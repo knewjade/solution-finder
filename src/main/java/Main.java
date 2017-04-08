@@ -32,7 +32,7 @@ public class Main {
         sample(field);
     }
 
-    static String readAll(String path) throws IOException {
+    private static String readAll(String path) throws IOException {
         return Files.lines(Paths.get(path), Charset.forName("UTF-8"))
                 .collect(Collectors.joining(""));
     }
