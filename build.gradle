@@ -1,0 +1,60 @@
+group 'com.knewjade'
+version '0.8'
+
+import jp.classmethod.aws.gradle.lambda.AWSLambdaMigrateFunctionTask
+import com.amazonaws.services.lambda.model.Runtime
+
+apply plugin: 'java'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.amazonaws:aws-lambda-java-core:1.+'
+    testCompile 'junit:junit:4.+'
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'https://plugins.gradle.org/m2/' }
+    }
+
+    dependencies {
+        classpath 'jp.classmethod.aws:gradle-aws-plugin:0.+'
+    }
+}
+
+apply plugin: 'jp.classmethod.aws'
+apply plugin: 'base'
+
+apply plugin: 'jp.classmethod.aws.lambda'
+
+aws {
+    profileName = 'windows'
+    region = 'us-west-2'
+}
+
+lambda {
+    region = 'ap-northeast-1'
+}
+
+task migrateFunction(type: AWSLambdaMigrateFunctionTask, dependsOn: jar) {
+    functionName = 'TestJava'
+    role = 'arn:aws:iam::159022142613:role/lambda_debug'
+    zipFile = jar.archivePath
+    runtime = Runtime.Java8
+    handler = 'Main::handler'
+    memorySize = 256 // default 128 MB
+    timeout = 30 // default 3 sec
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class' : 'Main'
+    }
+}
