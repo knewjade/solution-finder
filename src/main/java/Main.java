@@ -13,42 +13,46 @@ import misc.iterable.PermutationIterable;
 import searcher.checker.Checker;
 import searcher.common.action.Action;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.*;
-import java.util.stream.Collectors;
 
 import static core.mino.Block.*;
 
 public class Main {
     public static void main(String[] args) throws ExecutionException, InterruptedException, IOException {
-        String fieldStr = readAll("field.txt");
-        Field field = FieldFactory.createField(fieldStr);
-        sample(field);
+        Scanner scanner = new Scanner(new File("field.txt"));
+
+        if (!scanner.hasNextInt())
+            throw new IllegalArgumentException("Cannot read Field Height");
+        int maxClearLine = scanner.nextInt();
+
+        if (maxClearLine < 2 || 12 < maxClearLine)
+            throw new IllegalArgumentException("Field Height should be 2 <= height <= 12");
+
+        StringBuilder marks = new StringBuilder();
+        while (scanner.hasNext())
+            marks.append(scanner.nextLine());
+
+        Field field = FieldFactory.createField(marks.toString());
+        sample(field, maxClearLine);
     }
 
-    private static String readAll(String path) throws IOException {
-        return Files.lines(Paths.get(path), Charset.forName("UTF-8"))
-                .collect(Collectors.joining(""));
-    }
-
-    private static void sample(Field field) throws ExecutionException, InterruptedException {
-        System.out.println("# Initialize / User-defined");
-        List<Block> usingBlocks = Arrays.asList(I, T, S, Z, J, L, O);
-        int maxClearLine = 4;
-
-        System.out.println("Max clear lines: " + maxClearLine);
-        System.out.println("Using blocks: " + usingBlocks);
+    private static void sample(Field field, int maxClearLine) throws ExecutionException, InterruptedException {
+        System.out.println("# Setup Field");
+        System.out.println(FieldView.toString(field, maxClearLine));
 
         System.out.println();
         // ========================================
-        System.out.println("# Setup Field");
-        System.out.println(FieldView.toString(field, maxClearLine));
+        System.out.println("# Initialize / User-defined");
+        List<Block> usingBlocks = Arrays.asList(I, T, S, Z, J, L, O);
+
+        System.out.println("Max clear lines: " + maxClearLine);
+        System.out.println("Using pieces: " + usingBlocks);
 
         System.out.println();
         // ========================================
@@ -79,7 +83,7 @@ public class Main {
         if (usingBlocks.size() < combinationPopCount)
             combinationPopCount = usingBlocks.size();
 
-        System.out.println("Block pop count = " + combinationPopCount);
+        System.out.println("Piece pop count = " + combinationPopCount);
 
         List<List<Block>> searchingTargets = new ArrayList<>();
         // 組み合わせの列挙
@@ -92,7 +96,7 @@ public class Main {
             }
         }
 
-        System.out.println("Searching target count = " + searchingTargets.size());
+        System.out.println("Searching pattern count = " + searchingTargets.size());
 
         System.out.println();
         // ========================================
@@ -127,7 +131,25 @@ public class Main {
         // ========================================
         System.out.println("# Output");
         checkerTree.show();
-        checkerTree.tree(2);
+
+        System.out.println();
+        System.out.println("Success pattern tree [Head 3 pieces]:");
+        checkerTree.tree(3);
+
+        System.out.println();
+        System.out.println("-------------------");
+        System.out.println("Fail pattern (Max. 100)");
+        int counter = 0;
+        for (Future<Pair<List<Block>, Boolean>> future : futureResults) {
+            Pair<List<Block>, Boolean> resultPair = future.get();
+            Boolean result = resultPair.getValue();
+            if (!result) {
+                System.out.println(resultPair.getKey());
+                counter += 1;
+                if (100 <= counter)
+                    break;
+            }
+        }
 
         System.out.println();
         // ========================================
