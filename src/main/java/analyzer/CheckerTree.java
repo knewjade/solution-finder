@@ -48,8 +48,8 @@ public class CheckerTree {
         rootElement.fail(blocks);
     }
 
-    public void show() {
-        System.out.printf("success = %.2f%% (%d/%d)%n", rootElement.getSuccessPercent() * 100, rootElement.successCounter, rootElement.allCounter);
+    public String show() {
+        return String.format("success = %.2f%% (%d/%d)", rootElement.getSuccessPercent() * 100, rootElement.successCounter, rootElement.allCounter);
     }
 
     public void set(boolean result, List<Block> blocks) {
@@ -67,27 +67,31 @@ public class CheckerTree {
         tree(-1);
     }
 
-    public void tree(int maxDepth) {
+    public String tree(int maxDepth) {
+        String str = "";
         if (1 < rootElement.current.size())
-            System.out.printf("%s -> %.1f %%%n", "*", getSuccessPercent() * 100);
-        tree(rootElement, new LinkedList<>(), maxDepth);
+            str += String.format("%s -> %.1f %%%n", "*", getSuccessPercent() * 100);
+        return str + tree(rootElement, new LinkedList<>(), maxDepth);
     }
 
-    private void tree(Element element, LinkedList<Block> stack, int maxDepth) {
+    private String tree(Element element, LinkedList<Block> stack, int maxDepth) {
         int depth = stack.size();
 
         if (0 <= maxDepth && maxDepth <= depth)
-            return;
+            return "";
 
+        String str = "";
         for (Map.Entry<Block, Element> entry : element.current.entrySet()) {
             stack.addLast(entry.getKey());
             Element value = entry.getValue();
-            System.out.printf("%s∟ %s -> %.1f %%%n", repeat("  ", depth), toS(stack), value.getSuccessPercent() * 100);
+            str += String.format("%s∟ %s -> %.1f %%%n", repeat("  ", depth), toS(stack), value.getSuccessPercent() * 100);
             if (1 <= value.current.size()) {
-                tree(value, stack, maxDepth);
+                str += tree(value, stack, maxDepth);
             }
             stack.pollLast();
         }
+
+        return str;
     }
 
     private String repeat(String str, int maxCount) {

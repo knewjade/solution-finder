@@ -13,7 +13,9 @@ import misc.iterable.PermutationIterable;
 import searcher.checker.Checker;
 import searcher.common.action.Action;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,31 +40,40 @@ public class Main {
         while (scanner.hasNext())
             marks.append(scanner.nextLine());
 
+        BufferedWriter writer = new BufferedWriter(new FileWriter("last_output.txt"));
+        Main main = new Main(writer);
+
         Field field = FieldFactory.createField(marks.toString());
-        sample(field, maxClearLine);
+        main.sample(field, maxClearLine);
     }
 
-    private static void sample(Field field, int maxClearLine) throws ExecutionException, InterruptedException {
-        System.out.println("# Setup Field");
-        System.out.println(FieldView.toString(field, maxClearLine));
+    private final BufferedWriter writer;
 
-        System.out.println();
+    private Main(BufferedWriter writer) {
+        this.writer = writer;
+    }
+
+    private void sample(Field field, int maxClearLine) throws ExecutionException, InterruptedException, IOException {
+        output("# Setup Field");
+        output(FieldView.toString(field, maxClearLine));
+
+        output();
         // ========================================
-        System.out.println("# Initialize / User-defined");
+        output("# Initialize / User-defined");
         List<Block> usingBlocks = Arrays.asList(I, T, S, Z, J, L, O);
 
-        System.out.println("Max clear lines: " + maxClearLine);
-        System.out.println("Using pieces: " + usingBlocks);
+        output("Max clear lines: " + maxClearLine);
+        output("Using pieces: " + usingBlocks);
 
-        System.out.println();
+        output();
         // ========================================
-        System.out.println("# Initialize / System");
+        output("# Initialize / System");
         int core = Runtime.getRuntime().availableProcessors();
         ExecutorService executorService = Executors.newFixedThreadPool(core);
         ThreadLocal<Checker<Action>> checkerThreadLocal = new CheckerThreadLocal<>();
         CandidateThreadLocal candidateThreadLocal = new CandidateThreadLocal(maxClearLine);
 
-        System.out.println("Available processors = " + core);
+        output("Available processors = " + core);
 
         // 残りのスペースが4の倍数でないときはエラー
         int emptyCount = maxClearLine * 10 - field.getAllBlockCount();
@@ -74,16 +85,16 @@ public class Main {
         if (usingBlocks.size() < maxDepth)
             throw new IllegalArgumentException("Error: blocks size check short: " + usingBlocks.size() + " < " + maxDepth);
 
-        System.out.println();
+        output();
         // ========================================
-        System.out.println("# Enumerate target");
+        output("# Enumerate target");
 
         // 必要なミノ分（maxDepth + 1）だけを取り出す。maxDepth + 1だけないときはブロックの個数をそのまま指定
         int combinationPopCount = maxDepth + 1;
         if (usingBlocks.size() < combinationPopCount)
             combinationPopCount = usingBlocks.size();
 
-        System.out.println("Piece pop count = " + combinationPopCount);
+        output("Piece pop count = " + combinationPopCount);
 
         List<List<Block>> searchingTargets = new ArrayList<>();
         // 組み合わせの列挙
@@ -96,12 +107,12 @@ public class Main {
             }
         }
 
-        System.out.println("Searching pattern count = " + searchingTargets.size());
+        output("Searching pattern count = " + searchingTargets.size());
 
-        System.out.println();
+        output();
         // ========================================
-        System.out.println("# Search");
-        System.out.println("  -> Stopwatch start");
+        output("# Search");
+        output("  -> Stopwatch start");
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
         List<Future<Pair<List<Block>, Boolean>>> futureResults = new ArrayList<>();
@@ -125,36 +136,47 @@ public class Main {
         }
 
         stopwatch.stop();
-        System.out.println("  -> Stopwatch stop : " + stopwatch.toMessage(TimeUnit.MILLISECONDS));
+        output("  -> Stopwatch stop : " + stopwatch.toMessage(TimeUnit.MILLISECONDS));
 
-        System.out.println();
+        output();
         // ========================================
-        System.out.println("# Output");
-        checkerTree.show();
+        output("# Output");
+        output(checkerTree.show());
 
-        System.out.println();
-        System.out.println("Success pattern tree [Head 3 pieces]:");
-        checkerTree.tree(3);
+        output();
+        output("Success pattern tree [Head 3 pieces]:");
+        output(checkerTree.tree(3));
 
-        System.out.println();
-        System.out.println("-------------------");
-        System.out.println("Fail pattern (Max. 100)");
+        output("-------------------");
+        output("Fail pattern (Max. 100)");
         int counter = 0;
         for (Future<Pair<List<Block>, Boolean>> future : futureResults) {
             Pair<List<Block>, Boolean> resultPair = future.get();
             Boolean result = resultPair.getValue();
             if (!result) {
-                System.out.println(resultPair.getKey());
+                output(resultPair.getKey().toString());
                 counter += 1;
                 if (100 <= counter)
                     break;
             }
         }
 
-        System.out.println();
+        output();
         // ========================================
-        System.out.println("# Finalize");
+        output("# Finalize");
         executorService.shutdown();
-        System.out.println("done");
+        output("done");
+
+        writer.flush();
+    }
+
+    private void output() throws IOException {
+        output("");
+    }
+
+    private void output(String str) throws IOException {
+        writer.append(str);
+        writer.newLine();
+        System.out.println(str);
     }
 }
