@@ -54,7 +54,7 @@ solution-finder-runner.batをダブルクリックして起動してください
 
 ```
 cd  {jarファイルのあるディレクトリパス}
-java -jar -Xmx1024M solution-finder-0.1.jar
+java -jar -Xmx1024M solution-finder-0.11.jar
 ```
 
 # 出力サンプル
