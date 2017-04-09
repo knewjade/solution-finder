@@ -1,7 +1,7 @@
 # solution-finder
 
 テトリスのパーフェクトの成功確率を計算するためのツールです。  
-現バージョン(v0.1)では、異なる7種のミノ(ITSZJLO) の組み合わせのみ対応しています。  
+現バージョン(v0.11)では、異なる7種のミノ(ITSZJLO) の組み合わせのみ対応しています。  
 
 ダウンロードは releases からお願いします。
 https://github.com/knewjade/solution-finder/releases
