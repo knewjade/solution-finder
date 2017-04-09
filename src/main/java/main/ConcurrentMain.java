@@ -8,7 +8,7 @@ import core.mino.Block;
 import misc.Stopwatch;
 import misc.iterable.CombinationIterable;
 import misc.iterable.PermutationIterable;
-import concurrent.CandidateThreadLocal;
+import concurrent.LockedCandidateThreadLocal;
 import concurrent.CheckerThreadLocal;
 import searcher.checker.Checker;
 import searcher.common.action.Action;
@@ -44,7 +44,7 @@ public class ConcurrentMain {
 //        System.out.println(core);
         ExecutorService executorService = Executors.newFixedThreadPool(core);
         ThreadLocal<Checker<Action>> checkerThreadLocal = new CheckerThreadLocal<>();
-        CandidateThreadLocal candidateThreadLocal = new CandidateThreadLocal(maxClearLine);
+        LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
 
         // enumerate combinations and sort
         ArrayList<Callable<PairObj>> callables = new ArrayList<>();

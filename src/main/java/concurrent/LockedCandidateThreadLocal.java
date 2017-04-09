@@ -7,10 +7,10 @@ import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import searcher.common.action.Action;
 
-public class CandidateThreadLocal extends ThreadLocal<Candidate<Action>> {
+public class LockedCandidateThreadLocal extends ThreadLocal<Candidate<Action>> {
     private final int maxY;
 
-    public CandidateThreadLocal(int maxY) {
+    public LockedCandidateThreadLocal(int maxY) {
         this.maxY = maxY;
     }
 

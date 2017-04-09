@@ -32,8 +32,11 @@ public class LockedReachable implements Reachable {
     }
 
     @Override
-    public boolean checksReachable(Field field, Block block, int x, int y, Rotate rotate, int appearY) {
+    public boolean checks(Field field, Mino mino, int x, int y, int appearY) {
         this.appearY = appearY;
+
+        Block block = mino.getBlock();
+        Rotate rotate = mino.getRotate();
 
         if (check(field, block, x, y, rotate))
             return true;

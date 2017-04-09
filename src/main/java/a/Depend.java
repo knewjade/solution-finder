@@ -127,7 +127,7 @@ public class Depend {
         int x = minoPivot.getX();
         int y = minoPivot.getY();
         field.removeMino(mino, x, y);
-        boolean result = lockedReachable.checksReachable(field, mino.getBlock(),x, y, mino.getRotate(), height);
+        boolean result = lockedReachable.checks(field, mino, x, y, height);
         field.putMino(mino, x, y);
         return result;
     }

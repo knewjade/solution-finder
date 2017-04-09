@@ -34,7 +34,7 @@ public class MinimalAction implements Comparable<Action>, Action {
 
     @Override
     public int hashCode() {
-        return x + MAX_FIELD_WIDTH * y + rotate.getNumber() * MAX_FIELD_BLOCK;
+        return (x + MAX_FIELD_WIDTH * y + rotate.getNumber() * MAX_FIELD_BLOCK) + 1;
     }
 
     @Override

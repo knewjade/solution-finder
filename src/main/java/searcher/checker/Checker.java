@@ -4,6 +4,7 @@ import action.candidate.Candidate;
 import core.field.Field;
 import core.mino.Block;
 import core.mino.MinoFactory;
+import searcher.common.Result;
 import searcher.common.SearcherCore;
 import searcher.common.action.Action;
 import searcher.common.order.DepthOrder;
@@ -46,6 +47,10 @@ public class Checker<T extends Action> {
 //        System.out.println(results);
 
         return !dataPool.getResults().isEmpty();
+    }
+
+    public Result getResult() {
+        return dataPool.getResults().get(0);
     }
 
     private long getMemory() {

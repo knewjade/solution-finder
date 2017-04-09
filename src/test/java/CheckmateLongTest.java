@@ -4,7 +4,7 @@ import core.field.FieldFactory;
 import core.mino.MinoFactory;
 import main.CheckmateInvoker;
 import misc.Stopwatch;
-import concurrent.CandidateThreadLocal;
+import concurrent.LockedCandidateThreadLocal;
 import org.junit.Test;
 import searcher.checkmate.ConcurrentCheckmate;
 import searcher.common.action.Action;
@@ -72,7 +72,7 @@ public class CheckmateLongTest {
         int maxClearLine = 4;
         int maxDepth = 10;
 
-        CandidateThreadLocal threadLocal = new CandidateThreadLocal(maxClearLine);
+        LockedCandidateThreadLocal threadLocal = new LockedCandidateThreadLocal(maxClearLine);
         MinoFactory minoFactory = new MinoFactory();
         PerfectValidator validator = new PerfectValidator();
         int core = Runtime.getRuntime().availableProcessors();

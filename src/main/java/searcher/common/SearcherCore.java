@@ -8,6 +8,7 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import searcher.common.action.Action;
 import searcher.common.order.Order;
+import searcher.common.order.NormalOrder;
 import searcher.common.validator.Validator;
 
 import java.util.HashSet;
@@ -48,7 +49,7 @@ public class SearcherCore<T extends Action> {
         for (T action : candidateList)
             actions.add(shifter.createTransformedAction(drawn, action));
 
-        History history = order.getHistory();
+        OperationHistory history = order.getHistory();
         for (Action action : actions) {
             Field field = currentField.freeze(max);
             Mino mino = minoFactory.create(drawn, action.getRotate());
@@ -68,8 +69,8 @@ public class SearcherCore<T extends Action> {
             if (isLast)
                 continue;
 
-            History nextHistory = history.record(drawn, action);
-            Order nextOrder = new Order(field, nextHold, maxClearLine, nextHistory);
+            OperationHistory nextHistory = history.record(drawn, action);
+            Order nextOrder = new NormalOrder(field, nextHold, maxClearLine, nextHistory);
             dataPool.addOrder(nextOrder);
         }
     }

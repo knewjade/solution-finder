@@ -1,7 +1,6 @@
 package core.field;
 
 import core.mino.Mino;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * フィールドの高さ height <= 12 であること
@@ -21,6 +20,11 @@ public class MiddleField implements Field {
     private MiddleField(MiddleField src) {
         this.xBoardLow = src.xBoardLow;
         this.xBoardHigh = src.xBoardHigh;
+    }
+
+    public MiddleField(long xBoardLow, long xBoardHigh) {
+        this.xBoardLow = xBoardLow;
+        this.xBoardHigh = xBoardHigh;
     }
 
     @Override
@@ -222,6 +226,12 @@ public class MiddleField implements Field {
 
     @Override
     public int clearLine() {
+        long deleteKey = clearLineReturnKey();
+        return Long.bitCount(deleteKey);
+    }
+
+    @Override
+    public long clearLineReturnKey() {
         long deleteKeyLow = getDeleteKey(xBoardLow);
         long newXBoardLow = LongBoardMap.deleteLine(xBoardLow, deleteKeyLow);
 
@@ -233,7 +243,7 @@ public class MiddleField implements Field {
         this.xBoardLow = (newXBoardLow | (newXBoardHigh << (6 - deleteLineLow) * 10)) & 0xfffffffffffffffL;
         this.xBoardHigh = newXBoardHigh >>> deleteLineLow * 10;
 
-        return deleteLineLow + Long.bitCount(deleteKeyHigh);
+        return deleteKeyLow | (deleteKeyHigh << 1);
     }
 
     private long getDeleteKey(long board) {
@@ -248,8 +258,59 @@ public class MiddleField implements Field {
     }
 
     @Override
-    public int clearLineReturnIndex() {
-        throw new NotImplementedException();
+    public void insertLineWithKey(long deleteKey) {
+        long deleteKeyLow = deleteKey & 0x4010040100401L;
+        int deleteLineLow = Long.bitCount(deleteKeyLow);
+        int leftLineLow = 6 - deleteLineLow;
+        long newXBoardLow = LongBoardMap.insertLine(xBoardLow & getRowMaskBelowY(leftLineLow), deleteKeyLow);
+
+        long deleteKeyHigh = (deleteKey & 0x8020080200802L) >> 1;
+        long newXBoardHigh = LongBoardMap.insertLine((xBoardHigh << 10 * deleteLineLow) | ((xBoardLow & getRowMaskAboveY(leftLineLow)) >> 10 * leftLineLow), deleteKeyHigh);
+
+        this.xBoardLow = newXBoardLow;
+        this.xBoardHigh = newXBoardHigh & 0xfffffffffffffffL;
+    }
+
+    // yより下の行を選択するマスクを作成 (y行は含まない)
+    private long getRowMaskBelowY(int y) {
+        switch (y) {
+            case 0:
+                return 0L;
+            case 1:
+                return 0x2ffL;
+            case 2:
+                return 0xfffffL;
+            case 3:
+                return 0x2fffffffL;
+            case 4:
+                return 0xffffffffffL;
+            case 5:
+                return 0x2ffffffffffffL;
+            case 6:
+                return 0xfffffffffffffffL;
+        }
+        throw new IllegalArgumentException("No reachable");
+    }
+
+    // yより上の行を選択するマスクを作成 (y行を含む)
+    private long getRowMaskAboveY(int y) {
+        switch (y) {
+            case 0:
+                return 0xfffffffffffffffL;
+            case 1:
+                return 0xffffffffffffc00L;
+            case 2:
+                return 0xffffffffff00000L;
+            case 3:
+                return 0xfffffffc0000000L;
+            case 4:
+                return 0xfffff0000000000L;
+            case 5:
+                return 0xffc000000000000L;
+            case 6:
+                return 0L;
+        }
+        throw new IllegalArgumentException("No reachable");
     }
 
     @Override

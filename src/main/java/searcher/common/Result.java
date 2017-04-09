@@ -4,6 +4,9 @@ import core.mino.Block;
 import searcher.common.action.Action;
 import searcher.common.order.Order;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Result {
     private final Order order;
     private final Block lastBlock;
@@ -25,8 +28,19 @@ public class Result {
         return action;
     }
 
-    Block getLastHold() {
+    public Block getLastHold() {
         return lastHold;
+    }
+
+    public List<Operation> createOperations() {
+        int[] operationNumbers = order.getHistory().getOperationNumbers();
+        ArrayList<Operation> operations = new ArrayList<>();
+        for (int value : operationNumbers) {
+            Operation operation = ActionParser.parseToOperation(value);
+            operations.add(operation);
+        }
+        operations.add(new Operation(lastBlock, action.getRotate(), action.getX(), action.getY()));
+        return operations;
     }
 
     @Override

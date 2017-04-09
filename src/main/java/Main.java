@@ -1,6 +1,6 @@
 import action.candidate.Candidate;
 import analyzer.CheckerTree;
-import concurrent.CandidateThreadLocal;
+import concurrent.LockedCandidateThreadLocal;
 import concurrent.CheckerThreadLocal;
 import core.field.Field;
 import core.field.FieldFactory;
@@ -70,8 +70,8 @@ public class Main {
         output("# Initialize / System");
         int core = Runtime.getRuntime().availableProcessors();
         ExecutorService executorService = Executors.newFixedThreadPool(core);
-        ThreadLocal<Checker<Action>> checkerThreadLocal = new CheckerThreadLocal<>();
-        CandidateThreadLocal candidateThreadLocal = new CandidateThreadLocal(maxClearLine);
+        CheckerThreadLocal<Action> checkerThreadLocal = new CheckerThreadLocal<>();
+        LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
 
         output("Available processors = " + core);
 
@@ -87,7 +87,7 @@ public class Main {
 
         output();
         // ========================================
-        output("# Enumerate target");
+        output("# Enumerate pieces");
 
         // 必要なミノ分（maxDepth + 1）だけを取り出す。maxDepth + 1だけないときはブロックの個数をそのまま指定
         int combinationPopCount = maxDepth + 1;
@@ -96,18 +96,18 @@ public class Main {
 
         output("Piece pop count = " + combinationPopCount);
 
-        List<List<Block>> searchingTargets = new ArrayList<>();
+        List<List<Block>> searchingPieces = new ArrayList<>();
         // 組み合わせの列挙
         Iterable<List<Block>> combinationIterable = new CombinationIterable<>(usingBlocks, combinationPopCount);
         for (List<Block> combination : combinationIterable) {
             // 組み合わせから、順列を列挙
             Iterable<List<Block>> permutationIterable = new PermutationIterable<>(combination);
             for (List<Block> permutation : permutationIterable) {
-                searchingTargets.add(permutation);
+                searchingPieces.add(permutation);
             }
         }
 
-        output("Searching pattern count = " + searchingTargets.size());
+        output("Searching pattern count = " + searchingPieces.size());
 
         output();
         // ========================================
@@ -116,7 +116,7 @@ public class Main {
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
         List<Future<Pair<List<Block>, Boolean>>> futureResults = new ArrayList<>();
-        for (List<Block> target : searchingTargets) {
+        for (List<Block> target : searchingPieces) {
             Future<Pair<List<Block>, Boolean>> future = executorService.submit(() -> {
                 Checker<Action> checker = checkerThreadLocal.get();
                 Candidate<Action> candidate = candidateThreadLocal.get();
@@ -160,6 +160,9 @@ public class Main {
                     break;
             }
         }
+
+        if (counter == 0)
+            output("nothing");
 
         output();
         // ========================================

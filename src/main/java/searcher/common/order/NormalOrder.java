@@ -4,17 +4,17 @@ import core.field.Field;
 import core.mino.Block;
 import searcher.common.OperationHistory;
 
-public class DepthOrder implements Order {
+public class NormalOrder implements Order {
     private final Block hold;
     private final Field field;
     private final int maxClearLine;
     private final OperationHistory history;
 
-    public DepthOrder(Field field, Block hold, int maxClearLine, int maxDepth) {
+    public NormalOrder(Field field, Block hold, int maxClearLine, int maxDepth) {
         this(field, hold, maxClearLine, new OperationHistory(maxDepth - 1));
     }
 
-    private DepthOrder(Field field, Block hold, int maxClearLine, OperationHistory history) {
+    public NormalOrder(Field field, Block hold, int maxClearLine, OperationHistory history) {
         this.field = field;
         this.hold = hold;
         this.maxClearLine = maxClearLine;
@@ -54,13 +54,6 @@ public class DepthOrder implements Order {
 
     @Override
     public int compareTo(Order o) {
-        int compare = Integer.compare(this.getHistory().getIndex(), o.getHistory().getIndex());
-        if (compare == 0)
-            return superCompareTo(o);
-        return compare;
-    }
-
-    public int superCompareTo(Order o) {
         int compare = compare(o);
         if (compare == 0)
             return compare;
@@ -105,4 +98,3 @@ public class DepthOrder implements Order {
         return left > right ? 1 : -1;
     }
 }
-

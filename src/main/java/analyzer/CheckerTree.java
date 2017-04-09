@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 public class CheckerTree {
     private static class Element {
-
         private final EnumMap<Block, Element> current = new EnumMap<>(Block.class);
         private int allCounter = 0;
         private int successCounter = 0;
@@ -36,6 +35,14 @@ public class CheckerTree {
             return (double) successCounter / allCounter;
         }
 
+        private boolean isVisited(List<Block> blocks, int depth) {
+            Block block = blocks.get(depth);
+            if (depth < blocks.size() - 1) {
+                return current.containsKey(block) && current.get(block).isVisited(blocks, depth + 1);
+            } else {
+                return current.containsKey(block);
+            }
+        }
     }
 
     private final Element rootElement = new Element();
@@ -63,6 +70,10 @@ public class CheckerTree {
         return rootElement.getSuccessPercent();
     }
 
+    public boolean isVisited(List<Block> blocks) {
+        return rootElement.isVisited(blocks, 0);
+    }
+
     void tree() {
         tree(-1);
     }
@@ -84,7 +95,7 @@ public class CheckerTree {
         for (Map.Entry<Block, Element> entry : element.current.entrySet()) {
             stack.addLast(entry.getKey());
             Element value = entry.getValue();
-            str += String.format("%s∟ %s -> %.1f %%%n", repeat("  ", depth), toS(stack), value.getSuccessPercent() * 100);
+            str += String.format("%s∟ %s -> %.1f %%%n", repeat("  ", depth), toString(stack), value.getSuccessPercent() * 100);
             if (1 <= value.current.size()) {
                 str += tree(value, stack, maxDepth);
             }
@@ -101,7 +112,7 @@ public class CheckerTree {
         return builder.toString();
     }
 
-    private String toS(LinkedList<Block> stack) {
+    private String toString(LinkedList<Block> stack) {
         return String.join("", stack.stream().map(Block::name).collect(Collectors.toList()));
     }
 }

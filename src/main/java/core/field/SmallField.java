@@ -1,7 +1,6 @@
 package core.field;
 
 import core.mino.Mino;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * フィールドの高さ height <= 6 であること
@@ -20,7 +19,7 @@ public class SmallField implements Field {
         this.xBoard = src.xBoard;
     }
 
-    SmallField(long xBoard) {
+    public SmallField(long xBoard) {
         this.xBoard = xBoard;
     }
 
@@ -146,10 +145,20 @@ public class SmallField implements Field {
 
     @Override
     public int clearLine() {
-        // 削除行の探索
+        long deleteKey = clearLineReturnKey();
+        return Long.bitCount(deleteKey);
+    }
+
+    @Override
+    public long clearLineReturnKey() {
         long deleteKey = getDeleteKey(xBoard);
         this.xBoard = LongBoardMap.deleteLine(xBoard, deleteKey);
-        return Long.bitCount(deleteKey);
+        return deleteKey;
+    }
+
+    @Override
+    public void insertLineWithKey(long deleteKey) {
+        this.xBoard = LongBoardMap.insertLine(xBoard, deleteKey);
     }
 
     private long getDeleteKey(long board) {
@@ -161,11 +170,6 @@ public class SmallField implements Field {
         long b3 = (b2 & a0000010100) >>> 2 & b2;
         long a0000000100 = 4508001973047300L;
         return (b3 & a0000000100) >>> 2 & b3;
-    }
-
-    @Override
-    public int clearLineReturnIndex() {
-        throw new NotImplementedException();
     }
 
     @Override

@@ -4,10 +4,11 @@ import action.candidate.Candidate;
 import core.field.Field;
 import core.mino.Block;
 import core.mino.MinoFactory;
+import searcher.common.Result;
 import searcher.common.SearcherCore;
 import searcher.common.action.Action;
-import searcher.common.Result;
 import searcher.common.order.Order;
+import searcher.common.order.NormalOrder;
 import searcher.common.validator.Validator;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public class Checkmate<T extends Action> {
         dataPool.initFirst();
 
         TreeSet<Order> orders = new TreeSet<>();
-        orders.add(new Order(initField, blocks[0], maxClearLine, maxDepth));
+        orders.add(new NormalOrder(initField, blocks[0], maxClearLine, maxDepth));
 
         for (int depth = 1; depth <= maxDepth; depth++) {
             dataPool.initEachDepth();

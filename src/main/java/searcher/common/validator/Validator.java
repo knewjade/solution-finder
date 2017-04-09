@@ -6,7 +6,7 @@ public interface Validator {
     int FIELD_WIDTH = 10;
 
     // 最終条件を満たしたフィールドなら true を返却
-    boolean satisfies(Field field, int maxClearLine);
+    boolean satisfies(Field field, int maxY);
 
     // 有効なフィールドなら true を返却。false なら枝刈り対象
     boolean validate(Field field, int maxClearLine);

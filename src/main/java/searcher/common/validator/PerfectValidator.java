@@ -4,8 +4,8 @@ import core.field.Field;
 
 public class PerfectValidator implements Validator {
     @Override
-    public boolean satisfies(Field field, int maxClearLine) {
-        return maxClearLine == 0 && field.isPerfect();
+    public boolean satisfies(Field field, int maxY) {
+        return maxY == 0 && field.isPerfect();
     }
 
     @Override

@@ -5,10 +5,11 @@ import core.field.Field;
 import core.field.SmallField;
 import core.mino.Block;
 import core.mino.MinoFactory;
+import searcher.common.Result;
 import searcher.common.SearcherCore;
 import searcher.common.action.Action;
-import searcher.common.Result;
 import searcher.common.order.Order;
+import searcher.common.order.NormalOrder;
 import searcher.common.validator.Validator;
 
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class CheckmateReuse<T extends Action> {
             // mementoの初期化
             // 初めから
             memento = new ArrayList<>();
-            orders.add(new Order(initField, blocks[0], maxClearLine, maxDepth));
+            orders.add(new NormalOrder(initField, blocks[0], maxClearLine, maxDepth));
             startDepth = 1;
             memento.add(new TreeSet<>(orders));
         } else {
@@ -57,7 +58,7 @@ public class CheckmateReuse<T extends Action> {
 
             if (reuseIndex < 0) {
                 memento = new ArrayList<>();
-                orders.add(new Order(initField, blocks[0], maxClearLine, maxDepth));
+                orders.add(new NormalOrder(initField, blocks[0], maxClearLine, maxDepth));
                 startDepth = 1;
                 memento.add(new TreeSet<>(orders));
             } else if (reuseIndex == blocks.length - 1) {

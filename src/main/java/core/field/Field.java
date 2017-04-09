@@ -52,7 +52,17 @@ public interface Field {
     int clearLine();
 
     // ブロックがそろった行を削除し、削除した行を表すマスクを返却
-    int clearLineReturnIndex();
+    long clearLineReturnKey();
+
+    // ブロックがそろった行を復元する
+    // deleteKeyは以下のビット位置に、対応する行が揃っているときフラグをたてる
+    //       5.******** 最上位
+    //       4.********
+    //       39********
+    //       28********
+    //       17********
+    // 最下位 06********
+    void insertLineWithKey(long deleteKey);
 
     // 6列分のフィールドを表現するボードの個数を返却
     int getBoardCount();
