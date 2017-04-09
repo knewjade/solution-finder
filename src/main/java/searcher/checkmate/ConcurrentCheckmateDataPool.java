@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.TreeSet;
 
 public class ConcurrentCheckmateDataPool implements DataPool {
+    private final Integer addOrderLockObject = 0;   // lock object for addOrder
+    private final Integer addResultLockObject = 0;  // lock object for addResult
+
     private final CheckmateDataPool checkmateDataPool;
 
     ConcurrentCheckmateDataPool() {
@@ -24,14 +27,14 @@ public class ConcurrentCheckmateDataPool implements DataPool {
 
     @Override
     public void addOrder(Order order) {
-        synchronized (ConcurrentCheckmateDataPool.class) {
+        synchronized (addOrderLockObject) {
             checkmateDataPool.addOrder(order);
         }
     }
 
     @Override
     public void addResult(Result result) {
-        synchronized (ConcurrentCheckmateDataPool.class) {
+        synchronized (addResultLockObject) {
             checkmateDataPool.addResult(result);
         }
     }

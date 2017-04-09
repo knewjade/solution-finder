@@ -5,7 +5,7 @@ import core.mino.Block;
 import java.util.EnumMap;
 import java.util.List;
 
-public class VisitedTree {
+public class ConcurrentVisitedTree {
     public static final short NO_RESULT = -1;
     public static final short SUCCEED = 0;
     public static final short FAILED = 1;
@@ -74,11 +74,15 @@ public class VisitedTree {
     private final Element rootElement = new Element();
 
     public void success(List<Block> blocks) {
-        rootElement.success(blocks);
+        synchronized (rootElement) {
+            rootElement.success(blocks);
+        }
     }
 
     public void fail(List<Block> blocks) {
-        rootElement.fail(blocks);
+        synchronized (rootElement) {
+            rootElement.fail(blocks);
+        }
     }
 
     public void set(boolean result, List<Block> blocks) {
@@ -88,11 +92,9 @@ public class VisitedTree {
             fail(blocks);
     }
 
-    public boolean isVisited(List<Block> blocks) {
-        return rootElement.isVisited(blocks, 0);
-    }
-
     public int isSucceed(List<Block> blocks) {
-        return rootElement.isSucceed(blocks, 0);
+        synchronized (rootElement) {
+            return rootElement.isSucceed(blocks, 0);
+        }
     }
 }

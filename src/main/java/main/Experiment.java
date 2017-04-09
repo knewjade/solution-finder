@@ -51,14 +51,14 @@ public class Experiment {
         List<Block> usingBlocks = Arrays.asList(I, T, S, Z, J, L, O);
         int combinationPopCount = 7;
 
-        ArrayList<OrderPieces> searchingPieces = new ArrayList<>();
+        ArrayList<HashableBlocks> searchingPieces = new ArrayList<>();
         // 組み合わせの列挙
         Iterable<List<Block>> combinationIterable = new CombinationIterable<>(usingBlocks, combinationPopCount);
         for (List<Block> combination : combinationIterable) {
             // 組み合わせから、順列を列挙
             Iterable<List<Block>> permutationIterable = new PermutationIterable<>(combination);
             for (List<Block> permutation : permutationIterable) {
-                searchingPieces.add(new OrderPieces(permutation));
+                searchingPieces.add(new HashableBlocks(permutation));
             }
         }
 
@@ -79,7 +79,7 @@ public class Experiment {
             throw new IllegalArgumentException("Max Depth should be <= 10");
 
         stopwatch.start();
-        for (OrderPieces pieces : searchingPieces) {
+        for (HashableBlocks pieces : searchingPieces) {
             List<Block> blocks = pieces.getBlocks();
 
             if (visitedTree.isVisited(blocks)) {
@@ -99,7 +99,7 @@ public class Experiment {
                 }
 
                 int reverseMaxDepth = result.getLastHold() != null ? operationBlocks.size() + 1 : operationBlocks.size();
-                ArrayList<Pieces> reversePieces = Experiment2.reverse(operationBlocks, reverseMaxDepth);
+                ArrayList<Pieces> reversePieces = OrderLookup.reverse(operationBlocks, reverseMaxDepth);
                 for (Pieces piece : reversePieces) {
                     visitedTree.set(true, piece.getBlocks());
                 }
@@ -108,7 +108,7 @@ public class Experiment {
         stopwatch.stop();
 
         CheckerTree tree = new CheckerTree();
-        for (OrderPieces piece : searchingPieces) {
+        for (HashableBlocks piece : searchingPieces) {
             List<Block> blocks = piece.getBlocks();
             int result = visitedTree.isSucceed(blocks);
             assert result != VisitedTree.NO_RESULT;
@@ -133,14 +133,14 @@ public class Experiment {
         List<Block> usingBlocks = Arrays.asList(I, T, S, Z, J, L, O);
         int combinationPopCount = 7;
 
-        LinkedList<OrderPieces> searchingPieces = new LinkedList<>();
+        LinkedList<HashableBlocks> searchingPieces = new LinkedList<>();
         // 組み合わせの列挙
         Iterable<List<Block>> combinationIterable = new CombinationIterable<>(usingBlocks, combinationPopCount);
         for (List<Block> combination : combinationIterable) {
             // 組み合わせから、順列を列挙
             Iterable<List<Block>> permutationIterable = new PermutationIterable<>(combination);
             for (List<Block> permutation : permutationIterable) {
-                searchingPieces.add(new OrderPieces(permutation));
+                searchingPieces.add(new HashableBlocks(permutation));
             }
         }
 
@@ -155,7 +155,7 @@ public class Experiment {
 
         Checker<Action> builder = new Checker<>(minoFactory, validator);
 
-        HashSet<OrderPieces> duplicated = new HashSet<>();
+        HashSet<HashableBlocks> duplicated = new HashSet<>();
         Stopwatch stopwatch = Stopwatch.createStoppedStopwatch();
         CheckerTree tree = new CheckerTree();
 
@@ -164,7 +164,7 @@ public class Experiment {
             throw new IllegalArgumentException("Max Depth should be <= 10");
 
         while (!searchingPieces.isEmpty()) {
-            OrderPieces pieces = searchingPieces.poll();
+            HashableBlocks pieces = searchingPieces.poll();
             List<Block> blocks = pieces.getBlocks();
 
             stopwatch.start();
@@ -196,7 +196,7 @@ public class Experiment {
                 for (Operation allOperation : allOperations) {
                     okPiece.add(allOperation.getBlock());
                 }
-                OrderPieces okPieces = new OrderPieces(okPiece);
+                HashableBlocks okPieces = new HashableBlocks(okPiece);
                 if (duplicated.contains(okPieces)) {
                     continue;
                 }
@@ -298,42 +298,6 @@ public class Experiment {
         return field;
     }
 
-    // num of blocks <= 10 であること
-    private static class OrderPieces {
-        private final List<Block> blocks;
 
-        private final int hash;
-
-        public OrderPieces(List<Block> blocks) {
-            this.blocks = blocks;
-            this.hash = calculateHash(blocks);
-        }
-
-        private int calculateHash(List<Block> blocks) {
-            int size = blocks.size();
-            int number = blocks.get(size - 1).getNumber();
-            for (int index = size - 2; 0 <= index; index--) {
-                number *= 8;
-                number += blocks.get(index).getNumber();
-            }
-            return number;
-        }
-
-        public List<Block> getBlocks() {
-            return blocks;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            OrderPieces pieces = (OrderPieces) o;
-            return hash == pieces.hash;
-        }
-
-        @Override
-        public int hashCode() {
-            return this.hash;
-        }
-    }
 }
+

@@ -1,16 +1,22 @@
 import action.candidate.Candidate;
 import analyzer.CheckerTree;
-import concurrent.LockedCandidateThreadLocal;
+import analyzer.ConcurrentVisitedTree;
+import analyzer.VisitedTree;
 import concurrent.CheckerThreadLocal;
+import concurrent.LockedCandidateThreadLocal;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
 import core.mino.Block;
 import javafx.util.Pair;
+import main.OrderLookup;
+import main.Pieces;
 import misc.Stopwatch;
 import misc.iterable.CombinationIterable;
 import misc.iterable.PermutationIterable;
 import searcher.checker.Checker;
+import searcher.common.Operation;
+import searcher.common.Result;
 import searcher.common.action.Action;
 
 import java.io.BufferedWriter;
@@ -27,24 +33,29 @@ import static core.mino.Block.*;
 
 public class Main {
     public static void main(String[] args) throws ExecutionException, InterruptedException, IOException {
-        Scanner scanner = new Scanner(new File("field.txt"));
+        int maxClearLine;
+        String marks = "";
+        try (Scanner scanner = new Scanner(new File("field.txt"))) {
+            if (!scanner.hasNextInt())
+                throw new IllegalArgumentException("Cannot read Field Height");
+            maxClearLine = scanner.nextInt();
 
-        if (!scanner.hasNextInt())
-            throw new IllegalArgumentException("Cannot read Field Height");
-        int maxClearLine = scanner.nextInt();
+            if (maxClearLine < 2 || 12 < maxClearLine)
+                throw new IllegalArgumentException("Field Height should be 2 <= height <= 12");
 
-        if (maxClearLine < 2 || 12 < maxClearLine)
-            throw new IllegalArgumentException("Field Height should be 2 <= height <= 12");
+            StringBuilder stringBuilder = new StringBuilder();
+            while (scanner.hasNext())
+                stringBuilder.append(scanner.nextLine());
 
-        StringBuilder marks = new StringBuilder();
-        while (scanner.hasNext())
-            marks.append(scanner.nextLine());
+            marks = stringBuilder.toString();
+        }
 
-        BufferedWriter writer = new BufferedWriter(new FileWriter("last_output.txt"));
-        Main main = new Main(writer);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("last_output.txt"))) {
+            Main main = new Main(writer);
 
-        Field field = FieldFactory.createField(marks.toString());
-        main.sample(field, maxClearLine);
+            Field field = FieldFactory.createField(marks);
+            main.sample(field, maxClearLine);
+        }
     }
 
     private final BufferedWriter writer;
@@ -113,15 +124,37 @@ public class Main {
         // ========================================
         output("# Search");
         output("  -> Stopwatch start");
+        ConcurrentVisitedTree visitedTree = new ConcurrentVisitedTree();
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
         List<Future<Pair<List<Block>, Boolean>>> futureResults = new ArrayList<>();
         for (List<Block> target : searchingPieces) {
             Future<Pair<List<Block>, Boolean>> future = executorService.submit(() -> {
+                int succeed = visitedTree.isSucceed(target);
+                if (succeed != VisitedTree.NO_RESULT)
+                    return new Pair<>(target, succeed == VisitedTree.SUCCEED);
+
                 Checker<Action> checker = checkerThreadLocal.get();
                 Candidate<Action> candidate = candidateThreadLocal.get();
-                boolean result = checker.check(field, target, candidate, maxClearLine, maxDepth);
-                return new Pair<>(target, result);
+                boolean checkResult = checker.check(field, target, candidate, maxClearLine, maxDepth);
+                visitedTree.set(checkResult, target);
+
+                if (checkResult) {
+                    Result result = checker.getResult();
+                    List<Operation> operations = result.createOperations();
+                    ArrayList<Block> operationBlocks = new ArrayList<>();
+                    for (Operation operation : operations) {
+                        operationBlocks.add(operation.getBlock());
+                    }
+
+                    int reverseMaxDepth = result.getLastHold() != null ? operationBlocks.size() + 1 : operationBlocks.size();
+                    ArrayList<Pieces> reversePieces = OrderLookup.reverse(operationBlocks, reverseMaxDepth);
+                    for (Pieces piece : reversePieces) {
+                        visitedTree.set(true, piece.getBlocks());
+                    }
+                }
+
+                return new Pair<>(target, checkResult);
             });
             futureResults.add(future);
         }
