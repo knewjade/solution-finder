@@ -71,7 +71,7 @@ public class Main {
         output();
         // ========================================
         output("# Initialize / User-defined");
-        List<Block> usingBlocks = Arrays.asList(I, T, S, Z, J, L, O);
+        List<Block> usingBlocks = Arrays.asList(I, S, Z, J, L, O);
 
         output("Max clear lines: " + maxClearLine);
         output("Using pieces: " + usingBlocks);
