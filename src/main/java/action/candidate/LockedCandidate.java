@@ -11,6 +11,7 @@ import core.srs.Rotate;
 import searcher.common.action.Action;
 import searcher.common.From;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -38,7 +39,7 @@ public class LockedCandidate implements Candidate<Action> {
         this.appearY = appearY;
         lockedCache.clear();
 
-        TreeSet<Action> actions = new TreeSet<>();
+        HashSet<Action> actions = new HashSet<>();
 
         for (Rotate rotate : Rotate.values()) {
             Mino mino = minoFactory.create(block, rotate);

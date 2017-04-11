@@ -40,6 +40,14 @@ public class MiddleField implements Field {
             xBoardHigh |= getXMask(x, y - FIELD_ROW_BOARDER_Y);
     }
 
+    @Override
+    public void removeBlock(int x, int y) {
+        if (y < FIELD_ROW_BOARDER_Y)
+            xBoardLow &= ~getXMask(x, y);
+        else
+            xBoardHigh &= ~getXMask(x, y - FIELD_ROW_BOARDER_Y);
+    }
+
     private long getXMask(int x, int y) {
         return 1L << x + y * FIELD_WIDTH;
     }
@@ -59,11 +67,11 @@ public class MiddleField implements Field {
     public void removeMino(Mino mino, int x, int y) {
         // Lowの更新が必要
         if (y + mino.getMinY() < FIELD_ROW_BOARDER_Y)
-            xBoardLow -= mino.getMask(x, y);
+            xBoardLow &= ~mino.getMask(x, y);
 
         // Highの更新が必要
         if (FIELD_ROW_BOARDER_Y <= y + mino.getMaxY())
-            xBoardHigh -= mino.getMask(x, y - FIELD_ROW_BOARDER_Y);
+            xBoardHigh &= ~mino.getMask(x, y - FIELD_ROW_BOARDER_Y);
     }
 
     @Override
@@ -277,15 +285,15 @@ public class MiddleField implements Field {
             case 0:
                 return 0L;
             case 1:
-                return 0x2ffL;
+                return 0x3ffL;
             case 2:
                 return 0xfffffL;
             case 3:
-                return 0x2fffffffL;
+                return 0x3fffffffL;
             case 4:
                 return 0xffffffffffL;
             case 5:
-                return 0x2ffffffffffffL;
+                return 0x3ffffffffffffL;
             case 6:
                 return 0xfffffffffffffffL;
         }

@@ -11,8 +11,8 @@ import core.srs.Rotate;
 import searcher.common.From;
 import searcher.common.action.Action;
 
+import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 public class FixPlaceLockedCandidate implements Candidate<Action> {
     private static final int FIELD_WIDTH = 10;
@@ -41,7 +41,7 @@ public class FixPlaceLockedCandidate implements Candidate<Action> {
         this.appearY = appearY;
         lockedCache.clear();
 
-        TreeSet<Action> actions = new TreeSet<>();
+        HashSet<Action> actions = new HashSet<>();
 
         for (Rotate rotate : Rotate.values()) {
             Mino mino = minoFactory.create(block, rotate);

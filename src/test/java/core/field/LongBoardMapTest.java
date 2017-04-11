@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -24,14 +25,13 @@ public class LongBoardMapTest {
 //            System.out.println((int) ((mask >> 29) | (mask & 1073741823)));
 
             SmallField field = FieldFactory.createSmallField();
+            Random random = new Random();
             for (int index = 0; index < leftFlags.size(); index++) {
-                if (leftFlags.get(index)) {
-                    for (int x = 0; x < FIELD_WIDTH - 1; x++)
-                        field.setBlock(x, index);
-                } else {
-                    for (int x = 0; x < FIELD_WIDTH; x++)
-                        field.setBlock(x, index);
-                }
+                for (int x = 0; x < FIELD_WIDTH; x++)
+                    field.setBlock(x, index);
+
+                if (leftFlags.get(index))
+                    field.removeBlock(random.nextInt(10), index);
             }
 
 //            System.out.println(FieldView.toString(field));

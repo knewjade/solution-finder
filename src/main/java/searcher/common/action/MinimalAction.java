@@ -5,7 +5,7 @@ import core.srs.Rotate;
 /*
  * y < 24であること
  */
-public class MinimalAction implements Comparable<Action>, Action {
+public class MinimalAction implements Action {
     private static final int MAX_FIELD_WIDTH = 10;
     private static final int MAX_FIELD_HEIGHT = 24;
     private static final int MAX_FIELD_BLOCK = MAX_FIELD_WIDTH * MAX_FIELD_HEIGHT;
@@ -41,7 +41,12 @@ public class MinimalAction implements Comparable<Action>, Action {
     public int compareTo(Action o) {
         if (this.y == o.getY()) {
             if (this.x == o.getX()) {
-                return sign(this.rotate.getNumber(), o.getRotate().getNumber());
+                int number = this.rotate.getNumber();
+                int number1 = o.getRotate().getNumber();
+                if (number == number1)
+                    return 0;
+                else
+                    return sign(number, number1);
             } else {
                 return sign(this.x, o.getX());
             }

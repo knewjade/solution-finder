@@ -1,13 +1,13 @@
 package main;
 
 import action.candidate.Candidate;
-import analyzer.CheckerTree;
+import tree.CheckerTree;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
 import misc.Stopwatch;
 import misc.iterable.CombinationIterable;
-import misc.iterable.PermutationIterable;
+import misc.iterable.AllPermutationIterable;
 import concurrent.LockedCandidateThreadLocal;
 import concurrent.CheckerThreadLocal;
 import searcher.checker.Checker;
@@ -50,7 +50,7 @@ public class ConcurrentMain {
         ArrayList<Callable<PairObj>> callables = new ArrayList<>();
         Iterable<List<Block>> permutations = new CombinationIterable<>(allBlocks, popCount);
         for (List<Block> permutation : permutations) {
-            Iterable<List<Block>> combinations = new PermutationIterable<>(permutation);
+            Iterable<List<Block>> combinations = new AllPermutationIterable<>(permutation);
             for (List<Block> blocks : combinations) {
                 callables.add(() -> {
                     Checker<Action> checker = checkerThreadLocal.get();

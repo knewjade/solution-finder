@@ -1,4 +1,4 @@
-package action.memory;
+package action.cache.memory;
 
 public class SmallMemory implements Memory {
     private long flags = 0L;

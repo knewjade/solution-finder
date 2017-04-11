@@ -1,10 +1,6 @@
 package action.cache;
 
-import action.memory.Memory;
-import action.memory.ArrayMemory;
-import action.memory.LargeMemory;
-import action.memory.MiddleMemory;
-import action.memory.SmallMemory;
+import action.cache.memory.*;
 import core.srs.Rotate;
 
 import java.util.EnumMap;
@@ -21,11 +17,11 @@ public class LockedCache {
     }
 
     private Memory createMemory(int height) {
-        if (height < 6)
+        if (height <= 6)
             return new SmallMemory();
-        else if (height < 12)
+        else if (height <= 12)
             return new MiddleMemory();
-        else if (height < 24)
+        else if (height <= 24)
             return new LargeMemory();
         return new ArrayMemory(height);
     }

@@ -7,8 +7,8 @@ import action.candidate.FixPlaceLockedCandidate;
 import action.candidate.LockedCandidate;
 import action.reachable.LockedReachable;
 import action.reachable.Reachable;
-import analyzer.CheckerTree;
-import analyzer.VisitedTree;
+import tree.CheckerTree;
+import tree.VisitedTree;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.MiddleField;
@@ -17,9 +17,11 @@ import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
+import concurrent.invoker.OrderLookup;
+import concurrent.invoker.Pieces;
 import misc.Stopwatch;
+import misc.iterable.AllPermutationIterable;
 import misc.iterable.CombinationIterable;
-import misc.iterable.PermutationIterable;
 import searcher.checker.Checker;
 import searcher.common.Operation;
 import searcher.common.Result;
@@ -56,7 +58,7 @@ public class Experiment {
         Iterable<List<Block>> combinationIterable = new CombinationIterable<>(usingBlocks, combinationPopCount);
         for (List<Block> combination : combinationIterable) {
             // 組み合わせから、順列を列挙
-            Iterable<List<Block>> permutationIterable = new PermutationIterable<>(combination);
+            Iterable<List<Block>> permutationIterable = new AllPermutationIterable<>(combination);
             for (List<Block> permutation : permutationIterable) {
                 searchingPieces.add(new HashableBlocks(permutation));
             }
@@ -138,7 +140,7 @@ public class Experiment {
         Iterable<List<Block>> combinationIterable = new CombinationIterable<>(usingBlocks, combinationPopCount);
         for (List<Block> combination : combinationIterable) {
             // 組み合わせから、順列を列挙
-            Iterable<List<Block>> permutationIterable = new PermutationIterable<>(combination);
+            Iterable<List<Block>> permutationIterable = new AllPermutationIterable<>(combination);
             for (List<Block> permutation : permutationIterable) {
                 searchingPieces.add(new HashableBlocks(permutation));
             }
@@ -190,7 +192,7 @@ public class Experiment {
             System.out.println(result);
             List<Operation> operations2 = result.createOperations();
 
-            PermutationIterable<Operation> permutations = new PermutationIterable<>(operations2);
+            AllPermutationIterable<Operation> permutations = new AllPermutationIterable<>(operations2);
             for (List<Operation> allOperations : permutations) {
                 ArrayList<Block> okPiece = new ArrayList<>();
                 for (Operation allOperation : allOperations) {

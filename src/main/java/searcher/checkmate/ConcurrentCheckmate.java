@@ -36,9 +36,9 @@ public class ConcurrentCheckmate<T extends Action> {
     }
 
     // holdあり
-    public List<Result> search(Field initField, List<Block> blockList, int maxClearLine, int maxDepth) {
-        Block[] blocks = new Block[blockList.size()];
-        return search(initField, blockList.toArray(blocks), maxClearLine, maxDepth);
+    public List<Result> search(Field initField, List<Block> pieces, int maxClearLine, int maxDepth) {
+        Block[] blocks = new Block[pieces.size()];
+        return search(initField, pieces.toArray(blocks), maxClearLine, maxDepth);
     }
 
     public List<Result> search(Field initField, Block[] blocks, int maxClearLine, int maxDepth) {
@@ -126,7 +126,7 @@ public class ConcurrentCheckmate<T extends Action> {
         public void run() {
             Candidate<Action> candidate = candidateThreadLocal.get();
             for (Order order : tasks)
-                searcherCore.stepNormal(candidate, drawn, order, isLast);
+                searcherCore.stepWithNext(candidate, drawn, order, isLast);
             latch.countDown();
         }
     }
@@ -150,7 +150,7 @@ public class ConcurrentCheckmate<T extends Action> {
         public void run() {
             Candidate<Action> candidate = candidateThreadLocal.get();
             for (Order order : tasks)
-                searcherCore.stepLastWhenNoNext(candidate, order, isLast);
+                searcherCore.stepWhenNoNext(candidate, order, isLast);
             latch.countDown();
         }
     }

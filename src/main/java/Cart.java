@@ -1,7 +1,7 @@
 import action.candidate.Candidate;
-import analyzer.CheckerTree;
-import analyzer.ConcurrentVisitedTree;
-import analyzer.VisitedTree;
+import tree.CheckerTree;
+import tree.ConcurrentVisitedTree;
+import tree.VisitedTree;
 import concurrent.CheckerThreadLocal;
 import concurrent.LockedCandidateThreadLocal;
 import core.field.Field;
@@ -10,11 +10,11 @@ import core.field.FieldView;
 import core.mino.Block;
 import javafx.util.Pair;
 import main.HashableBlocks;
-import main.OrderLookup;
-import main.Pieces;
+import concurrent.invoker.OrderLookup;
+import concurrent.invoker.Pieces;
 import misc.Stopwatch;
 import misc.iterable.CombinationIterable;
-import misc.iterable.PermutationIterable;
+import misc.iterable.AllPermutationIterable;
 import searcher.checker.Checker;
 import searcher.common.Operation;
 import searcher.common.Result;
@@ -125,7 +125,7 @@ public class Cart {
         Iterable<List<Block>> combinationIterable = new CombinationIterable<>(usingBlocks, combinationPopCount);
         for (List<Block> combination : combinationIterable) {
             // 組み合わせから、順列を列挙
-            Iterable<List<Block>> permutationIterable = new PermutationIterable<>(combination);
+            Iterable<List<Block>> permutationIterable = new AllPermutationIterable<>(combination);
             for (List<Block> permutation : permutationIterable) {
                 searchingPieces.add(permutation);
             }

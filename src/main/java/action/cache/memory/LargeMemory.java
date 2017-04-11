@@ -1,4 +1,4 @@
-package action.memory;
+package action.cache.memory;
 
 /**
  * 高さ < 24であること

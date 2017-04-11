@@ -9,6 +9,9 @@ public interface Field {
     // 指定した位置にブロックをおく
     void setBlock(int x, int y);
 
+    // 指定した位置からブロックを取り除く
+    void removeBlock(int x, int y);
+
     // 指定した位置にミノをおく
     void putMino(Mino mino, int x, int y);
 

@@ -1,7 +1,7 @@
 package action.candidate;
 
-import core.mino.Block;
 import core.field.Field;
+import core.mino.Block;
 
 import java.util.Set;
 

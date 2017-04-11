@@ -1,17 +1,17 @@
 package action.candidate;
 
-import core.mino.Block;
-import core.srs.MinoRotation;
-import core.srs.Rotate;
 import core.field.Field;
+import core.mino.Block;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
-import searcher.common.action.Action;
+import core.srs.MinoRotation;
+import core.srs.Rotate;
 import searcher.common.From;
+import searcher.common.action.Action;
 
+import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 public class LimitIterationCandidate implements Candidate<Action> {
     private static final int FIELD_WIDTH = 10;
@@ -36,7 +36,7 @@ public class LimitIterationCandidate implements Candidate<Action> {
         // temporaryの初期化
         this.appearY = appearY;
 
-        TreeSet<Action> actions = new TreeSet<>();
+        HashSet<Action> actions = new HashSet<>();
 
         for (Rotate rotate : Rotate.values()) {
             Mino mino = minoFactory.create(block, rotate);
@@ -127,6 +127,6 @@ public class LimitIterationCandidate implements Candidate<Action> {
     }
 
     private boolean canPutMinoInField(Field field, Mino mino, int x, int y) {
-        return 0 <= x && x < FIELD_WIDTH && 0 <= y && y < field.getMaxFieldHeight()  && field.canPutMino(mino, x, y);
+        return 0 <= x && x < FIELD_WIDTH && 0 <= y && y < field.getMaxFieldHeight() && field.canPutMino(mino, x, y);
     }
 }

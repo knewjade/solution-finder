@@ -1,12 +1,12 @@
 package main;
 
-import analyzer.CheckerTree;
+import tree.CheckerTree;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
 import misc.Stopwatch;
+import misc.iterable.AllPermutationIterable;
 import misc.iterable.CombinationIterable;
-import misc.iterable.PermutationIterable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,7 +70,7 @@ public class CheckerMain {
         ArrayList<List<Block>> allCombinations = new ArrayList<>();
         Iterable<List<Block>> permutations = new CombinationIterable<>(blocks, popCount);
         for (List<Block> permutation : permutations) {
-            Iterable<List<Block>> combinations = new PermutationIterable<>(permutation);
+            Iterable<List<Block>> combinations = new AllPermutationIterable<>(permutation);
             for (List<Block> combination : combinations) {
 //                combination.add(0, Block.T);
                 allCombinations.add(combination);
@@ -95,12 +95,12 @@ public class CheckerMain {
 
         // Measure
         CheckerTree tree = new CheckerTree();
-//        analyzer.CheckerTree treeFail = new analyzer.CheckerTree();
+//        tree.CheckerTree treeFail = new tree.CheckerTree();
         for (List<Block> combination : allCombinations) {
             invoker.measure(field, combination, 1);
 
 //                System.out.print(combination + " => ");
-//            if (invoker.getLastResult()) {
+//            if (concurrent.invoker.getLastResult()) {
 ////                    System.out.println("success");
 //                tree.success(combination);
 //            } else {
@@ -113,7 +113,7 @@ public class CheckerMain {
         stopwatch.stop();
 
         // Show
-//        invoker.show();
+//        concurrent.invoker.show();
 //        tree.show();
 //        System.out.println("---");
 //        tree.tree(1);
@@ -146,7 +146,7 @@ public class CheckerMain {
         ArrayList<List<Block>> allCombinations = new ArrayList<>();
         Iterable<List<Block>> permutations = new CombinationIterable<>(blocks, popCount);
         for (List<Block> permutation : permutations) {
-            Iterable<List<Block>> combinations = new PermutationIterable<>(permutation);
+            Iterable<List<Block>> combinations = new AllPermutationIterable<>(permutation);
             for (List<Block> combination : combinations) {
 //                combination.add(0, Block.T);
                 allCombinations.add(combination);
@@ -171,7 +171,7 @@ public class CheckerMain {
 
         // Measure
         CheckerTree tree = new CheckerTree();
-//        analyzer.CheckerTree treeFail = new analyzer.CheckerTree();
+//        tree.CheckerTree treeFail = new tree.CheckerTree();
         for (List<Block> combination : allCombinations) {
             invoker.measure(field, combination, 1);
 

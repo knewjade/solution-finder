@@ -1,4 +1,4 @@
-package main;
+package concurrent.invoker;
 
 import core.mino.Block;
 
@@ -13,7 +13,7 @@ public class ListPieces implements Pieces {
         this(new ArrayList<>(), 0);
     }
 
-    ListPieces(List<Block> blocks, int stockIndex) {
+    private ListPieces(List<Block> blocks, int stockIndex) {
         this.blocks = blocks;
         this.stockIndex = stockIndex;
     }

@@ -1,4 +1,4 @@
-package analyzer;
+package tree;
 
 import core.mino.Block;
 

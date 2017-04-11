@@ -1,3 +1,5 @@
+package searcher.checkmate;
+
 import action.candidate.Candidate;
 import action.candidate.LockedCandidate;
 import core.field.Field;
@@ -8,19 +10,17 @@ import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import misc.Stopwatch;
 import org.junit.Test;
-import searcher.checkmate.Checkmate;
-import searcher.checkmate.CheckmateReuse;
-import searcher.common.action.Action;
 import searcher.common.Result;
 import searcher.common.ResultHelper;
+import searcher.common.action.Action;
 import searcher.common.validator.PerfectValidator;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 import static core.mino.Block.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.lessThan;
 
 public class CheckmateReuseTest {
     @Test
@@ -48,8 +48,9 @@ public class CheckmateReuseTest {
         CheckmateReuse<Action> CheckmateReuse = new CheckmateReuse<>(minoFactory, validator);
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
 
-        Stopwatch stopwatch1 = Stopwatch.createStoppedStopwatch();
-        Stopwatch stopwatch2 = Stopwatch.createStoppedStopwatch();
+        Stopwatch stopwatchNoUse = Stopwatch.createStoppedStopwatch();
+        Stopwatch stopwatchReuse = Stopwatch.createStoppedStopwatch();
+
         Random random = new Random();
 
         for (int count = 0; count < 500; count++) {
@@ -57,19 +58,18 @@ public class CheckmateReuseTest {
             Block pop = blocks.remove(index);
             blocks.add(pop);
 
-            stopwatch1.start();
+            stopwatchNoUse.start();
             List<Result> result1 = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
-            stopwatch1.stop();
+            stopwatchNoUse.stop();
 
-            stopwatch2.start();
+            stopwatchReuse.start();
             List<Result> result2 = CheckmateReuse.search(field, blocks, candidate, maxClearLine, maxDepth);
-            stopwatch2.stop();
+            stopwatchReuse.stop();
 
             assertResult(ResultHelper.uniquify(result1), ResultHelper.uniquify(result2));
         }
 
-        System.out.println(stopwatch1.toMessage(TimeUnit.MICROSECONDS));
-        System.out.println(stopwatch2.toMessage(TimeUnit.MICROSECONDS));
+        assertThat(stopwatchReuse.getNanoAverageTime(), is(lessThan(stopwatchNoUse.getNanoAverageTime())));
     }
 
     private void assertResult(List<Result> left, List<Result> right) {

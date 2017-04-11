@@ -30,12 +30,12 @@ public class CheckmateReuse<T extends Action> {
     }
 
     // holdあり
-    public List<Result> search(Field initField, List<Block> blockList, Candidate<T> candidate, int maxClearLine, int maxDepth) {
-        Block[] blocks = new Block[blockList.size()];
-        return search(initField, blockList.toArray(blocks), candidate, maxClearLine, maxDepth);
+    public List<Result> search(Field initField, List<Block> pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
+        Block[] blocks = new Block[pieces.size()];
+        return search(initField, pieces.toArray(blocks), candidate, maxClearLine, maxDepth);
     }
 
-    public List<Result> search(Field initField, Block[] blocks, Candidate<T> candidate, int maxClearLine, int maxDepth) {
+    public List<Result> search(Field initField, Block[] pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
         TreeSet<Order> orders = new TreeSet<>();
 
         // 最初の探索開始depthとordersを調整
@@ -44,13 +44,13 @@ public class CheckmateReuse<T extends Action> {
             // mementoの初期化
             // 初めから
             memento = new ArrayList<>();
-            orders.add(new NormalOrder(initField, blocks[0], maxClearLine, maxDepth));
+            orders.add(new NormalOrder(initField, pieces[0], maxClearLine, maxDepth));
             startDepth = 1;
             memento.add(new TreeSet<>(orders));
         } else {
             int reuseIndex = -1;
-            for (int index = 0; index < blocks.length; index++) {
-                if (lastBlocks[index] == blocks[index])
+            for (int index = 0; index < pieces.length; index++) {
+                if (lastBlocks[index] == pieces[index])
                     reuseIndex = index;
                 else
                     break;
@@ -58,10 +58,10 @@ public class CheckmateReuse<T extends Action> {
 
             if (reuseIndex < 0) {
                 memento = new ArrayList<>();
-                orders.add(new NormalOrder(initField, blocks[0], maxClearLine, maxDepth));
+                orders.add(new NormalOrder(initField, pieces[0], maxClearLine, maxDepth));
                 startDepth = 1;
                 memento.add(new TreeSet<>(orders));
-            } else if (reuseIndex == blocks.length - 1) {
+            } else if (reuseIndex == pieces.length - 1) {
                 return dataPool.getResults();
             } else {
                 orders.addAll(memento.get(reuseIndex));
@@ -77,17 +77,17 @@ public class CheckmateReuse<T extends Action> {
 
             boolean isLast = depth == maxDepth;
 
-            if (depth < blocks.length) {
-                Block drawn = blocks[depth];
+            if (depth < pieces.length) {
+                Block drawn = pieces[depth];
 
                 for (int count = 0, size = orders.size(); count < size; count++) {
                     Order order = orders.pollFirst();
-                    searcherCore.stepNormal(candidate, drawn, order, isLast);
+                    searcherCore.stepWithNext(candidate, drawn, order, isLast);
                 }
             } else {
                 for (int count = 0, size = orders.size(); count < size; count++) {
                     Order order = orders.pollFirst();
-                    searcherCore.stepLastWhenNoNext(candidate, order, isLast);
+                    searcherCore.stepWhenNoNext(candidate, order, isLast);
                 }
             }
 
@@ -95,7 +95,7 @@ public class CheckmateReuse<T extends Action> {
             memento.add(new TreeSet<>(orders));
         }
 
-        lastBlocks = blocks;
+        lastBlocks = pieces;
         lastField = initField;
 
         return dataPool.getResults();
