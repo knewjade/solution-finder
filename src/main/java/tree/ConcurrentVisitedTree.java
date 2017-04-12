@@ -14,16 +14,16 @@ public class ConcurrentVisitedTree {
         private final EnumMap<Block, Element> current = new EnumMap<>(Block.class);
         private int isSucceed = NO_RESULT;
 
-        private void success(List<Block> blocks) {
-            if (1 <= blocks.size()) {
-                Block currentBlock = blocks.get(0);
+        private void success(List<Block> blocks, int depth) {
+            if (depth < blocks.size()) {
+                Block currentBlock = blocks.get(depth);
                 if (currentBlock != null) {
                     Element element = current.computeIfAbsent(currentBlock, k -> new Element());
-                    element.success(blocks.subList(1, blocks.size()));
+                    element.success(blocks, depth + 1);
                 } else {
                     for (Block block : Block.values()) {
                         Element element = current.computeIfAbsent(block, k -> new Element());
-                        element.success(blocks.subList(1, blocks.size()));
+                        element.success(blocks, depth + 1);
                     }
                 }
             } else {
@@ -32,16 +32,16 @@ public class ConcurrentVisitedTree {
             }
         }
 
-        private void fail(List<Block> blocks) {
-            if (1 <= blocks.size()) {
-                Block currentBlock = blocks.get(0);
+        private void fail(List<Block> blocks, int depth) {
+            if (depth < blocks.size()) {
+                Block currentBlock = blocks.get(depth);
                 if (currentBlock != null) {
                     Element element = current.computeIfAbsent(currentBlock, k -> new Element());
-                    element.fail(blocks.subList(1, blocks.size()));
+                    element.fail(blocks, depth + 1);
                 } else {
                     for (Block block : Block.values()) {
                         Element element = current.computeIfAbsent(block, k -> new Element());
-                        element.fail(blocks.subList(1, blocks.size()));
+                        element.fail(blocks, depth + 1);
                     }
                 }
             } else {
@@ -75,13 +75,13 @@ public class ConcurrentVisitedTree {
 
     public void success(List<Block> blocks) {
         synchronized (rootElement) {
-            rootElement.success(blocks);
+            rootElement.success(blocks, 0);
         }
     }
 
     public void fail(List<Block> blocks) {
         synchronized (rootElement) {
-            rootElement.fail(blocks);
+            rootElement.fail(blocks, 0);
         }
     }
 

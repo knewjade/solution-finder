@@ -2,6 +2,8 @@ package searcher.checker;
 
 import action.candidate.Candidate;
 import action.candidate.LockedCandidate;
+import misc.PiecesGenerator;
+import misc.SafePieces;
 import tree.CheckerTree;
 import core.field.Field;
 import core.field.FieldFactory;
@@ -99,8 +101,7 @@ public class CheckerTest {
     @Test
     public void testTemplateWithHoldI() throws Exception {
         // Invoker
-        List<Block> blocks = Arrays.asList(I, T, S, Z, J, L, O);
-        int popCount = 4;
+        String pattern = "I, *p4";
         int maxClearLine = 4;
         int maxDepth = 4;
 
@@ -123,11 +124,12 @@ public class CheckerTest {
         // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
         CheckerTree tree = new CheckerTree();
-        Iterable<List<Block>> combinations = new PermutationIterable<>(blocks, popCount);
-        for (List<Block> combination : combinations) {
-            combination.add(0, I);  // Hold分の追加
-            boolean result = checker.check(field, combination, candidate, maxClearLine, maxDepth);
-            tree.set(result, combination);
+        
+        Iterable<SafePieces> combinations = new PiecesGenerator(pattern);
+        for (SafePieces pieces : combinations) {
+            List<Block> blocks = pieces.getBlocks();
+            boolean result = checker.check(field, blocks, candidate, maxClearLine, maxDepth);
+            tree.set(result, blocks);
         }
 
         assertThat(tree.getSuccessPercent(), is(711 / 840.0));

@@ -1,31 +1,29 @@
 import concurrent.CheckerThreadLocal;
 import concurrent.LockedCandidateThreadLocal;
+import concurrent.invoker.ConcurrentCheckerInvoker;
+import concurrent.invoker.Pair;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
 import core.mino.Block;
-import concurrent.invoker.ConcurrentCheckerInvoker;
-import concurrent.invoker.Pair;
+import misc.PiecesGenerator;
+import misc.SafePieces;
 import misc.Stopwatch;
-import misc.iterable.AllPermutationIterable;
-import misc.iterable.CombinationIterable;
 import searcher.common.action.Action;
 import tree.CheckerTree;
+import tree.VisitedTree;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
-import static core.mino.Block.*;
 
 // TODO: List of ALL
 // Write unittest for searcher.common
@@ -71,10 +69,11 @@ public class Main {
         output();
         // ========================================
         output("# Initialize / User-defined");
-        List<Block> usingBlocks = Arrays.asList(T, I, S, Z, J, L, O);
+        String patterns = "I, [TILJSZO]p4";
+        PiecesGenerator generator = new PiecesGenerator(patterns);
 
         output("Max clear lines: " + maxClearLine);
-        output("Using pieces: " + usingBlocks);
+        output("Using pieces: " + patterns);
 
         output();
         // ========================================
@@ -94,8 +93,11 @@ public class Main {
 
         // ブロック数が足りないときはエラー
         int maxDepth = emptyCount / 4;
-        if (usingBlocks.size() < maxDepth)
-            throw new IllegalArgumentException("Error: blocks size check short: " + usingBlocks.size() + " < " + maxDepth);
+        int piecesDepth = generator.getDepth();
+        if (piecesDepth < maxDepth)
+            throw new IllegalArgumentException("Error: blocks size check short: " + piecesDepth + " < " + maxDepth);
+
+        output("Need Pieces = " + maxDepth);
 
         output();
         // ========================================
@@ -103,21 +105,12 @@ public class Main {
 
         // 必要なミノ分（maxDepth + 1）だけを取り出す。maxDepth + 1だけないときはブロックの個数をそのまま指定
         int combinationPopCount = maxDepth + 1;
-        if (usingBlocks.size() < combinationPopCount)
-            combinationPopCount = usingBlocks.size();
+        if (piecesDepth < combinationPopCount)
+            combinationPopCount = piecesDepth;
 
         output("Piece pop count = " + combinationPopCount);
 
-        List<List<Block>> searchingPieces = new ArrayList<>();
-        // 組み合わせの列挙
-        Iterable<List<Block>> combinationIterable = new CombinationIterable<>(usingBlocks, combinationPopCount);
-        for (List<Block> combination : combinationIterable) {
-            // 組み合わせから、順列を列挙
-            Iterable<List<Block>> permutationIterable = new AllPermutationIterable<>(combination);
-            for (List<Block> permutation : permutationIterable) {
-                searchingPieces.add(permutation);
-            }
-        }
+        List<List<Block>> searchingPieces = createSearchingPieces(generator, combinationPopCount);
 
         output("Searching pattern count = " + searchingPieces.size());
 
@@ -172,6 +165,24 @@ public class Main {
         output("done");
 
         writer.flush();
+    }
+
+    private List<List<Block>> createSearchingPieces(PiecesGenerator generator, int combinationPopCount) {
+        List<List<Block>> searchingPieces = new ArrayList<>();
+        VisitedTree duplicateCheckTree = new VisitedTree();
+        boolean isOverPieces = combinationPopCount < generator.getDepth();
+        // 組み合わせの列挙
+        for (SafePieces pieces : generator) {
+            List<Block> blocks = pieces.getBlocks();
+            if (isOverPieces)
+                blocks = blocks.subList(0, combinationPopCount);
+
+            if (!duplicateCheckTree.isVisited(blocks)) {
+                searchingPieces.add(blocks);
+                duplicateCheckTree.success(blocks);
+            }
+        }
+        return searchingPieces;
     }
 
     private void output() throws IOException {

@@ -45,6 +45,7 @@ class Task implements Callable<Pair<List<Block>, Boolean>> {
 
             int reverseMaxDepth = result.getLastHold() != null ? operationBlocks.size() + 1 : operationBlocks.size();
             ArrayList<Pieces> reversePieces = OrderLookup.reverse(operationBlocks, reverseMaxDepth);
+
             for (Pieces piece : reversePieces)
                 obj.visitedTree.set(true, piece.getBlocks());
         }

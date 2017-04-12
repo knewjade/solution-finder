@@ -31,4 +31,7 @@ public class OrderLookup {
 
         return candidates;
     }
+
+    private OrderLookup() {
+    }
 }
