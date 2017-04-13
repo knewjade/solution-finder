@@ -27,15 +27,17 @@ public class SearcherCore<T extends Action> {
         this.shifter = new MinoShifter();
     }
 
-    public void stepNormal(Candidate<T> candidate, Block drawn, Order order, boolean isLast) {
+    public void stepWithNext(Candidate<T> candidate, Block drawn, Order order, boolean isLast) {
         Block hold = order.getHold();
         step(candidate, drawn, hold, order, isLast);
+
         if (drawn != hold) {
+            // Holdの探索
             step(candidate, hold, drawn, order, isLast);
         }
     }
 
-    public void stepLastWhenNoNext(Candidate<T> candidate, Order order, boolean isLast) {
+    public void stepWhenNoNext(Candidate<T> candidate, Order order, boolean isLast) {
         Block hold = order.getHold();
         step(candidate, hold, null, order, isLast);
     }

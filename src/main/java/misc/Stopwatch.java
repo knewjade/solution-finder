@@ -77,4 +77,8 @@ public class Stopwatch {
         }
         throw new UnsupportedOperationException();
     }
+
+    public double getNanoAverageTime() {
+        return average;
+    }
 }

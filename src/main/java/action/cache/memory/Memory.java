@@ -1,4 +1,4 @@
-package action.memory;
+package action.cache.memory;
 
 public interface Memory {
     int FIELD_WIDTH = 10;

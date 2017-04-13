@@ -1,15 +1,15 @@
 package action.candidate;
 
-import core.mino.Block;
-import core.srs.Rotate;
 import core.field.Field;
+import core.mino.Block;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import core.srs.Rotate;
 import searcher.common.action.Action;
 
+import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 public class HarddropCandidate implements Candidate<Action> {
     private static final int FIELD_WIDTH = 10;
@@ -24,7 +24,7 @@ public class HarddropCandidate implements Candidate<Action> {
 
     @Override
     public Set<Action> search(Field field, Block block, int appearY) {
-        TreeSet<Action> actions = new TreeSet<>();
+        HashSet<Action> actions = new HashSet<>();
 
         for (Rotate rotate : Rotate.values()) {
             Mino mino = minoFactory.create(block, rotate);

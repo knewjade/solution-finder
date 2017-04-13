@@ -23,38 +23,31 @@ public class Checker<T extends Action> {
     }
 
     // holdあり
-    public boolean check(Field initField, List<Block> blockList, Candidate<T> candidate, int maxClearLine, int maxDepth) {
-        Block[] blocks = new Block[blockList.size()];
-        return check(initField, blockList.toArray(blocks), candidate, maxClearLine, maxDepth);
+    public boolean check(Field initField, List<Block> pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
+        Block[] blocks = new Block[pieces.size()];
+        return check(initField, pieces.toArray(blocks), candidate, maxClearLine, maxDepth);
     }
 
-    public boolean check(Field initField, Block[] blocks, Candidate<T> candidate, int maxClearLine, int maxDepth) {
+    public boolean check(Field initField, Block[] pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
         dataPool.initFirst();
-        dataPool.addOrder(new DepthOrder(initField, blocks[0], maxClearLine, maxDepth));
+        dataPool.addOrder(new DepthOrder(initField, pieces[0], maxClearLine, maxDepth));
 
         while (!dataPool.getNexts().isEmpty() && dataPool.getResults().isEmpty()) {
             Order order = dataPool.getNexts().pollLast();
             int depth = order.getHistory().getIndex() + 1;
             boolean isLast = depth == maxDepth;
 
-            if (depth < blocks.length) {
-                searcherCore.stepNormal(candidate, blocks[depth], order, isLast);
+            if (depth < pieces.length) {
+                searcherCore.stepWithNext(candidate, pieces[depth], order, isLast);
             } else {
-                searcherCore.stepLastWhenNoNext(candidate, order, isLast);
+                searcherCore.stepWhenNoNext(candidate, order, isLast);
             }
         }
-
-//        System.out.println(results);
 
         return !dataPool.getResults().isEmpty();
     }
 
     public Result getResult() {
         return dataPool.getResults().get(0);
-    }
-
-    private long getMemory() {
-        Runtime runtime = Runtime.getRuntime();
-        return runtime.totalMemory() - runtime.freeMemory();
     }
 }

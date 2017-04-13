@@ -1,4 +1,4 @@
-package main;
+package concurrent.invoker;
 
 import core.mino.Block;
 
@@ -8,7 +8,7 @@ import java.util.List;
 public class OrderLookup {
     public static ArrayList<Pieces> reverse(List<Block> blocks, int maxDepth) {
         ArrayList<Pieces> candidates = new ArrayList<>();
-        candidates.add(new SmallPieces());
+        candidates.add(new ListPieces());
 
         for (int depth = 0; depth < maxDepth; depth++) {
             Block block = depth < blocks.size() ? blocks.get(depth) : null;
@@ -30,5 +30,8 @@ public class OrderLookup {
         }
 
         return candidates;
+    }
+
+    private OrderLookup() {
     }
 }

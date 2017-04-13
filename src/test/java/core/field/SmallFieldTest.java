@@ -11,7 +11,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class SmallFieldTest {
-
     public static final int FIELD_WIDTH = 10;
 
     @Test
@@ -21,7 +20,17 @@ public class SmallFieldTest {
     }
 
     @Test
-    public void testPutMino() throws Exception {
+    public void testPutAndRemoveBlock() throws Exception {
+        Field field = FieldFactory.createSmallField();
+        assertThat(field.isEmpty(0, 0), is(true));
+        field.setBlock(0, 0);
+        assertThat(field.isEmpty(0, 0), is(false));
+        field.removeBlock(0, 0);
+        assertThat(field.isEmpty(0, 0), is(true));
+    }
+
+    @Test
+    public void testPutAndRemoveMino() throws Exception {
         Field field = FieldFactory.createSmallField();
         field.putMino(new Mino(Block.T, Rotate.Spawn), 1, 0);
         assertThat(field.isEmpty(0, 0), is(false));
@@ -271,15 +280,6 @@ public class SmallFieldTest {
                 }
             }
 
-            System.out.println("==");
-            System.out.println(pattern);
-            System.out.println(FieldView.toString(field));
-
-            System.out.println(leftFlags);
-
-            System.out.println(FieldView.toString(field));
-            System.out.println(deleteLines);
-
             int line = field.clearLine();
             assertThat(line, is(deleteLines));
 
@@ -287,6 +287,27 @@ public class SmallFieldTest {
                 assertThat(field.existsAbove(fieldHeight - deleteLines - 1), is(true));
             assertThat(field.existsAbove(fieldHeight - deleteLines), is(false));
         }
+    }
+
+    @Test
+    public void testClearLineAndInsertLine() throws Exception {
+        String marks = "" +
+                "XXX_XXXXXX" +
+                "XXXXXXXXXX" +
+                "X_XXXXXXXX" +
+                "XXXXXXXXXX" +
+                "XXXX_XXXXX" +
+                "XXXXXXXXXX" +
+                "";
+        Field field = FieldFactory.createSmallField(marks);
+        Field freeze = field.freeze(field.getMaxFieldHeight());
+
+        long deleteKey = field.clearLineReturnKey();
+        assertThat(Long.bitCount(deleteKey), is(3));
+        field.insertLineWithKey(deleteKey);
+
+        for (int index = 0; index < freeze.getAllBlockCount(); index++)
+            assertThat(field.getBoard(index), is(freeze.getBoard(index)));
     }
 
     @Test

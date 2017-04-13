@@ -1,4 +1,4 @@
-package action.memory;
+package action.cache.memory;
 
 public class MiddleMemory implements Memory {
     private static final int FIELD_ROW_BOARDER_Y = 6;

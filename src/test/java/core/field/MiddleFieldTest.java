@@ -16,7 +16,23 @@ public class MiddleFieldTest {
     }
 
     @Test
-    public void testPutMino() throws Exception {
+    public void testPutAndRemoveBlock() throws Exception {
+        Field field = FieldFactory.createSmallField();
+        assertThat(field.isEmpty(0, 0), is(true));
+        field.setBlock(0, 0);
+        assertThat(field.isEmpty(0, 0), is(false));
+        field.removeBlock(0, 0);
+        assertThat(field.isEmpty(0, 0), is(true));
+
+        assertThat(field.isEmpty(9, 9), is(true));
+        field.setBlock(9, 9);
+        assertThat(field.isEmpty(9, 9), is(false));
+        field.removeBlock(9, 9);
+        assertThat(field.isEmpty(9, 9), is(true));
+    }
+
+    @Test
+    public void testPutAndRemoveMino() throws Exception {
         Field field = FieldFactory.createMiddleField();
 
         field.putMino(new Mino(Block.T, Rotate.Spawn), 1, 0);
@@ -350,6 +366,29 @@ public class MiddleFieldTest {
             assertThat(field.isEmpty(index, index), is(true));
     }
 
+    @Test
+    public void testClearLineAndInsertLine() throws Exception {
+        String marks = "" +
+                "XXXXXXXX_X" +
+                "XXXXXXXXXX" +
+                "XXXXXXXXXX" +
+                "XXXXXXXXXX" +
+                "XXX_XXXXXX" +
+                "XXXXXXXXXX" +
+                "X_XXXXXXXX" +
+                "XXXXXXXXXX" +
+                "XXXX_XXXXX" +
+                "XXXXXXXXXX";
+        Field field = FieldFactory.createMiddleField(marks);
+        Field freeze = field.freeze(field.getMaxFieldHeight());
+
+        long deleteKey = field.clearLineReturnKey();
+        assertThat(Long.bitCount(deleteKey), is(6));
+        field.insertLineWithKey(deleteKey);
+
+        for (int index = 0; index < freeze.getAllBlockCount(); index++)
+            assertThat(field.getBoard(index), is(freeze.getBoard(index)));
+    }
 
     @Test
     public void testGetBoard() throws Exception {

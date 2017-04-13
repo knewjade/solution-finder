@@ -1,16 +1,18 @@
+package searcher.checker;
+
 import action.candidate.Candidate;
 import action.candidate.LockedCandidate;
-import analyzer.CheckerTree;
+import misc.PiecesGenerator;
+import misc.SafePieces;
+import tree.CheckerTree;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
-import misc.iterable.CombinationIterable;
 import misc.iterable.PermutationIterable;
 import org.junit.Test;
-import searcher.checker.Checker;
 import searcher.common.action.Action;
 import searcher.common.validator.PerfectValidator;
 
@@ -49,14 +51,12 @@ public class CheckerTest {
         // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
         CheckerTree tree = new CheckerTree();
-        Iterable<List<Block>> permutations = new CombinationIterable<>(blocks, popCount);
-        for (List<Block> permutation : permutations) {
-            Iterable<List<Block>> combinations = new PermutationIterable<>(permutation);
-            for (List<Block> combination : combinations) {
-                combination.add(0, Block.T);  // Hold分の追加
-                boolean result = checker.check(field, combination, candidate, maxClearLine, maxDepth);
-                tree.set(result, combination);
-            }
+
+        Iterable<List<Block>> combinations = new PermutationIterable<>(blocks, popCount);
+        for (List<Block> combination : combinations) {
+            combination.add(0, Block.T);  // Hold分の追加
+            boolean result = checker.check(field, combination, candidate, maxClearLine, maxDepth);
+            tree.set(result, combination);
         }
 
         assertThat(tree.getSuccessPercent(), is(744 / 840.0));
@@ -89,13 +89,10 @@ public class CheckerTest {
         // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
         CheckerTree tree = new CheckerTree();
-        Iterable<List<Block>> permutations = new CombinationIterable<>(blocks, popCount);
-        for (List<Block> permutation : permutations) {
-            Iterable<List<Block>> combinations = new PermutationIterable<>(permutation);
-            for (List<Block> combination : combinations) {
-                boolean result = checker.check(field, combination, candidate, maxClearLine, maxDepth);
-                tree.set(result, combination);
-            }
+        Iterable<List<Block>> combinations = new PermutationIterable<>(blocks, popCount);
+        for (List<Block> combination : combinations) {
+            boolean result = checker.check(field, combination, candidate, maxClearLine, maxDepth);
+            tree.set(result, combination);
         }
 
         assertThat(tree.getSuccessPercent(), is(514 / 840.0));
@@ -104,8 +101,7 @@ public class CheckerTest {
     @Test
     public void testTemplateWithHoldI() throws Exception {
         // Invoker
-        List<Block> blocks = Arrays.asList(I, T, S, Z, J, L, O);
-        int popCount = 4;
+        String pattern = "I, *p4";
         int maxClearLine = 4;
         int maxDepth = 4;
 
@@ -128,14 +124,12 @@ public class CheckerTest {
         // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
         CheckerTree tree = new CheckerTree();
-        Iterable<List<Block>> permutations = new CombinationIterable<>(blocks, popCount);
-        for (List<Block> permutation : permutations) {
-            Iterable<List<Block>> combinations = new PermutationIterable<>(permutation);
-            for (List<Block> combination : combinations) {
-                combination.add(0, I);  // Hold分の追加
-                boolean result = checker.check(field, combination, candidate, maxClearLine, maxDepth);
-                tree.set(result, combination);
-            }
+        
+        Iterable<SafePieces> combinations = new PiecesGenerator(pattern);
+        for (SafePieces pieces : combinations) {
+            List<Block> blocks = pieces.getBlocks();
+            boolean result = checker.check(field, blocks, candidate, maxClearLine, maxDepth);
+            tree.set(result, blocks);
         }
 
         assertThat(tree.getSuccessPercent(), is(711 / 840.0));
@@ -168,12 +162,51 @@ public class CheckerTest {
         // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
         CheckerTree tree = new CheckerTree();
-        Iterable<List<Block>> combinations = new PermutationIterable<>(blocks);
+        Iterable<List<Block>> combinations = new PermutationIterable<>(blocks, popCount);
         for (List<Block> combination : combinations) {
             boolean result = checker.check(field, combination, candidate, maxClearLine, maxDepth);
             tree.set(result, combination);
         }
 
         assertThat(tree.getSuccessPercent(), is(5040 / 5040.0));
+    }
+
+    @Test
+    public void testBT4_5() throws Exception {
+        // Invoker
+        List<Block> blocks = Arrays.asList(I, T, S, Z, J, L, O);
+        int popCount = 7;
+        int maxClearLine = 6;
+        int maxDepth = 7;
+
+        // Field
+        String marks = "" +
+                "XX________" +
+                "XX________" +
+                "XXX______X" +
+                "XXXXXXX__X" +
+                "XXXXXX___X" +
+                "XXXXXXX_XX" +
+                "";
+        Field field = FieldFactory.createField(marks);
+
+        // Initialize
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        MinoRotation minoRotation = new MinoRotation();
+        PerfectValidator validator = new PerfectValidator();
+        Checker<Action> checker = new Checker<>(minoFactory, validator);
+
+        // Measure
+        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+        CheckerTree tree = new CheckerTree();
+        Iterable<List<Block>> combinations = new PermutationIterable<>(blocks, popCount);
+        for (List<Block> combination : combinations) {
+            boolean result = checker.check(field, combination, candidate, maxClearLine, maxDepth);
+            tree.set(result, combination);
+        }
+
+        // 5034が真に正しいかは不明。デグレしていないことの確認
+        assertThat(tree.getSuccessPercent(), is(5034 / 5040.0));
     }
 }

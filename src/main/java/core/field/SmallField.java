@@ -34,13 +34,18 @@ public class SmallField implements Field {
     }
 
     @Override
+    public void removeBlock(int x, int y) {
+        xBoard &= ~getXMask(x, y);
+    }
+
+    @Override
     public void putMino(Mino mino, int x, int y) {
         xBoard |= mino.getMask(x, y);
     }
 
     @Override
     public void removeMino(Mino mino, int x, int y) {
-        xBoard -= mino.getMask(x, y);
+        xBoard &= ~mino.getMask(x, y);
     }
 
     @Override

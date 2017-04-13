@@ -1,8 +1,8 @@
 package main;
 
 import action.candidate.FixPlaceLockedCandidate;
-import analyzer.CheckerTree;
-import analyzer.VisitedTree;
+import tree.CheckerTree;
+import tree.VisitedTree;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.MiddleField;
@@ -10,9 +10,11 @@ import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
+import concurrent.invoker.OrderLookup;
+import concurrent.invoker.Pieces;
 import misc.Stopwatch;
+import misc.iterable.AllPermutationIterable;
 import misc.iterable.CombinationIterable;
-import misc.iterable.PermutationIterable;
 import searcher.checker.Checker;
 import searcher.common.Operation;
 import searcher.common.Result;
@@ -45,7 +47,7 @@ public class BuilderMain {
         Iterable<List<Block>> combinationIterable = new CombinationIterable<>(usingBlocks, combinationPopCount);
         for (List<Block> combination : combinationIterable) {
             // 組み合わせから、順列を列挙
-            Iterable<List<Block>> permutationIterable = new PermutationIterable<>(combination);
+            Iterable<List<Block>> permutationIterable = new AllPermutationIterable<>(combination);
             for (List<Block> permutation : permutationIterable) {
                 searchingPieces.add(new HashableBlocks(permutation));
             }

@@ -1,4 +1,4 @@
-package main;
+package concurrent.invoker;
 
 import core.mino.Block;
 

@@ -24,33 +24,33 @@ public class Checkmate<T extends Action> {
     }
 
     // holdあり
-    public List<Result> search(Field initField, List<Block> blockList, Candidate<T> candidate, int maxClearLine, int maxDepth) {
-        Block[] blocks = new Block[blockList.size()];
-        return search(initField, blockList.toArray(blocks), candidate, maxClearLine, maxDepth);
+    public List<Result> search(Field initField, List<Block> pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
+        Block[] blocks = new Block[pieces.size()];
+        return search(initField, pieces.toArray(blocks), candidate, maxClearLine, maxDepth);
     }
 
-    public List<Result> search(Field initField, Block[] blocks, Candidate<T> candidate, int maxClearLine, int maxDepth) {
+    public List<Result> search(Field initField, Block[] pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
         dataPool.initFirst();
 
         TreeSet<Order> orders = new TreeSet<>();
-        orders.add(new NormalOrder(initField, blocks[0], maxClearLine, maxDepth));
+        orders.add(new NormalOrder(initField, pieces[0], maxClearLine, maxDepth));
 
         for (int depth = 1; depth <= maxDepth; depth++) {
             dataPool.initEachDepth();
 
             boolean isLast = depth == maxDepth;
 
-            if (depth < blocks.length) {
-                Block drawn = blocks[depth];
+            if (depth < pieces.length) {
+                Block drawn = pieces[depth];
 
                 for (int count = 0, size = orders.size(); count < size; count++) {
                     Order order = orders.pollFirst();
-                    searcherCore.stepNormal(candidate, drawn, order, isLast);
+                    searcherCore.stepWithNext(candidate, drawn, order, isLast);
                 }
             } else {
                 for (int count = 0, size = orders.size(); count < size; count++) {
                     Order order = orders.pollFirst();
-                    searcherCore.stepLastWhenNoNext(candidate, order, isLast);
+                    searcherCore.stepWhenNoNext(candidate, order, isLast);
                 }
             }
 
