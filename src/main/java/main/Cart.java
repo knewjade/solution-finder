@@ -1,3 +1,5 @@
+package main;
+
 import action.candidate.Candidate;
 import tree.CheckerTree;
 import tree.ConcurrentVisitedTree;
@@ -9,7 +11,6 @@ import core.field.FieldFactory;
 import core.field.FieldView;
 import core.mino.Block;
 import javafx.util.Pair;
-import main.HashableBlocks;
 import concurrent.invoker.OrderLookup;
 import concurrent.invoker.Pieces;
 import misc.Stopwatch;
