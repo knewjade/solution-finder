@@ -32,7 +32,7 @@ solution-finder-runner.batをダブルクリックして起動してください
 
 ```
 cd  {jarファイルのあるディレクトリパス}
-java -jar -Xmx1024M solution-finder-0.2.jar
+java -jar -Xmx1024M solution-finder-0.21.jar
 ```
 
 # フィールドの変更方法と制限
