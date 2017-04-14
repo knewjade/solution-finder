@@ -1,4 +1,4 @@
-# solution-finder v0.21
+# solution-finder
 
 テトリスのパーフェクトの成功確率を計算するためのツールです。  
 7種のミノ(ITSZJLO) の様々な組み合わせでの探索が可能です。 
