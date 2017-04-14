@@ -1,4 +1,4 @@
-# solution-finder
+# solution-finder v0.21
 
 テトリスのパーフェクトの成功確率を計算するためのツールです。  
 7種のミノ(ITSZJLO) の様々な組み合わせでの探索が可能です。 
@@ -32,7 +32,7 @@ solution-finder-runner.batをダブルクリックして起動してください
 
 ```
 cd  {jarファイルのあるディレクトリパス}
-java -jar -Xmx1024M solution-finder-0.2.jar
+java -jar -Xmx1024M solution-finder-0.21.jar
 ```
 
 # フィールドの変更方法と制限
