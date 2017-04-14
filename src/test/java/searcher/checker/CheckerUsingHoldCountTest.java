@@ -4,7 +4,7 @@ import action.candidate.Candidate;
 import action.candidate.LockedCandidate;
 import misc.PiecesGenerator;
 import misc.SafePieces;
-import tree.CheckerTree;
+import tree.AnalyzeTree;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
@@ -23,7 +23,7 @@ import static core.mino.Block.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class CheckerTest {
+public class CheckerUsingHoldCountTest {
     @Test
     public void testGraceSystem() throws Exception {
         // Invoker
@@ -46,11 +46,11 @@ public class CheckerTest {
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = new MinoRotation();
         PerfectValidator validator = new PerfectValidator();
-        Checker<Action> checker = new Checker<>(minoFactory, validator);
+        CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
 
         // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
-        CheckerTree tree = new CheckerTree();
+        AnalyzeTree tree = new AnalyzeTree();
 
         Iterable<List<Block>> combinations = new PermutationIterable<>(blocks, popCount);
         for (List<Block> combination : combinations) {
@@ -84,11 +84,11 @@ public class CheckerTest {
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = new MinoRotation();
         PerfectValidator validator = new PerfectValidator();
-        Checker<Action> checker = new Checker<>(minoFactory, validator);
+        CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
 
         // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
-        CheckerTree tree = new CheckerTree();
+        AnalyzeTree tree = new AnalyzeTree();
         Iterable<List<Block>> combinations = new PermutationIterable<>(blocks, popCount);
         for (List<Block> combination : combinations) {
             boolean result = checker.check(field, combination, candidate, maxClearLine, maxDepth);
@@ -119,11 +119,11 @@ public class CheckerTest {
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = new MinoRotation();
         PerfectValidator validator = new PerfectValidator();
-        Checker<Action> checker = new Checker<>(minoFactory, validator);
+        CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
 
         // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
-        CheckerTree tree = new CheckerTree();
+        AnalyzeTree tree = new AnalyzeTree();
         
         Iterable<SafePieces> combinations = new PiecesGenerator(pattern);
         for (SafePieces pieces : combinations) {
@@ -157,11 +157,11 @@ public class CheckerTest {
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = new MinoRotation();
         PerfectValidator validator = new PerfectValidator();
-        Checker<Action> checker = new Checker<>(minoFactory, validator);
+        CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
 
         // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
-        CheckerTree tree = new CheckerTree();
+        AnalyzeTree tree = new AnalyzeTree();
         Iterable<List<Block>> combinations = new PermutationIterable<>(blocks, popCount);
         for (List<Block> combination : combinations) {
             boolean result = checker.check(field, combination, candidate, maxClearLine, maxDepth);
@@ -195,11 +195,11 @@ public class CheckerTest {
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = new MinoRotation();
         PerfectValidator validator = new PerfectValidator();
-        Checker<Action> checker = new Checker<>(minoFactory, validator);
+        CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
 
         // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
-        CheckerTree tree = new CheckerTree();
+        AnalyzeTree tree = new AnalyzeTree();
         Iterable<List<Block>> combinations = new PermutationIterable<>(blocks, popCount);
         for (List<Block> combination : combinations) {
             boolean result = checker.check(field, combination, candidate, maxClearLine, maxDepth);
@@ -207,6 +207,6 @@ public class CheckerTest {
         }
 
         // 5034が真に正しいかは不明。デグレしていないことの確認
-        assertThat(tree.getSuccessPercent(), is(5034 / 5040.0));
+        assertThat(tree.getSuccessPercent(), is(5038 / 5040.0));
     }
 }

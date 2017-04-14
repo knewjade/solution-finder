@@ -1,7 +1,7 @@
 package main;
 
 import action.candidate.FixPlaceLockedCandidate;
-import tree.CheckerTree;
+import tree.AnalyzeTree;
 import tree.VisitedTree;
 import core.field.Field;
 import core.field.FieldFactory;
@@ -15,7 +15,7 @@ import concurrent.invoker.Pieces;
 import misc.Stopwatch;
 import misc.iterable.AllPermutationIterable;
 import misc.iterable.CombinationIterable;
-import searcher.checker.Checker;
+import searcher.checker.CheckerUsingHold;
 import searcher.common.Operation;
 import searcher.common.Result;
 import searcher.common.action.Action;
@@ -60,7 +60,7 @@ public class BuilderMain {
         FixPlaceLockedCandidate candidate = new FixPlaceLockedCandidate(minoFactory, minoShifter, minoRotation, maxY, field);
         BuildValidator validator = new BuildValidator(field);
 
-        Checker<Action> builder = new Checker<>(minoFactory, validator);
+        CheckerUsingHold<Action> builder = new CheckerUsingHold<>(minoFactory, validator);
 
         Stopwatch stopwatch = Stopwatch.createStoppedStopwatch();
         VisitedTree visitedTree = new VisitedTree();
@@ -98,7 +98,7 @@ public class BuilderMain {
         }
         stopwatch.stop();
 
-        CheckerTree tree = new CheckerTree();
+        AnalyzeTree tree = new AnalyzeTree();
         for (HashableBlocks piece : searchingPieces) {
             List<Block> blocks = piece.getBlocks();
             int result = visitedTree.isSucceed(blocks);

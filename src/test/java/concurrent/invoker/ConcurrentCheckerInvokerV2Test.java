@@ -1,12 +1,13 @@
 package concurrent.invoker;
 
-import concurrent.CheckerUsingHoldThreadLocal;
+import concurrent.CheckerNoHoldThreadLocal;
 import concurrent.LockedCandidateThreadLocal;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
 import misc.iterable.AllPermutationIterable;
 import misc.iterable.CombinationIterable;
+import org.junit.Ignore;
 import org.junit.Test;
 import searcher.common.action.Action;
 import tree.AnalyzeTree;
@@ -21,8 +22,9 @@ import static core.mino.Block.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class ConcurrentCheckerInvokerTest {
+public class ConcurrentCheckerInvokerV2Test {
     @Test
+    @Ignore
     public void testSearch1() throws Exception {
         List<Block> usingBlocks = Arrays.asList(T, I, S, Z, J, L, O);
         int combinationPopCount = 7;
@@ -55,9 +57,9 @@ public class ConcurrentCheckerInvokerTest {
 
         int core = Runtime.getRuntime().availableProcessors();
         ExecutorService executorService = Executors.newFixedThreadPool(core);
-        CheckerUsingHoldThreadLocal<Action> checkerThreadLocal = new CheckerUsingHoldThreadLocal<>();
+        CheckerNoHoldThreadLocal<Action> checkerThreadLocal = new CheckerNoHoldThreadLocal<>();
         LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
-        ConcurrentCheckerInvoker invoker = new ConcurrentCheckerInvoker(executorService, candidateThreadLocal, checkerThreadLocal);
+        ConcurrentCheckerInvokerV2 invoker = new ConcurrentCheckerInvokerV2(executorService, candidateThreadLocal, checkerThreadLocal);
 
         List<Pair<List<Block>, Boolean>> resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
 
@@ -74,6 +76,7 @@ public class ConcurrentCheckerInvokerTest {
     }
 
     @Test
+    @Ignore
     public void testSearch2BT4_5() throws Exception {
         List<Block> usingBlocks = Arrays.asList(T, I, S, Z, J, L, O);
         int combinationPopCount = 7;
@@ -103,9 +106,9 @@ public class ConcurrentCheckerInvokerTest {
 
         int core = Runtime.getRuntime().availableProcessors();
         ExecutorService executorService = Executors.newFixedThreadPool(core);
-        CheckerUsingHoldThreadLocal<Action> checkerThreadLocal = new CheckerUsingHoldThreadLocal<>();
+        CheckerNoHoldThreadLocal<Action> checkerThreadLocal = new CheckerNoHoldThreadLocal<>();
         LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
-        ConcurrentCheckerInvoker invoker = new ConcurrentCheckerInvoker(executorService, candidateThreadLocal, checkerThreadLocal);
+        ConcurrentCheckerInvokerV2 invoker = new ConcurrentCheckerInvokerV2(executorService, candidateThreadLocal, checkerThreadLocal);
 
         List<Pair<List<Block>, Boolean>> resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
 
@@ -118,10 +121,11 @@ public class ConcurrentCheckerInvokerTest {
         }
 
         // 5034が真に正しいかは不明。デグレしていないことの確認
-        assertThat(tree.getSuccessPercent(), is(5038 / 5040.0));
+        assertThat(tree.getSuccessPercent(), is(5034 / 5040.0));
     }
 
     @Test
+    @Ignore
     public void testSearch3() throws Exception {
         List<Block> usingBlocks = Arrays.asList(T, I, S, Z, J, L, O);
         int combinationPopCount = 7;
@@ -149,9 +153,9 @@ public class ConcurrentCheckerInvokerTest {
 
         int core = Runtime.getRuntime().availableProcessors();
         ExecutorService executorService = Executors.newFixedThreadPool(core);
-        CheckerUsingHoldThreadLocal<Action> checkerThreadLocal = new CheckerUsingHoldThreadLocal<>();
+        CheckerNoHoldThreadLocal<Action> checkerThreadLocal = new CheckerNoHoldThreadLocal<>();
         LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
-        ConcurrentCheckerInvoker invoker = new ConcurrentCheckerInvoker(executorService, candidateThreadLocal, checkerThreadLocal);
+        ConcurrentCheckerInvokerV2 invoker = new ConcurrentCheckerInvokerV2(executorService, candidateThreadLocal, checkerThreadLocal);
 
         List<Pair<List<Block>, Boolean>> resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
 
@@ -162,8 +166,6 @@ public class ConcurrentCheckerInvokerTest {
             Boolean result = resultPair.getValue();
             tree.set(result, pieces);
         }
-
-        System.out.println(tree.tree(3));
 
         // 4736が真に正しいかは不明。デグレしていないことの確認
         assertThat(tree.getSuccessPercent(), is(4736 / 5040.0));

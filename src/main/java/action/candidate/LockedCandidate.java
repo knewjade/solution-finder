@@ -8,13 +8,15 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
-import searcher.common.action.Action;
 import searcher.common.From;
+import searcher.common.action.Action;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
+/**
+ * マルチスレッド非対応
+ */
 public class LockedCandidate implements Candidate<Action> {
     private static final int FIELD_WIDTH = 10;
 
@@ -22,6 +24,9 @@ public class LockedCandidate implements Candidate<Action> {
     private final MinoShifter minoShifter;
     private final MinoRotation minoRotation;
     private final LockedCache lockedCache;
+
+    private final Mino[] minoStore = new Mino[4];  // ミノを一時的に保存しておく変数
+    private final int[][] minMaxStore = new int[4][4];  // 境界値を一時的に保存しておく変数 0:minX, 1:maxX, 2:minY, 3:maxY
 
     // temporary変数
     private int appearY = 0;
@@ -39,18 +44,35 @@ public class LockedCandidate implements Candidate<Action> {
         this.appearY = appearY;
         lockedCache.clear();
 
-        HashSet<Action> actions = new HashSet<>();
-
+        // ミノと境界値の取得
         for (Rotate rotate : Rotate.values()) {
             Mino mino = minoFactory.create(block, rotate);
-            for (int x = -mino.getMinX(); x < FIELD_WIDTH - mino.getMaxX(); x++) {
-                for (int y = appearY - mino.getMaxY() - 1; -mino.getMinY() <= y; y--) {
-                    if (field.canPutMino(mino, x, y) && field.isOnGround(mino, x, y)) {
-                        if (check(field, mino, x, y, From.None)) {
-                            Action action = minoShifter.createTransformedAction(block, x, y, rotate);
-                            actions.add(action);
-                        } else {
-                            lockedCache.visit(x, y, rotate);
+            int index = rotate.getNumber();
+            minoStore[index] = mino;
+            minMaxStore[index][0] = -mino.getMinX(); //include
+            minMaxStore[index][1] = FIELD_WIDTH - mino.getMaxX();  // exclude
+            minMaxStore[index][2] = -mino.getMinY();  // include
+            minMaxStore[index][3] = appearY - mino.getMaxY();  // exclude
+        }
+
+        // 探索
+        HashSet<Action> actions = new HashSet<>();
+        for (int y = 0; y < appearY; y++) {
+            for (int minoIndex = 0, minoStoreLength = minoStore.length; minoIndex < minoStoreLength; minoIndex++) {
+                // yが適正範囲
+                if (minMaxStore[minoIndex][2] <= y && y < minMaxStore[minoIndex][3]) {
+                    Mino mino = minoStore[minoIndex];
+                    Rotate rotate = mino.getRotate();
+                    // 適正範囲のxを探索
+                    for (int x = minMaxStore[minoIndex][0]; x < minMaxStore[minoIndex][1]; x++) {
+                        if (field.canPutMino(mino, x, y) && field.isOnGround(mino, x, y)) {
+                            if (check(field, mino, x, y, From.None)) {
+                                Action action = minoShifter.createTransformedAction(block, x, y, rotate);
+                                actions.add(action);
+                            } else {
+                                lockedCache.visit(x, y, rotate);
+                            }
+                            lockedCache.resetTrail();
                         }
                     }
                 }
@@ -68,8 +90,11 @@ public class LockedCandidate implements Candidate<Action> {
         Rotate rotate = mino.getRotate();
 
         // すでに訪問済みのとき
-        if (lockedCache.isVisit(x, y, rotate))
-            return lockedCache.isFound(x, y, rotate);  // その時の結果を返却。訪問済みだが結果が出てないときは他の探索でカバーできるためfalseを返却
+        if (lockedCache.isVisit(x, y, rotate)) {
+            // 結果が確定済みなら、その時の結果を返却
+            // 訪問済みだが結果が出てないときは他の探索でカバーできるためfalseを返却
+            return lockedCache.isFound(x, y, rotate);
+        }
 
         lockedCache.visit(x, y, rotate);
 

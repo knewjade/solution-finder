@@ -1,6 +1,6 @@
 package entry;
 
-import concurrent.CheckerThreadLocal;
+import concurrent.CheckerUsingHoldThreadLocal;
 import concurrent.LockedCandidateThreadLocal;
 import concurrent.invoker.ConcurrentCheckerInvoker;
 import concurrent.invoker.Pair;
@@ -11,7 +11,7 @@ import misc.PiecesGenerator;
 import misc.SafePieces;
 import misc.Stopwatch;
 import searcher.common.action.Action;
-import tree.CheckerTree;
+import tree.AnalyzeTree;
 import tree.VisitedTree;
 
 import java.io.IOException;
@@ -66,7 +66,7 @@ public class CheckerEntry {
         output("# Initialize / System");
         int core = Runtime.getRuntime().availableProcessors();
         ExecutorService executorService = Executors.newFixedThreadPool(core);
-        CheckerThreadLocal<Action> checkerThreadLocal = new CheckerThreadLocal<>();
+        CheckerUsingHoldThreadLocal<Action> checkerThreadLocal = new CheckerUsingHoldThreadLocal<>();
         LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
         ConcurrentCheckerInvoker invoker = new ConcurrentCheckerInvoker(executorService, candidateThreadLocal, checkerThreadLocal);
 
@@ -109,7 +109,7 @@ public class CheckerEntry {
         List<Pair<List<Block>, Boolean>> resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
 
         // 結果を集計する
-        CheckerTree tree = new CheckerTree();
+        AnalyzeTree tree = new AnalyzeTree();
         for (Pair<List<Block>, Boolean> resultPair : resultPairs) {
             List<Block> pieces = resultPair.getKey();
             Boolean result = resultPair.getValue();

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class CheckerTree {
+public class AnalyzeTree {
     private static class Element {
         private final EnumMap<Block, Element> current = new EnumMap<>(Block.class);
         private int allCounter = 0;

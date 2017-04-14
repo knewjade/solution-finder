@@ -8,7 +8,7 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import misc.Stopwatch;
-import searcher.checker.Checker;
+import searcher.checker.CheckerUsingHold;
 import searcher.common.action.Action;
 import searcher.common.validator.PerfectValidator;
 
@@ -23,18 +23,18 @@ public class CheckerInvoker {
         MinoRotation minoRotation = new MinoRotation();
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
         PerfectValidator validator = new PerfectValidator();
-        Checker<Action> checker = new Checker<>(minoFactory, validator);
+        CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
         return new CheckerInvoker(checker, candidate, maxClearLine, Stopwatch.createStoppedStopwatch());
     }
 
-    private final Checker<Action> checker;
+    private final CheckerUsingHold<Action> checker;
     private final Candidate<Action> candidate;
     private final int maxClearLine;
     private final Stopwatch stopwatch;
 
     private boolean lastResult = false;
 
-    private CheckerInvoker(Checker<Action> checker, Candidate<Action> candidate, int maxClearLine, Stopwatch stopwatch) {
+    private CheckerInvoker(CheckerUsingHold<Action> checker, Candidate<Action> candidate, int maxClearLine, Stopwatch stopwatch) {
         this.checker = checker;
         this.candidate = candidate;
         this.maxClearLine = maxClearLine;

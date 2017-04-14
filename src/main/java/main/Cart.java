@@ -1,25 +1,25 @@
 package main;
 
 import action.candidate.Candidate;
-import tree.CheckerTree;
-import tree.ConcurrentVisitedTree;
-import tree.VisitedTree;
-import concurrent.CheckerThreadLocal;
+import concurrent.CheckerUsingHoldThreadLocal;
 import concurrent.LockedCandidateThreadLocal;
+import concurrent.invoker.OrderLookup;
+import concurrent.invoker.Pieces;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
 import core.mino.Block;
 import javafx.util.Pair;
-import concurrent.invoker.OrderLookup;
-import concurrent.invoker.Pieces;
 import misc.Stopwatch;
-import misc.iterable.CombinationIterable;
 import misc.iterable.AllPermutationIterable;
+import misc.iterable.CombinationIterable;
 import searcher.checker.Checker;
 import searcher.common.Operation;
 import searcher.common.Result;
 import searcher.common.action.Action;
+import tree.AnalyzeTree;
+import tree.ConcurrentVisitedTree;
+import tree.VisitedTree;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -95,7 +95,7 @@ public class Cart {
         output("# Initialize / System");
         int core = Runtime.getRuntime().availableProcessors();
         ExecutorService executorService = Executors.newFixedThreadPool(core);
-        CheckerThreadLocal<Action> checkerThreadLocal = new CheckerThreadLocal<>();
+        CheckerUsingHoldThreadLocal<Action> checkerThreadLocal = new CheckerUsingHoldThreadLocal<>();
         LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
 
         output("Available processors = " + core);
@@ -174,12 +174,12 @@ public class Cart {
         }
 
         // 結果を集計する
-        CheckerTree checkerTree = new CheckerTree();
+        AnalyzeTree analyzeTree = new AnalyzeTree();
         for (Future<Pair<List<Block>, Boolean>> future : futureResults) {
             Pair<List<Block>, Boolean> resultPair = future.get();
             List<Block> blocks = resultPair.getKey();
             Boolean result = resultPair.getValue();
-            checkerTree.set(result, blocks);
+            analyzeTree.set(result, blocks);
         }
 
         stopwatch.stop();
@@ -263,7 +263,7 @@ public class Cart {
                 System.out.print("  ");
             System.out.println("retire");
             checkLast(results, answers + "x");
-            results.forEach(pair -> System.out.println(pair.getKey().getBlocks()+ " " + pair.getValue()));
+            results.forEach(pair -> System.out.println(pair.getKey().getBlocks() + " " + pair.getValue()));
             return;
         }
 

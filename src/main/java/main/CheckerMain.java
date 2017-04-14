@@ -1,6 +1,6 @@
 package main;
 
-import tree.CheckerTree;
+import tree.AnalyzeTree;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
@@ -94,8 +94,8 @@ public class CheckerMain {
         System.out.println(allCombinations.size());
 
         // Measure
-        CheckerTree tree = new CheckerTree();
-//        tree.CheckerTree treeFail = new tree.CheckerTree();
+        AnalyzeTree tree = new AnalyzeTree();
+//        tree.AnalyzeTree treeFail = new tree.AnalyzeTree();
         for (List<Block> combination : allCombinations) {
             invoker.measure(field, combination, 1);
 
@@ -170,8 +170,8 @@ public class CheckerMain {
         System.out.println(allCombinations.size());
 
         // Measure
-        CheckerTree tree = new CheckerTree();
-//        tree.CheckerTree treeFail = new tree.CheckerTree();
+        AnalyzeTree tree = new AnalyzeTree();
+//        tree.AnalyzeTree treeFail = new tree.AnalyzeTree();
         for (List<Block> combination : allCombinations) {
             invoker.measure(field, combination, 1);
 

@@ -4,6 +4,7 @@ import core.mino.Block;
 
 import java.util.EnumMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ConcurrentVisitedTree {
     public static final short NO_RESULT = -1;

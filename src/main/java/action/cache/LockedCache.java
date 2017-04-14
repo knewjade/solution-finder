@@ -48,4 +48,9 @@ public class LockedCache {
     public boolean isFound(int x, int y, Rotate rotate) {
         return foundMap.get(rotate).get(x, y);
     }
+
+    public void resetTrail() {
+        for (Memory memory : visitedMap.values())
+            memory.clear();
+    }
 }

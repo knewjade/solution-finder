@@ -1,7 +1,8 @@
 package main;
 
 import action.candidate.Candidate;
-import tree.CheckerTree;
+import searcher.checker.Checker;
+import tree.AnalyzeTree;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
@@ -9,8 +10,7 @@ import misc.Stopwatch;
 import misc.iterable.CombinationIterable;
 import misc.iterable.AllPermutationIterable;
 import concurrent.LockedCandidateThreadLocal;
-import concurrent.CheckerThreadLocal;
-import searcher.checker.Checker;
+import concurrent.CheckerUsingHoldThreadLocal;
 import searcher.common.action.Action;
 
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class ConcurrentMain {
         int core = Runtime.getRuntime().availableProcessors();
 //        System.out.println(core);
         ExecutorService executorService = Executors.newFixedThreadPool(core);
-        ThreadLocal<Checker<Action>> checkerThreadLocal = new CheckerThreadLocal<>();
+        ThreadLocal<Checker<Action>> checkerThreadLocal = new CheckerUsingHoldThreadLocal<>();
         LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
 
         // enumerate combinations and sort
@@ -65,7 +65,7 @@ public class ConcurrentMain {
 
         List<Future<PairObj>> futures = executorService.invokeAll(callables);
 
-        CheckerTree tree = new CheckerTree();
+        AnalyzeTree tree = new AnalyzeTree();
         for (Future<PairObj> future : futures) {
             PairObj obj = future.get();
             List<Block> combination = obj.blocks;

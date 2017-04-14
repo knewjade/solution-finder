@@ -37,6 +37,10 @@ public class SearcherCore<T extends Action> {
         }
     }
 
+    public void stepWithNextNoHold(Candidate<T> candidate, Block drawn, Order order, boolean isLast) {
+        step(candidate, drawn, order.getHold(), order, isLast);
+    }
+
     public void stepWhenNoNext(Candidate<T> candidate, Order order, boolean isLast) {
         Block hold = order.getHold();
         step(candidate, hold, null, order, isLast);

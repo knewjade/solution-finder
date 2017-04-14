@@ -37,7 +37,7 @@ public class CheckerEntryTest {
 
         String output = writer.toString();
 
-        String expected = "success = 99.88% (5034/5040)";
+        String expected = "success = 99.96% (5038/5040)";
         assertThat(output, containsString(expected));
     }
 
