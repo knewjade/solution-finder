@@ -100,7 +100,7 @@ public class CheckerMain {
             invoker.measure(field, combination, 1);
 
 //                System.out.print(combination + " => ");
-//            if (concurrent.invoker.getLastResult()) {
+//            if (concurrent.checker.invoker.getLastResult()) {
 ////                    System.out.println("success");
 //                tree.success(combination);
 //            } else {
@@ -113,7 +113,7 @@ public class CheckerMain {
         stopwatch.stop();
 
         // Show
-//        concurrent.invoker.show();
+//        concurrent.checker.invoker.show();
 //        tree.show();
 //        System.out.println("---");
 //        tree.tree(1);

@@ -21,20 +21,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class CheckerNoHoldCountTest {
-    @Test
-    public void testCase1() throws Exception {
-        // Invoker
-        PiecesGenerator piecesGenerator = new PiecesGenerator("*p7");
-        int maxClearLine = 4;
-        int maxDepth = 6;
-
-        // Field
-        String marks = "" +
-                "X________X" +
-                "X________X" +
-                "XX______XX" +
-                "XXXXXX__XX" +
-                "";
+    private AnalyzeTree runTestCase(PiecesGenerator piecesGenerator, int maxClearLine, int maxDepth, String marks) {
         Field field = FieldFactory.createField(marks);
 
         // Initialize
@@ -54,6 +41,27 @@ public class CheckerNoHoldCountTest {
             tree.set(result, blocks);
         }
 
+        return tree;
+    }
+
+    @Test
+    public void testCase1() throws Exception {
+        // Invoker
+        PiecesGenerator piecesGenerator = new PiecesGenerator("*p7");
+        int maxClearLine = 4;
+        int maxDepth = 6;
+
+        // Field
+        String marks = "" +
+                "X________X" +
+                "X________X" +
+                "XX______XX" +
+                "XXXXXX__XX" +
+                "";
+
+        AnalyzeTree tree = runTestCase(piecesGenerator, maxClearLine, maxDepth, marks);
+
+        // Source: reply in twitter from @fullfool_14
         assertThat(tree.getSuccessPercent(), is(1439 / 5040.0));
     }
 
@@ -72,25 +80,9 @@ public class CheckerNoHoldCountTest {
                 "__XXXXXXXX" +
                 "___XXXXXXX" +
                 "";
-        Field field = FieldFactory.createField(marks);
+        AnalyzeTree tree = runTestCase(piecesGenerator, maxClearLine, maxDepth, marks);
 
-        // Initialize
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
-        PerfectValidator validator = new PerfectValidator();
-        CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
-
-        // Measure
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
-        AnalyzeTree tree = new AnalyzeTree();
-
-        for (SafePieces pieces : piecesGenerator) {
-            List<Block> blocks = pieces.getBlocks();
-            boolean result = checker.check(field, blocks, candidate, maxClearLine, maxDepth);
-            tree.set(result, blocks);
-        }
-
+        // Source: reply in twitter from @fullfool_14
         assertThat(tree.getSuccessPercent(), is(477 / 2520.0));
     }
 
@@ -108,27 +100,9 @@ public class CheckerNoHoldCountTest {
                 "XXXXXXX___" +
                 "XXXXXX____" +
                 "";
-        Field field = FieldFactory.createField(marks);
+        AnalyzeTree tree = runTestCase(piecesGenerator, maxClearLine, maxDepth, marks);
 
-        // Initialize
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
-        PerfectValidator validator = new PerfectValidator();
-        CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
-
-        // Measure
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
-        AnalyzeTree tree = new AnalyzeTree();
-
-        for (SafePieces pieces : piecesGenerator) {
-            List<Block> blocks = pieces.getBlocks();
-            boolean result = checker.check(field, blocks, candidate, maxClearLine, maxDepth);
-            tree.set(result, blocks);
-        }
-
-        String show = tree.show();
-        System.out.println(show);
+        // Source: reply in twitter from @fullfool_14
         assertThat(tree.getSuccessPercent(), is(727 / 5040.0));
     }
 
@@ -146,26 +120,9 @@ public class CheckerNoHoldCountTest {
                 "XXXX______" +
                 "XXXX______" +
                 "";
-        Field field = FieldFactory.createField(marks);
+        AnalyzeTree tree = runTestCase(piecesGenerator, maxClearLine, maxDepth, marks);
 
-        // Initialize
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
-        PerfectValidator validator = new PerfectValidator();
-        CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
-
-        // Measure
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
-        AnalyzeTree tree = new AnalyzeTree();
-
-        for (SafePieces pieces : piecesGenerator) {
-            List<Block> blocks = pieces.getBlocks();
-            boolean result = checker.check(field, blocks, candidate, maxClearLine, maxDepth);
-            tree.set(result, blocks);
-        }
-
-        // 1902が真に正しいかは不明。デグレしていないことの確認
+        // Source: myself 20170415
         assertThat(tree.getSuccessPercent(), is(1902 / 5040.0));
     }
 }

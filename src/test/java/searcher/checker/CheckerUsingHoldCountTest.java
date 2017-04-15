@@ -24,21 +24,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class CheckerUsingHoldCountTest {
-    @Test
-    public void testGraceSystem() throws Exception {
-        // Invoker
-        List<Block> blocks = Arrays.asList(I, T, S, Z, J, L, O);
-        int popCount = 4;
-        int maxClearLine = 4;
-        int maxDepth = 4;
-
-        // Field
-        String marks = "" +
-                "XXXXXX____" +
-                "XXXXXX____" +
-                "XXXXXX____" +
-                "XXXXXX____" +
-                "";
+    private AnalyzeTree runTestCase(List<Block> blocks, int popCount, int maxClearLine, int maxDepth, String marks) {
         Field field = FieldFactory.createField(marks);
 
         // Initialize
@@ -58,7 +44,28 @@ public class CheckerUsingHoldCountTest {
             boolean result = checker.check(field, combination, candidate, maxClearLine, maxDepth);
             tree.set(result, combination);
         }
+        return tree;
+    }
 
+    @Test
+    public void testGraceSystem() throws Exception {
+        // Invoker
+        List<Block> blocks = Arrays.asList(I, T, S, Z, J, L, O);
+        int popCount = 4;
+        int maxClearLine = 4;
+        int maxDepth = 4;
+
+        // Field
+        String marks = "" +
+                "XXXXXX____" +
+                "XXXXXX____" +
+                "XXXXXX____" +
+                "XXXXXX____" +
+                "";
+
+        AnalyzeTree tree = runTestCase(blocks, popCount, maxClearLine, maxDepth, marks);
+
+        // Source: Nilgiri: https://docs.google.com/spreadsheets/d/1bVY3t_X96xRmUL0qdgB9tViSIGenu6RMKX4RW7qWg8Y/edit#gid=0
         assertThat(tree.getSuccessPercent(), is(744 / 840.0));
     }
 
@@ -95,6 +102,7 @@ public class CheckerUsingHoldCountTest {
             tree.set(result, combination);
         }
 
+        // Source: Nilgiri: https://docs.google.com/spreadsheets/d/1bVY3t_X96xRmUL0qdgB9tViSIGenu6RMKX4RW7qWg8Y/edit#gid=0
         assertThat(tree.getSuccessPercent(), is(514 / 840.0));
     }
 
@@ -132,6 +140,7 @@ public class CheckerUsingHoldCountTest {
             tree.set(result, blocks);
         }
 
+        // Source: Nilgiri: https://docs.google.com/spreadsheets/d/1bVY3t_X96xRmUL0qdgB9tViSIGenu6RMKX4RW7qWg8Y/edit#gid=0
         assertThat(tree.getSuccessPercent(), is(711 / 840.0));
     }
 
@@ -168,6 +177,7 @@ public class CheckerUsingHoldCountTest {
             tree.set(result, combination);
         }
 
+        // Source: myself 20170415
         assertThat(tree.getSuccessPercent(), is(5040 / 5040.0));
     }
 
@@ -206,7 +216,7 @@ public class CheckerUsingHoldCountTest {
             tree.set(result, combination);
         }
 
-        // 5034が真に正しいかは不明。デグレしていないことの確認
+        // Source: myself 20170415
         assertThat(tree.getSuccessPercent(), is(5038 / 5040.0));
     }
 }

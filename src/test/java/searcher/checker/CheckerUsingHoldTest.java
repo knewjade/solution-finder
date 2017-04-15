@@ -2,7 +2,7 @@ package searcher.checker;
 
 import action.candidate.Candidate;
 import action.candidate.LockedCandidate;
-import concurrent.invoker.Pair;
+import concurrent.checker.invoker.Pair;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;

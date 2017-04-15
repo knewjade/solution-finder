@@ -1,30 +1,22 @@
-package concurrent.invoker;
+package concurrent.checker.invoker.v2;
 
 import action.candidate.Candidate;
 import core.field.Field;
 import searcher.checker.Checker;
 import searcher.common.action.Action;
-import tree.ConcurrentVisitedTree;
-
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicInteger;
 
 class ObjV2 {
     final Field field;
     final int maxClearLine;
     final int maxDepth;
-    final ConcurrentVisitedTree visitedTree;
     final ThreadLocal<Candidate<Action>> candidateThreadLocal;
     final ThreadLocal<Checker<Action>> checkerThreadLocal;
-    final CountDownLatch countDownLatch;
 
-    ObjV2(Field field, int maxClearLine, int maxDepth, ConcurrentVisitedTree visitedTree, ThreadLocal<Candidate<Action>> candidateThreadLocal, ThreadLocal<Checker<Action>> checkerThreadLocal, int maxTaskCount) {
+    ObjV2(Field field, int maxClearLine, int maxDepth, ThreadLocal<Candidate<Action>> candidateThreadLocal, ThreadLocal<Checker<Action>> checkerThreadLocal) {
         this.field = field;
         this.maxClearLine = maxClearLine;
         this.maxDepth = maxDepth;
-        this.visitedTree = visitedTree;
         this.candidateThreadLocal = candidateThreadLocal;
         this.checkerThreadLocal = checkerThreadLocal;
-        this.countDownLatch = new CountDownLatch(maxTaskCount);
     }
 }

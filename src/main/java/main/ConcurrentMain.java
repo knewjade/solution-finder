@@ -10,7 +10,7 @@ import misc.Stopwatch;
 import misc.iterable.CombinationIterable;
 import misc.iterable.AllPermutationIterable;
 import concurrent.LockedCandidateThreadLocal;
-import concurrent.CheckerUsingHoldThreadLocal;
+import concurrent.checker.CheckerUsingHoldThreadLocal;
 import searcher.common.action.Action;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package concurrent.invoker;
+package concurrent.checker.invoker;
 
 import core.mino.Block;
 import org.junit.Test;

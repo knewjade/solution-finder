@@ -1,6 +1,9 @@
-package concurrent.invoker;
+package concurrent.checker.invoker.v1;
 
 import action.candidate.Candidate;
+import concurrent.checker.invoker.OrderLookup;
+import concurrent.checker.invoker.Pair;
+import concurrent.checker.invoker.Pieces;
 import core.mino.Block;
 import searcher.checker.Checker;
 import searcher.common.Operation;

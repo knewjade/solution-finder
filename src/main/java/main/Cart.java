@@ -1,10 +1,10 @@
 package main;
 
 import action.candidate.Candidate;
-import concurrent.CheckerUsingHoldThreadLocal;
+import concurrent.checker.CheckerUsingHoldThreadLocal;
 import concurrent.LockedCandidateThreadLocal;
-import concurrent.invoker.OrderLookup;
-import concurrent.invoker.Pieces;
+import concurrent.checker.invoker.OrderLookup;
+import concurrent.checker.invoker.Pieces;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;

@@ -1,4 +1,4 @@
-package concurrent.invoker;
+package concurrent.checker.invoker;
 
 public class Pair<K, V> extends javafx.util.Pair<K, V> {
     public Pair(K key, V value) {

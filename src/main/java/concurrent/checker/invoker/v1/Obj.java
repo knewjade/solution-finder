@@ -1,4 +1,4 @@
-package concurrent.invoker;
+package concurrent.checker.invoker.v1;
 
 import action.candidate.Candidate;
 import core.field.Field;

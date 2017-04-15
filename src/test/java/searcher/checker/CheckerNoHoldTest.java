@@ -2,15 +2,13 @@ package searcher.checker;
 
 import action.candidate.Candidate;
 import action.candidate.LockedCandidate;
-import action.reachable.LockedReachable;
-import concurrent.invoker.Pair;
+import concurrent.checker.invoker.Pair;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
-import core.srs.Rotate;
 import org.junit.Test;
 import searcher.common.action.Action;
 import searcher.common.validator.PerfectValidator;
@@ -18,7 +16,6 @@ import searcher.common.validator.PerfectValidator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import static core.mino.Block.*;
 import static org.hamcrest.CoreMatchers.is;

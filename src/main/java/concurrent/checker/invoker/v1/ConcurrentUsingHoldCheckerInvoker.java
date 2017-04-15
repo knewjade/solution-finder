@@ -1,11 +1,11 @@
-package concurrent.invoker;
+package concurrent.checker.invoker.v1;
 
 import action.candidate.Candidate;
-import concurrent.CheckerNoHoldThreadLocal;
+import concurrent.checker.CheckerUsingHoldThreadLocal;
+import concurrent.checker.invoker.Pair;
 import core.field.Field;
 import core.mino.Block;
 import searcher.checker.Checker;
-import searcher.common.Operation;
 import searcher.common.action.Action;
 import tree.ConcurrentVisitedTree;
 
@@ -13,14 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Future;
 
-public class ConcurrentCheckerInvokerV2 {
+public class ConcurrentUsingHoldCheckerInvoker {
     private final ExecutorService executorService;
     private final ThreadLocal<Candidate<Action>> candidateThreadLocal;
     private final ThreadLocal<Checker<Action>> checkerThreadLocal;
 
-    public ConcurrentCheckerInvokerV2(ExecutorService executorService, ThreadLocal<Candidate<Action>> candidateThreadLocal, CheckerNoHoldThreadLocal<Action> checkerThreadLocal) {
+    public ConcurrentUsingHoldCheckerInvoker(ExecutorService executorService, ThreadLocal<Candidate<Action>> candidateThreadLocal, CheckerUsingHoldThreadLocal<Action> checkerThreadLocal) {
         this.executorService = executorService;
         this.candidateThreadLocal = candidateThreadLocal;
         this.checkerThreadLocal = checkerThreadLocal;
@@ -29,21 +29,17 @@ public class ConcurrentCheckerInvokerV2 {
     public List<Pair<List<Block>, Boolean>> search(Field field, List<List<Block>> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
         ConcurrentVisitedTree visitedTree = new ConcurrentVisitedTree();
 
-        // タスクの実行
-        ObjV2 obj = new ObjV2(field, maxClearLine, maxDepth, visitedTree, candidateThreadLocal, checkerThreadLocal, searchingPieces.size());
+        Obj obj = new Obj(field, maxClearLine, maxDepth, visitedTree, candidateThreadLocal, checkerThreadLocal);
+        ArrayList<Task> tasks = new ArrayList<>();
         for (List<Block> target : searchingPieces)
-            executorService.submit(new TaskV2(obj, target));
+            tasks.add(new Task(obj, target));
 
-        obj.countDownLatch.await();
+        List<Future<Pair<List<Block>, Boolean>>> futureResults = executorService.invokeAll(tasks);
 
-        // No hold から Using hold へ確率を計算し直す
         // 結果をリストに追加する
         ArrayList<Pair<List<Block>, Boolean>> pairs = new ArrayList<>();
-        ConcurrentVisitedTree tree = obj.visitedTree;
-        for (List<Block> target : searchingPieces) {
-            int succeed = tree.isSucceed(target);
-            pairs.add(new Pair<>(target, succeed == ConcurrentVisitedTree.SUCCEED));
-        }
+        for (Future<Pair<List<Block>, Boolean>> future : futureResults)
+            pairs.add(future.get());
 
         return pairs;
     }
