@@ -41,6 +41,8 @@ public class ConcurrentNoHoldCheckerInvokerTest {
         for (Pair<List<Block>, Boolean> resultPair : resultPairs) {
             List<Block> pieces = resultPair.getKey();
             Boolean result = resultPair.getValue();
+            if (result)
+                System.out.println(pieces);
             tree.set(result, pieces);
         }
 
@@ -163,7 +165,7 @@ public class ConcurrentNoHoldCheckerInvokerTest {
     public void testSearch6() throws Exception {
         PiecesGenerator piecesGenerator = new PiecesGenerator("*p5");
         int maxClearLine = 4;
-        int maxDepth = 6;
+        int maxDepth = 4;
 
         String marks = "" +
                 "XXXXXX____" +
@@ -182,7 +184,7 @@ public class ConcurrentNoHoldCheckerInvokerTest {
     public void testSearch7() throws Exception {
         PiecesGenerator piecesGenerator = new PiecesGenerator("*p5");
         int maxClearLine = 4;
-        int maxDepth = 6;
+        int maxDepth = 4;
 
         String marks = "" +
                 "XXXXX_____" +
@@ -201,7 +203,7 @@ public class ConcurrentNoHoldCheckerInvokerTest {
     public void testSearch8() throws Exception {
         PiecesGenerator piecesGenerator = new PiecesGenerator("*p5");
         int maxClearLine = 4;
-        int maxDepth = 6;
+        int maxDepth = 4;
 
         String marks = "" +
                 "XXXXXX____" +
@@ -220,7 +222,7 @@ public class ConcurrentNoHoldCheckerInvokerTest {
     public void testSearch9() throws Exception {
         PiecesGenerator piecesGenerator = new PiecesGenerator("*p5");
         int maxClearLine = 4;
-        int maxDepth = 6;
+        int maxDepth = 4;
 
         String marks = "" +
                 "XXXXXX____" +

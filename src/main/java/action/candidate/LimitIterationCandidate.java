@@ -127,6 +127,6 @@ public class LimitIterationCandidate implements Candidate<Action> {
     }
 
     private boolean canPutMinoInField(Field field, Mino mino, int x, int y) {
-        return 0 <= x && x < FIELD_WIDTH && 0 <= y && y < field.getMaxFieldHeight() && field.canPutMino(mino, x, y);
+        return -mino.getMinX() <= x && x < FIELD_WIDTH - mino.getMaxX() && -mino.getMinY() <= y && field.canPutMino(mino, x, y);
     }
 }

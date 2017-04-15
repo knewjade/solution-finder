@@ -158,7 +158,7 @@ public class ConcurrentUsingHoldCheckerInvokerTest {
     public void testSearch6() throws Exception {
         PiecesGenerator piecesGenerator = new PiecesGenerator("*p5");
         int maxClearLine = 4;
-        int maxDepth = 6;
+        int maxDepth = 4;
 
         String marks = "" +
                 "XXXXXX____" +
@@ -177,7 +177,7 @@ public class ConcurrentUsingHoldCheckerInvokerTest {
     public void testSearch7() throws Exception {
         PiecesGenerator piecesGenerator = new PiecesGenerator("*p5");
         int maxClearLine = 4;
-        int maxDepth = 6;
+        int maxDepth = 4;
 
         String marks = "" +
                 "XXXXX_____" +
@@ -196,7 +196,7 @@ public class ConcurrentUsingHoldCheckerInvokerTest {
     public void testSearch8() throws Exception {
         PiecesGenerator piecesGenerator = new PiecesGenerator("*p5");
         int maxClearLine = 4;
-        int maxDepth = 6;
+        int maxDepth = 4;
 
         String marks = "" +
                 "XXXXXX____" +
@@ -215,7 +215,7 @@ public class ConcurrentUsingHoldCheckerInvokerTest {
     public void testSearch9() throws Exception {
         PiecesGenerator piecesGenerator = new PiecesGenerator("*p5");
         int maxClearLine = 4;
-        int maxDepth = 6;
+        int maxDepth = 4;
 
         String marks = "" +
                 "XXXXXX____" +

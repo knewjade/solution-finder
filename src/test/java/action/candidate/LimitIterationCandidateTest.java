@@ -72,7 +72,7 @@ public class LimitIterationCandidateTest {
         Field field = FieldFactory.createField(marks);
 
         Set<Action> actions = candidate.search(field, Block.T, 4);
-        assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Spawn).toArray().length, is(3));
+        assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Spawn).toArray().length, is(2));
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Right).toArray().length, is(1));
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Reverse).toArray().length, is(4));
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Left).toArray().length, is(2));
@@ -93,6 +93,25 @@ public class LimitIterationCandidateTest {
         Field field = FieldFactory.createField(marks);
 
         Set<Action> actions = candidate.search(field, Block.T, 4);
-        assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Spawn).toArray().length, is(4));
+        assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Spawn).toArray().length, is(3));
+    }
+
+    @Test
+    public void testSearch4() throws Exception {
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        MinoRotation minoRotation = new MinoRotation();
+        Candidate<Action> candidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 4);
+
+        String marks = "" +
+                "XXXXX__XXX" +
+                "XXXXX___XX" +
+                "XXXX___XXX" +
+                "";
+        Field field = FieldFactory.createField(marks);
+
+        Set<Action> actions = candidate.search(field, Block.T, 4);
+        assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Spawn).toArray().length, is(1));
+        System.out.println(actions);
     }
 }
