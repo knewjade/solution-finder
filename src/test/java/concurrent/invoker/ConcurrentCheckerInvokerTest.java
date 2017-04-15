@@ -41,7 +41,6 @@ public class ConcurrentCheckerInvokerTest {
                 "";
         Field field = FieldFactory.createField(marks);
 
-
         // 組み合わせの列挙
         List<List<Block>> searchingPieces = new ArrayList<>();
         Iterable<List<Block>> combinationIterable = new CombinationIterable<>(usingBlocks, combinationPopCount);

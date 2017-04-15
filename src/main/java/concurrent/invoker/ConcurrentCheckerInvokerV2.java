@@ -34,11 +34,7 @@ public class ConcurrentCheckerInvokerV2 {
         for (List<Block> target : searchingPieces)
             executorService.submit(new TaskV2(obj, target));
 
-        while (0 < obj.countDownLatch.getCount()) {
-            System.out.println(obj.countDownLatch.getCount());
-            obj.countDownLatch.await(1000L, TimeUnit.MILLISECONDS);
-        }
-        System.out.println("done");
+        obj.countDownLatch.await();
 
         // No hold から Using hold へ確率を計算し直す
         // 結果をリストに追加する
@@ -46,7 +42,6 @@ public class ConcurrentCheckerInvokerV2 {
         ConcurrentVisitedTree tree = obj.visitedTree;
         for (List<Block> target : searchingPieces) {
             int succeed = tree.isSucceed(target);
-            assert succeed != ConcurrentVisitedTree.NO_RESULT;
             pairs.add(new Pair<>(target, succeed == ConcurrentVisitedTree.SUCCEED));
         }
 

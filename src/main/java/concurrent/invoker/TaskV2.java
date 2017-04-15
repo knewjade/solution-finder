@@ -5,7 +5,6 @@ import core.mino.Block;
 import searcher.checker.Checker;
 import searcher.common.Operation;
 import searcher.common.action.Action;
-import tree.VisitedTree;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,36 +20,24 @@ class TaskV2 implements Runnable {
 
     @Override
     public void run() {
-        // 探索
-        boolean checkResult = search();
-
-        // もし探索に成功した場合
-        // パフェが見つかったツモ順(≠探索時のツモ順)へと、ホールドを使ってできるパターンを逆算
-        if (checkResult) {
-            int reverseMaxDepth = target.size();
-            ArrayList<Pieces> reversePieces = OrderLookup.reverse(target, reverseMaxDepth);
-
-            for (Pieces piece : reversePieces) {
-                obj.visitedTree.set(true, piece.getBlocks());
-            }
-            System.out.println(obj.countDownLatch.getCount());
-            System.out.println("done");
-        }
-
-        obj.countDownLatch.countDown();
-    }
-
-    private boolean search() {
-        // すでに探索成功済みならそのまま結果を返却
-        if (obj.visitedTree.isSucceed(target) == VisitedTree.SUCCEED)
-            return true;
-
-        // 探索
+        // 探索  // すでに成功確定済みでも、別のholdパターンを列挙するため探索が必要
         Checker<Action> checker = obj.checkerThreadLocal.get();
         Candidate<Action> candidate = obj.candidateThreadLocal.get();
         boolean checkResult = checker.check(obj.field, target, candidate, obj.maxClearLine, obj.maxDepth);
-        obj.visitedTree.set(checkResult, target);
-        return checkResult;
+
+        // 成功を記録する
+        // もし探索に成功した場合
+        // パフェが見つかったツモ順(≠探索時のツモ順)へと、ホールドを使ってできるパターンを逆算
+        if (checkResult) {
+            obj.visitedTree.set(true, target);
+            int reverseMaxDepth = target.size();
+            ArrayList<Pieces> reversePieces = OrderLookup.reverse(target, reverseMaxDepth);
+            for (Pieces piece : reversePieces) {
+                obj.visitedTree.set(true, piece.getBlocks());
+            }
+        }
+
+        obj.countDownLatch.countDown();
     }
 
     private ArrayList<Block> parseOperationsToBlockList(List<Operation> operations) {

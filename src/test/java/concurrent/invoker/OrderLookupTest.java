@@ -29,4 +29,13 @@ public class OrderLookupTest {
             assertThat(reverse.size(), is((int) Math.pow(2, depth)));
         }
     }
+
+    @Test
+    public void reverseWithJustBlocks2() throws Exception {
+        List<Block> blocks = Arrays.asList(O, J, L, T, I, S, Z);
+        for (int depth = 1; depth < blocks.size(); depth++) {
+            ArrayList<Pieces> reverse = OrderLookup.reverse(blocks.subList(0, depth), depth + 1);
+            assertThat(reverse.size(), is((int) Math.pow(2, depth)));
+        }
+    }
 }

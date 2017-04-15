@@ -140,4 +140,45 @@ public class CheckerNoHoldTest {
             assertThat(checker.check(field, blocks, candidate, maxClearLine, maxDepth), is(testCase.getValue()));
         }
     }
+
+    @Test
+    public void testCase3() throws Exception {
+        List<Pair<List<Block>, Boolean>> testCases = new ArrayList<Pair<List<Block>, Boolean>>() {
+            {
+                add(new Pair<>(Arrays.asList(T, I, L, S, O, Z, J), false));
+                add(new Pair<>(Arrays.asList(O, J, I, L, T, S, Z), false));
+                add(new Pair<>(Arrays.asList(O, J, L, T, I, S, Z), true));
+            }
+        };
+
+        // Field
+        String marks = "" +
+                "XXXXXX____" +
+                "XXXXXX____" +
+                "XXXXXX____" +
+                "XXXXXX____" +
+                "XXXXXX____" +
+                "XXXXXX____" +
+                "XXXXXXXX__" +
+                "XXXXXXXX__" +
+                "";
+        Field field = FieldFactory.createField(marks);
+        int maxClearLine = 8;
+        int maxDepth = 7;
+
+        // Initialize
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        MinoRotation minoRotation = new MinoRotation();
+        PerfectValidator validator = new PerfectValidator();
+        CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
+
+        // Measure
+        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+
+        for (Pair<List<Block>, Boolean> testCase : testCases) {
+            List<Block> blocks = testCase.getKey();
+            assertThat(checker.check(field, blocks, candidate, maxClearLine, maxDepth), is(testCase.getValue()));
+        }
+    }
 }

@@ -7,6 +7,7 @@ import searcher.common.action.Action;
 import tree.ConcurrentVisitedTree;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 
 class ObjV2 {
     final Field field;

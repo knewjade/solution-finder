@@ -28,7 +28,6 @@ public class ConcurrentVisitedTree {
                     }
                 }
             } else {
-                assert isSucceed != FAILED;
                 isSucceed = SUCCEED;
             }
         }
@@ -46,7 +45,6 @@ public class ConcurrentVisitedTree {
                     }
                 }
             } else {
-                assert isSucceed != SUCCEED;
                 isSucceed = FAILED;
             }
         }
