@@ -71,7 +71,7 @@ public class Experiment {
         FixPlaceLockedCandidate candidate = new FixPlaceLockedCandidate(minoFactory, minoShifter, minoRotation, maxY, field);
         BuildValidator validator = new BuildValidator(field);
 
-        CheckerUsingHold<Action> builder = new CheckerUsingHold<>(minoFactory, minoShifter, validator);
+        CheckerUsingHold<Action> builder = new CheckerUsingHold<>(minoFactory, validator);
 
         Stopwatch stopwatch = Stopwatch.createStoppedStopwatch();
         VisitedTree visitedTree = new VisitedTree();
@@ -155,7 +155,7 @@ public class Experiment {
 
         Reachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
 
-        CheckerUsingHold<Action> builder = new CheckerUsingHold<>(minoFactory, minoShifter, validator);
+        CheckerUsingHold<Action> builder = new CheckerUsingHold<>(minoFactory, validator);
 
         HashSet<HashableBlocks> duplicated = new HashSet<>();
         Stopwatch stopwatch = Stopwatch.createStoppedStopwatch();
@@ -232,7 +232,7 @@ public class Experiment {
             if (!validator.validate(freeze, maxY))
                 return false;
 
-            freeze.insertLineWithKey(deleteKey);
+            freeze.insertBlackLineWithKey(deleteKey);
         }
         return true;
     }

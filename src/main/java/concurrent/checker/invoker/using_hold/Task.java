@@ -1,4 +1,4 @@
-package concurrent.checker.invoker.v1;
+package concurrent.checker.invoker.using_hold;
 
 import action.candidate.Candidate;
 import concurrent.checker.invoker.OrderLookup;

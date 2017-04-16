@@ -17,7 +17,11 @@ class ActionParser {
     }
 
     static int parseToInt(Block block, Action action) {
-        return action.getX() + action.getY() * 10 + action.getRotate().getNumber() * 240 + block.getNumber() * 240 * 4;
+        return parseToInt(block, action.getRotate(), action.getX(), action.getY());
+    }
+
+    static int parseToInt(Block block, Rotate rotate, int x, int y) {
+        return x + y * 10 + rotate.getNumber() * 240 + block.getNumber() * 240 * 4;
     }
 
     static Operation parseToOperation(int value) {

@@ -266,14 +266,14 @@ public class MiddleField implements Field {
     }
 
     @Override
-    public void insertLineWithKey(long deleteKey) {
+    public void insertBlackLineWithKey(long deleteKey) {
         long deleteKeyLow = deleteKey & 0x4010040100401L;
         int deleteLineLow = Long.bitCount(deleteKeyLow);
         int leftLineLow = 6 - deleteLineLow;
-        long newXBoardLow = LongBoardMap.insertLine(xBoardLow & getRowMaskBelowY(leftLineLow), deleteKeyLow);
+        long newXBoardLow = LongBoardMap.insertBlackLine(xBoardLow & getRowMaskBelowY(leftLineLow), deleteKeyLow);
 
         long deleteKeyHigh = (deleteKey & 0x8020080200802L) >> 1;
-        long newXBoardHigh = LongBoardMap.insertLine((xBoardHigh << 10 * deleteLineLow) | ((xBoardLow & getRowMaskAboveY(leftLineLow)) >> 10 * leftLineLow), deleteKeyHigh);
+        long newXBoardHigh = LongBoardMap.insertBlackLine((xBoardHigh << 10 * deleteLineLow) | ((xBoardLow & getRowMaskAboveY(leftLineLow)) >> 10 * leftLineLow), deleteKeyHigh);
 
         this.xBoardLow = newXBoardLow;
         this.xBoardHigh = newXBoardHigh & 0xfffffffffffffffL;
@@ -298,6 +298,20 @@ public class MiddleField implements Field {
                 return 0xfffffffffffffffL;
         }
         throw new IllegalArgumentException("No reachable");
+    }
+
+    @Override
+    public void insertWhiteLineWithKey(long deleteKey) {
+        long deleteKeyLow = deleteKey & 0x4010040100401L;
+        int deleteLineLow = Long.bitCount(deleteKeyLow);
+        int leftLineLow = 6 - deleteLineLow;
+        long newXBoardLow = LongBoardMap.insertWhiteLine(xBoardLow & getRowMaskBelowY(leftLineLow), deleteKeyLow);
+
+        long deleteKeyHigh = (deleteKey & 0x8020080200802L) >> 1;
+        long newXBoardHigh = LongBoardMap.insertWhiteLine((xBoardHigh << 10 * deleteLineLow) | ((xBoardLow & getRowMaskAboveY(leftLineLow)) >> 10 * leftLineLow), deleteKeyHigh);
+
+        this.xBoardLow = newXBoardLow;
+        this.xBoardHigh = newXBoardHigh & 0xfffffffffffffffL;
     }
 
     // yより上の行を選択するマスクを作成 (y行を含む)
@@ -338,5 +352,19 @@ public class MiddleField implements Field {
         if (maxHeight <= 6)
             return new SmallField(xBoardLow);
         return new MiddleField(this);
+    }
+
+    @Override
+    public void merge(Field other) {
+        int otherBlockCount = other.getAllBlockCount();
+        if (otherBlockCount == 1) {
+            xBoardLow |= other.getBoard(0);
+            return;
+        } else if (otherBlockCount == 2) {
+            xBoardLow |= other.getBoard(0);
+            xBoardHigh |= other.getBoard(1);
+            return;
+        }
+        throw new UnsupportedOperationException("too large field");
     }
 }

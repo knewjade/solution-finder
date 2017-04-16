@@ -1,22 +1,22 @@
-package concurrent.checker.invoker.v2;
+package concurrent.full_checkmate.invoker.no_hold;
 
 import action.candidate.Candidate;
 import core.field.Field;
-import searcher.checker.Checker;
 import searcher.common.action.Action;
+import searcher.full_checkmate.FullCheckmate;
 
-class ObjV2 {
+class Obj {
     final Field field;
     final int maxClearLine;
     final int maxDepth;
     final ThreadLocal<Candidate<Action>> candidateThreadLocal;
-    final ThreadLocal<Checker<Action>> checkerThreadLocal;
+    final ThreadLocal<FullCheckmate<Action>> checkmateThreadLocal;
 
-    ObjV2(Field field, int maxClearLine, int maxDepth, ThreadLocal<Candidate<Action>> candidateThreadLocal, ThreadLocal<Checker<Action>> checkerThreadLocal) {
+    Obj(Field field, int maxClearLine, int maxDepth, ThreadLocal<Candidate<Action>> candidateThreadLocal, ThreadLocal<FullCheckmate<Action>> checkmateThreadLocal) {
         this.field = field;
         this.maxClearLine = maxClearLine;
         this.maxDepth = maxDepth;
         this.candidateThreadLocal = candidateThreadLocal;
-        this.checkerThreadLocal = checkerThreadLocal;
+        this.checkmateThreadLocal = checkmateThreadLocal;
     }
 }

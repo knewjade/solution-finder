@@ -57,7 +57,7 @@ public interface Field {
     // ブロックがそろった行を削除し、削除した行を表すマスクを返却
     long clearLineReturnKey();
 
-    // ブロックがそろった行を復元する
+    // ブロックがそろった行を埋めた状態で復元する
     // deleteKeyは以下のビット位置に、対応する行が揃っているときフラグをたてる
     //       5.******** 最上位
     //       4.********
@@ -65,7 +65,10 @@ public interface Field {
     //       28********
     //       17********
     // 最下位 06********
-    void insertLineWithKey(long deleteKey);
+    void insertBlackLineWithKey(long deleteKey);
+
+    // ブロックがそろった行を空白の状態で復元する
+    void insertWhiteLineWithKey(long deleteKey);
 
     // 6列分のフィールドを表現するボードの個数を返却
     int getBoardCount();
@@ -75,4 +78,7 @@ public interface Field {
 
     // 現在のフィールドのコピーを返却
     Field freeze(int maxHeight);
+
+    // 指定したフィールドを重ね合せる
+    void merge(Field field);
 }

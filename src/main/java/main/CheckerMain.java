@@ -26,7 +26,7 @@ public class CheckerMain {
         // Invoker
         List<Block> blocks = Arrays.asList(I, T, L, J, S, Z, J, L, T);
         int maxClearLine = 4;
-        CheckmateInvoker invoker = CheckmateInvoker.createPerfectCheckmate(maxClearLine);
+        CheckmateInvoker invoker = CheckmateInvoker.createPerfectCheckmateUsingHold(maxClearLine);
 
         // Field
         String marks = "" +
@@ -131,7 +131,7 @@ public class CheckerMain {
         List<Block> blocks = Arrays.asList(I, T, S, Z, J, L, O);
         int popCount = 7;
         int maxClearLine = 4;
-        CheckmateInvoker invoker = CheckmateInvoker.createPerfectCheckmate(maxClearLine);
+        CheckmateInvoker invoker = CheckmateInvoker.createPerfectCheckmateUsingHold(maxClearLine);
 
         // Field
         String marks = "" +

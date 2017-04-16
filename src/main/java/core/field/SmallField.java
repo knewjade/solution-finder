@@ -162,8 +162,8 @@ public class SmallField implements Field {
     }
 
     @Override
-    public void insertLineWithKey(long deleteKey) {
-        this.xBoard = LongBoardMap.insertLine(xBoard, deleteKey);
+    public void insertBlackLineWithKey(long deleteKey) {
+        this.xBoard = LongBoardMap.insertBlackLine(xBoard, deleteKey);
     }
 
     private long getDeleteKey(long board) {
@@ -175,6 +175,11 @@ public class SmallField implements Field {
         long b3 = (b2 & a0000010100) >>> 2 & b2;
         long a0000000100 = 4508001973047300L;
         return (b3 & a0000000100) >>> 2 & b3;
+    }
+
+    @Override
+    public void insertWhiteLineWithKey(long deleteKey) {
+        this.xBoard = LongBoardMap.insertWhiteLine(xBoard, deleteKey);
     }
 
     @Override
@@ -190,5 +195,10 @@ public class SmallField implements Field {
     @Override
     public int getBoardCount() {
         return 1;
+    }
+
+    @Override
+    public void merge(Field other) {
+        xBoard |= other.getBoard(0);
     }
 }

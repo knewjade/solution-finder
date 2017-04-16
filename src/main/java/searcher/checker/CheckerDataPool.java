@@ -9,24 +9,19 @@ import java.util.TreeSet;
 
 public class CheckerDataPool implements DataPool {
     private TreeSet<Order> nexts;
-    private TreeSet<Order> test;
+    private TreeSet<Order> existsCheck;
     private ArrayList<Result> results;
-
-    private int mergins = 0;
 
     void initFirst() {
         this.results = new ArrayList<>();
         this.nexts = new TreeSet<>();
-        this.test = new TreeSet<>();
-        mergins = 0;
+        this.existsCheck = new TreeSet<>();
     }
 
     @Override
     public void addOrder(Order order) {
-        boolean add = test.add(order);
-        if (!add)
-            mergins += 1;
-        else
+        boolean add = existsCheck.add(order);
+        if (add)
             nexts.add(order);
     }
 

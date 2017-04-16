@@ -5,7 +5,6 @@ import core.field.Field;
 import core.field.SmallField;
 import core.mino.Block;
 import core.mino.MinoFactory;
-import core.mino.MinoShifter;
 import searcher.common.Result;
 import searcher.common.SimpleSearcherCore;
 import searcher.common.action.Action;
@@ -26,7 +25,7 @@ public class CheckmateNoHoldReuse<T extends Action> implements Checkmate<T> {
     private Block[] lastBlocks = null;
     private Field lastField = new SmallField();
 
-    public CheckmateNoHoldReuse(MinoFactory minoFactory, MinoShifter minoShifter, Validator validator) {
+    public CheckmateNoHoldReuse(MinoFactory minoFactory, Validator validator) {
         this.dataPool = new CheckmateDataPool();
         this.searcherCore = new SimpleSearcherCore<T>(minoFactory, validator, dataPool);
     }
@@ -52,7 +51,7 @@ public class CheckmateNoHoldReuse<T extends Action> implements Checkmate<T> {
             memento.add(new TreeSet<>(orders));
         } else {
             int reuseIndex = -1;
-            for (int index = 0; index < pieces.length; index++) {
+            for (int index = 0; index < maxDepth; index++) {
                 if (lastBlocks[index] == pieces[index])
                     reuseIndex = index;
                 else
@@ -64,11 +63,11 @@ public class CheckmateNoHoldReuse<T extends Action> implements Checkmate<T> {
                 orders.add(new NormalOrder(initField, null, maxClearLine, maxDepth));
                 startDepth = 0;
                 memento.add(new TreeSet<>(orders));
-            } else if (reuseIndex == pieces.length - 1) {
+            } else if (reuseIndex == maxDepth - 1) {
                 return dataPool.getResults();
             } else {
                 orders.addAll(memento.get(reuseIndex));
-                startDepth = reuseIndex + 1;
+                startDepth = reuseIndex;
                 memento = memento.subList(0, reuseIndex + 1);
             }
         }

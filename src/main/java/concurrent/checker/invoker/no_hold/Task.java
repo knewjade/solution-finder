@@ -1,4 +1,4 @@
-package concurrent.checker.invoker.v2;
+package concurrent.checker.invoker.no_hold;
 
 import action.candidate.Candidate;
 import concurrent.checker.invoker.Pair;
@@ -9,11 +9,11 @@ import searcher.common.action.Action;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-class TaskV2 implements Callable<Pair<List<Block>, Boolean>> {
-    private final ObjV2 obj;
+class Task implements Callable<Pair<List<Block>, Boolean>> {
+    private final Obj obj;
     private final List<Block> target;
 
-    TaskV2(ObjV2 obj, List<Block> target) {
+    Task(Obj obj, List<Block> target) {
         this.obj = obj;
         this.target = target;
     }

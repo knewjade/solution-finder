@@ -4,7 +4,6 @@ import action.candidate.Candidate;
 import core.field.Field;
 import core.mino.Block;
 import core.mino.MinoFactory;
-import core.mino.MinoShifter;
 import searcher.common.Result;
 import searcher.common.SimpleSearcherCore;
 import searcher.common.action.Action;
@@ -18,24 +17,25 @@ public class CheckerNoHold<T extends Action> implements Checker<T> {
     private final CheckerDataPool dataPool;
     private final SimpleSearcherCore<T> searcherCore;
 
-    public CheckerNoHold(MinoFactory minoFactory, MinoShifter minoShifter, Validator validator) {
+    public CheckerNoHold(MinoFactory minoFactory, Validator validator) {
         this.dataPool = new CheckerDataPool();
         this.searcherCore = new SimpleSearcherCore<>(minoFactory, validator, dataPool);
     }
 
-    // holdあり
+    @Override
     public boolean check(Field initField, List<Block> pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
         Block[] blocks = new Block[pieces.size()];
         return check(initField, pieces.toArray(blocks), candidate, maxClearLine, maxDepth);
     }
 
+    @Override
     public boolean check(Field initField, Block[] pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
         dataPool.initFirst();
         dataPool.addOrder(new DepthOrder(initField, null, maxClearLine, maxDepth));
 
         while (!dataPool.getNexts().isEmpty() && dataPool.getResults().isEmpty()) {
             Order order = dataPool.getNexts().pollLast();
-            int depth = order.getHistory().getIndex();
+            int depth = order.getHistory().getNextIndex();
             boolean isLast = depth == maxDepth;
 
             assert depth < pieces.length;

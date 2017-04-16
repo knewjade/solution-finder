@@ -367,7 +367,7 @@ public class MiddleFieldTest {
     }
 
     @Test
-    public void testClearLineAndInsertLine() throws Exception {
+    public void testClearLineAndInsertBlackLine() throws Exception {
         String marks = "" +
                 "XXXXXXXX_X" +
                 "XXXXXXXXXX" +
@@ -384,10 +384,46 @@ public class MiddleFieldTest {
 
         long deleteKey = field.clearLineReturnKey();
         assertThat(Long.bitCount(deleteKey), is(6));
-        field.insertLineWithKey(deleteKey);
+        field.insertBlackLineWithKey(deleteKey);
 
         for (int index = 0; index < freeze.getAllBlockCount(); index++)
             assertThat(field.getBoard(index), is(freeze.getBoard(index)));
+    }
+
+    @Test
+    public void testClearLineAndInsertWhiteLine() throws Exception {
+        String marks = "" +
+                "XXXXXXXX_X" +
+                "XXXXXXXXXX" +
+                "XXXXXXXXXX" +
+                "XXXXXXXXXX" +
+                "XXX_XXXXXX" +
+                "XXXXXXXXXX" +
+                "X_XXXXXXXX" +
+                "XXXXXXXXXX" +
+                "XXXX_XXXXX" +
+                "XXXXXXXXXX";
+        Field field = FieldFactory.createMiddleField(marks);
+
+        String expectedMarks = "" +
+                "XXXXXXXX_X" +
+                "__________" +
+                "__________" +
+                "__________" +
+                "XXX_XXXXXX" +
+                "__________" +
+                "X_XXXXXXXX" +
+                "__________" +
+                "XXXX_XXXXX" +
+                "__________";
+        Field expected = FieldFactory.createMiddleField(expectedMarks);
+
+        long deleteKey = field.clearLineReturnKey();
+        assertThat(Long.bitCount(deleteKey), is(6));
+        field.insertWhiteLineWithKey(deleteKey);
+
+        for (int index = 0; index < expected.getAllBlockCount(); index++)
+            assertThat(field.getBoard(index), is(expected.getBoard(index)));
     }
 
     @Test

@@ -1,10 +1,9 @@
-package searcher.checkmate2;
+package searcher.full_checkmate;
 
 import action.candidate.Candidate;
 import core.field.Field;
 import core.mino.Block;
 import core.mino.MinoFactory;
-import core.mino.MinoShifter;
 import searcher.checkmate.CheckmateDataPool;
 import searcher.common.FullSearcherCore;
 import searcher.common.Result;
@@ -23,7 +22,7 @@ public class FullCheckmateNoHold<T extends Action> implements FullCheckmate<T> {
     private final CheckmateDataPool dataPool;
     private final FullSearcherCore<T> searcherCore;
 
-    public FullCheckmateNoHold(MinoFactory minoFactory, MinoShifter minoShifter) {
+    public FullCheckmateNoHold(MinoFactory minoFactory) {
         this.dataPool = new CheckmateDataPool();
         this.searcherCore = new FullSearcherCore<>(minoFactory, dataPool);
     }

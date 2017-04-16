@@ -2,7 +2,7 @@ package concurrent.checker.invoker;
 
 import concurrent.LockedCandidateThreadLocal;
 import concurrent.checker.CheckerUsingHoldThreadLocal;
-import concurrent.checker.invoker.v1.ConcurrentUsingHoldCheckerInvoker;
+import concurrent.checker.invoker.using_hold.ConcurrentCheckerUsingHoldInvoker;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
@@ -21,7 +21,7 @@ import java.util.concurrent.Executors;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class ConcurrentUsingHoldCheckerInvokerTest {
+public class ConcurrentCheckerUsingHoldInvokerTest {
     private AnalyzeTree runTestCase(String marks, PiecesGenerator piecesGenerator, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
         Field field = FieldFactory.createField(marks);
 
@@ -32,7 +32,7 @@ public class ConcurrentUsingHoldCheckerInvokerTest {
         ExecutorService executorService = Executors.newFixedThreadPool(core);
         CheckerUsingHoldThreadLocal<Action> checkerThreadLocal = new CheckerUsingHoldThreadLocal<>();
         LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
-        ConcurrentUsingHoldCheckerInvoker invoker = new ConcurrentUsingHoldCheckerInvoker(executorService, candidateThreadLocal, checkerThreadLocal);
+        ConcurrentCheckerUsingHoldInvoker invoker = new ConcurrentCheckerUsingHoldInvoker(executorService, candidateThreadLocal, checkerThreadLocal);
 
         List<Pair<List<Block>, Boolean>> resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
 

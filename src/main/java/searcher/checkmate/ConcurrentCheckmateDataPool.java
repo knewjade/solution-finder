@@ -6,10 +6,11 @@ import searcher.common.order.Order;
 
 import java.util.ArrayList;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ConcurrentCheckmateDataPool implements DataPool {
-    private final Integer addOrderLockObject = 0;   // lock object for addOrder
-    private final Integer addResultLockObject = 0;  // lock object for addResult
+    private final AtomicInteger addOrderLockObject = new AtomicInteger();   // lock object for addOrder
+    private final AtomicInteger addResultLockObject = new AtomicInteger();  // lock object for addResult
 
     private final CheckmateDataPool checkmateDataPool;
 

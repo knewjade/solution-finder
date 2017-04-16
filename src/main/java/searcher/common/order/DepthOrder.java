@@ -54,7 +54,7 @@ public class DepthOrder implements Order {
 
     @Override
     public int compareTo(Order o) {
-        int compare = Integer.compare(this.getHistory().getIndex(), o.getHistory().getIndex());
+        int compare = Integer.compare(this.getHistory().getNextIndex(), o.getHistory().getNextIndex());
         if (compare == 0)
             return superCompareTo(o);
         return compare;

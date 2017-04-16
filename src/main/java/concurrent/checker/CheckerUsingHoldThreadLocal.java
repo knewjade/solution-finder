@@ -11,8 +11,7 @@ public class CheckerUsingHoldThreadLocal<T extends Action> extends ThreadLocal<C
     @Override
     protected Checker<T> initialValue() {
         MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new MinoShifter();
         PerfectValidator validator = new PerfectValidator();
-        return new CheckerUsingHold<>(minoFactory, minoShifter, validator);
+        return new CheckerUsingHold<>(minoFactory, validator);
     }
 }

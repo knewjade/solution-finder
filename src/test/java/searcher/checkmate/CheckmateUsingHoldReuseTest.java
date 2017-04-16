@@ -24,18 +24,18 @@ import static org.hamcrest.Matchers.lessThan;
 
 public class CheckmateUsingHoldReuseTest {
     @Test
-    public void testCheckmateWhenSwappingBlock() throws Exception {
+    public void testCheckmateWhenSwappingJustBlock() throws Exception {
         // Invoker
         List<Block> blocks = new ArrayList<>(Arrays.asList(I, S, Z, T, J, L, O));
         int maxClearLine = 4;
-        int maxDepth = 6;
+        int maxDepth = 7;
 
         // Field
         String marks = "" +
-                "XXXX______" +
-                "XXXX______" +
-                "XXXX______" +
-                "XXXX______" +
+                "XXX_______" +
+                "XXX_______" +
+                "XXX_______" +
+                "XXX_______" +
                 "";
         Field field = FieldFactory.createField(marks);
 
@@ -44,8 +44,8 @@ public class CheckmateUsingHoldReuseTest {
         MinoRotation minoRotation = new MinoRotation();
         PerfectValidator validator = new PerfectValidator();
 
-        CheckmateUsingHold<Action> checkmate = new CheckmateUsingHold<>(minoFactory, minoShifter, validator);
-        CheckmateUsingHoldReuse<Action> CheckmateReuse = new CheckmateUsingHoldReuse<>(validator, minoShifter, minoFactory);
+        CheckmateUsingHold<Action> checkmate = new CheckmateUsingHold<>(minoFactory, validator);
+        CheckmateUsingHoldReuse<Action> CheckmateReuse = new CheckmateUsingHoldReuse<>(minoFactory, validator);
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         Stopwatch stopwatchNoUse = Stopwatch.createStoppedStopwatch();
@@ -67,6 +67,157 @@ public class CheckmateUsingHoldReuseTest {
             stopwatchReuse.stop();
 
             assertResult(ResultHelper.uniquify(result1), ResultHelper.uniquify(result2));
+        }
+
+        assertThat(stopwatchReuse.getNanoAverageTime(), is(lessThan(stopwatchNoUse.getNanoAverageTime())));
+    }
+
+    @Test
+    public void testCheckmateWhenSwappingOverBlock() throws Exception {
+        // Invoker
+        List<Block> blocks = new ArrayList<>(Arrays.asList(I, S, Z, T, J, L, O));
+        int maxClearLine = 4;
+        int maxDepth = 6;
+
+        // Field
+        String marks = "" +
+                "XXXX______" +
+                "XXXX______" +
+                "XXXX______" +
+                "XXXX______" +
+                "";
+        Field field = FieldFactory.createField(marks);
+
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        MinoRotation minoRotation = new MinoRotation();
+        PerfectValidator validator = new PerfectValidator();
+
+        CheckmateUsingHold<Action> checkmate = new CheckmateUsingHold<>(minoFactory, validator);
+        CheckmateUsingHoldReuse<Action> CheckmateReuse = new CheckmateUsingHoldReuse<>(minoFactory, validator);
+        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+
+        Stopwatch stopwatchNoUse = Stopwatch.createStoppedStopwatch();
+        Stopwatch stopwatchReuse = Stopwatch.createStoppedStopwatch();
+
+        Random random = new Random();
+
+        for (int count = 0; count < 500; count++) {
+            int index = random.nextInt(blocks.size());
+            Block pop = blocks.remove(index);
+            blocks.add(pop);
+
+            stopwatchNoUse.start();
+            List<Result> result1 = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
+            stopwatchNoUse.stop();
+
+            stopwatchReuse.start();
+            List<Result> result2 = CheckmateReuse.search(field, blocks, candidate, maxClearLine, maxDepth);
+            stopwatchReuse.stop();
+
+            assertResult(ResultHelper.uniquify(result1), ResultHelper.uniquify(result2));
+        }
+
+        assertThat(stopwatchReuse.getNanoAverageTime(), is(lessThan(stopwatchNoUse.getNanoAverageTime())));
+    }
+
+    @Test
+    public void testCheckmateWhenSameOverBlockTwice() throws Exception {
+        // Invoker
+        List<Block> blocks = new ArrayList<>(Arrays.asList(I, S, Z, T, J, L, O));
+        int maxClearLine = 4;
+        int maxDepth = 6;
+
+        // Field
+        String marks = "" +
+                "XXXX______" +
+                "XXXX______" +
+                "XXXX______" +
+                "XXXX______" +
+                "";
+        Field field = FieldFactory.createField(marks);
+
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        MinoRotation minoRotation = new MinoRotation();
+        PerfectValidator validator = new PerfectValidator();
+
+        CheckmateUsingHold<Action> checkmate = new CheckmateUsingHold<>(minoFactory, validator);
+        CheckmateUsingHoldReuse<Action> CheckmateReuse = new CheckmateUsingHoldReuse<>(minoFactory, validator);
+        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+
+        Stopwatch stopwatchNoUse = Stopwatch.createStoppedStopwatch();
+        Stopwatch stopwatchReuse = Stopwatch.createStoppedStopwatch();
+
+        Random random = new Random();
+
+        for (int count = 0; count < 500; count++) {
+            int index = random.nextInt(blocks.size());
+            Block pop = blocks.remove(index);
+            blocks.add(pop);
+
+            stopwatchNoUse.start();
+            List<Result> result1 = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
+            stopwatchNoUse.stop();
+
+            stopwatchReuse.start();
+            List<Result> result2 = CheckmateReuse.search(field, blocks, candidate, maxClearLine, maxDepth);
+            List<Result> result3 = CheckmateReuse.search(field, blocks, candidate, maxClearLine, maxDepth);
+            stopwatchReuse.stop();
+
+            assertResult(ResultHelper.uniquify(result1), ResultHelper.uniquify(result2));
+            assertResult(ResultHelper.uniquify(result1), ResultHelper.uniquify(result3));
+        }
+
+        assertThat(stopwatchReuse.getNanoAverageTime(), is(lessThan(stopwatchNoUse.getNanoAverageTime())));
+    }
+
+    @Test
+    public void testCheckmateWhenOverMoreBlockTwice() throws Exception {
+        // Invoker
+        List<Block> blocks = new ArrayList<>(Arrays.asList(I, S, Z, T, J, L, O, I, S, Z, T, J, L, O));
+        int maxClearLine = 4;
+        int maxDepth = 6;
+
+        // Field
+        String marks = "" +
+                "XXXX______" +
+                "XXXX______" +
+                "XXXX______" +
+                "XXXX______" +
+                "";
+        Field field = FieldFactory.createField(marks);
+
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        MinoRotation minoRotation = new MinoRotation();
+        PerfectValidator validator = new PerfectValidator();
+
+        CheckmateUsingHold<Action> checkmate = new CheckmateUsingHold<>(minoFactory, validator);
+        CheckmateUsingHoldReuse<Action> CheckmateReuse = new CheckmateUsingHoldReuse<>(minoFactory, validator);
+        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+
+        Stopwatch stopwatchNoUse = Stopwatch.createStoppedStopwatch();
+        Stopwatch stopwatchReuse = Stopwatch.createStoppedStopwatch();
+
+        Random random = new Random();
+
+        for (int count = 0; count < 500; count++) {
+            int index = random.nextInt(blocks.size());
+            Block pop = blocks.remove(index);
+            blocks.add(pop);
+
+            stopwatchNoUse.start();
+            List<Result> result1 = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
+            stopwatchNoUse.stop();
+
+            stopwatchReuse.start();
+            List<Result> result2 = CheckmateReuse.search(field, blocks, candidate, maxClearLine, maxDepth);
+            List<Result> result3 = CheckmateReuse.search(field, blocks, candidate, maxClearLine, maxDepth);
+            stopwatchReuse.stop();
+
+            assertResult(ResultHelper.uniquify(result1), ResultHelper.uniquify(result2));
+            assertResult(ResultHelper.uniquify(result1), ResultHelper.uniquify(result3));
         }
 
         assertThat(stopwatchReuse.getNanoAverageTime(), is(lessThan(stopwatchNoUse.getNanoAverageTime())));

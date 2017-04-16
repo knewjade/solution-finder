@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class InsertMapGenerator {
+    private static boolean IS_BLACK_ON_DELETE_LINE = false;
+    
     public static void main(String[] args) {
         run();
     }
@@ -108,9 +110,11 @@ public class InsertMapGenerator {
 
         // 消えたブロックを復元させる
         long block = 0L;
-        for (int index = 0; index < leftFlags.size(); index++) {
-            if (!leftFlags.get(index))
-                block |= 0x3FFL << (10 * index);
+        if (IS_BLACK_ON_DELETE_LINE) {
+            for (int index = 0; index < leftFlags.size(); index++) {
+                if (!leftFlags.get(index))
+                    block |= 0x3FFL << (10 * index);
+            }
         }
 
         if (block != 0L)

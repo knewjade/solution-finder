@@ -4,7 +4,6 @@ import action.candidate.Candidate;
 import core.field.Field;
 import core.mino.Block;
 import core.mino.MinoFactory;
-import core.mino.MinoShifter;
 import searcher.common.Result;
 import searcher.common.SimpleSearcherCore;
 import searcher.common.action.Action;
@@ -18,12 +17,11 @@ public class CheckerUsingHold<T extends Action> implements Checker<T> {
     private final CheckerDataPool dataPool;
     private final SimpleSearcherCore<T> searcherCore;
 
-    public CheckerUsingHold(MinoFactory minoFactory, MinoShifter minoShifter, Validator validator) {
+    public CheckerUsingHold(MinoFactory minoFactory, Validator validator) {
         this.dataPool = new CheckerDataPool();
         this.searcherCore = new SimpleSearcherCore<>(minoFactory, validator, dataPool);
     }
 
-    // holdあり
     @Override
     public boolean check(Field initField, List<Block> pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
         Block[] blocks = new Block[pieces.size()];
@@ -37,7 +35,7 @@ public class CheckerUsingHold<T extends Action> implements Checker<T> {
 
         while (!dataPool.getNexts().isEmpty() && dataPool.getResults().isEmpty()) {
             Order order = dataPool.getNexts().pollLast();
-            int depth = order.getHistory().getIndex() + 1;
+            int depth = order.getHistory().getNextIndex() + 1;
             boolean isLast = depth == maxDepth;
 
             if (depth < pieces.length) {

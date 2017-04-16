@@ -1,4 +1,4 @@
-package concurrent.checker.invoker.v1;
+package concurrent.checker.invoker.using_hold;
 
 import action.candidate.Candidate;
 import concurrent.checker.CheckerUsingHoldThreadLocal;
@@ -15,12 +15,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-public class ConcurrentUsingHoldCheckerInvoker {
+public class ConcurrentCheckerUsingHoldInvoker {
     private final ExecutorService executorService;
     private final ThreadLocal<Candidate<Action>> candidateThreadLocal;
     private final ThreadLocal<Checker<Action>> checkerThreadLocal;
 
-    public ConcurrentUsingHoldCheckerInvoker(ExecutorService executorService, ThreadLocal<Candidate<Action>> candidateThreadLocal, CheckerUsingHoldThreadLocal<Action> checkerThreadLocal) {
+    public ConcurrentCheckerUsingHoldInvoker(ExecutorService executorService, ThreadLocal<Candidate<Action>> candidateThreadLocal, CheckerUsingHoldThreadLocal<Action> checkerThreadLocal) {
         this.executorService = executorService;
         this.candidateThreadLocal = candidateThreadLocal;
         this.checkerThreadLocal = checkerThreadLocal;

@@ -5,7 +5,6 @@ import concurrent.LockedCandidateThreadLocal;
 import core.field.Field;
 import core.mino.Block;
 import core.mino.MinoFactory;
-import core.mino.MinoShifter;
 import searcher.common.Result;
 import searcher.common.SimpleSearcherCore;
 import searcher.common.action.Action;
@@ -19,7 +18,9 @@ import java.util.TreeSet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 
-public class ConcurrentCheckmate<T extends Action> {
+// 不安定なため使用禁止
+@Deprecated
+public class ConcurrentCheckmateUsingHold<T extends Action> {
     private final LockedCandidateThreadLocal candidateThreadLocal;
     private final ExecutorService executorService;
 
@@ -28,7 +29,7 @@ public class ConcurrentCheckmate<T extends Action> {
 
     private CountDownLatch latch;
 
-    public ConcurrentCheckmate(LockedCandidateThreadLocal threadLocal, MinoFactory minoFactory, MinoShifter minoShifter, Validator validator, ExecutorService executorService) {
+    public ConcurrentCheckmateUsingHold(LockedCandidateThreadLocal threadLocal, MinoFactory minoFactory, Validator validator, ExecutorService executorService) {
         this.candidateThreadLocal = threadLocal;
         this.executorService = executorService;
 
@@ -36,7 +37,6 @@ public class ConcurrentCheckmate<T extends Action> {
         this.searcherCore = new SimpleSearcherCore<>(minoFactory, validator, dataPool);
     }
 
-    // holdあり
     public List<Result> search(Field initField, List<Block> pieces, int maxClearLine, int maxDepth) {
         Block[] blocks = new Block[pieces.size()];
         return search(initField, pieces.toArray(blocks), maxClearLine, maxDepth);
@@ -54,15 +54,15 @@ public class ConcurrentCheckmate<T extends Action> {
             boolean isLast = depth == maxDepth;
 
             int size = orders.size();
-            int core = 4 * 100;
-            latch = new CountDownLatch(core);
+            int splitCount = 1000;
+            latch = new CountDownLatch(splitCount);
 
             if (depth < blocks.length) {
                 Block drawn = blocks[depth];
 
                 int lastIndex = 0;
-                for (int count = 0; count < core; count++) {
-                    int toIndex = (int) (size * ((double) (count + 1) / core));
+                for (int count = 0; count < splitCount; count++) {
+                    int toIndex = (int) (size * ((double) (count + 1) / splitCount));
                     List<Order> subList = new ArrayList<>();
                     for (int index = lastIndex; index < toIndex; index++) {
                         Order order = orders.pollFirst();
@@ -74,10 +74,10 @@ public class ConcurrentCheckmate<T extends Action> {
                     executorService.execute(new MyTask(candidateThreadLocal, subList, isLast, searcherCore, latch, drawn));
                 }
             } else {
+                System.out.println(depth + " " + orders.size());
                 int lastIndex = 0;
-                for (int count = 0; count < core; count++) {
-
-                    int toIndex = (int) (orders.size() * ((double) (count + 1) / core));
+                for (int count = 0; count < splitCount; count++) {
+                    int toIndex = (int) (orders.size() * ((double) (count + 1) / splitCount));
                     List<Order> subList = new ArrayList<>();
                     for (int index = lastIndex; index < toIndex; index++) {
                         Order order = orders.pollFirst();
@@ -90,14 +90,11 @@ public class ConcurrentCheckmate<T extends Action> {
                 }
             }
 
-            do {
-                try {
-                    latch.await();
-                } catch (InterruptedException e) {
-                    throw new IllegalStateException("Error in Searching CheckmateUsingHold Solutions");
-                }
-            } while (latch.getCount() != 0);
-
+            try {
+                latch.await();
+            } catch (InterruptedException e) {
+                throw new IllegalStateException("Error in Searching CheckmateUsingHold Solutions");
+            }
 
             orders = dataPool.getNexts();
         }
@@ -106,7 +103,7 @@ public class ConcurrentCheckmate<T extends Action> {
     }
 
 
-    private static class MyTask<T extends Action> implements Runnable {
+    private static class MyTask implements Runnable {
         private final LockedCandidateThreadLocal candidateThreadLocal;
         private final List<Order> tasks;
         private final boolean isLast;
@@ -132,7 +129,7 @@ public class ConcurrentCheckmate<T extends Action> {
         }
     }
 
-    private static class MyLastTask<T extends Action> implements Runnable {
+    private static class MyLastTask implements Runnable {
         private final LockedCandidateThreadLocal candidateThreadLocal;
         private final List<Order> tasks;
         private final boolean isLast;

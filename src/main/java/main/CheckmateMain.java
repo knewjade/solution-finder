@@ -19,7 +19,7 @@ public class CheckmateMain {
         // Invoker
         List<Block> blocks = Arrays.asList(Block.I, Block.I, Block.J, Block.S);
         int maxClearLine = 4;
-        CheckmateInvoker invoker = CheckmateInvoker.createPerfectCheckmate(maxClearLine);
+        CheckmateInvoker invoker = CheckmateInvoker.createPerfectCheckmateUsingHold(maxClearLine);
 
         // Field
         String marks = "" +
@@ -42,7 +42,7 @@ public class CheckmateMain {
         // Invoker
         List<Block> blocks = Arrays.asList(I, T, L, J, S, Z, J, L, T);
         int maxClearLine = 8;
-        CheckmateInvoker invoker = CheckmateInvoker.createPerfectCheckmate(maxClearLine);
+        CheckmateInvoker invoker = CheckmateInvoker.createPerfectCheckmateUsingHold(maxClearLine);
 
         // Field
         String marks = "" +

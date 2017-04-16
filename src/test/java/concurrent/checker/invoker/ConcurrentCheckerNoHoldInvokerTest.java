@@ -2,7 +2,7 @@ package concurrent.checker.invoker;
 
 import concurrent.LockedCandidateThreadLocal;
 import concurrent.checker.CheckerNoHoldThreadLocal;
-import concurrent.checker.invoker.v2.ConcurrentNoHoldCheckerInvoker;
+import concurrent.checker.invoker.no_hold.ConcurrentCheckerNoHoldInvoker;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
@@ -21,7 +21,7 @@ import java.util.concurrent.Executors;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class ConcurrentNoHoldCheckerInvokerTest {
+public class ConcurrentCheckerNoHoldInvokerTest {
     private AnalyzeTree runTestCase(String marks, PiecesGenerator piecesGenerator, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
         Field field = FieldFactory.createField(marks);
 
@@ -32,7 +32,7 @@ public class ConcurrentNoHoldCheckerInvokerTest {
         ExecutorService executorService = Executors.newFixedThreadPool(core);
         CheckerNoHoldThreadLocal<Action> checkerThreadLocal = new CheckerNoHoldThreadLocal<>();
         LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
-        ConcurrentNoHoldCheckerInvoker invoker = new ConcurrentNoHoldCheckerInvoker(executorService, candidateThreadLocal, checkerThreadLocal);
+        ConcurrentCheckerNoHoldInvoker invoker = new ConcurrentCheckerNoHoldInvoker(executorService, candidateThreadLocal, checkerThreadLocal);
 
         List<Pair<List<Block>, Boolean>> resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
 

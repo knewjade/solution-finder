@@ -142,13 +142,13 @@ class LongBoardMap {
         }
     }
 
-    static long insertLine(long x, long mask) {
+    static long insertBlackLine(long x, long mask) {
 //        // 1073741823 = (1 << 30) - 1
         int key = (int) ((mask >> 29) | (mask & 1073741823));
-        return insertLine(x, key);
+        return insertBlackLine(x, key);
     }
 
-    private static long insertLine(long x, int key) {
+    private static long insertBlackLine(long x, int key) {
         switch (key) {
             case 3072:
                 return (x & 1023L) | ((x & 1073740800L) << 10) | ((x & 1098437885952L) << 20) | (1124800396262400L);
@@ -278,6 +278,147 @@ class LongBoardMap {
                 return ((x & 1023L) << 40) | (1151796704211632127L);
             case 3145731:
                 return ((x & 1023L) << 10) | ((x & 1047552L) << 30) | (1151796704210584575L);
+            default:
+                throw new IllegalArgumentException("No reachable");
+        }
+    }
+
+    static long insertWhiteLine(long x, long mask) {
+//        // 1073741823 = (1 << 30) - 1
+        int key = (int) ((mask >> 29) | (mask & 1073741823));
+        return insertWhiteLine(x, key);
+    }
+
+    private static long insertWhiteLine(long x, int key) {
+        switch (key) {
+            case 3072:
+                return (x & 1023L) | ((x & 1073740800L) << 10) | ((x & 1098437885952L) << 20);
+            case 2048:
+                return (x & 1099511627775L) | ((x & 1124800395214848L) << 10);
+            case 1024:
+                return (x & 1023L) | ((x & 1125899906841600L) << 10);
+            case 0:
+                return (x);
+            case 3073:
+                return ((x & 1048575L) << 20) | ((x & 1072693248L) << 30);
+            case 2049:
+                return ((x & 1073741823L) << 10) | ((x & 1098437885952L) << 20);
+            case 1025:
+                return ((x & 1099511627775L) << 20);
+            case 1:
+                return ((x & 1125899906842623L) << 10);
+            case 3074:
+                return (x & 1023L) | ((x & 1047552L) << 10) | ((x & 1072693248L) << 30);
+            case 2050:
+                return (x & 1073741823L) | ((x & 1098437885952L) << 20);
+            case 1026:
+                return (x & 1023L) | ((x & 1047552L) << 10) | ((x & 1099510579200L) << 20);
+            case 2:
+                return (x & 1073741823L) | ((x & 1125898833100800L) << 10);
+            case 3075:
+                return ((x & 1023L) << 20) | ((x & 1047552L) << 40);
+            case 2051:
+                return ((x & 1048575L) << 10) | ((x & 1072693248L) << 30);
+            case 1027:
+                return ((x & 1023L) << 20) | ((x & 1073740800L) << 30);
+            case 3:
+                return ((x & 1048575L) << 10) | ((x & 1099510579200L) << 20);
+            case 1051648:
+                return (x & 1023L) | ((x & 1047552L) << 20) | ((x & 1072693248L) << 30);
+            case 1050624:
+                return (x & 1048575L) | ((x & 1072693248L) << 10) | ((x & 1098437885952L) << 20);
+            case 1049600:
+                return (x & 1023L) | ((x & 1099511626752L) << 20);
+            case 1048576:
+                return (x & 1048575L) | ((x & 1125899905794048L) << 10);
+            case 1051649:
+                return ((x & 1023L) << 30) | ((x & 1047552L) << 40);
+            case 1050625:
+                return ((x & 1023L) << 10) | ((x & 1047552L) << 20) | ((x & 1072693248L) << 30);
+            case 1049601:
+                return ((x & 1073741823L) << 30);
+            case 1048577:
+                return ((x & 1023L) << 10) | ((x & 1099511626752L) << 20);
+            case 1051650:
+                return (x & 1023L) | ((x & 1047552L) << 40);
+            case 1050626:
+                return (x & 1048575L) | ((x & 1072693248L) << 30);
+            case 1049602:
+                return (x & 1023L) | ((x & 1073740800L) << 30);
+            case 1048578:
+                return (x & 1048575L) | ((x & 1099510579200L) << 20);
+            case 1051651:
+                return ((x & 1023L) << 50);
+            case 1050627:
+                return ((x & 1023L) << 10) | ((x & 1047552L) << 40);
+            case 1049603:
+                return ((x & 1048575L) << 40);
+            case 1048579:
+                return ((x & 1023L) << 10) | ((x & 1073740800L) << 30);
+            case 2100224:
+                return (x & 1023L) | ((x & 1073740800L) << 10);
+            case 2099200:
+                return (x & 1099511627775L);
+            case 2098176:
+                return (x & 1023L) | ((x & 1099511626752L) << 10);
+            case 2097152:
+                return (x & 1125899906842623L);
+            case 2100225:
+                return ((x & 1048575L) << 20);
+            case 2099201:
+                return ((x & 1073741823L) << 10);
+            case 2098177:
+                return ((x & 1073741823L) << 20);
+            case 2097153:
+                return ((x & 1099511627775L) << 10);
+            case 2100226:
+                return (x & 1023L) | ((x & 1047552L) << 10);
+            case 2099202:
+                return (x & 1073741823L);
+            case 2098178:
+                return (x & 1023L) | ((x & 1047552L) << 10) | ((x & 1072693248L) << 20);
+            case 2097154:
+                return (x & 1073741823L) | ((x & 1098437885952L) << 10);
+            case 2100227:
+                return ((x & 1023L) << 20);
+            case 2099203:
+                return ((x & 1048575L) << 10);
+            case 2098179:
+                return ((x & 1023L) << 20) | ((x & 1047552L) << 30);
+            case 2097155:
+                return ((x & 1048575L) << 10) | ((x & 1072693248L) << 20);
+            case 3148800:
+                return (x & 1023L) | ((x & 1047552L) << 20);
+            case 3147776:
+                return (x & 1048575L) | ((x & 1072693248L) << 10);
+            case 3146752:
+                return (x & 1023L) | ((x & 1073740800L) << 20);
+            case 3145728:
+                return (x & 1048575L) | ((x & 1099510579200L) << 10);
+            case 3148801:
+                return ((x & 1023L) << 30);
+            case 3147777:
+                return ((x & 1023L) << 10) | ((x & 1047552L) << 20);
+            case 3146753:
+                return ((x & 1048575L) << 30);
+            case 3145729:
+                return ((x & 1023L) << 10) | ((x & 1073740800L) << 20);
+            case 3148802:
+                return (x & 1023L);
+            case 3147778:
+                return (x & 1048575L);
+            case 3146754:
+                return (x & 1023L) | ((x & 1047552L) << 30);
+            case 3145730:
+                return (x & 1048575L) | ((x & 1072693248L) << 20);
+            case 3148803:
+                return (0L);
+            case 3147779:
+                return ((x & 1023L) << 10);
+            case 3146755:
+                return ((x & 1023L) << 40);
+            case 3145731:
+                return ((x & 1023L) << 10) | ((x & 1047552L) << 30);
             default:
                 throw new IllegalArgumentException("No reachable");
         }

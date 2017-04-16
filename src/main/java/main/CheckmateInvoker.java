@@ -8,6 +8,8 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import misc.Stopwatch;
+import searcher.checkmate.Checkmate;
+import searcher.checkmate.CheckmateNoHold;
 import searcher.checkmate.CheckmateUsingHold;
 import searcher.common.Result;
 import searcher.common.action.Action;
@@ -19,18 +21,29 @@ import java.util.List;
 import static java.util.concurrent.TimeUnit.*;
 
 public class CheckmateInvoker {
-    public static CheckmateInvoker createPerfectCheckmate(int maxClearLine) {
+    public static CheckmateInvoker createPerfectCheckmateUsingHold(int maxClearLine) {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = new MinoRotation();
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
         PerfectValidator validator = new PerfectValidator();
-        CheckmateUsingHold<Action> checkmate = new CheckmateUsingHold<>(minoFactory, minoShifter, validator);
+        Checkmate<Action> checkmate = new CheckmateUsingHold<>(minoFactory, validator);
         Stopwatch stopwatch = Stopwatch.createStoppedStopwatch();
         return new CheckmateInvoker(checkmate, candidate, maxClearLine, stopwatch);
     }
 
-    private final CheckmateUsingHold<Action> checkmate;
+    public static CheckmateInvoker createPerfectCheckmateNoHold(int maxClearLine) {
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        MinoRotation minoRotation = new MinoRotation();
+        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+        PerfectValidator validator = new PerfectValidator();
+        Checkmate<Action> checkmate = new CheckmateNoHold<>(minoFactory, validator);
+        Stopwatch stopwatch = Stopwatch.createStoppedStopwatch();
+        return new CheckmateInvoker(checkmate, candidate, maxClearLine, stopwatch);
+    }
+
+    private final Checkmate<Action> checkmate;
     private final Candidate<Action> candidate;
     private final int maxClearLine;
 
@@ -38,7 +51,7 @@ public class CheckmateInvoker {
 
     private List<Result> lastResults = new ArrayList<>();
 
-    private CheckmateInvoker(CheckmateUsingHold<Action> checkmate, Candidate<Action> candidate, int maxClearLine, Stopwatch stopwatch) {
+    private CheckmateInvoker(Checkmate<Action> checkmate, Candidate<Action> candidate, int maxClearLine, Stopwatch stopwatch) {
         this.checkmate = checkmate;
         this.candidate = candidate;
         this.maxClearLine = maxClearLine;

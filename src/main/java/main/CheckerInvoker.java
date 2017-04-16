@@ -23,7 +23,7 @@ public class CheckerInvoker {
         MinoRotation minoRotation = new MinoRotation();
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
         PerfectValidator validator = new PerfectValidator();
-        CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, minoShifter, validator);
+        CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
         return new CheckerInvoker(checker, candidate, maxClearLine, Stopwatch.createStoppedStopwatch());
     }
 

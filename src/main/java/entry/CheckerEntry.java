@@ -2,7 +2,7 @@ package entry;
 
 import concurrent.checker.CheckerUsingHoldThreadLocal;
 import concurrent.LockedCandidateThreadLocal;
-import concurrent.checker.invoker.v1.ConcurrentUsingHoldCheckerInvoker;
+import concurrent.checker.invoker.using_hold.ConcurrentCheckerUsingHoldInvoker;
 import concurrent.checker.invoker.Pair;
 import core.field.Field;
 import core.field.FieldView;
@@ -68,7 +68,7 @@ public class CheckerEntry {
         ExecutorService executorService = Executors.newFixedThreadPool(core);
         CheckerUsingHoldThreadLocal<Action> checkerThreadLocal = new CheckerUsingHoldThreadLocal<>();
         LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
-        ConcurrentUsingHoldCheckerInvoker invoker = new ConcurrentUsingHoldCheckerInvoker(executorService, candidateThreadLocal, checkerThreadLocal);
+        ConcurrentCheckerUsingHoldInvoker invoker = new ConcurrentCheckerUsingHoldInvoker(executorService, candidateThreadLocal, checkerThreadLocal);
 
         output("Available processors = " + core);
 

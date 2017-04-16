@@ -60,7 +60,7 @@ public class BuilderMain {
         FixPlaceLockedCandidate candidate = new FixPlaceLockedCandidate(minoFactory, minoShifter, minoRotation, maxY, field);
         BuildValidator validator = new BuildValidator(field);
 
-        CheckerUsingHold<Action> builder = new CheckerUsingHold<>(minoFactory, minoShifter, validator);
+        CheckerUsingHold<Action> builder = new CheckerUsingHold<>(minoFactory, validator);
 
         Stopwatch stopwatch = Stopwatch.createStoppedStopwatch();
         VisitedTree visitedTree = new VisitedTree();

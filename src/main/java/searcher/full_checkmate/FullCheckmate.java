@@ -1,4 +1,4 @@
-package searcher.checkmate2;
+package searcher.full_checkmate;
 
 import action.candidate.Candidate;
 import core.field.Field;
@@ -9,6 +9,7 @@ import searcher.common.validator.FullValidator;
 
 import java.util.List;
 
+// 探索時のチェックに通常より多くの情報にアクセスできるサーチャー
 public interface FullCheckmate<T extends Action> {
     List<Result> search(Field initField, List<Block> pieces, Candidate<T> candidate, FullValidator validator, int maxClearLine, int maxDepth);
 

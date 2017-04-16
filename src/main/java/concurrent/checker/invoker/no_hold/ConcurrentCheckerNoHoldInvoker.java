@@ -1,4 +1,4 @@
-package concurrent.checker.invoker.v2;
+package concurrent.checker.invoker.no_hold;
 
 import action.candidate.Candidate;
 import concurrent.checker.CheckerNoHoldThreadLocal;
@@ -14,22 +14,22 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-public class ConcurrentNoHoldCheckerInvoker {
+public class ConcurrentCheckerNoHoldInvoker {
     private final ExecutorService executorService;
     private final ThreadLocal<Candidate<Action>> candidateThreadLocal;
     private final ThreadLocal<Checker<Action>> checkerThreadLocal;
 
-    public ConcurrentNoHoldCheckerInvoker(ExecutorService executorService, ThreadLocal<Candidate<Action>> candidateThreadLocal, CheckerNoHoldThreadLocal<Action> checkerThreadLocal) {
+    public ConcurrentCheckerNoHoldInvoker(ExecutorService executorService, ThreadLocal<Candidate<Action>> candidateThreadLocal, CheckerNoHoldThreadLocal<Action> checkerThreadLocal) {
         this.executorService = executorService;
         this.candidateThreadLocal = candidateThreadLocal;
         this.checkerThreadLocal = checkerThreadLocal;
     }
 
     public List<Pair<List<Block>, Boolean>> search(Field field, List<List<Block>> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
-        ObjV2 obj = new ObjV2(field, maxClearLine, maxDepth, candidateThreadLocal, checkerThreadLocal);
-        ArrayList<TaskV2> tasks = new ArrayList<>();
+        Obj obj = new Obj(field, maxClearLine, maxDepth, candidateThreadLocal, checkerThreadLocal);
+        ArrayList<Task> tasks = new ArrayList<>();
         for (List<Block> target : searchingPieces)
-            tasks.add(new TaskV2(obj, target));
+            tasks.add(new Task(obj, target));
 
         List<Future<Pair<List<Block>, Boolean>>> futureResults = executorService.invokeAll(tasks);
 

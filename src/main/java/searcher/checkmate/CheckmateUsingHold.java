@@ -4,7 +4,6 @@ import action.candidate.Candidate;
 import core.field.Field;
 import core.mino.Block;
 import core.mino.MinoFactory;
-import core.mino.MinoShifter;
 import searcher.common.Result;
 import searcher.common.SimpleSearcherCore;
 import searcher.common.action.Action;
@@ -19,7 +18,7 @@ public class CheckmateUsingHold<T extends Action> implements Checkmate<T> {
     private final CheckmateDataPool dataPool;
     private final SimpleSearcherCore<T> searcherCore;
 
-    public CheckmateUsingHold(MinoFactory minoFactory, MinoShifter minoShifter, Validator validator) {
+    public CheckmateUsingHold(MinoFactory minoFactory, Validator validator) {
         this.dataPool = new CheckmateDataPool();
         this.searcherCore = new SimpleSearcherCore<T>(minoFactory, validator, dataPool);
     }

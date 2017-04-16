@@ -36,4 +36,8 @@ public class Operation {
     public int getY() {
         return y;
     }
+
+    public int toNumber() {
+        return ActionParser.parseToInt(block, rotate, x, y);
+    }
 }

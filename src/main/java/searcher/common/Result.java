@@ -33,9 +33,12 @@ public class Result {
     }
 
     public List<Operation> createOperations() {
-        int[] operationNumbers = order.getHistory().getOperationNumbers();
+        OperationHistory history = order.getHistory();
+        int[] operationNumbers = history.getOperationNumbers();
+        int max = history.getNextIndex();
         ArrayList<Operation> operations = new ArrayList<>();
-        for (int value : operationNumbers) {
+        for (int i = 0; i < max; i++) {
+            int value = operationNumbers[i];
             Operation operation = ActionParser.parseToOperation(value);
             operations.add(operation);
         }

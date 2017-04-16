@@ -41,7 +41,7 @@ public class LongBoardMapTest {
 
 //            System.out.println(FieldView.toString(new SmallField(deleted)));
 
-            long inserted = LongBoardMap.insertLine(deleted, mask);
+            long inserted = LongBoardMap.insertBlackLine(deleted, mask);
 
 //            System.out.println(FieldView.toString(new SmallField(inserted)));
 
