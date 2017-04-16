@@ -8,7 +8,7 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import misc.Stopwatch;
-import searcher.checkmate.Checkmate;
+import searcher.checkmate.CheckmateUsingHold;
 import searcher.common.Result;
 import searcher.common.action.Action;
 import searcher.common.validator.PerfectValidator;
@@ -25,12 +25,12 @@ public class CheckmateInvoker {
         MinoRotation minoRotation = new MinoRotation();
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
         PerfectValidator validator = new PerfectValidator();
-        Checkmate<Action> checkmate = new Checkmate<>(minoFactory, validator);
+        CheckmateUsingHold<Action> checkmate = new CheckmateUsingHold<>(minoFactory, minoShifter, validator);
         Stopwatch stopwatch = Stopwatch.createStoppedStopwatch();
         return new CheckmateInvoker(checkmate, candidate, maxClearLine, stopwatch);
     }
 
-    private final Checkmate<Action> checkmate;
+    private final CheckmateUsingHold<Action> checkmate;
     private final Candidate<Action> candidate;
     private final int maxClearLine;
 
@@ -38,7 +38,7 @@ public class CheckmateInvoker {
 
     private List<Result> lastResults = new ArrayList<>();
 
-    private CheckmateInvoker(Checkmate<Action> checkmate, Candidate<Action> candidate, int maxClearLine, Stopwatch stopwatch) {
+    private CheckmateInvoker(CheckmateUsingHold<Action> checkmate, Candidate<Action> candidate, int maxClearLine, Stopwatch stopwatch) {
         this.checkmate = checkmate;
         this.candidate = candidate;
         this.maxClearLine = maxClearLine;

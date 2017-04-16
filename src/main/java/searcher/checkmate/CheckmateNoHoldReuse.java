@@ -5,47 +5,50 @@ import core.field.Field;
 import core.field.SmallField;
 import core.mino.Block;
 import core.mino.MinoFactory;
+import core.mino.MinoShifter;
 import searcher.common.Result;
-import searcher.common.SearcherCore;
+import searcher.common.SimpleSearcherCore;
 import searcher.common.action.Action;
-import searcher.common.order.Order;
 import searcher.common.order.NormalOrder;
+import searcher.common.order.Order;
 import searcher.common.validator.Validator;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
-public class CheckmateReuse<T extends Action> {
+// TODO: write unittest
+public class CheckmateNoHoldReuse<T extends Action> implements Checkmate<T> {
     private final CheckmateDataPool dataPool;
-    private final SearcherCore<T> searcherCore;
+    private final SimpleSearcherCore<T> searcherCore;
 
     private List<TreeSet<Order>> memento = null;
     private Block[] lastBlocks = null;
     private Field lastField = new SmallField();
 
-    public CheckmateReuse(MinoFactory minoFactory, Validator validator) {
+    public CheckmateNoHoldReuse(MinoFactory minoFactory, MinoShifter minoShifter, Validator validator) {
         this.dataPool = new CheckmateDataPool();
-        this.searcherCore = new SearcherCore<T>(minoFactory, validator, dataPool);
+        this.searcherCore = new SimpleSearcherCore<T>(minoFactory, validator, dataPool);
     }
 
-    // holdあり
+    @Override
     public List<Result> search(Field initField, List<Block> pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
         Block[] blocks = new Block[pieces.size()];
         return search(initField, pieces.toArray(blocks), candidate, maxClearLine, maxDepth);
     }
 
+    @Override
     public List<Result> search(Field initField, Block[] pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
         TreeSet<Order> orders = new TreeSet<>();
 
         // 最初の探索開始depthとordersを調整
-        int startDepth = -1;
+        int startDepth;
         if (!equalsField(lastField, initField) || lastBlocks == null) {
             // mementoの初期化
             // 初めから
             memento = new ArrayList<>();
-            orders.add(new NormalOrder(initField, pieces[0], maxClearLine, maxDepth));
-            startDepth = 1;
+            orders.add(new NormalOrder(initField, null, maxClearLine, maxDepth));
+            startDepth = 0;
             memento.add(new TreeSet<>(orders));
         } else {
             int reuseIndex = -1;
@@ -58,8 +61,8 @@ public class CheckmateReuse<T extends Action> {
 
             if (reuseIndex < 0) {
                 memento = new ArrayList<>();
-                orders.add(new NormalOrder(initField, pieces[0], maxClearLine, maxDepth));
-                startDepth = 1;
+                orders.add(new NormalOrder(initField, null, maxClearLine, maxDepth));
+                startDepth = 0;
                 memento.add(new TreeSet<>(orders));
             } else if (reuseIndex == pieces.length - 1) {
                 return dataPool.getResults();
@@ -72,23 +75,15 @@ public class CheckmateReuse<T extends Action> {
 
         dataPool.initFirst();
 
-        for (int depth = startDepth; depth <= maxDepth; depth++) {
+        for (int depth = startDepth; depth < maxDepth; depth++) {
             dataPool.initEachDepth();
 
-            boolean isLast = depth == maxDepth;
+            assert depth < pieces.length;
+            boolean isLast = depth == maxDepth - 1;
 
-            if (depth < pieces.length) {
-                Block drawn = pieces[depth];
-
-                for (int count = 0, size = orders.size(); count < size; count++) {
-                    Order order = orders.pollFirst();
-                    searcherCore.stepWithNext(candidate, drawn, order, isLast);
-                }
-            } else {
-                for (int count = 0, size = orders.size(); count < size; count++) {
-                    Order order = orders.pollFirst();
-                    searcherCore.stepWhenNoNext(candidate, order, isLast);
-                }
+            for (int count = 0, size = orders.size(); count < size; count++) {
+                Order order = orders.pollFirst();
+                searcherCore.stepWithNextNoHold(candidate, pieces[depth], order, isLast);
             }
 
             orders = dataPool.getNexts();

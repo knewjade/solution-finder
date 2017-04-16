@@ -22,7 +22,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.lessThan;
 
-public class CheckmateReuseTest {
+public class CheckmateUsingHoldReuseTest {
     @Test
     public void testCheckmateWhenSwappingBlock() throws Exception {
         // Invoker
@@ -44,8 +44,8 @@ public class CheckmateReuseTest {
         MinoRotation minoRotation = new MinoRotation();
         PerfectValidator validator = new PerfectValidator();
 
-        Checkmate<Action> checkmate = new Checkmate<>(minoFactory, validator);
-        CheckmateReuse<Action> CheckmateReuse = new CheckmateReuse<>(minoFactory, validator);
+        CheckmateUsingHold<Action> checkmate = new CheckmateUsingHold<>(minoFactory, minoShifter, validator);
+        CheckmateUsingHoldReuse<Action> CheckmateReuse = new CheckmateUsingHoldReuse<>(validator, minoShifter, minoFactory);
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         Stopwatch stopwatchNoUse = Stopwatch.createStoppedStopwatch();

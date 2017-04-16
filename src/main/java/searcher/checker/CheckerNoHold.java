@@ -4,8 +4,9 @@ import action.candidate.Candidate;
 import core.field.Field;
 import core.mino.Block;
 import core.mino.MinoFactory;
+import core.mino.MinoShifter;
 import searcher.common.Result;
-import searcher.common.SearcherCore;
+import searcher.common.SimpleSearcherCore;
 import searcher.common.action.Action;
 import searcher.common.order.DepthOrder;
 import searcher.common.order.Order;
@@ -15,11 +16,11 @@ import java.util.List;
 
 public class CheckerNoHold<T extends Action> implements Checker<T> {
     private final CheckerDataPool dataPool;
-    private final SearcherCore<T> searcherCore;
+    private final SimpleSearcherCore<T> searcherCore;
 
-    public CheckerNoHold(MinoFactory minoFactory, Validator validator) {
+    public CheckerNoHold(MinoFactory minoFactory, MinoShifter minoShifter, Validator validator) {
         this.dataPool = new CheckerDataPool();
-        this.searcherCore = new SearcherCore<>(minoFactory, validator, dataPool);
+        this.searcherCore = new SimpleSearcherCore<>(minoFactory, validator, dataPool);
     }
 
     // holdあり

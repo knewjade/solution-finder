@@ -1,6 +1,6 @@
 import core.field.Field;
 import core.field.FieldFactory;
-import entry.CheckerEntry;
+import entry.CheckmateEntry;
 import misc.PiecesGenerator;
 import misc.SyntaxException;
 
@@ -60,7 +60,8 @@ public class Main {
         Field field = FieldFactory.createField(marks);
 
         try (Writer fileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("last_output.txt"), "utf-8"))) {
-            CheckerEntry entry = new CheckerEntry(fileWriter);
+//            CheckerEntry entry = new CheckerEntry(fileWriter);
+            CheckmateEntry entry = new CheckmateEntry(fileWriter);
             entry.invoke(field, patterns, maxClearLine);
         }
     }

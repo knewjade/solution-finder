@@ -24,7 +24,7 @@ import static core.mino.Block.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class CheckmateTest {
+public class CheckmateUsingHoldTest {
     @Test
     public void testLong9() throws Exception {
         // Invoker
@@ -65,5 +65,28 @@ public class CheckmateTest {
 
         List<Result> results = invoker.getLastResults();
         assertThat(ResultHelper.uniquify(results).size(), is(44));
+    }
+
+    @Test
+    public void testMultiPath() throws Exception {
+        // Invoker
+        List<Block> blocks = Arrays.asList(J, L, S, Z);
+        int maxClearLine = 3;
+        CheckmateInvoker invoker = CheckmateInvoker.createPerfectCheckmate(maxClearLine);
+
+        // Field
+        String marks = "" +
+                "X________X" +
+                "XX__XX__XX" +
+                "XX__XX__XX" +
+                "";
+        Field field = FieldFactory.createField(marks);
+
+        // Measure
+        invoker.measure(field, blocks, 1);
+        invoker.show(true);
+
+        List<Result> results = invoker.getLastResults();
+        assertThat(ResultHelper.uniquify(results).size(), is(4));
     }
 }

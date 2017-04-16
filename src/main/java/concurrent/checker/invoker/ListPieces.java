@@ -24,6 +24,11 @@ public class ListPieces implements Pieces {
     }
 
     @Override
+    public void addLastTwo(Block block) {
+        blocks.add(blocks.size() - 1, block);
+    }
+
+    @Override
     public void stock(Block block) {
         blocks.add(stockIndex, block);
         stockIndex = blocks.size();

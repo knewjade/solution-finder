@@ -16,7 +16,7 @@ public class OrderLookupTest {
     public void reverseWithJustBlocks() throws Exception {
         List<Block> blocks = Arrays.asList(T, I, O, S, Z, J, L, T, I, O, S, Z, J, L);
         for (int depth = 1; depth < blocks.size(); depth++) {
-            ArrayList<Pieces> reverse = OrderLookup.reverse(blocks, depth);
+            ArrayList<Pieces> reverse = OrderLookup.reverse(blocks.subList(0, depth), depth);
             assertThat(reverse.size(), is((int) Math.pow(2, depth - 1)));
         }
     }
@@ -36,6 +36,15 @@ public class OrderLookupTest {
         for (int depth = 1; depth < blocks.size(); depth++) {
             ArrayList<Pieces> reverse = OrderLookup.reverse(blocks.subList(0, depth), depth + 1);
             assertThat(reverse.size(), is((int) Math.pow(2, depth)));
+        }
+    }
+
+    @Test
+    public void forwardWithJustBlocks() throws Exception {
+        List<Block> blocks = Arrays.asList(T, I, O, S, Z, J, L, T, I, O, S, Z, J, L);
+        for (int depth = 2; depth < blocks.size(); depth++) {
+            ArrayList<Pieces> forward = OrderLookup.forward(blocks.subList(0, depth), depth);
+            assertThat(forward.size(), is((int) Math.pow(2, depth - 1)));
         }
     }
 }

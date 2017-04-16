@@ -47,6 +47,7 @@ public class ConcurrentNoHoldCheckerInvokerTest {
         }
 
         System.out.println(tree.show());
+        executorService.shutdown();
 
         return tree;
     }

@@ -9,6 +9,11 @@ import java.util.*;
 public class ResultHelper {
     public static List<Result> uniquify(List<Result> results) {
         HashSet<Result> set = new HashSet<>(results);
+        List<Result> unique = sort(set);
+        return unique;
+    }
+
+    public static List<Result> sort(HashSet<Result> set) {
         List<Result> unique = new ArrayList<>(set);
         unique.sort((a, b) -> {
             int compare5 = Objects.compare(a.getLastHold(), b.getLastHold(), Comparator.comparingInt(Block::getNumber));

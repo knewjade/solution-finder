@@ -44,6 +44,9 @@ public class ConcurrentUsingHoldCheckerInvokerTest {
             tree.set(result, pieces);
         }
 
+        System.out.println(tree.show());
+        executorService.shutdown();
+
         return tree;
     }
 

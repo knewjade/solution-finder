@@ -5,26 +5,22 @@ import core.field.Field;
 import core.mino.Block;
 import core.mino.Mino;
 import core.mino.MinoFactory;
-import core.mino.MinoShifter;
 import searcher.common.action.Action;
 import searcher.common.order.Order;
 import searcher.common.order.NormalOrder;
 import searcher.common.validator.Validator;
 
-import java.util.HashSet;
 import java.util.Set;
 
-public class SearcherCore<T extends Action> {
+public class SimpleSearcherCore<T extends Action> {
     private final MinoFactory minoFactory;
     private final Validator validator;
-    private final MinoShifter shifter;
     private final DataPool dataPool;
 
-    public SearcherCore(MinoFactory minoFactory, Validator validator, DataPool dataPool) {
+    public SimpleSearcherCore(MinoFactory minoFactory, Validator validator, DataPool dataPool) {
         this.minoFactory = minoFactory;
         this.validator = validator;
         this.dataPool = dataPool;
-        this.shifter = new MinoShifter();
     }
 
     public void stepWithNext(Candidate<T> candidate, Block drawn, Order order, boolean isLast) {
@@ -51,12 +47,8 @@ public class SearcherCore<T extends Action> {
         int max = order.getMaxClearLine();
         Set<T> candidateList = candidate.search(currentField, drawn, max);
 
-        HashSet<Action> actions = new HashSet<>();
-        for (T action : candidateList)
-            actions.add(shifter.createTransformedAction(drawn, action));
-
         OperationHistory history = order.getHistory();
-        for (Action action : actions) {
+        for (T action : candidateList) {
             Field field = currentField.freeze(max);
             Mino mino = minoFactory.create(drawn, action.getRotate());
             field.putMino(mino, action.getX(), action.getY());

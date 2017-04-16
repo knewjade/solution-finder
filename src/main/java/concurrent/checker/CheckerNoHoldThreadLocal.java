@@ -1,6 +1,7 @@
 package concurrent.checker;
 
 import core.mino.MinoFactory;
+import core.mino.MinoShifter;
 import searcher.checker.Checker;
 import searcher.checker.CheckerNoHold;
 import searcher.common.action.Action;
@@ -10,7 +11,8 @@ public class CheckerNoHoldThreadLocal<T extends Action> extends ThreadLocal<Chec
     @Override
     protected Checker<T> initialValue() {
         MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
         PerfectValidator validator = new PerfectValidator();
-        return new CheckerNoHold<>(minoFactory, validator);
+        return new CheckerNoHold<>(minoFactory, minoShifter, validator);
     }
 }

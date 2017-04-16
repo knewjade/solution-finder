@@ -13,11 +13,11 @@ public class CheckmateDataPool implements DataPool {
 
     private int mergins = 0;
 
-    void initFirst() {
+    public void initFirst() {
         this.results = new ArrayList<>();
     }
 
-    void initEachDepth() {
+    public void initEachDepth() {
         mergins = 0;
         this.nexts = new TreeSet<>();
     }
@@ -34,11 +34,11 @@ public class CheckmateDataPool implements DataPool {
         results.add(result);
     }
 
-    TreeSet<Order> getNexts() {
+    public TreeSet<Order> getNexts() {
         return nexts;
     }
 
-    ArrayList<Result> getResults() {
+    public ArrayList<Result> getResults() {
         return results;
     }
 }

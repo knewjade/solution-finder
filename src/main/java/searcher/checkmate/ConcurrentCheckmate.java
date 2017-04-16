@@ -5,11 +5,12 @@ import concurrent.LockedCandidateThreadLocal;
 import core.field.Field;
 import core.mino.Block;
 import core.mino.MinoFactory;
+import core.mino.MinoShifter;
 import searcher.common.Result;
-import searcher.common.SearcherCore;
+import searcher.common.SimpleSearcherCore;
 import searcher.common.action.Action;
-import searcher.common.order.Order;
 import searcher.common.order.NormalOrder;
+import searcher.common.order.Order;
 import searcher.common.validator.Validator;
 
 import java.util.ArrayList;
@@ -23,16 +24,16 @@ public class ConcurrentCheckmate<T extends Action> {
     private final ExecutorService executorService;
 
     private final ConcurrentCheckmateDataPool dataPool;
-    private final SearcherCore<Action> searcherCore;
+    private final SimpleSearcherCore<Action> searcherCore;
 
     private CountDownLatch latch;
 
-    public ConcurrentCheckmate(LockedCandidateThreadLocal threadLocal, MinoFactory minoFactory, Validator validator, ExecutorService executorService) {
+    public ConcurrentCheckmate(LockedCandidateThreadLocal threadLocal, MinoFactory minoFactory, MinoShifter minoShifter, Validator validator, ExecutorService executorService) {
         this.candidateThreadLocal = threadLocal;
         this.executorService = executorService;
 
         this.dataPool = new ConcurrentCheckmateDataPool();
-        this.searcherCore = new SearcherCore<>(minoFactory, validator, dataPool);
+        this.searcherCore = new SimpleSearcherCore<>(minoFactory, validator, dataPool);
     }
 
     // holdあり
@@ -93,7 +94,7 @@ public class ConcurrentCheckmate<T extends Action> {
                 try {
                     latch.await();
                 } catch (InterruptedException e) {
-                    throw new IllegalStateException("Error in Searching Checkmate Solutions");
+                    throw new IllegalStateException("Error in Searching CheckmateUsingHold Solutions");
                 }
             } while (latch.getCount() != 0);
 
@@ -109,11 +110,11 @@ public class ConcurrentCheckmate<T extends Action> {
         private final LockedCandidateThreadLocal candidateThreadLocal;
         private final List<Order> tasks;
         private final boolean isLast;
-        private final SearcherCore<Action> searcherCore;
+        private final SimpleSearcherCore<Action> searcherCore;
         private final CountDownLatch latch;
         private final Block drawn;
 
-        private MyTask(LockedCandidateThreadLocal candidateThreadLocal, List<Order> tasks, boolean isLast, SearcherCore<Action> searcherCore, CountDownLatch latch, Block drawn) {
+        private MyTask(LockedCandidateThreadLocal candidateThreadLocal, List<Order> tasks, boolean isLast, SimpleSearcherCore<Action> searcherCore, CountDownLatch latch, Block drawn) {
             this.candidateThreadLocal = candidateThreadLocal;
             this.tasks = tasks;
             this.isLast = isLast;
@@ -135,10 +136,10 @@ public class ConcurrentCheckmate<T extends Action> {
         private final LockedCandidateThreadLocal candidateThreadLocal;
         private final List<Order> tasks;
         private final boolean isLast;
-        private final SearcherCore<Action> searcherCore;
+        private final SimpleSearcherCore<Action> searcherCore;
         private final CountDownLatch latch;
 
-        private MyLastTask(LockedCandidateThreadLocal candidateThreadLocal, List<Order> tasks, boolean isLast, SearcherCore<Action> searcherCore, CountDownLatch latch) {
+        private MyLastTask(LockedCandidateThreadLocal candidateThreadLocal, List<Order> tasks, boolean isLast, SimpleSearcherCore<Action> searcherCore, CountDownLatch latch) {
             this.candidateThreadLocal = candidateThreadLocal;
             this.tasks = tasks;
             this.isLast = isLast;

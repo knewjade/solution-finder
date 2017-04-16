@@ -34,7 +34,8 @@ public class OperationHistory {
             return "";
 
         StringBuilder str = new StringBuilder();
-        for (int history : operationNumbers) {
+        for (int i = 0; i < index; i++) {
+            int history = operationNumbers[i];
             Operation operation = ActionParser.parseToOperation(history);
             str.append(operation).append(" / ");
         }

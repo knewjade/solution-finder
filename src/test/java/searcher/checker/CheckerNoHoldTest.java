@@ -1,7 +1,6 @@
 package searcher.checker;
 
 import action.candidate.Candidate;
-import action.candidate.LimitIterationCandidate;
 import action.candidate.LockedCandidate;
 import concurrent.checker.invoker.Pair;
 import core.field.Field;
@@ -56,7 +55,7 @@ public class CheckerNoHoldTest {
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = new MinoRotation();
         PerfectValidator validator = new PerfectValidator();
-        CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
+        CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, minoShifter, validator);
 
         // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
@@ -93,7 +92,7 @@ public class CheckerNoHoldTest {
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = new MinoRotation();
         PerfectValidator validator = new PerfectValidator();
-        CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
+        CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, minoShifter, validator);
 
         // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
@@ -128,7 +127,7 @@ public class CheckerNoHoldTest {
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = new MinoRotation();
         PerfectValidator validator = new PerfectValidator();
-        CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
+        CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, minoShifter, validator);
 
         // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
@@ -169,7 +168,7 @@ public class CheckerNoHoldTest {
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = new MinoRotation();
         PerfectValidator validator = new PerfectValidator();
-        CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
+        CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, minoShifter, validator);
 
         // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
@@ -177,43 +176,6 @@ public class CheckerNoHoldTest {
         for (Pair<List<Block>, Boolean> testCase : testCases) {
             List<Block> blocks = testCase.getKey();
             assertThat(checker.check(field, blocks, candidate, maxClearLine, maxDepth), is(testCase.getValue()));
-        }
-    }
-
-    @Test
-    public void test() throws Exception {
-        List<Pair<List<Block>, Boolean>> testCases = new ArrayList<Pair<List<Block>, Boolean>>() {
-            {
-                add(new Pair<>(Arrays.asList(O, T, Z, S), false));
-            }
-        };
-
-        // Field
-        String marks = "" +
-                "XXX____XXX" +
-                "XXX_____XX" +
-                "XXXX___XXX" +
-                "";
-        Field field = FieldFactory.createField(marks);
-        int maxClearLine = 3;
-        int maxDepth = 3;
-
-        // Initialize
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
-        PerfectValidator validator = new PerfectValidator();
-        CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
-
-        // Measure
-        Candidate<Action> candidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 3);
-//        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
-
-        for (Pair<List<Block>, Boolean> testCase : testCases) {
-            List<Block> blocks = testCase.getKey();
-            boolean check = checker.check(field, blocks, candidate, maxClearLine, maxDepth);
-            System.out.println(checker.getResult());
-            assertThat(check, is(testCase.getValue()));
         }
     }
 }
