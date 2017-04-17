@@ -2,6 +2,7 @@ package concurrent.checker.invoker.no_hold;
 
 import action.candidate.Candidate;
 import concurrent.checker.CheckerNoHoldThreadLocal;
+import concurrent.checker.invoker.ConcurrentCheckerInvoker;
 import concurrent.checker.invoker.Pair;
 import core.field.Field;
 import core.mino.Block;
@@ -14,7 +15,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-public class ConcurrentCheckerNoHoldInvoker {
+public class ConcurrentCheckerNoHoldInvoker implements ConcurrentCheckerInvoker {
     private final ExecutorService executorService;
     private final ThreadLocal<Candidate<Action>> candidateThreadLocal;
     private final ThreadLocal<Checker<Action>> checkerThreadLocal;
@@ -25,6 +26,7 @@ public class ConcurrentCheckerNoHoldInvoker {
         this.checkerThreadLocal = checkerThreadLocal;
     }
 
+    @Override
     public List<Pair<List<Block>, Boolean>> search(Field field, List<List<Block>> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
         Obj obj = new Obj(field, maxClearLine, maxDepth, candidateThreadLocal, checkerThreadLocal);
         ArrayList<Task> tasks = new ArrayList<>();

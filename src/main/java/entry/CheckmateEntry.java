@@ -41,26 +41,20 @@ public class CheckmateEntry {
     private static final String LINE_SEPARATOR = System.lineSeparator();
 
     private final List<Writer> writers;
-    private final boolean isOutputToConsole;
     private final File allFile;
     private final File uniqueFile;
+    private final Settings settings;
+    private final boolean isOutputToConsole;
 
-    public CheckmateEntry(Writer writer, File allFile, File uniqueFile) {
-        this(Collections.singletonList(writer), allFile, uniqueFile);
+    public CheckmateEntry(Writer writer, File allFile, File uniqueFile, Settings settings) {
+        this(Collections.singletonList(writer), allFile, uniqueFile, settings, true);
     }
 
-    CheckmateEntry(Writer writer, File allFile, File uniqueFile, boolean isOutputToConsole) {
-        this(Collections.singletonList(writer), allFile, uniqueFile, isOutputToConsole);
-    }
-
-    private CheckmateEntry(List<Writer> writers, File allFile, File uniqueFile) {
-        this(writers, allFile, uniqueFile, true);
-    }
-
-    private CheckmateEntry(List<Writer> writers, File allFile, File uniqueFile, boolean isOutputToConsole) {
+    private CheckmateEntry(List<Writer> writers, File allFile, File uniqueFile, Settings settings, boolean isOutputToConsole) {
         this.writers = writers;
         this.allFile = allFile;
         this.uniqueFile = uniqueFile;
+        this.settings = settings;
         this.isOutputToConsole = isOutputToConsole;
     }
 
@@ -109,15 +103,20 @@ public class CheckmateEntry {
         // ========================================
         output("# Enumerate pieces");
 
-        // 必要なミノ分（maxDepth + 1）だけを取り出す。maxDepth + 1だけないときはブロックの個数をそのまま指定
-        int combinationPopCount = maxDepth + 1;
+        // Holdができるときは必要なミノ分（maxDepth + 1）だけを取り出す。maxDepth + 1だけないときはブロックの個数をそのまま指定
+        int combinationPopCount = settings.isUsingHold() ? maxDepth + 1 : maxDepth;
         if (piecesDepth < combinationPopCount)
             combinationPopCount = piecesDepth;
 
         output("Piece pop count = " + combinationPopCount);
 
         // ホールドありのパターンから複数のホールドなしパターンに分解する
-        List<List<Block>> searchingPieces = createSearchingPieces(generator, combinationPopCount, maxDepth);
+        List<List<Block>> searchingPieces;
+        if (settings.isUsingHold()) {
+            searchingPieces = createSearchingPiecesUsingHold(generator, combinationPopCount, maxDepth);
+        } else {
+            searchingPieces = createSearchingPiecesNoHold(generator, maxDepth);
+        }
 
         output("Searching pattern size (no hold, no dup.) = " + searchingPieces.size());
 
@@ -296,7 +295,7 @@ public class CheckmateEntry {
         return expectField;
     }
 
-    private List<List<Block>> createSearchingPieces(PiecesGenerator generator, int combinationPopCount, int maxDepth) throws IOException {
+    private List<List<Block>> createSearchingPiecesUsingHold(PiecesGenerator generator, int combinationPopCount, int maxDepth) throws IOException {
         int counter = 0;
         List<List<Block>> searchingPieces = new ArrayList<>();
         VisitedTree duplicateCheckTree = new VisitedTree();
@@ -320,6 +319,32 @@ public class CheckmateEntry {
                     searchingPieces.add(blocksWithNoHold);
                     duplicateCheckTree.success(blocksWithNoHold);
                 }
+            }
+        }
+
+        output("Searching pattern size (duplicate) = " + counter);
+
+        return searchingPieces;
+    }
+
+    private List<List<Block>> createSearchingPiecesNoHold(PiecesGenerator generator, int maxDepth) throws IOException {
+        int counter = 0;
+        List<List<Block>> searchingPieces = new ArrayList<>();
+        VisitedTree duplicateCheckTree = new VisitedTree();
+        boolean isOverPieces = maxDepth < generator.getDepth();
+
+        // 組み合わせの列挙
+        for (SafePieces pieces : generator) {
+            counter++;
+            List<Block> blocks = pieces.getBlocks();
+
+            if (isOverPieces)
+                blocks = blocks.subList(0, maxDepth);
+
+            // 重複するホールドなしパターンを除去
+            if (!duplicateCheckTree.isVisited(blocks)) {
+                searchingPieces.add(blocks);
+                duplicateCheckTree.success(blocks);
             }
         }
 

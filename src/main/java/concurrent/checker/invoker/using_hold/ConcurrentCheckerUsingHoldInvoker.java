@@ -2,6 +2,7 @@ package concurrent.checker.invoker.using_hold;
 
 import action.candidate.Candidate;
 import concurrent.checker.CheckerUsingHoldThreadLocal;
+import concurrent.checker.invoker.ConcurrentCheckerInvoker;
 import concurrent.checker.invoker.Pair;
 import core.field.Field;
 import core.mino.Block;
@@ -15,7 +16,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-public class ConcurrentCheckerUsingHoldInvoker {
+public class ConcurrentCheckerUsingHoldInvoker implements ConcurrentCheckerInvoker {
     private final ExecutorService executorService;
     private final ThreadLocal<Candidate<Action>> candidateThreadLocal;
     private final ThreadLocal<Checker<Action>> checkerThreadLocal;
@@ -26,6 +27,7 @@ public class ConcurrentCheckerUsingHoldInvoker {
         this.checkerThreadLocal = checkerThreadLocal;
     }
 
+    @Override
     public List<Pair<List<Block>, Boolean>> search(Field field, List<List<Block>> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
         ConcurrentVisitedTree visitedTree = new ConcurrentVisitedTree();
 

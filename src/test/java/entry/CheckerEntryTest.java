@@ -10,12 +10,11 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class CheckerEntryTest {
     @Test
-    public void invoke() throws Exception {
+    public void invokeUsingHoldJust() throws Exception {
         // Field
         String marks = "" +
                 "XX________" +
@@ -31,7 +30,8 @@ public class CheckerEntryTest {
 
         Field field = FieldFactory.createField(marks);
         StringWriter writer = new StringWriter();
-        CheckerEntry entry = new CheckerEntry(writer, false);
+        Settings settings = new Settings();
+        CheckerEntry entry = new CheckerEntry(writer, settings, false);
 
         entry.invoke(field, patterns, maxClearLine);
 
@@ -42,7 +42,7 @@ public class CheckerEntryTest {
     }
 
     @Test
-    public void invoke2() throws Exception {
+    public void invokeUsingHoldOver() throws Exception {
         // Field
         String marks = "" +
                 "XX_____XXX" +
@@ -64,7 +64,8 @@ public class CheckerEntryTest {
 
         Field field = FieldFactory.createField(marks);
         StringWriter writer = new StringWriter();
-        CheckerEntry entry = new CheckerEntry(writer, false);
+        Settings settings = new Settings();
+        CheckerEntry entry = new CheckerEntry(writer, settings, false);
 
         entry.invoke(field, patterns, maxClearLine);
 
@@ -72,6 +73,59 @@ public class CheckerEntryTest {
 
         String expected = "success = 84.64% (711/840)";
         assertThat(output, containsString(expected));
+    }
 
+    @Test
+    public void invokeNoHoldJust() throws Exception {
+        // Field
+        String marks = "" +
+                "X________X" +
+                "X________X" +
+                "XX______XX" +
+                "XXXXXX__XX" +
+                "";
+        int maxClearLine = 4;
+
+        List<String> patterns = Collections.singletonList("*p6");
+
+        Field field = FieldFactory.createField(marks);
+        StringWriter writer = new StringWriter();
+        Settings settings = new Settings();
+        settings.setUsingHold(false);
+        CheckerEntry entry = new CheckerEntry(writer, settings, false);
+
+        entry.invoke(field, patterns, maxClearLine);
+
+        String output = writer.toString();
+
+        String expected = "success = 28.55% (1439/5040)";
+        assertThat(output, containsString(expected));
+    }
+
+    @Test
+    public void invokeNoHoldOver() throws Exception {
+        // Field
+        String marks = "" +
+                "X_________" +
+                "X___X_____" +
+                "XXXXXXX___" +
+                "XXXXXX____" +
+                "";
+        int maxClearLine = 4;
+
+        List<String> patterns = Collections.singletonList("*p7");
+
+        Field field = FieldFactory.createField(marks);
+        StringWriter writer = new StringWriter();
+        Settings settings = new Settings();
+        settings.setUsingHold(false);
+        CheckerEntry entry = new CheckerEntry(writer, settings, false);
+
+        entry.invoke(field, patterns, maxClearLine);
+
+        String output = writer.toString();
+
+        String expected = "success = 14.42% (727/5040)";
+        assertThat(output, containsString(expected));
     }
 }

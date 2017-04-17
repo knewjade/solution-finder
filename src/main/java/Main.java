@@ -2,6 +2,8 @@ import core.field.Field;
 import core.field.FieldFactory;
 import entry.CheckerEntry;
 import entry.CheckmateEntry;
+import entry.InvokeType;
+import entry.Settings;
 import misc.PiecesGenerator;
 import misc.SyntaxException;
 
@@ -32,23 +34,66 @@ public class Main {
 
     public static void main(String[] args) throws ExecutionException, InterruptedException, IOException {
         List<String> argsList = Arrays.asList(args);
+        Settings settings = new Settings();
+
+        // 処理の決定
+        InvokeType invokeType = getInvokeType(argsList);
+        settings.setInvokeType(invokeType);
+
+        // ホールドの使用の決定
+        boolean usingHold = getUsingHold(argsList);
+        settings.setUsingHold(usingHold);
+
+        // 実行
+        switch (settings.getInvokeType()) {
+            case AllPath:
+                generatePath(settings);
+            case PerfectPercent:
+                calcPercent(settings);
+        }
+    }
+
+    private static InvokeType getInvokeType(List<String> argsList) {
         int modeIndex = argsList.indexOf("-m");
+
         if (0 <= modeIndex && modeIndex < argsList.size() - 1) {
             String modeName = argsList.get(modeIndex + 1);
             switch (modeName) {
                 case "allpath":
-                    generatePath();
-                    break;
-                default:
-                    calcPercent();
-                    break;
+                    return InvokeType.AllPath;
+                case "perfect-percent":
+                    return InvokeType.PerfectPercent;
             }
-        } else {
-            calcPercent();
         }
+
+        return InvokeType.PerfectPercent;
     }
 
-    private static void calcPercent() throws IOException, ExecutionException, InterruptedException {
+    private static boolean getUsingHold(List<String> argsList) {
+        int modeIndex = argsList.indexOf("--hold");
+
+        if (0 <= modeIndex && modeIndex < argsList.size() - 1) {
+            String modeName = argsList.get(modeIndex + 1);
+            switch (modeName) {
+                case "true":
+                    return true;
+                case "false":
+                    return false;
+                case "yes":
+                    return true;
+                case "no":
+                    return false;
+                case "avoid":
+                    return false;
+                case "use":
+                    return true;
+            }
+        }
+
+        return true;
+    }
+
+    private static void calcPercent(Settings settings) throws IOException, ExecutionException, InterruptedException {
         int maxClearLine;
         String marks = "";
         try (Scanner scanner = new Scanner(new File(FIELD_TXT), CHARSET_NAME)) {
@@ -99,12 +144,12 @@ public class Main {
 
         String outputPath = concatPath(OUTPUT_DIRECTORY, "last_output.txt");
         try (Writer fileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputPath), CHARSET_NAME))) {
-            CheckerEntry entry = new CheckerEntry(fileWriter);
+            CheckerEntry entry = new CheckerEntry(fileWriter, settings);
             entry.invoke(field, patterns, maxClearLine);
         }
     }
 
-    private static void generatePath() throws IOException, ExecutionException, InterruptedException {
+    private static void generatePath(Settings settings) throws IOException, ExecutionException, InterruptedException {
         int maxClearLine;
         String marks = "";
         try (Scanner scanner = new Scanner(new File(FIELD_TXT), CHARSET_NAME)) {
@@ -149,7 +194,7 @@ public class Main {
         try (Writer fileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputPath), CHARSET_NAME))) {
             String allOutputPath = concatPath(OUTPUT_DIRECTORY, "all_path.csv");
             String uniqueOutputPath = concatPath(OUTPUT_DIRECTORY, "unique_path.csv");
-            CheckmateEntry entry = new CheckmateEntry(fileWriter, new File(allOutputPath), new File(uniqueOutputPath));
+            CheckmateEntry entry = new CheckmateEntry(fileWriter, new File(allOutputPath), new File(uniqueOutputPath), settings);
             entry.invoke(field, patterns, maxClearLine);
         }
     }

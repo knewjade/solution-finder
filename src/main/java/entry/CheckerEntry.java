@@ -1,9 +1,12 @@
 package entry;
 
-import concurrent.checker.CheckerUsingHoldThreadLocal;
 import concurrent.LockedCandidateThreadLocal;
-import concurrent.checker.invoker.using_hold.ConcurrentCheckerUsingHoldInvoker;
+import concurrent.checker.CheckerNoHoldThreadLocal;
+import concurrent.checker.CheckerUsingHoldThreadLocal;
+import concurrent.checker.invoker.ConcurrentCheckerInvoker;
 import concurrent.checker.invoker.Pair;
+import concurrent.checker.invoker.no_hold.ConcurrentCheckerNoHoldInvoker;
+import concurrent.checker.invoker.using_hold.ConcurrentCheckerUsingHoldInvoker;
 import core.field.Field;
 import core.field.FieldView;
 import core.mino.Block;
@@ -28,22 +31,20 @@ public class CheckerEntry {
     private static final String LINE_SEPARATOR = System.lineSeparator();
 
     private final List<Writer> writers;
+    private final Settings settings;
     private final boolean isOutputToConsole;
 
-    public CheckerEntry(Writer writer) {
-        this(Collections.singletonList(writer));
+    public CheckerEntry(Writer writer, Settings settings) {
+        this(Collections.singletonList(writer), settings, true);
     }
 
-    CheckerEntry(Writer writer, boolean isOutputToConsole) {
-        this(Collections.singletonList(writer), isOutputToConsole);
+    CheckerEntry(Writer writer, Settings settings, boolean isOutputToConsole) {
+        this(Collections.singletonList(writer), settings, isOutputToConsole);
     }
 
-    private CheckerEntry(List<Writer> writers) {
-        this(writers, true);
-    }
-
-    private CheckerEntry(List<Writer> writers, boolean isOutputToConsole) {
+    private CheckerEntry(List<Writer> writers, Settings settings, boolean isOutputToConsole) {
         this.writers = writers;
+        this.settings = settings;
         this.isOutputToConsole = isOutputToConsole;
     }
 
@@ -66,9 +67,7 @@ public class CheckerEntry {
         output("# Initialize / System");
         int core = Runtime.getRuntime().availableProcessors();
         ExecutorService executorService = Executors.newFixedThreadPool(core);
-        CheckerUsingHoldThreadLocal<Action> checkerThreadLocal = new CheckerUsingHoldThreadLocal<>();
-        LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
-        ConcurrentCheckerUsingHoldInvoker invoker = new ConcurrentCheckerUsingHoldInvoker(executorService, candidateThreadLocal, checkerThreadLocal);
+        ConcurrentCheckerInvoker invoker = createConcurrentCheckerInvoker(maxClearLine, executorService);
 
         output("Available processors = " + core);
 
@@ -89,8 +88,8 @@ public class CheckerEntry {
         // ========================================
         output("# Enumerate pieces");
 
-        // 必要なミノ分（maxDepth + 1）だけを取り出す。maxDepth + 1だけないときはブロックの個数をそのまま指定
-        int combinationPopCount = maxDepth + 1;
+        // Holdできるなら必要なミノ分（maxDepth + 1）だけを取り出す。maxDepth + 1だけないときはブロックの個数をそのまま指定
+        int combinationPopCount = settings.isUsingHold() ? maxDepth + 1 : maxDepth;
         if (piecesDepth < combinationPopCount)
             combinationPopCount = piecesDepth;
 
@@ -153,11 +152,24 @@ public class CheckerEntry {
         flush();
     }
 
+    private ConcurrentCheckerInvoker createConcurrentCheckerInvoker(int maxClearLine, ExecutorService executorService) {
+        if (settings.isUsingHold()) {
+            CheckerUsingHoldThreadLocal<Action> checkerThreadLocal = new CheckerUsingHoldThreadLocal<>();
+            LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
+            return new ConcurrentCheckerUsingHoldInvoker(executorService, candidateThreadLocal, checkerThreadLocal);
+        } else {
+            CheckerNoHoldThreadLocal<Action> checkerThreadLocal = new CheckerNoHoldThreadLocal<>();
+            LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
+            return new ConcurrentCheckerNoHoldInvoker(executorService, candidateThreadLocal, checkerThreadLocal);
+        }
+    }
+
     private List<List<Block>> createSearchingPieces(PiecesGenerator generator, int combinationPopCount) throws IOException {
         int counter = 0;
         List<List<Block>> searchingPieces = new ArrayList<>();
         VisitedTree duplicateCheckTree = new VisitedTree();
         boolean isOverPieces = combinationPopCount < generator.getDepth();
+
         // 組み合わせの列挙
         for (SafePieces pieces : generator) {
             counter++;

@@ -30,6 +30,7 @@ public class ConcurrentCheckmateCommonInvoker {
     }
 
     public List<Pair<List<Block>, List<Result>>> search(Field field, List<List<Block>> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
+        // ミノごとにソートする
         List<ComparablePieces> sortedPieces = searchingPieces.stream()
                 .map(ComparablePieces::new)
                 .sorted()

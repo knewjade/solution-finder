@@ -87,7 +87,7 @@ L , *  →  LT, LI, LJ, LL, LS, LZ, LO 7通り
 * ```[SZLJ]``` : SZJLから1つを選択 : 4通り
 * ```[SZLJ]p2``` : SZLJから2つを選択する順列 : 6通り
 * ```*``` (アスタリスク) : [TIJLSZO]と同等 : 7通り
-* ```*p3``` : [TIJLSZO]p3と同様 : 7P3=210通り
+* ```*p3``` : [TIJLSZO]p3と同等 : 7P3=210通り
 
 
 ### patterns.txtの書き方
