@@ -48,8 +48,10 @@ public class Main {
         switch (settings.getInvokeType()) {
             case AllPath:
                 generatePath(settings);
+                break;
             case PerfectPercent:
                 calcPercent(settings);
+                break;
         }
     }
 
