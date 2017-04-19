@@ -68,7 +68,7 @@ class PatternElement {
                 throw new SyntaxException("Too much ']'");
 
             if (blockNames.matches("[^TIOSZJL]"))
-                throw new SyntaxException("Unknown block in []");
+                throw new SyntaxException("Unknown colorType in []");
 
             List<Block> blocks = Stream.of(blockNames.split(""))
                     .map(nameToBlock::get)
@@ -92,7 +92,7 @@ class PatternElement {
             List<Block> blocks = Collections.singletonList(nameToBlock.get(trim));
             return new PatternElement(blocks, 1);
         } else {
-            throw new SyntaxException("Unknown block");
+            throw new SyntaxException("Unknown colorType");
         }
     }
 

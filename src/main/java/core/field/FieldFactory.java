@@ -6,6 +6,8 @@ public class FieldFactory {
             return new SmallField();
         else if (maxHeight < 12)
             return new MiddleField();
+        else if (maxHeight < 24)
+            return new LargeField();
         throw new IllegalArgumentException("MaxHeight check too large. Should be equal or less than 12");
     }
 
@@ -19,11 +21,13 @@ public class FieldFactory {
             return createSmallField(marks);
         else if (maxY <= 12)
             return FieldFactory.createMiddleField(marks);
+        else if (maxY <= 24)
+            return FieldFactory.createLargeField(marks);
 
         throw new UnsupportedOperationException("Too large core.field height: " + maxY);
     }
 
-    public static SmallField createSmallField() {
+    static SmallField createSmallField() {
         return new SmallField();
     }
 
@@ -44,16 +48,37 @@ public class FieldFactory {
         return field;
     }
 
-    public static Field createMiddleField() {
+    static Field createMiddleField() {
         return new MiddleField();
     }
 
-    public static MiddleField createMiddleField(String marks) {
+    static MiddleField createMiddleField(String marks) {
         if (marks.length() % 10 != 0)
             throw new IllegalArgumentException("length of marks should be 'mod 10'");
 
         int maxY = marks.length() / 10;
         MiddleField field = new MiddleField();
+        for (int y = 0; y < maxY; y++) {
+            for (int x = 0; x < 10; x++) {
+                char mark = marks.charAt((maxY - y - 1) * 10 + x);
+                if (mark != ' ' && mark != '_')
+                    field.setBlock(x, y);
+            }
+        }
+
+        return field;
+    }
+
+    static Field createLargeField() {
+        return new MiddleField();
+    }
+
+    static LargeField createLargeField(String marks) {
+        if (marks.length() % 10 != 0)
+            throw new IllegalArgumentException("length of marks should be 'mod 10'");
+
+        int maxY = marks.length() / 10;
+        LargeField field = new LargeField();
         for (int y = 0; y < maxY; y++) {
             for (int x = 0; x < 10; x++) {
                 char mark = marks.charAt((maxY - y - 1) * 10 + x);
