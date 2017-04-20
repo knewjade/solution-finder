@@ -1,9 +1,8 @@
 package tetfu.decorder;
 
-import core.mino.Block;
 import core.srs.Rotate;
-import tetfu.ColorType;
-import tetfu.Coordinate;
+import tetfu.common.ColorType;
+import tetfu.common.Coordinate;
 import tetfu.TetfuTable;
 
 import static tetfu.Tetfu.*;
@@ -62,28 +61,27 @@ public class ActionDecoder {
     private Coordinate parseCoordinate(int value, ColorType type, Rotate rotate) {
         int x = value % TETFU_FIELD_WIDTH;
         int originY = value / 10;
+        int y = TETFU_FIELD_TOP - originY - 1;
 
         if (type == ColorType.O && rotate == Rotate.Left) {
             x += 1;
-            originY += 1;
+            y += 1;
         } else if (type == ColorType.O && rotate == Rotate.Reverse)
             x += 1;
         else if (type == ColorType.O && rotate == Rotate.Spawn)
-            originY -= 1;
+            y -= 1;
         else if (type == ColorType.I && rotate == Rotate.Reverse)
             x += 1;
         else if (type == ColorType.I && rotate == Rotate.Left)
-            originY -= 1;
+            y -= 1;
         else if (type == ColorType.S && rotate == Rotate.Spawn)
-            originY -= 1;
+            y -= 1;
         else if (type == ColorType.S && rotate == Rotate.Right)
             x -= 1;
         else if (type == ColorType.Z && rotate == Rotate.Spawn)
-            originY -= 1;
+            y -= 1;
         else if (type == ColorType.Z && rotate == Rotate.Left)
             x += 1;
-
-        int y = TETFU_FIELD_TOP - originY - 1;
 
         return new Coordinate(x, y);
     }

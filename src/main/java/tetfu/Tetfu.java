@@ -3,11 +3,19 @@ package tetfu;
 import core.mino.Block;
 import core.mino.Mino;
 import core.mino.MinoFactory;
+import core.srs.Rotate;
+import tetfu.common.ActionFlags;
+import tetfu.common.ColorConverter;
+import tetfu.common.ColorType;
+import tetfu.common.Coordinate;
 import tetfu.decorder.ActionDecoder;
 import tetfu.decorder.CommentDecoder;
 import tetfu.encorder.ActionEncoder;
 import tetfu.encorder.CommentEncoder;
 import tetfu.encorder.FieldEncoder;
+import tetfu.field.ColoredField;
+import tetfu.field.ColoredFieldFactory;
+import tetfu.field.ColoredFieldView;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -23,6 +31,7 @@ public class Tetfu {
 
     public static final int TETFU_FIELD_WIDTH = 10;
     public static final int TETFU_FIELD_BLOCKS = TETFU_MAX_HEIGHT * TETFU_FIELD_WIDTH;
+    private static final int FILED_WIDTH = 10;
 
     public static String encodeForQuiz(List<Block> orders) {
         return encodeForQuiz(orders, orders.get(0));
@@ -85,6 +94,7 @@ public class Tetfu {
                 Block block = converter.parseToBlock(colorType);
                 Mino mino = minoFactory.create(block, element.getRotate());
                 field.putMino(mino, element.getX(), element.getY());
+                field.clearLine();
             }
             // next field
             prevField = field;
@@ -138,13 +148,16 @@ public class Tetfu {
     }
 
     List<TetfuPage> decode(String str) {
-        LinkedList<Integer> values = str.chars().boxed()
+        LinkedList<Integer> values = str.replace("?", "").chars().boxed()
                 .map(c -> decodeData((char) c.intValue()))
                 .collect(Collectors.toCollection(LinkedList::new));
+
+        ArrayList<TetfuPage> pages = new ArrayList<>();
 
         ColoredField prevField = ColoredFieldFactory.createField(TETFU_MAX_HEIGHT);
         ColoredField currentField = ColoredFieldFactory.createField(TETFU_MAX_HEIGHT);
 
+        int[] blockUp = new int[FILED_WIDTH];
         int repeatCount = -1;
         while (!values.isEmpty()) {
             if (repeatCount <= 0) {
@@ -163,8 +176,10 @@ public class Tetfu {
                         if (0 <= y) {
                             int prevBlockNumber = prevField.getBlockNumber(x, y);
                             currentField.setBlockNumber(x, y, diff + prevBlockNumber - 8);
+                        } else {
+                            blockUp[x] += diff - 8;
                         }
-                        // blockUpさせるなら別途記録して y < 0のとき比較する
+
                         index += 1;
                     }
                 }
@@ -175,38 +190,52 @@ public class Tetfu {
                 repeatCount -= 1;
             }
 
-            System.out.println(ColoredFieldView.toString(currentField, 24));
-
             int action = pollValues(values, 3);
             ActionDecoder actionDecoder = new ActionDecoder(action);
-            System.out.println(actionDecoder.colorType);
-            System.out.println(actionDecoder.rotate);
-            System.out.println(actionDecoder.coordinate);
-            System.out.println(actionDecoder.isLock);
-            System.out.println(actionDecoder.isBlockUp);
-            System.out.println(actionDecoder.isColor);
-            System.out.println(actionDecoder.isComment);
-            System.out.println(actionDecoder.isMirror);
 
+            String escapedComment = "";
             if (actionDecoder.isComment) {
                 List<Integer> commentValues = new ArrayList<>();
                 int commentLength = pollValues(values, 2);
-                for (int commentCounter = 0; commentCounter < (commentLength / 4) + 1; commentCounter++) {
+                for (int commentCounter = 0; commentCounter < (commentLength + 3) / 4; commentCounter++) {
                     int commentValue = pollValues(values, 5);
                     commentValues.add(commentValue);
                 }
-                CommentDecoder commentDecoder = new CommentDecoder(commentValues);
-                System.out.println(commentDecoder.getComment());
+                CommentDecoder commentDecoder = new CommentDecoder(commentLength, commentValues);
+                escapedComment = commentDecoder.getEscapedComment();
             }
-            System.out.println(values);
 
-            prevField = currentField.freeze(TETFU_MAX_HEIGHT);
+            TetfuPage tetfuPage = new TetfuPage(actionDecoder, escapedComment, currentField);
+            pages.add(tetfuPage);
+
+            ColorType colorType = actionDecoder.colorType;
+            if (actionDecoder.isLock && ColorType.isBlock(colorType)) {
+                Rotate rotate = actionDecoder.rotate;
+                Coordinate coordinate = actionDecoder.coordinate;
+
+                Block block = converter.parseToBlock(colorType);
+                Mino mino = minoFactory.create(block, rotate);
+
+                currentField.putMino(mino, coordinate.x, coordinate.y);
+                currentField.clearLine();
+
+                if (actionDecoder.isBlockUp) {
+                    currentField.blockUp();
+                    for (int x = 0; x < TETFU_FIELD_WIDTH; x++)
+                        currentField.setBlockNumber(x, 0, blockUp[x]);
+                }
+
+                if (actionDecoder.isMirror)
+                    currentField.mirror();
+            }
+
+            prevField = currentField;
         }
 
-        return new ArrayList<>();
+        return pages;
     }
 
-    protected int pollValues(LinkedList<Integer> values, int splitCount) {
+    private int pollValues(LinkedList<Integer> values, int splitCount) {
         int value = 0;
         for (int count = 0; count < splitCount; count++) {
             int v = values.pollFirst();

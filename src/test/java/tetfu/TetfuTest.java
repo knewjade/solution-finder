@@ -1,9 +1,16 @@
 package tetfu;
 
+import core.field.FieldView;
 import core.mino.Block;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
 import org.junit.Test;
+import tetfu.common.ColorConverter;
+import tetfu.common.ColorType;
+import tetfu.field.ArrayColoredField;
+import tetfu.field.ColoredField;
+import tetfu.field.ColoredFieldFactory;
+import tetfu.field.ColoredFieldView;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,6 +22,12 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class TetfuTest {
+    private static void assertField(ColoredField actual, ColoredField expected) {
+        for (int y = 0; y < 24; y++)
+            for (int x = 0; x < 10; x++)
+                assertThat(actual.getBlockNumber(x, y), is(expected.getBlockNumber(x, y)));
+    }
+
     @Test
     public void encode1() throws Exception {
         List<TetfuElement> elements = Collections.singletonList(
@@ -164,7 +177,15 @@ public class TetfuTest {
         MinoFactory factory = new MinoFactory();
         ColorConverter converter = new ColorConverter();
         Tetfu tetfu = new Tetfu(factory, converter);
-        tetfu.decode(value);
+        List<TetfuPage> pages = tetfu.decode(value);
+
+        assertThat(pages.size(), is(1));
+        assertThat(pages.get(0).getColorType(), is(ColorType.I));
+        assertThat(pages.get(0).getRotate(), is(Rotate.Spawn));
+        assertThat(pages.get(0).getX(), is(5));
+        assertThat(pages.get(0).getY(), is(0));
+        assertThat(pages.get(0).getComment(), is(""));
+        assertField(ColoredFieldFactory.createColoredField("IIII______"), pages.get(0).getField());
     }
 
     @Test
@@ -174,7 +195,15 @@ public class TetfuTest {
         MinoFactory factory = new MinoFactory();
         ColorConverter converter = new ColorConverter();
         Tetfu tetfu = new Tetfu(factory, converter);
-        tetfu.decode(value);
+        List<TetfuPage> pages = tetfu.decode(value);
+
+        assertThat(pages.size(), is(1));
+        assertThat(pages.get(0).getColorType(), is(ColorType.I));
+        assertThat(pages.get(0).getRotate(), is(Rotate.Spawn));
+        assertThat(pages.get(0).getX(), is(5));
+        assertThat(pages.get(0).getY(), is(0));
+        assertThat(pages.get(0).getComment(), is("hello"));
+        assertField(ColoredFieldFactory.createColoredField("IIII______"), pages.get(0).getField());
     }
 
     @Test
@@ -185,6 +214,116 @@ public class TetfuTest {
         MinoFactory factory = new MinoFactory();
         ColorConverter converter = new ColorConverter();
         Tetfu tetfu = new Tetfu(factory, converter);
-        tetfu.decode(value);
+        List<TetfuPage> pages = tetfu.decode(value);
+
+        assertThat(pages.size(), is(1));
+        assertThat(pages.get(0).getColorType(), is(ColorType.Empty));
+        assertThat(pages.get(0).getRotate(), is(Rotate.Reverse));
+        assertThat(pages.get(0).getX(), is(0));
+        assertThat(pages.get(0).getY(), is(22));
+        assertThat(pages.get(0).getComment(), is(""));
+        assertField(ColoredFieldFactory.createColoredField(""), pages.get(0).getField());
+    }
+
+    @Test
+    public void decode4() throws Exception {
+        List<TetfuElement> elements = Arrays.asList(
+                new TetfuElement(ColorType.I, Rotate.Reverse, 5, 0, "a"),
+                new TetfuElement(ColorType.S, Rotate.Reverse, 5, 2, "b"),
+                new TetfuElement(ColorType.J, Rotate.Left, 9, 1, "c"),
+                new TetfuElement(ColorType.O, Rotate.Right, 0, 1, "d"),
+                new TetfuElement(ColorType.Z, Rotate.Left, 3, 1, "e"),
+                new TetfuElement(ColorType.L, Rotate.Right, 0, 3, "f"),
+                new TetfuElement(ColorType.T, Rotate.Reverse, 7, 1)
+        );
+
+        ArrayColoredField field = new ArrayColoredField(Tetfu.TETFU_MAX_HEIGHT);
+
+        MinoFactory factory = new MinoFactory();
+        ColorConverter converter = new ColorConverter();
+        Tetfu tetfu = new Tetfu(factory, converter);
+        String encode = tetfu.encode(field, elements);
+
+        List<TetfuPage> pages = tetfu.decode(encode);
+
+        assertThat(pages.size(), is(elements.size()));
+        for (int index = 0; index < pages.size(); index++) {
+            TetfuPage page = pages.get(index);
+            TetfuElement element = elements.get(index);
+            assertThat(page.getColorType(), is(element.getColorType()));
+            assertThat(page.getRotate(), is(element.getRotate()));
+            assertThat(page.getX(), is(element.getX()));
+            assertThat(page.getY(), is(element.getY()));
+            assertThat(page.getComment(), is(element.getComment()));
+        }
+    }
+
+    @Test
+    public void decode5() throws Exception {
+        String value = "bhzhFeH8Bex4OvhAAAA";
+
+        MinoFactory factory = new MinoFactory();
+        ColorConverter converter = new ColorConverter();
+        Tetfu tetfu = new Tetfu(factory, converter);
+        List<TetfuPage> pages = tetfu.decode(value);
+
+        assertThat(pages.size(), is(2));
+        assertThat(pages.get(0).getColorType(), is(ColorType.I));
+        assertThat(pages.get(0).getRotate(), is(Rotate.Spawn));
+        assertThat(pages.get(0).getX(), is(5));
+        assertThat(pages.get(0).getY(), is(0));
+        assertThat(pages.get(0).getComment(), is(""));
+        assertField(ColoredFieldFactory.createColoredField(
+                "IIII______"
+        ), pages.get(0).getField());
+
+        assertThat(pages.get(1).getColorType(), is(ColorType.Empty));
+        assertThat(pages.get(1).getComment(), is(""));
+        assertField(ColoredFieldFactory.createColoredField(
+                "" +
+                        "__IIIIIIII" +
+                        "__XXXXXXXX"
+        ), pages.get(1).getField());
+    }
+
+    @Test
+    public void decode6() throws Exception {
+        String value = "VhRpHeRpNeAgHvhIAAAAAAAAAAAAAAAAAAAAAAAAAA?A";
+
+        MinoFactory factory = new MinoFactory();
+        ColorConverter converter = new ColorConverter();
+        Tetfu tetfu = new Tetfu(factory, converter);
+        List<TetfuPage> pages = tetfu.decode(value);
+
+        assertThat(pages.size(), is(10));
+        for (int index = 0; index < 10; index++) {
+            assertThat(pages.get(index).getColorType(), is(ColorType.Empty));
+            assertThat(pages.get(index).getComment(), is(""));
+        }
+        assertField(ColoredFieldFactory.createColoredField(
+                "" +
+                        "____OO____" +
+                        "____OO____"
+        ), pages.get(9).getField());
+    }
+
+    @Test
+    public void decode7() throws Exception {
+        String value = "+gH8AeI8BeH8AeI8KeAgHvhBpoBAAA";
+
+        MinoFactory factory = new MinoFactory();
+        ColorConverter converter = new ColorConverter();
+        Tetfu tetfu = new Tetfu(factory, converter);
+        List<TetfuPage> pages = tetfu.decode(value);
+
+        assertThat(pages.size(), is(3));
+        assertThat(pages.get(0).getColorType(), is(ColorType.Empty));
+        assertThat(pages.get(1).getColorType(), is(ColorType.I));
+        assertThat(pages.get(2).getColorType(), is(ColorType.Empty));
+        assertField(ColoredFieldFactory.createColoredField(
+                "" +
+                        "_XXXXXXXXI" +
+                        "_XXXXXXXXI"
+        ), pages.get(2).getField());
     }
 }

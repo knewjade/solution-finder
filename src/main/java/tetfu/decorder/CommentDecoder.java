@@ -12,7 +12,7 @@ import static tetfu.TetfuTable.COMMENT_TABLE_SIZE;
 public class CommentDecoder {
     private final String comment;
 
-    public CommentDecoder(List<Integer> values) {
+    public CommentDecoder(int commentLength, List<Integer> values) {
         String comment = values.stream()
                 .flatMap(value -> {
                     ArrayList<Integer> chars = new ArrayList<>();
@@ -23,6 +23,7 @@ public class CommentDecoder {
                     }
                     return chars.stream();
                 })
+                .limit(commentLength)
                 .map(TetfuTable::decodeCommentChar)
                 .map(String::valueOf)
                 .collect(Collectors.joining());
@@ -30,7 +31,7 @@ public class CommentDecoder {
         this.comment = comment;
     }
 
-    public String getComment() {
+    public String getEscapedComment() {
         return TetfuTable.escape(comment);
     }
 }

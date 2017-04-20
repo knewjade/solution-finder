@@ -1,8 +1,8 @@
 package tetfu.encorder;
 
 import core.srs.Rotate;
-import tetfu.ActionFlags;
-import tetfu.ColorType;
+import tetfu.common.ActionFlags;
+import tetfu.common.ColorType;
 import tetfu.TetfuElement;
 
 import static tetfu.Tetfu.*;

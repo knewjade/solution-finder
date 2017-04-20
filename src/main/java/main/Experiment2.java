@@ -1,16 +1,15 @@
 package main;
 
 import core.mino.Block;
-import concurrent.checker.invoker.OrderLookup;
-import concurrent.checker.invoker.Pieces;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
 import tetfu.*;
+import tetfu.common.ColorConverter;
+import tetfu.common.ColorType;
+import tetfu.field.ArrayColoredField;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static core.mino.Block.*;
 
@@ -39,10 +38,6 @@ public class Experiment2 {
         String encode = tetfu.encode(field, elements);
         System.out.println("v115@" + encode);
     }
-
-
-
-
 }
 
 

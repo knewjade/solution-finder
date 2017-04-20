@@ -1,6 +1,7 @@
 package tetfu;
 
 import core.srs.Rotate;
+import tetfu.common.ColorType;
 
 public class TetfuElement {
     private final String comment;
@@ -39,5 +40,9 @@ public class TetfuElement {
 
     public int getY() {
         return y;
+    }
+
+    public String getComment() {
+        return comment;
     }
 }

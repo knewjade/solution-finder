@@ -1,6 +1,6 @@
 package tetfu.encorder;
 
-import tetfu.ColoredField;
+import tetfu.field.ColoredField;
 
 import static tetfu.Tetfu.*;
 

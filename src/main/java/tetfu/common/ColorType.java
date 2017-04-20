@@ -1,6 +1,4 @@
-package tetfu;
-
-import core.mino.Block;
+package tetfu.common;
 
 public enum ColorType {
     Empty(0),

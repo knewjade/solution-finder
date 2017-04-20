@@ -1,4 +1,4 @@
-package tetfu;
+package tetfu.common;
 
 public class ActionFlags {
     public final String escapedComment;
@@ -9,7 +9,7 @@ public class ActionFlags {
     public final boolean isMirror = false;
     public final boolean isBlockUp = false;
 
-    ActionFlags(String escapedComment, String prevEscapedComment, int index) {
+    public ActionFlags(String escapedComment, String prevEscapedComment, int index) {
         this.escapedComment = escapedComment;
         this.prevEscapedComment = prevEscapedComment;
         this.isColor = index == 0;

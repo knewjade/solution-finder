@@ -1,8 +1,10 @@
 package tetfu;
 
-import core.mino.Block;
+import tetfu.common.ColorConverter;
+import tetfu.common.ColorType;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,14 +52,36 @@ public class TetfuTable {
     }
 
     public static char decodeCommentChar(int value) {
+        assert 0 <= value && value < COMMENT_TABLE.size() : value;
         return COMMENT_TABLE.get(value);
-    }
-
-    public static int parseBlockNumber(Block block) {
-        return COLOR_CONVERTER.parseToColorType(block).getNumber();
     }
 
     public static ColorType parseColorType(int number) {
         return COLOR_CONVERTER.parseToColorType(number);
+    }
+
+    public static String unescape(String str) {
+        LinkedList<Character> chars = new LinkedList<>();
+        for (char character : str.toCharArray())
+            chars.add(character);
+
+        StringBuilder builder = new StringBuilder();
+        while (!chars.isEmpty()) {
+            Character c = chars.pollFirst();
+            if (ASCII_CHARACTERS.contains(c)) {
+                builder.append(c);
+            } else if (c == '%') {
+                Character c2 = chars.pollFirst();
+                String value = "" + c2;
+                for (int count = 0; count < (c2 == 'u' ? 3 : 1); count++)
+                    value += chars.pollFirst();
+                char c1 = (char) Integer.valueOf(value, 16).intValue();
+                System.out.println(c1);
+                builder.append(c1);
+            } else {
+                throw new IllegalStateException("Unknown character");
+            }
+        }
+        return builder.toString();
     }
 }

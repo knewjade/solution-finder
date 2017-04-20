@@ -1,6 +1,7 @@
-package tetfu;
+package tetfu.common;
 
 import core.mino.Block;
+import tetfu.common.ColorType;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -34,16 +35,16 @@ public class ColorConverter {
             numberToColor.set(type.getNumber(), type);
     }
 
-    ColorType parseToColorType(Block block) {
+    public ColorType parseToColorType(Block block) {
         return blockToColor.get(block);
     }
 
-    Block parseToBlock(ColorType type) {
+    public Block parseToBlock(ColorType type) {
         assert ColorType.isBlock(type);
         return colorToBlock.get(type);
     }
 
-    ColorType parseToColorType(int number) {
+    public ColorType parseToColorType(int number) {
         return numberToColor.get(number);
     }
 }

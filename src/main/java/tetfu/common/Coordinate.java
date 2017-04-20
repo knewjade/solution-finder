@@ -1,4 +1,4 @@
-package tetfu;
+package tetfu.common;
 
 public class Coordinate {
     public int x;
