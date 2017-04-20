@@ -73,7 +73,7 @@ public class TetfuTest {
                 new TetfuElement(ColorType.J, Rotate.Left, 9, 1, "c"),
                 new TetfuElement(ColorType.O, Rotate.Right, 0, 1, "d"),
                 new TetfuElement(ColorType.Z, Rotate.Left, 3, 1, "e"),
-                new TetfuElement(ColorType.L, Rotate.Right, 0, 3, "f"),
+                new TetfuElement(ColorType.L, Rotate.Right, 0, 3, "日本語"),
                 new TetfuElement(ColorType.T, Rotate.Reverse, 7, 1)
         );
 
@@ -83,7 +83,7 @@ public class TetfuTest {
         ColorConverter converter = new ColorConverter();
         Tetfu tetfu = new Tetfu(factory, converter);
         String encode = tetfu.encode(field, elements);
-        assertThat(encode, is("vhGBQYBABBAAAnmQBACBAAA+tQBADBAAALpQBAEBAA?AcqQBAFBAAAKfQBAGBAAAlsQAA"));
+        assertThat(encode, is("vhGBQYBABBAAAnmQBACBAAA+tQBADBAAALpQBAEBAA?AcqQBAFBAAAKfQSAlfrHBFwDfE2Cx2Bl/PwB53AAAlsQAA"));
     }
 
     @Test
@@ -231,9 +231,9 @@ public class TetfuTest {
                 new TetfuElement(ColorType.I, Rotate.Reverse, 5, 0, "a"),
                 new TetfuElement(ColorType.S, Rotate.Reverse, 5, 2, "b"),
                 new TetfuElement(ColorType.J, Rotate.Left, 9, 1, "c"),
-                new TetfuElement(ColorType.O, Rotate.Right, 0, 1, "d"),
-                new TetfuElement(ColorType.Z, Rotate.Left, 3, 1, "e"),
-                new TetfuElement(ColorType.L, Rotate.Right, 0, 3, "f"),
+                new TetfuElement(ColorType.O, Rotate.Right, 0, 1, "hello world!"),
+                new TetfuElement(ColorType.Z, Rotate.Left, 3, 1, "こんにちは"),
+                new TetfuElement(ColorType.L, Rotate.Right, 0, 3, "x ~= 1;"),
                 new TetfuElement(ColorType.T, Rotate.Reverse, 7, 1)
         );
 

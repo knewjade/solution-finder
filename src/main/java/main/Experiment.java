@@ -1,8 +1,5 @@
 package main;
 
-import a.Depend;
-import a.Estimate;
-import a.MinoPivot;
 import action.candidate.FixPlaceLockedCandidate;
 import action.candidate.LockedCandidate;
 import action.reachable.LockedReachable;
@@ -247,36 +244,36 @@ public class Experiment {
 //                "";
 //
 //        List<Block> blocks = Arrays.asList(O, J, Z, I, L, S, T);
-
-        String marks = "" +
-                "__________" +
-                "___22____5" +
-                "0___224445" +
-                "00_1133345" +
-                "_0_113___5" +
-                "";
-
-        List<Block> blocks = Arrays.asList(S, O, Z, L, J, I);
-
-        // フィールド番号 -> 各ミノの回転方向と回転軸
-        int[][] numberField = createNumberField(marks);
-        MinoFactory minoFactory = new MinoFactory();
-        Estimate estimate = new Estimate(minoFactory);
-        List<MinoPivot> minoPivots = estimate.create(numberField, blocks);
-
-        System.out.println(minoPivots);
-        System.out.println(minoPivots.stream().map(MinoPivot::getMino).map(Mino::getRotate).collect(Collectors.toList()));
-
-        //
-        int maxY = 5;
-        MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
-        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
-        Depend depend = new Depend(reachable);
-
-        Field field = FieldFactory.createField(marks);
-        Map<Integer, Set<Integer>> results = depend.extract(field, numberField, minoPivots);
-        System.out.println(results);
+//
+//        String marks = "" +
+//                "__________" +
+//                "___22____5" +
+//                "0___224445" +
+//                "00_1133345" +
+//                "_0_113___5" +
+//                "";
+//
+//        List<Block> blocks = Arrays.asList(S, O, Z, L, J, I);
+//
+//        // フィールド番号 -> 各ミノの回転方向と回転軸
+//        int[][] numberField = createNumberField(marks);
+//        MinoFactory minoFactory = new MinoFactory();
+//        Estimate estimate = new Estimate(minoFactory);
+//        List<MinoPivot> minoPivots = estimate.create(numberField, blocks);
+//
+//        System.out.println(minoPivots);
+//        System.out.println(minoPivots.stream().map(MinoPivot::getMino).map(Mino::getRotate).collect(Collectors.toList()));
+//
+//        //
+//        int maxY = 5;
+//        MinoShifter minoShifter = new MinoShifter();
+//        MinoRotation minoRotation = new MinoRotation();
+//        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
+//        Depend depend = new Depend(reachable);
+//
+//        Field field = FieldFactory.createField(marks);
+//        Map<Integer, Set<Integer>> results = depend.extract(field, numberField, minoPivots);
+//        System.out.println(results);
     }
 
     private static int[][] createNumberField(String marks) {

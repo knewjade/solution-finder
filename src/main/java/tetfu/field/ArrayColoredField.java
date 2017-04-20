@@ -56,7 +56,6 @@ public class ArrayColoredField implements ColoredField {
 
     @Override
     public void clearLine() {
-        System.out.println(ColoredFieldView.toString(this));
         int currentY = 0;
         for (int y = 0; y < field.length; y++) {
             for (int x = 0; x < FIELD_WIDTH; x++) {

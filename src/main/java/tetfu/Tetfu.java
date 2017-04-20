@@ -15,7 +15,6 @@ import tetfu.encorder.CommentEncoder;
 import tetfu.encorder.FieldEncoder;
 import tetfu.field.ColoredField;
 import tetfu.field.ColoredFieldFactory;
-import tetfu.field.ColoredFieldView;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -90,11 +89,24 @@ public class Tetfu {
             parseAction(element, flags);
 
             ColorType colorType = element.getColorType();
-            if (ColorType.isBlock(colorType)) {
+            if (flags.isLock && ColorType.isBlock(colorType)) {
                 Block block = converter.parseToBlock(colorType);
                 Mino mino = minoFactory.create(block, element.getRotate());
+
                 field.putMino(mino, element.getX(), element.getY());
                 field.clearLine();
+
+                if (flags.isBlockUp) {
+                    throw new UnsupportedOperationException();
+//                    currentField.blockUp();
+//                    for (int x = 0; x < TETFU_FIELD_WIDTH; x++)
+//                        currentField.setBlockNumber(x, 0, blockUp[x]);
+                }
+
+                if (flags.isMirror) {
+                    throw new UnsupportedOperationException();
+//                    currentField.mirror();
+                }
             }
             // next field
             prevField = field;

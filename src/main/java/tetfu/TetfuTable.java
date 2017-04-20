@@ -72,12 +72,18 @@ public class TetfuTable {
                 builder.append(c);
             } else if (c == '%') {
                 Character c2 = chars.pollFirst();
-                String value = "" + c2;
-                for (int count = 0; count < (c2 == 'u' ? 3 : 1); count++)
-                    value += chars.pollFirst();
-                char c1 = (char) Integer.valueOf(value, 16).intValue();
-                System.out.println(c1);
-                builder.append(c1);
+                if (c2 != 'u') {
+                    Character c3 = chars.pollFirst();
+                    String value = String.valueOf(c2) + String.valueOf(c3);
+                    char newChar = (char) Integer.valueOf(value, 16).intValue();
+                    builder.append(newChar);
+                } else {
+                    String value = "";
+                    for (int count = 0; count < 4; count++)
+                        value += chars.pollFirst();
+                    char newChar = (char) Integer.valueOf(value, 16).intValue();
+                    builder.append(newChar);
+                }
             } else {
                 throw new IllegalStateException("Unknown character");
             }
