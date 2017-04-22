@@ -40,6 +40,8 @@ solution-finderは、探索ツールとして次の特徴を持っています�
 
 https://github.com/knewjade/solution-finder/releases/
 
+※ プログラムの実行には、Java8が実行できる環境が必要です
+
 .. toctree::
    :maxdepth: 2
    :caption: 目次

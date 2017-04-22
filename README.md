@@ -6,136 +6,42 @@
 ダウンロードは releases からお願いします。
 https://github.com/knewjade/solution-finder/releases
 
-詳細は、以下をご参照ください。
+※ プログラムの実行には、Java8が実行できる環境が必要です
+
 
 # 概要
 
-* 任意のミノの組み合わせからパーフェクトできる確率を計算する
-* フィールドの変更が可能
-* マルチスレッド対応
-* CLIの表示のみ対応
-* ホールドを利用できる場合のみ対応
-* パーフェクトができないツモ順を表示（最大100コまで）
-* 実行結果をlast_output.txtに出力
+solution-finderとは、テトリスで「ある地形からのパーフェクト成功確率・接着手順」など、条件に従った解を探索するためのツールです。
 
-※ Javaが実行できる環境が必要です
+solution-finderは、探索ツールとして次の特徴を持っています。
 
-# 起動方法
-
-# Windows
-
-solution-finder-runner.batをダブルクリックして起動してください。
-
-# Mac
-
-ターミナルから以下のコマンドを入力してください
-
-```
-cd  {jarファイルのあるディレクトリパス}
-java -jar -Xmx1024M solution-finder-0.21.jar
-```
+* 任意のフィールド・ミノ組み合わせを指定した探索が可能
+* 探索時の回転法則はSRSに準拠
+* マルチスレッドによる探索に対応
+* 実行時にオプションを与えることで「ホールドあり・なし」など細かい設定が可能
+* 入力として [連続テト譜エディタ Ver 1.15a](http://fumen.zui.jp) のデータに対応
 
 
+# 主な機能
+
+* ある地形からパーフェクトできる確率を計算する
+   - 7種のミノ(ITSZJLO) の様々な組み合わせでの探索が可能
+   - 先頭3ミノごとのパーフェクト成功確率もツリー形式で表示
+   - ホールドあり・なしの切り替えに対応
+   - パーフェクトができないツモ順を表示
+   - ソフトドロップありの場合のみ対応
+
+* ある地形からパーフェクトまでの操作手順をすべて列挙する（α版）
+   - 指定したミノの組み合わせから、パーフェクトまでの全パターンを列挙してCSV形式で出力
+   - 次の2種類の結果を列挙して出力
+       + ミノの接着順・接着場所が異なる手順を列挙 (all)
+       + ミノの接着順には依存せず、接着場所が異なる手順を列挙 (unique)
+   - ホールドあり・なしの切り替えに対応
+   - ソフトドロップありの場合のみ対応
 
 
+# ドキュメント
 
+詳細は、以下のドキュメントをご参照ください。
 
-
-
-
-# 出力サンプル
-
-一部、出力値についてコメントを追加してあります。  
-
-
-```
-# Setup Field
-XXXXXX____
-XXXXXX____
-XXXXXX____
-XXXXXX____
-XXXXXX____
-XXXXXX____
-XXXXXXXX__
-XXXXXXXX__
-
-# Initialize / User-defined
-Max clear lines: 8
-Searching patterns:
-  [TILJSZO]p7
-
-# Initialize / System
-Available processors = 8
-Need Pieces = 7  ← パフェに必要なミノ数
-
-# Enumerate pieces
-Piece pop count = 7  ← 1度の探索で使用するミノ個数。ミノに余裕があれば、ホールドのために Need Pieces + 1 となる。
-Searching pattern size (duplicate) = 5040  ← パターン定義ファイルを基に生成されたパターン数。ミノ順が重複して登録されている可能性あり
-Searching pattern size ( no dup. ) = 5040  ← 実際に探索するミノ順の総数。ミノ順は重複しない
-
-# Search
-  -> Stopwatch start
-  -> Stopwatch stop : avg.time = 4137 ms [1 counts]  ← 探索にかかったミリ秒
-
-# Output
-success = 99.84% (5032/5040)  ← パフェ成功確率。カッコ内は 成功数/全探索数
-
-Success pattern tree [Head 3 pieces]:
-* -> 99.8 %
-∟ T -> 99.6 %
-  ∟ TI -> 99.2 %
-    ∟ TIL -> 95.8 %
-    ∟ TIJ -> 100.0 %
-    ∟ TIS -> 100.0 %
-    ∟ TIZ -> 100.0 %
-    ∟ TIO -> 100.0 %
-  ∟ TL -> 99.2 %
-    ∟ TLI -> 100.0 %
-    ∟ TLJ -> 95.8 %
-    ∟ TLS -> 100.0 %
-    ∟ TLZ -> 100.0 %
-    ∟ TLO -> 100.0 %
-
-... 省略 ...
-
-  ∟ OS -> 100.0 %
-    ∟ OST -> 100.0 %
-    ∟ OSI -> 100.0 %
-    ∟ OSL -> 100.0 %
-    ∟ OSJ -> 100.0 %
-    ∟ OSZ -> 100.0 %
-  ∟ OZ -> 100.0 %
-    ∟ OZT -> 100.0 %
-    ∟ OZI -> 100.0 %
-    ∟ OZL -> 100.0 %
-    ∟ OZJ -> 100.0 %
-    ∟ OZS -> 100.0 %
-
-  ∟ OS -> 100.0 %
-    ∟ OST -> 100.0 %
-    ∟ OSI -> 100.0 %
-    ∟ OSL -> 100.0 %
-    ∟ OSJ -> 100.0 %
-    ∟ OSZ -> 100.0 %
-  ∟ OZ -> 100.0 %
-    ∟ OZT -> 100.0 %
-    ∟ OZI -> 100.0 %
-    ∟ OZL -> 100.0 %
-    ∟ OZJ -> 100.0 %
-    ∟ OZS -> 100.0 %
-
--------------------
-Fail pattern (Max. 100)  ← パフェができなかったパターンを最大100個まで表示
-[T, I, L, J, S, O, Z]
-[T, L, J, O, Z, I, S]
-[T, S, L, O, Z, J, I]
-[S, T, L, O, Z, J, I]
-[L, T, J, O, Z, I, S]
-[J, I, S, T, O, L, Z]
-[I, J, S, T, O, L, Z]
-[I, T, L, J, S, O, Z]
-
-# Finalize
-done
-
-```
+http://sfinder.s3-website-ap-northeast-1.amazonaws.com/index.html
