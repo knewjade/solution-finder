@@ -1,25 +1,16 @@
-package entry;
+package entry.percent;
 
-import concurrent.LockedCandidateThreadLocal;
-import concurrent.checker.CheckerNoHoldThreadLocal;
-import concurrent.checker.CheckerUsingHoldThreadLocal;
-import concurrent.checker.invoker.ConcurrentCheckerInvoker;
 import concurrent.checker.invoker.Pair;
-import concurrent.checker.invoker.no_hold.ConcurrentCheckerNoHoldInvoker;
-import concurrent.checker.invoker.using_hold.ConcurrentCheckerUsingHoldInvoker;
 import core.field.Field;
 import core.field.FieldView;
 import core.mino.Block;
+import entry.searching_pieces.NormalEnumeratePieces;
 import misc.PiecesGenerator;
-import misc.SafePieces;
 import misc.Stopwatch;
-import searcher.common.action.Action;
 import tree.AnalyzeTree;
-import tree.VisitedTree;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -27,22 +18,22 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class CheckerEntry {
+public class PercentInvoker {
     private static final String LINE_SEPARATOR = System.lineSeparator();
 
     private final List<Writer> writers;
     private final Settings settings;
     private final boolean isOutputToConsole;
 
-    public CheckerEntry(Writer writer, Settings settings) {
+    public PercentInvoker(Writer writer, Settings settings) {
         this(Collections.singletonList(writer), settings, true);
     }
 
-    CheckerEntry(Writer writer, Settings settings, boolean isOutputToConsole) {
+    PercentInvoker(Writer writer, Settings settings, boolean isOutputToConsole) {
         this(Collections.singletonList(writer), settings, isOutputToConsole);
     }
 
-    private CheckerEntry(List<Writer> writers, Settings settings, boolean isOutputToConsole) {
+    private PercentInvoker(List<Writer> writers, Settings settings, boolean isOutputToConsole) {
         this.writers = writers;
         this.settings = settings;
         this.isOutputToConsole = isOutputToConsole;
@@ -55,8 +46,6 @@ public class CheckerEntry {
         output();
         // ========================================
         output("# Initialize / User-defined");
-        PiecesGenerator generator = new PiecesGenerator(patterns);
-
         output("Max clear lines: " + maxClearLine);
         output("Searching patterns:");
         for (String pattern : patterns)
@@ -67,7 +56,7 @@ public class CheckerEntry {
         output("# Initialize / System");
         int core = Runtime.getRuntime().availableProcessors();
         ExecutorService executorService = Executors.newFixedThreadPool(core);
-        ConcurrentCheckerInvoker invoker = createConcurrentCheckerInvoker(maxClearLine, executorService);
+        PiecesGenerator generator = new PiecesGenerator(patterns);
 
         output("Available processors = " + core);
 
@@ -95,8 +84,10 @@ public class CheckerEntry {
 
         output("Piece pop count = " + combinationPopCount);
 
-        List<List<Block>> searchingPieces = createSearchingPieces(generator, combinationPopCount);
+        NormalEnumeratePieces normalEnumeratePieces = new NormalEnumeratePieces(generator, maxDepth, settings.isUsingHold());
+        List<List<Block>> searchingPieces = normalEnumeratePieces.enumerate();
 
+        output("Searching pattern size (duplicate) = " + normalEnumeratePieces.getCounter());
         output("Searching pattern size ( no dup. ) = " + searchingPieces.size());
 
         output();
@@ -105,15 +96,10 @@ public class CheckerEntry {
         output("  -> Stopwatch start");
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
-        List<Pair<List<Block>, Boolean>> resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
-
-        // 結果を集計する
-        AnalyzeTree tree = new AnalyzeTree();
-        for (Pair<List<Block>, Boolean> resultPair : resultPairs) {
-            List<Block> pieces = resultPair.getKey();
-            Boolean result = resultPair.getValue();
-            tree.set(result, pieces);
-        }
+        PercentCore percentCore = new PercentCore(maxClearLine, executorService, settings.isUsingHold());
+        percentCore.run(field, searchingPieces, maxClearLine, maxDepth);
+        AnalyzeTree tree = percentCore.getResultTree();
+        List<Pair<List<Block>, Boolean>> resultPairs = percentCore.getResultPairs();
 
         stopwatch.stop();
         output("  -> Stopwatch stop : " + stopwatch.toMessage(TimeUnit.MILLISECONDS));
@@ -150,42 +136,6 @@ public class CheckerEntry {
         output("done");
 
         flush();
-    }
-
-    private ConcurrentCheckerInvoker createConcurrentCheckerInvoker(int maxClearLine, ExecutorService executorService) {
-        if (settings.isUsingHold()) {
-            CheckerUsingHoldThreadLocal<Action> checkerThreadLocal = new CheckerUsingHoldThreadLocal<>();
-            LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
-            return new ConcurrentCheckerUsingHoldInvoker(executorService, candidateThreadLocal, checkerThreadLocal);
-        } else {
-            CheckerNoHoldThreadLocal<Action> checkerThreadLocal = new CheckerNoHoldThreadLocal<>();
-            LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
-            return new ConcurrentCheckerNoHoldInvoker(executorService, candidateThreadLocal, checkerThreadLocal);
-        }
-    }
-
-    private List<List<Block>> createSearchingPieces(PiecesGenerator generator, int combinationPopCount) throws IOException {
-        int counter = 0;
-        List<List<Block>> searchingPieces = new ArrayList<>();
-        VisitedTree duplicateCheckTree = new VisitedTree();
-        boolean isOverPieces = combinationPopCount < generator.getDepth();
-
-        // 組み合わせの列挙
-        for (SafePieces pieces : generator) {
-            counter++;
-            List<Block> blocks = pieces.getBlocks();
-            if (isOverPieces)
-                blocks = blocks.subList(0, combinationPopCount);
-
-            if (!duplicateCheckTree.isVisited(blocks)) {
-                searchingPieces.add(blocks);
-                duplicateCheckTree.success(blocks);
-            }
-        }
-
-        output("Searching pattern size (duplicate) = " + counter);
-
-        return searchingPieces;
     }
 
     private void output() throws IOException {

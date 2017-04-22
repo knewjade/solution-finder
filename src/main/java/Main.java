@@ -1,9 +1,9 @@
 import core.field.Field;
 import core.field.FieldFactory;
-import entry.CheckerEntry;
-import entry.CheckmateEntry;
 import entry.InvokeType;
-import entry.Settings;
+import entry.all_path.CheckmateEntry;
+import entry.percent.PercentInvoker;
+import entry.percent.Settings;
 import misc.PiecesGenerator;
 import misc.SyntaxException;
 
@@ -38,14 +38,13 @@ public class Main {
 
         // 処理の決定
         InvokeType invokeType = getInvokeType(argsList);
-        settings.setInvokeType(invokeType);
 
         // ホールドの使用の決定
         boolean usingHold = getUsingHold(argsList);
         settings.setUsingHold(usingHold);
 
         // 実行
-        switch (settings.getInvokeType()) {
+        switch (invokeType) {
             case AllPath:
                 generatePath(settings);
                 break;
@@ -146,7 +145,7 @@ public class Main {
 
         String outputPath = concatPath(OUTPUT_DIRECTORY, "last_output.txt");
         try (Writer fileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputPath), CHARSET_NAME))) {
-            CheckerEntry entry = new CheckerEntry(fileWriter, settings);
+            PercentInvoker entry = new PercentInvoker(fileWriter, settings);
             entry.invoke(field, patterns, maxClearLine);
         }
     }

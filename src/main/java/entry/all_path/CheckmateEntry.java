@@ -1,9 +1,7 @@
-package entry;
+package entry.all_path;
 
 import concurrent.LockedCandidateThreadLocal;
-import concurrent.checker.invoker.OrderLookup;
 import concurrent.checker.invoker.Pair;
-import concurrent.checker.invoker.Pieces;
 import concurrent.checkmate.CheckmateNoHoldThreadLocal;
 import concurrent.checkmate.invoker.no_hold.ConcurrentCheckmateCommonInvoker;
 import concurrent.full_checkmate.FullCheckmateNoHoldThreadLocal;
@@ -15,8 +13,11 @@ import core.mino.Block;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
+import entry.percent.Settings;
+import entry.searching_pieces.EnumeratePiecesCore;
+import entry.searching_pieces.HoldBreakEnumeratePieces;
+import entry.searching_pieces.NormalEnumeratePieces;
 import misc.PiecesGenerator;
-import misc.SafePieces;
 import misc.Stopwatch;
 import searcher.common.Operation;
 import searcher.common.Operations;
@@ -25,7 +26,6 @@ import searcher.common.action.Action;
 import searcher.common.validator.FullValidator;
 import searcher.common.validator.PathFullValidator;
 import searcher.common.validator.PerfectValidator;
-import tree.VisitedTree;
 
 import java.io.*;
 import java.util.*;
@@ -111,12 +111,7 @@ public class CheckmateEntry {
         output("Piece pop count = " + combinationPopCount);
 
         // ホールドありのパターンから複数のホールドなしパターンに分解する
-        List<List<Block>> searchingPieces;
-        if (settings.isUsingHold()) {
-            searchingPieces = createSearchingPiecesUsingHold(generator, combinationPopCount, maxDepth);
-        } else {
-            searchingPieces = createSearchingPiecesNoHold(generator, maxDepth);
-        }
+        List<List<Block>> searchingPieces = getSearchingPieces(generator, maxDepth);
 
         output("Searching pattern size (no hold, no dup.) = " + searchingPieces.size());
 
@@ -260,6 +255,18 @@ public class CheckmateEntry {
         flush();
     }
 
+    private List<List<Block>> getSearchingPieces(PiecesGenerator generator, int maxDepth) throws IOException {
+        List<List<Block>> searchingPieces;
+        if (settings.isUsingHold()) {
+            EnumeratePiecesCore EnumeratePiecesCore = new HoldBreakEnumeratePieces(generator, maxDepth);
+            searchingPieces = EnumeratePiecesCore.enumerate();
+        } else {
+            EnumeratePiecesCore EnumeratePiecesCore = new NormalEnumeratePieces(generator, maxDepth, false);
+            searchingPieces = EnumeratePiecesCore.enumerate();
+        }
+        return searchingPieces;
+    }
+
     private String toRotate(Rotate rotate) {
         switch (rotate) {
             case Spawn:
@@ -293,64 +300,6 @@ public class CheckmateEntry {
             current = current.freeze(currentMaxClearLine);
         }
         return expectField;
-    }
-
-    private List<List<Block>> createSearchingPiecesUsingHold(PiecesGenerator generator, int combinationPopCount, int maxDepth) throws IOException {
-        int counter = 0;
-        List<List<Block>> searchingPieces = new ArrayList<>();
-        VisitedTree duplicateCheckTree = new VisitedTree();
-        boolean isOverPieces = maxDepth < combinationPopCount;
-
-        // 組み合わせの列挙
-        for (SafePieces pieces : generator) {
-            counter++;
-            List<Block> blocks = pieces.getBlocks();
-
-            // ホールドありパターンから複数のホールドなしに分解
-            List<Pieces> forward = OrderLookup.forward(blocks, combinationPopCount);
-
-            for (Pieces piecesWithNoHold : forward) {
-                List<Block> blocksWithNoHold = piecesWithNoHold.getBlocks();
-                if (isOverPieces)
-                    blocksWithNoHold = blocksWithNoHold.subList(0, maxDepth);
-
-                // 重複するホールドなしパターンを除去
-                if (!duplicateCheckTree.isVisited(blocksWithNoHold)) {
-                    searchingPieces.add(blocksWithNoHold);
-                    duplicateCheckTree.success(blocksWithNoHold);
-                }
-            }
-        }
-
-        output("Searching pattern size (duplicate) = " + counter);
-
-        return searchingPieces;
-    }
-
-    private List<List<Block>> createSearchingPiecesNoHold(PiecesGenerator generator, int maxDepth) throws IOException {
-        int counter = 0;
-        List<List<Block>> searchingPieces = new ArrayList<>();
-        VisitedTree duplicateCheckTree = new VisitedTree();
-        boolean isOverPieces = maxDepth < generator.getDepth();
-
-        // 組み合わせの列挙
-        for (SafePieces pieces : generator) {
-            counter++;
-            List<Block> blocks = pieces.getBlocks();
-
-            if (isOverPieces)
-                blocks = blocks.subList(0, maxDepth);
-
-            // 重複するホールドなしパターンを除去
-            if (!duplicateCheckTree.isVisited(blocks)) {
-                searchingPieces.add(blocks);
-                duplicateCheckTree.success(blocks);
-            }
-        }
-
-        output("Searching pattern size (duplicate) = " + counter);
-
-        return searchingPieces;
     }
 
     private void output() throws IOException {

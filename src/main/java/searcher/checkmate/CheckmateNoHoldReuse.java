@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
-// TODO: write unittest
 public class CheckmateNoHoldReuse<T extends Action> implements Checkmate<T> {
     private final CheckmateDataPool dataPool;
     private final SimpleSearcherCore<T> searcherCore;

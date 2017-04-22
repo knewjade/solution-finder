@@ -1,4 +1,4 @@
-package entry;
+package entry.percent;
 
 import core.field.Field;
 import core.field.FieldFactory;
@@ -12,7 +12,7 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 
-public class CheckerEntryTest {
+public class PercentInvokerTest {
     @Test
     public void invokeUsingHoldJust() throws Exception {
         // Field
@@ -31,12 +31,13 @@ public class CheckerEntryTest {
         Field field = FieldFactory.createField(marks);
         StringWriter writer = new StringWriter();
         Settings settings = new Settings();
-        CheckerEntry entry = new CheckerEntry(writer, settings, false);
+        PercentInvoker entry = new PercentInvoker(writer, settings, false);
 
         entry.invoke(field, patterns, maxClearLine);
 
         String output = writer.toString();
 
+        // Source: myself 20170415
         String expected = "success = 99.96% (5038/5040)";
         assertThat(output, containsString(expected));
     }
@@ -65,12 +66,13 @@ public class CheckerEntryTest {
         Field field = FieldFactory.createField(marks);
         StringWriter writer = new StringWriter();
         Settings settings = new Settings();
-        CheckerEntry entry = new CheckerEntry(writer, settings, false);
+        PercentInvoker entry = new PercentInvoker(writer, settings, false);
 
         entry.invoke(field, patterns, maxClearLine);
 
         String output = writer.toString();
 
+        // Source: Nilgiri: https://docs.google.com/spreadsheets/d/1bVY3t_X96xRmUL0qdgB9tViSIGenu6RMKX4RW7qWg8Y/edit#gid=0
         String expected = "success = 84.64% (711/840)";
         assertThat(output, containsString(expected));
     }
@@ -92,12 +94,13 @@ public class CheckerEntryTest {
         StringWriter writer = new StringWriter();
         Settings settings = new Settings();
         settings.setUsingHold(false);
-        CheckerEntry entry = new CheckerEntry(writer, settings, false);
+        PercentInvoker entry = new PercentInvoker(writer, settings, false);
 
         entry.invoke(field, patterns, maxClearLine);
 
         String output = writer.toString();
 
+        // Source: reply in twitter from @fullfool_14
         String expected = "success = 28.55% (1439/5040)";
         assertThat(output, containsString(expected));
     }
@@ -119,12 +122,13 @@ public class CheckerEntryTest {
         StringWriter writer = new StringWriter();
         Settings settings = new Settings();
         settings.setUsingHold(false);
-        CheckerEntry entry = new CheckerEntry(writer, settings, false);
+        PercentInvoker entry = new PercentInvoker(writer, settings, false);
 
         entry.invoke(field, patterns, maxClearLine);
 
         String output = writer.toString();
 
+        // Source: reply in twitter from @fullfool_14
         String expected = "success = 14.42% (727/5040)";
         assertThat(output, containsString(expected));
     }
