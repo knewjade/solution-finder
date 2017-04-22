@@ -28,7 +28,6 @@ public class PiecesGenerator implements Iterable<SafePieces> {
             for (String split : splits) {
                 try {
                     currentDepth += PatternElement.verify(split);
-
                 } catch (SyntaxException e) {
                     String message = String.format("'%s' # '%s' in %d line : cause = %s", split.trim(), pattern.trim(), index + 1, e.getMessage());
                     throw new SyntaxException(message);

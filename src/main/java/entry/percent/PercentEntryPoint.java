@@ -29,6 +29,15 @@ public class PercentEntryPoint implements EntryPoint {
 
         String logFilePath = settings.getLogFilePath();
         File logFile = new File(logFilePath);
+
+        // 親ディレクトリがない場合は作成
+        if (!logFile.getParentFile().exists()) {
+            boolean mairSuccess = logFile.getParentFile().mkdir();
+            if (!mairSuccess) {
+                throw new IllegalStateException("Failed to make output directory");
+            }
+        }
+
         if (logFile.isDirectory())
             throw new IllegalArgumentException("Cannot specify directory as log file path");
         if (logFile.exists() && !logFile.canWrite())

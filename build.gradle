@@ -25,10 +25,18 @@ buildscript {
         maven { url 'https://plugins.gradle.org/m2/' }
     }
 
-    dependencies {
+//    dependencies {
 //        compile 'commons-cli:commons-cli:1.+'
 //        classpath 'jp.classmethod.aws:gradle-aws-plugin:0.+'
+//    }
+}
+
+
+jar {
+    manifest {
+        attributes 'Main-Class' : 'Main'
     }
+    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
 }
 
 //apply plugin: 'jp.classmethod.aws'
@@ -54,9 +62,3 @@ buildscript {
 //    memorySize = 256 // default 128 MB
 //    timeout = 30 // default 3 sec
 //}
-
-jar {
-    manifest {
-        attributes 'Main-Class' : 'Main'
-    }
-}

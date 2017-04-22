@@ -49,6 +49,15 @@ public class PathEntryPoint implements EntryPoint {
 
         String logFilePath = settings.getLogFilePath();
         File logFile = new File(logFilePath);
+
+        // 親ディレクトリがない場合は作成
+        if (!logFile.getParentFile().exists()) {
+            boolean mairSuccess = logFile.getParentFile().mkdir();
+            if (!mairSuccess) {
+                throw new IllegalStateException("Failed to make output directory");
+            }
+        }
+
         if (logFile.isDirectory())
             throw new IllegalArgumentException("Cannot specify directory as log file path");
         if (logFile.exists() && !logFile.canWrite())
@@ -91,6 +100,15 @@ public class PathEntryPoint implements EntryPoint {
         // 出力ファイルが正しく出力できるか確認
         String outputBaseFilePath = settings.getOutputBaseFilePath();
         File outputBaseFile = new File(outputBaseFilePath);
+
+        // 親ディレクトリがない場合は作成
+        if (!outputBaseFile.getParentFile().exists()) {
+            boolean mairSuccess = outputBaseFile.getParentFile().mkdir();
+            if (!mairSuccess) {
+                throw new IllegalStateException("Failed to make output directory");
+            }
+        }
+
         if (outputBaseFile.isDirectory())
             throw new IllegalArgumentException("Cannot specify directory as output base file path");
         if (outputBaseFile.exists() && !outputBaseFile.canWrite())

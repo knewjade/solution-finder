@@ -22,6 +22,17 @@ public class Main {
         if (args.length < 1)
             throw new IllegalArgumentException("No command: Use percent, path");
 
+        if (args[0].equals("-h")) {
+            System.out.println("Usage: <command> [options]");
+            System.out.println("  command: percent, path");
+            System.exit(0);
+        }
+
+        if (args[0].equals("-v")) {
+            System.out.println("Version: 0.30");
+            System.exit(0);
+        }
+
         // 引数リストの作成
         List<String> argsList = new ArrayList<>(Arrays.asList(args).subList(1, args.length));
 

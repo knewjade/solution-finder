@@ -23,8 +23,8 @@ class PatternElement {
         }
     }
 
-    static int verify(String patter) throws SyntaxException {
-        return parse(patter).blocks.size();
+    static int verify(String pattern) throws SyntaxException {
+        return parse(pattern).getPopCount();
     }
 
     private static PatternElement parse(String pattern) throws SyntaxException {

@@ -175,6 +175,16 @@ public class PiecesGeneratorTest {
         assertThat(pieces.size(), is(210 + 210 + 210 + 840));
     }
 
+    @Test
+    public void toMultiList4() throws Exception {
+        List<String> patterns = Arrays.asList("T,T", "Z,* # comment");
+        PiecesGenerator generator = new PiecesGenerator(patterns);
+        assertThat(generator.getDepth(), is(2));
+
+        List<SafePieces> pieces = toList(generator);
+        assertThat(pieces.size(), is(8));
+    }
+
     @Test(expected = SyntaxException.class)
     public void errorOverPopPermutation() throws Exception {
         try {
