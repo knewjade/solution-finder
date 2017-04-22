@@ -21,7 +21,7 @@ public class PiecesGeneratorTest {
 
     @Test
     public void toList1() throws Exception {
-        PiecesGenerator generator = new PiecesGenerator("I");
+        PiecesGenerator generator = new PiecesGenerator("I # comment");
         assertThat(generator.getDepth(), is(1));
 
         List<SafePieces> pieces = toList(generator);
@@ -140,7 +140,7 @@ public class PiecesGeneratorTest {
 
     @Test
     public void toMultiList1() throws Exception {
-        List<String> patterns = Arrays.asList("I", "T");
+        List<String> patterns = Arrays.asList("I#comment", "T", "# comment");
         PiecesGenerator generator = new PiecesGenerator(patterns);
         assertThat(generator.getDepth(), is(1));
 
@@ -199,6 +199,16 @@ public class PiecesGeneratorTest {
     public void errorIllegalNumberPermutation() throws Exception {
         try {
             PiecesGenerator.verify(" *pf ");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Test(expected = SyntaxException.class)
+    public void errorIllegalNumber2Permutation() throws Exception {
+        try {
+            PiecesGenerator.verify(" *7p4 ");
         } catch (Exception e) {
             e.printStackTrace();
             throw e;

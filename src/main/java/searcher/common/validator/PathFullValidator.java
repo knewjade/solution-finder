@@ -7,14 +7,6 @@ import searcher.common.action.Action;
 import java.util.List;
 
 public class PathFullValidator implements FullValidator {
-//    public static PathFullValidator createWithHold(List<Field> expectedField, List<Action> expectedAction, Validator validator) {
-//        ArrayList<Field> fields = new ArrayList<>(expectedField);
-//        fields.add(null);  // add Dummy
-//        ArrayList<Action> actions = new ArrayList<>(expectedAction);
-//        actions.add(null);  // add Dummy
-//        return new PathFullValidator(fields, actions, validator);
-//    }
-
     public static PathFullValidator createWithoutHold(List<Field> expectedField, Validator validator) {
         return new PathFullValidator(expectedField, validator);
     }

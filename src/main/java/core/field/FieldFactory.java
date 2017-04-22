@@ -52,7 +52,7 @@ public class FieldFactory {
         return new MiddleField();
     }
 
-    static MiddleField createMiddleField(String marks) {
+    public static MiddleField createMiddleField(String marks) {
         if (marks.length() % 10 != 0)
             throw new IllegalArgumentException("length of marks should be 'mod 10'");
 

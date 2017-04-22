@@ -51,7 +51,7 @@ public class ActionEncoder extends Encoder {
         ColorType type = element.getColorType();
         Rotate rotate = element.getRotate();
 
-        if (!ColorType.isBlock(type)) {
+        if (!ColorType.isMinoBlock(type)) {
             x = 0;
             y = 22;
         } else if (type == ColorType.O && rotate == Rotate.Left) {
@@ -81,7 +81,7 @@ public class ActionEncoder extends Encoder {
         ColorType type = element.getColorType();
         Rotate rotate = element.getRotate();
 
-        if (!ColorType.isBlock(type))
+        if (!ColorType.isMinoBlock(type))
             return 0;
 
         switch (rotate) {

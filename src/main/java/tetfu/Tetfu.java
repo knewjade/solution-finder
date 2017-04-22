@@ -89,7 +89,7 @@ public class Tetfu {
             parseAction(element, flags);
 
             ColorType colorType = element.getColorType();
-            if (flags.isLock && ColorType.isBlock(colorType)) {
+            if (flags.isLock && ColorType.isMinoBlock(colorType)) {
                 Block block = converter.parseToBlock(colorType);
                 Mino mino = minoFactory.create(block, element.getRotate());
 
@@ -221,7 +221,7 @@ public class Tetfu {
             pages.add(tetfuPage);
 
             ColorType colorType = actionDecoder.colorType;
-            if (actionDecoder.isLock && ColorType.isBlock(colorType)) {
+            if (actionDecoder.isLock && ColorType.isMinoBlock(colorType)) {
                 Rotate rotate = actionDecoder.rotate;
                 Coordinate coordinate = actionDecoder.coordinate;
 

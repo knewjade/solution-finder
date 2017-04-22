@@ -1,7 +1,6 @@
 package tetfu.common;
 
 import core.mino.Block;
-import tetfu.common.ColorType;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -40,7 +39,7 @@ public class ColorConverter {
     }
 
     public Block parseToBlock(ColorType type) {
-        assert ColorType.isBlock(type);
+        assert ColorType.isMinoBlock(type) : type;
         return colorToBlock.get(type);
     }
 

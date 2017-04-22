@@ -55,6 +55,7 @@ public class NormalEnumeratePieces implements EnumeratePiecesCore {
         return searchingPieces;
     }
 
+    @Override
     public int getCounter() {
         return duplicate;
     }

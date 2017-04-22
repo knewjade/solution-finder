@@ -5,6 +5,7 @@ import core.field.Field;
 import core.field.SmallField;
 import core.mino.Block;
 import core.mino.MinoFactory;
+import misc.FieldComparator;
 import searcher.common.Result;
 import searcher.common.SimpleSearcherCore;
 import searcher.common.action.Action;
@@ -13,12 +14,14 @@ import searcher.common.order.Order;
 import searcher.common.validator.Validator;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.TreeSet;
 
 public class CheckmateUsingHoldReuse<T extends Action> implements Checkmate<T> {
     private final CheckmateDataPool dataPool;
     private final SimpleSearcherCore<T> searcherCore;
+    private final Comparator<Field> fieldComparator = new FieldComparator();
 
     private List<TreeSet<Order>> memento = null;
     private Block[] lastBlocks = null;
@@ -105,13 +108,6 @@ public class CheckmateUsingHoldReuse<T extends Action> implements Checkmate<T> {
     }
 
     private boolean equalsField(Field left, Field right) {
-        int boardCount = left.getBoardCount();
-        if (boardCount != right.getBoardCount())
-            return false;
-
-        for (int index = 0; index < boardCount; index++)
-            if (left.getBoard(index) != right.getBoard(index))
-                return false;
-        return true;
+        return fieldComparator.compare(left, right) == 0;
     }
 }

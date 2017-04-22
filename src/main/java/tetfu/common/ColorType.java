@@ -21,7 +21,7 @@ public enum ColorType {
         return number;
     }
 
-    public static boolean isBlock(ColorType colorType) {
+    public static boolean isMinoBlock(ColorType colorType) {
         return colorType != Empty && colorType != Gray;
     }
 }

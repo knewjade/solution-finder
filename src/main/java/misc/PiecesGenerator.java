@@ -15,6 +15,11 @@ public class PiecesGenerator implements Iterable<SafePieces> {
         int depth = -1;
         for (int index = 0; index < patterns.size(); index++) {
             String pattern = patterns.get(index);
+            if (pattern.contains("#"))
+                pattern = pattern.substring(0, pattern.indexOf('#'));
+
+            pattern = pattern.trim();
+
             if (pattern.equals(""))
                 continue;
 
@@ -47,6 +52,12 @@ public class PiecesGenerator implements Iterable<SafePieces> {
 
     public PiecesGenerator(List<String> patterns) {
         this.patterns = patterns.stream()
+                .map(str -> {
+                    if (str.contains("#"))
+                        return str.substring(0, str.indexOf('#'));
+                    return str;
+                })
+                .map(String::trim)
                 .filter(str -> !str.isEmpty())
                 .collect(Collectors.toList());
     }

@@ -65,6 +65,7 @@ public class HoldBreakEnumeratePieces implements EnumeratePiecesCore {
         return searchingPieces;
     }
 
+    @Override
     public int getCounter() {
         return duplicate;
     }

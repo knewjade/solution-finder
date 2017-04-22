@@ -14,6 +14,7 @@ public class TetfuPage {
     private final Rotate rotate;
     private final String escapedComment;
     private final ColoredField field;
+    private final ActionDecoder actionDecoder;
 
     public TetfuPage(ActionDecoder decoder, String escapedComment, ColoredField field) {
         this.colorType = decoder.colorType;
@@ -21,6 +22,7 @@ public class TetfuPage {
         this.rotate = decoder.rotate;
         this.escapedComment = escapedComment;
         this.field = field.freeze(TETFU_MAX_HEIGHT);
+        this.actionDecoder = decoder;
     }
 
     public ColorType getColorType() {
@@ -45,6 +47,10 @@ public class TetfuPage {
 
     public ColoredField getField() {
         return field;
+    }
+
+    public boolean isPutMino() {
+        return ColorType.isMinoBlock(colorType) && actionDecoder.isLock;
     }
 
     @Override
