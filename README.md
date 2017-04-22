@@ -4,6 +4,7 @@
 7種のミノ(ITSZJLO) の様々な組み合わせでの探索が可能です。
 
 ダウンロードは releases からお願いします。
+
 https://github.com/knewjade/solution-finder/releases
 
 ※ プログラムの実行には、Java8が実行できる環境が必要です
