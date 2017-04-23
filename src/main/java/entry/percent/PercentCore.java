@@ -10,7 +10,7 @@ import concurrent.checker.invoker.using_hold.ConcurrentCheckerUsingHoldInvoker;
 import core.field.Field;
 import core.mino.Block;
 import searcher.common.action.Action;
-import tree.AnalyzeTree;
+import misc.tree.AnalyzeTree;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -50,11 +50,11 @@ class PercentCore {
         }
     }
 
-    public AnalyzeTree getResultTree() {
+    AnalyzeTree getResultTree() {
         return resultTree;
     }
 
-    public List<Pair<List<Block>, Boolean>> getResultPairs() {
+    List<Pair<List<Block>, Boolean>> getResultPairs() {
         return resultPairs;
     }
 }

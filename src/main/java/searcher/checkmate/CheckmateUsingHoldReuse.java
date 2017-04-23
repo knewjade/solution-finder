@@ -1,13 +1,13 @@
 package searcher.checkmate;
 
-import action.candidate.Candidate;
+import core.action.candidate.Candidate;
 import core.field.Field;
 import core.field.SmallField;
 import core.mino.Block;
 import core.mino.MinoFactory;
 import misc.FieldComparator;
 import searcher.common.Result;
-import searcher.common.SimpleSearcherCore;
+import searcher.core.SimpleSearcherCore;
 import searcher.common.action.Action;
 import searcher.common.order.NormalOrder;
 import searcher.common.order.Order;

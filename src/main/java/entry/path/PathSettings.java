@@ -2,8 +2,8 @@ package entry.path;
 
 import core.field.Field;
 import core.field.FieldFactory;
-import tetfu.common.ColorType;
-import tetfu.field.ColoredField;
+import misc.tetfu.common.ColorType;
+import misc.tetfu.field.ColoredField;
 
 import java.util.ArrayList;
 import java.util.List;

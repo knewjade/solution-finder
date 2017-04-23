@@ -1,11 +1,11 @@
 package searcher.full_checkmate;
 
-import action.candidate.Candidate;
+import core.action.candidate.Candidate;
 import core.field.Field;
 import core.mino.Block;
 import core.mino.MinoFactory;
 import searcher.checkmate.CheckmateDataPool;
-import searcher.common.FullSearcherCore;
+import searcher.core.FullSearcherCore;
 import searcher.common.Result;
 import searcher.common.action.Action;
 import searcher.common.order.NormalOrder;

@@ -4,7 +4,7 @@ import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
 import entry.searching_pieces.NormalEnumeratePieces;
-import misc.PiecesGenerator;
+import misc.pattern.PiecesGenerator;
 import org.junit.Test;
 
 import java.util.Arrays;

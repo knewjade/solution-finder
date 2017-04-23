@@ -17,15 +17,23 @@ public class OperationHistory {
         this.nextIndex = nextIndex;
     }
 
-    OperationHistory record(Block block, Action action) {
-        return record(ActionParser.parseToInt(block, action));
+    public OperationHistory recordAndReturnNew(Block block, Action action) {
+        return recordAndReturnNew(ActionParser.parseToInt(block, action));
     }
 
-    private OperationHistory record(int value) {
+    private OperationHistory recordAndReturnNew(int value) {
         int[] newArray = new int[operationNumbers.length];
         System.arraycopy(operationNumbers, 0, newArray, 0, nextIndex);
         newArray[nextIndex] = value;
         return new OperationHistory(newArray, nextIndex + 1);
+    }
+
+    int[] getOperationNumbers() {
+        return operationNumbers;
+    }
+
+    public int getNextIndex() {
+        return nextIndex;
     }
 
     @Override
@@ -40,13 +48,5 @@ public class OperationHistory {
             str.append(operation).append(" / ");
         }
         return str.substring(0, str.length() - 3);
-    }
-
-    int[] getOperationNumbers() {
-        return operationNumbers;
-    }
-
-    public int getNextIndex() {
-        return nextIndex;
     }
 }

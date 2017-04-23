@@ -9,11 +9,11 @@ import entry.CommandLineWrapper;
 import entry.NormalCommandLineWrapper;
 import entry.PriorityCommandLineWrapper;
 import org.apache.commons.cli.*;
-import tetfu.Tetfu;
-import tetfu.TetfuPage;
-import tetfu.common.ColorConverter;
-import tetfu.common.ColorType;
-import tetfu.field.ColoredField;
+import misc.tetfu.Tetfu;
+import misc.tetfu.TetfuPage;
+import misc.tetfu.common.ColorConverter;
+import misc.tetfu.common.ColorType;
+import misc.tetfu.field.ColoredField;
 
 import java.io.IOException;
 import java.nio.charset.Charset;

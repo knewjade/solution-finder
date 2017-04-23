@@ -1,7 +1,7 @@
 package searcher.checkmate;
 
-import action.candidate.Candidate;
-import action.candidate.LockedCandidate;
+import core.action.candidate.Candidate;
+import core.action.candidate.LockedCandidate;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;

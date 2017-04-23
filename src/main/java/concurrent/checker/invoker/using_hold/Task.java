@@ -1,6 +1,6 @@
 package concurrent.checker.invoker.using_hold;
 
-import action.candidate.Candidate;
+import core.action.candidate.Candidate;
 import concurrent.checker.invoker.OrderLookup;
 import concurrent.checker.invoker.Pair;
 import concurrent.checker.invoker.Pieces;
@@ -9,7 +9,7 @@ import searcher.checker.Checker;
 import searcher.common.Operation;
 import searcher.common.Result;
 import searcher.common.action.Action;
-import tree.VisitedTree;
+import misc.tree.VisitedTree;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -14,6 +14,7 @@ public class Result {
     private final Block lastHold;
 
     public Result(Order order, Block lastBlock, Action action, Block lastHold) {
+        assert order != null && lastBlock != null && action != null;
         this.order = order;
         this.lastBlock = lastBlock;
         this.action = action;

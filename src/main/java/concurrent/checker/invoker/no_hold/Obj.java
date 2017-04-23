@@ -1,6 +1,6 @@
 package concurrent.checker.invoker.no_hold;
 
-import action.candidate.Candidate;
+import core.action.candidate.Candidate;
 import core.field.Field;
 import searcher.checker.Checker;
 import searcher.common.action.Action;

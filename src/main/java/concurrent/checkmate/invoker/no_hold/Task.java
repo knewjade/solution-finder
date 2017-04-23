@@ -1,9 +1,9 @@
 package concurrent.checkmate.invoker.no_hold;
 
-import action.candidate.Candidate;
+import core.action.candidate.Candidate;
 import concurrent.checker.invoker.Pair;
 import core.mino.Block;
-import misc.ComparablePieces;
+import misc.pieces.ComparablePieces;
 import searcher.checkmate.Checkmate;
 import searcher.common.Result;
 import searcher.common.action.Action;

@@ -1,19 +1,19 @@
 package searcher.checker;
 
-import action.candidate.Candidate;
-import action.candidate.LockedCandidate;
+import core.action.candidate.Candidate;
+import core.action.candidate.LockedCandidate;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
-import misc.PiecesGenerator;
-import misc.SafePieces;
+import misc.pattern.PiecesGenerator;
+import misc.pieces.SafePieces;
 import org.junit.Test;
 import searcher.common.action.Action;
 import searcher.common.validator.PerfectValidator;
-import tree.AnalyzeTree;
+import misc.tree.AnalyzeTree;
 
 import java.util.List;
 

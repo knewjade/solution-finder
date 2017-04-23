@@ -1,11 +1,11 @@
 package searcher.checker;
 
-import action.candidate.Candidate;
+import core.action.candidate.Candidate;
 import core.field.Field;
 import core.mino.Block;
 import core.mino.MinoFactory;
 import searcher.common.Result;
-import searcher.common.SimpleSearcherCore;
+import searcher.core.SimpleSearcherCore;
 import searcher.common.action.Action;
 import searcher.common.order.DepthOrder;
 import searcher.common.order.Order;

@@ -1,10 +1,9 @@
 package concurrent.full_checkmate.invoker.no_hold;
 
-import action.candidate.Candidate;
+import core.action.candidate.Candidate;
 import concurrent.checker.invoker.Pair;
 import concurrent.full_checkmate.FullCheckmateNoHoldThreadLocal;
 import core.field.Field;
-import core.mino.Block;
 import searcher.common.Operation;
 import searcher.common.Result;
 import searcher.common.action.Action;

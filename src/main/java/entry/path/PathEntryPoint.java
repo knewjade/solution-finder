@@ -1,41 +1,25 @@
 package entry.path;
 
-import concurrent.LockedCandidateThreadLocal;
-import concurrent.checker.invoker.Pair;
-import concurrent.checkmate.CheckmateNoHoldThreadLocal;
-import concurrent.checkmate.invoker.no_hold.ConcurrentCheckmateCommonInvoker;
-import concurrent.full_checkmate.FullCheckmateNoHoldThreadLocal;
-import concurrent.full_checkmate.invoker.no_hold.ConcurrentFullCheckmateNoHoldInvoker;
 import core.field.Field;
-import core.field.FieldFactory;
 import core.field.FieldView;
 import core.mino.Block;
-import core.mino.Mino;
-import core.mino.MinoFactory;
 import core.srs.Rotate;
 import entry.EntryPoint;
 import entry.searching_pieces.EnumeratePiecesCore;
-import entry.searching_pieces.HoldBreakEnumeratePieces;
-import entry.searching_pieces.NormalEnumeratePieces;
-import misc.PiecesGenerator;
 import misc.Stopwatch;
 import misc.SyntaxException;
+import misc.pattern.PiecesGenerator;
 import searcher.common.Operation;
 import searcher.common.Operations;
-import searcher.common.Result;
-import searcher.common.action.Action;
-import searcher.common.validator.FullValidator;
-import searcher.common.validator.PathFullValidator;
-import searcher.common.validator.PerfectValidator;
 
 import java.io.*;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
-import static java.util.Comparator.reverseOrder;
 
 public class PathEntryPoint implements EntryPoint {
     private static final String LINE_SEPARATOR = System.lineSeparator();
@@ -129,13 +113,6 @@ public class PathEntryPoint implements EntryPoint {
         int core = Runtime.getRuntime().availableProcessors();
         ExecutorService executorService = Executors.newFixedThreadPool(core);
 
-        CheckmateNoHoldThreadLocal<Action> checkmateThreadLocal = new CheckmateNoHoldThreadLocal<>();
-        LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
-        ConcurrentCheckmateCommonInvoker invoker = new ConcurrentCheckmateCommonInvoker(executorService, candidateThreadLocal, checkmateThreadLocal, core * 10);
-
-        FullCheckmateNoHoldThreadLocal<Action> fullCheckmateThreadLocal = new FullCheckmateNoHoldThreadLocal<>();
-        ConcurrentFullCheckmateNoHoldInvoker invokerFull = new ConcurrentFullCheckmateNoHoldInvoker(executorService, candidateThreadLocal, fullCheckmateThreadLocal);
-
         PiecesGenerator generator = new PiecesGenerator(patterns);
 
         output("Available processors = " + core);
@@ -162,7 +139,7 @@ public class PathEntryPoint implements EntryPoint {
 
         // ホールドありなら、探索パターンから複数のホールドなしパターンに分解する
         // ホールドなしなら、探索パターンをそのままリスト化する
-        EnumeratePiecesCore enumeratePiecesCore = createEnumeratePiecesCore(generator, maxDepth);
+        EnumeratePiecesCore enumeratePiecesCore = PathCore.createEnumeratePiecesCore(generator, maxDepth, settings.isUsingHold());
         List<List<Block>> searchingPieces = enumeratePiecesCore.enumerate();
 
         output("Searching pattern size (duplicate) = " + enumeratePiecesCore.getCounter());
@@ -174,51 +151,28 @@ public class PathEntryPoint implements EntryPoint {
         output("  -> Stopwatch start");
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
-        // 探索パターンをホールドなしで列挙
-        // 同じ地形は統合される
-        List<Pair<List<Block>, List<Result>>> allMergedPatterns = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
-
-        // パフェできるホールドなしパターンから派生するパターンをすべて列挙
-        // 途中で同じ地形になる統合されたパターンを探索
-        PerfectValidator perfectValidator = new PerfectValidator();
-        MinoFactory minoFactory = new MinoFactory();
-
-        // マージされた探索結果から派生するパスを探索する準備
-        List<Pair<List<Operation>, FullValidator>> pathCheckList = createPathCheckList(field, maxClearLine, allMergedPatterns, perfectValidator, minoFactory);
-
-        // 統合される瞬間までのパスを探索する
-        List<Pair<List<Operation>, List<Result>>> allDerivationPath = invokerFull.search(field, pathCheckList, maxClearLine, maxDepth);
-
-        // Operationに変換し、重複を取り除く  // 全パス
-        TreeSet<Operations> allUniqueOperations = parseToUniqueOperations(allDerivationPath);
-
-        // Blockごとに置き分けたフィールド群に変換する  // 同一ミノ配置を取り除く
-        TreeSet<BlockField> blockFields = createBlockFields(field, maxClearLine, minoFactory, allUniqueOperations);
-
-        // 操作順に並び替える
-        List<BlockField> uniqueBlockField = blockFields.stream()
-                .sorted(Comparator.comparing(BlockField::getOperations))
-                .collect(Collectors.toList());
+        // 探索を行う
+        PathCore pathCore = new PathCore(maxClearLine, executorService, core * 10);
+        pathCore.run(field, searchingPieces, maxClearLine, maxDepth);
+        TreeSet<Operations> allOperations = pathCore.getAllOperations();
+        List<Operations> uniqueOperations = pathCore.getUniqueOperations();
 
         stopwatch.stop();
         output("  -> Stopwatch stop : " + stopwatch.toMessage(TimeUnit.MILLISECONDS));
 
         output();
-        output("Found path [all] = " + allUniqueOperations.size());
-        output("Found path [unique] = " + uniqueBlockField.size());
+        output("Found path [all] = " + allOperations.size());
+        output("Found path [unique] = " + uniqueOperations.size());
 
         output();
         // ========================================
         output("# Output file");
 
         // 全パスの出力
-        outputOperationsToCSV(outputBaseFile, allUniqueOperations);
+        outputOperationsToCSV(outputBaseFile, allOperations);
 
         // 同一ミノ配置を取り除いたパスの出力
-        List<Operations> uniqueBlockFieldOperations = uniqueBlockField.stream()
-                .map(BlockField::getOperations)
-                .collect(Collectors.toList());
-        outputOperationsToCSV(outputUniqueFile, uniqueBlockFieldOperations);
+        outputOperationsToCSV(outputUniqueFile, uniqueOperations);
 
         output("done");
 
@@ -259,127 +213,6 @@ public class PathEntryPoint implements EntryPoint {
             return path.substring(pointIndex);
 
         return "";
-    }
-
-    private TreeSet<BlockField> createBlockFields(Field field, int maxClearLine, MinoFactory minoFactory, TreeSet<Operations> allUniqueOperations) {
-        TreeSet<BlockField> blockFields = new TreeSet<>();
-        for (Operations allOperation : allUniqueOperations) {
-            // 操作を取り出す
-            List<Operation> operations = allOperation.getOperations();
-
-            // 初期化
-            BlockField blockField = new BlockField(allOperation, maxClearLine);
-            Field freeze = field.freeze(maxClearLine);  // このフィールドには行が揃っていてもライン消去されていない状態で記録
-
-            // 操作を再生する
-            for (Operation operation : operations) {
-                // 接着情報を取り出す
-                Rotate rotate = operation.getRotate();
-                Block block = operation.getBlock();
-                int x = operation.getX();
-                int y = operation.getY();
-                Mino mino = minoFactory.create(block, rotate);
-
-                // 一度、フィールドをライン消去する
-                long newdeletekey = freeze.clearLineReturnKey();
-
-                // 何もないフィールドにミノをおき、これまでに消去されたラインを空白で復元させる
-                Field vanilla = FieldFactory.createField(maxClearLine);
-                vanilla.putMino(mino, x, y);
-                vanilla.insertWhiteLineWithKey(newdeletekey);
-
-                // おいたミノをこれまでの結果に統合する
-                blockField.merge(vanilla, block);
-
-                // ライン消去されたフィールドにミノをおく
-                freeze.putMino(mino, x, y);
-
-                // ライン消去前の状態に戻す
-                freeze.insertBlackLineWithKey(newdeletekey);
-            }
-
-            blockFields.add(blockField);
-        }
-        return blockFields;
-    }
-
-    private TreeSet<Operations> parseToUniqueOperations(List<Pair<List<Operation>, List<Result>>> allDerivationPath) {
-        TreeSet<Operations> allOperations = new TreeSet<>();
-        for (Pair<List<Operation>, List<Result>> allPathPatternPair : allDerivationPath) {
-            List<Operation> baseOperations = allPathPatternPair.getKey();
-            List<Result> search = allPathPatternPair.getValue();
-
-            // Resultからオペレーションに変換。オペレーションが長い順に並び替える
-            List<List<Operation>> sortedOperations = search.stream()
-                    .map(Result::createOperations)
-                    .sorted(Comparator.comparing(List::size, reverseOrder()))
-                    .collect(Collectors.toList());
-
-            ArrayList<Operations> newOperations = new ArrayList<>();
-            newOperations.add(new Operations(baseOperations));
-
-            // すでに確定しているオペレーション順をもとに、新たに派生するオペレーションをつなげて追加する
-            for (List<Operation> operation : sortedOperations) {
-                // すべての確定分をもとに、派生パターンを生成
-                for (int index = 0, size = newOperations.size(); index < size; index++) {
-                    List<Operation> base = newOperations.get(index).getOperations();
-                    ArrayList<Operation> list = new ArrayList<>(operation);
-                    list.addAll(base.subList(operation.size(), base.size()));
-                    assert list.size() == base.size();
-                    newOperations.add(new Operations(list));
-                }
-            }
-
-            allOperations.addAll(newOperations);
-        }
-
-        return allOperations;
-    }
-
-    private List<Pair<List<Operation>, FullValidator>> createPathCheckList(Field field, int maxClearLine, List<Pair<List<Block>, List<Result>>> allMergedPatterns, PerfectValidator perfectValidator, MinoFactory minoFactory) {
-        List<Pair<List<Operation>, FullValidator>> pathCheckList = new ArrayList<>();
-        for (Pair<List<Block>, List<Result>> mergedPatternPair : allMergedPatterns) {
-            List<Result> results = mergedPatternPair.getValue();
-            for (Result result : results) {
-                // resultから1手ごとの地形リストを作成
-                ArrayList<Field> expectField = createExpectedFieldListFromResult(field, maxClearLine, minoFactory, result);
-
-                // 統合される瞬間までのパスを探索するためのValidator
-                PathFullValidator pathFullValidator = PathFullValidator.createWithoutHold(expectField, perfectValidator);
-
-                pathCheckList.add(new Pair<>(result.createOperations(), pathFullValidator));
-            }
-        }
-        return pathCheckList;
-    }
-
-    private EnumeratePiecesCore createEnumeratePiecesCore(PiecesGenerator generator, int maxDepth) throws IOException {
-        if (settings.isUsingHold()) {
-            return new HoldBreakEnumeratePieces(generator, maxDepth);
-        } else {
-            return new NormalEnumeratePieces(generator, maxDepth, false);
-        }
-    }
-
-    private ArrayList<Field> createExpectedFieldListFromResult(Field field, int maxClearLine, MinoFactory minoFactory, Result result) {
-        ArrayList<Field> expectField = new ArrayList<>();
-
-        int currentMaxClearLine = maxClearLine;
-        Field current = field.freeze(currentMaxClearLine);
-        for (Operation operation : result.createOperations()) {
-            Block block = operation.getBlock();
-            Rotate rotate = operation.getRotate();
-            int x = operation.getX();
-            int y = operation.getY();
-
-            Mino mino = minoFactory.create(block, rotate);
-            current.putMino(mino, x, y);
-            currentMaxClearLine -= current.clearLine();
-            expectField.add(current);
-
-            current = current.freeze(currentMaxClearLine);
-        }
-        return expectField;
     }
 
     private void outputOperationsToCSV(File file, Collection<Operations> operations) {

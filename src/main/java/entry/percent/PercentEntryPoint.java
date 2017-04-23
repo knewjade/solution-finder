@@ -6,10 +6,10 @@ import core.field.FieldView;
 import core.mino.Block;
 import entry.EntryPoint;
 import entry.searching_pieces.NormalEnumeratePieces;
-import misc.PiecesGenerator;
+import misc.pattern.PiecesGenerator;
 import misc.Stopwatch;
 import misc.SyntaxException;
-import tree.AnalyzeTree;
+import misc.tree.AnalyzeTree;
 
 import java.io.*;
 import java.util.List;
@@ -132,7 +132,7 @@ public class PercentEntryPoint implements EntryPoint {
         output(tree.show());
 
         output();
-        output("Success pattern tree [Head 3 pieces]:");
+        output("Success pattern misc.tree [Head 3 pieces]:");
         output(tree.tree(3));
 
         output("-------------------");

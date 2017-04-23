@@ -1,10 +1,10 @@
 package concurrent.checkmate.invoker.no_hold;
 
-import action.candidate.Candidate;
+import core.action.candidate.Candidate;
 import concurrent.checker.invoker.Pair;
 import core.field.Field;
 import core.mino.Block;
-import misc.ComparablePieces;
+import misc.pieces.ComparablePieces;
 import searcher.checkmate.Checkmate;
 import searcher.common.Result;
 import searcher.common.action.Action;
@@ -20,13 +20,13 @@ public class ConcurrentCheckmateCommonInvoker {
     private final ExecutorService executorService;
     private final ThreadLocal<Candidate<Action>> candidateThreadLocal;
     private final ThreadLocal<Checkmate<Action>> checkmateThreadLocal;
-    private final int splitCount;
+    private final int taskSplitCount;
 
-    public ConcurrentCheckmateCommonInvoker(ExecutorService executorService, ThreadLocal<Candidate<Action>> candidateThreadLocal, ThreadLocal<Checkmate<Action>> checkmateThreadLocal, int splitCount) {
+    public ConcurrentCheckmateCommonInvoker(ExecutorService executorService, ThreadLocal<Candidate<Action>> candidateThreadLocal, ThreadLocal<Checkmate<Action>> checkmateThreadLocal, int taskSplitCount) {
         this.executorService = executorService;
         this.candidateThreadLocal = candidateThreadLocal;
         this.checkmateThreadLocal = checkmateThreadLocal;
-        this.splitCount = splitCount;
+        this.taskSplitCount = taskSplitCount;
     }
 
     public List<Pair<List<Block>, List<Result>>> search(Field field, List<List<Block>> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
@@ -42,8 +42,8 @@ public class ConcurrentCheckmateCommonInvoker {
 
         ArrayList<Task> tasks = new ArrayList<>();
         int lastIndex = 0;
-        for (int count = 0; count < splitCount; count++) {
-            int toIndex = (int) (size * ((double) (count + 1) / splitCount));
+        for (int count = 0; count < taskSplitCount; count++) {
+            int toIndex = (int) (size * ((double) (count + 1) / taskSplitCount));
             List<ComparablePieces> subPieces = sortedPieces.subList(lastIndex, toIndex);
             tasks.add(new Task(obj, subPieces));
             lastIndex = toIndex;

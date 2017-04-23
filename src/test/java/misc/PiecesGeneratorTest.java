@@ -1,5 +1,7 @@
 package misc;
 
+import misc.pattern.PiecesGenerator;
+import misc.pieces.SafePieces;
 import org.junit.Test;
 
 import java.util.ArrayList;

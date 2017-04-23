@@ -1,7 +1,7 @@
 package concurrent;
 
-import action.candidate.Candidate;
-import action.candidate.LockedCandidate;
+import core.action.candidate.Candidate;
+import core.action.candidate.LockedCandidate;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;

@@ -4,7 +4,7 @@ import concurrent.checker.invoker.Pair;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
-import main.CheckmateInvoker;
+import _experimental.main.CheckmateInvoker;
 import org.junit.Test;
 import searcher.common.Result;
 import searcher.common.ResultHelper;

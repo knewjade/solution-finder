@@ -1,7 +1,7 @@
 package entry.searching_pieces;
 
 import core.mino.Block;
-import misc.PiecesGenerator;
+import misc.pattern.PiecesGenerator;
 import org.junit.Test;
 
 import java.util.Arrays;

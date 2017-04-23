@@ -1,10 +1,10 @@
 package searcher.checker;
 
-import action.candidate.Candidate;
-import action.candidate.LockedCandidate;
-import misc.PiecesGenerator;
-import misc.SafePieces;
-import tree.AnalyzeTree;
+import core.action.candidate.Candidate;
+import core.action.candidate.LockedCandidate;
+import misc.pattern.PiecesGenerator;
+import misc.pieces.SafePieces;
+import misc.tree.AnalyzeTree;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
