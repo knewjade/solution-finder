@@ -15,7 +15,7 @@ repositories {
 
 dependencies {
     compile 'commons-cli:commons-cli:1.+'
-    compile 'com.google.guava:guava:21.0'
+    testCompile 'com.google.guava:guava:21.0'
     testCompile 'junit:junit:4.+'
     testCompile 'org.hamcrest:hamcrest-library:1.3.+'
 }
