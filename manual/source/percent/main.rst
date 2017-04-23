@@ -119,7 +119,7 @@ v115のテト譜データにのみ対応。
   # Output
   success = 99.84% (5032/5040)  ← パフェ成功確率。カッコ内は 成功数/全探索数
 
-  Success pattern misc.tree [Head 3 pieces]:
+  Success pattern tree [Head 3 pieces]:
   * -> 99.8 %
   ∟ T -> 99.6 %
     ∟ TI -> 99.2 %

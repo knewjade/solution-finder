@@ -24,7 +24,7 @@ public class FieldFactory {
         else if (maxY <= 24)
             return FieldFactory.createLargeField(marks);
 
-        throw new UnsupportedOperationException("Too large core.field height: " + maxY);
+        throw new UnsupportedOperationException("Too large field height: " + maxY);
     }
 
     static SmallField createSmallField() {

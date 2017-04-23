@@ -132,7 +132,7 @@ public class PercentEntryPoint implements EntryPoint {
         output(tree.show());
 
         output();
-        output("Success pattern misc.tree [Head 3 pieces]:");
+        output("Success pattern tree [Head 3 pieces]:");
         output(tree.tree(3));
 
         output("-------------------");

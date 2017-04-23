@@ -95,17 +95,17 @@ public class CheckerMain {
 
         // Measure
         AnalyzeTree tree = new AnalyzeTree();
-//        misc.tree.AnalyzeTree treeFail = new misc.tree.AnalyzeTree();
+//        AnalyzeTree treeFail = new AnalyzeTree();
         for (List<Block> combination : allCombinations) {
             invoker.measure(field, combination, 1);
 
 //                System.out.print(combination + " => ");
-//            if (concurrent.checker.invoker.getLastResult()) {
+//            if (invoker.getLastResult()) {
 ////                    System.out.println("success");
-//                misc.tree.success(combination);
+//                success(combination);
 //            } else {
 ////                    System.out.println("fail");
-//                misc.tree.fail(combination);
+//                fail(combination);
 ////                    treeFail.fail(combination);
 //            }
         }
@@ -113,12 +113,12 @@ public class CheckerMain {
         stopwatch.stop();
 
         // Show
-//        concurrent.checker.invoker.show();
-//        misc.tree.show();
+//        invoker.show();
+//        tree.show();
 //        System.out.println("---");
-//        misc.tree.misc.tree(1);
+//        tree(1);
 //        System.out.println("---");
-//        treeFail.misc.tree(3);
+//        tree(3);
 //
 //        System.out.println(PerfectValidator.validateCount);
 //        System.out.println(PerfectValidator.allCount);
@@ -171,7 +171,7 @@ public class CheckerMain {
 
         // Measure
         AnalyzeTree tree = new AnalyzeTree();
-//        misc.tree.AnalyzeTree treeFail = new misc.tree.AnalyzeTree();
+//        AnalyzeTree treeFail = new AnalyzeTree();
         for (List<Block> combination : allCombinations) {
             invoker.measure(field, combination, 1);
 
@@ -193,6 +193,6 @@ public class CheckerMain {
         System.out.println("---");
         tree.tree(1);
         System.out.println("---");
-//        treeFail.misc.tree(3);
+//        tree.tree(3);
     }
 }
