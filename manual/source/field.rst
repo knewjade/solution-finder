@@ -23,7 +23,7 @@
 
 例) パフェテンプレを探索する場合 (Mac) ::
 
-  java -jar solution-finder.jar percent --tetfu v115@9gwhi0DeR4whg0RpCeR4wwwhglRpBeBtxwwhilCeBt?wwJeAgWUA0no2AtTMeDUPNXEuN98AQPUGB
+  java -jar sinder.jar percent --tetfu v115@9gwhi0DeR4whg0RpCeR4wwwhglRpBeBtxwwhilCeBt?wwJeAgWUA0no2AtTMeDUPNXEuN98AQPUGB
 
 * TIPS
 

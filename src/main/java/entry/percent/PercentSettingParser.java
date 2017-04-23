@@ -250,8 +250,10 @@ public class PercentSettingParser {
         TetfuPage tetfuPage = extractTetfuPage(decoded, page);
 
         // コメントの抽出
-        String trim = "--clear-line " + tetfuPage.getComment().trim();
-        List<String> splitComment = Arrays.stream(trim.split(" "))
+        // 先頭が数字ではない(--clear-line -p *p7のようになる)場合でも、parserはエラーにならない
+        // データ取得時にOptional.emptyがかえるだけ
+        String comment = "--clear-line " + tetfuPage.getComment();
+        List<String> splitComment = Arrays.stream(comment.split(" "))
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.toList());

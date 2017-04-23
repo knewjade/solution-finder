@@ -9,7 +9,7 @@
 
 solution-finderの実行は、基本的に次のようなコマンドで実行します。 ::
 
-  java -jar solution-finder.jar <command> [options]
+  java -jar sfinder.jar <command> [options]
 
 このとき、<command>を必ず指定する必要があります。
 
@@ -28,9 +28,9 @@ path      ある地形からパーフェクトまでの操作手順をすべて�
 
 * TIPS
 
-  - ``java -jar solution-finder.jar -v`` で、現在のバージョンを表示します
-  - ``java -jar solution-finder.jar -h`` で、Usage (現在の実装されているコマンド)を表示します
-  - ``java -jar solution-finder.jar <command> -h`` で、各オプションごとのUsage (使用できるオプション一覧)を表示します
+  - ``java -jar sfinder.jar -v`` で、現在のバージョンを表示します
+  - ``java -jar sfinder.jar -h`` で、Usage (現在の実装されているコマンド)を表示します
+  - ``java -jar sfinder.jar <command> -h`` で、各オプションごとのUsage (使用できるオプション一覧)を表示します
 
 
 テト譜からオプションを指定する
@@ -49,5 +49,5 @@ path      ある地形からパーフェクトまでの操作手順をすべて�
 コマンドラインやテト譜など、複数箇所で同一オプションを設定した場合、次の数字が小さい場所の値が優先されます。
 
 1. テト譜のコマンド
-2. コマンドライン引数 ``solution-finder.jar <command> [options]``
+2. コマンドライン引数 ``sfinder.jar <command> [options]``
 3. フィールドファイル・パターンファイルの設定値

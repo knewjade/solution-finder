@@ -242,4 +242,30 @@ public class PercentSettingParserTest {
             assertField(settings.getField(), expectedField);
         });
     }
+
+    @Test
+    public void testTetfu3InField() throws Exception {
+        String fieldPath = ClassLoader.getSystemResource("field/tetfu3.txt").getPath();
+        String commands = String.format("-fp %s -P 36", fieldPath);
+
+        PercentSettingParser entryPoint = new PercentSettingParser(commands);
+        Optional<PercentSettings> parse = entryPoint.parse();
+
+        Field expectedField = FieldFactory.createField("" +
+                "XX_____XXX" +
+                "XXX____XXX" +
+                "XXXX___XXX" +
+                "XXX____XXX" +
+                ""
+        );
+
+        assertThat(parse.isPresent(), is(true));
+        parse.ifPresent(settings -> {
+            assertThat(settings.getMaxClearLine(), is(4));
+            assertThat(settings.getPatterns(), is(Collections.singletonList("*p4")));
+            assertThat(settings.isOutputToConsole(), is(true));
+            assertThat(settings.isUsingHold(), is(true));
+            assertField(settings.getField(), expectedField);
+        });
+    }
 }

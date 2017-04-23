@@ -21,10 +21,10 @@ inputディレクトリにある field.txt と patterns.txt から地形と組�
   cd  {jarファイルのあるディレクトリパス}
 
   # パフェ成功確率を知りたいとき
-  java -jar -Xmx1024M solution-finder.jar percent
+  java -jar -Xmx1024M sfinder.jar percent
 
   # 全操作を列挙したいとき
-  java -jar -Xmx1024M solution-finder.jar path
+  java -jar -Xmx1024M sfinder.jar path
 
 
 しっかりと利用したい方
@@ -68,7 +68,7 @@ Mac
   cd  {jarファイルのあるディレクトリパス}
 
   # ホールドを使用しないパフェ成功確率を知りたいとき
-  java -jar -Xmx1024M solution-finder.jar percent --hold avoid
+  java -jar -Xmx1024M sfinder.jar percent --hold avoid
 
 使用したいオプションを付与してコマンドを実行することで、様々な探索が可能になります。
 
