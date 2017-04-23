@@ -194,7 +194,7 @@ public class PercentSettingParserTest {
     }
 
     @Test
-    public void testTetfuInField() throws Exception {
+    public void testTetfu1InField() throws Exception {
         String fieldPath = ClassLoader.getSystemResource("field/tetfu1.txt").getPath();
         String commands = String.format("-fp %s -P 46", fieldPath);
 
@@ -211,6 +211,32 @@ public class PercentSettingParserTest {
         parse.ifPresent(settings -> {
             assertThat(settings.getMaxClearLine(), is(3));
             assertThat(settings.getPatterns(), is(Collections.singletonList("T,S,L,O,L")));
+            assertThat(settings.isOutputToConsole(), is(true));
+            assertThat(settings.isUsingHold(), is(true));
+            assertField(settings.getField(), expectedField);
+        });
+    }
+
+    @Test
+    public void testTetfu2InField() throws Exception {
+        String fieldPath = ClassLoader.getSystemResource("field/tetfu2.txt").getPath();
+        String commands = String.format("-fp %s -P 6 -p *p4", fieldPath);
+
+        PercentSettingParser entryPoint = new PercentSettingParser(commands);
+        Optional<PercentSettings> parse = entryPoint.parse();
+
+        Field expectedField = FieldFactory.createField("" +
+                "_____XXXXX" +
+                "____XXXXXX" +
+                "___XXXXXXX" +
+                "____XXXXXX" +
+                ""
+        );
+
+        assertThat(parse.isPresent(), is(true));
+        parse.ifPresent(settings -> {
+            assertThat(settings.getMaxClearLine(), is(4));
+            assertThat(settings.getPatterns(), is(Collections.singletonList("*p4")));
             assertThat(settings.isOutputToConsole(), is(true));
             assertThat(settings.isUsingHold(), is(true));
             assertField(settings.getField(), expectedField);

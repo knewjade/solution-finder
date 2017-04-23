@@ -1,21 +1,22 @@
 package entry;
 
-import org.apache.commons.cli.CommandLine;
-
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class PriorityCommandLineWrapper implements CommandLineWrapper {
-    private final List<NormalCommandLineWrapper> commandLines;
+    private final List<CommandLineWrapper> commandLines;
 
-    public PriorityCommandLineWrapper(List<CommandLine> commandLines) {
-        this.commandLines = commandLines.stream().map(NormalCommandLineWrapper::new).collect(Collectors.toList());
+//    public PriorityCommandLineWrapper(List<CommandLine> commandLines) {
+//        this(commandLines.stream().map(NormalCommandLineWrapper::new).collect(Collectors.toList()));
+//    }
+
+    public PriorityCommandLineWrapper(List<CommandLineWrapper> commandLines) {
+        this.commandLines = commandLines;
     }
 
     @Override
     public boolean hasOption(String name) {
-        for (NormalCommandLineWrapper commandLine : commandLines)
+        for (CommandLineWrapper commandLine : commandLines)
             if (commandLine.hasOption(name))
                 return true;
         return false;
@@ -23,7 +24,7 @@ public class PriorityCommandLineWrapper implements CommandLineWrapper {
 
     @Override
     public Optional<Boolean> getBoolOption(String name) {
-        for (NormalCommandLineWrapper commandLine : commandLines) {
+        for (CommandLineWrapper commandLine : commandLines) {
             Optional<Boolean> option = commandLine.getBoolOption(name);
             if (option.isPresent())
                 return option;
@@ -33,7 +34,7 @@ public class PriorityCommandLineWrapper implements CommandLineWrapper {
 
     @Override
     public Optional<String> getStringOption(String name) {
-        for (NormalCommandLineWrapper commandLine : commandLines) {
+        for (CommandLineWrapper commandLine : commandLines) {
             Optional<String> option = commandLine.getStringOption(name);
             if (option.isPresent())
                 return option;
@@ -43,7 +44,7 @@ public class PriorityCommandLineWrapper implements CommandLineWrapper {
 
     @Override
     public Optional<Integer> getIntegerOption(String name) {
-        for (NormalCommandLineWrapper commandLine : commandLines) {
+        for (CommandLineWrapper commandLine : commandLines) {
             Optional<Integer> option = commandLine.getIntegerOption(name);
             if (option.isPresent())
                 return option;

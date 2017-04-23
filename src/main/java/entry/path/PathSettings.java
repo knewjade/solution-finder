@@ -14,7 +14,7 @@ public class PathSettings {
     private static final String DEFAULT_OUTPUT_BASE_FILE_PATH = "output/path.txt";
 
     private boolean isUsingHold = true;
-    private int maxClearLine = -1;
+    private int maxClearLine = 4;
     private Field field = null;
     private String logFilePath = DEFAULT_LOG_FILE_PATH;
     private List<String> patterns = new ArrayList<>();

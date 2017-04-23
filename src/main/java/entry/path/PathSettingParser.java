@@ -72,9 +72,7 @@ public class PathSettingParser {
             Optional<String> tetfuData = wrapper.getStringOption("tetfu");
             assert tetfuData.isPresent();
             String encoded = tetfuData.get();
-            String[] commentArgs = loadTetfu(encoded, wrapper, settings);
-            CommandLine commandLineTetfu = parser.parse(options, commentArgs);
-            wrapper = new PriorityCommandLineWrapper(Arrays.asList(commandLineTetfu, commandLine));
+            wrapper = loadTetfu(encoded, parser, options, wrapper, settings);
         } else {
             // フィールドファイルから
             Optional<String> fieldPathOption = wrapper.getStringOption("field-path");
@@ -99,9 +97,7 @@ public class PathSettingParser {
                 if (fieldLines.get(0).startsWith(SUPPORTED_TETFU_PREFIX)) {
                     // テト譜から
                     String encoded = fieldLines.get(0);
-                    String[] commentArgs = loadTetfu(encoded, wrapper, settings);
-                    CommandLine commandLineTetfu = parser.parse(options, commentArgs);
-                    wrapper = new PriorityCommandLineWrapper(Arrays.asList(commandLineTetfu, commandLine));
+                    wrapper = loadTetfu(encoded, parser, options, wrapper, settings);
                 } else {
                     // 最大削除ラインの設定
                     int maxClearLine = Integer.valueOf(fieldLines.pollFirst());
@@ -246,10 +242,20 @@ public class PathSettingParser {
                 .build();
         options.addOption(outputFileOption);
 
+        Option clearLineOption = Option.builder("c")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("num-of-line")
+                .longOpt("clear-line")
+                .desc("Max clear line")
+                .build();
+        options.addOption(clearLineOption);
+
         return options;
     }
 
-    private String[] loadTetfu(String encoded, CommandLineWrapper wrapper, PathSettings settings) {
+    private CommandLineWrapper loadTetfu(String encoded, CommandLineParser parser, Options options, CommandLineWrapper wrapper, PathSettings settings) {
         // テト譜面のエンコード
         List<TetfuPage> decoded = encodeTetfu(encoded);
 
@@ -258,26 +264,31 @@ public class PathSettingParser {
         TetfuPage tetfuPage = extractTetfuPage(decoded, page);
 
         // コメントの抽出
-        List<String> splitComment = Arrays.stream(tetfuPage.getComment().split(" "))
+        String trim = "--clear-line " + tetfuPage.getComment().trim();
+        List<String> splitComment = Arrays.stream(trim.split(" "))
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.toList());
 
-        if (splitComment.size() < 1)
-            throw new IllegalArgumentException(String.format("Cannot max-clear-line in comment of tetfu in %d pages", page));
+        // コマンド引数を配列に変換
+        String[] commentArgs = new String[splitComment.size()];
+        splitComment.toArray(commentArgs);
 
-        String firstComment = splitComment.remove(0);
-        int maxClearLine;
+        // オプションとして読み込む
         try {
-            maxClearLine = Integer.valueOf(firstComment);  // 最大削除ラインの取得
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid number for max-clear-line in comment of tetfu");
+            CommandLine commandLineTetfu = parser.parse(options, commentArgs);
+            CommandLineWrapper newWrapper = new NormalCommandLineWrapper(commandLineTetfu);
+            wrapper = new PriorityCommandLineWrapper(Arrays.asList(newWrapper, wrapper));
+        } catch (ParseException ignore) {
         }
 
         // 最大削除ラインの設定
-        if (maxClearLine < 1)
-            throw new IllegalArgumentException("Should be 1 <= max-clear-line in comment of tetfu");
-        settings.setMaxClearLine(maxClearLine);
+        Optional<Integer> maxClearLineOption = wrapper.getIntegerOption("clear-line");
+        maxClearLineOption.ifPresent(maxClearLine -> {
+            if (maxClearLine < 1)
+                throw new IllegalArgumentException("Should be 1 <= max-clear-line in comment of tetfu");
+            settings.setMaxClearLine(maxClearLine);
+        });
 
         // フィールドを設定
         ColoredField coloredField = tetfuPage.getField();
@@ -292,13 +303,9 @@ public class PathSettingParser {
             coloredField.putMino(mino, x, y);
             coloredField.clearLine();
         }
-        settings.setField(coloredField, maxClearLine);
+        settings.setField(coloredField, settings.getMaxClearLine());
 
-        // コマンド引数を配列に変換
-        String[] newArgs = new String[splitComment.size()];
-        splitComment.toArray(newArgs);
-
-        return newArgs;
+        return wrapper;
     }
 
     private List<TetfuPage> encodeTetfu(String encoded) {

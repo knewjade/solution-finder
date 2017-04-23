@@ -13,7 +13,7 @@ public class PercentSettings {
     private static final String DEFAULT_LOG_FILE_PATH = "output/last_output.txt";
 
     private boolean isUsingHold = true;
-    private int maxClearLine = -1;
+    private int maxClearLine = 4;
     private Field field = null;
     private String logFilePath = DEFAULT_LOG_FILE_PATH;
     private List<String> patterns = new ArrayList<>();
