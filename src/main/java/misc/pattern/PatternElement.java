@@ -76,6 +76,8 @@ class PatternElement {
                     .collect(Collectors.toList());
 
             if (trim.contains("P")) {
+                if (!trim.contains("]P"))
+                    throw new SyntaxException("Should not exist character between [] and p");
                 String number = trim.substring(trim.indexOf("P") + 1, trim.length());
                 int popCount = getNumber(number);
                 return new PatternElement(blocks, popCount);

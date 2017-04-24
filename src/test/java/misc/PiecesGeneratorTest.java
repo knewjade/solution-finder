@@ -248,6 +248,46 @@ public class PiecesGeneratorTest {
     }
 
     @Test(expected = SyntaxException.class)
+    public void errorAsteriskAndBlocksPermutation() throws Exception {
+        try {
+            PiecesGenerator.verify(" [SZT]*p2 ");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Test(expected = SyntaxException.class)
+    public void errorUnknownAndBlocksPermutation() throws Exception {
+        try {
+            PiecesGenerator.verify(" [SZT]kp2 ");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Test(expected = SyntaxException.class)
+    public void errorAsteriskAndBlocksPermutation2() throws Exception {
+        try {
+            PiecesGenerator.verify(" *[SZT]p2 ");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Test(expected = SyntaxException.class)
+    public void errorUnknownAndBlocksPermutation2() throws Exception {
+        try {
+            PiecesGenerator.verify(" z[SZT]p2 ");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Test(expected = SyntaxException.class)
     public void errorNoCloseBracketPermutation() throws Exception {
         try {
             PiecesGenerator.verify(" [TSZ  p1 ");
