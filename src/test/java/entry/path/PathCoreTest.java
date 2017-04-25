@@ -3,75 +3,22 @@ package entry.path;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
-import core.srs.Rotate;
 import entry.searching_pieces.EnumeratePiecesCore;
 import misc.pattern.PiecesGenerator;
 import org.junit.Test;
-import searcher.common.Operation;
 import searcher.common.Operations;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static searcher.common.OperationsFactory.createOperations;
 
 public class PathCoreTest {
-    private Operations createOperations(String... strings) {
-        List<Operation> operationList = Arrays.stream(strings)
-                .map(this::createOperation)
-                .collect(Collectors.toList());
-        return new Operations(operationList);
-    }
-
-    private Operation createOperation(String str) {
-        String[] split = str.split(",");
-        Block block = getBlock(split[0].trim());
-        Rotate rotate = getRotate(split[1].trim());
-        int x = Integer.valueOf(split[2].trim());
-        int y = Integer.valueOf(split[3].trim());
-        return new Operation(block, rotate, x, y);
-    }
-
-    private Block getBlock(String name) {
-        switch (name) {
-            case "T":
-                return Block.T;
-            case "S":
-                return Block.S;
-            case "Z":
-                return Block.Z;
-            case "I":
-                return Block.I;
-            case "O":
-                return Block.O;
-            case "J":
-                return Block.J;
-            case "L":
-                return Block.L;
-        }
-        throw new IllegalArgumentException("No reachable");
-    }
-
-    private Rotate getRotate(String name) {
-        switch (name) {
-            case "0":
-                return Rotate.Spawn;
-            case "L":
-                return Rotate.Left;
-            case "2":
-                return Rotate.Reverse;
-            case "R":
-                return Rotate.Right;
-        }
-        throw new IllegalArgumentException("No reachable");
-    }
-
     @Test
     public void invokeUsingHoldEasy1() throws Exception {
         // Field

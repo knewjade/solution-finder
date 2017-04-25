@@ -11,8 +11,10 @@ public class CommentEncoder extends Encoder {
         this.escapedComment = escapedComment;
     }
 
-    public void encod() {
+    public void encode() {
         int commentLength = escapedComment.length();
+        if (4096 <= commentLength)
+            commentLength = 4095;
 
         pushValues(commentLength, 2);
 

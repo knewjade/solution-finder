@@ -154,7 +154,7 @@ public class Tetfu {
 
         if (isCommented) {
             CommentEncoder commentEncoder = new CommentEncoder(flags.escapedComment);
-            commentEncoder.encod();
+            commentEncoder.encode();
             encodedValues.addAll(commentEncoder.getEncodedValues());
         }
     }
