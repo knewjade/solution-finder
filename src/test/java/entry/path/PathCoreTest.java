@@ -42,7 +42,7 @@ public class PathCoreTest {
         PiecesGenerator generator = new PiecesGenerator("*p4");
         EnumeratePiecesCore enumeratePiecesCore = PathCore.createEnumeratePiecesCore(generator, maxDepth, isUsingHold);
         List<List<Block>> blocks = enumeratePiecesCore.enumerate();
-        pathCore.run(field, blocks, maxClearLine, maxDepth);
+        pathCore.run(field, blocks, maxClearLine, maxDepth, generator);
 
         // Source: myself 20170423
         TreeSet<Operations> allOperations = pathCore.getAllOperations();
@@ -84,7 +84,7 @@ public class PathCoreTest {
         PiecesGenerator generator = new PiecesGenerator("*p4");
         EnumeratePiecesCore enumeratePiecesCore = PathCore.createEnumeratePiecesCore(generator, maxDepth, isUsingHold);
         List<List<Block>> blocks = enumeratePiecesCore.enumerate();
-        pathCore.run(field, blocks, maxClearLine, maxDepth);
+        pathCore.run(field, blocks, maxClearLine, maxDepth, generator);
 
         // Source: myself 20170423
         assertThat(pathCore.getAllOperations().size(), is(39));

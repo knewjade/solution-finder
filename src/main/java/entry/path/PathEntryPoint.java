@@ -9,6 +9,7 @@ import entry.searching_pieces.EnumeratePiecesCore;
 import misc.Stopwatch;
 import misc.SyntaxException;
 import misc.pattern.PiecesGenerator;
+import misc.tree.VisitedTree;
 import searcher.common.Operation;
 import searcher.common.Operations;
 
@@ -153,7 +154,7 @@ public class PathEntryPoint implements EntryPoint {
 
         // 探索を行う
         PathCore pathCore = new PathCore(maxClearLine, executorService, core * 10);
-        pathCore.run(field, searchingPieces, maxClearLine, maxDepth);
+        pathCore.run(field, searchingPieces, maxClearLine, maxDepth, generator);
         TreeSet<Operations> allOperations = pathCore.getAllOperations();
         List<Operations> uniqueOperations = pathCore.getUniqueOperations();
 

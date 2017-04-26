@@ -1,7 +1,9 @@
 package entry.path;
 
 import concurrent.LockedCandidateThreadLocal;
+import concurrent.checker.invoker.OrderLookup;
 import concurrent.checker.invoker.Pair;
+import concurrent.checker.invoker.Pieces;
 import concurrent.checkmate.CheckmateNoHoldThreadLocal;
 import concurrent.checkmate.invoker.no_hold.ConcurrentCheckmateCommonInvoker;
 import concurrent.full_checkmate.FullCheckmateNoHoldThreadLocal;
@@ -23,6 +25,14 @@ import misc.Build;
 import misc.OperationWithKey;
 import misc.iterable.PermutationIterable;
 import misc.pattern.PiecesGenerator;
+import misc.pieces.SafePieces;
+import misc.tetfu.Tetfu;
+import misc.tetfu.TetfuElement;
+import misc.tetfu.common.ColorConverter;
+import misc.tetfu.common.ColorType;
+import misc.tetfu.field.ColoredField;
+import misc.tetfu.field.ColoredFieldFactory;
+import misc.tree.VisitedTree;
 import searcher.common.Operation;
 import searcher.common.Operations;
 import searcher.common.Result;
@@ -63,7 +73,13 @@ class PathCore {
         this.invokerFull = new ConcurrentFullCheckmateNoHoldInvoker(executorService, candidateThreadLocal, fullCheckmateThreadLocal);
     }
 
-    void run(Field field, List<List<Block>> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
+    void run(Field field, List<List<Block>> searchingPieces, int maxClearLine, int maxDepth, PiecesGenerator generator) throws ExecutionException, InterruptedException {
+        // 探索対象のミノ順かを判定できるようにする
+        VisitedTree visitedTree = new VisitedTree();
+        for (SafePieces safePieces : generator) {
+            visitedTree.success(safePieces.getBlocks());
+        }
+
         // 探索パターンをホールドなしで列挙
         // 同じ地形は統合される
         List<Pair<List<Block>, List<Result>>> allMergedPatterns = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
@@ -99,7 +115,7 @@ class PathCore {
         LinkedList<Pair<Operations, Set<List<Block>>>> masters = new LinkedList<>();
         for (BlockFieldOperations blockFieldOperations : blockFieldOperationsList) {
             Operations operations = blockFieldOperations.getOperations();
-            System.out.println(operations);
+            //System.out.println(operations);
             List<OperationWithKey> operationWithKeys = Build.createOperationWithKeys(field, operations, minoFactory, maxClearLine);
 
             HashSet<List<Block>> set = new HashSet<>();
@@ -108,7 +124,30 @@ class PathCore {
                 boolean cansBuild = Build.cansBuild(field, targetCheckOperationsWithKey, maxClearLine, reachable);
                 if (cansBuild) {
                     List<Block> blocks = targetCheckOperationsWithKey.stream().map(o -> o.getMino().getBlock()).collect(Collectors.toList());
-                    set.add(blocks);
+                    boolean isUsingHold = true;
+                    if (isUsingHold) {
+                        ArrayList<Pieces> reverse = OrderLookup.reverse(blocks, blocks.size() + 1);
+                        List<List<Block>> collect = reverse.stream().map(Pieces::getBlocks).collect(Collectors.toList());
+                        for (List<Block> blockList : collect) {
+                            int nullIndex = blockList.indexOf(null);
+                            if (0 <= nullIndex) {
+                                for (Block block : Block.values()) {
+                                    blockList.set(nullIndex, block);
+                                    boolean visited = visitedTree.isVisited(blockList);
+                                    if (visited)
+                                        set.add(new ArrayList<>(blocks));
+                                }
+                            } else {
+                                boolean visited = visitedTree.isVisited(blockList);
+                                if (visited)
+                                    set.add(blocks);
+                            }
+                        }
+                    } else {
+                        boolean visited = visitedTree.isVisited(blocks);
+                        if (visited)
+                            set.add(blocks);
+                    }
                 }
             }
 //            System.out.println(set);
@@ -170,8 +209,39 @@ class PathCore {
         }
 
         System.out.println(masters.size());
+        ColorConverter colorConverter = new ColorConverter();
+        ColoredField initField = ColoredFieldFactory.createField(24);
+        for (int y = 0; y < maxClearLine; y++) {
+            for (int x = 0; x < 10; x++) {
+                if (!field.isEmpty(x, y))
+                    initField.setColorType(ColorType.Gray, x, y);
+            }
+        }
         for (Pair<Operations, Set<List<Block>>> master : masters) {
-            System.out.println(master.getKey());
+//            boolean isT = false;
+            List<Operation> operations = master.getKey().getOperations();
+            ArrayList<TetfuElement> elements = new ArrayList<>();
+            for (Operation operation : operations) {
+                Block block = operation.getBlock();
+//                if (block == Block.T)
+//                    isT = true;
+                Rotate rotate = operation.getRotate();
+                int x = operation.getX();
+                int y = operation.getY();
+                elements.add(new TetfuElement(colorConverter.parseToColorType(block), rotate, x, y));
+            }
+            Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
+            String encode = tetfu.encode(initField, elements);
+
+//            if (isT) {
+                System.out.print("<div><a href='");
+                System.out.print("http://fumen.zui.jp/?v115@" + encode);
+                System.out.print("' target='_blank'>");
+                System.out.print(operations + " ");
+                System.out.print(master.getValue() + " ");
+                System.out.print("</a></div>");
+                System.out.println();
+//            }
         }
     }
 
