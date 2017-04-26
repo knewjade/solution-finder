@@ -135,7 +135,7 @@ public class PathEntryPoint implements EntryPoint {
         output("# Enumerate pieces");
 
         // Holdができるときは必要なミノ分（maxDepth + 1）だけを取り出す。maxDepth + 1だけないときはブロックの個数をそのまま指定
-        output("Piece pop count = " + (settings.isUsingHold() ? maxDepth + 1 : maxDepth));
+        output("Piece pop count = " + (settings.isUsingHold() && maxDepth < generator.getDepth() ? maxDepth + 1 : maxDepth));
 
         // ホールドありなら、探索パターンから複数のホールドなしパターンに分解する
         // ホールドなしなら、探索パターンをそのままリスト化する

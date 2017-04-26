@@ -131,17 +131,17 @@ public class MiddleField implements Field {
             return true;
         } else if (maxY <= FIELD_ROW_BOARDER_Y) {
             // Lowで完結
-            long mask = getColumnBelowY(maxY) << x;
+            long mask = BitOperators.getColumnBelowY(maxY) << x;
             return (~xBoardLow & mask) == 0L;
         } else {
             // すべて必要
             // Lowのチェック
-            long maskLow = getColumnBelowY(FIELD_ROW_BOARDER_Y) << x;
+            long maskLow = BitOperators.getColumnBelowY(FIELD_ROW_BOARDER_Y) << x;
             if ((~xBoardLow & maskLow) != 0L)
                 return false;
 
             // Highのチェック
-            long maskHigh = getColumnBelowY(maxY - FIELD_ROW_BOARDER_Y) << x;
+            long maskHigh = BitOperators.getColumnBelowY(maxY - FIELD_ROW_BOARDER_Y) << x;
             return (~xBoardHigh & maskHigh) == 0L;
         }
     }
@@ -165,33 +165,12 @@ public class MiddleField implements Field {
     }
 
     private boolean isWallBetweenLeft(int x, int maxYHigh, long xBoardHigh) {
-        long maskHigh = getColumnBelowY(maxYHigh);
+        long maskHigh = BitOperators.getColumnBelowY(maxYHigh);
         long reverseXBoardHigh = ~xBoardHigh;
         long columnHigh = maskHigh << x;
         long rightHigh = reverseXBoardHigh & columnHigh;
         long leftHigh = reverseXBoardHigh & (columnHigh >>> 1);
         return ((leftHigh << 1) & rightHigh) == 0L;
-    }
-
-    // y行より1列ブロックをマスクを取得する（y行を含まない）
-    private long getColumnBelowY(int maxY) {
-        switch (maxY) {
-            case 0:
-                return 0;
-            case 1:
-                return 0x1L;
-            case 2:
-                return 0x401L;
-            case 3:
-                return 0x100401L;
-            case 4:
-                return 0x40100401L;
-            case 5:
-                return 0x10040100401L;
-            case 6:
-                return 0x4010040100401L;
-        }
-        throw new IllegalStateException("No reachable");
     }
 
     @Override
@@ -217,12 +196,12 @@ public class MiddleField implements Field {
     public int getBlockCountBelowOnX(int x, int maxY) {
         if (maxY <= FIELD_ROW_BOARDER_Y) {
             // Lowで完結
-            long mask = getColumnBelowY(maxY) << x;
+            long mask = BitOperators.getColumnBelowY(maxY) << x;
             return Long.bitCount(xBoardLow & mask);
         } else {
             // すべて必要
-            long maskLow = getColumnBelowY(FIELD_ROW_BOARDER_Y) << x;
-            long maskHigh = getColumnBelowY(maxY - FIELD_ROW_BOARDER_Y) << x;
+            long maskLow = BitOperators.getColumnBelowY(FIELD_ROW_BOARDER_Y) << x;
+            long maskHigh = BitOperators.getColumnBelowY(maxY - FIELD_ROW_BOARDER_Y) << x;
             return Long.bitCount(xBoardLow & maskLow) + Long.bitCount(xBoardHigh & maskHigh);
         }
     }
@@ -240,10 +219,10 @@ public class MiddleField implements Field {
 
     @Override
     public long clearLineReturnKey() {
-        long deleteKeyLow = getDeleteKey(xBoardLow);
+        long deleteKeyLow = KeyOperators.getDeleteKey(xBoardLow);
         long newXBoardLow = LongBoardMap.deleteLine(xBoardLow, deleteKeyLow);
 
-        long deleteKeyHigh = getDeleteKey(xBoardHigh);
+        long deleteKeyHigh = KeyOperators.getDeleteKey(xBoardHigh);
         long newXBoardHigh = LongBoardMap.deleteLine(xBoardHigh, deleteKeyHigh);
 
         int deleteLineLow = Long.bitCount(deleteKeyLow);
@@ -254,50 +233,18 @@ public class MiddleField implements Field {
         return deleteKeyLow | (deleteKeyHigh << 1);
     }
 
-    private long getDeleteKey(long board) {
-        long a1010101010 = 768614336404564650L;
-        long b1 = (board & a1010101010) >>> 1 & board;
-        long a0101010000 = 378672165735973200L;
-        long b2 = (b1 & a0101010000) >>> 4 & b1;
-        long a0000010100 = 22540009865236500L;
-        long b3 = (b2 & a0000010100) >>> 2 & b2;
-        long a0000000100 = 4508001973047300L;
-        return (b3 & a0000000100) >>> 2 & b3;
-    }
-
     @Override
     public void insertBlackLineWithKey(long deleteKey) {
         long deleteKeyLow = deleteKey & 0x4010040100401L;
         int deleteLineLow = Long.bitCount(deleteKeyLow);
         int leftLineLow = 6 - deleteLineLow;
-        long newXBoardLow = LongBoardMap.insertBlackLine(xBoardLow & getRowMaskBelowY(leftLineLow), deleteKeyLow);
+        long newXBoardLow = LongBoardMap.insertBlackLine(xBoardLow & BitOperators.getRowMaskBelowY(leftLineLow), deleteKeyLow);
 
         long deleteKeyHigh = (deleteKey & 0x8020080200802L) >> 1;
-        long newXBoardHigh = LongBoardMap.insertBlackLine((xBoardHigh << 10 * deleteLineLow) | ((xBoardLow & getRowMaskAboveY(leftLineLow)) >> 10 * leftLineLow), deleteKeyHigh);
+        long newXBoardHigh = LongBoardMap.insertBlackLine((xBoardHigh << 10 * deleteLineLow) | ((xBoardLow & BitOperators.getRowMaskAboveY(leftLineLow)) >> 10 * leftLineLow), deleteKeyHigh);
 
         this.xBoardLow = newXBoardLow;
         this.xBoardHigh = newXBoardHigh & 0xfffffffffffffffL;
-    }
-
-    // yより下の行を選択するマスクを作成 (y行は含まない)
-    private long getRowMaskBelowY(int y) {
-        switch (y) {
-            case 0:
-                return 0L;
-            case 1:
-                return 0x3ffL;
-            case 2:
-                return 0xfffffL;
-            case 3:
-                return 0x3fffffffL;
-            case 4:
-                return 0xffffffffffL;
-            case 5:
-                return 0x3ffffffffffffL;
-            case 6:
-                return 0xfffffffffffffffL;
-        }
-        throw new IllegalArgumentException("No reachable");
     }
 
     @Override
@@ -305,34 +252,13 @@ public class MiddleField implements Field {
         long deleteKeyLow = deleteKey & 0x4010040100401L;
         int deleteLineLow = Long.bitCount(deleteKeyLow);
         int leftLineLow = 6 - deleteLineLow;
-        long newXBoardLow = LongBoardMap.insertWhiteLine(xBoardLow & getRowMaskBelowY(leftLineLow), deleteKeyLow);
+        long newXBoardLow = LongBoardMap.insertWhiteLine(xBoardLow & BitOperators.getRowMaskBelowY(leftLineLow), deleteKeyLow);
 
         long deleteKeyHigh = (deleteKey & 0x8020080200802L) >> 1;
-        long newXBoardHigh = LongBoardMap.insertWhiteLine((xBoardHigh << 10 * deleteLineLow) | ((xBoardLow & getRowMaskAboveY(leftLineLow)) >> 10 * leftLineLow), deleteKeyHigh);
+        long newXBoardHigh = LongBoardMap.insertWhiteLine((xBoardHigh << 10 * deleteLineLow) | ((xBoardLow & BitOperators.getRowMaskAboveY(leftLineLow)) >> 10 * leftLineLow), deleteKeyHigh);
 
         this.xBoardLow = newXBoardLow;
         this.xBoardHigh = newXBoardHigh & 0xfffffffffffffffL;
-    }
-
-    // yより上の行を選択するマスクを作成 (y行を含む)
-    private long getRowMaskAboveY(int y) {
-        switch (y) {
-            case 0:
-                return 0xfffffffffffffffL;
-            case 1:
-                return 0xffffffffffffc00L;
-            case 2:
-                return 0xffffffffff00000L;
-            case 3:
-                return 0xfffffffc0000000L;
-            case 4:
-                return 0xfffff0000000000L;
-            case 5:
-                return 0xffc000000000000L;
-            case 6:
-                return 0L;
-        }
-        throw new IllegalArgumentException("No reachable");
     }
 
     @Override
@@ -366,5 +292,15 @@ public class MiddleField implements Field {
             return;
         }
         throw new UnsupportedOperationException("too large field");
+    }
+
+    @Override
+    public int getUpperYWith4Blocks() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int getLowerY() {
+        throw new UnsupportedOperationException();
     }
 }

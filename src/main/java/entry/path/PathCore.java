@@ -6,16 +6,22 @@ import concurrent.checkmate.CheckmateNoHoldThreadLocal;
 import concurrent.checkmate.invoker.no_hold.ConcurrentCheckmateCommonInvoker;
 import concurrent.full_checkmate.FullCheckmateNoHoldThreadLocal;
 import concurrent.full_checkmate.invoker.no_hold.ConcurrentFullCheckmateNoHoldInvoker;
+import core.action.reachable.LockedReachable;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
 import core.mino.Mino;
 import core.mino.MinoFactory;
+import core.mino.MinoShifter;
+import core.srs.MinoRotation;
 import core.srs.Rotate;
 import entry.searching_pieces.EnumeratePiecesCore;
 import entry.searching_pieces.HoldBreakEnumeratePieces;
 import entry.searching_pieces.NormalEnumeratePieces;
 import misc.BlockField;
+import misc.Build;
+import misc.OperationWithKey;
+import misc.iterable.PermutationIterable;
 import misc.pattern.PiecesGenerator;
 import searcher.common.Operation;
 import searcher.common.Operations;
@@ -26,10 +32,7 @@ import searcher.common.validator.PathFullValidator;
 import searcher.common.validator.PerfectValidator;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
@@ -50,7 +53,6 @@ class PathCore {
             return new NormalEnumeratePieces(generator, maxDepth, false);
         }
     }
-
 
     PathCore(int maxClearLine, ExecutorService executorService, int taskSplitCount) {
         CheckmateNoHoldThreadLocal<Action> checkmateThreadLocal = new CheckmateNoHoldThreadLocal<>();
@@ -88,6 +90,89 @@ class PathCore {
                 .sorted(Comparator.comparing(BlockFieldOperations::getOperations))
                 .map(BlockFieldOperations::getOperations)
                 .collect(Collectors.toList());
+
+        // さらに整理
+        MinoShifter minoShifter = new MinoShifter();
+        MinoRotation minoRotation = new MinoRotation();
+        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
+
+        LinkedList<Pair<Operations, Set<List<Block>>>> masters = new LinkedList<>();
+        for (BlockFieldOperations blockFieldOperations : blockFieldOperationsList) {
+            Operations operations = blockFieldOperations.getOperations();
+            System.out.println(operations);
+            List<OperationWithKey> operationWithKeys = Build.createOperationWithKeys(field, operations, minoFactory, maxClearLine);
+
+            HashSet<List<Block>> set = new HashSet<>();
+            PermutationIterable<OperationWithKey> permutationIterable = new PermutationIterable<>(operationWithKeys, operationWithKeys.size());
+            for (List<OperationWithKey> targetCheckOperationsWithKey : permutationIterable) {
+                boolean cansBuild = Build.cansBuild(field, targetCheckOperationsWithKey, maxClearLine, reachable);
+                if (cansBuild) {
+                    List<Block> blocks = targetCheckOperationsWithKey.stream().map(o -> o.getMino().getBlock()).collect(Collectors.toList());
+                    set.add(blocks);
+                }
+            }
+//            System.out.println(set);
+
+            // 比較
+            Pair<Operations, Set<List<Block>>> pair = new Pair<>(blockFieldOperations.getOperations(), set);
+            LinkedList<Pair<Operations, Set<List<Block>>>> nextMasters = new LinkedList<>();
+            boolean isSetNeed = true;
+
+            while (!masters.isEmpty()) {
+                Pair<Operations, Set<List<Block>>> targetPair = masters.pollFirst();
+                Set<List<Block>> target = targetPair.getValue();
+
+                if (target.size() < set.size()) {
+                    // setがmasterになる
+                    HashSet<List<Block>> newTarget = new HashSet<>(target);
+                    newTarget.removeAll(set);
+
+                    if (newTarget.size() != 0) {
+                        // targetも残る
+                        nextMasters.add(targetPair);
+                    }
+                } else if (set.size() < target.size()) {
+                    // targetがmasterになる
+                    HashSet<List<Block>> newSet = new HashSet<>(set);
+                    newSet.removeAll(target);
+
+                    // targetは必ず残る
+                    nextMasters.add(targetPair);
+
+                    if (newSet.size() == 0) {
+                        // 上位のtargetが存在するのでsetはいらない
+                        // 残りのtargetも無条件で残す
+                        isSetNeed = false;
+                        nextMasters.addAll(masters);
+                        break;
+                    }
+                } else {
+                    HashSet<List<Block>> newSet = new HashSet<>(set);
+                    newSet.retainAll(target);
+
+                    // targetは必ず残る
+                    nextMasters.add(targetPair);
+
+                    if (newSet.size() == target.size()) {
+                        // 完全に同一のtargetが存在するのでsetはいらない
+                        // 残りのtargetも無条件で残す
+                        isSetNeed = false;
+                        nextMasters.addAll(masters);
+                        break;
+                    }
+                }
+            }
+
+            if (isSetNeed)
+                nextMasters.add(pair);
+
+            masters = nextMasters;
+        }
+
+        System.out.println(masters.size());
+        for (Pair<Operations, Set<List<Block>>> master : masters) {
+            System.out.println(master.getKey());
+        }
     }
 
     private TreeSet<BlockFieldOperations> createBlockFields(Field field, int maxClearLine, MinoFactory minoFactory, TreeSet<Operations> allUniqueOperations) {

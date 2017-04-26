@@ -102,7 +102,7 @@ public class PercentEntryPoint implements EntryPoint {
         output();
         // ========================================
         output("# Enumerate pieces");
-        output("Piece pop count = " + (settings.isUsingHold() ? maxDepth + 1 : maxDepth));
+        output("Piece pop count = " + (settings.isUsingHold() && maxDepth < generator.getDepth() ? maxDepth + 1 : maxDepth));
 
         // 探索パターンの列挙
         NormalEnumeratePieces normalEnumeratePieces = new NormalEnumeratePieces(generator, maxDepth, settings.isUsingHold());

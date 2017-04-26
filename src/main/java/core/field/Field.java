@@ -81,4 +81,10 @@ public interface Field {
 
     // 指定したフィールドを重ね合せる
     void merge(Field field);
+
+    // フィールド内には必ず4ブロックだけ存在している前提のもと、最も高い位置にあるブロックのY座標を取得
+    int getUpperYWith4Blocks();
+
+    // 最も低い位置にあるブロックのY座標を取得
+    int getLowerY();
 }
