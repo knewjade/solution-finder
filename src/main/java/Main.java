@@ -29,7 +29,7 @@ public class Main {
         }
 
         if (args[0].equals("-v")) {
-            System.out.println("Version: 0.30");
+            System.out.println("Version: 0.31");
             System.exit(0);
         }
 

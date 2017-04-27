@@ -31,6 +31,7 @@ public class PercentCoreTest {
         int maxDepth = 7;
         boolean isUsingHold = true;
 
+
         int core = Runtime.getRuntime().availableProcessors();
         ExecutorService executorService = Executors.newFixedThreadPool(core);
         PercentCore percentCore = new PercentCore(maxClearLine, executorService, isUsingHold);
@@ -138,5 +139,32 @@ public class PercentCoreTest {
 
         // Source: reply in twitter from @fullfool_14
         assertThat(percentCore.getResultTree().getSuccessPercent(), is(727 / 5040.0));
+    }
+
+    @Test
+    public void invokeNoHoldInputMoreOver() throws Exception {
+        // Field
+        String marks = "" +
+                "X___XXXXXX" +
+                "XX_XXXXXXX" +
+                "";
+        int maxClearLine = 2;
+        int maxDepth = 1;
+        boolean isUsingHold = false;
+
+        int core = Runtime.getRuntime().availableProcessors();
+        ExecutorService executorService = Executors.newFixedThreadPool(core);
+        PercentCore percentCore = new PercentCore(maxClearLine, executorService, isUsingHold);
+
+        Field field = FieldFactory.createField(marks);
+
+        PiecesGenerator generator = new PiecesGenerator(Arrays.asList("T,T", "Z,*"));
+        NormalEnumeratePieces enumeratePieces = new NormalEnumeratePieces(generator, maxDepth, isUsingHold);
+        List<List<Block>> blocks = enumeratePieces.enumerate();
+        percentCore.run(field, blocks, maxClearLine, maxDepth);
+
+        // 指定した探索は8個だが、必要以上に入れたミノは無視する
+        // 警告を表示する代わりに、これは仕様とする
+        assertThat(percentCore.getResultTree().getSuccessPercent(), is(1 / 2.0));
     }
 }

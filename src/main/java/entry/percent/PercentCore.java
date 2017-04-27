@@ -41,7 +41,7 @@ class PercentCore {
     void run(Field field, List<List<Block>> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
         this.resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
 
-        // 結果を集計する
+        // 最低限の探索結果を集計する
         this.resultTree = new AnalyzeTree();
         for (Pair<List<Block>, Boolean> resultPair : resultPairs) {
             List<Block> pieces = resultPair.getKey();

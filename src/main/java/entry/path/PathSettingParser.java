@@ -8,12 +8,12 @@ import core.srs.Rotate;
 import entry.CommandLineWrapper;
 import entry.NormalCommandLineWrapper;
 import entry.PriorityCommandLineWrapper;
-import org.apache.commons.cli.*;
 import misc.tetfu.Tetfu;
 import misc.tetfu.TetfuPage;
 import misc.tetfu.common.ColorConverter;
 import misc.tetfu.common.ColorType;
 import misc.tetfu.field.ColoredField;
+import org.apache.commons.cli.*;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -126,6 +126,14 @@ public class PathSettingParser {
         // アウトプットファイルの設定
         Optional<String> outputBaseFilePath = wrapper.getStringOption("output-base");
         outputBaseFilePath.ifPresent(settings::setOutputBaseFilePath);
+
+        // 最大レイヤーの設定
+        Optional<Integer> maxLayer = wrapper.getIntegerOption("max-layer");
+        maxLayer.ifPresent(settings::setMaxLayer);
+
+        // 出力タイプの設定
+        Optional<String> outputType = wrapper.getStringOption("format");
+        outputType.ifPresent(settings::setOutputType);
 
         // 探索パターンの設定
         if (wrapper.hasOption("patterns")) {
@@ -251,6 +259,26 @@ public class PathSettingParser {
                 .desc("Max clear line")
                 .build();
         options.addOption(clearLineOption);
+
+        Option maxLayerOption = Option.builder("L")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("int-value")
+                .longOpt("max-layer")
+                .desc("Max layer")
+                .build();
+        options.addOption(maxLayerOption);
+
+        Option outputTypeOption = Option.builder("f")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("type-string")
+                .longOpt("format")
+                .desc("Format type for output")
+                .build();
+        options.addOption(outputTypeOption);
 
         return options;
     }

@@ -39,6 +39,8 @@ public class PathSettingParserTest {
             assertThat(settings.isUsingHold(), is(true));
             assertField(settings.getField(), expectedField);
             assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
+            assertThat(settings.getMaxLayer(), is(3));
+            assertThat(settings.getOutputType(), is(OutputType.Link));
         });
     }
 
@@ -66,6 +68,8 @@ public class PathSettingParserTest {
             assertThat(settings.isUsingHold(), is(true));
             assertField(settings.getField(), expectedField);
             assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
+            assertThat(settings.getMaxLayer(), is(3));
+            assertThat(settings.getOutputType(), is(OutputType.Link));
         });
     }
 
@@ -82,7 +86,7 @@ public class PathSettingParserTest {
         String fieldPath = ClassLoader.getSystemResource("field/4row.txt").getPath();
         String patternsPath = ClassLoader.getSystemResource("patterns/7mino.txt").getPath();
         String tetfu = "v115@9gB8DeG8CeH8BeG8CeD8JeAgWBAUAAAA";  // comment: 4
-        String commands = String.format("--hold avoid -fp %s -pp %s --tetfu %s", fieldPath, patternsPath, tetfu);
+        String commands = String.format("--hold avoid -fp %s -pp %s --tetfu %s --max-layer 1 --format csv", fieldPath, patternsPath, tetfu);
 
         PathSettingParser entryPoint = new PathSettingParser(commands);
         Optional<PathSettings> parse = entryPoint.parse();
@@ -103,6 +107,8 @@ public class PathSettingParserTest {
             assertThat(settings.isUsingHold(), is(false));
             assertField(settings.getField(), expectedField);
             assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
+            assertThat(settings.getMaxLayer(), is(1));
+            assertThat(settings.getOutputType(), is(OutputType.CSV));
         });
     }
 
@@ -113,7 +119,7 @@ public class PathSettingParserTest {
 
         // comment: 4 --hold avoid --patterns *p4
         String tetfu = "v115@9gB8DeG8CeH8BeG8CeD8JeAgWlA0no2AtTKNEM388A?wBrNEJ388AwjdOEB/2rDSm0TAS4WOEUAAAA";
-        String commands = String.format("--hold use -fp %s -pp %s --tetfu %s --patterns 'T, Z' --log-path output/dummy", fieldPath, patternsPath, tetfu);
+        String commands = String.format("--hold use -fp %s -pp %s --tetfu %s --patterns 'T, Z' --log-path output/dummy -L 2", fieldPath, patternsPath, tetfu);
 
         PathSettingParser entryPoint = new PathSettingParser(commands);
         Optional<PathSettings> parse = entryPoint.parse();
@@ -134,6 +140,8 @@ public class PathSettingParserTest {
             assertThat(settings.isUsingHold(), is(false));
             assertField(settings.getField(), expectedField);
             assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
+            assertThat(settings.getMaxLayer(), is(2));
+            assertThat(settings.getOutputType(), is(OutputType.Link));
         });
     }
 
@@ -165,6 +173,8 @@ public class PathSettingParserTest {
             assertThat(settings.isUsingHold(), is(false));
             assertField(settings.getField(), expectedField);
             assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
+            assertThat(settings.getMaxLayer(), is(3));
+            assertThat(settings.getOutputType(), is(OutputType.Link));
         });
     }
 
@@ -195,6 +205,8 @@ public class PathSettingParserTest {
             assertThat(settings.isUsingHold(), is(true));
             assertField(settings.getField(), expectedField);
             assertThat(settings.getOutputBaseFilePath(), is("output/result_dummy.txt"));
+            assertThat(settings.getMaxLayer(), is(3));
+            assertThat(settings.getOutputType(), is(OutputType.Link));
         });
     }
 
@@ -220,6 +232,8 @@ public class PathSettingParserTest {
             assertThat(settings.isUsingHold(), is(true));
             assertField(settings.getField(), expectedField);
             assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
+            assertThat(settings.getMaxLayer(), is(3));
+            assertThat(settings.getOutputType(), is(OutputType.Link));
         });
     }
 
@@ -247,6 +261,8 @@ public class PathSettingParserTest {
             assertThat(settings.isUsingHold(), is(true));
             assertField(settings.getField(), expectedField);
             assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
+            assertThat(settings.getMaxLayer(), is(3));
+            assertThat(settings.getOutputType(), is(OutputType.Link));
         });
     }
 }

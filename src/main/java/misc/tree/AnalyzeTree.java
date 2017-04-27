@@ -43,6 +43,16 @@ public class AnalyzeTree {
                 return current.containsKey(block);
             }
         }
+
+        private boolean isSuccess(List<Block> blocks, int depth) {
+            Block block = blocks.get(depth);
+            if (depth < blocks.size() - 1) {
+                return current.containsKey(block) && current.get(block).isSuccess(blocks, depth + 1);
+            } else {
+                assert current.containsKey(block) && (current.get(block).successCounter == 0 || current.get(block).successCounter == current.get(block).allCounter);
+                return current.containsKey(block) && 0 < current.get(block).successCounter;
+            }
+        }
     }
 
     private final Element rootElement = new Element();
@@ -72,6 +82,10 @@ public class AnalyzeTree {
 
     public boolean isVisited(List<Block> blocks) {
         return rootElement.isVisited(blocks, 0);
+    }
+
+    public boolean isSucceed(List<Block> blocks) {
+        return rootElement.isSuccess(blocks, 0);
     }
 
     void tree() {

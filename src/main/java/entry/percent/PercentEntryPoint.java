@@ -95,14 +95,24 @@ public class PercentEntryPoint implements EntryPoint {
         int maxDepth = emptyCount / 4;
         int piecesDepth = generator.getDepth();
         if (piecesDepth < maxDepth)
-            throw new IllegalArgumentException("Error: blocks size check short: " + piecesDepth + " < " + maxDepth);
+            throw new IllegalArgumentException("Error: pieces is too short: " + piecesDepth + " < " + maxDepth);
 
-        output("Need Pieces = " + maxDepth);
+        output("Necessary Pieces = " + maxDepth);
 
         output();
         // ========================================
         output("# Enumerate pieces");
-        output("Piece pop count = " + (settings.isUsingHold() && maxDepth < generator.getDepth() ? maxDepth + 1 : maxDepth));
+        int popCount = settings.isUsingHold() && maxDepth < piecesDepth ? maxDepth + 1 : maxDepth;
+        output("Piece pop count = " + popCount);
+        if (popCount < piecesDepth) {
+            output();
+            output("####################################################################");
+            output("WARNING: Inputted pieces is more than 'necessary pieces'.");
+            output("         Because reduce unnecessary pieces,");
+            output("         there is a possibility of getting no expected percentages.");
+            output("####################################################################");
+            output();
+        }
 
         // 探索パターンの列挙
         NormalEnumeratePieces normalEnumeratePieces = new NormalEnumeratePieces(generator, maxDepth, settings.isUsingHold());

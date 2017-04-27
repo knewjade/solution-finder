@@ -26,12 +26,6 @@ import misc.OperationWithKey;
 import misc.iterable.PermutationIterable;
 import misc.pattern.PiecesGenerator;
 import misc.pieces.SafePieces;
-import misc.tetfu.Tetfu;
-import misc.tetfu.TetfuElement;
-import misc.tetfu.common.ColorConverter;
-import misc.tetfu.common.ColorType;
-import misc.tetfu.field.ColoredField;
-import misc.tetfu.field.ColoredFieldFactory;
 import misc.tree.VisitedTree;
 import searcher.common.Operation;
 import searcher.common.Operations;
@@ -50,11 +44,14 @@ import java.util.stream.Collectors;
 import static java.util.Comparator.reverseOrder;
 
 class PathCore {
+    private final MinoFactory minoFactory = new MinoFactory();
+
     private final ConcurrentCheckmateCommonInvoker invoker;
     private final ConcurrentFullCheckmateNoHoldInvoker invokerFull;
 
     private TreeSet<Operations> allUniqueOperations;
-    private List<Operations> uniqueOperations;
+    private TreeSet<BlockFieldOperations> blockFieldOperationsList;
+    LinkedList<Pair<Operations, Set<List<Block>>>> minimalOperations;  // 手順とその手順で置けるミノ順
 
     static EnumeratePiecesCore createEnumeratePiecesCore(PiecesGenerator generator, int maxDepth, boolean isUsingHold) throws IOException {
         if (isUsingHold) {
@@ -73,13 +70,7 @@ class PathCore {
         this.invokerFull = new ConcurrentFullCheckmateNoHoldInvoker(executorService, candidateThreadLocal, fullCheckmateThreadLocal);
     }
 
-    void run(Field field, List<List<Block>> searchingPieces, int maxClearLine, int maxDepth, PiecesGenerator generator) throws ExecutionException, InterruptedException {
-        // 探索対象のミノ順かを判定できるようにする
-        VisitedTree visitedTree = new VisitedTree();
-        for (SafePieces safePieces : generator) {
-            visitedTree.success(safePieces.getBlocks());
-        }
-
+    void runForLayer1(Field field, List<List<Block>> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
         // 探索パターンをホールドなしで列挙
         // 同じ地形は統合される
         List<Pair<List<Block>, List<Result>>> allMergedPatterns = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
@@ -87,7 +78,6 @@ class PathCore {
         // パフェできるホールドなしパターンから派生するパターンをすべて列挙
         // 途中で同じ地形になる統合されたパターンを探索
         PerfectValidator perfectValidator = new PerfectValidator();
-        MinoFactory minoFactory = new MinoFactory();
 
         // マージされた探索結果から派生するパスを探索する準備
         List<Pair<List<Operation>, FullValidator>> pathCheckList = createPathCheckList(field, maxClearLine, allMergedPatterns, perfectValidator, minoFactory);
@@ -97,104 +87,72 @@ class PathCore {
 
         // Operationsに変換し、重複を取り除く  // 全パス
         this.allUniqueOperations = parseToUniqueOperations(allDerivationPath);
+    }
 
+    void runForLayer2(Field field, int maxClearLine) {
         // Blockごとに置き分けたフィールド群に変換する  // 同一ミノ配置を取り除く
-        TreeSet<BlockFieldOperations> blockFieldOperationsList = createBlockFields(field, maxClearLine, minoFactory, allUniqueOperations);
+        this.blockFieldOperationsList = createBlockFields(field, maxClearLine, minoFactory, allUniqueOperations);
+    }
 
-        // 操作順に並び替える
-        this.uniqueOperations = blockFieldOperationsList.stream()
-                .sorted(Comparator.comparing(BlockFieldOperations::getOperations))
-                .map(BlockFieldOperations::getOperations)
-                .collect(Collectors.toList());
+    void runForLayer3(Field field, int maxClearLine, PiecesGenerator generator, boolean isUsingHold) {
+        // 探索対象のミノ順かを判定できるようにする
+        VisitedTree visitedTree = new VisitedTree();
+        for (SafePieces safePieces : generator) {
+            visitedTree.success(safePieces.getBlocks());
+        }
 
-        // さらに整理
-        MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
-        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
-
+        // 他のパターンではカバーできないものだけを列挙する
         LinkedList<Pair<Operations, Set<List<Block>>>> masters = new LinkedList<>();
         for (BlockFieldOperations blockFieldOperations : blockFieldOperationsList) {
             Operations operations = blockFieldOperations.getOperations();
-            //System.out.println(operations);
             List<OperationWithKey> operationWithKeys = Build.createOperationWithKeys(field, operations, minoFactory, maxClearLine);
-
-            HashSet<List<Block>> set = new HashSet<>();
-            PermutationIterable<OperationWithKey> permutationIterable = new PermutationIterable<>(operationWithKeys, operationWithKeys.size());
-            for (List<OperationWithKey> targetCheckOperationsWithKey : permutationIterable) {
-                boolean cansBuild = Build.cansBuild(field, targetCheckOperationsWithKey, maxClearLine, reachable);
-                if (cansBuild) {
-                    List<Block> blocks = targetCheckOperationsWithKey.stream().map(o -> o.getMino().getBlock()).collect(Collectors.toList());
-                    boolean isUsingHold = true;
-                    if (isUsingHold) {
-                        ArrayList<Pieces> reverse = OrderLookup.reverse(blocks, blocks.size() + 1);
-                        List<List<Block>> collect = reverse.stream().map(Pieces::getBlocks).collect(Collectors.toList());
-                        for (List<Block> blockList : collect) {
-                            int nullIndex = blockList.indexOf(null);
-                            if (0 <= nullIndex) {
-                                for (Block block : Block.values()) {
-                                    blockList.set(nullIndex, block);
-                                    boolean visited = visitedTree.isVisited(blockList);
-                                    if (visited)
-                                        set.add(new ArrayList<>(blocks));
-                                }
-                            } else {
-                                boolean visited = visitedTree.isVisited(blockList);
-                                if (visited)
-                                    set.add(blocks);
-                            }
-                        }
-                    } else {
-                        boolean visited = visitedTree.isVisited(blocks);
-                        if (visited)
-                            set.add(blocks);
-                    }
-                }
-            }
-//            System.out.println(set);
+            HashSet<List<Block>> canBuildBlocks = buildPattern(field, maxClearLine, isUsingHold, visitedTree, operationWithKeys);
 
             // 比較
-            Pair<Operations, Set<List<Block>>> pair = new Pair<>(blockFieldOperations.getOperations(), set);
-            LinkedList<Pair<Operations, Set<List<Block>>>> nextMasters = new LinkedList<>();
-            boolean isSetNeed = true;
+            Pair<Operations, Set<List<Block>>> pair = new Pair<>(blockFieldOperations.getOperations(), canBuildBlocks);
 
+            boolean isSetNeed = true;
+            LinkedList<Pair<Operations, Set<List<Block>>>> nextMasters = new LinkedList<>();
+
+            // すでに登録済みのパターンでカバーできるか確認
             while (!masters.isEmpty()) {
                 Pair<Operations, Set<List<Block>>> targetPair = masters.pollFirst();
-                Set<List<Block>> target = targetPair.getValue();
+                Set<List<Block>> registeredBlocks = targetPair.getValue();
 
-                if (target.size() < set.size()) {
-                    // setがmasterになる
-                    HashSet<List<Block>> newTarget = new HashSet<>(target);
-                    newTarget.removeAll(set);
+                if (registeredBlocks.size() < canBuildBlocks.size()) {
+                    // 新しいパターンの方が多く対応できる  // 新パターンが残る
+                    HashSet<List<Block>> newTarget = new HashSet<>(registeredBlocks);
+                    newTarget.removeAll(canBuildBlocks);
 
-                    if (newTarget.size() != 0) {
-                        // targetも残る
+                    // 新パターンでも対応できないパターンがあるときは残す
+                    if (newTarget.size() != 0)
                         nextMasters.add(targetPair);
-                    }
-                } else if (set.size() < target.size()) {
-                    // targetがmasterになる
-                    HashSet<List<Block>> newSet = new HashSet<>(set);
-                    newSet.removeAll(target);
+                } else if (canBuildBlocks.size() < registeredBlocks.size()) {
+                    // 登録済みパターンの方が多く対応できる
+                    HashSet<List<Block>> newSet = new HashSet<>(canBuildBlocks);
+                    newSet.removeAll(registeredBlocks);
 
-                    // targetは必ず残る
+                    // 登録済みパターンを残す
                     nextMasters.add(targetPair);
 
                     if (newSet.size() == 0) {
-                        // 上位のtargetが存在するのでsetはいらない
-                        // 残りのtargetも無条件で残す
+                        // 上位のパターンが存在するので新パターンはいらない
+                        // 残りの登録済みパターンは無条件で残す
                         isSetNeed = false;
                         nextMasters.addAll(masters);
                         break;
                     }
                 } else {
-                    HashSet<List<Block>> newSet = new HashSet<>(set);
-                    newSet.retainAll(target);
+                    // 新パターンと登録済みパターンが対応できる数は同じ
+                    HashSet<List<Block>> newSet = new HashSet<>(canBuildBlocks);
+                    newSet.retainAll(registeredBlocks);
 
-                    // targetは必ず残る
+                    // 登録済みパターンを残す
                     nextMasters.add(targetPair);
 
-                    if (newSet.size() == target.size()) {
-                        // 完全に同一のtargetが存在するのでsetはいらない
-                        // 残りのtargetも無条件で残す
+                    if (newSet.size() == registeredBlocks.size()) {
+                        // 完全に同一の対応パターンなので新パターンはいらない
+                        // 残りの登録済みパターンは無条件で残す
                         isSetNeed = false;
                         nextMasters.addAll(masters);
                         break;
@@ -202,47 +160,14 @@ class PathCore {
                 }
             }
 
+            // 新パターンが必要
             if (isSetNeed)
                 nextMasters.add(pair);
 
             masters = nextMasters;
         }
 
-        System.out.println(masters.size());
-        ColorConverter colorConverter = new ColorConverter();
-        ColoredField initField = ColoredFieldFactory.createField(24);
-        for (int y = 0; y < maxClearLine; y++) {
-            for (int x = 0; x < 10; x++) {
-                if (!field.isEmpty(x, y))
-                    initField.setColorType(ColorType.Gray, x, y);
-            }
-        }
-        for (Pair<Operations, Set<List<Block>>> master : masters) {
-//            boolean isT = false;
-            List<Operation> operations = master.getKey().getOperations();
-            ArrayList<TetfuElement> elements = new ArrayList<>();
-            for (Operation operation : operations) {
-                Block block = operation.getBlock();
-//                if (block == Block.T)
-//                    isT = true;
-                Rotate rotate = operation.getRotate();
-                int x = operation.getX();
-                int y = operation.getY();
-                elements.add(new TetfuElement(colorConverter.parseToColorType(block), rotate, x, y));
-            }
-            Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
-            String encode = tetfu.encode(initField, elements);
-
-//            if (isT) {
-                System.out.print("<div><a href='");
-                System.out.print("http://fumen.zui.jp/?v115@" + encode);
-                System.out.print("' target='_blank'>");
-                System.out.print(operations + " ");
-                System.out.print(master.getValue() + " ");
-                System.out.print("</a></div>");
-                System.out.println();
-//            }
-        }
+        this.minimalOperations = masters;
     }
 
     private TreeSet<BlockFieldOperations> createBlockFields(Field field, int maxClearLine, MinoFactory minoFactory, TreeSet<Operations> allUniqueOperations) {
@@ -359,11 +284,70 @@ class PathCore {
         return expectField;
     }
 
+    // ある手順をもとに、探索パターンの中で同じように組めるパターンを列挙
+    private HashSet<List<Block>> buildPattern(Field field, int maxClearLine, boolean isUsingHold, VisitedTree visitedTree, List<OperationWithKey> operationWithKeys) {
+        // ホールドなしのときはそのまま返却
+        if (!isUsingHold) {
+            List<Block> blocks = operationWithKeys.stream()
+                    .map(o -> o.getMino().getBlock())
+                    .collect(Collectors.toList());
+            HashSet<List<Block>> set = new HashSet<>();
+            set.add(blocks);
+            return set;
+        }
+
+        MinoShifter minoShifter = new MinoShifter();
+        MinoRotation minoRotation = new MinoRotation();
+        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
+
+        // すべての入れ替えた手順で組み直してみる
+        HashSet<List<Block>> set = new HashSet<>();
+        PermutationIterable<OperationWithKey> permutationIterable = new PermutationIterable<>(operationWithKeys, operationWithKeys.size());
+        for (List<OperationWithKey> targetCheckOperationsWithKey : permutationIterable) {
+            boolean cansBuild = Build.cansBuild(field, targetCheckOperationsWithKey, maxClearLine, reachable);
+            if (cansBuild) {
+                // 手順を入れ替えても組むことができる
+                List<Block> blocks = targetCheckOperationsWithKey.stream()
+                        .map(o -> o.getMino().getBlock())
+                        .collect(Collectors.toList());
+
+                // ホールドありでこの手順になる可能性があるミノ順を算出
+                List<List<Block>> reverse = OrderLookup.reverse(blocks, blocks.size() + 1).stream()
+                        .map(Pieces::getBlocks)
+                        .collect(Collectors.toList());
+
+                for (List<Block> blockList : reverse) {
+                    int nullIndex = blockList.indexOf(null);
+                    if (0 <= nullIndex) {
+                        // ワイルドカードがあるときは置き換える
+                        for (Block block : Block.values()) {
+                            blockList.set(nullIndex, block);
+                            if (visitedTree.isVisited(blockList))
+                                set.add(new ArrayList<>(blocks));
+                        }
+                    } else {
+                        if (visitedTree.isVisited(blockList))
+                            set.add(blocks);
+                    }
+                }
+            }
+        }
+        return set;
+    }
+
     TreeSet<Operations> getAllOperations() {
         return allUniqueOperations;
     }
 
     List<Operations> getUniqueOperations() {
-        return uniqueOperations;
+        // 操作順に並び替える
+        return blockFieldOperationsList.stream()
+                .sorted(Comparator.comparing(BlockFieldOperations::getOperations))
+                .map(BlockFieldOperations::getOperations)
+                .collect(Collectors.toList());
+    }
+
+    public List<Pair<Operations, Set<List<Block>>>> getMinimalOperations() {
+        return minimalOperations;
     }
 }

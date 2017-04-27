@@ -19,6 +19,8 @@ public class PathSettings {
     private String logFilePath = DEFAULT_LOG_FILE_PATH;
     private List<String> patterns = new ArrayList<>();
     private String outputBaseFilePath = DEFAULT_OUTPUT_BASE_FILE_PATH;
+    private int maxLayer = 3;
+    private OutputType outputType = OutputType.Link;
 
     // ********* Getter ************
     public boolean isUsingHold() {
@@ -47,6 +49,14 @@ public class PathSettings {
 
     String getOutputBaseFilePath() {
         return outputBaseFilePath;
+    }
+
+    int getMaxLayer() {
+        return maxLayer;
+    }
+
+    OutputType getOutputType() {
+        return outputType;
     }
 
     // ********* Setter ************
@@ -81,5 +91,22 @@ public class PathSettings {
 
     void setOutputBaseFilePath(String path) {
         this.outputBaseFilePath = path;
+    }
+
+    void setMaxLayer(int maxLayer) {
+        this.maxLayer = maxLayer;
+    }
+
+    void setOutputType(String type) {
+        switch (type.trim().toLowerCase()) {
+            case "csv":
+                this.outputType = OutputType.CSV;
+                break;
+            case "link":
+                this.outputType = OutputType.Link;
+                break;
+            default:
+                throw new UnsupportedOperationException("Unsupported output type = '" + type + "'");
+        }
     }
 }

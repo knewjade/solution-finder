@@ -1,22 +1,32 @@
 package entry.path;
 
+import core.action.reachable.LockedReachable;
 import core.field.Field;
 import core.field.FieldView;
 import core.mino.Block;
+import core.mino.MinoFactory;
+import core.mino.MinoShifter;
+import core.srs.MinoRotation;
 import core.srs.Rotate;
 import entry.EntryPoint;
 import entry.searching_pieces.EnumeratePiecesCore;
+import misc.Build;
+import misc.OperationWithKey;
 import misc.Stopwatch;
 import misc.SyntaxException;
+import misc.iterable.PermutationIterable;
 import misc.pattern.PiecesGenerator;
-import misc.tree.VisitedTree;
+import misc.tetfu.Tetfu;
+import misc.tetfu.TetfuElement;
+import misc.tetfu.common.ColorConverter;
+import misc.tetfu.common.ColorType;
+import misc.tetfu.field.ColoredField;
+import misc.tetfu.field.ColoredFieldFactory;
 import searcher.common.Operation;
 import searcher.common.Operations;
 
 import java.io.*;
-import java.util.Collection;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -82,31 +92,42 @@ public class PathEntryPoint implements EntryPoint {
         for (String pattern : patterns)
             output("  " + pattern);
 
+
         // 出力ファイルが正しく出力できるか確認
+        String extension = getExtension();
         String outputBaseFilePath = settings.getOutputBaseFilePath();
-        File outputBaseFile = new File(outputBaseFilePath);
+        String outputBaseCanonicalPath = new File(outputBaseFilePath).getCanonicalPath();
+        String outputFilePath = String.format("%s%s", getRemoveExtensionFromPath(outputBaseCanonicalPath), extension);
+        File outputFile = new File(outputFilePath);
 
         // 親ディレクトリがない場合は作成
-        if (!outputBaseFile.getParentFile().exists()) {
-            boolean mairSuccess = outputBaseFile.getParentFile().mkdir();
+        if (!outputFile.getParentFile().exists()) {
+            boolean mairSuccess = outputFile.getParentFile().mkdir();
             if (!mairSuccess) {
                 throw new IllegalStateException("Failed to make output directory");
             }
         }
 
-        if (outputBaseFile.isDirectory())
+        if (outputFile.isDirectory())
             throw new IllegalArgumentException("Cannot specify directory as output base file path");
-        if (outputBaseFile.exists() && !outputBaseFile.canWrite())
+        if (outputFile.exists() && !outputFile.canWrite())
             throw new IllegalArgumentException("Cannot write output base file");
 
         // uniqueファイル
-        String canonicalPath = outputBaseFile.getCanonicalPath();
-        String uniqueOutputFilePath = String.format("%s_unique%s", getRemoveExtensionFromPath(canonicalPath), getExtensionFromPath(canonicalPath));
+        String uniqueOutputFilePath = String.format("%s_unique%s", getRemoveExtensionFromPath(outputBaseCanonicalPath), extension);
         File outputUniqueFile = new File(uniqueOutputFilePath);
         if (outputUniqueFile.isDirectory())
             throw new IllegalArgumentException("Cannot specify directory as output unique file path");
-        if (outputBaseFile.exists() && !outputUniqueFile.canWrite())
+        if (outputUniqueFile.exists() && !outputUniqueFile.canWrite())
             throw new IllegalArgumentException("Cannot write output unique file");
+
+        // minimalファイル
+        String minimalOutputFilePath = String.format("%s_minimal%s", getRemoveExtensionFromPath(outputBaseCanonicalPath), extension);
+        File outputMinimalFile = new File(minimalOutputFilePath);
+        if (outputMinimalFile.isDirectory())
+            throw new IllegalArgumentException("Cannot specify directory as output minimal file path");
+        if (outputMinimalFile.exists() && !outputMinimalFile.canWrite())
+            throw new IllegalArgumentException("Cannot write output minimal file");
 
         output();
         // ========================================
@@ -154,26 +175,53 @@ public class PathEntryPoint implements EntryPoint {
 
         // 探索を行う
         PathCore pathCore = new PathCore(maxClearLine, executorService, core * 10);
-        pathCore.run(field, searchingPieces, maxClearLine, maxDepth, generator);
-        TreeSet<Operations> allOperations = pathCore.getAllOperations();
-        List<Operations> uniqueOperations = pathCore.getUniqueOperations();
+        int maxLayer = settings.getMaxLayer();
+        if (1 <= maxLayer) {
+            System.out.println("     ... Layer 1: all");
+            pathCore.runForLayer1(field, searchingPieces, maxClearLine, maxDepth);
+        }
+
+        if (2 <= maxLayer) {
+            System.out.println("     ... Layer 2: unique");
+            pathCore.runForLayer2(field, maxClearLine);
+        }
+
+        if (3 <= maxLayer) {
+            System.out.println("     ... Layer 3: minimal");
+            pathCore.runForLayer3(field, maxClearLine, generator, settings.isUsingHold());
+        }
 
         stopwatch.stop();
         output("  -> Stopwatch stop : " + stopwatch.toMessage(TimeUnit.MILLISECONDS));
 
         output();
-        output("Found path [all] = " + allOperations.size());
-        output("Found path [unique] = " + uniqueOperations.size());
 
         output();
         // ========================================
         output("# Output file");
 
         // 全パスの出力
-        outputOperationsToCSV(outputBaseFile, allOperations);
+        if (1 <= maxLayer) {
+            TreeSet<Operations> allOperations = pathCore.getAllOperations();
+            output("Found path [all] = " + allOperations.size());
+            outputOperations(field, maxClearLine, outputFile, allOperations);
+        }
 
         // 同一ミノ配置を取り除いたパスの出力
-        outputOperationsToCSV(outputUniqueFile, uniqueOperations);
+        if (2 <= maxLayer) {
+            List<Operations> uniqueOperations = pathCore.getUniqueOperations();
+            output("Found path [unique] = " + uniqueOperations.size());
+            outputOperations(field, maxClearLine, outputUniqueFile, uniqueOperations);
+        }
+
+        // 同一ミノ配置を取り除いたパスの出力
+        if (3 <= maxLayer) {
+            List<Operations> minimalOperations = pathCore.getMinimalOperations().stream()
+                    .map(javafx.util.Pair::getKey)
+                    .collect(Collectors.toList());
+            output("Found path [minimal] = " + minimalOperations.size());
+            outputOperations(field, maxClearLine, outputMinimalFile, minimalOperations);
+        }
 
         output("done");
 
@@ -216,6 +264,32 @@ public class PathEntryPoint implements EntryPoint {
         return "";
     }
 
+    private String getExtension() {
+        OutputType outputType = settings.getOutputType();
+        switch (outputType) {
+            case CSV:
+                return ".csv";
+            case Link:
+                return ".html";
+            default:
+                throw new UnsupportedOperationException("Unsupport output type: " + outputType);
+        }
+    }
+
+    private void outputOperations(Field field, int maxClearLine, File file, Collection<Operations> operations) {
+        OutputType outputType = settings.getOutputType();
+        switch (outputType) {
+            case CSV:
+                outputOperationsToCSV(file, operations);
+                break;
+            case Link:
+                outputOperationsToSimpleHTML(field, maxClearLine, file, operations);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unsupport output type: " + outputType);
+        }
+    }
+
     private void outputOperationsToCSV(File file, Collection<Operations> operations) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false), CHARSET))) {
             for (Operations allOperation : operations) {
@@ -225,6 +299,82 @@ public class PathEntryPoint implements EntryPoint {
                 writer.write(operationLine);
                 writer.newLine();
             }
+            writer.flush();
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to output file", e);
+        }
+    }
+
+    private void outputOperationsToSimpleHTML(Field field, int maxClearLine, File file, Collection<Operations> operations) {
+        // テト譜用のフィールド作成
+        ColoredField initField = ColoredFieldFactory.createField(24);
+        for (int y = 0; y < maxClearLine; y++) {
+            for (int x = 0; x < 10; x++) {
+                if (!field.isEmpty(x, y))
+                    initField.setColorType(ColorType.Gray, x, y);
+            }
+        }
+
+        ColorConverter colorConverter = new ColorConverter();
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        MinoRotation minoRotation = new MinoRotation();
+        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
+
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false), CHARSET))) {
+            // headerの出力
+            writer.write("<!DOCTYPE html>");
+            writer.newLine();
+            writer.write("<html lang=ja><head><meta charset=\"UTF-8\"></head><body>");
+            writer.newLine();
+
+            // パターン数の出力
+            writer.write(String.format("<div>%dパターン</div>", operations.size()));
+            writer.newLine();
+
+            // 手順の出力
+            for (Operations allOperation : operations) {
+
+                // テト譜の作成
+                ArrayList<String> texts = new ArrayList<>();
+                ArrayList<TetfuElement> elements = new ArrayList<>();
+                for (Operation operation : allOperation.getOperations()) {
+                    Block block = operation.getBlock();
+                    Rotate rotate = operation.getRotate();
+                    int x = operation.getX();
+                    int y = operation.getY();
+                    elements.add(new TetfuElement(colorConverter.parseToColorType(block), rotate, x, y));
+                    texts.add(String.format("%s-%s %d,%d", block, rotate, x, y));
+                }
+
+                // 組めるパターンを列挙
+                // すべての入れ替えた手順で組み直してみる
+                List<OperationWithKey> operationWithKeys = Build.createOperationWithKeys(field, allOperation, minoFactory, maxClearLine);
+                HashSet<List<Block>> set = new HashSet<>();
+                PermutationIterable<OperationWithKey> permutationIterable = new PermutationIterable<>(operationWithKeys, operationWithKeys.size());
+                for (List<OperationWithKey> targetCheckOperationsWithKey : permutationIterable) {
+                    boolean cansBuild = Build.cansBuild(field, targetCheckOperationsWithKey, maxClearLine, reachable);
+                    if (cansBuild) {
+                        // 手順を入れ替えても組むことができる
+                        List<Block> blocks = targetCheckOperationsWithKey.stream()
+                                .map(o -> o.getMino().getBlock())
+                                .collect(Collectors.toList());
+
+                        set.add(blocks);
+                    }
+                }
+
+                String text = String.join(", ", texts) + set;
+                Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
+                String encode = tetfu.encode(initField, elements);
+
+                writer.write(String.format("<div><a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a></div>", encode, text));
+                writer.newLine();
+            }
+
+            // footerの出力
+            writer.write("<html lang=ja><head><meta charset=\"UTF-8\"></head><body>");
+            writer.newLine();
             writer.flush();
         } catch (Exception e) {
             throw new IllegalStateException("Failed to output file", e);

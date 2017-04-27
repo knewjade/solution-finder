@@ -42,7 +42,7 @@ public class PathCoreTest {
         PiecesGenerator generator = new PiecesGenerator("*p4");
         EnumeratePiecesCore enumeratePiecesCore = PathCore.createEnumeratePiecesCore(generator, maxDepth, isUsingHold);
         List<List<Block>> blocks = enumeratePiecesCore.enumerate();
-        pathCore.run(field, blocks, maxClearLine, maxDepth, generator);
+        pathCore.runForLayer1(field, blocks, maxClearLine, maxDepth);
 
         // Source: myself 20170423
         TreeSet<Operations> allOperations = pathCore.getAllOperations();
@@ -54,6 +54,15 @@ public class PathCoreTest {
                 createOperations("Z,0,2,3", "S,0,3,2", "O,0,7,0")
         ));
 
+        pathCore.runForLayer2(field, maxClearLine);
+        assertThat(pathCore.getUniqueOperations().size(), is(3));
+        assertThat(allOperations, hasItems(
+                createOperations("L,L,2,3", "J,R,3,3", "O,0,7,0"),
+                createOperations("S,0,3,3", "Z,0,2,2", "O,0,7,0"),
+                createOperations("Z,0,2,3", "S,0,3,2", "O,0,7,0")
+        ));
+
+        pathCore.runForLayer3(field, maxClearLine, generator, isUsingHold);
         assertThat(pathCore.getUniqueOperations().size(), is(3));
         assertThat(allOperations, hasItems(
                 createOperations("L,L,2,3", "J,R,3,3", "O,0,7,0"),
@@ -84,10 +93,45 @@ public class PathCoreTest {
         PiecesGenerator generator = new PiecesGenerator("*p4");
         EnumeratePiecesCore enumeratePiecesCore = PathCore.createEnumeratePiecesCore(generator, maxDepth, isUsingHold);
         List<List<Block>> blocks = enumeratePiecesCore.enumerate();
-        pathCore.run(field, blocks, maxClearLine, maxDepth, generator);
+        pathCore.runForLayer1(field, blocks, maxClearLine, maxDepth);
+        pathCore.runForLayer2(field, maxClearLine);
+        pathCore.runForLayer3(field, maxClearLine, generator, isUsingHold);
 
         // Source: myself 20170423
         assertThat(pathCore.getAllOperations().size(), is(39));
         assertThat(pathCore.getUniqueOperations().size(), is(18));
+        assertThat(pathCore.getMinimalOperations().size(), is(16));
+    }
+
+    @Test
+    public void invokeUsingHoldWitGraceSystem() throws Exception {
+        // Field
+        String marks = "" +
+                "XXXXXX____" +
+                "XXXXXX____" +
+                "XXXXXX____" +
+                "XXXXXX____" +
+                "";
+        int maxClearLine = 4;
+        int maxDepth = 4;
+        boolean isUsingHold = true;
+
+        int core = Runtime.getRuntime().availableProcessors();
+        ExecutorService executorService = Executors.newFixedThreadPool(core);
+        PathCore pathCore = new PathCore(maxClearLine, executorService, core * 10);
+
+        Field field = FieldFactory.createField(marks);
+
+        PiecesGenerator generator = new PiecesGenerator("T, *p4");
+        EnumeratePiecesCore enumeratePiecesCore = PathCore.createEnumeratePiecesCore(generator, maxDepth, isUsingHold);
+        List<List<Block>> blocks = enumeratePiecesCore.enumerate();
+        pathCore.runForLayer1(field, blocks, maxClearLine, maxDepth);
+        pathCore.runForLayer2(field, maxClearLine);
+        pathCore.runForLayer3(field, maxClearLine, generator, isUsingHold);
+
+        // Source: myself 20170426
+        assertThat(pathCore.getAllOperations().size(), is(797));
+        assertThat(pathCore.getUniqueOperations().size(), is(363));
+        assertThat(pathCore.getMinimalOperations().size(), is(102));
     }
 }
