@@ -2,6 +2,7 @@ package newfield;
 
 import core.field.Field;
 import core.field.FieldFactory;
+import core.field.FieldView;
 import core.mino.Block;
 
 import java.util.ArrayList;
@@ -21,10 +22,12 @@ public class Main2 {
                 "XXX_______" +
                 ""
         );
+        int maxClearLine = 4;
+        System.out.println(FieldView.toString(field, maxClearLine));
+
         ParityField parityField = new ParityField(field);
         System.out.println(parityField);
 
-        int maxClearLine = 4;
         NewValidate newValidate = new NewValidate(blockCounter, parityField, maxClearLine);
         newValidate.run();
     }
@@ -57,7 +60,8 @@ public class Main2 {
             for (int count = 0; count <= LJCount; count++) {
                 int oddLJ = LJCount + 2 * count;
                 int evenLJ = LJCount + 2 * (LJCount - count);
-                validateAfterSZOLJ(evenParity - oddLJ, oddParity - evenLJ, count);
+                if ((LJCount - count) % 2 == 0)
+                    validateAfterSZOLJ(evenParity - oddLJ, oddParity - evenLJ, count);
             }
         }
 
@@ -95,168 +99,16 @@ public class Main2 {
 
         private void validateAfterAll(int oddCountLJ, int oddCountT, int oddCountI) {
             // 偶奇数列の差を相殺する置き方に注意
-            // oddCountLJ: 偶数列を3にするLJの置き方の総数
-            // oddCountT : 偶数列を3にするTの置き方の総数
-            // oddCountI : 偶数列を4にするIの置き方の総数
-            EstimateBuilder estimateBuilder = new EstimateBuilder(blockCounter);
-            estimateBuilder.run(oddCountLJ, oddCountT, oddCountI);
+            // oddCountLJ: 偶数列を3にするLJの置き方の総数 // 必ず正となる
+            // oddCountT : 偶数列を3にするTの置き方の総数  // マイナスの場合は、奇数列を3にするTの置き方の総数
+            // oddCountI : 偶数列を4にするIの置き方の総数  // マイナスの場合は、奇数列を4にするIの置き方の総数
 
-            for (List<EstimateMino> estimateMinos : estimateBuilder.estimateMinos) {
-                for (EstimateMino estimateMino : estimateMinos)
-                    System.out.println(estimateMino);
-                System.out.println("---");
-            }
+            EstimateBuilder estimateBuilder = new EstimateBuilder(blockCounter, oddCountLJ, oddCountT, oddCountI);
+            List<List<EstimateMino>> lists = estimateBuilder.create();
+
+            System.out.println(estimateBuilder);
+            System.out.println(lists.size());
+            System.out.println(lists);
         }
-    }
-
-    private static class EstimateBuilder {
-        private ArrayList<List<EstimateMino>> estimateMinos = new ArrayList<>();
-        private ArrayList<List<EstimateMino>> nextEstimateMinos = new ArrayList<>();
-
-        private final BlockCounter blockCounter;
-
-        EstimateBuilder(BlockCounter blockCounter) {
-            this.blockCounter = blockCounter;
-        }
-
-        public void run(int oddCountLJ, int oddCountT, int oddCountI) {
-            addSZO();
-            addLJAndSZO(oddCountLJ);
-            estimateMinos = nextEstimateMinos;
-            addLJSZOAndT(oddCountT);
-            estimateMinos = nextEstimateMinos;
-        }
-
-        private void addSZO() {
-            ArrayList<EstimateMino> listSZO = new ArrayList<>();
-
-            // S
-            for (int count = 0; count < blockCounter.getCount(Block.S); count++)
-                listSZO.add(new EstimateMino(Block.S, RotateLimit.NoLimit, Delta.Flat));
-
-            // Z
-            for (int count = 0; count < blockCounter.getCount(Block.Z); count++)
-                listSZO.add(new EstimateMino(Block.Z, RotateLimit.NoLimit, Delta.Flat));
-
-            // O
-            for (int count = 0; count < blockCounter.getCount(Block.O); count++)
-                listSZO.add(new EstimateMino(Block.O, RotateLimit.NoLimit, Delta.Flat));
-
-            estimateMinos.add(listSZO);
-        }
-
-        private void addLJAndSZO(int oddCountLJ) {
-            int countL = blockCounter.getCount(Block.L);
-            int countJ = blockCounter.getCount(Block.J);
-            int countLJ = countL + countJ;
-
-            if (countLJ == oddCountLJ) {
-                // すべて偶数列を3にするLJ
-                for (int oddCountL = 0; oddCountL <= countL; oddCountL++) {
-                    // 偶数列を3にするJの数を決定
-                    int oddCountJ = oddCountLJ - oddCountL;
-                    // Jを使いすぎているときは次へ
-                    if (countJ < oddCountJ)
-                        continue;
-
-                    ArrayList<EstimateMino> ljList = createLJ(oddCountL, oddCountJ, 0, 0);
-                    concat(ljList);
-                }
-            } else {
-                // 偶数列を3にするLの数を決定
-                for (int oddCountL = 0; oddCountL <= oddCountLJ; oddCountL++) {
-                    // Lを使いすぎているときは次へ
-                    if (countL < oddCountL)
-                        continue;
-
-                    // 偶数列を3にするJの数を決定
-                    int oddCountJ = oddCountLJ - oddCountL;
-                    // Jを使いすぎているときは次へ
-                    if (countJ < oddCountJ)
-                        continue;
-
-                    // 奇数列を3にするLJの数を決定
-                    int evenCountLJ = countLJ - oddCountLJ;
-                    assert 0 < evenCountLJ;
-
-                    int leastL = countL - oddCountL;
-                    int leastJ = countJ - oddCountJ;
-                    if (leastL < leastJ) {
-                        // Lから埋めていく
-                        for (int evenCountL = 0; evenCountL <= leastL; evenCountL++) {
-                            int evenCountJ = leastJ - evenCountL;
-                            ArrayList<EstimateMino> ljList = createLJ(oddCountL, oddCountJ, evenCountL, evenCountJ);
-                            concat(ljList);
-                        }
-                    } else {
-                        // Jから埋めていく
-                        for (int evenCountJ = 0; evenCountJ < leastJ; evenCountJ++) {
-                            int evenCountL = leastL - evenCountJ;
-                            ArrayList<EstimateMino> ljList = createLJ(oddCountL, oddCountJ, evenCountL, evenCountJ);
-                            concat(ljList);
-                        }
-                    }
-                }
-            }
-        }
-
-        private ArrayList<EstimateMino> createLJ(int oddCountL, int oddCountJ, int evenCountL, int evenCountJ) {
-            ArrayList<EstimateMino> minos = new ArrayList<>();
-            for (int count = 0; count < oddCountL; count++)
-                minos.add(new EstimateMino(Block.L, RotateLimit.NoLimit, Delta.OddUp));
-            for (int count = 0; count < oddCountJ; count++)
-                minos.add(new EstimateMino(Block.J, RotateLimit.NoLimit, Delta.OddUp));
-            for (int count = 0; count < evenCountL; count++)
-                minos.add(new EstimateMino(Block.L, RotateLimit.NoLimit, Delta.EvenUp));
-            for (int count = 0; count < evenCountJ; count++)
-                minos.add(new EstimateMino(Block.J, RotateLimit.NoLimit, Delta.EvenUp));
-            return minos;
-        }
-
-        private void concat(ArrayList<EstimateMino> values) {
-            for (List<EstimateMino> estimateMino : estimateMinos) {
-                ArrayList<EstimateMino> newList = new ArrayList<>(estimateMino);
-                newList.addAll(values);
-                nextEstimateMinos.add(newList);
-            }
-        }
-
-        private ArrayList<EstimateMino> addLJSZOAndT(int oddCountT) {
-            int countT = blockCounter.getCount(Block.T);
-            
-        }
-    }
-
-    private static class EstimateMino {
-        private final Block block;
-        private final RotateLimit rotateLimit;
-        private final Delta delta;
-
-        private EstimateMino(Block block, RotateLimit rotateLimit, Delta delta) {
-            this.block = block;
-            this.rotateLimit = rotateLimit;
-            this.delta = delta;
-        }
-
-        @Override
-        public String toString() {
-            return "EstimateMino{" +
-                    "block=" + block +
-                    ", rotateLimit=" + rotateLimit +
-                    ", delta=" + delta +
-                    '}';
-        }
-    }
-
-    private enum RotateLimit {
-        NoLimit,
-        LeftOrRight,
-        SpawnOrReverse,;
-    }
-
-    private enum Delta {
-        Flat,
-        OddUp,
-        EvenUp,;
     }
 }
