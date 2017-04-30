@@ -268,6 +268,7 @@ public class MiddleField implements Field {
 
     @Override
     public long getBoard(int index) {
+        assert 0 <= index && index < 2;
         if (index == 0)
             return xBoardLow;
         return xBoardHigh;
@@ -275,32 +276,89 @@ public class MiddleField implements Field {
 
     @Override
     public Field freeze(int maxHeight) {
+        assert 0 < maxHeight && maxHeight <= 12;
         if (maxHeight <= 6)
             return new SmallField(xBoardLow);
         return new MiddleField(this);
     }
 
+    // TODO: write unittest
     @Override
     public void merge(Field other) {
         int otherBlockCount = other.getAllBlockCount();
-        if (otherBlockCount == 1) {
-            xBoardLow |= other.getBoard(0);
-            return;
-        } else if (otherBlockCount == 2) {
-            xBoardLow |= other.getBoard(0);
+        assert 0 < otherBlockCount && otherBlockCount <= 2;
+
+        xBoardLow |= other.getBoard(0);
+        if (otherBlockCount == 2)
             xBoardHigh |= other.getBoard(1);
-            return;
-        }
-        throw new UnsupportedOperationException("too large field");
     }
 
+    // TODO: write unittest
+    @Override
+    public void reduce(Field other) {
+        int otherBlockCount = other.getAllBlockCount();
+        assert 0 < otherBlockCount && otherBlockCount <= 2;
+
+        xBoardLow &= ~other.getBoard(0);
+        if (otherBlockCount == 2)
+            xBoardHigh &= ~other.getBoard(1);
+    }
+
+    // TODO: write unittest
+    @Override
+    public boolean canMerge(Field other) {
+        int otherBlockCount = other.getAllBlockCount();
+        assert 0 < otherBlockCount && otherBlockCount <= 2;
+
+        if (otherBlockCount == 1) {
+            return (xBoardLow & other.getBoard(0)) == 0L && xBoardHigh == 0L;
+        } else {
+            return (xBoardLow & other.getBoard(0)) == 0L && (xBoardHigh & other.getBoard(1)) == 0L;
+        }
+    }
+
+    // TODO: write unittest
     @Override
     public int getUpperYWith4Blocks() {
-        throw new UnsupportedOperationException();
+        assert Long.bitCount(xBoardLow) + Long.bitCount(xBoardHigh) == 4;
+        if (xBoardLow != 0L) {
+            if (xBoardHigh != 0L) {
+                // 何ビットかxBoardHighにある
+                // xBoardHighを下から順にオフする
+                long prevBoard = xBoardHigh;
+                long board = xBoardHigh & (xBoardHigh - 1);
+                while (board != 0L) {
+                    prevBoard = board;
+                    board = board & (board - 1);
+                }
+                return BitOperators.bitToY(prevBoard) + 6;
+            } else {
+                // すべてxBoardLowにある
+                // xBoardLowを下から順に3bit分、オフする
+                long board = xBoardLow & (xBoardLow - 1);
+                board = board & (board - 1);
+                board = board & (board - 1);
+                return BitOperators.bitToY(board);
+            }
+        } else {
+            // すべてxBoardHighにある
+            // xBoardHighを下から順に3bit分、オフする
+            long board = xBoardHigh & (xBoardHigh - 1);
+            board = board & (board - 1);
+            board = board & (board - 1);
+            return BitOperators.bitToY(board) + 6;
+        }
     }
 
+    // TODO: write unittest
     @Override
     public int getLowerY() {
-        throw new UnsupportedOperationException();
+        if (xBoardLow != 0L) {
+            long lowerBit = xBoardLow & (-xBoardLow);
+            return BitOperators.bitToY(lowerBit);
+        } else {
+            long lowerBit = xBoardHigh & (-xBoardHigh);
+            return BitOperators.bitToY(lowerBit) + 6;
+        }
     }
 }

@@ -30,14 +30,14 @@ public class BuildValidator implements Validator {
 
         int boardCount = field.getBoardCount();
         Field newField;
-        if (boardCount == 0) {
+        if (boardCount == 1) {
             long reverse = ~expectedField.getBoard(0);
             long board = field.getBoard(0);
             if ((reverse & board) != 0L)
                 return false;
 
             newField = new SmallField(reverse | board);
-        } else if (boardCount == 1) {
+        } else if (boardCount == 2) {
             long reverseLow = ~expectedField.getBoard(0);
             long boardLow = field.getBoard(0);
             if ((reverseLow & boardLow) != 0L)

@@ -2,8 +2,8 @@ package misc;
 
 import core.action.reachable.Reachable;
 import core.field.Field;
+import core.field.FieldFactory;
 import core.field.KeyOperators;
-import core.field.SmallField;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import searcher.common.Operation;
@@ -24,7 +24,7 @@ public class Build {
             long deleteKey = field.clearLineReturnKey();
 
             // 一番上と一番下のy座標を抽出
-            SmallField vanilla = new SmallField();
+            Field vanilla = FieldFactory.createField(height);
             vanilla.putMino(mino, x, y);
             vanilla.insertWhiteLineWithKey(deleteKey);
             int lowerY = vanilla.getLowerY();

@@ -79,8 +79,14 @@ public interface Field {
     // 現在のフィールドのコピーを返却
     Field freeze(int maxHeight);
 
-    // 指定したフィールドを重ね合せる
+    // 指定したフィールドのブロックを重ね合せる
     void merge(Field field);
+
+    // 指定したフィールドのブロックを取り除く
+    void reduce(Field field);
+
+    // 指定したフィールドのブロックが重ならないときfalseを返却
+    boolean canMerge(Field field);
 
     // フィールド内には必ず4ブロックだけ存在している前提のもと、最も高い位置にあるブロックのY座標を取得
     int getUpperYWith4Blocks();

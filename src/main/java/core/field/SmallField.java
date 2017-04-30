@@ -165,13 +165,28 @@ public class SmallField implements Field {
         return 1;
     }
 
+    // TODO: write unittest
     @Override
     public void merge(Field other) {
         xBoard |= other.getBoard(0);
     }
 
+    // TODO: write unittest
+    @Override
+    public void reduce(Field other) {
+        xBoard &= ~other.getBoard(0);
+    }
+
+    // TODO: write unittest
+    @Override
+    public boolean canMerge(Field other) {
+        return (xBoard & other.getBoard(0)) == 0L;
+    }
+
+    // TODO: write unittest
     @Override
     public int getUpperYWith4Blocks() {
+        assert Long.bitCount(xBoard) == 4;
         // 下から順に3bit分、オフする
         long board = xBoard & (xBoard - 1);
         board = board & (board - 1);
@@ -179,6 +194,7 @@ public class SmallField implements Field {
         return BitOperators.bitToY(board);
     }
 
+    // TODO: write unittest
     @Override
     public int getLowerY() {
         long lowerBit = xBoard & (-xBoard);

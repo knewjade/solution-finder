@@ -124,6 +124,16 @@ public class LargeField implements Field {
     }
 
     @Override
+    public void reduce(Field field) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean canMerge(Field field) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public int getUpperYWith4Blocks() {
         throw new UnsupportedOperationException();
     }

@@ -45,20 +45,20 @@ class DeleteKeyParser {
 
                     // 一番下の行と一番上の行を取得
                     int lowerY = indexes.get(0);
-                    int UpperY = indexes.get(indexes.size() - 1);
+                    int upperY = indexes.get(indexes.size() - 1);
 
                     // ミノに挟まれる全ての行を含むdeleteKey
-                    long deleteKey = KeyOperators.getMaskForKeyAboveY(lowerY) & KeyOperators.getMaskForKeyBelowY(UpperY + 1);
+                    long deleteKey = KeyOperators.getMaskForKeyAboveY(lowerY) & KeyOperators.getMaskForKeyBelowY(upperY + 1);
 
-                    assert Long.bitCount(deleteKey) == UpperY - lowerY + 1;
+                    assert Long.bitCount(deleteKey) == upperY - lowerY + 1;
 
                     // ブロックのある行のフラグを取り消す
                     for (Integer index : indexes)
                         deleteKey &= ~KeyOperators.getDeleteBitKey(index);
 
-                    assert Long.bitCount(deleteKey) + indexes.size() == UpperY - lowerY + 1;
+                    assert Long.bitCount(deleteKey) + indexes.size() == upperY - lowerY + 1;
 
-                    deleteLimitedMinos.add(DeleteKey.create(deleteKey, lowerY));
+                    deleteLimitedMinos.add(DeleteKey.create(mino, deleteKey, lowerY, upperY));
                 }
 
                 rotateMaps.put(rotate, deleteLimitedMinos);

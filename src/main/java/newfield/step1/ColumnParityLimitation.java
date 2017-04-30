@@ -44,18 +44,24 @@ public class ColumnParityLimitation {
             int evenLJ = 2 * LJCount - count;
             int leastCount = LJCount - (0 <= count ? count : -count);
             if (leastCount % 2 == 0)
-                enumerateAfterSZOLJ(evenParity - oddLJ, oddParity - evenLJ, count);
+                enumerateAfterSZOLJ(oddParity - oddLJ, evenParity - evenLJ, count);
         }
 
         return builders;
     }
 
     private void enumerateAfterSZOLJ(int evenParity, int oddParity, int oddCountLJ) {
+        // 両方ともパリティが0なら終了
+        if (evenParity == 0 && oddParity == 0) {
+            enumerateAfterAll(oddCountLJ, 0, 0);
+            return;
+        }
+
         // Tは必ず1以上減少するため、0の場合は終了
         if (oddParity <= 0 || evenParity <= 0)
             return;
 
-        // T対応: 横3:1,1:3 と 縦:2:2 の3種
+        // T対応: 縦3:1,1:3 と 横2:2 の3種
         int TCount = blockCounter.getCount(Block.T);
         for (int count = -TCount; count <= TCount; count++) {
             int oddT = 2 * TCount + count;
@@ -65,6 +71,12 @@ public class ColumnParityLimitation {
     }
 
     private void enumerateAfterSZOLJT(int evenParity, int oddParity, int oddCountLJ, int oddCountT) {
+        // 両方ともパリティが0なら終了
+        if (evenParity == 0 && oddParity == 0) {
+            enumerateAfterAll(oddCountLJ, oddCountT, 0);
+            return;
+        }
+
         // Iは2 or 4ずつ減少するので、奇数の場合は終了
         // 縦置きの場合は減少しないため、0の場合は継続
         if (oddParity < 0 || evenParity < 0 || oddParity % 2 != 0 || evenParity % 2 != 0)
@@ -77,7 +89,7 @@ public class ColumnParityLimitation {
             int evenI = 2 * (ICount - count);
 
             // パリティが正しいときは記録する
-            if (evenParity - oddI == 0 && oddParity - evenI == 0)
+            if (oddParity - oddI == 0 && evenParity - evenI == 0)
                 enumerateAfterAll(oddCountLJ, oddCountT, count);
         }
     }

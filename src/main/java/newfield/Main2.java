@@ -11,7 +11,9 @@ import newfield.step1.DeltaLimitedMino;
 import newfield.step1.EstimateBuilder;
 import newfield.step2.FullLimitedMino;
 import newfield.step2.PositionLimitParser;
+import newfield.step3.Search;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -20,16 +22,16 @@ import java.util.stream.Collectors;
 public class Main2 {
     public static void main(String[] args) {
         List<Block> usedBlocks = Arrays.asList(
-                Block.T, Block.I, Block.S, Block.Z, Block.O, Block.L, Block.J
+                Block.L, Block.S, Block.J
         );
         BlockCounter blockCounter = new BlockCounter(usedBlocks);
         System.out.println(blockCounter);
 
         Field field = FieldFactory.createField("" +
-                "XXX_______" +
-                "XXX_______" +
-                "XXX_______" +
-                "XXX_______" +
+                "XXXXXXX___" +
+                "XXXXXXX___" +
+                "XXXXXXX___" +
+                "XXXXXXX___" +
                 ""
         );
         int maxClearLine = 4;
@@ -38,34 +40,35 @@ public class Main2 {
         ParityField parityField = new ParityField(field);
         System.out.println(parityField);
 
-        MinoFactory minoFactory = new MinoFactory();
-        PositionLimitParser positionLimitParser = new PositionLimitParser(minoFactory, maxClearLine);
-
         Stopwatch stopwatch = Stopwatch.createStoppedStopwatch();
         for (int count = 0; count < 1; count++) {
             stopwatch.start();
+
+            ArrayList<List<List<FullLimitedMino>>> allSets = new ArrayList<>();
+            MinoFactory minoFactory = new MinoFactory();
+            PositionLimitParser positionLimitParser = new PositionLimitParser(minoFactory, maxClearLine);
+
             ColumnParityLimitation limitation = new ColumnParityLimitation(blockCounter, parityField, maxClearLine);
             List<EstimateBuilder> estimateBuilders = limitation.enumerate();
             for (EstimateBuilder builder : estimateBuilders) {
                 List<List<DeltaLimitedMino>> lists = builder.create();
                 for (List<DeltaLimitedMino> list : lists) {
                     System.out.println(list);
-                    List<List<FullLimitedMino>> collect = list.stream()
+                    List<List<FullLimitedMino>> sets = list.stream()
                             .map(positionLimitParser::parse)
                             .collect(Collectors.toList());
-
-                    for (List<FullLimitedMino> fullLimitedMinos : collect) {
-                        System.out.print(fullLimitedMinos.size() + " ");
-                    }
-                    System.out.println();
-                    System.out.println("---");
-
+                    allSets.add(sets);
                 }
             }
-            stopwatch.stop();
 
+            for (List<List<FullLimitedMino>> sets : allSets) {
+                Search searcher = new Search(field, sets);
+                searcher.search();
+            }
+
+            stopwatch.stop();
         }
-        System.out.println(stopwatch.toMessage(TimeUnit.MICROSECONDS));
+        System.out.println(stopwatch.toMessage(TimeUnit.MILLISECONDS));
 
     }
 }
