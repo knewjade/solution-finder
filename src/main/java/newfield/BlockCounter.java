@@ -4,8 +4,11 @@ import core.mino.Block;
 
 import java.util.EnumMap;
 import java.util.List;
+import java.util.function.BiFunction;
 
-class BlockCounter {
+public class BlockCounter {
+    private static final BiFunction<Block, Integer, Integer> remapCountUp = (block, count) -> count + 1;
+
     private EnumMap<Block, Integer> counters = new EnumMap<>(Block.class);
 
     BlockCounter(List<Block> blocks) {
@@ -16,7 +19,18 @@ class BlockCounter {
     }
 
     private void countUp(Block block) {
-        counters.compute(block, (blk, cnt) -> cnt + 1);
+        counters.compute(block, remapCountUp);
+    }
+
+    public int getCount(Block block) {
+        return counters.get(block);
+    }
+
+    public int getAllBlock() {
+        int sum = 0;
+        for (Integer count : counters.values())
+            sum += count;
+        return sum;
     }
 
     @Override
@@ -24,9 +38,5 @@ class BlockCounter {
         return "BlockCounter{" +
                 "counters=" + counters +
                 '}';
-    }
-
-    int getCount(Block block) {
-        return counters.get(block);
     }
 }

@@ -11,6 +11,7 @@ public class FieldView {
     }
 
     public static String toString(Field field, int maxHeight) {
+        assert maxHeight <= field.getBoardCount() * 6 : field.getBoardCount() * 6;
         StringBuilder builder = new StringBuilder();
         for (int y = maxHeight - 1; y >= 0; y--) {
             for (int x = 0; x < FIELD_WIDTH; x++)

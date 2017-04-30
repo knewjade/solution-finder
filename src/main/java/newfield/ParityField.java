@@ -5,7 +5,7 @@ import core.field.Field;
 public class ParityField {
     private final long[] boards;
 
-    ParityField(Field field) {
+    public ParityField(Field field) {
         int boardCount = field.getBoardCount();
         long[] boards = new long[boardCount];
         for (int index = 0; index < boardCount; index++)
@@ -13,7 +13,7 @@ public class ParityField {
         this.boards = boards;
     }
 
-    int calculateOddLineParity() {
+    public int calculateOddColumnParity() {
         long mask = 0x555555555555555L;
         int count = 0;
         for (long board : boards)
@@ -21,7 +21,7 @@ public class ParityField {
         return count;
     }
 
-    int calculateEvenLineParity() {
+    public int calculateEvenColumnParity() {
         long mask = 0xaaaaaaaaaaaaaaaL;
         int count = 0;
         for (long board : boards)
@@ -32,8 +32,8 @@ public class ParityField {
     @Override
     public String toString() {
         return "ParityField{" +
-                "OddLine=" + calculateOddLineParity() + "," +
-                "EvenLine=" + calculateEvenLineParity() +
+                "OddLine=" + calculateOddColumnParity() + "," +
+                "EvenLine=" + calculateEvenColumnParity() +
                 '}';
     }
 }

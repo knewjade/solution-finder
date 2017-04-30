@@ -1,5 +1,6 @@
 package core.field;
 
+// TODO: write unittest
 class BitOperators {
     // y行より1列ブロックをマスクを取得する（y行を含まない）
     static long getColumnBelowY(int maxY) {

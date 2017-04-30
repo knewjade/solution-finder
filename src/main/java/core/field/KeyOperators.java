@@ -1,5 +1,6 @@
 package core.field;
 
+// TODO: write unittest
 public class KeyOperators {
     static long getDeleteKey(long board) {
         long a1010101010 = 768614336404564650L;
@@ -122,6 +123,60 @@ public class KeyOperators {
                 return 0x20000000000000L;
             case 24:
                 return 0L;
+        }
+        throw new IllegalArgumentException("No reachable");
+    }
+
+    public static long getDeleteBitKey(int y) {
+        switch (y) {
+            case 0:
+                return 1L;
+            case 1:
+                return 1024L;
+            case 2:
+                return 1048576L;
+            case 3:
+                return 1073741824L;
+            case 4:
+                return 1099511627776L;
+            case 5:
+                return 1125899906842624L;
+            case 6:
+                return 2L;
+            case 7:
+                return 2048L;
+            case 8:
+                return 2097152L;
+            case 9:
+                return 2147483648L;
+            case 10:
+                return 2199023255552L;
+            case 11:
+                return 2251799813685248L;
+            case 12:
+                return 4L;
+            case 13:
+                return 4096L;
+            case 14:
+                return 4194304L;
+            case 15:
+                return 4294967296L;
+            case 16:
+                return 4398046511104L;
+            case 17:
+                return 4503599627370496L;
+            case 18:
+                return 8L;
+            case 19:
+                return 8192L;
+            case 20:
+                return 8388608L;
+            case 21:
+                return 8589934592L;
+            case 22:
+                return 8796093022208L;
+            case 23:
+                return 9007199254740992L;
         }
         throw new IllegalArgumentException("No reachable");
     }
