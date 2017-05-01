@@ -1,20 +1,27 @@
 package newfield;
 
+import core.action.reachable.LockedReachable;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
 import core.mino.Block;
 import core.mino.MinoFactory;
+import core.mino.MinoShifter;
+import core.srs.MinoRotation;
+import misc.Build;
+import misc.OperationWithKey;
 import misc.Stopwatch;
 import newfield.step1.ColumnParityLimitation;
 import newfield.step1.DeltaLimitedMino;
 import newfield.step1.EstimateBuilder;
 import newfield.step2.FullLimitedMino;
 import newfield.step2.PositionLimitParser;
-import newfield.step3.Search;
+import newfield.step3.CrossBuilder;
+import newfield.step4.Search;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -22,16 +29,16 @@ import java.util.stream.Collectors;
 public class Main2 {
     public static void main(String[] args) {
         List<Block> usedBlocks = Arrays.asList(
-                Block.L, Block.S, Block.J
+                Block.L, Block.S, Block.J, Block.I, Block.O, Block.Z, Block.T,Block.O, Block.Z, Block.T
         );
         BlockCounter blockCounter = new BlockCounter(usedBlocks);
         System.out.println(blockCounter);
 
         Field field = FieldFactory.createField("" +
-                "XXXXXXX___" +
-                "XXXXXXX___" +
-                "XXXXXXX___" +
-                "XXXXXXX___" +
+                "__________" +
+                "__________" +
+                "__________" +
+                "__________" +
                 ""
         );
         int maxClearLine = 4;
@@ -41,33 +48,37 @@ public class Main2 {
         System.out.println(parityField);
 
         Stopwatch stopwatch = Stopwatch.createStoppedStopwatch();
-        for (int count = 0; count < 1; count++) {
-            stopwatch.start();
+        stopwatch.start();
 
-            ArrayList<List<List<FullLimitedMino>>> allSets = new ArrayList<>();
-            MinoFactory minoFactory = new MinoFactory();
-            PositionLimitParser positionLimitParser = new PositionLimitParser(minoFactory, maxClearLine);
+        ColumnParityLimitation limitation = new ColumnParityLimitation(blockCounter, parityField, maxClearLine);
 
-            ColumnParityLimitation limitation = new ColumnParityLimitation(blockCounter, parityField, maxClearLine);
-            List<EstimateBuilder> estimateBuilders = limitation.enumerate();
-            for (EstimateBuilder builder : estimateBuilders) {
-                List<List<DeltaLimitedMino>> lists = builder.create();
-                for (List<DeltaLimitedMino> list : lists) {
-                    System.out.println(list);
-                    List<List<FullLimitedMino>> sets = list.stream()
-                            .map(positionLimitParser::parse)
-                            .collect(Collectors.toList());
-                    allSets.add(sets);
-                }
-            }
+        MinoFactory minoFactory = new MinoFactory();
+        PositionLimitParser positionLimitParser = new PositionLimitParser(minoFactory, maxClearLine);
+        LockedReachableThreadLocal threadLocal = new LockedReachableThreadLocal(maxClearLine);
 
-            for (List<List<FullLimitedMino>> sets : allSets) {
-                Search searcher = new Search(field, sets);
-                searcher.search();
-            }
+        List<List<OperationWithKey>> operationsWithKey  = limitation.enumerate().parallelStream()
+                .map(EstimateBuilder::create)
+                .flatMap(Collection::stream)
+                .limit(1)
+                .peek(lists -> System.out.println(lists))
+                .map(deltaLimitedMinos -> deltaLimitedMinos.stream().map(positionLimitParser::parse).sorted(Comparator.comparingInt(List::size)).collect(Collectors.toList()))
+                .limit(1)
+                .peek(lists -> {
+                    for (List<FullLimitedMino> list : lists) {
+                        System.out.println(list);
+                    }
+                })
+                .flatMap(sets -> new CrossBuilder(sets, field, maxClearLine).create().stream())
+                .flatMap(sets -> new Search(field, sets, maxClearLine).search().stream())
+                .limit(10)
+                .filter(operationWithKeys -> Build.existsValidBuildPattern(field, operationWithKeys, maxClearLine, threadLocal.get()))
+                .peek(System.out::println)
+                .collect(Collectors.toList());
 
-            stopwatch.stop();
-        }
+        System.out.println(operationsWithKey.size());
+
+        stopwatch.stop();
+
         System.out.println(stopwatch.toMessage(TimeUnit.MILLISECONDS));
 
     }

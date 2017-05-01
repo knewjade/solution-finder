@@ -206,6 +206,18 @@ public class MiddleField implements Field {
         }
     }
 
+    // TODO: write unittest
+    @Override
+    public int getBlockCountOnY(int y) {
+        if (y < 6) {
+            long mask = 0x3ff << y * FIELD_WIDTH;
+            return Long.bitCount(xBoardLow & mask);
+        } else {
+            long mask = 0x3ff << (y - 6) * FIELD_WIDTH;
+            return Long.bitCount(xBoardHigh & mask);
+        }
+    }
+
     @Override
     public int getAllBlockCount() {
         return Long.bitCount(xBoardLow) + Long.bitCount(xBoardHigh);
@@ -268,7 +280,7 @@ public class MiddleField implements Field {
 
     @Override
     public long getBoard(int index) {
-        assert 0 <= index && index < 2;
+        assert 0 <= index && index < 2 : index;
         if (index == 0)
             return xBoardLow;
         return xBoardHigh;

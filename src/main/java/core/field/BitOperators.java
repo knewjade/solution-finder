@@ -2,7 +2,7 @@ package core.field;
 
 // TODO: write unittest
 class BitOperators {
-    // y行より1列ブロックをマスクを取得する（y行を含まない）
+    // y行より下の1列ブロックマスクを取得する（y行を含まない）
     static long getColumnBelowY(int maxY) {
         switch (maxY) {
             case 0:
@@ -65,6 +65,7 @@ class BitOperators {
         throw new IllegalArgumentException("No reachable");
     }
 
+    // 1ビットがオンになっているとき、そのビットのy座標を返却
     static int bitToY(long bit) {
         assert bit < 0x100000000000000L;
         if (bit < 0x40000000L) {

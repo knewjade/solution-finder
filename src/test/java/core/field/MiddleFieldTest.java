@@ -386,7 +386,7 @@ public class MiddleFieldTest {
         assertThat(Long.bitCount(deleteKey), is(6));
         field.insertBlackLineWithKey(deleteKey);
 
-        for (int index = 0; index < freeze.getAllBlockCount(); index++)
+        for (int index = 0; index < freeze.getBoardCount(); index++)
             assertThat(field.getBoard(index), is(freeze.getBoard(index)));
     }
 
@@ -422,7 +422,7 @@ public class MiddleFieldTest {
         assertThat(Long.bitCount(deleteKey), is(6));
         field.insertWhiteLineWithKey(deleteKey);
 
-        for (int index = 0; index < expected.getAllBlockCount(); index++)
+        for (int index = 0; index < expected.getBoardCount(); index++)
             assertThat(field.getBoard(index), is(expected.getBoard(index)));
     }
 

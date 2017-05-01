@@ -1,4 +1,4 @@
-package newfield.step3;
+package newfield.step4;
 
 import core.field.Field;
 import core.field.SmallField;

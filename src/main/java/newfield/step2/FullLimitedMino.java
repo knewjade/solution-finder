@@ -1,21 +1,23 @@
 package newfield.step2;
 
 import core.mino.Mino;
-import newfield.step3.MinoMask;
+import newfield.step4.MinoMask;
 
 public class FullLimitedMino {
     public static final int FIELD_WIDTH = 10;
 
     private final int[] xs;
-    private final MinoMask minoMask;
+    private final Mino mino;
+    private final DeleteKey deleteKey;
 
     public static FullLimitedMino create(Mino mino, PositionLimit positionLimit, DeleteKey deleteKey) {
         return new FullLimitedMino(mino, positionLimit, deleteKey);
     }
 
-    private FullLimitedMino(Mino mino, PositionLimit positionLimit, DeleteKey DeleteKey) {
+    private FullLimitedMino(Mino mino, PositionLimit positionLimit, DeleteKey deleteKey) {
+        this.mino = mino;
+        this.deleteKey = deleteKey;
         this.xs = createX(mino, positionLimit);
-        this.minoMask = DeleteKey.getMinoMask();
     }
 
     private int[] createX(Mino mino, PositionLimit positionLimit) {
@@ -55,11 +57,35 @@ public class FullLimitedMino {
         return ints;
     }
 
+    public Mino getMino() {
+        return mino;
+    }
+
     public int[] getXs() {
         return xs;
     }
 
     public MinoMask getMinoMask() {
-        return minoMask;
+        return deleteKey.getMinoMask();
+    }
+
+    public int[][] getBlockCountEachLines() {
+        return deleteKey.getBlockCountEachLines();
+    }
+
+    public int getLowerY() {
+        return deleteKey.getLowerY();
+    }
+
+    public long getDeleteKey() {
+        return deleteKey.getNeedKey();
+    }
+
+    @Override
+    public String toString() {
+        return "FullLimitedMino{" +
+                "mino=" + mino.getBlock() +
+                "," + mino.getRotate() +
+                '}';
     }
 }

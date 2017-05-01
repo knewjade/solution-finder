@@ -33,34 +33,34 @@ public class PathFullValidator implements FullValidator {
 
         // 本来のパスと同じか判定
         // 全く同じなら結果としては不適切（探索を続ける）
-        return depth != 0 && !checks(currentField, depth - 1);
+        return 0 < depth && depth < expectedField.size() - 1 && !checks(currentField, depth - 1);
     }
 
     private boolean checks(Field field, int depth) {
         Field expectField = expectedField.get(depth);
-        int expectAllBlockCount = expectField.getAllBlockCount();
-        int fieldAllBlockCount = field.getAllBlockCount();
-        if (expectAllBlockCount == fieldAllBlockCount) {
-            for (int index = 0; index < expectAllBlockCount; index++)
+        int expectBoardCount = expectField.getBoardCount();
+        int fieldBoardCount = field.getBoardCount();
+        if (expectBoardCount == fieldBoardCount) {
+            for (int index = 0; index < expectBoardCount; index++)
                 if (expectField.getBoard(index) != field.getBoard(index))
                     return false;
-        } else if (expectAllBlockCount < fieldAllBlockCount) {
+        } else if (expectBoardCount < fieldBoardCount) {
             int index = 0;
-            for (; index < expectAllBlockCount; index++) {
+            for (; index < expectBoardCount; index++) {
                 if (expectField.getBoard(index) != field.getBoard(index))
                     return false;
             }
-            for (; index < fieldAllBlockCount; index++) {
+            for (; index < fieldBoardCount; index++) {
                 if (field.getBoard(index) != 0L)
                     return false;
             }
-        } else if (fieldAllBlockCount < expectAllBlockCount) {
+        } else if (fieldBoardCount < expectBoardCount) {
             int index = 0;
-            for (; index < fieldAllBlockCount; index++) {
+            for (; index < fieldBoardCount; index++) {
                 if (expectField.getBoard(index) != field.getBoard(index))
                     return false;
             }
-            for (; index < expectAllBlockCount; index++) {
+            for (; index < expectBoardCount; index++) {
                 if (expectField.getBoard(index) != 0L)
                     return false;
             }

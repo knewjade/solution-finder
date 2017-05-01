@@ -9,7 +9,7 @@ public class OperationWithKey {
     private final long needDeletedKey;
 
     // lowerY: 最も下にあるブロックのy座標
-    OperationWithKey(Mino mino, int x, long needDeletedKey, int lowerY) {
+    public OperationWithKey(Mino mino, int x, long needDeletedKey, int lowerY) {
         this.mino = mino;
         this.x = x;
         this.y = lowerY - mino.getMinY();  // 回転軸のy座標 (ライン消去後のフィールドに対して置かれるべき位置)に直す
@@ -35,7 +35,7 @@ public class OperationWithKey {
     @Override
     public String toString() {
         return "OperationWithKey{" +
-                "mino=" + mino +
+                "mino=" + mino.getBlock() + "-" + mino.getRotate() +
                 ", x=" + x +
                 ", y=" + y +
                 ", needDeletedKey=" + needDeletedKey +

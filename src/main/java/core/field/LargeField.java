@@ -78,6 +78,12 @@ public class LargeField implements Field {
         throw new UnsupportedOperationException();
     }
 
+    // TODO: write unittest
+    @Override
+    public int getBlockCountOnY(int y) {
+        throw new UnsupportedOperationException();
+    }
+
     @Override
     public int getAllBlockCount() {
         throw new UnsupportedOperationException();

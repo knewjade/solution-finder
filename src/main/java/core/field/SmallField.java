@@ -122,6 +122,13 @@ public class SmallField implements Field {
         return Long.bitCount(xBoard & column);
     }
 
+    // TODO: write unittest
+    @Override
+    public int getBlockCountOnY(int y) {
+        long mask = 0x3ff << y * FIELD_WIDTH;
+        return Long.bitCount(xBoard & mask);
+    }
+
     @Override
     public int getAllBlockCount() {
         return Long.bitCount(xBoard);

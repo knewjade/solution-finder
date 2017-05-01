@@ -13,6 +13,9 @@ import searcher.common.From;
 
 import java.util.List;
 
+/**
+ * マルチスレッド非対応
+ */
 public class LockedReachable implements Reachable {
     private static final int FIELD_WIDTH = 10;
 

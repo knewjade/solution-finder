@@ -48,6 +48,9 @@ public interface Field {
     // x列上で、maxY行より下にあるブロックの個数を返却 （maxY行上のブロックは対象に含まない）
     int getBlockCountBelowOnX(int x, int maxY);
 
+    // y行上にあるブロックの個数を返却
+    int getBlockCountOnY(int y);
+
     // すべてのブロックの個数を返却
     int getAllBlockCount();
 

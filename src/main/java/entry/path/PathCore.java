@@ -228,6 +228,7 @@ class PathCore {
             ArrayList<Operations> newOperations = new ArrayList<>();
             newOperations.add(new Operations(baseOperations));
 
+            // TODO: 削除されているライン数が違うと座標がずれる 案:OperationWithKeyにする
             // すでに確定しているオペレーション順をもとに、新たに派生するオペレーションをつなげて追加する
             for (List<Operation> operation : sortedOperations) {
                 // すべての確定分をもとに、派生パターンを生成
@@ -236,7 +237,8 @@ class PathCore {
                     ArrayList<Operation> list = new ArrayList<>(operation);
                     list.addAll(base.subList(operation.size(), base.size()));
                     assert list.size() == base.size();
-                    newOperations.add(new Operations(list));
+                    Operations e = new Operations(list);
+                    newOperations.add(e);
                 }
             }
 
@@ -347,7 +349,7 @@ class PathCore {
                 .collect(Collectors.toList());
     }
 
-    public List<Pair<Operations, Set<List<Block>>>> getMinimalOperations() {
+    List<Pair<Operations, Set<List<Block>>>> getMinimalOperations() {
         return minimalOperations;
     }
 }
