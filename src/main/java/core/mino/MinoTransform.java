@@ -1,8 +1,8 @@
 package core.mino;
 
 import core.srs.Rotate;
-import searcher.common.action.Action;
-import searcher.common.action.MinimalAction;
+import common.datastore.action.Action;
+import common.datastore.action.MinimalAction;
 
 import java.util.ArrayList;
 import java.util.EnumMap;

@@ -8,11 +8,11 @@ import core.srs.Rotate;
 import entry.CommandLineWrapper;
 import entry.NormalCommandLineWrapper;
 import entry.PriorityCommandLineWrapper;
-import misc.tetfu.Tetfu;
-import misc.tetfu.TetfuPage;
-import misc.tetfu.common.ColorConverter;
-import misc.tetfu.common.ColorType;
-import misc.tetfu.field.ColoredField;
+import common.tetfu.Tetfu;
+import common.tetfu.TetfuPage;
+import common.tetfu.common.ColorConverter;
+import common.tetfu.common.ColorType;
+import common.tetfu.field.ColoredField;
 import org.apache.commons.cli.*;
 
 import java.io.IOException;

@@ -1,12 +1,12 @@
 package _experimental.main;
 
-import misc.tree.AnalyzeTree;
+import common.tree.AnalyzeTree;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
-import misc.Stopwatch;
-import misc.iterable.AllPermutationIterable;
-import misc.iterable.CombinationIterable;
+import common.Stopwatch;
+import common.iterable.AllPermutationIterable;
+import common.iterable.CombinationIterable;
 
 import java.util.ArrayList;
 import java.util.Arrays;

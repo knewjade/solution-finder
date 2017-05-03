@@ -1,11 +1,11 @@
 package concurrent.full_checkmate.invoker.no_hold;
 
 import core.action.candidate.Candidate;
-import concurrent.checker.invoker.Pair;
+import common.datastore.Pair;
 import core.mino.Block;
-import searcher.common.Operation;
+import common.datastore.Operation;
 import searcher.common.Result;
-import searcher.common.action.Action;
+import common.datastore.action.Action;
 import searcher.common.validator.FullValidator;
 import searcher.full_checkmate.FullCheckmate;
 

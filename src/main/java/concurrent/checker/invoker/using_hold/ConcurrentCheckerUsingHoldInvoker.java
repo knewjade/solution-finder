@@ -3,12 +3,12 @@ package concurrent.checker.invoker.using_hold;
 import core.action.candidate.Candidate;
 import concurrent.checker.CheckerUsingHoldThreadLocal;
 import concurrent.checker.invoker.ConcurrentCheckerInvoker;
-import concurrent.checker.invoker.Pair;
+import common.datastore.Pair;
 import core.field.Field;
 import core.mino.Block;
 import searcher.checker.Checker;
-import searcher.common.action.Action;
-import misc.tree.ConcurrentVisitedTree;
+import common.datastore.action.Action;
+import common.tree.ConcurrentVisitedTree;
 
 import java.util.ArrayList;
 import java.util.List;

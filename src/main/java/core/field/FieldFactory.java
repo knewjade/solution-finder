@@ -70,7 +70,7 @@ public class FieldFactory {
     }
 
     static Field createLargeField() {
-        return new MiddleField();
+        return new LargeField();
     }
 
     static LargeField createLargeField(String marks) {

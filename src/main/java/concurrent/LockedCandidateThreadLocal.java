@@ -5,7 +5,7 @@ import core.action.candidate.LockedCandidate;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
-import searcher.common.action.Action;
+import common.datastore.action.Action;
 
 public class LockedCandidateThreadLocal extends ThreadLocal<Candidate<Action>> {
     private final int maxY;

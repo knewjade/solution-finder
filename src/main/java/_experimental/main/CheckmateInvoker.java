@@ -7,12 +7,12 @@ import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
-import misc.Stopwatch;
+import common.Stopwatch;
 import searcher.checkmate.Checkmate;
 import searcher.checkmate.CheckmateNoHold;
 import searcher.checkmate.CheckmateUsingHold;
 import searcher.common.Result;
-import searcher.common.action.Action;
+import common.datastore.action.Action;
 import searcher.common.validator.PerfectValidator;
 
 import java.util.ArrayList;

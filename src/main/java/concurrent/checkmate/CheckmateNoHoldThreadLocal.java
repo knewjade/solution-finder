@@ -2,9 +2,8 @@ package concurrent.checkmate;
 
 import core.mino.MinoFactory;
 import searcher.checkmate.Checkmate;
-import searcher.checkmate.CheckmateNoHold;
 import searcher.checkmate.CheckmateNoHoldReuse;
-import searcher.common.action.Action;
+import common.datastore.action.Action;
 import searcher.common.validator.PerfectValidator;
 
 public class CheckmateNoHoldThreadLocal<T extends Action> extends ThreadLocal<Checkmate<T>> {

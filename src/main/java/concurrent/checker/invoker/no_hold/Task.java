@@ -1,10 +1,10 @@
 package concurrent.checker.invoker.no_hold;
 
 import core.action.candidate.Candidate;
-import concurrent.checker.invoker.Pair;
+import common.datastore.Pair;
 import core.mino.Block;
 import searcher.checker.Checker;
-import searcher.common.action.Action;
+import common.datastore.action.Action;
 
 import java.util.List;
 import java.util.concurrent.Callable;

@@ -1,7 +1,7 @@
 package concurrent.full_checkmate;
 
 import core.mino.MinoFactory;
-import searcher.common.action.Action;
+import common.datastore.action.Action;
 import searcher.full_checkmate.FullCheckmate;
 import searcher.full_checkmate.FullCheckmateNoHold;
 

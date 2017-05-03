@@ -2,7 +2,7 @@ package searcher.checker;
 
 import core.action.candidate.Candidate;
 import core.action.candidate.LockedCandidate;
-import concurrent.checker.invoker.Pair;
+import common.datastore.Pair;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
@@ -10,7 +10,7 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import org.junit.Test;
-import searcher.common.action.Action;
+import common.datastore.action.Action;
 import searcher.common.validator.PerfectValidator;
 
 import java.util.ArrayList;

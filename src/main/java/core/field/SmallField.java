@@ -122,7 +122,7 @@ public class SmallField implements Field {
         return Long.bitCount(xBoard & column);
     }
 
-    // TODO: write unittest
+    // TODO: unittest
     @Override
     public int getBlockCountOnY(int y) {
         long mask = 0x3ff << y * FIELD_WIDTH;
@@ -172,25 +172,25 @@ public class SmallField implements Field {
         return 1;
     }
 
-    // TODO: write unittest
+    // TODO: unittest
     @Override
     public void merge(Field other) {
         xBoard |= other.getBoard(0);
     }
 
-    // TODO: write unittest
+    // TODO: unittest
     @Override
     public void reduce(Field other) {
         xBoard &= ~other.getBoard(0);
     }
 
-    // TODO: write unittest
+    // TODO: unittest
     @Override
     public boolean canMerge(Field other) {
         return (xBoard & other.getBoard(0)) == 0L;
     }
 
-    // TODO: write unittest
+    // TODO: unittest
     @Override
     public int getUpperYWith4Blocks() {
         assert Long.bitCount(xBoard) == 4;
@@ -201,7 +201,7 @@ public class SmallField implements Field {
         return BitOperators.bitToY(board);
     }
 
-    // TODO: write unittest
+    // TODO: unittest
     @Override
     public int getLowerY() {
         long lowerBit = xBoard & (-xBoard);

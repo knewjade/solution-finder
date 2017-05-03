@@ -1,9 +1,9 @@
 package entry.searching_pieces;
 
 import core.mino.Block;
-import misc.pattern.PiecesGenerator;
-import misc.pieces.SafePieces;
-import misc.tree.VisitedTree;
+import common.pattern.PiecesGenerator;
+import common.datastore.SafePieces;
+import common.tree.VisitedTree;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
 package searcher.checkmate;
 
-import concurrent.checker.invoker.Pair;
+import common.datastore.Pair;
 import core.mino.Block;
 import core.field.Field;
 import core.field.FieldFactory;

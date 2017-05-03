@@ -1,8 +1,9 @@
 package searcher.common;
 
+import common.datastore.Operation;
 import core.mino.Block;
 import core.srs.Rotate;
-import searcher.common.action.Action;
+import common.datastore.action.Action;
 
 class ActionParser {
     private static final Block[] blockMap = new Block[Block.values().length];

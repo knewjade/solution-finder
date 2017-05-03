@@ -1,12 +1,14 @@
 package searcher.common;
 
+import common.datastore.Operation;
 import core.mino.Block;
-import searcher.common.action.Action;
-import searcher.common.order.Order;
+import common.datastore.action.Action;
+import common.datastore.order.Order;
 
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: createOperationsを外に出してdatastoreへ移動
 public class Result {
     private final Order order;
     private final Block lastBlock;
@@ -21,7 +23,7 @@ public class Result {
         this.lastHold = lastHold;
     }
 
-    Block getLastBlock() {
+    public Block getLastBlock() {
         return lastBlock;
     }
 

@@ -2,7 +2,7 @@ package searcher.checker;
 
 import searcher.common.DataPool;
 import searcher.common.Result;
-import searcher.common.order.Order;
+import common.datastore.order.Order;
 
 import java.util.ArrayList;
 import java.util.TreeSet;

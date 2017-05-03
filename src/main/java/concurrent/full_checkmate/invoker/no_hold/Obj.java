@@ -2,7 +2,7 @@ package concurrent.full_checkmate.invoker.no_hold;
 
 import core.action.candidate.Candidate;
 import core.field.Field;
-import searcher.common.action.Action;
+import common.datastore.action.Action;
 import searcher.full_checkmate.FullCheckmate;
 
 class Obj {

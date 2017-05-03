@@ -3,8 +3,8 @@ package concurrent.checker.invoker.using_hold;
 import core.action.candidate.Candidate;
 import core.field.Field;
 import searcher.checker.Checker;
-import searcher.common.action.Action;
-import misc.tree.ConcurrentVisitedTree;
+import common.datastore.action.Action;
+import common.tree.ConcurrentVisitedTree;
 
 class Obj {
     final Field field;

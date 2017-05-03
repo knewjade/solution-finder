@@ -1,7 +1,8 @@
 package searcher.common;
 
+import common.datastore.Operation;
+import common.datastore.action.Action;
 import core.mino.Block;
-import searcher.common.action.Action;
 
 public class OperationHistory {
     private final int[] operationNumbers;

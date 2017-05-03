@@ -1,5 +1,7 @@
 package searcher.common;
 
+import common.datastore.Operation;
+import common.datastore.Operations;
 import core.mino.Block;
 import core.srs.Rotate;
 
@@ -7,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+// TODO: unittest
 public class OperationsFactory {
     public static Operations createOperations(String... strings) {
         List<Operation> operationList = Arrays.stream(strings)

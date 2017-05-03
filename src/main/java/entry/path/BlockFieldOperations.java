@@ -2,8 +2,8 @@ package entry.path;
 
 import core.field.Field;
 import core.mino.Block;
-import misc.BlockField;
-import searcher.common.Operations;
+import common.datastore.BlockField;
+import common.datastore.Operations;
 
 public class BlockFieldOperations implements Comparable<BlockFieldOperations> {
     private final BlockField blockField;

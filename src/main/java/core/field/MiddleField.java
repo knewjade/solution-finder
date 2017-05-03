@@ -206,7 +206,7 @@ public class MiddleField implements Field {
         }
     }
 
-    // TODO: write unittest
+    // TODO: unittest
     @Override
     public int getBlockCountOnY(int y) {
         if (y < 6) {
@@ -294,7 +294,7 @@ public class MiddleField implements Field {
         return new MiddleField(this);
     }
 
-    // TODO: write unittest
+    // TODO: unittest
     @Override
     public void merge(Field other) {
         int otherBlockCount = other.getAllBlockCount();
@@ -305,7 +305,7 @@ public class MiddleField implements Field {
             xBoardHigh |= other.getBoard(1);
     }
 
-    // TODO: write unittest
+    // TODO: unittest
     @Override
     public void reduce(Field other) {
         int otherBlockCount = other.getAllBlockCount();
@@ -316,7 +316,7 @@ public class MiddleField implements Field {
             xBoardHigh &= ~other.getBoard(1);
     }
 
-    // TODO: write unittest
+    // TODO: unittest
     @Override
     public boolean canMerge(Field other) {
         int otherBlockCount = other.getAllBlockCount();
@@ -329,7 +329,7 @@ public class MiddleField implements Field {
         }
     }
 
-    // TODO: write unittest
+    // TODO: unittest
     @Override
     public int getUpperYWith4Blocks() {
         assert Long.bitCount(xBoardLow) + Long.bitCount(xBoardHigh) == 4;
@@ -362,7 +362,7 @@ public class MiddleField implements Field {
         }
     }
 
-    // TODO: write unittest
+    // TODO: unittest
     @Override
     public int getLowerY() {
         if (xBoardLow != 0L) {

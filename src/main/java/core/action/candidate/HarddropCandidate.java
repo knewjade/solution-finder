@@ -6,7 +6,7 @@ import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.Rotate;
-import searcher.common.action.Action;
+import common.datastore.action.Action;
 
 import java.util.HashSet;
 import java.util.Set;

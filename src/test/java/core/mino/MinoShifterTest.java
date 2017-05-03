@@ -2,7 +2,8 @@ package core.mino;
 
 import core.srs.Rotate;
 import org.junit.Test;
-import searcher.common.action.Action;
+import common.datastore.action.Action;
+import common.datastore.action.MinimalAction;
 
 import java.util.List;
 
@@ -13,16 +14,16 @@ public class MinoShifterTest {
     @Test
     public void createTransformedActionI() throws Exception {
         MinoShifter shifter = new MinoShifter();
-        Action fromSpawn = shifter.createTransformedAction(Block.I, 1, 0, Rotate.Spawn);
+        Action fromSpawn = shifter.createTransformedAction(Block.I, MinimalAction.create(1, 0, Rotate.Spawn));
         assertAction(fromSpawn, 1, 0, Rotate.Spawn);
 
-        Action fromReverse = shifter.createTransformedAction(Block.I, 2, 0, Rotate.Reverse);
+        Action fromReverse = shifter.createTransformedAction(Block.I, MinimalAction.create(2, 0, Rotate.Reverse));
         assertAction(fromReverse, 1, 0, Rotate.Spawn);
 
-        Action fromLeft = shifter.createTransformedAction(Block.I, 0, 1, Rotate.Left);
+        Action fromLeft = shifter.createTransformedAction(Block.I, MinimalAction.create(0, 1, Rotate.Left));
         assertAction(fromLeft, 0, 1, Rotate.Left);
 
-        Action fromRight = shifter.createTransformedAction(Block.I, 0, 2, Rotate.Right);
+        Action fromRight = shifter.createTransformedAction(Block.I, MinimalAction.create(0, 2, Rotate.Right));
         assertAction(fromRight, 0, 1, Rotate.Left);
     }
 

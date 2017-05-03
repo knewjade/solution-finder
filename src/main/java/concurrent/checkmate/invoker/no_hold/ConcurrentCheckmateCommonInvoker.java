@@ -1,13 +1,13 @@
 package concurrent.checkmate.invoker.no_hold;
 
 import core.action.candidate.Candidate;
-import concurrent.checker.invoker.Pair;
+import common.datastore.Pair;
 import core.field.Field;
 import core.mino.Block;
-import misc.pieces.ComparablePieces;
+import common.datastore.ComparablePieces;
 import searcher.checkmate.Checkmate;
 import searcher.common.Result;
-import searcher.common.action.Action;
+import common.datastore.action.Action;
 
 import java.util.ArrayList;
 import java.util.List;

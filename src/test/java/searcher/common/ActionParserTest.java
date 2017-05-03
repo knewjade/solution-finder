@@ -1,9 +1,10 @@
 package searcher.common;
 
+import common.datastore.Operation;
 import core.mino.Block;
 import core.srs.Rotate;
 import org.junit.Test;
-import searcher.common.action.MinimalAction;
+import common.datastore.action.MinimalAction;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;

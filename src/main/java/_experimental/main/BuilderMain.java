@@ -1,8 +1,8 @@
 package _experimental.main;
 
 import core.action.candidate.FixPlaceLockedCandidate;
-import misc.tree.AnalyzeTree;
-import misc.tree.VisitedTree;
+import common.tree.AnalyzeTree;
+import common.tree.VisitedTree;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.MiddleField;
@@ -10,15 +10,15 @@ import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
-import concurrent.checker.invoker.OrderLookup;
-import concurrent.checker.invoker.Pieces;
-import misc.Stopwatch;
-import misc.iterable.AllPermutationIterable;
-import misc.iterable.CombinationIterable;
+import common.order.OrderLookup;
+import common.order.Pieces;
+import common.Stopwatch;
+import common.iterable.AllPermutationIterable;
+import common.iterable.CombinationIterable;
 import searcher.checker.CheckerUsingHold;
-import searcher.common.Operation;
+import common.datastore.Operation;
 import searcher.common.Result;
-import searcher.common.action.Action;
+import common.datastore.action.Action;
 import searcher.common.validator.BuildValidator;
 
 import java.util.ArrayList;

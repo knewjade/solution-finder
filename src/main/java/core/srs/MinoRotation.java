@@ -6,6 +6,7 @@ import core.mino.Mino;
 
 import java.util.EnumMap;
 
+// TODO: unittest
 public class MinoRotation {
     private static final int FIELD_WIDTH = 10;
 

@@ -5,12 +5,12 @@ import core.field.Field;
 import core.field.SmallField;
 import core.mino.Block;
 import core.mino.MinoFactory;
-import misc.FieldComparator;
+import common.FieldComparator;
 import searcher.common.Result;
 import searcher.core.SimpleSearcherCore;
-import searcher.common.action.Action;
-import searcher.common.order.NormalOrder;
-import searcher.common.order.Order;
+import common.datastore.action.Action;
+import common.datastore.order.NormalOrder;
+import common.datastore.order.Order;
 import searcher.common.validator.Validator;
 
 import java.util.ArrayList;

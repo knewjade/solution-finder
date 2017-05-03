@@ -2,10 +2,11 @@ package searcher.common;
 
 import core.mino.Block;
 import core.srs.Rotate;
-import searcher.common.action.Action;
+import common.datastore.action.Action;
 
 import java.util.*;
 
+// TODO: comparatorを抽出して削除
 public class ResultHelper {
     public static List<Result> uniquify(List<Result> results) {
         HashSet<Result> set = new HashSet<>(results);

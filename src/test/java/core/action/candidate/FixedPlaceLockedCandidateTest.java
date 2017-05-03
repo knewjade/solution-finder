@@ -9,7 +9,7 @@ import core.mino.PassedMinoShifter;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
 import org.junit.Test;
-import searcher.common.action.Action;
+import common.datastore.action.Action;
 
 import java.util.Set;
 

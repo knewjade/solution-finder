@@ -3,10 +3,10 @@ package _experimental.main;
 import core.mino.Block;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
-import misc.tetfu.*;
-import misc.tetfu.common.ColorConverter;
-import misc.tetfu.common.ColorType;
-import misc.tetfu.field.ArrayColoredField;
+import common.tetfu.*;
+import common.tetfu.common.ColorConverter;
+import common.tetfu.common.ColorType;
+import common.tetfu.field.ArrayColoredField;
 
 import java.util.Arrays;
 import java.util.List;

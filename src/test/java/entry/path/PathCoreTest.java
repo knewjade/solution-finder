@@ -4,9 +4,9 @@ import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
 import entry.searching_pieces.EnumeratePiecesCore;
-import misc.pattern.PiecesGenerator;
+import common.pattern.PiecesGenerator;
 import org.junit.Test;
-import searcher.common.Operations;
+import common.datastore.Operations;
 
 import java.util.List;
 import java.util.TreeSet;

@@ -6,9 +6,9 @@ import core.mino.Block;
 import core.mino.MinoFactory;
 import searcher.common.Result;
 import searcher.core.SimpleSearcherCore;
-import searcher.common.action.Action;
-import searcher.common.order.DepthOrder;
-import searcher.common.order.Order;
+import common.datastore.action.Action;
+import common.datastore.order.DepthOrder;
+import common.datastore.order.Order;
 import searcher.common.validator.Validator;
 
 import java.util.List;

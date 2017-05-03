@@ -3,7 +3,7 @@ package concurrent.checker.invoker.no_hold;
 import core.action.candidate.Candidate;
 import core.field.Field;
 import searcher.checker.Checker;
-import searcher.common.action.Action;
+import common.datastore.action.Action;
 
 class Obj {
     final Field field;

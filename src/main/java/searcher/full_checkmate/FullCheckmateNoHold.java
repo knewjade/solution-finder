@@ -7,9 +7,9 @@ import core.mino.MinoFactory;
 import searcher.checkmate.CheckmateDataPool;
 import searcher.core.FullSearcherCore;
 import searcher.common.Result;
-import searcher.common.action.Action;
-import searcher.common.order.NormalOrder;
-import searcher.common.order.Order;
+import common.datastore.action.Action;
+import common.datastore.order.NormalOrder;
+import common.datastore.order.Order;
 import searcher.common.validator.FullValidator;
 
 import java.util.List;

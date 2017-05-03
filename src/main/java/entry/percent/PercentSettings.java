@@ -2,8 +2,8 @@ package entry.percent;
 
 import core.field.Field;
 import core.field.FieldFactory;
-import misc.tetfu.common.ColorType;
-import misc.tetfu.field.ColoredField;
+import common.tetfu.common.ColorType;
+import common.tetfu.field.ColoredField;
 
 import java.util.ArrayList;
 import java.util.List;

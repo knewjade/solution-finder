@@ -2,6 +2,7 @@ package searcher.common.validator;
 
 import core.field.Field;
 
+// TODO: unittest
 public class PerfectValidator implements Validator {
     @Override
     public boolean satisfies(Field field, int maxY) {

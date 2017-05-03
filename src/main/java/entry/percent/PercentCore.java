@@ -4,13 +4,13 @@ import concurrent.LockedCandidateThreadLocal;
 import concurrent.checker.CheckerNoHoldThreadLocal;
 import concurrent.checker.CheckerUsingHoldThreadLocal;
 import concurrent.checker.invoker.ConcurrentCheckerInvoker;
-import concurrent.checker.invoker.Pair;
+import common.datastore.Pair;
 import concurrent.checker.invoker.no_hold.ConcurrentCheckerNoHoldInvoker;
 import concurrent.checker.invoker.using_hold.ConcurrentCheckerUsingHoldInvoker;
 import core.field.Field;
 import core.mino.Block;
-import searcher.common.action.Action;
-import misc.tree.AnalyzeTree;
+import common.datastore.action.Action;
+import common.tree.AnalyzeTree;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;

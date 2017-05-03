@@ -2,7 +2,7 @@ package entry.path;
 
 import core.field.Field;
 import core.field.FieldFactory;
-import misc.FieldComparator;
+import common.FieldComparator;
 import org.junit.Test;
 
 import java.util.Collections;

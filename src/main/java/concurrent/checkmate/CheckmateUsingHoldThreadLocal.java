@@ -3,7 +3,7 @@ package concurrent.checkmate;
 import core.mino.MinoFactory;
 import searcher.checkmate.Checkmate;
 import searcher.checkmate.CheckmateUsingHoldReuse;
-import searcher.common.action.Action;
+import common.datastore.action.Action;
 import searcher.common.validator.PerfectValidator;
 
 public class CheckmateUsingHoldThreadLocal<T extends Action> extends ThreadLocal<Checkmate<T>> {

@@ -9,6 +9,7 @@ import java.util.Random;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+// TODO: unittest: LongBoardのinsertWhiteLineのテスト
 public class LongBoardMapTest {
     private static final int FIELD_WIDTH = 10;
 

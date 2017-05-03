@@ -7,7 +7,7 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.field.FieldFactory;
 import org.junit.Test;
-import searcher.common.action.Action;
+import common.datastore.action.Action;
 
 import java.util.Set;
 

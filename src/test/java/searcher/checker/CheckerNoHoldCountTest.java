@@ -8,12 +8,12 @@ import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
-import misc.pattern.PiecesGenerator;
-import misc.pieces.SafePieces;
+import common.pattern.PiecesGenerator;
+import common.datastore.SafePieces;
 import org.junit.Test;
-import searcher.common.action.Action;
+import common.datastore.action.Action;
 import searcher.common.validator.PerfectValidator;
-import misc.tree.AnalyzeTree;
+import common.tree.AnalyzeTree;
 
 import java.util.List;
 

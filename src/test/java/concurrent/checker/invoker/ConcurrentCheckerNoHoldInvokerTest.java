@@ -6,11 +6,12 @@ import concurrent.checker.invoker.no_hold.ConcurrentCheckerNoHoldInvoker;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
-import misc.pattern.PiecesGenerator;
-import misc.pieces.SafePieces;
+import common.datastore.Pair;
+import common.pattern.PiecesGenerator;
+import common.datastore.SafePieces;
 import org.junit.Test;
-import searcher.common.action.Action;
-import misc.tree.AnalyzeTree;
+import common.datastore.action.Action;
+import common.tree.AnalyzeTree;
 
 import java.util.ArrayList;
 import java.util.List;

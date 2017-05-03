@@ -2,8 +2,7 @@ package entry.percent;
 
 import core.field.Field;
 import core.field.FieldFactory;
-import core.field.FieldView;
-import misc.FieldComparator;
+import common.FieldComparator;
 import org.junit.Test;
 
 import java.util.Collections;

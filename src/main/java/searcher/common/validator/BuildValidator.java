@@ -4,6 +4,7 @@ import core.field.Field;
 import core.field.MiddleField;
 import core.field.SmallField;
 
+// TODO: unittest
 public class BuildValidator implements Validator {
     private final Field expectedField;
 

@@ -2,10 +2,11 @@ package searcher.common.validator;
 
 import core.field.Field;
 import core.mino.Block;
-import searcher.common.action.Action;
+import common.datastore.action.Action;
 
 import java.util.List;
 
+// TODO: unittest
 public class PathFullValidator implements FullValidator {
     public static PathFullValidator createWithoutHold(List<Field> expectedField, Validator validator) {
         return new PathFullValidator(expectedField, validator);

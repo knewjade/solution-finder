@@ -8,7 +8,7 @@ import core.srs.Rotate;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
-import searcher.common.action.Action;
+import common.datastore.action.Action;
 import searcher.common.From;
 
 import java.util.List;

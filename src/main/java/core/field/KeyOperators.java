@@ -1,6 +1,6 @@
 package core.field;
 
-// TODO: write unittest
+// TODO: unittest: すべてのメソッド
 public class KeyOperators {
     static long getDeleteKey(long board) {
         long a1010101010 = 768614336404564650L;

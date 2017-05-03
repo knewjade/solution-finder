@@ -8,11 +8,11 @@ import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
-import misc.Stopwatch;
+import common.Stopwatch;
 import org.junit.Test;
 import searcher.common.Result;
 import searcher.common.ResultHelper;
-import searcher.common.action.Action;
+import common.datastore.action.Action;
 import searcher.common.validator.PerfectValidator;
 
 import java.util.*;

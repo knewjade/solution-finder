@@ -2,7 +2,7 @@ package searcher.common.validator;
 
 import core.field.Field;
 import core.mino.Block;
-import searcher.common.action.Action;
+import common.datastore.action.Action;
 
 public interface FullValidator {
     int FIELD_WIDTH = 10;

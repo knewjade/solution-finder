@@ -1,7 +1,7 @@
 package core.mino;
 
 import core.srs.Rotate;
-import searcher.common.action.Action;
+import common.datastore.action.Action;
 
 import java.util.EnumMap;
 import java.util.List;

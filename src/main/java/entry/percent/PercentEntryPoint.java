@@ -1,15 +1,15 @@
 package entry.percent;
 
-import concurrent.checker.invoker.Pair;
+import common.datastore.Pair;
 import core.field.Field;
 import core.field.FieldView;
 import core.mino.Block;
 import entry.EntryPoint;
 import entry.searching_pieces.NormalEnumeratePieces;
-import misc.pattern.PiecesGenerator;
-import misc.Stopwatch;
-import misc.SyntaxException;
-import misc.tree.AnalyzeTree;
+import common.pattern.PiecesGenerator;
+import common.Stopwatch;
+import common.SyntaxException;
+import common.tree.AnalyzeTree;
 
 import java.io.*;
 import java.util.List;

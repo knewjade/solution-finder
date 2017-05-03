@@ -1,7 +1,6 @@
 package entry.searching_pieces;
 
 import core.mino.Block;
-import misc.tree.VisitedTree;
 
 import java.io.IOException;
 import java.util.List;
