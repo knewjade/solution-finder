@@ -1,23 +1,29 @@
 package newfield.step2;
 
+import core.field.Field;
 import core.mino.Mino;
+import newfield.ParityField;
 import newfield.step4.MinoMask;
 
 public class FullLimitedMino {
-    public static final int FIELD_WIDTH = 10;
-
-    private final int[] xs;
-    private final Mino mino;
-    private final DeleteKey deleteKey;
-
     public static FullLimitedMino create(Mino mino, PositionLimit positionLimit, DeleteKey deleteKey) {
         return new FullLimitedMino(mino, positionLimit, deleteKey);
     }
 
+    public static final int FIELD_WIDTH = 10;
+
+    private final Mino mino;
+    private final PositionLimit positionLimit;
+    private final DeleteKey deleteKey;
+    private final int[] xs;
+    private final int[] parity;
+
     private FullLimitedMino(Mino mino, PositionLimit positionLimit, DeleteKey deleteKey) {
         this.mino = mino;
+        this.positionLimit = positionLimit;
         this.deleteKey = deleteKey;
         this.xs = createX(mino, positionLimit);
+        this.parity = createParity(deleteKey, positionLimit);
     }
 
     private int[] createX(Mino mino, PositionLimit positionLimit) {
@@ -28,8 +34,20 @@ public class FullLimitedMino {
                 return createOdd(minX, maxX);
             case EvenX:
                 return createEven(minX, maxX);
-            case NoLimit:
-                return createAll(minX, maxX);
+        }
+        throw new IllegalStateException("No reachable");
+    }
+
+    private int[] createParity(DeleteKey deleteKey, PositionLimit positionLimit) {
+        switch (positionLimit) {
+            case OddX:
+                Field oddField = deleteKey.getMinoMask().getMinoMask(6);
+                ParityField oddParityField = new ParityField(oddField);
+                return new int[]{oddParityField.calculateOddParity(), oddParityField.calculateEvenParity()};
+            case EvenX:
+                Field evenField = deleteKey.getMinoMask().getMinoMask(5);
+                ParityField evenParityField = new ParityField(evenField);
+                return new int[]{evenParityField.calculateOddParity(), evenParityField.calculateEvenParity()};
         }
         throw new IllegalStateException("No reachable");
     }
@@ -47,13 +65,6 @@ public class FullLimitedMino {
         int[] ints = new int[(maxX - minX + 1) / 2];
         for (int index = 0; index < ints.length; index++)
             ints[index] = minX + index * 2;
-        return ints;
-    }
-
-    private int[] createAll(int minX, int maxX) {
-        int[] ints = new int[maxX - minX];
-        for (int index = 0; index < ints.length; index++)
-            ints[index] = minX + index;
         return ints;
     }
 
@@ -81,11 +92,19 @@ public class FullLimitedMino {
         return deleteKey.getNeedKey();
     }
 
+    public int[] getParity() {
+        return parity;
+    }
+
     @Override
     public String toString() {
         return "FullLimitedMino{" +
-                "mino=" + mino.getBlock() +
-                "," + mino.getRotate() +
+                "mino=" + mino.getBlock() + "-" + mino.getRotate() + ":" + deleteKey +
+                ",pos=" + positionLimit +
                 '}';
+    }
+
+    PositionLimit getPositionLimit() {
+        return positionLimit;
     }
 }

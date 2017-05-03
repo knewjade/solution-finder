@@ -137,4 +137,23 @@ public class CheckmateUsingHoldTest {
         List<Result> results = invoker.getLastResults();
         assertThat(ResultHelper.uniquify(results).size(), is(1));
     }
+
+    @Test
+    public void test() throws Exception {
+        int maxClearLine = 4;
+        CheckmateInvoker invoker = CheckmateInvoker.createPerfectCheckmateUsingHold(maxClearLine);
+
+        // Field
+        Field field = FieldFactory.createField(maxClearLine);
+
+        // Measure
+        List<Block> blocks = Arrays.asList(I, O, O, T, T, L, J, S, Z, Z);
+        invoker.measure(field, blocks, 1);
+        invoker.show(false);
+
+        List<Result> results = invoker.getLastResults();
+        for (Result result : results) {
+            System.out.println(result);
+        }
+    }
 }

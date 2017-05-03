@@ -5,7 +5,7 @@ import core.mino.Mino;
 import newfield.step4.MinoMask;
 import newfield.step4.MinoMaskFactory;
 
-class DeleteKey {
+public class DeleteKey {
     public static DeleteKey create(Mino mino, long deleteKey, int lowerY, int upperY) {
         int y = lowerY - mino.getMinY();
         int maxHeight = upperY + 1;
@@ -55,5 +55,10 @@ class DeleteKey {
 
     long getNeedKey() {
         return deleteKey;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("key{%d, %d}", lowerY, deleteKey);
     }
 }

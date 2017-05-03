@@ -37,8 +37,10 @@ public class PositionLimitParser {
     private void initialMapSZ(EnumMap<Block, EnumMap<DeltaLimit, List<FullLimitedMino>>> maps) {
         for (Block block : Arrays.asList(Block.S, Block.Z)) {
             List<PositionLimitedMino> minos = Arrays.asList(
-                    PositionLimitedMino.create(minoFactory.create(block, Rotate.Spawn), PositionLimit.NoLimit),
-                    PositionLimitedMino.create(minoFactory.create(block, Rotate.Left), PositionLimit.NoLimit)
+                    PositionLimitedMino.create(minoFactory.create(block, Rotate.Spawn), PositionLimit.OddX),
+                    PositionLimitedMino.create(minoFactory.create(block, Rotate.Spawn), PositionLimit.EvenX),
+                    PositionLimitedMino.create(minoFactory.create(block, Rotate.Left), PositionLimit.OddX),
+                    PositionLimitedMino.create(minoFactory.create(block, Rotate.Left), PositionLimit.EvenX)
             );
             registerToMap(maps, block, minos, DeltaLimit.Flat);
         }
@@ -60,8 +62,9 @@ public class PositionLimitParser {
     }
 
     private void initialMapO(EnumMap<Block, EnumMap<DeltaLimit, List<FullLimitedMino>>> maps) {
-        List<PositionLimitedMino> minos = Collections.singletonList(
-                PositionLimitedMino.create(minoFactory.create(Block.O, Rotate.Spawn), PositionLimit.NoLimit)
+        List<PositionLimitedMino> minos = Arrays.asList(
+                PositionLimitedMino.create(minoFactory.create(Block.O, Rotate.Spawn), PositionLimit.OddX),
+                PositionLimitedMino.create(minoFactory.create(Block.O, Rotate.Spawn), PositionLimit.EvenX)
         );
         registerToMap(maps, Block.O, minos, DeltaLimit.Flat);
 
@@ -127,8 +130,10 @@ public class PositionLimitParser {
                 );
             case Flat:
                 return Arrays.asList(
-                        PositionLimitedMino.create(spawn, PositionLimit.NoLimit),
-                        PositionLimitedMino.create(reverse, PositionLimit.NoLimit)
+                        PositionLimitedMino.create(spawn, PositionLimit.OddX),
+                        PositionLimitedMino.create(spawn, PositionLimit.EvenX),
+                        PositionLimitedMino.create(reverse, PositionLimit.OddX),
+                        PositionLimitedMino.create(reverse, PositionLimit.EvenX)
                 );
         }
         throw new IllegalStateException("No reachable");
@@ -151,7 +156,10 @@ public class PositionLimitParser {
             case EvenUp:
                 return Collections.singletonList(PositionLimitedMino.create(left, PositionLimit.EvenX));
             case Flat:
-                return Collections.singletonList(PositionLimitedMino.create(spawn, PositionLimit.NoLimit));
+                return Arrays.asList(
+                        PositionLimitedMino.create(spawn, PositionLimit.OddX),
+                        PositionLimitedMino.create(spawn, PositionLimit.EvenX)
+                );
         }
 
         throw new IllegalStateException("No reachable");

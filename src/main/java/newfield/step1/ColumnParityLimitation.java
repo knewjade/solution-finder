@@ -44,7 +44,7 @@ public class ColumnParityLimitation {
             int evenLJ = 2 * LJCount - count;
             int leastCount = LJCount - (0 <= count ? count : -count);
             if (leastCount % 2 == 0)
-                enumerateAfterSZOLJ(oddParity - oddLJ, evenParity - evenLJ, count);
+                enumerateAfterSZOLJ(evenParity - evenLJ, oddParity - oddLJ, count);
         }
 
         return builders;
@@ -66,7 +66,7 @@ public class ColumnParityLimitation {
         for (int count = -TCount; count <= TCount; count++) {
             int oddT = 2 * TCount + count;
             int evenT = 2 * TCount - count;
-            enumerateAfterSZOLJT(evenParity - oddT, oddParity - evenT, oddCountLJ, count);
+            enumerateAfterSZOLJT(evenParity - evenT, oddParity - oddT, oddCountLJ, count);
         }
     }
 

@@ -4,6 +4,7 @@ import core.field.Field;
 import core.mino.Mino;
 import misc.OperationWithKey;
 import newfield.step2.FullLimitedMino;
+import newfield.step2.FullLimitedMinos;
 import searcher.common.validator.PerfectValidator;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import java.util.List;
  */
 public class Search {
     private final Field initField;
-    private final List<FullLimitedMino> sets;
+    private final FullLimitedMinos sets;
     private final int maxClearLine;
     private final PerfectValidator perfectValidator;
     private final List<List<OperationWithKey>> results = new ArrayList<>();
@@ -24,13 +25,13 @@ public class Search {
     private final FullLimitedMino[] fullLimitedMinos;
     private final int[] xs;
 
-    public Search(Field initField, List<FullLimitedMino> sets, int maxClearLine) {
+    public Search(Field initField, FullLimitedMinos sets, int maxClearLine) {
         this.initField = initField.freeze(initField.getMaxFieldHeight());
         this.sets = sets;
         this.maxClearLine = maxClearLine;
         this.perfectValidator = new PerfectValidator();
 
-        int maxDepth = sets.size();
+        int maxDepth = sets.getDepth();
         this.fullLimitedMinos = new FullLimitedMino[maxDepth];
         this.xs = new int[maxDepth];
     }
@@ -42,7 +43,7 @@ public class Search {
     }
 
     private void search(Field field, int depth) {
-        if (depth == sets.size()) {
+        if (depth == sets.getDepth()) {
             List<OperationWithKey> result = new ArrayList<>();
             for (int index = 0, length = fullLimitedMinos.length; index < length; index++) {
                 FullLimitedMino limitedMino = fullLimitedMinos[index];
