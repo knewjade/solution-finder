@@ -9,6 +9,7 @@ import searcher.common.validator.PerfectValidator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 /**
  * マルチスレッド非対応
@@ -20,18 +21,27 @@ public class CrossBuilder {
     private final List<List<OperationWithKey>> results = new ArrayList<>();
     private final int lastIndex;
     private final PerfectValidator perfectValidator;
+    private final boolean[] isSame;
 
     // 結果記録用
     private final FullLimitedMino[] fullLimitedMinos;
     private final FullLimitedMino[] prev;
     private final List<List<XField>> cache = new ArrayList<>();
 
+    // sets: 同じ種類のミノは連続させたほうが探索カットが有効になるため推奨
     public CrossBuilder(List<List<FullLimitedMino>> sets, Field field, int maxClearLine) {
         this.sets = sets;
         this.maxClearLine = maxClearLine;
         this.lineCounterField = new LineCounterField(field, maxClearLine);
         this.lastIndex = sets.size() - 1;
         this.perfectValidator = new PerfectValidator();
+
+        this.isSame = new boolean[sets.size()];
+        for (int index = 1; index < isSame.length; index++) {
+            TreeSet<FullLimitedMino> current = new TreeSet<>(sets.get(index));
+            TreeSet<FullLimitedMino> prev = new TreeSet<>(sets.get(index - 1));
+            this.isSame[index] = prev.equals(current);
+        }
 
         this.fullLimitedMinos = new FullLimitedMino[sets.size()];
         this.prev = new FullLimitedMino[sets.size()];
@@ -48,6 +58,9 @@ public class CrossBuilder {
 
     private void createList(int depth) {
         for (FullLimitedMino mino : sets.get(depth)) {
+            if (isSame[depth] && 0 <= fullLimitedMinos[depth - 1].compareTo(mino))
+                continue;
+
             int[][] blockCountEachLines = mino.getBlockCountEachLines();
             int[] parity = mino.getParity();
             lineCounterField.decrease(blockCountEachLines);

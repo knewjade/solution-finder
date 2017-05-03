@@ -11,6 +11,7 @@ import misc.Build;
 import misc.OperationWithKey;
 import misc.Stopwatch;
 import newfield.step1.ColumnParityLimitation;
+import newfield.step1.DeltaLimitedMino;
 import newfield.step1.EstimateBuilder;
 import newfield.step2.DeleteKey;
 import newfield.step2.FullLimitedMino;
@@ -28,17 +29,17 @@ public class Main2 {
     public static void main(String[] args) {
         // I, O, O, T, T, L, J, S, Z, Z
         List<Block> usedBlocks = Arrays.asList(
-                Block.O, Block.T, Block.S, Block.Z, Block.L, Block.J,
+                Block.I, Block.O, Block.T, Block.S, Block.Z, Block.L, Block.J,
                 Block.S, Block.Z, Block.I
         );
         BlockCounter blockCounter = new BlockCounter(usedBlocks);
         System.out.println(blockCounter);
 
         Field field = FieldFactory.createField("" +
-                "________X_" +
-                "________X_" +
-                "________X_" +
-                "________X_" +
+                "__________" +
+                "__________" +
+                "__________" +
+                "__________" +
                 ""
         );
         int maxClearLine = 4;
@@ -56,40 +57,62 @@ public class Main2 {
         PositionLimitParser positionLimitParser = new PositionLimitParser(minoFactory, maxClearLine);
         LockedReachableThreadLocal threadLocal = new LockedReachableThreadLocal(maxClearLine);
 
-        // TODO: 1つしかないミノの方が良い。Iミノだけが1つの場合 or Iしかない 場合は特別選択
+        // 1つしかないミノの方が良い。Iミノだけが1つの場合 or Iしかない 場合は特別選択
         Block selectedBlock = selectBlock(blockCounter);
+        System.out.println(selectedBlock);
+
 //        AtomicInteger counter = new AtomicInteger(0);
-        List<Block> filteredBlock = Arrays.asList(Block.S, Block.Z, Block.O);
         List<List<OperationWithKey>> operationsWithKey = limitation.enumerate().parallelStream()
                 .map(EstimateBuilder::create)
                 .flatMap(Collection::stream)
-                .flatMap(deltaLimitedMinos -> {
+                .peek(System.out::println)
+                .flatMap((List<DeltaLimitedMino> deltaLimitedMinos) -> {
+                    // 変換 DeltaLimitedMinos to FullLimitedMino
                     List<List<FullLimitedMino>> collect = deltaLimitedMinos.stream()
-                            .filter(deltaLimitedMino -> !filteredBlock.contains(deltaLimitedMino.getBlock()))
                             .map(positionLimitParser::parse)
-                            .sorted(Comparator.comparingInt(List::size))
                             .collect(Collectors.toList());
 
+                    // 選択するブロックのindexを取得
                     int splitIndex = 0;
                     for (int index = 0; index < collect.size(); index++) {
-                        List<FullLimitedMino> limitedMinos = collect.get(0);
-                        assert !limitedMinos.isEmpty();
-                        Block block = limitedMinos.get(0).getMino().getBlock();
+                        List<FullLimitedMino> limitedMinos2 = collect.get(index);
+                        assert !limitedMinos2.isEmpty();
+                        Block block = limitedMinos2.get(0).getMino().getBlock();
                         if (block == selectedBlock)
                             splitIndex = index;
                     }
 
+                    // 候補数が小さい順  // 同種のブロックを固めるため
+                    List<Block> priority = collect.stream()
+                            .sorted(Comparator.comparingInt(List::size))
+                            .map(fullLimitedMinos -> fullLimitedMinos.get(0).getMino().getBlock())
+                            .collect(Collectors.toList());
+
+                    collect.sort((o1, o2) -> {
+                        int compare = Integer.compare(priority.indexOf(o1.get(0).getMino().getBlock()), priority.indexOf(o2.get(0).getMino().getBlock()));
+                        if (compare != 0)
+                            return compare;
+                        return -Integer.compare(o1.size(), o2.size());
+                    });
+
+                    // 分割する
                     List<List<List<FullLimitedMino>>> collect2 = new ArrayList<>();
                     List<FullLimitedMino> limitedMinos = collect.get(splitIndex);
                     for (FullLimitedMino mino : limitedMinos) {
                         ArrayList<List<FullLimitedMino>> base = new ArrayList<>(collect);
                         base.set(splitIndex, singletonList(mino));
-                        base.sort(Comparator.comparingInt(List::size));
+                        base.sort((o1, o2) -> {
+                            int compare = Integer.compare(priority.indexOf(o1.get(0).getMino().getBlock()), priority.indexOf(o2.get(0).getMino().getBlock()));
+                            if (compare != 0)
+                                return compare;
+                            return -Integer.compare(o1.size(), o2.size());
+                        });
                         collect2.add(base);
                     }
-                    System.out.println(collect2);
-                    return collect2.stream();
+//                    return collect2.stream();
+                    return Collections.singletonList(collect).stream();
                 })
+                .limit(Long.MAX_VALUE)
                 .peek(System.out::println)
                 .flatMap(sets -> new CrossBuilder(sets, field, maxClearLine).create().stream())
 //                .collect(Collectors.toCollection(TreeSet::new)).parallelStream()
@@ -115,7 +138,7 @@ public class Main2 {
                 singletonList(create(minoFactory, Block.T, Rotate.Spawn, PositionLimit.OddX, 0L, 0, 1)),
                 singletonList(create(minoFactory, Block.T, Rotate.Reverse, PositionLimit.EvenX, 0L, 2, 3))
         );
-        CrossBuilder crossBuilder = new CrossBuilder(lists, field, maxClearLine);
+        CrossBuilder crossBuilder = new CrossBuilder(lists, FieldFactory.createField(maxClearLine), maxClearLine);
         List<List<OperationWithKey>> lists1 = crossBuilder.create();
         System.out.println(lists1.size());
 

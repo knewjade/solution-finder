@@ -57,8 +57,7 @@ public class ColumnParityLimitation {
             return;
         }
 
-        // Tは必ず1以上減少するため、0の場合は終了
-        if (oddParity <= 0 || evenParity <= 0)
+        if (oddParity < 0 || evenParity < 0)
             return;
 
         // T対応: 縦3:1,1:3 と 横2:2 の3種

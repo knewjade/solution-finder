@@ -5,7 +5,7 @@ import core.mino.Mino;
 import newfield.ParityField;
 import newfield.step4.MinoMask;
 
-public class FullLimitedMino {
+public class FullLimitedMino implements Comparable<FullLimitedMino> {
     public static FullLimitedMino create(Mino mino, PositionLimit positionLimit, DeleteKey deleteKey) {
         return new FullLimitedMino(mino, positionLimit, deleteKey);
     }
@@ -104,7 +104,38 @@ public class FullLimitedMino {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int hashCode() {
+        throw new UnsupportedOperationException();
+    }
+
     PositionLimit getPositionLimit() {
         return positionLimit;
+    }
+
+    @Override
+    public int compareTo(FullLimitedMino o) {
+        int block = mino.getBlock().compareTo(o.mino.getBlock());
+        if (block != 0)
+            return block;
+
+        int rotate = mino.getRotate().compareTo(o.mino.getRotate());
+        if (rotate != 0)
+            return rotate;
+
+        int position = positionLimit.compareTo(o.positionLimit);
+        if (position != 0)
+            return position;
+
+        int lowerY = Integer.compare(deleteKey.getLowerY(), o.deleteKey.getLowerY());
+        if (lowerY != 0)
+            return lowerY;
+
+        return Long.compare(deleteKey.getNeedKey(), o.deleteKey.getNeedKey());
     }
 }
