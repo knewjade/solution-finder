@@ -91,4 +91,9 @@ public class ArrayColoredField implements ColoredField {
             }
         }
     }
+
+    @Override
+    public int getMaxHeight() {
+        return field.length;
+    }
 }

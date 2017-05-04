@@ -33,7 +33,7 @@ public class Operations implements Comparable<Operations> {
         int oSize = o.operations.size();
         if (size == oSize) {
             for (int index = 0; index < size; index++) {
-                int compare = operations.get(index).compareTo(o.operations.get(index));
+                int compare = Operation.compareTo(operations.get(index), o.operations.get(index));
                 if (compare != 0)
                     return compare;
             }

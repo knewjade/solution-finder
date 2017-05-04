@@ -18,6 +18,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static searcher.common.OperationsFactory.createOperations;
 
+// TODO: unittest pathを修正次第、内容を見直す
 public class PathCoreTest {
     @Test
     public void invokeUsingHoldEasy1() throws Exception {

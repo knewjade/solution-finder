@@ -1,9 +1,9 @@
 package common.datastore;
 
+import common.FieldComparator;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
-import common.FieldComparator;
 
 import java.util.Comparator;
 import java.util.EnumMap;
@@ -34,5 +34,9 @@ public class BlockField implements Comparable<BlockField> {
                 return compare;
         }
         return 0;
+    }
+
+    public Field get(Block block) {
+        return map.getOrDefault(block, EMPTY_FIELD);
     }
 }

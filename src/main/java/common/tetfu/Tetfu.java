@@ -73,6 +73,7 @@ public class Tetfu {
 
     // コメント・フィールドは初期設定のみ設定可能
     public String encode(ColoredField initField, List<TetfuElement> elements) {
+        assert initField.getMaxHeight() == TETFU_MAX_HEIGHT;
         ColoredField field = initField.freeze(TETFU_MAX_HEIGHT);
         ColoredField prevField = ColoredFieldFactory.createField(TETFU_MAX_HEIGHT);
         String prevComment = "";

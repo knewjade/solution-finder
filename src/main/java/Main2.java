@@ -4,7 +4,7 @@ import core.field.FieldFactory;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
-import common.Build;
+import common.buildup.BuildUp;
 import common.datastore.OperationWithKey;
 import common.iterable.PermutationIterable;
 import common.datastore.Operations;
@@ -29,7 +29,7 @@ public class Main2 {
         Operations operations = createOperations("T,R,4,1", "S,0,6,1", "Z,0,5,0");
         MinoFactory minoFactory = new MinoFactory();
         int height = 4;
-        List<OperationWithKey> objs = Build.createOperationWithKeys(fieldOrigin, operations, minoFactory, height);
+        List<OperationWithKey> objs = BuildUp.createOperationWithKeys(fieldOrigin, operations, minoFactory, height);
 
         System.out.println("---");
         for (OperationWithKey obj : objs) {
@@ -42,7 +42,7 @@ public class Main2 {
         PermutationIterable<OperationWithKey> iterable = new PermutationIterable<>(objs, objs.size());
         for (List<OperationWithKey> list : iterable) {
             System.out.println(list.stream().map(o -> o.getMino().getBlock().getName()).collect(Collectors.joining("")));
-            boolean isBuild = Build.cansBuild(fieldOrigin, list, height, reachable);
+            boolean isBuild = BuildUp.cansBuild(fieldOrigin, list, height, reachable);
             System.out.println(isBuild);
         }
     }

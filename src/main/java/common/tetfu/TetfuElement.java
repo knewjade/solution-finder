@@ -1,9 +1,11 @@
 package common.tetfu;
 
-import core.srs.Rotate;
 import common.tetfu.common.ColorType;
+import core.srs.Rotate;
 
 public class TetfuElement {
+    public static TetfuElement EMPTY = new TetfuElement(ColorType.Empty, Rotate.Reverse, 0, 0);
+
     private final String comment;
     private final ColorType colorType;
     private final Rotate rotate;

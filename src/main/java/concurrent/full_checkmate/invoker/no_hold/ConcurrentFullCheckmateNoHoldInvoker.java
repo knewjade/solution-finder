@@ -1,10 +1,10 @@
 package concurrent.full_checkmate.invoker.no_hold;
 
+import common.datastore.Operation;
 import core.action.candidate.Candidate;
 import common.datastore.Pair;
 import concurrent.full_checkmate.FullCheckmateNoHoldThreadLocal;
 import core.field.Field;
-import common.datastore.Operation;
 import searcher.common.Result;
 import common.datastore.action.Action;
 import searcher.common.validator.FullValidator;

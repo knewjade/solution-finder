@@ -1,15 +1,15 @@
-package common;
+package common.buildup;
 
+import common.datastore.Operation;
+import common.datastore.OperationWithKey;
+import common.datastore.Operations;
 import core.action.reachable.Reachable;
 import core.field.Field;
 import core.field.FieldFactory;
+import core.field.FieldView;
 import core.field.KeyOperators;
 import core.mino.Mino;
 import core.mino.MinoFactory;
-import common.datastore.OperationWithKey;
-import common.iterable.PermutationIterable;
-import common.datastore.Operation;
-import common.datastore.Operations;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -17,7 +17,7 @@ import java.util.List;
 
 // TODO: rewrite 移動したり、クラス化したり
 // TODO: unittest
-public class Build {
+public class BuildUp {
     public static List<OperationWithKey> createOperationWithKeys(Field fieldOrigin, Operations operations, MinoFactory minoFactory, int height) {
         ArrayList<OperationWithKey> objs = new ArrayList<>();
         Field field = fieldOrigin.freeze(height);
@@ -84,87 +84,48 @@ public class Build {
     // 組み立てられる手順が存在するか確認
     public static boolean existsValidBuildPattern(Field fieldOrigin, List<OperationWithKey> operationWithKeys, int height, Reachable reachable) {
         LinkedList<OperationWithKey> keys = new LinkedList<>(operationWithKeys);
-
-        Field field = fieldOrigin.freeze(height);
-
-        while (!keys.isEmpty()) {
-            boolean isNext = false;
-            LinkedList<OperationWithKey> next = new LinkedList<>();
-            LinkedList<ForSerialize> current = new LinkedList<>();
-
-            long deleteKey = field.clearLineReturnKey();
-            Field nextField = field.freeze(height);
-
-            while (!keys.isEmpty()) {
-                OperationWithKey operationWithKey = keys.poll();
-
-                long needDeletedKey = operationWithKey.getNeedDeletedKey();
-                if ((deleteKey & needDeletedKey) != needDeletedKey) {
-                    // 必要な列が消えていない
-                    next.add(operationWithKey);
-                    continue;
-                }
-
-                // すでに下のラインが消えているときは、その分スライドさせる
-                int originalY = operationWithKey.getY();
-                int deletedLines = Long.bitCount(KeyOperators.getMaskForKeyBelowY(originalY) & deleteKey);
-
-                Mino mino = operationWithKey.getMino();
-                int x = operationWithKey.getX();
-                int y = originalY - deletedLines;
-
-                if (field.isOnGround(mino, x, y) && field.canPutMino(mino, x, y) && reachable.checks(field, mino, x, y, height)) {
-                    nextField.putMino(mino, x, y);
-                    current.add(new ForSerialize(mino, x, y));
-                    isNext = true;
-                } else {
-                    next.add(operationWithKey);
-                }
-            }
-
-            if (!isNext)
-                return false;
-
-            if (!canPutSerial(field, current, height, reachable))
-                return false;
-
-            nextField.insertBlackLineWithKey(deleteKey);
-
-            field = nextField;
-            keys = next;
-        }
-
-        return true;
+        return existsValidBuildPattern2(fieldOrigin.freeze(height), keys, height, reachable);
     }
 
-    private static boolean canPutSerial(Field fieldOriginal, LinkedList<ForSerialize> current, int height, Reachable reachable) {
-        if (current.size() == 1)
-            return true;
+    public static boolean existsValidBuildPattern2(Field field, LinkedList<OperationWithKey> operationWithKeys, int height, Reachable reachable) {
+        System.out.println(FieldView.toString(field));
+        long deleteKey = field.clearLineReturnKey();
 
-        PermutationIterable<ForSerialize> permutation = new PermutationIterable<>(current, current.size());
-        LOOP:
-        for (List<ForSerialize> operationWithKeys : permutation) {
-            Field field = fieldOriginal.freeze(height);
-            for (ForSerialize key : operationWithKeys) {
-                if (!reachable.checks(field, key.mino, key.x, key.y, height))
-                    continue LOOP;
-                field.putMino(key.mino, key.x, key.y);
+        for (int index = 0; index < operationWithKeys.size(); index++) {
+            OperationWithKey key = operationWithKeys.remove(index);
+
+            long needDeletedKey = key.getNeedDeletedKey();
+            if ((deleteKey & needDeletedKey) != needDeletedKey) {
+                // 必要な列が消えていない
+                operationWithKeys.add(index, key);
+                continue;
             }
-            return true;
+
+            // すでに下のラインが消えているときは、その分スライドさせる
+            int originalY = key.getY();
+            int deletedLines = Long.bitCount(KeyOperators.getMaskForKeyBelowY(originalY) & deleteKey);
+
+            Mino mino = key.getMino();
+            int x = key.getX();
+            int y = originalY - deletedLines;
+
+            if (field.isOnGround(mino, x, y) && field.canPutMino(mino, x, y) && reachable.checks(field, mino, x, y, height)) {
+                if (operationWithKeys.isEmpty())
+                    return true;
+
+                Field nextField = field.freeze(height);
+                nextField.putMino(mino, x, y);
+                nextField.insertBlackLineWithKey(deleteKey);
+
+                boolean exists = existsValidBuildPattern2(nextField, operationWithKeys, height, reachable);
+                if (exists)
+                    return true;
+            }
+
+            operationWithKeys.add(index, key);
         }
+
+        field.insertBlackLineWithKey(deleteKey);
         return false;
-    }
-
-    private static class ForSerialize {
-        private final Mino mino;
-        private final int x;
-        private final int y;
-
-        private ForSerialize(Mino mino, int x, int y) {
-
-            this.mino = mino;
-            this.x = x;
-            this.y = y;
-        }
     }
 }

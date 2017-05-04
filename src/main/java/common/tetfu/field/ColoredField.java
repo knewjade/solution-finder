@@ -21,4 +21,6 @@ public interface ColoredField {
     void blockUp();
 
     void mirror();
+
+    int getMaxHeight();
 }

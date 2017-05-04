@@ -1,5 +1,6 @@
 package _experimental.main;
 
+import common.datastore.Operation;
 import core.action.candidate.FixPlaceLockedCandidate;
 import core.action.candidate.LockedCandidate;
 import core.action.reachable.LockedReachable;
@@ -20,7 +21,6 @@ import common.Stopwatch;
 import common.iterable.AllPermutationIterable;
 import common.iterable.CombinationIterable;
 import searcher.checker.CheckerUsingHold;
-import common.datastore.Operation;
 import searcher.common.Result;
 import common.datastore.action.Action;
 import searcher.common.validator.BuildValidator;

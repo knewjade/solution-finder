@@ -1,6 +1,7 @@
 package searcher.common;
 
 import common.datastore.Operation;
+import common.datastore.SimpleOperation;
 import core.mino.Block;
 import common.datastore.action.Action;
 import common.datastore.order.Order;
@@ -45,7 +46,7 @@ public class Result {
             Operation operation = ActionParser.parseToOperation(value);
             operations.add(operation);
         }
-        operations.add(new Operation(lastBlock, action.getRotate(), action.getX(), action.getY()));
+        operations.add(new SimpleOperation(lastBlock, action.getRotate(), action.getX(), action.getY()));
         return operations;
     }
 

@@ -1,5 +1,6 @@
 package entry.path;
 
+import common.datastore.Operation;
 import core.action.reachable.LockedReachable;
 import core.field.Field;
 import core.field.FieldView;
@@ -10,7 +11,7 @@ import core.srs.MinoRotation;
 import core.srs.Rotate;
 import entry.EntryPoint;
 import entry.searching_pieces.EnumeratePiecesCore;
-import common.Build;
+import common.buildup.BuildUp;
 import common.datastore.OperationWithKey;
 import common.Stopwatch;
 import common.SyntaxException;
@@ -22,7 +23,6 @@ import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
-import common.datastore.Operation;
 import common.datastore.Operations;
 
 import java.io.*;
@@ -334,7 +334,6 @@ public class PathEntryPoint implements EntryPoint {
 
             // 手順の出力
             for (Operations allOperation : operations) {
-
                 // テト譜の作成
                 ArrayList<String> texts = new ArrayList<>();
                 ArrayList<TetfuElement> elements = new ArrayList<>();
@@ -349,11 +348,11 @@ public class PathEntryPoint implements EntryPoint {
 
                 // 組めるパターンを列挙
                 // すべての入れ替えた手順で組み直してみる
-                List<OperationWithKey> operationWithKeys = Build.createOperationWithKeys(field, allOperation, minoFactory, maxClearLine);
+                List<OperationWithKey> operationWithKeys = BuildUp.createOperationWithKeys(field, allOperation, minoFactory, maxClearLine);
                 HashSet<List<Block>> set = new HashSet<>();
                 PermutationIterable<OperationWithKey> permutationIterable = new PermutationIterable<>(operationWithKeys, operationWithKeys.size());
                 for (List<OperationWithKey> targetCheckOperationsWithKey : permutationIterable) {
-                    boolean cansBuild = Build.cansBuild(field, targetCheckOperationsWithKey, maxClearLine, reachable);
+                    boolean cansBuild = BuildUp.cansBuild(field, targetCheckOperationsWithKey, maxClearLine, reachable);
                     if (cansBuild) {
                         // 手順を入れ替えても組むことができる
                         List<Block> blocks = targetCheckOperationsWithKey.stream()

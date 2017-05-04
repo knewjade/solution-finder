@@ -4,7 +4,7 @@ public class ColoredFieldView {
     private static final int FIELD_WIDTH = 10;
 
     public static String toString(ColoredField field) {
-        return toString(field, 24);
+        return toString(field, field.getMaxHeight());
     }
 
     public static String toString(ColoredField field, int maxHeight) {

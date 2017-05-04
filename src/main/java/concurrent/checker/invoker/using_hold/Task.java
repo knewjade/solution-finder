@@ -1,12 +1,12 @@
 package concurrent.checker.invoker.using_hold;
 
+import common.datastore.Operation;
 import core.action.candidate.Candidate;
 import common.order.OrderLookup;
 import common.datastore.Pair;
 import common.order.Pieces;
 import core.mino.Block;
 import searcher.checker.Checker;
-import common.datastore.Operation;
 import searcher.common.Result;
 import common.datastore.action.Action;
 import common.tree.VisitedTree;

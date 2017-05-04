@@ -1,6 +1,7 @@
 package searcher.common;
 
 import common.datastore.Operation;
+import common.datastore.SimpleOperation;
 import common.datastore.Operations;
 import core.mino.Block;
 import core.srs.Rotate;
@@ -25,7 +26,7 @@ public class OperationsFactory {
         Rotate rotate = getRotate(split[1].trim());
         int x = Integer.valueOf(split[2].trim());
         int y = Integer.valueOf(split[3].trim());
-        return new Operation(block, rotate, x, y);
+        return new SimpleOperation(block, rotate, x, y);
     }
 
     private static Block getBlock(String name) {

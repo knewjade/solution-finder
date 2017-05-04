@@ -1,5 +1,6 @@
 package _experimental.main;
 
+import common.datastore.Operation;
 import core.action.candidate.Candidate;
 import concurrent.checker.CheckerUsingHoldThreadLocal;
 import concurrent.LockedCandidateThreadLocal;
@@ -14,7 +15,6 @@ import common.Stopwatch;
 import common.iterable.AllPermutationIterable;
 import common.iterable.CombinationIterable;
 import searcher.checker.Checker;
-import common.datastore.Operation;
 import searcher.common.Result;
 import common.datastore.action.Action;
 import common.tree.AnalyzeTree;

@@ -1,6 +1,7 @@
 package searcher.common;
 
 import common.datastore.Operation;
+import common.datastore.SimpleOperation;
 import core.mino.Block;
 import core.srs.Rotate;
 import common.datastore.action.Action;
@@ -33,6 +34,6 @@ class ActionParser {
         Rotate rotate = rotateMap[value % 4];
         value /= 4;
         Block block = blockMap[value];
-        return new Operation(block, rotate, x, y);
+        return new SimpleOperation(block, rotate, x, y);
     }
 }

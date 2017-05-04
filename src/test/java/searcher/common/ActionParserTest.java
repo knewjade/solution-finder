@@ -1,6 +1,6 @@
 package searcher.common;
 
-import common.datastore.Operation;
+import common.datastore.SimpleOperation;
 import core.mino.Block;
 import core.srs.Rotate;
 import org.junit.Test;
@@ -39,7 +39,7 @@ public class ActionParserTest {
                 for (int y = 0; y < 24; y++) {
                     for (int x = 0; x < 10; x++) {
                         int value = ActionParser.parseToInt(block, rotate, x, y);
-                        assertThat(ActionParser.parseToOperation(value), is(new Operation(block, rotate, x, y)));
+                        assertThat(ActionParser.parseToOperation(value), is(new SimpleOperation(block, rotate, x, y)));
                     }
                 }
             }

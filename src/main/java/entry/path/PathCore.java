@@ -1,8 +1,8 @@
 package entry.path;
 
+import common.datastore.*;
 import concurrent.LockedCandidateThreadLocal;
 import common.order.OrderLookup;
-import common.datastore.Pair;
 import common.order.Pieces;
 import concurrent.checkmate.CheckmateNoHoldThreadLocal;
 import concurrent.checkmate.invoker.no_hold.ConcurrentCheckmateCommonInvoker;
@@ -20,15 +20,10 @@ import core.srs.Rotate;
 import entry.searching_pieces.EnumeratePiecesCore;
 import entry.searching_pieces.HoldBreakEnumeratePieces;
 import entry.searching_pieces.NormalEnumeratePieces;
-import common.datastore.BlockField;
-import common.Build;
-import common.datastore.OperationWithKey;
+import common.buildup.BuildUp;
 import common.iterable.PermutationIterable;
 import common.pattern.PiecesGenerator;
-import common.datastore.SafePieces;
 import common.tree.VisitedTree;
-import common.datastore.Operation;
-import common.datastore.Operations;
 import searcher.common.Result;
 import common.datastore.action.Action;
 import searcher.common.validator.FullValidator;
@@ -105,7 +100,7 @@ class PathCore {
         LinkedList<Pair<Operations, Set<List<Block>>>> masters = new LinkedList<>();
         for (BlockFieldOperations blockFieldOperations : blockFieldOperationsList) {
             Operations operations = blockFieldOperations.getOperations();
-            List<OperationWithKey> operationWithKeys = Build.createOperationWithKeys(field, operations, minoFactory, maxClearLine);
+            List<OperationWithKey> operationWithKeys = BuildUp.createOperationWithKeys(field, operations, minoFactory, maxClearLine);
             HashSet<List<Block>> canBuildBlocks = buildPattern(field, maxClearLine, isUsingHold, visitedTree, operationWithKeys);
 
             // 比較
@@ -306,7 +301,7 @@ class PathCore {
         HashSet<List<Block>> set = new HashSet<>();
         PermutationIterable<OperationWithKey> permutationIterable = new PermutationIterable<>(operationWithKeys, operationWithKeys.size());
         for (List<OperationWithKey> targetCheckOperationsWithKey : permutationIterable) {
-            boolean cansBuild = Build.cansBuild(field, targetCheckOperationsWithKey, maxClearLine, reachable);
+            boolean cansBuild = BuildUp.cansBuild(field, targetCheckOperationsWithKey, maxClearLine, reachable);
             if (cansBuild) {
                 // 手順を入れ替えても組むことができる
                 List<Block> blocks = targetCheckOperationsWithKey.stream()
