@@ -84,11 +84,16 @@ public class BuildUp {
     // 組み立てられる手順が存在するか確認
     public static boolean existsValidBuildPattern(Field fieldOrigin, List<OperationWithKey> operationWithKeys, int height, Reachable reachable) {
         LinkedList<OperationWithKey> keys = new LinkedList<>(operationWithKeys);
-        return existsValidBuildPattern2(fieldOrigin.freeze(height), keys, height, reachable);
+        keys.sort((o1, o2) -> {
+            int compare = Integer.compare(o1.getY(), o2.getY());
+            if (compare != 0)
+                return compare;
+            return Long.compare(o1.getNeedDeletedKey(), o2.getNeedDeletedKey());
+        });
+        return existsValidBuildPatternRecursive(fieldOrigin.freeze(height), keys, height, reachable);
     }
 
-    public static boolean existsValidBuildPattern2(Field field, LinkedList<OperationWithKey> operationWithKeys, int height, Reachable reachable) {
-        System.out.println(FieldView.toString(field));
+    private static boolean existsValidBuildPatternRecursive(Field field, LinkedList<OperationWithKey> operationWithKeys, int height, Reachable reachable) {
         long deleteKey = field.clearLineReturnKey();
 
         for (int index = 0; index < operationWithKeys.size(); index++) {
@@ -117,7 +122,7 @@ public class BuildUp {
                 nextField.putMino(mino, x, y);
                 nextField.insertBlackLineWithKey(deleteKey);
 
-                boolean exists = existsValidBuildPattern2(nextField, operationWithKeys, height, reachable);
+                boolean exists = existsValidBuildPatternRecursive(nextField, operationWithKeys, height, reachable);
                 if (exists)
                     return true;
             }

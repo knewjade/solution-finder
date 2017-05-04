@@ -125,7 +125,7 @@ public class SmallField implements Field {
     // TODO: unittest
     @Override
     public int getBlockCountOnY(int y) {
-        long mask = 0x3ff << y * FIELD_WIDTH;
+        long mask = 0x3ffL << y * FIELD_WIDTH;
         return Long.bitCount(xBoard & mask);
     }
 

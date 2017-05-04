@@ -34,8 +34,6 @@ public class ColumnParityLimitation {
         evenParity -= 2 * SZOCount;
         oddParity -= 2 * SZOCount;
 
-        assert 0 <= evenParity && 0 <= oddParity;
-
         // LJ対応: どの置き方でも 3:1 で減少
         // 最低でも LJCount　減少し、最大で LJCount + LJCount * 2 減少
         int LJCount = blockCounter.getCount(Block.L) + blockCounter.getCount(Block.J);

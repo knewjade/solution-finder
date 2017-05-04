@@ -1,6 +1,18 @@
 package _experimental.newfield;
 
+import _experimental.newfield.step1.ColumnParityLimitation;
+import _experimental.newfield.step1.DeltaLimitedMino;
+import _experimental.newfield.step1.EstimateBuilder;
+import _experimental.newfield.step2.DeleteKey;
+import _experimental.newfield.step2.FullLimitedMino;
+import _experimental.newfield.step2.PositionLimit;
+import _experimental.newfield.step2.PositionLimitParser;
+import _experimental.newfield.step3.CrossBuilder;
+import common.Stopwatch;
+import common.buildup.BuildUp;
 import common.datastore.BlockField;
+import common.datastore.OperationWithKey;
+import common.iterable.CombinationIterable;
 import common.tetfu.Tetfu;
 import common.tetfu.TetfuElement;
 import common.tetfu.common.ColorConverter;
@@ -14,75 +26,74 @@ import core.mino.Block;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
-import common.buildup.BuildUp;
-import common.datastore.OperationWithKey;
-import common.Stopwatch;
-import _experimental.newfield.step1.ColumnParityLimitation;
-import _experimental.newfield.step1.DeltaLimitedMino;
-import _experimental.newfield.step1.EstimateBuilder;
-import _experimental.newfield.step2.DeleteKey;
-import _experimental.newfield.step2.FullLimitedMino;
-import _experimental.newfield.step2.PositionLimit;
-import _experimental.newfield.step2.PositionLimitParser;
-import _experimental.newfield.step3.CrossBuilder;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Collections.singletonList;
+
 public class Main3 {
     public static void main(String[] args) {
         // I, O, O, T, T, L, J, S, Z, Z
         List<Block> usedBlocks = Arrays.asList(
-                Block.J, Block.L, Block.S
+                Block.O, Block.L, Block.S, Block.J, Block.Z, Block.I
         );
 
         Field field = FieldFactory.createField("" +
-                "XXXXXXX___" +
-                "XXXXXXX___" +
-                "XXXXXXX___" +
-                "XXXXXXX___" +
-                ""
+                "___XXXXXXX" +
+                "___XXXXXXX" +
+                "___XXXXXXX" +
+                "___XXXXXXX"
         );
         int maxClearLine = 4;
+
+//        Field verifyField = field;
+        Field verifyField = FieldFactory.createField(5);
         System.out.println(FieldView.toString(field, maxClearLine));
 
         Stopwatch stopwatch = Stopwatch.createStoppedStopwatch();
         stopwatch.start();
 
-        List<List<OperationWithKey>> operationsWithKey = search(usedBlocks, field, maxClearLine);
-        List<BlockField> blockFields = operationsWithKey.stream()
-                .map(operationWithKeys -> {
-                    BlockField blockField = new BlockField(maxClearLine);
-                    for (OperationWithKey key : operationWithKeys) {
-                        Field test = FieldFactory.createField(maxClearLine);
-                        Mino mino = key.getMino();
-                        test.putMino(mino, key.getX(), key.getY());
-                        test.insertWhiteLineWithKey(key.getNeedDeletedKey());
-                        blockField.merge(test, mino.getBlock());
-                    }
-                    return blockField;
-                })
-                .collect(Collectors.toList());
+        List<Block> blocks = Arrays.asList(Block.values());
+        CombinationIterable<Block> combinationIterable = new CombinationIterable<>(blocks, 3);
+        for (List<Block> usedBlocks2 : combinationIterable) {
+            List<List<OperationWithKey>> operationsWithKey = search(usedBlocks2, field, maxClearLine, verifyField);
+            List<BlockField> blockFields = operationsWithKey.stream()
+                    .map(operationWithKeys -> {
+                        BlockField blockField = new BlockField(maxClearLine);
+                        for (OperationWithKey key : operationWithKeys) {
+                            Field test = FieldFactory.createField(maxClearLine);
+                            Mino mino = key.getMino();
+                            test.putMino(mino, key.getX(), key.getY());
+                            test.insertWhiteLineWithKey(key.getNeedDeletedKey());
+                            blockField.merge(test, mino.getBlock());
+                        }
+                        return blockField;
+                    })
+                    .collect(Collectors.toList());
 
-        MinoFactory minoFactory = new MinoFactory();
-        ColorConverter colorConverter = new ColorConverter();
-        for (BlockField blockField : blockFields) {
-            ColoredField coloredField = ColoredFieldFactory.createField(24);
-            fillInField(coloredField, ColorType.Gray, field);
+            MinoFactory minoFactory = new MinoFactory();
+            ColorConverter colorConverter = new ColorConverter();
+            for (BlockField blockField : blockFields) {
+                ColoredField coloredField = ColoredFieldFactory.createField(24);
+                fillInField(coloredField, ColorType.Gray, field);
 
-            for (Block block : Block.values()) {
-                Field target = blockField.get(block);
-                ColorType colorType = colorConverter.parseToColorType(block);
-                fillInField(coloredField, colorType, target);
-            }
+                for (Block block : Block.values()) {
+                    Field target = blockField.get(block);
+                    ColorType colorType = colorConverter.parseToColorType(block);
+                    fillInField(coloredField, colorType, target);
+                }
 //            System.out.println(ColoredFieldView.toString(coloredField));
-            Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
-            String encode = tetfu.encode(coloredField, Collections.singletonList(TetfuElement.EMPTY));
-            System.out.println(String.format("v115@%s", encode));
+                Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
+                String encode = tetfu.encode(coloredField, singletonList(TetfuElement.EMPTY));
+                System.out.println(String.format("v115@%s", encode));
+            }
+            System.out.println(operationsWithKey.size());
         }
-        System.out.println(operationsWithKey.size());
+
+
 
 //        List<List<FullLimitedMino>> lists = Arrays.asList(
 //                singletonList(create(minoFactory, Block.I, Rotate.Left, PositionLimit.OddX, 0L, 0, 3)),
@@ -139,7 +150,7 @@ public class Main3 {
         return FullLimitedMino.create(mino, positionLimit, DeleteKey.create(mino, deleteKey, lowerY, upperY));
     }
 
-    private static List<List<OperationWithKey>> search(List<Block> usedBlocks, Field field, int maxClearLine) {
+    private static List<List<OperationWithKey>> search(List<Block> usedBlocks, Field field, int maxClearLine, Field verifyField) {
         MinoFactory minoFactory = new MinoFactory();
         PositionLimitParser positionLimitParser = new PositionLimitParser(minoFactory, maxClearLine);
         LockedReachableThreadLocal threadLocal = new LockedReachableThreadLocal(maxClearLine);
@@ -181,7 +192,7 @@ public class Main3 {
                 .limit(Long.MAX_VALUE)
                 .peek(System.out::println)
                 .flatMap(sets -> new CrossBuilder(sets, field, maxClearLine).create().stream())
-                .filter(operationWithKeys -> BuildUp.existsValidBuildPattern(field, operationWithKeys, maxClearLine, threadLocal.get()))
+                .filter(operationWithKeys -> BuildUp.existsValidBuildPattern(verifyField, operationWithKeys, maxClearLine, threadLocal.get()))
 //                .peek(System.out::println)
                 .collect(Collectors.toList());
     }

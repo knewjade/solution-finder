@@ -113,7 +113,7 @@ public class CrossBuilder {
                         int[] history = nextXField.getxHistory().getHistory();
                         assert fullLimitedMinos.length == history.length;
                         List<OperationWithKey> result = new ArrayList<>();
-                        for (int i = 0, length = fullLimitedMinos.length; i < length; i++) {
+                        for (int i = 0, length = history.length; i < length; i++) {
                             FullLimitedMino limitedMino = fullLimitedMinos[i];
                             int x = history[i];
 
