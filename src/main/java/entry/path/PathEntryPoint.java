@@ -1,6 +1,20 @@
 package entry.path;
 
+import common.OperationHelper;
+import common.Stopwatch;
+import common.SyntaxException;
+import common.buildup.BuildUp;
 import common.datastore.Operation;
+import common.datastore.OperationWithKey;
+import common.datastore.Operations;
+import common.iterable.PermutationIterable;
+import common.pattern.PiecesGenerator;
+import common.tetfu.Tetfu;
+import common.tetfu.TetfuElement;
+import common.tetfu.common.ColorConverter;
+import common.tetfu.common.ColorType;
+import common.tetfu.field.ColoredField;
+import common.tetfu.field.ColoredFieldFactory;
 import core.action.reachable.LockedReachable;
 import core.field.Field;
 import core.field.FieldView;
@@ -11,19 +25,6 @@ import core.srs.MinoRotation;
 import core.srs.Rotate;
 import entry.EntryPoint;
 import entry.searching_pieces.EnumeratePiecesCore;
-import common.buildup.BuildUp;
-import common.datastore.OperationWithKey;
-import common.Stopwatch;
-import common.SyntaxException;
-import common.iterable.PermutationIterable;
-import common.pattern.PiecesGenerator;
-import common.tetfu.Tetfu;
-import common.tetfu.TetfuElement;
-import common.tetfu.common.ColorConverter;
-import common.tetfu.common.ColorType;
-import common.tetfu.field.ColoredField;
-import common.tetfu.field.ColoredFieldFactory;
-import common.datastore.Operations;
 
 import java.io.*;
 import java.util.*;
@@ -293,9 +294,7 @@ public class PathEntryPoint implements EntryPoint {
     private void outputOperationsToCSV(File file, Collection<Operations> operations) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false), CHARSET))) {
             for (Operations allOperation : operations) {
-                String operationLine = allOperation.getOperations().stream()
-                        .map(this::parseOperationToString)
-                        .collect(Collectors.joining(","));
+                String operationLine = OperationHelper.parseToString(allOperation);
                 writer.write(operationLine);
                 writer.newLine();
             }
@@ -378,29 +377,6 @@ public class PathEntryPoint implements EntryPoint {
         } catch (Exception e) {
             throw new IllegalStateException("Failed to output file", e);
         }
-    }
-
-    private String parseOperationToString(Operation operation) {
-        return String.format("%s,%s,%d,%d",
-                operation.getBlock().getName(),
-                parseRotateToString(operation.getRotate()),
-                operation.getX(),
-                operation.getY()
-        );
-    }
-
-    private String parseRotateToString(Rotate rotate) {
-        switch (rotate) {
-            case Spawn:
-                return "0";
-            case Left:
-                return "L";
-            case Reverse:
-                return "2";
-            case Right:
-                return "R";
-        }
-        throw new IllegalStateException("No reachable");
     }
 
     private void output() throws IOException {

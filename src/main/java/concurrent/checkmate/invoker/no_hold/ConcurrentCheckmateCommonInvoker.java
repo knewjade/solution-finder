@@ -6,7 +6,7 @@ import core.field.Field;
 import core.mino.Block;
 import common.datastore.ComparablePieces;
 import searcher.checkmate.Checkmate;
-import searcher.common.Result;
+import common.datastore.Result;
 import common.datastore.action.Action;
 
 import java.util.ArrayList;

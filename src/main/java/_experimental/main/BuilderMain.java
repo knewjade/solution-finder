@@ -17,8 +17,9 @@ import common.Stopwatch;
 import common.iterable.AllPermutationIterable;
 import common.iterable.CombinationIterable;
 import searcher.checker.CheckerUsingHold;
-import searcher.common.Result;
+import common.datastore.Result;
 import common.datastore.action.Action;
+import common.ResultHelper;
 import searcher.common.validator.BuildValidator;
 
 import java.util.ArrayList;
@@ -83,7 +84,7 @@ public class BuilderMain {
 
             if (checkResult) {
                 Result result = builder.getResult();
-                List<Operation> operations = result.createOperations();
+                List<Operation> operations = ResultHelper.createOperations(result);
                 ArrayList<Block> operationBlocks = new ArrayList<>();
                 for (Operation operation : operations) {
                     operationBlocks.add(operation.getBlock());

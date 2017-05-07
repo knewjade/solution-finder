@@ -4,7 +4,7 @@ import common.datastore.Operation;
 import core.action.candidate.Candidate;
 import common.datastore.Pair;
 import core.mino.Block;
-import searcher.common.Result;
+import common.datastore.Result;
 import common.datastore.action.Action;
 import searcher.common.validator.FullValidator;
 import searcher.full_checkmate.FullCheckmate;

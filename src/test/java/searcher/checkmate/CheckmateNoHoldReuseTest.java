@@ -10,8 +10,8 @@ import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import common.Stopwatch;
 import org.junit.Test;
-import searcher.common.Result;
-import searcher.common.ResultHelper;
+import common.datastore.Result;
+import common.ResultHelper;
 import common.datastore.action.Action;
 import searcher.common.validator.PerfectValidator;
 

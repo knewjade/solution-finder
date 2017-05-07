@@ -1,7 +1,7 @@
 package searcher.checker;
 
 import searcher.common.DataPool;
-import searcher.common.Result;
+import common.datastore.Result;
 import common.datastore.order.Order;
 
 import java.util.ArrayList;

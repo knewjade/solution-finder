@@ -1,6 +1,6 @@
 package common.datastore;
 
-import common.FieldComparator;
+import common.comparator.FieldComparator;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
@@ -38,5 +38,12 @@ public class BlockField implements Comparable<BlockField> {
 
     public Field get(Block block) {
         return map.getOrDefault(block, EMPTY_FIELD);
+    }
+
+    public Field getMergedField() {
+        Field field = FieldFactory.createField(height);
+        for (Field fieldEachBlock : map.values())
+            field.merge(fieldEachBlock);
+        return field;
     }
 }

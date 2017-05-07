@@ -1,5 +1,6 @@
 package common;
 
+import common.comparator.FieldComparator;
 import core.field.Field;
 import core.field.FieldFactory;
 import org.junit.Test;

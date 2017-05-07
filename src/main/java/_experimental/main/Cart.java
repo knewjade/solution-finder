@@ -15,11 +15,12 @@ import common.Stopwatch;
 import common.iterable.AllPermutationIterable;
 import common.iterable.CombinationIterable;
 import searcher.checker.Checker;
-import searcher.common.Result;
+import common.datastore.Result;
 import common.datastore.action.Action;
 import common.tree.AnalyzeTree;
 import common.tree.ConcurrentVisitedTree;
 import common.tree.VisitedTree;
+import common.ResultHelper;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -155,7 +156,7 @@ public class Cart {
 
                 if (checkResult) {
                     Result result = checker.getResult();
-                    List<Operation> operations = result.createOperations();
+                    List<Operation> operations = ResultHelper.createOperations(result);
                     ArrayList<Block> operationBlocks = new ArrayList<>();
                     for (Operation operation : operations) {
                         operationBlocks.add(operation.getBlock());

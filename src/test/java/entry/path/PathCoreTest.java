@@ -16,7 +16,7 @@ import java.util.concurrent.Executors;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static searcher.common.OperationsFactory.createOperations;
+import static common.OperationsFactory.createOperations;
 
 // TODO: unittest pathを修正次第、内容を見直す
 public class PathCoreTest {

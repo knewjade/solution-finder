@@ -1,4 +1,4 @@
-package searcher.common;
+package common;
 
 import common.datastore.Operation;
 import common.datastore.action.Action;
@@ -29,7 +29,7 @@ public class OperationHistory {
         return new OperationHistory(newArray, nextIndex + 1);
     }
 
-    int[] getOperationNumbers() {
+    public int[] getOperationNumbers() {
         return operationNumbers;
     }
 

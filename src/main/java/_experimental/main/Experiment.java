@@ -21,8 +21,9 @@ import common.Stopwatch;
 import common.iterable.AllPermutationIterable;
 import common.iterable.CombinationIterable;
 import searcher.checker.CheckerUsingHold;
-import searcher.common.Result;
+import common.datastore.Result;
 import common.datastore.action.Action;
+import common.ResultHelper;
 import searcher.common.validator.BuildValidator;
 import searcher.common.validator.Validator;
 
@@ -90,7 +91,7 @@ public class Experiment {
 
             if (checkResult) {
                 Result result = builder.getResult();
-                List<Operation> operations = result.createOperations();
+                List<Operation> operations = ResultHelper.createOperations(result);
                 ArrayList<Block> operationBlocks = new ArrayList<>();
                 for (Operation operation : operations) {
                     operationBlocks.add(operation.getBlock());
@@ -186,7 +187,7 @@ public class Experiment {
             Result result = builder.getResult();
             System.out.println(blocks);
             System.out.println(result);
-            List<Operation> operations2 = result.createOperations();
+            List<Operation> operations2 = ResultHelper.createOperations(result);
 
             AllPermutationIterable<Operation> permutations = new AllPermutationIterable<>(operations2);
             for (List<Operation> allOperations : permutations) {

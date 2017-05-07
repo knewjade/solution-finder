@@ -4,7 +4,7 @@ import core.action.candidate.Candidate;
 import core.field.Field;
 import core.mino.Block;
 import core.mino.MinoFactory;
-import searcher.common.Result;
+import common.datastore.Result;
 import searcher.core.SimpleSearcherCore;
 import common.datastore.action.Action;
 import common.datastore.order.DepthOrder;

@@ -373,4 +373,16 @@ public class MiddleField implements Field {
             return BitOperators.bitToY(lowerBit) + 6;
         }
     }
+
+    // TODO: unittest
+    @Override
+    public void invert(int maxHeight) {
+        if (maxHeight < 6) {
+            xBoardLow = ~xBoardLow & BitOperators.getRowMaskBelowY(maxHeight);
+            xBoardHigh = 0L;
+        } else {
+            xBoardLow = ~xBoardLow & 0xfffffffffffffffL;
+            xBoardHigh = ~xBoardHigh & BitOperators.getRowMaskBelowY(maxHeight - 6);
+        }
+    }
 }

@@ -207,4 +207,10 @@ public class SmallField implements Field {
         long lowerBit = xBoard & (-xBoard);
         return BitOperators.bitToY(lowerBit);
     }
+
+    // TODO: unittest
+    @Override
+    public void invert(int maxHeight) {
+        xBoard = ~xBoard & BitOperators.getRowMaskBelowY(maxHeight);
+    }
 }

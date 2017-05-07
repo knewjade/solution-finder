@@ -36,29 +36,32 @@ import static java.util.Collections.singletonList;
 
 public class Main3 {
     public static void main(String[] args) {
-        // I, O, O, T, T, L, J, S, Z, Z
-        List<Block> usedBlocks = Arrays.asList(
-                Block.O, Block.L, Block.S, Block.J, Block.Z, Block.I
-        );
-
         Field field = FieldFactory.createField("" +
-                "___XXXXXXX" +
-                "___XXXXXXX" +
-                "___XXXXXXX" +
-                "___XXXXXXX"
+                "____XXXXXX" +
+                "____XXXXXX" +
+                "____XXXXXX" +
+                "____XXXXXX"
         );
         int maxClearLine = 4;
 
 //        Field verifyField = field;
-        Field verifyField = FieldFactory.createField(5);
+        Field verifyField = field.freeze(maxClearLine);
         System.out.println(FieldView.toString(field, maxClearLine));
 
         Stopwatch stopwatch = Stopwatch.createStoppedStopwatch();
         stopwatch.start();
 
-        List<Block> blocks = Arrays.asList(Block.values());
-        CombinationIterable<Block> combinationIterable = new CombinationIterable<>(blocks, 3);
-        for (List<Block> usedBlocks2 : combinationIterable) {
+        Set<List<Block>> sets = new HashSet<>();
+        List<Block> allBlocks = Arrays.asList(Block.values());
+        List<Block> blocks = new ArrayList<>();
+        blocks.addAll(allBlocks);
+        blocks.addAll(allBlocks);
+        CombinationIterable<Block> combinationIterable = new CombinationIterable<>(blocks, 4);
+        for (List<Block> blockList : combinationIterable) {
+            blockList.sort(Comparator.comparingInt(allBlocks::indexOf));
+            sets.add(blockList);
+        }
+        for (List<Block> usedBlocks2 : sets) {
             List<List<OperationWithKey>> operationsWithKey = search(usedBlocks2, field, maxClearLine, verifyField);
             List<BlockField> blockFields = operationsWithKey.stream()
                     .map(operationWithKeys -> {
@@ -73,6 +76,7 @@ public class Main3 {
                         return blockField;
                     })
                     .collect(Collectors.toList());
+//            System.out.println(operationsWithKey.size());
 
             MinoFactory minoFactory = new MinoFactory();
             ColorConverter colorConverter = new ColorConverter();
@@ -90,9 +94,7 @@ public class Main3 {
                 String encode = tetfu.encode(coloredField, singletonList(TetfuElement.EMPTY));
                 System.out.println(String.format("v115@%s", encode));
             }
-            System.out.println(operationsWithKey.size());
         }
-
 
 
 //        List<List<FullLimitedMino>> lists = Arrays.asList(
@@ -128,6 +130,23 @@ public class Main3 {
 //            System.out.println(operationWithKeys);
 //        }
 
+//        MinoFactory minoFactory = new MinoFactory();
+//        List<List<FullLimitedMino>> lists = Arrays.asList(
+//                singletonList(create(minoFactory, Block.J, Rotate.Right, PositionLimit.OddX, 0L, 0, 2)),
+//                singletonList(create(minoFactory, Block.L, Rotate.Left, PositionLimit.EvenX, 1048576, 0, 4))
+//        );
+//        CrossBuilder crossBuilder = new CrossBuilder(lists, FieldFactory.createField("" +
+//                "__XXXXXXXX" +
+//                "__XXXXXXXX" +
+//                "__XXXXXXXX" +
+//                "__XXXXXXXX"
+//        ), maxClearLine);
+//        List<List<OperationWithKey>> lists1 = crossBuilder.create();
+//        for (List<OperationWithKey> operationWithKeys : lists1) {
+//            System.out.println(operationWithKeys);
+//        }
+//        System.out.println(lists1.size());
+
         stopwatch.stop();
 
         System.out.println(stopwatch.toMessage(TimeUnit.MILLISECONDS));
@@ -150,7 +169,7 @@ public class Main3 {
         return FullLimitedMino.create(mino, positionLimit, DeleteKey.create(mino, deleteKey, lowerY, upperY));
     }
 
-    private static List<List<OperationWithKey>> search(List<Block> usedBlocks, Field field, int maxClearLine, Field verifyField) {
+    public static List<List<OperationWithKey>> search(List<Block> usedBlocks, Field field, int maxClearLine, Field verifyField) {
         MinoFactory minoFactory = new MinoFactory();
         PositionLimitParser positionLimitParser = new PositionLimitParser(minoFactory, maxClearLine);
         LockedReachableThreadLocal threadLocal = new LockedReachableThreadLocal(maxClearLine);
@@ -159,13 +178,13 @@ public class Main3 {
         BlockCounter blockCounter = new BlockCounter(usedBlocks);
         ColumnParityLimitation limitation = new ColumnParityLimitation(blockCounter, parityField, maxClearLine);
 
-        System.out.println(parityField);
-        System.out.println(blockCounter);
+//        System.out.println(parityField);
+//        System.out.println(blockCounter);
 
         return limitation.enumerate().parallelStream()
                 .map(EstimateBuilder::create)
                 .flatMap(Collection::stream)
-                .peek(System.out::println)
+//                .peek(System.out::println)
                 .flatMap((List<DeltaLimitedMino> deltaLimitedMinos) -> {
                     // 変換 DeltaLimitedMinos to FullLimitedMino
                     List<List<FullLimitedMino>> collect = deltaLimitedMinos.stream()
@@ -186,13 +205,19 @@ public class Main3 {
                         return -Integer.compare(o1.size(), o2.size());
                     });
 
-                    // 分割する
                     return Stream.of(collect);
                 })
                 .limit(Long.MAX_VALUE)
-                .peek(System.out::println)
+//                .peek(System.out::println)
                 .flatMap(sets -> new CrossBuilder(sets, field, maxClearLine).create().stream())
                 .filter(operationWithKeys -> BuildUp.existsValidBuildPattern(verifyField, operationWithKeys, maxClearLine, threadLocal.get()))
+//                .filter(operationWithKeys -> {
+//                    for (OperationWithKey operationWithKey : operationWithKeys) {
+//                        if (operationWithKey.getNeedDeletedKey() != 0L)
+//                            return false;
+//                    }
+//                    return true;
+//                })
 //                .peek(System.out::println)
                 .collect(Collectors.toList());
     }

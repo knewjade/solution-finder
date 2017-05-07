@@ -24,8 +24,9 @@ import common.buildup.BuildUp;
 import common.iterable.PermutationIterable;
 import common.pattern.PiecesGenerator;
 import common.tree.VisitedTree;
-import searcher.common.Result;
+import common.datastore.Result;
 import common.datastore.action.Action;
+import common.ResultHelper;
 import searcher.common.validator.FullValidator;
 import searcher.common.validator.PathFullValidator;
 import searcher.common.validator.PerfectValidator;
@@ -216,7 +217,7 @@ class PathCore {
 
             // Resultからオペレーションに変換。オペレーションが長い順に並び替える
             List<List<Operation>> sortedOperations = search.stream()
-                    .map(Result::createOperations)
+                    .map(ResultHelper::createOperations)
                     .sorted(Comparator.comparing(List::size, reverseOrder()))
                     .collect(Collectors.toList());
 
@@ -254,7 +255,7 @@ class PathCore {
                 // 統合される瞬間までのパスを探索するためのValidator
                 PathFullValidator pathFullValidator = PathFullValidator.createWithoutHold(expectField, perfectValidator);
 
-                pathCheckList.add(new Pair<>(result.createOperations(), pathFullValidator));
+                pathCheckList.add(new Pair<>(ResultHelper.createOperations(result), pathFullValidator));
             }
         }
         return pathCheckList;
@@ -265,7 +266,7 @@ class PathCore {
 
         int currentMaxClearLine = maxClearLine;
         Field current = field.freeze(currentMaxClearLine);
-        for (Operation operation : result.createOperations()) {
+        for (Operation operation : ResultHelper.createOperations(result)) {
             Block block = operation.getBlock();
             Rotate rotate = operation.getRotate();
             int x = operation.getX();

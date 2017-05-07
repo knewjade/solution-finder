@@ -96,4 +96,7 @@ public interface Field {
 
     // 最も低い位置にあるブロックのY座標を取得
     int getLowerY();
+
+    // maxHeight行より下にあるブロックと空を反転させる  // maxHeight行以上のブロックは削除する
+    void invert(int maxHeight);
 }

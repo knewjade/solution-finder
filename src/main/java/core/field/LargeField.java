@@ -149,4 +149,9 @@ public class LargeField implements Field {
     public int getLowerY() {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public void invert(int maxHeight) {
+        throw new UnsupportedOperationException();
+    }
 }

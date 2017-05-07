@@ -5,7 +5,7 @@ import core.action.candidate.Candidate;
 import common.datastore.Pair;
 import concurrent.full_checkmate.FullCheckmateNoHoldThreadLocal;
 import core.field.Field;
-import searcher.common.Result;
+import common.datastore.Result;
 import common.datastore.action.Action;
 import searcher.common.validator.FullValidator;
 import searcher.full_checkmate.FullCheckmate;

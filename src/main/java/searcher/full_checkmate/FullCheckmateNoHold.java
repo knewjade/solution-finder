@@ -6,7 +6,7 @@ import core.mino.Block;
 import core.mino.MinoFactory;
 import searcher.checkmate.CheckmateDataPool;
 import searcher.core.FullSearcherCore;
-import searcher.common.Result;
+import common.datastore.Result;
 import common.datastore.action.Action;
 import common.datastore.order.NormalOrder;
 import common.datastore.order.Order;

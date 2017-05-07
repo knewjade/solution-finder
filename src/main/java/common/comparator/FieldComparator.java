@@ -1,4 +1,4 @@
-package common;
+package common.comparator;
 
 import core.field.Field;
 

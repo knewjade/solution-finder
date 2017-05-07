@@ -3,7 +3,7 @@ package searcher.checkmate;
 import core.action.candidate.Candidate;
 import core.field.Field;
 import core.mino.Block;
-import searcher.common.Result;
+import common.datastore.Result;
 import common.datastore.action.Action;
 
 import java.util.List;

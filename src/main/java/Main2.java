@@ -12,11 +12,10 @@ import common.datastore.Operations;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static searcher.common.OperationsFactory.createOperations;
+import static common.OperationsFactory.createOperations;
 
 
 public class Main2 {
-
     public static void main(String[] args) {
         Field fieldOrigin = FieldFactory.createField("" +
                 "XXXX____XX" +

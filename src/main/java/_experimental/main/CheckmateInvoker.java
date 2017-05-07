@@ -11,7 +11,7 @@ import common.Stopwatch;
 import searcher.checkmate.Checkmate;
 import searcher.checkmate.CheckmateNoHold;
 import searcher.checkmate.CheckmateUsingHold;
-import searcher.common.Result;
+import common.datastore.Result;
 import common.datastore.action.Action;
 import searcher.common.validator.PerfectValidator;
 

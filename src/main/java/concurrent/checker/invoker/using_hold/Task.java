@@ -7,9 +7,10 @@ import common.datastore.Pair;
 import common.order.Pieces;
 import core.mino.Block;
 import searcher.checker.Checker;
-import searcher.common.Result;
+import common.datastore.Result;
 import common.datastore.action.Action;
 import common.tree.VisitedTree;
+import common.ResultHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,7 @@ class Task implements Callable<Pair<List<Block>, Boolean>> {
         // パフェが見つかったツモ順(≠探索時のツモ順)へと、ホールドを使ってできるパターンを逆算
         if (checkResult) {
             Result result = checker.getResult();
-            List<Operation> operations = result.createOperations();
+            List<Operation> operations = ResultHelper.createOperations(result);
             ArrayList<Block> operationBlocks = parseOperationsToBlockList(operations);
 
             int reverseMaxDepth = result.getLastHold() != null ? operationBlocks.size() + 1 : operationBlocks.size();

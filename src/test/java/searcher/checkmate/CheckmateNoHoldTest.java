@@ -6,8 +6,8 @@ import core.field.FieldFactory;
 import core.mino.Block;
 import _experimental.main.CheckmateInvoker;
 import org.junit.Test;
-import searcher.common.Result;
-import searcher.common.ResultHelper;
+import common.datastore.Result;
+import common.ResultHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;

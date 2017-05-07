@@ -2,8 +2,8 @@ package common.datastore.order;
 
 import core.field.Field;
 import core.mino.Block;
-import common.FieldComparator;
-import searcher.common.OperationHistory;
+import common.comparator.FieldComparator;
+import common.OperationHistory;
 
 import java.util.Comparator;
 

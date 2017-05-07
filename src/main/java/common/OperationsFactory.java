@@ -1,4 +1,4 @@
-package searcher.common;
+package common;
 
 import common.datastore.Operation;
 import common.datastore.SimpleOperation;
