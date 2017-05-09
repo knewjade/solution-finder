@@ -336,13 +336,15 @@ public class PathEntryPoint implements EntryPoint {
                 // テト譜の作成
                 ArrayList<String> texts = new ArrayList<>();
                 ArrayList<TetfuElement> elements = new ArrayList<>();
+                ColoredField prevField = initField;
                 for (Operation operation : allOperation.getOperations()) {
                     Block block = operation.getBlock();
                     Rotate rotate = operation.getRotate();
                     int x = operation.getX();
                     int y = operation.getY();
-                    elements.add(new TetfuElement(colorConverter.parseToColorType(block), rotate, x, y));
+                    elements.add(new TetfuElement(prevField, colorConverter.parseToColorType(block), rotate, x, y));
                     texts.add(String.format("%s-%s %d,%d", block, rotate, x, y));
+                    prevField = null;
                 }
 
                 // 組めるパターンを列挙
@@ -364,7 +366,7 @@ public class PathEntryPoint implements EntryPoint {
 
                 String text = String.join(", ", texts) + set;
                 Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
-                String encode = tetfu.encode(initField, elements);
+                String encode = tetfu.encode(elements);
 
                 writer.write(String.format("<div><a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a></div>", encode, text));
                 writer.newLine();

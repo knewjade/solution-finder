@@ -1,9 +1,5 @@
 package common.tetfu;
 
-import core.mino.Block;
-import core.mino.Mino;
-import core.mino.MinoFactory;
-import core.srs.Rotate;
 import common.tetfu.common.ActionFlags;
 import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
@@ -15,6 +11,10 @@ import common.tetfu.encorder.CommentEncoder;
 import common.tetfu.encorder.FieldEncoder;
 import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
+import core.mino.Block;
+import core.mino.Mino;
+import core.mino.MinoFactory;
+import core.srs.Rotate;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -53,13 +53,6 @@ public class Tetfu {
         return String.format("#Q=[%s](%s)%s", hold != null ? hold.getName() : "", current.getName(), names);
     }
 
-    private static String escapeComment(String comment) {
-        String escape = TetfuTable.escape(comment);
-        if (4095 <= escape.length())
-            throw new UnsupportedOperationException("Escaped comment is less than 4095");
-        return escape;
-    }
-
     private final List<Integer> encodedValues = new ArrayList<>();
     private final MinoFactory minoFactory;
     private final ColorConverter converter;
@@ -72,29 +65,31 @@ public class Tetfu {
     }
 
     // コメント・フィールドは初期設定のみ設定可能
-    public String encode(ColoredField initField, List<TetfuElement> elements) {
-        assert initField.getMaxHeight() == TETFU_MAX_HEIGHT;
-        ColoredField field = initField.freeze(TETFU_MAX_HEIGHT);
+    public String encode(List<TetfuElement> elements) {
         ColoredField prevField = ColoredFieldFactory.createField(TETFU_MAX_HEIGHT);
         String prevComment = "";
 
         for (int index = 0; index < elements.size(); index++) {
+            TetfuElement element = elements.get(index);
+            ColoredField field = element.getField().orElse(prevField);
+
             // field settings
             // prevFieldは、ひとつ前のミノを置いてできたフィールド
             // fieldは次に表示させたいフィールド。今回は、最初をのぞいてひとつ前のミノを置いてできたフィールドをそのまま利用
             encodeField(prevField, field);
 
-            TetfuElement element = elements.get(index);
             String comment = element.getEscapedComment();
-            ActionFlags flags = new ActionFlags(comment, prevComment, index);
+            ActionFlags flags = new ActionFlags(comment, prevComment, index, element);
             parseAction(element, flags);
 
             ColorType colorType = element.getColorType();
-            if (flags.isLock && ColorType.isMinoBlock(colorType)) {
-                Block block = converter.parseToBlock(colorType);
-                Mino mino = minoFactory.create(block, element.getRotate());
+            if (flags.isLock) {
+                if (ColorType.isMinoBlock(colorType)) {
+                    Block block = converter.parseToBlock(colorType);
+                    Mino mino = minoFactory.create(block, element.getRotate());
+                    field.putMino(mino, element.getX(), element.getY());
+                }
 
-                field.putMino(mino, element.getX(), element.getY());
                 field.clearLine();
 
                 if (flags.isBlockUp) {
@@ -222,14 +217,17 @@ public class Tetfu {
             pages.add(tetfuPage);
 
             ColorType colorType = actionDecoder.colorType;
-            if (actionDecoder.isLock && ColorType.isMinoBlock(colorType)) {
-                Rotate rotate = actionDecoder.rotate;
-                Coordinate coordinate = actionDecoder.coordinate;
+            if (actionDecoder.isLock) {
+                if (ColorType.isMinoBlock(colorType)) {
+                    Rotate rotate = actionDecoder.rotate;
+                    Coordinate coordinate = actionDecoder.coordinate;
 
-                Block block = converter.parseToBlock(colorType);
-                Mino mino = minoFactory.create(block, rotate);
+                    Block block = converter.parseToBlock(colorType);
+                    Mino mino = minoFactory.create(block, rotate);
 
-                currentField.putMino(mino, coordinate.x, coordinate.y);
+                    currentField.putMino(mino, coordinate.x, coordinate.y);
+                }
+
                 currentField.clearLine();
 
                 if (actionDecoder.isBlockUp) {

@@ -32,12 +32,10 @@ public class TetfuTest {
                 new TetfuElement(ColorType.T, Rotate.Spawn, 5, 0)
         );
 
-        ArrayColoredField field = new ArrayColoredField(Tetfu.TETFU_MAX_HEIGHT);
-
         MinoFactory factory = new MinoFactory();
         ColorConverter converter = new ColorConverter();
         Tetfu tetfu = new Tetfu(factory, converter);
-        String encode = tetfu.encode(field, elements);
+        String encode = tetfu.encode(elements);
         assertThat(encode, is("vhA1QJ"));
     }
 
@@ -54,12 +52,10 @@ public class TetfuTest {
                 new TetfuElement(ColorType.J, Rotate.Right, 0, 3)
         );
 
-        ArrayColoredField field = new ArrayColoredField(Tetfu.TETFU_MAX_HEIGHT);
-
         MinoFactory factory = new MinoFactory();
         ColorConverter converter = new ColorConverter();
         Tetfu tetfu = new Tetfu(factory, converter);
-        String encode = tetfu.encode(field, elements);
+        String encode = tetfu.encode(elements);
         assertThat(encode, is("vhHSQJWyBJnBXmBUoBVhBTpBOfB"));
     }
 
@@ -75,44 +71,42 @@ public class TetfuTest {
                 new TetfuElement(ColorType.T, Rotate.Reverse, 7, 1)
         );
 
-        ArrayColoredField field = new ArrayColoredField(Tetfu.TETFU_MAX_HEIGHT);
-
         MinoFactory factory = new MinoFactory();
         ColorConverter converter = new ColorConverter();
         Tetfu tetfu = new Tetfu(factory, converter);
-        String encode = tetfu.encode(field, elements);
+        String encode = tetfu.encode(elements);
         assertThat(encode, is("vhGBQYBABBAAAnmQBACBAAA+tQBADBAAALpQBAEBAA?AcqQBAFBAAAKfQSAlfrHBFwDfE2Cx2Bl/PwB53AAAlsQAA"));
     }
 
     @Test
     public void encode4() throws Exception {
-        List<TetfuElement> elements = Collections.singletonList(
-                new TetfuElement(ColorType.I, Rotate.Spawn, 5, 0)
-        );
-
         MinoFactory factory = new MinoFactory();
         ArrayColoredField field = new ArrayColoredField(Tetfu.TETFU_MAX_HEIGHT);
         field.putMino(factory.create(Block.I, Rotate.Spawn), 1, 0);
 
+        List<TetfuElement> elements = Collections.singletonList(
+                new TetfuElement(field, ColorType.I, Rotate.Spawn, 5, 0, "")
+        );
+
         ColorConverter converter = new ColorConverter();
         Tetfu tetfu = new Tetfu(factory, converter);
-        String encode = tetfu.encode(field, elements);
+        String encode = tetfu.encode(elements);
         assertThat(encode, is("bhzhPexQJ"));
     }
 
     @Test
     public void encode5() throws Exception {
-        List<TetfuElement> elements = Collections.singletonList(
-                new TetfuElement(ColorType.I, Rotate.Reverse, 6, 0)
-        );
-
         MinoFactory factory = new MinoFactory();
         ArrayColoredField field = new ArrayColoredField(Tetfu.TETFU_MAX_HEIGHT);
         field.putMino(factory.create(Block.I, Rotate.Spawn), 1, 0);
 
+        List<TetfuElement> elements = Collections.singletonList(
+                new TetfuElement(field, ColorType.I, Rotate.Reverse, 6, 0)
+        );
+
         ColorConverter converter = new ColorConverter();
         Tetfu tetfu = new Tetfu(factory, converter);
-        String encode = tetfu.encode(field, elements);
+        String encode = tetfu.encode(elements);
         assertThat(encode, is("bhzhPehQJ"));
     }
 
@@ -123,13 +117,28 @@ public class TetfuTest {
         );
 
         MinoFactory factory = new MinoFactory();
-        ArrayColoredField field = new ArrayColoredField(Tetfu.TETFU_MAX_HEIGHT);
 
         ColorConverter converter = new ColorConverter();
         Tetfu tetfu = new Tetfu(factory, converter);
-        String encode = tetfu.encode(field, elements);
+        String encode = tetfu.encode(elements);
         assertThat(encode, is("vhAAgH"));
     }
+
+    @Test
+    public void encode7() throws Exception {
+        List<TetfuElement> elements = Arrays.asList(
+                TetfuElement.createFieldOnly(ColoredFieldFactory.createColoredField("XXXXLLXXXX")),
+                TetfuElement.createFieldOnly(ColoredFieldFactory.createColoredField("XXXXJJXXXX"))
+        );
+
+        MinoFactory factory = new MinoFactory();
+
+        ColorConverter converter = new ColorConverter();
+        Tetfu tetfu = new Tetfu(factory, converter);
+        String encode = tetfu.encode(elements);
+        assertThat(encode, is("bhD8hlD8JeAgHbhD8h0D8JeAAA"));
+    }
+
 
     @Test
     public void encodeQuiz1() throws Exception {
@@ -140,12 +149,10 @@ public class TetfuTest {
                 new TetfuElement(ColorType.L, Rotate.Right, 0, 1, quiz)
         );
 
-        ArrayColoredField field = new ArrayColoredField(Tetfu.TETFU_MAX_HEIGHT);
-
         MinoFactory factory = new MinoFactory();
         ColorConverter converter = new ColorConverter();
         Tetfu tetfu = new Tetfu(factory, converter);
-        String encode = tetfu.encode(field, elements);
+        String encode = tetfu.encode(elements);
         assertThat(encode, is("vhAKJYUAFLDmClcJSAVDEHBEooRBMoAVB"));
     }
 
@@ -159,12 +166,10 @@ public class TetfuTest {
                 new TetfuElement(ColorType.J, Rotate.Left, 3, 1, quiz)
         );
 
-        ArrayColoredField field = new ArrayColoredField(Tetfu.TETFU_MAX_HEIGHT);
-
         MinoFactory factory = new MinoFactory();
         ColorConverter converter = new ColorConverter();
         Tetfu tetfu = new Tetfu(factory, converter);
-        String encode = tetfu.encode(field, elements);
+        String encode = tetfu.encode(elements);
         assertThat(encode, is("vhBKJYVAFLDmClcJSAVTXSAVG88AYS88AZAAAA+qB"));
     }
 
@@ -235,12 +240,10 @@ public class TetfuTest {
                 new TetfuElement(ColorType.T, Rotate.Reverse, 7, 1)
         );
 
-        ArrayColoredField field = new ArrayColoredField(Tetfu.TETFU_MAX_HEIGHT);
-
         MinoFactory factory = new MinoFactory();
         ColorConverter converter = new ColorConverter();
         Tetfu tetfu = new Tetfu(factory, converter);
-        String encode = tetfu.encode(field, elements);
+        String encode = tetfu.encode(elements);
 
         List<TetfuPage> pages = tetfu.decode(encode);
 
@@ -323,5 +326,23 @@ public class TetfuTest {
                         "_XXXXXXXXI" +
                         "_XXXXXXXXI"
         ), pages.get(2).getField());
+    }
+
+    @Test
+    public void decode8() throws Exception {
+        String value = "bhD8hlD8JeAgHbhD8h0D8JeAAA";
+
+        MinoFactory factory = new MinoFactory();
+        ColorConverter converter = new ColorConverter();
+        Tetfu tetfu = new Tetfu(factory, converter);
+        List<TetfuPage> pages = tetfu.decode(value);
+
+        assertThat(pages.size(), is(2));
+        assertThat(pages.get(0).getColorType(), is(ColorType.Empty));
+        assertThat(pages.get(1).getColorType(), is(ColorType.Empty));
+        assertField(ColoredFieldFactory.createColoredField(
+                "" +
+                        "XXXXJJXXXX"
+        ), pages.get(1).getField());
     }
 }

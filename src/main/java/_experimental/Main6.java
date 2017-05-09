@@ -101,7 +101,7 @@ public class Main6 {
                 fillInField(coloredField, ColorType.Gray, field);
 
                 Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
-                String encode = tetfu.encode(coloredField, singletonList(TetfuElement.EMPTY));
+                String encode = tetfu.encode( singletonList(TetfuElement.createFieldOnly(coloredField)));
                 writer.write(String.format("%.2f %% => http://fumen.zui.jp/?v115@%s", percent * 100, encode));
                 writer.newLine();
             }

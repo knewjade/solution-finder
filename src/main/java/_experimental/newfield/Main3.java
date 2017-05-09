@@ -29,22 +29,20 @@ import core.srs.Rotate;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static java.util.Collections.singletonList;
 
 public class Main3 {
     public static void main(String[] args) {
         Field field = FieldFactory.createField("" +
-                "____XXXXXX" +
-                "____XXXXXX" +
-                "____XXXXXX" +
-                "____XXXXXX"
+                "XX______XX" +
+                "XX______XX" +
+                "XX______XX" +
+                "XX______XX"
         );
         int maxClearLine = 4;
 
-//        Field verifyField = field;
         Field verifyField = field.freeze(maxClearLine);
         System.out.println(FieldView.toString(field, maxClearLine));
 
@@ -56,15 +54,22 @@ public class Main3 {
         List<Block> blocks = new ArrayList<>();
         blocks.addAll(allBlocks);
         blocks.addAll(allBlocks);
-        CombinationIterable<Block> combinationIterable = new CombinationIterable<>(blocks, 4);
+        int popCount = (maxClearLine * 10 - field.getAllBlockCount()) / 4;
+        CombinationIterable<Block> combinationIterable = new CombinationIterable<>(blocks, popCount);
         for (List<Block> blockList : combinationIterable) {
             blockList.sort(Comparator.comparingInt(allBlocks::indexOf));
             sets.add(blockList);
         }
-        for (List<Block> usedBlocks2 : sets) {
-            List<List<OperationWithKey>> operationsWithKey = search(usedBlocks2, field, maxClearLine, verifyField);
-            List<BlockField> blockFields = operationsWithKey.stream()
+
+        TreeSet<Obj> allObjSet = new TreeSet<>(Comparator.comparing(o -> o.blockField));
+        int counter = 0;
+        for (List<Block> usedBlocks : sets) {
+            counter++;
+            System.out.println(counter + " / " + sets.size());
+            List<List<OperationWithKey>> operationsWithKey = search(usedBlocks, field, maxClearLine, verifyField);
+            List<Obj> objs = operationsWithKey.stream()
                     .map(operationWithKeys -> {
+                        boolean isDeleted = false;
                         BlockField blockField = new BlockField(maxClearLine);
                         for (OperationWithKey key : operationWithKeys) {
                             Field test = FieldFactory.createField(maxClearLine);
@@ -72,29 +77,43 @@ public class Main3 {
                             test.putMino(mino, key.getX(), key.getY());
                             test.insertWhiteLineWithKey(key.getNeedDeletedKey());
                             blockField.merge(test, mino.getBlock());
+
+                            if (key.getNeedDeletedKey() != 0L)
+                                isDeleted = true;
                         }
-                        return blockField;
+                        return new Obj(usedBlocks, blockField, isDeleted);
                     })
                     .collect(Collectors.toList());
+
+            allObjSet.addAll(objs);
+        }
+
+        ArrayList<Obj> allObjs = new ArrayList<>(allObjSet);
+        allObjs.sort(Main3::blockListComparator);
+
 //            System.out.println(operationsWithKey.size());
 
-            MinoFactory minoFactory = new MinoFactory();
-            ColorConverter colorConverter = new ColorConverter();
-            for (BlockField blockField : blockFields) {
-                ColoredField coloredField = ColoredFieldFactory.createField(24);
-                fillInField(coloredField, ColorType.Gray, field);
+        ColorConverter colorConverter = new ColorConverter();
 
-                for (Block block : Block.values()) {
-                    Field target = blockField.get(block);
-                    ColorType colorType = colorConverter.parseToColorType(block);
-                    fillInField(coloredField, colorType, target);
-                }
-//            System.out.println(ColoredFieldView.toString(coloredField));
-                Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
-                String encode = tetfu.encode(coloredField, singletonList(TetfuElement.EMPTY));
-                System.out.println(String.format("v115@%s", encode));
-            }
-        }
+        System.out.println("<h3>各ミノ最大1つずつ & ライン消去なし</h3>");
+        Predicate<Obj> objPredicate = obj -> !obj.isDouble && !obj.isDeleted;
+        List<TetfuElement> oneNoDelete = createTetfuElements(field, allObjs, colorConverter, objPredicate);
+        viewTetfu(oneNoDelete);
+
+        System.out.println("<h3>同一ミノを2つ利用 & ライン消去なし</h3>");
+        Predicate<Obj> objPredicate1 = obj -> obj.isDouble && !obj.isDeleted;
+        List<TetfuElement> doubleNoDelete = createTetfuElements(field, allObjs, colorConverter, objPredicate1);
+        viewTetfu(doubleNoDelete);
+
+        System.out.println("<h3>各ミノ最大1つずつ & ライン消去あり</h3>");
+        Predicate<Obj> objPredicate2 = obj -> !obj.isDouble && obj.isDeleted;
+        List<TetfuElement> oneDeleted = createTetfuElements(field, allObjs, colorConverter, objPredicate2);
+        viewTetfu(oneDeleted);
+
+        System.out.println("<h3>同一ミノを2つ利用 & ライン消去あり</h3>");
+        Predicate<Obj> objPredicate3 = obj -> obj.isDouble && obj.isDeleted;
+        List<TetfuElement> doubleDeleted = createTetfuElements(field, allObjs, colorConverter, objPredicate3);
+        viewTetfu(doubleDeleted);
 
 
 //        List<List<FullLimitedMino>> lists = Arrays.asList(
@@ -151,6 +170,81 @@ public class Main3 {
 
         System.out.println(stopwatch.toMessage(TimeUnit.MILLISECONDS));
 
+    }
+
+    private static int blockListComparator(Obj o1, Obj o2) {
+        List<Block> blocks1 = o1.blocks;
+        List<Block> blocks2 = o2.blocks;
+        int size1 = blocks1.size();
+        int size2 = blocks2.size();
+        int minSize = size1 < size2 ? size1 : size2;
+
+        for (int index = 0; index < minSize; index++) {
+            int compare = blocks1.get(index).compareTo(blocks2.get(index));
+            if (compare != 0)
+                return compare;
+        }
+
+        return Integer.compare(size1, size2);
+    }
+
+    private static List<TetfuElement> createTetfuElements(Field field, ArrayList<Obj> allObjs, ColorConverter colorConverter, Predicate<Obj> objPredicate) {
+        TreeSet<Obj> treeSet = new TreeSet<>(Main3::blockListComparator);
+        for (Obj obj : allObjs) {
+            if (!objPredicate.test(obj))
+                continue;
+
+            boolean add = treeSet.add(obj);
+            if (!add) {
+                SortedSet<Obj> objs = treeSet.tailSet(obj);
+                Obj same = objs.first();
+                assert same.blocks.equals(obj.blocks);
+                same.duplicate += 1;
+            }
+        }
+
+        return treeSet.stream()
+                .map(obj -> parseBlockFieldToTetfuElement(field, colorConverter, obj))
+                .collect(Collectors.toList());
+    }
+
+    private static void viewTetfu(List<TetfuElement> elements) {
+        if (elements.isEmpty()) {
+            System.out.printf("<p>該当なし</p>%n");
+        } else {
+            MinoFactory minoFactory = new MinoFactory();
+            ColorConverter colorConverter = new ColorConverter();
+            int sizePerOne = 40;
+            int split = ((elements.size() - 1) / sizePerOne) + 1;
+            for (int index = 0; index < split; index++) {
+                int startIndex = index * sizePerOne;
+                int toIndex = index == split - 1 ? elements.size() : startIndex + sizePerOne;
+                List<TetfuElement> subList = elements.subList(startIndex, toIndex);
+                Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
+                String encode = tetfu.encode(subList);
+                if (split == 1)
+                    System.out.printf("<p><a href='http://fumen.zui.jp/?v115@%s' target='_blank'>全 %d パターン</a></p>%n", encode, elements.size());
+                else
+                    System.out.printf("<p><a href='http://fumen.zui.jp/?v115@%s' target='_blank'>全 %d パターン (%d/%d)</a></p>%n", encode, elements.size(), index + 1, split);
+            }
+        }
+    }
+
+    private static TetfuElement parseBlockFieldToTetfuElement(Field initField, ColorConverter colorConverter, Obj obj) {
+        ColoredField coloredField = ColoredFieldFactory.createField(24);
+        fillInField(coloredField, ColorType.Gray, initField);
+
+        BlockField blockField = obj.blockField;
+        for (Block block : Block.values()) {
+            Field target = blockField.get(block);
+            ColorType colorType = colorConverter.parseToColorType(block);
+            fillInField(coloredField, colorType, target);
+        }
+
+        String blocks = obj.blocks.toString();
+        if (0 < obj.duplicate)
+            blocks += " 他 " + obj.duplicate + "pattern";
+        return new TetfuElement(coloredField, ColorType.Empty, Rotate.Reverse, 0, 0, blocks);
     }
 
     private static void fillInField(ColoredField coloredField, ColorType colorType, Field target) {
@@ -220,5 +314,27 @@ public class Main3 {
 //                })
 //                .peek(System.out::println)
                 .collect(Collectors.toList());
+    }
+
+    private static class Obj {
+        private final List<Block> blocks;
+        private final BlockField blockField;
+        private final boolean isDeleted;
+        private final boolean isDouble;
+        private int duplicate = 0;
+
+        public Obj(List<Block> blocks, BlockField blockField, boolean isDeleted) {
+            this.blocks = blocks;
+            this.blockField = blockField;
+            this.isDeleted = isDeleted;
+
+            BlockCounter blockCounter = new BlockCounter(blocks);
+            boolean isDouble = false;
+            for (Block block : Block.values()) {
+                if (2 <= blockCounter.getCount(block))
+                    isDouble = true;
+            }
+            this.isDouble = isDouble;
+        }
     }
 }

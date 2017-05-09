@@ -30,12 +30,10 @@ public class Experiment2 {
                 new TetfuElement(ColorType.T, Rotate.Left, 7, 1)
         );
 
-        ArrayColoredField field = new ArrayColoredField(Tetfu.TETFU_MAX_HEIGHT);
-
         MinoFactory factory = new MinoFactory();
         ColorConverter converter = new ColorConverter();
         Tetfu tetfu = new Tetfu(factory, converter);
-        String encode = tetfu.encode(field, elements);
+        String encode = tetfu.encode(elements);
         System.out.println("v115@" + encode);
     }
 }

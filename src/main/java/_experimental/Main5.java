@@ -157,7 +157,7 @@ public class Main5 {
                         }
 //            System.out.println(ColoredFieldView.toString(coloredField));
                         Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
-                        String encode = tetfu.encode(coloredField, singletonList(TetfuElement.EMPTY));
+                        String encode = tetfu.encode(singletonList(TetfuElement.createFieldOnly(coloredField)));
                         System.out.println(String.format("v115@%s", encode));
                     }
                     System.out.println("---");
