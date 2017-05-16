@@ -385,4 +385,19 @@ public class MiddleField implements Field {
             xBoardHigh = ~xBoardHigh & BitOperators.getRowMaskBelowY(maxHeight - 6);
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MiddleField that = (MiddleField) o;
+        return xBoardLow == that.xBoardLow && xBoardHigh == that.xBoardHigh;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (xBoardLow ^ (xBoardLow >>> 32));
+        result = 31 * result + (int) (xBoardHigh ^ (xBoardHigh >>> 32));
+        return result;
+    }
 }

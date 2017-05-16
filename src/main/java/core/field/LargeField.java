@@ -154,4 +154,14 @@ public class LargeField implements Field {
     public void invert(int maxHeight) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int hashCode() {
+        throw new UnsupportedOperationException();
+    }
 }

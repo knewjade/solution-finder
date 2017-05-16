@@ -74,4 +74,9 @@ class MinoTransform {
         }
         return actions;
     }
+
+    Rotate transformRotate(Rotate rotate) {
+        int index = rotate.getNumber();
+        return rotates[index];
+    }
 }

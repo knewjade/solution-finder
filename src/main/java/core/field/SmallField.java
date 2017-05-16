@@ -213,4 +213,17 @@ public class SmallField implements Field {
     public void invert(int maxHeight) {
         xBoard = ~xBoard & BitOperators.getRowMaskBelowY(maxHeight);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SmallField that = (SmallField) o;
+        return xBoard == that.xBoard;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (xBoard ^ (xBoard >>> 32));
+    }
 }

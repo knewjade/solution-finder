@@ -24,6 +24,30 @@ public class BlockField implements Comparable<BlockField> {
         map.computeIfAbsent(block, b -> FieldFactory.createField(height)).merge(field);
     }
 
+    public Field get(Block block) {
+        return map.getOrDefault(block, EMPTY_FIELD);
+    }
+
+    public Field getMergedField() {
+        Field field = FieldFactory.createField(height);
+        for (Field fieldEachBlock : map.values())
+            field.merge(fieldEachBlock);
+        return field;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BlockField that = (BlockField) o;
+        return map.equals(that.map);
+    }
+
+    @Override
+    public int hashCode() {
+        return map.hashCode();
+    }
+
     @Override
     public int compareTo(BlockField o) {
         for (Block block : Block.values()) {
@@ -34,16 +58,5 @@ public class BlockField implements Comparable<BlockField> {
                 return compare;
         }
         return 0;
-    }
-
-    public Field get(Block block) {
-        return map.getOrDefault(block, EMPTY_FIELD);
-    }
-
-    public Field getMergedField() {
-        Field field = FieldFactory.createField(height);
-        for (Field fieldEachBlock : map.values())
-            field.merge(fieldEachBlock);
-        return field;
     }
 }

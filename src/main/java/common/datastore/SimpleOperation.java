@@ -47,10 +47,10 @@ public class SimpleOperation implements Operation {
 
     @Override
     public int hashCode() {
-        int result = block.hashCode();
-        result = 31 * result + rotate.hashCode();
-        result = 31 * result + x;
-        result = 31 * result + y;
+        int result = y;
+        result = 10 * result + x;
+        result = 7 * result + block.getNumber();
+        result = 4 * result + rotate.getNumber();
         return result;
     }
 

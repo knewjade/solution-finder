@@ -36,6 +36,11 @@ public class MinoShifter {
         transformers.put(Block.J, new MinoTransform());
     }
 
+    // TODO: unittest: write
+    public Rotate createTransformedRotate(Block block, Rotate rotate) {
+        return transformers.get(block).transformRotate(rotate);
+    }
+
     public Action createTransformedAction(Block block, Action action) {
         return createTransformedAction(block, action.getX(), action.getY(), action.getRotate());
     }
