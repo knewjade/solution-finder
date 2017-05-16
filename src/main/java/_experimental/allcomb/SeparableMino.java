@@ -29,7 +29,7 @@ public class SeparableMino {
     private final int lowerY;
     private final long deleteKey;
 
-    public SeparableMino(Mino mino, ColumnField field, int x, int lowerY, long deleteKey) {
+    private SeparableMino(Mino mino, ColumnField field, int x, int lowerY, long deleteKey) {
         this.mino = mino;
         this.field = field;
         this.x = x;

@@ -12,12 +12,10 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
-public class SeparableMinoFactory {
+class SeparableMinoFactory {
     private final EnumMap<Block, EnumMap<Rotate, List<SeparableMino>>> maps;
-    private final MinoShifter minoShifter;
 
-    public SeparableMinoFactory(MinoFactory minoFactory, MinoShifter minoShifter, int fieldWidth, int fieldHeight) {
-        this.minoShifter = minoShifter;
+    SeparableMinoFactory(MinoFactory minoFactory, MinoShifter minoShifter, int fieldWidth, int fieldHeight) {
         this.maps = initializeMaps(minoFactory, minoShifter, fieldWidth, fieldHeight);
     }
 
@@ -75,19 +73,11 @@ public class SeparableMinoFactory {
         return maps;
     }
 
-    List<SeparableMino> create(Block block, Rotate rotate) {
-        Rotate transformedRotate = minoShifter.createTransformedRotate(block, rotate);
-        return maps.get(block).get(transformedRotate);
-    }
-
-    List<SeparableMino> create(Mino mino) {
-        return create(mino.getBlock(), mino.getRotate());
-    }
-
-    List<SeparableMino> create(Block block) {
-        ArrayList<SeparableMino> all = new ArrayList<>();
-        for (List<SeparableMino> minos : maps.get(block).values())
-            all.addAll(minos);
+    List<SeparableMino> create() {
+        List<SeparableMino> all = new ArrayList<>();
+        for (Block block : Block.values())
+            for (List<SeparableMino> minos : maps.get(block).values())
+                all.addAll(minos);
         return all;
     }
 }
