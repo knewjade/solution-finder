@@ -99,4 +99,7 @@ public interface Field {
 
     // maxHeight行より下にあるブロックと空を反転させる  // maxHeight行以上のブロックは削除する
     void invert(int maxHeight);
+
+    // フィールドを左に指定したブロック分スライドさせる
+    void slideLeft(int slide);
 }

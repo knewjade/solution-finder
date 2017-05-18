@@ -6,7 +6,7 @@ import _experimental.newfield.step4.MinoMask;
 import _experimental.newfield.step4.MinoMaskFactory;
 
 public class DeleteKey {
-    public static DeleteKey create(Mino mino, long deleteKey, int lowerY, int upperY) {
+    public static DeleteKey create(Mino mino, long deleteKey, long usingKey, int lowerY, int upperY) {
         int y = lowerY - mino.getMinY();
         int maxHeight = upperY + 1;
         MinoMask minoMask = MinoMaskFactory.create(maxHeight, mino, y, deleteKey);
@@ -25,20 +25,22 @@ public class DeleteKey {
         }
         assert index == minoHeight;
 
-        return new DeleteKey(minoMask, blockCountEachLines, lowerY, deleteKey);
+        return new DeleteKey(minoMask, blockCountEachLines, lowerY, deleteKey, usingKey);
     }
 
     private final MinoMask minoMask;
     private final int[][] blockCountEachLines;
     private final int lowerY;
     private final long deleteKey;
+    private final long usingKey;
 
-    private DeleteKey(MinoMask minoMask, int[][] blockCountEachLines, int lowerY, long deleteKey) {
+    private DeleteKey(MinoMask minoMask, int[][] blockCountEachLines, int lowerY, long deleteKey, long usingKey) {
         assert 0 < blockCountEachLines.length && blockCountEachLines[0].length == 2;
         this.minoMask = minoMask;
         this.blockCountEachLines = blockCountEachLines;
         this.lowerY = lowerY;
         this.deleteKey = deleteKey;
+        this.usingKey = usingKey;
     }
 
     MinoMask getMinoMask() {
@@ -60,5 +62,9 @@ public class DeleteKey {
     @Override
     public String toString() {
         return String.format("key{%d, %d}", lowerY, deleteKey);
+    }
+
+    public long getUsingKey() {
+        return usingKey;
     }
 }

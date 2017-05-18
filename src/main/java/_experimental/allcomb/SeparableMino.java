@@ -6,7 +6,7 @@ import core.field.Field;
 import core.mino.Mino;
 
 public class SeparableMino {
-    public static SeparableMino create(Mino mino, long deleteKey, int x, int lowerY, int upperY, int fieldHeight) {
+    public static SeparableMino create(Mino mino, long deleteKey, long usingKey, int x, int lowerY, int upperY, int fieldHeight) {
         assert 0 <= lowerY && upperY <= 10 : lowerY;
 
         MinoMask minoMask = MinoMaskFactory.create(fieldHeight, mino, lowerY - mino.getMinY(), deleteKey);
@@ -14,13 +14,13 @@ public class SeparableMino {
 
         ColumnSmallField field = new ColumnSmallField();
         for (int ny = lowerY; ny <= upperY; ny++) {
-            for (int nx = 0; nx < 7; nx++) {
+            for (int nx = x + mino.getMinX(); nx <= x + mino.getMaxX(); nx++) {
                 if (!mask.isEmpty(nx, ny))
                     field.setBlock(nx, ny, fieldHeight);
             }
         }
 
-        return new SeparableMino(mino, field, x, lowerY, deleteKey);
+        return new SeparableMino(mino, field, x, lowerY, deleteKey, usingKey);
     }
 
     private final Mino mino;
@@ -28,13 +28,15 @@ public class SeparableMino {
     private final int x;
     private final int lowerY;
     private final long deleteKey;
+    private final long usingKey;
 
-    private SeparableMino(Mino mino, ColumnField field, int x, int lowerY, long deleteKey) {
+    private SeparableMino(Mino mino, ColumnField field, int x, int lowerY, long deleteKey, long usingKey) {
         this.mino = mino;
         this.field = field;
         this.x = x;
         this.lowerY = lowerY;
         this.deleteKey = deleteKey;
+        this.usingKey = usingKey;
     }
 
     public Mino getMino() {
@@ -55,5 +57,9 @@ public class SeparableMino {
 
     public int getX() {
         return x;
+    }
+
+    public long getUsingKey() {
+        return usingKey;
     }
 }

@@ -49,16 +49,23 @@ class DeleteKeyParser {
 
                     // ミノに挟まれる全ての行を含むdeleteKey
                     long deleteKey = KeyOperators.getMaskForKeyAboveY(lowerY) & KeyOperators.getMaskForKeyBelowY(upperY + 1);
+                    long usingKey = 0L;
 
                     assert Long.bitCount(deleteKey) == upperY - lowerY + 1;
 
-                    // ブロックのある行のフラグを取り消す
-                    for (Integer index : indexes)
-                        deleteKey &= ~KeyOperators.getDeleteBitKey(index);
+                    for (Integer index : indexes) {
+                        long bitKey = KeyOperators.getDeleteBitKey(index);
+
+                        // ブロックのある行のフラグを取り消す
+                        deleteKey &= ~bitKey;
+
+                        // ブロックのある行のフラグをたてる
+                        usingKey |= bitKey;
+                    }
 
                     assert Long.bitCount(deleteKey) + indexes.size() == upperY - lowerY + 1;
 
-                    deleteLimitedMinos.add(DeleteKey.create(mino, deleteKey, lowerY, upperY));
+                    deleteLimitedMinos.add(DeleteKey.create(mino, deleteKey, usingKey, lowerY, upperY));
                 }
 
                 rotateMaps.put(rotate, deleteLimitedMinos);

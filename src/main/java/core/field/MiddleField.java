@@ -131,17 +131,17 @@ public class MiddleField implements Field {
             return true;
         } else if (maxY <= FIELD_ROW_BOARDER_Y) {
             // Lowで完結
-            long mask = BitOperators.getColumnBelowY(maxY) << x;
+            long mask = BitOperators.getColumnOneLineBelowY(maxY) << x;
             return (~xBoardLow & mask) == 0L;
         } else {
             // すべて必要
             // Lowのチェック
-            long maskLow = BitOperators.getColumnBelowY(FIELD_ROW_BOARDER_Y) << x;
+            long maskLow = BitOperators.getColumnOneLineBelowY(FIELD_ROW_BOARDER_Y) << x;
             if ((~xBoardLow & maskLow) != 0L)
                 return false;
 
             // Highのチェック
-            long maskHigh = BitOperators.getColumnBelowY(maxY - FIELD_ROW_BOARDER_Y) << x;
+            long maskHigh = BitOperators.getColumnOneLineBelowY(maxY - FIELD_ROW_BOARDER_Y) << x;
             return (~xBoardHigh & maskHigh) == 0L;
         }
     }
@@ -165,7 +165,7 @@ public class MiddleField implements Field {
     }
 
     private boolean isWallBetweenLeft(int x, int maxYHigh, long xBoardHigh) {
-        long maskHigh = BitOperators.getColumnBelowY(maxYHigh);
+        long maskHigh = BitOperators.getColumnOneLineBelowY(maxYHigh);
         long reverseXBoardHigh = ~xBoardHigh;
         long columnHigh = maskHigh << x;
         long rightHigh = reverseXBoardHigh & columnHigh;
@@ -196,12 +196,12 @@ public class MiddleField implements Field {
     public int getBlockCountBelowOnX(int x, int maxY) {
         if (maxY <= FIELD_ROW_BOARDER_Y) {
             // Lowで完結
-            long mask = BitOperators.getColumnBelowY(maxY) << x;
+            long mask = BitOperators.getColumnOneLineBelowY(maxY) << x;
             return Long.bitCount(xBoardLow & mask);
         } else {
             // すべて必要
-            long maskLow = BitOperators.getColumnBelowY(FIELD_ROW_BOARDER_Y) << x;
-            long maskHigh = BitOperators.getColumnBelowY(maxY - FIELD_ROW_BOARDER_Y) << x;
+            long maskLow = BitOperators.getColumnOneLineBelowY(FIELD_ROW_BOARDER_Y) << x;
+            long maskHigh = BitOperators.getColumnOneLineBelowY(maxY - FIELD_ROW_BOARDER_Y) << x;
             return Long.bitCount(xBoardLow & maskLow) + Long.bitCount(xBoardHigh & maskHigh);
         }
     }
@@ -384,6 +384,14 @@ public class MiddleField implements Field {
             xBoardLow = ~xBoardLow & 0xfffffffffffffffL;
             xBoardHigh = ~xBoardHigh & BitOperators.getRowMaskBelowY(maxHeight - 6);
         }
+    }
+
+    // TODO: unittest
+    @Override
+    public void slideLeft(int slide) {
+        long mask = BitOperators.getColumnMaskRightX(slide);
+        xBoardLow = (xBoardLow & mask) >> slide;
+        xBoardHigh = (xBoardHigh & mask) >> slide;
     }
 
     @Override

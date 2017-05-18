@@ -7,13 +7,15 @@ public class OperationWithKey {
     private final int x;
     private final int y;
     private final long needDeletedKey;
+    private final long usingKey;
 
     // lowerY: 最も下にあるブロックのy座標
-    public OperationWithKey(Mino mino, int x, long needDeletedKey, int lowerY) {
+    public OperationWithKey(Mino mino, int x, long needDeletedKey, long usingKey, int lowerY) {
         this.mino = mino;
         this.x = x;
         this.y = lowerY - mino.getMinY();  // 回転軸のy座標 (ライン消去後のフィールドに対して置かれるべき位置)に直す
         this.needDeletedKey = needDeletedKey;
+        this.usingKey = usingKey;
     }
 
     public Mino getMino() {
@@ -30,6 +32,34 @@ public class OperationWithKey {
 
     public long getNeedDeletedKey() {
         return needDeletedKey;
+    }
+
+    public long getUsingKey() {
+        return usingKey;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        OperationWithKey that = (OperationWithKey) o;
+
+        if (x != that.x) return false;
+        if (y != that.y) return false;
+        if (needDeletedKey != that.needDeletedKey) return false;
+        return mino.equals(that.mino);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = mino.getBlock().hashCode();
+        result = 31 * result + mino.getRotate().hashCode();
+        result = 31 * result + x;
+        result = 31 * result + y;
+        result = 31 * result + (int) (needDeletedKey ^ (needDeletedKey >>> 32));
+        result = 31 * result + (int) (usingKey ^ (usingKey >>> 32));
+        return result;
     }
 
     @Override

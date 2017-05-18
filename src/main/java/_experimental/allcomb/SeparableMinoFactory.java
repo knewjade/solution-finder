@@ -53,17 +53,24 @@ class SeparableMinoFactory {
 
                     // ミノに挟まれる全ての行を含むdeleteKey
                     long deleteKey = KeyOperators.getMaskForKeyAboveY(lowerY) & KeyOperators.getMaskForKeyBelowY(upperY + 1);
+                    long usingKey = 0L;
 
                     assert Long.bitCount(deleteKey) == upperY - lowerY + 1;
 
-                    // ブロックのある行のフラグを取り消す
-                    for (Integer index : indexes)
-                        deleteKey &= ~KeyOperators.getDeleteBitKey(index);
+                    for (Integer index : indexes) {
+                        long bitKey = KeyOperators.getDeleteBitKey(index);
+
+                        // ブロックのある行のフラグを取り消す
+                        deleteKey &= ~bitKey;
+
+                        // ブロックのある行にフラグをたてる
+                        usingKey |= bitKey;
+                    }
 
                     assert Long.bitCount(deleteKey) + indexes.size() == upperY - lowerY + 1;
 
                     for (int x = -mino.getMinX(); x < fieldWidth - mino.getMinX(); x++)
-                        deleteLimitedMinos.add(SeparableMino.create(mino, deleteKey, x, lowerY, upperY, fieldHeight));
+                        deleteLimitedMinos.add(SeparableMino.create(mino, deleteKey, usingKey, x, lowerY, upperY, fieldHeight));
                 }
 
                 rotateMaps.put(rotate, deleteLimitedMinos);

@@ -140,7 +140,7 @@ class BasicSolutionsCalculator {
     private List<OperationWithKey> toOperationWithKeys(List<SeparableMino> minos) {
         ArrayList<OperationWithKey> operations = new ArrayList<>();
         for (SeparableMino mino : minos) {
-            OperationWithKey key = new OperationWithKey(mino.getMino(), mino.getX(), mino.getDeleteKey(), mino.getLowerY());
+            OperationWithKey key = new OperationWithKey(mino.getMino(), mino.getX(), mino.getDeleteKey(), mino.getUsingKey(), mino.getLowerY());
             operations.add(key);
         }
         return operations;

@@ -10,7 +10,7 @@ class BasicSolutions {
         this.solutions = solutions;
     }
 
-    public Set<MinoField> get(ColumnSmallField columnSmallField) {
-        return solutions.get(columnSmallField);
+    public Set<MinoField> get(ColumnField columnField) {
+        return solutions.get(columnField);
     }
 }

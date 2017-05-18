@@ -132,51 +132,51 @@ public class KeyOperators {
             case 0:
                 return 1L;
             case 1:
-                return 1024L;
+                return 0x400L;
             case 2:
-                return 1048576L;
+                return 0x100000L;
             case 3:
-                return 1073741824L;
+                return 0x40000000L;
             case 4:
-                return 1099511627776L;
+                return 0x10000000000L;
             case 5:
-                return 1125899906842624L;
+                return 0x4000000000000L;
             case 6:
-                return 2L;
+                return 0x2L;
             case 7:
-                return 2048L;
+                return 0x800L;
             case 8:
-                return 2097152L;
+                return 0x200000L;
             case 9:
-                return 2147483648L;
+                return 0x80000000L;
             case 10:
-                return 2199023255552L;
+                return 0x20000000000L;
             case 11:
-                return 2251799813685248L;
+                return 0x8000000000000L;
             case 12:
-                return 4L;
+                return 0x4L;
             case 13:
-                return 4096L;
+                return 0x1000L;
             case 14:
-                return 4194304L;
+                return 0x400000L;
             case 15:
-                return 4294967296L;
+                return 0x100000000L;
             case 16:
-                return 4398046511104L;
+                return 0x40000000000L;
             case 17:
-                return 4503599627370496L;
+                return 0x10000000000000L;
             case 18:
-                return 8L;
+                return 0x8L;
             case 19:
-                return 8192L;
+                return 0x2000L;
             case 20:
-                return 8388608L;
+                return 0x800000L;
             case 21:
-                return 8589934592L;
+                return 0x200000000L;
             case 22:
-                return 8796093022208L;
+                return 0x80000000000L;
             case 23:
-                return 9007199254740992L;
+                return 0x20000000000000L;
         }
         throw new IllegalArgumentException("No reachable");
     }

@@ -90,14 +90,14 @@ public class SmallField implements Field {
     public boolean isFilledInColumn(int x, int maxY) {
         if (maxY == 0)
             return true;
-        long mask = BitOperators.getColumnBelowY(maxY);
+        long mask = BitOperators.getColumnOneLineBelowY(maxY);
         long column = mask << x;
         return (~xBoard & column) == 0L;
     }
 
     @Override
     public boolean isWallBetweenLeft(int x, int maxY) {
-        long mask = BitOperators.getColumnBelowY(maxY);
+        long mask = BitOperators.getColumnOneLineBelowY(maxY);
         long reverseXBoard = ~xBoard;
         long column = mask << x;
         long right = reverseXBoard & column;
@@ -117,7 +117,7 @@ public class SmallField implements Field {
 
     @Override
     public int getBlockCountBelowOnX(int x, int maxY) {
-        long mask = BitOperators.getColumnBelowY(maxY);
+        long mask = BitOperators.getColumnOneLineBelowY(maxY);
         long column = mask << x;
         return Long.bitCount(xBoard & column);
     }
@@ -212,6 +212,13 @@ public class SmallField implements Field {
     @Override
     public void invert(int maxHeight) {
         xBoard = ~xBoard & BitOperators.getRowMaskBelowY(maxHeight);
+    }
+
+    // TODO: unittest
+    @Override
+    public void slideLeft(int slide) {
+        long mask = BitOperators.getColumnMaskRightX(slide);
+        xBoard = (xBoard & mask) >> slide;
     }
 
     @Override

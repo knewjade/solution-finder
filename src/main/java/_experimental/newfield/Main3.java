@@ -256,13 +256,6 @@ public class Main3 {
         }
     }
 
-    private static FullLimitedMino create(
-            MinoFactory minoFactory, Block block, Rotate rotate, PositionLimit positionLimit, long deleteKey, int lowerY, int upperY
-    ) {
-        Mino mino = minoFactory.create(block, rotate);
-        return FullLimitedMino.create(mino, positionLimit, DeleteKey.create(mino, deleteKey, lowerY, upperY));
-    }
-
     public static List<List<OperationWithKey>> search(List<Block> usedBlocks, Field field, int maxClearLine, Field verifyField) {
         MinoFactory minoFactory = new MinoFactory();
         PositionLimitParser positionLimitParser = new PositionLimitParser(minoFactory, maxClearLine);

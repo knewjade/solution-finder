@@ -119,8 +119,9 @@ public class CrossBuilder {
 
                             Mino mino = limitedMino.getMino();
                             long deleteKey = limitedMino.getDeleteKey();
+                            long usingKey = limitedMino.getUsingKey();
                             int lowerY = limitedMino.getLowerY();
-                            OperationWithKey withKey = new OperationWithKey(mino, x, deleteKey, lowerY);
+                            OperationWithKey withKey = new OperationWithKey(mino, x, deleteKey, usingKey, lowerY);
                             result.add(withKey);
                         }
                         results.add(result);

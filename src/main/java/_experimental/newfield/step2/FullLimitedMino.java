@@ -92,6 +92,10 @@ public class FullLimitedMino implements Comparable<FullLimitedMino> {
         return deleteKey.getNeedKey();
     }
 
+    public long getUsingKey() {
+        return deleteKey.getUsingKey();
+    }
+
     public int[] getParity() {
         return parity;
     }

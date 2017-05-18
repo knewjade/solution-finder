@@ -6,7 +6,6 @@ import common.datastore.Operations;
 import core.action.reachable.Reachable;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.field.FieldView;
 import core.field.KeyOperators;
 import core.mino.Mino;
 import core.mino.MinoFactory;
@@ -19,7 +18,7 @@ import java.util.List;
 // TODO: unittest
 public class BuildUp {
     public static List<OperationWithKey> createOperationWithKeys(Field fieldOrigin, Operations operations, MinoFactory minoFactory, int height) {
-        ArrayList<OperationWithKey> objs = new ArrayList<>();
+        ArrayList<OperationWithKey> keys = new ArrayList<>();
         Field field = fieldOrigin.freeze(height);
         for (Operation op : operations.getOperations()) {
             Mino mino = minoFactory.create(op.getBlock(), op.getRotate());
@@ -37,18 +36,20 @@ public class BuildUp {
 
             // 接着に必ず消去されている必要がある行を抽出
             long aboveLowerY = KeyOperators.getMaskForKeyAboveY(lowerY);
-            long belowUpperY = KeyOperators.getMaskForKeyBelowY(upperY);
-            long needDeletedKey = deleteKey & aboveLowerY & belowUpperY;
+            long belowUpperY = KeyOperators.getMaskForKeyBelowY(upperY + 1);
+            long keyLine = aboveLowerY & belowUpperY;
+            long needDeletedKey = deleteKey & keyLine;
+            long usingKey = keyLine & ~needDeletedKey;
 
             // 操作・消去されている必要がある行をセットで記録
-            OperationWithKey operationWithKey = new OperationWithKey(mino, x, needDeletedKey, lowerY);
-            objs.add(operationWithKey);
+            OperationWithKey operationWithKey = new OperationWithKey(mino, x, needDeletedKey, usingKey, lowerY);
+            keys.add(operationWithKey);
 
             // 次のフィールドを作成
             field.putMino(mino, x, y);
             field.insertBlackLineWithKey(deleteKey);
         }
-        return objs;
+        return keys;
     }
 
     // 指定した手順で組み立てられるか確認
@@ -132,5 +133,46 @@ public class BuildUp {
 
         field.insertBlackLineWithKey(deleteKey);
         return false;
+    }
+
+    // deleteKey・usingKeyに矛盾がないか確認
+    public static boolean checksKey(List<OperationWithKey> operationWithKeys, long initDeleteKey, int maxClearLine) {
+        LinkedList<OperationWithKey> targets = new LinkedList<>(operationWithKeys);
+        long fillKey = KeyOperators.getMaskForKeyBelowY(maxClearLine);
+        long currentValidKey = initDeleteKey;
+
+        while (!targets.isEmpty()) {
+            long nextValidKey = fillKey;
+            LinkedList<OperationWithKey> next = new LinkedList<>();
+            do {
+                OperationWithKey operationWithKey = targets.pollFirst();
+                long deletedKey = operationWithKey.getNeedDeletedKey();
+
+                // まだ必要なライン消去がされていないか確認
+                if (!includesChildKey(currentValidKey, deletedKey)) {
+                    // 次にも探索する
+                    next.add(operationWithKey);
+
+                    // このブロックで使用されている列はまだ無効
+                    long usingKey = operationWithKey.getUsingKey();
+                    nextValidKey &= ~usingKey;
+                }
+            } while (!targets.isEmpty());
+
+            // keyに変化がないときは探索が停滞しているため、ビルドできない
+            if (currentValidKey == nextValidKey)
+                return false;
+
+            // 次の探索の準備
+            assert includesChildKey(nextValidKey, currentValidKey);
+            targets = next;
+            currentValidKey = nextValidKey;
+        }
+
+        return true;
+    }
+
+    private static boolean includesChildKey(long parent, long child) {
+        return (parent | child) == parent;
     }
 }
