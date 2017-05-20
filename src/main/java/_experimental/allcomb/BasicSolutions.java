@@ -3,7 +3,7 @@ package _experimental.allcomb;
 import java.util.Map;
 import java.util.Set;
 
-class BasicSolutions {
+public class BasicSolutions {
     private final Map<ColumnField, Set<MinoField>> solutions;
 
     public BasicSolutions(Map<ColumnField, Set<MinoField>> solutions) {

@@ -3,12 +3,15 @@ package _experimental.allcomb;
 import common.datastore.BlockField;
 import common.datastore.OperationWithKey;
 import core.field.SmallField;
+import core.mino.Block;
 import core.mino.Mino;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
-class MinoField implements Comparable<MinoField> {
+public class MinoField implements Comparable<MinoField> {
     private static final Comparator<OperationWithKey> OPERATION_WITH_KEY_COMPARATOR = (o1, o2) -> {
         Mino mino1 = o1.getMino();
         Mino mino2 = o2.getMino();
@@ -35,12 +38,21 @@ class MinoField implements Comparable<MinoField> {
     private final List<OperationWithKey> operations;
     private final ColumnField outerField;
     private final BlockField blockField;
+    private final BlockCounter blockCounter;
 
-    MinoField(List<OperationWithKey> operations, ColumnField outerField, int height) {
+    public MinoField(List<OperationWithKey> operations, ColumnField outerField, int height) {
         operations.sort(OPERATION_WITH_KEY_COMPARATOR);
         this.operations = operations;
         this.outerField = outerField;
         this.blockField = parseToBlockField(operations, height);
+        this.blockCounter = parseToBlockCounter(operations);
+    }
+
+    private MinoField(List<OperationWithKey> operations, ColumnField outerField, BlockField blockField, BlockCounter blockCounter) {
+        this.operations = operations;
+        this.outerField = outerField;
+        this.blockField = blockField;
+        this.blockCounter = blockCounter;
     }
 
     private BlockField parseToBlockField(List<OperationWithKey> operations, int height) {
@@ -55,16 +67,28 @@ class MinoField implements Comparable<MinoField> {
         return blockField;
     }
 
-    ColumnField getOuterField() {
+    private BlockCounter parseToBlockCounter(List<OperationWithKey> operations) {
+        List<Block> blocks = operations.stream()
+                .map(OperationWithKey::getMino)
+                .map(Mino::getBlock)
+                .collect(Collectors.toList());
+        return new BlockCounter(blocks);
+    }
+
+    public ColumnField getOuterField() {
         return outerField;
     }
 
-    List<OperationWithKey> getOperations() {
+    public List<OperationWithKey> getOperations() {
         return operations;
     }
 
     BlockField getBlockField() {
         return blockField;
+    }
+
+    public BlockCounter getBlockCounter() {
+        return blockCounter;
     }
 
     @Override

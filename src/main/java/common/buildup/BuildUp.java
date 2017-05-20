@@ -136,8 +136,7 @@ public class BuildUp {
     }
 
     // deleteKey・usingKeyに矛盾がないか確認
-    public static boolean checksKey(List<OperationWithKey> operationWithKeys, long initDeleteKey, int maxClearLine) {
-        LinkedList<OperationWithKey> targets = new LinkedList<>(operationWithKeys);
+    public static boolean checksKeyDirectory(LinkedList<OperationWithKey> targets, long initDeleteKey, int maxClearLine) {
         long fillKey = KeyOperators.getMaskForKeyBelowY(maxClearLine);
         long currentValidKey = initDeleteKey;
 
@@ -170,6 +169,11 @@ public class BuildUp {
         }
 
         return true;
+    }
+
+    public static boolean checksKey(List<OperationWithKey> operationWithKeys, long initDeleteKey, int maxClearLine) {
+        LinkedList<OperationWithKey> targets = new LinkedList<>(operationWithKeys);
+        return checksKeyDirectory(targets, initDeleteKey, maxClearLine);
     }
 
     private static boolean includesChildKey(long parent, long child) {
