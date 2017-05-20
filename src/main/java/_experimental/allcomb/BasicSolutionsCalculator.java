@@ -2,6 +2,7 @@ package _experimental.allcomb;
 
 
 import common.buildup.BuildUp;
+import common.datastore.IOperationWithKey;
 import common.datastore.OperationWithKey;
 import core.field.Field;
 import core.field.SmallField;
@@ -79,7 +80,7 @@ class BasicSolutionsCalculator {
             Field invertedOuterField = reference.parseInvertedOuterField(outerColumnField);
             freeze.merge(invertedOuterField);
 
-            List<OperationWithKey> operations = toOperationWithKeys(minos);
+            List<IOperationWithKey> operations = toOperationWithKeys(minos);
 
             // 置くブロック以外がすでに埋まっていると仮定したとき、正しく接着できる順があるか確認
             if (existsValidBuildPattern(freeze, operations))
@@ -95,7 +96,7 @@ class BasicSolutionsCalculator {
                 // outerで、最終的に使用されるブロック と すでに使っているブロックが重ならないことを確認
                 ColumnField lastOuterField = minoField.getOuterField();
                 if (lastOuterField.canMerge(outerColumnField)) {
-                    List<OperationWithKey> operations = toOperationWithKeys(this.minos);
+                    List<IOperationWithKey> operations = toOperationWithKeys(this.minos);
                     operations.addAll(minoField.getOperations());
 
                     // 使用されるブロックを算出
@@ -137,10 +138,10 @@ class BasicSolutionsCalculator {
         }
     }
 
-    private List<OperationWithKey> toOperationWithKeys(List<SeparableMino> minos) {
-        ArrayList<OperationWithKey> operations = new ArrayList<>();
+    private List<IOperationWithKey> toOperationWithKeys(List<SeparableMino> minos) {
+        ArrayList<IOperationWithKey> operations = new ArrayList<>();
         for (SeparableMino mino : minos) {
-            OperationWithKey key = new OperationWithKey(mino.getMino(), mino.getX(), mino.getDeleteKey(), mino.getUsingKey(), mino.getLowerY());
+            IOperationWithKey key = new OperationWithKey(mino.getMino(), mino.getX(), mino.getDeleteKey(), mino.getUsingKey(), mino.getLowerY());
             operations.add(key);
         }
         return operations;
@@ -149,11 +150,11 @@ class BasicSolutionsCalculator {
     // 置くブロック以外がすでに埋まっていると仮定したとき、正しく接着できる順があるか確認
     // ただし、フィールドをブロックで埋めると回転入れなどができない場合があるため、判定は下に地面があるかだけを判定
     // (部分的には回転入れできなくても、左右のSolutionパターン次第では入れられる可能性がある)
-    private boolean existsValidBuildPattern(Field freeze, List<OperationWithKey> operations) {
+    private boolean existsValidBuildPattern(Field freeze, List<IOperationWithKey> operations) {
         return BuildUp.existsValidBuildPattern(freeze, operations, height, grandOnlyReachable);
     }
 
-    private void recordResult(List<OperationWithKey> operations, ColumnField outerField) {
+    private void recordResult(List<IOperationWithKey> operations, ColumnField outerField) {
         MinoField result = new MinoField(operations, outerField, height);
         results.add(result);
     }

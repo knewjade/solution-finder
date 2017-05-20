@@ -1,14 +1,17 @@
 package _experimental.allcomb.memento;
 
 import _experimental.allcomb.MinoField;
-import common.datastore.OperationWithKey;
+import _experimental.allcomb.SlideXOperationWithKey;
+import common.datastore.IOperationWithKey;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MinoFieldMemento {
-    private static final List<OperationWithKey> EMPTY_LIST = Collections.emptyList();
+    private static final List<IOperationWithKey> EMPTY_LIST = Collections.emptyList();
 
     private final MinoField minoField1;
     private final MinoField minoField2;
@@ -63,64 +66,41 @@ public class MinoFieldMemento {
     }
 
     long getSumBlockCounter() {
+        long sum = 0L;
         switch (index) {
-            case 0:
-                return 0L;
-            case 1:
-                return getCounter1();
-            case 2:
-                return getCounter1() + getCounter2();
-            case 3:
-                return getCounter1() + getCounter2() + getCounter3();
             case 4:
-                return getCounter1() + getCounter2() + getCounter3() + getCounter4();
+                if (minoField4 != null)
+                    sum += minoField4.getBlockCounter().getCounter();
+            case 3:
+                if (minoField3 != null)
+                    sum += minoField3.getBlockCounter().getCounter();
+            case 2:
+                if (minoField2 != null)
+                    sum += minoField2.getBlockCounter().getCounter();
+            case 1:
+                if (minoField1 != null)
+                    sum += minoField1.getBlockCounter().getCounter();
+            case 0:
+                return sum;
         }
         throw new IllegalStateException("No reachable");
     }
 
-    private long getCounter1() {
-        return minoField1 == null ? 0L : minoField1.getBlockCounter().getCounter();
-    }
-
-    private long getCounter2() {
-        return minoField2 == null ? 0L : minoField2.getBlockCounter().getCounter();
-    }
-
-    private long getCounter3() {
-        return minoField3 == null ? 0L : minoField3.getBlockCounter().getCounter();
-    }
-
-    private long getCounter4() {
-        return minoField4 == null ? 0L : minoField4.getBlockCounter().getCounter();
-    }
-
-    private List<OperationWithKey> getOperations1() {
-        return minoField1 == null ? EMPTY_LIST : minoField1.getOperations();
-    }
-
-    private List<OperationWithKey> getOperations2() {
-        return minoField2 == null ? EMPTY_LIST : minoField2.getOperations();
-    }
-
-    private List<OperationWithKey> getOperations3() {
-        return minoField3 == null ? EMPTY_LIST : minoField3.getOperations();
-    }
-
-    private List<OperationWithKey> getOperations4() {
-        return minoField4 == null ? EMPTY_LIST : minoField4.getOperations();
-    }
-
-    LinkedList<OperationWithKey> getRawOperations() {
-        LinkedList<OperationWithKey> operations = new LinkedList<>();
+    LinkedList<IOperationWithKey> getRawOperations() {
+        LinkedList<IOperationWithKey> operations = new LinkedList<>();
         switch (index) {
             case 4:
-                operations.addAll(getOperations4());
+                if (minoField4 != null)
+                    operations.addAll(minoField4.getOperations());
             case 3:
-                operations.addAll(getOperations3());
+                if (minoField3 != null)
+                    operations.addAll(minoField3.getOperations());
             case 2:
-                operations.addAll(getOperations2());
+                if (minoField2 != null)
+                    operations.addAll(minoField2.getOperations());
             case 1:
-                operations.addAll(getOperations1());
+                if (minoField1 != null)
+                    operations.addAll(minoField1.getOperations());
             case 0:
                 return operations;
         }
@@ -163,5 +143,35 @@ public class MinoFieldMemento {
 
     public int getIndex() {
         return index;
+    }
+
+    public LinkedList<IOperationWithKey> getOperations() {
+        LinkedList<IOperationWithKey> list = new LinkedList<>();
+        switch (index) {
+            case 4:
+                if (minoField4 != null)
+                    addSlideX(list, minoField4.getOperations(), 9);
+            case 3:
+                if (minoField3 != null)
+                    addSlideX(list, minoField3.getOperations(), 6);
+            case 2:
+                if (minoField2 != null)
+                    addSlideX(list, minoField2.getOperations(), 3);
+            case 1:
+                if (minoField1 != null)
+                    addSlideX(list, minoField1.getOperations(), 0);
+            case 0:
+                return list;
+        }
+        throw new IllegalStateException("No reachable");
+    }
+
+    private void addSlideX(LinkedList<IOperationWithKey> list, List<IOperationWithKey> operations, int slideX) {
+        for (IOperationWithKey operation : operations)
+            list.add(toSlideWrapper(operation, slideX));
+    }
+
+    private IOperationWithKey toSlideWrapper(IOperationWithKey operationWithKey, int slideX) {
+        return new SlideXOperationWithKey(operationWithKey, slideX);
     }
 }

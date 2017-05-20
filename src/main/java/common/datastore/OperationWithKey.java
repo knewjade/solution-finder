@@ -2,7 +2,7 @@ package common.datastore;
 
 import core.mino.Mino;
 
-public class OperationWithKey {
+public class OperationWithKey implements IOperationWithKey {
     private final Mino mino;
     private final int x;
     private final int y;
@@ -18,22 +18,27 @@ public class OperationWithKey {
         this.usingKey = usingKey;
     }
 
+    @Override
     public Mino getMino() {
         return mino;
     }
 
+    @Override
     public int getX() {
         return x;
     }
 
+    @Override
     public int getY() {
         return y;
     }
 
+    @Override
     public long getNeedDeletedKey() {
         return needDeletedKey;
     }
 
+    @Override
     public long getUsingKey() {
         return usingKey;
     }

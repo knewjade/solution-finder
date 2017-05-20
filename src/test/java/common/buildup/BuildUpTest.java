@@ -1,5 +1,6 @@
 package common.buildup;
 
+import common.datastore.IOperationWithKey;
 import common.datastore.OperationWithKey;
 import core.action.reachable.LockedReachable;
 import core.field.Field;
@@ -25,7 +26,7 @@ public class BuildUpTest {
                 "_________X"
         );
         MinoFactory minoFactory = new MinoFactory();
-        List<OperationWithKey> operationWithKeys = Arrays.asList(
+        List<IOperationWithKey> operationWithKeys = Arrays.asList(
                 new OperationWithKey(minoFactory.create(Block.J, Rotate.Right), 5, 0L, 0),
                 new OperationWithKey(minoFactory.create(Block.J, Rotate.Reverse), 8, 0L, 2),
                 new OperationWithKey(minoFactory.create(Block.L, Rotate.Spawn), 7, 0L, 0),
@@ -48,7 +49,7 @@ public class BuildUpTest {
                 "__XXXXXXXX"
         );
         MinoFactory minoFactory = new MinoFactory();
-        List<OperationWithKey> operationWithKeys = Arrays.asList(
+        List<IOperationWithKey> operationWithKeys = Arrays.asList(
                 new OperationWithKey(minoFactory.create(Block.J, Rotate.Right), 0, 0L, 0),
                 new OperationWithKey(minoFactory.create(Block.L, Rotate.Left), 1, 1048576L, 0)
         );

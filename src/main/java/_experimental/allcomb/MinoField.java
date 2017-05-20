@@ -1,18 +1,17 @@
 package _experimental.allcomb;
 
 import common.datastore.BlockField;
-import common.datastore.OperationWithKey;
+import common.datastore.IOperationWithKey;
 import core.field.SmallField;
 import core.mino.Block;
 import core.mino.Mino;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class MinoField implements Comparable<MinoField> {
-    private static final Comparator<OperationWithKey> OPERATION_WITH_KEY_COMPARATOR = (o1, o2) -> {
+    private static final Comparator<IOperationWithKey> OPERATION_WITH_KEY_COMPARATOR = (o1, o2) -> {
         Mino mino1 = o1.getMino();
         Mino mino2 = o2.getMino();
 
@@ -35,12 +34,12 @@ public class MinoField implements Comparable<MinoField> {
         return Long.compare(o1.getNeedDeletedKey(), o2.getNeedDeletedKey());
     };
 
-    private final List<OperationWithKey> operations;
+    private final List<IOperationWithKey> operations;
     private final ColumnField outerField;
     private final BlockField blockField;
     private final BlockCounter blockCounter;
 
-    public MinoField(List<OperationWithKey> operations, ColumnField outerField, int height) {
+    public MinoField(List<IOperationWithKey> operations, ColumnField outerField, int height) {
         operations.sort(OPERATION_WITH_KEY_COMPARATOR);
         this.operations = operations;
         this.outerField = outerField;
@@ -48,16 +47,16 @@ public class MinoField implements Comparable<MinoField> {
         this.blockCounter = parseToBlockCounter(operations);
     }
 
-    private MinoField(List<OperationWithKey> operations, ColumnField outerField, BlockField blockField, BlockCounter blockCounter) {
+    private MinoField(List<IOperationWithKey> operations, ColumnField outerField, BlockField blockField, BlockCounter blockCounter) {
         this.operations = operations;
         this.outerField = outerField;
         this.blockField = blockField;
         this.blockCounter = blockCounter;
     }
 
-    private BlockField parseToBlockField(List<OperationWithKey> operations, int height) {
+    private BlockField parseToBlockField(List<IOperationWithKey> operations, int height) {
         BlockField blockField = new BlockField(height);
-        for (OperationWithKey operation : operations) {
+        for (IOperationWithKey operation : operations) {
             SmallField smallField = new SmallField();
             Mino mino = operation.getMino();
             smallField.putMino(mino, operation.getX(), operation.getY());
@@ -67,9 +66,9 @@ public class MinoField implements Comparable<MinoField> {
         return blockField;
     }
 
-    private BlockCounter parseToBlockCounter(List<OperationWithKey> operations) {
+    private BlockCounter parseToBlockCounter(List<IOperationWithKey> operations) {
         List<Block> blocks = operations.stream()
-                .map(OperationWithKey::getMino)
+                .map(IOperationWithKey::getMino)
                 .map(Mino::getBlock)
                 .collect(Collectors.toList());
         return new BlockCounter(blocks);
@@ -79,7 +78,7 @@ public class MinoField implements Comparable<MinoField> {
         return outerField;
     }
 
-    public List<OperationWithKey> getOperations() {
+    public List<IOperationWithKey> getOperations() {
         return operations;
     }
 

@@ -1,5 +1,6 @@
 package _experimental.newfield.step3;
 
+import common.datastore.IOperationWithKey;
 import core.field.Field;
 import core.mino.Mino;
 import common.datastore.OperationWithKey;
@@ -18,7 +19,7 @@ public class CrossBuilder {
     private final List<List<FullLimitedMino>> sets;
     private final int maxClearLine;
     private final LineCounterField lineCounterField;
-    private final List<List<OperationWithKey>> results = new ArrayList<>();
+    private final List<List<IOperationWithKey>> results = new ArrayList<>();
     private final int lastIndex;
     private final PerfectValidator perfectValidator;
     private final boolean[] isSame;
@@ -50,7 +51,7 @@ public class CrossBuilder {
         this.cache.get(0).add(XField.createFirst(field, sets.size()));
     }
 
-    public List<List<OperationWithKey>> create() {
+    public List<List<IOperationWithKey>> create() {
         assert results.isEmpty();
         createList(0);
         return results;
@@ -112,7 +113,7 @@ public class CrossBuilder {
                     for (XField nextXField : nextXFields) {
                         int[] history = nextXField.getxHistory().getHistory();
                         assert fullLimitedMinos.length == history.length;
-                        List<OperationWithKey> result = new ArrayList<>();
+                        List<IOperationWithKey> result = new ArrayList<>();
                         for (int i = 0, length = history.length; i < length; i++) {
                             FullLimitedMino limitedMino = fullLimitedMinos[i];
                             int x = history[i];
@@ -121,7 +122,7 @@ public class CrossBuilder {
                             long deleteKey = limitedMino.getDeleteKey();
                             long usingKey = limitedMino.getUsingKey();
                             int lowerY = limitedMino.getLowerY();
-                            OperationWithKey withKey = new OperationWithKey(mino, x, deleteKey, usingKey, lowerY);
+                            IOperationWithKey withKey = new OperationWithKey(mino, x, deleteKey, usingKey, lowerY);
                             result.add(withKey);
                         }
                         results.add(result);

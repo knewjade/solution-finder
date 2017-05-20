@@ -1,5 +1,6 @@
 package _experimental.newfield.step4;
 
+import common.datastore.IOperationWithKey;
 import core.field.Field;
 import core.mino.Mino;
 import common.datastore.OperationWithKey;
@@ -19,7 +20,7 @@ public class Search {
     private final FullLimitedMinos sets;
     private final int maxClearLine;
     private final PerfectValidator perfectValidator;
-    private final List<List<OperationWithKey>> results = new ArrayList<>();
+    private final List<List<IOperationWithKey>> results = new ArrayList<>();
 
     // 結果を一時的に保存
     private final FullLimitedMino[] fullLimitedMinos;
@@ -36,7 +37,7 @@ public class Search {
         this.xs = new int[maxDepth];
     }
 
-    public List<List<OperationWithKey>> search() {
+    public List<List<IOperationWithKey>> search() {
         assert results.isEmpty();
         search(initField, 0);
         return Collections.unmodifiableList(results);
@@ -44,7 +45,7 @@ public class Search {
 
     private void search(Field field, int depth) {
         if (depth == sets.getDepth()) {
-            List<OperationWithKey> result = new ArrayList<>();
+            List<IOperationWithKey> result = new ArrayList<>();
             for (int index = 0, length = fullLimitedMinos.length; index < length; index++) {
                 FullLimitedMino limitedMino = fullLimitedMinos[index];
                 int x = xs[index];
@@ -53,7 +54,7 @@ public class Search {
                 long deleteKey = limitedMino.getDeleteKey();
                 long usingKey = limitedMino.getUsingKey();
                 int lowerY = limitedMino.getLowerY();
-                OperationWithKey withKey = new OperationWithKey(mino, x, deleteKey, usingKey, lowerY);
+                IOperationWithKey withKey = new OperationWithKey(mino, x, deleteKey, usingKey, lowerY);
                 result.add(withKey);
             }
             results.add(result);

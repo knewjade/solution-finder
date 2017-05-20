@@ -3,15 +3,13 @@ package _experimental.newfield;
 import _experimental.newfield.step1.ColumnParityLimitation;
 import _experimental.newfield.step1.DeltaLimitedMino;
 import _experimental.newfield.step1.EstimateBuilder;
-import _experimental.newfield.step2.DeleteKey;
 import _experimental.newfield.step2.FullLimitedMino;
-import _experimental.newfield.step2.PositionLimit;
 import _experimental.newfield.step2.PositionLimitParser;
 import _experimental.newfield.step3.CrossBuilder;
 import common.Stopwatch;
 import common.buildup.BuildUp;
 import common.datastore.BlockField;
-import common.datastore.OperationWithKey;
+import common.datastore.IOperationWithKey;
 import common.iterable.CombinationIterable;
 import common.tetfu.Tetfu;
 import common.tetfu.TetfuElement;
@@ -66,12 +64,12 @@ public class Main3 {
         for (List<Block> usedBlocks : sets) {
             counter++;
             System.out.println(counter + " / " + sets.size());
-            List<List<OperationWithKey>> operationsWithKey = search(usedBlocks, field, maxClearLine, verifyField);
+            List<List<IOperationWithKey>> operationsWithKey = search(usedBlocks, field, maxClearLine, verifyField);
             List<Obj> objs = operationsWithKey.stream()
                     .map(operationWithKeys -> {
                         boolean isDeleted = false;
                         BlockField blockField = new BlockField(maxClearLine);
-                        for (OperationWithKey key : operationWithKeys) {
+                        for (IOperationWithKey key : operationWithKeys) {
                             Field test = FieldFactory.createField(maxClearLine);
                             Mino mino = key.getMino();
                             test.putMino(mino, key.getX(), key.getY());
@@ -256,7 +254,7 @@ public class Main3 {
         }
     }
 
-    public static List<List<OperationWithKey>> search(List<Block> usedBlocks, Field field, int maxClearLine, Field verifyField) {
+    public static List<List<IOperationWithKey>> search(List<Block> usedBlocks, Field field, int maxClearLine, Field verifyField) {
         MinoFactory minoFactory = new MinoFactory();
         PositionLimitParser positionLimitParser = new PositionLimitParser(minoFactory, maxClearLine);
         LockedReachableThreadLocal threadLocal = new LockedReachableThreadLocal(maxClearLine);

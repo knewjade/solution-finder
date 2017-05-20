@@ -1,19 +1,28 @@
 package _experimental.allcomb;
 
+import _experimental.allcomb.memento.KeyMementoFilter;
+import _experimental.allcomb.memento.MementoFilter;
+import _experimental.allcomb.task.Field4x10MinoPackingTask;
+import _experimental.allcomb.task.TaskResultHelper;
+import _experimental.newfield.LockedReachableThreadLocal;
 import common.Stopwatch;
+import common.iterable.CombinationIterable;
 import core.field.Field;
 import core.field.FieldFactory;
+import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
     private static final int WIDTH = 3;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
         int height = 4;
@@ -25,7 +34,7 @@ public class Main {
         List<SeparableMino> minos = factory.create();
 
         // TODO: 消去ラインのフィルタをするならこの段階
-        // TODO: ミノ数に制限がある場合はここでもする
+        // TODO: ミノ種類に制限がある場合はここでもする
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(minos, height);
         BasicSolutions solutions = calculator.calculate();
 
@@ -38,17 +47,34 @@ public class Main {
 //        Set<MinoField> minoFields = solutions.get(new ColumnSmallField());
 //        HashSet<ColumnField> nextOuter = new HashSet<>();
         Field initField = FieldFactory.createField("" +
-                "__________" +
-                "__________" +
-                "__________" +
-                "__________" +
+                "______XXXX" +
+                "______XXXX" +
+                "______XXXX" +
+                "______XXXX" +
                 ""
         );
         List<InOutPairField> inOutPairFields = createInOutPairFields(height, initField);
         Bit bit = new Bit(WIDTH, height);
 //        search(inOutPairFields, 0, inOutPairFields.get(0).getInnerField(), solutions, bit);
         System.out.println(inOutPairFields);
-        ListUpSearcher searcher = new ListUpSearcher(inOutPairFields, solutions, bit);
+
+
+        // TODO: ミノの制限をちゃんとする
+        HashSet<Long> validBlockCounters = new HashSet<>();
+        List<Block> usingBlocks = Arrays.asList(Block.values());
+        for (int size = 0; size < usingBlocks.size(); size++) {
+            CombinationIterable<Block> combinationIterable = new CombinationIterable<>(usingBlocks, size);
+            for (List<Block> blocks : combinationIterable) {
+                BlockCounter counter = new BlockCounter(blocks);
+                validBlockCounters.add(counter.getCounter());
+            }
+        }
+        LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(height);
+        MementoFilter mementoFilter = new KeyMementoFilter(initField, reachableThreadLocal, bit.height);
+//        MementoFilter mementoFilter = new UsingBlockAndKeyMementoFilter(initField, validBlockCounters, reachableThreadLocal, bit.height);
+//        MementoFilter mementoFilter = new AllPassedMementoFilter();
+        TaskResultHelper taskResultHelper = new Field4x10MinoPackingTask();
+        ListUpSearcher searcher = new ListUpSearcher(inOutPairFields, solutions, bit, mementoFilter, taskResultHelper);
         searcher.search();
     }
 

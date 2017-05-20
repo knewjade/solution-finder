@@ -34,7 +34,7 @@ public class LockedReachable implements Reachable {
         this.lockedCache = new MinimalLockedCache(maxY);
     }
 
-    // checksの前に、cansPutの確認が必須
+    // checksを呼び出す前に、Field.cansPutの確認を必ずしていること
     @Override
     public boolean checks(Field field, Mino mino, int x, int y, int appearY) {
         this.appearY = appearY;
