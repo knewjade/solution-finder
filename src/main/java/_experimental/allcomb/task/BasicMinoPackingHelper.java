@@ -7,7 +7,7 @@ import _experimental.allcomb.memento.MinoFieldMemento;
 import java.util.Set;
 import java.util.stream.Stream;
 
-public class BasicMinoPackingTask implements TaskResultHelper {
+public class BasicMinoPackingHelper implements TaskResultHelper {
     @Override
     public Stream<Result> fixResult(ListUpSearcher searcher, MementoFilter mementoFilter, ColumnField lastOuterField, MinoFieldMemento nextMemento) {
         Bit bit = searcher.getBit();

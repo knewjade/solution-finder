@@ -86,7 +86,7 @@ public class MinoFieldMemento {
         throw new IllegalStateException("No reachable");
     }
 
-    LinkedList<IOperationWithKey> getRawOperations() {
+    public LinkedList<IOperationWithKey> getRawOperations() {
         LinkedList<IOperationWithKey> operations = new LinkedList<>();
         switch (index) {
             case 4:

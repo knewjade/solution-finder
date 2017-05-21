@@ -9,4 +9,8 @@ public class Result {
 //            System.out.println(memento.getRawOperations().size());
         this.memento = memento;
     }
+
+    public MinoFieldMemento getMemento() {
+        return memento;
+    }
 }

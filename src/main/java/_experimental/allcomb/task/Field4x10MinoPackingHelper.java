@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.stream.Stream;
 
 // フィールドの探索範囲が4x10のとき限定のTask。最後のパターンが決まっているため少し高速に動作
-public class Field4x10MinoPackingTask implements TaskResultHelper {
+public class Field4x10MinoPackingHelper implements TaskResultHelper {
     private static final MinoField LEFT_I_ONLY = new MinoField(
             Collections.singletonList(
                     new OperationWithKey(new Mino(Block.I, Rotate.Left), 0, 0L, 1074791425L, 0)
@@ -32,7 +32,7 @@ public class Field4x10MinoPackingTask implements TaskResultHelper {
         } else if (board == 0b111111110000L) {
             MinoFieldMemento concatILeft = nextMemento.concat(LEFT_I_ONLY);
             if (mementoFilter.testLast(concatILeft))
-                return Stream.of(createResult(nextMemento));
+                return Stream.of(createResult(concatILeft));
         }
         return Stream.empty();
     }

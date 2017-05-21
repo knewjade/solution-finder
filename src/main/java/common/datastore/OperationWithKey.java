@@ -18,6 +18,14 @@ public class OperationWithKey implements IOperationWithKey {
         this.usingKey = usingKey;
     }
 
+    public OperationWithKey(Mino mino, int x, int y, long needDeletedKey, long usingKey) {
+        this.mino = mino;
+        this.x = x;
+        this.y = y;
+        this.needDeletedKey = needDeletedKey;
+        this.usingKey = usingKey;
+    }
+
     @Override
     public Mino getMino() {
         return mino;
