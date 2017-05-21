@@ -1,8 +1,7 @@
 package _experimental.allcomb;
 
-import _experimental.allcomb.memento.KeyMementoFilter;
+import _experimental.allcomb.memento.ValidKeyMementoFilter;
 import _experimental.allcomb.memento.MementoFilter;
-import _experimental.allcomb.memento.NoDeleteLineMementoFilter;
 import _experimental.allcomb.task.Field4x10MinoPackingHelper;
 import _experimental.allcomb.task.TaskResultHelper;
 import _experimental.newfield.LockedReachableThreadLocal;
@@ -48,10 +47,10 @@ public class Main {
 //        Set<MinoField> minoFields = solutions.get(new ColumnSmallField());
 //        HashSet<ColumnField> nextOuter = new HashSet<>();
         Field initField = FieldFactory.createField("" +
-                "_____XXXXX" +
-                "_____XXXXX" +
-                "_____XXXXX" +
-                "_____XXXXX" +
+                "_________X" +
+                "_________X" +
+                "_________X" +
+                "_________X" +
                 ""
         );
         List<InOutPairField> inOutPairFields = createInOutPairFields(height, initField);
@@ -71,10 +70,10 @@ public class Main {
             }
         }
         LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(height);
-//        MementoFilter mementoFilter = new KeyMementoFilter(initField, reachableThreadLocal, bit.height);
-//        MementoFilter mementoFilter = new UsingBlockAndKeyMementoFilter(initField, validBlockCounters, reachableThreadLocal, bit.height);
+        MementoFilter mementoFilter = new ValidKeyMementoFilter(initField, reachableThreadLocal, bit.height);
+//        MementoFilter mementoFilter = new UsingBlockAndValidKeyMementoFilter(initField, validBlockCounters, reachableThreadLocal, bit.height);
 //        MementoFilter mementoFilter = new AllPassedMementoFilter();
-        MementoFilter mementoFilter = new NoDeleteLineMementoFilter(initField, reachableThreadLocal, bit.height);
+//        MementoFilter mementoFilter = new NoDeleteLineMementoFilter(initField, reachableThreadLocal, bit.height);
 
         TaskResultHelper taskResultHelper = new Field4x10MinoPackingHelper();
         ListUpSearcher searcher = new ListUpSearcher(inOutPairFields, solutions, bit, mementoFilter, taskResultHelper);

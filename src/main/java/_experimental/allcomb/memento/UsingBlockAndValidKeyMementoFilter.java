@@ -8,13 +8,13 @@ import core.field.Field;
 import java.util.LinkedList;
 import java.util.Set;
 
-public class UsingBlockAndKeyMementoFilter implements MementoFilter {
+public class UsingBlockAndValidKeyMementoFilter implements MementoFilter {
     private final Field field;
     private final Set<Long> validBlockCounters;
     private final ThreadLocal<? extends Reachable> reachableThreadLocal;
     private final int height;
 
-    public UsingBlockAndKeyMementoFilter(Field field, Set<Long> validBlockCounters, ThreadLocal<? extends Reachable> reachableThreadLocal, int height) {
+    public UsingBlockAndValidKeyMementoFilter(Field field, Set<Long> validBlockCounters, ThreadLocal<? extends Reachable> reachableThreadLocal, int height) {
         this.field = field;
         this.validBlockCounters = validBlockCounters;
         this.reachableThreadLocal = reachableThreadLocal;

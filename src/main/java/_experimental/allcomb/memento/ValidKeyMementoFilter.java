@@ -7,12 +7,12 @@ import core.field.Field;
 
 import java.util.LinkedList;
 
-public class KeyMementoFilter implements MementoFilter {
+public class ValidKeyMementoFilter implements MementoFilter {
     private final Field field;
     private final ThreadLocal<? extends Reachable> reachableThreadLocal;
     private final int height;
 
-    public KeyMementoFilter(Field field, ThreadLocal<? extends Reachable> reachableThreadLocal, int height) {
+    public ValidKeyMementoFilter(Field field, ThreadLocal<? extends Reachable> reachableThreadLocal, int height) {
         this.field = field;
         this.reachableThreadLocal = reachableThreadLocal;
         this.height = height;

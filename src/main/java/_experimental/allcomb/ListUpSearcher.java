@@ -45,21 +45,22 @@ public class ListUpSearcher {
             forkJoinPool.submit(() -> {
                 // Streamは終端操作を実行するまで実際には計算を行わない
                 // そのため、終端操作をPool内でしなければ、Pool外のスレッド場で動くため注意が必要 (Pool内ではStream自体の作成をして終了する)
-                task.compute()
-                        .filter(result -> result.getMemento().getRawOperations().stream().allMatch(key -> key.getNeedDeletedKey() == 0L))
+                long count = task.compute()
+                        .parallel()
+//                        .filter(result -> result.getMemento().getRawOperations().stream().allMatch(key -> key.getNeedDeletedKey() == 0L))
                         .map(result -> OperationWithKeyHelper.parseToString(result.getMemento().getOperations()))
-                        .forEach(str -> {
-                            singleThreadExecutor.submit(() -> {
-                                try {
-                                    writer.write(str);
-                                    writer.newLine();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            });
-                        });
-//                long count = task.compute().count();
-//                System.out.println(count);
+//                        .peek(str -> {
+//                            singleThreadExecutor.submit(() -> {
+//                                try {
+//                                    writer.write(str);
+//                                    writer.newLine();
+//                                } catch (IOException e) {
+//                                    e.printStackTrace();
+//                                }
+//                            });
+//                        })
+                        .count();
+                System.out.println(count);
             });
 
             forkJoinPool.shutdown();
