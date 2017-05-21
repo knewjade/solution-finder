@@ -7,8 +7,6 @@ import common.datastore.IOperationWithKey;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class MinoFieldMemento {
     private static final List<IOperationWithKey> EMPTY_LIST = Collections.emptyList();

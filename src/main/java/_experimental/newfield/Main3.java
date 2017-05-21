@@ -1,11 +1,13 @@
 package _experimental.newfield;
 
+import _experimental.allcomb.MinoField;
 import _experimental.newfield.step1.ColumnParityLimitation;
 import _experimental.newfield.step1.DeltaLimitedMino;
 import _experimental.newfield.step1.EstimateBuilder;
 import _experimental.newfield.step2.FullLimitedMino;
 import _experimental.newfield.step2.PositionLimitParser;
 import _experimental.newfield.step3.CrossBuilder;
+import common.OperationWithKeyHelper;
 import common.Stopwatch;
 import common.buildup.BuildUp;
 import common.datastore.BlockField;
@@ -51,7 +53,6 @@ public class Main3 {
         List<Block> allBlocks = Arrays.asList(Block.values());
         List<Block> blocks = new ArrayList<>();
         blocks.addAll(allBlocks);
-        blocks.addAll(allBlocks);
         int popCount = (maxClearLine * 10 - field.getAllBlockCount()) / 4;
         CombinationIterable<Block> combinationIterable = new CombinationIterable<>(blocks, popCount);
         for (List<Block> blockList : combinationIterable) {
@@ -59,10 +60,11 @@ public class Main3 {
             sets.add(blockList);
         }
 
-        TreeSet<Obj> allObjSet = new TreeSet<>(Comparator.comparing(o -> o.blockField));
+        TreeSet<Obj> allObjSet = new TreeSet<>();
         int counter = 0;
         for (List<Block> usedBlocks : sets) {
             counter++;
+            System.out.println(usedBlocks);
             System.out.println(counter + " / " + sets.size());
             List<List<IOperationWithKey>> operationsWithKey = search(usedBlocks, field, maxClearLine, verifyField);
             List<Obj> objs = operationsWithKey.stream()
@@ -79,12 +81,20 @@ public class Main3 {
                             if (key.getNeedDeletedKey() != 0L)
                                 isDeleted = true;
                         }
-                        return new Obj(usedBlocks, blockField, isDeleted);
+                        return new Obj(usedBlocks, blockField, isDeleted, operationWithKeys);
                     })
                     .collect(Collectors.toList());
 
+            System.out.println(objs.size());
+            objs.stream()
+                    .map(obj -> OperationWithKeyHelper.parseToString(obj.operations))
+                    .sorted().sequential()
+                    .forEach(System.out::println);
+
             allObjSet.addAll(objs);
         }
+        System.out.println(allObjSet.size());
+        System.exit(0);
 
         ArrayList<Obj> allObjs = new ArrayList<>(allObjSet);
         allObjs.sort(Main3::blockListComparator);
@@ -307,17 +317,43 @@ public class Main3 {
                 .collect(Collectors.toList());
     }
 
-    private static class Obj {
+    private static final Comparator<IOperationWithKey> OPERATION_WITH_KEY_COMPARATOR = (o1, o2) -> {
+        Mino mino1 = o1.getMino();
+        Mino mino2 = o2.getMino();
+
+        int compareBlock = mino1.getBlock().compareTo(mino2.getBlock());
+        if (compareBlock != 0)
+            return compareBlock;
+
+        int compareRotate = mino1.getRotate().compareTo(mino2.getRotate());
+        if (compareRotate != 0)
+            return compareRotate;
+
+        int compareX = Integer.compare(o1.getX(), o2.getX());
+        if (compareX != 0)
+            return compareX;
+
+        int compareY = Integer.compare(o1.getY(), o2.getY());
+        if (compareY != 0)
+            return compareY;
+
+        return Long.compare(o1.getNeedDeletedKey(), o2.getNeedDeletedKey());
+    };
+
+    private static class Obj implements Comparable<Obj> {
         private final List<Block> blocks;
         private final BlockField blockField;
         private final boolean isDeleted;
+        private final List<IOperationWithKey> operations;
         private final boolean isDouble;
         private int duplicate = 0;
 
-        public Obj(List<Block> blocks, BlockField blockField, boolean isDeleted) {
+        public Obj(List<Block> blocks, BlockField blockField, boolean isDeleted, List<IOperationWithKey> operations) {
+            operations.sort(OPERATION_WITH_KEY_COMPARATOR);
             this.blocks = blocks;
             this.blockField = blockField;
             this.isDeleted = isDeleted;
+            this.operations = operations;
 
             BlockCounter blockCounter = new BlockCounter(blocks);
             boolean isDouble = false;
@@ -326,6 +362,25 @@ public class Main3 {
                     isDouble = true;
             }
             this.isDouble = isDouble;
+        }
+
+        @Override
+        public int compareTo(Obj o) {
+            int compareBlockField = blockField.compareTo(o.blockField);
+            if (compareBlockField != 0)
+                return compareBlockField;
+
+            int compareSize = Integer.compare(operations.size(), o.operations.size());
+            if (compareSize != 0)
+                return compareSize;
+
+            for (int index = 0; index < operations.size(); index++) {
+                int compare = OPERATION_WITH_KEY_COMPARATOR.compare(operations.get(index), o.operations.get(index));
+                if (compare != 0)
+                    return compare;
+            }
+
+            return 0;
         }
     }
 }

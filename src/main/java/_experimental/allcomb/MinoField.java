@@ -47,13 +47,6 @@ public class MinoField implements Comparable<MinoField> {
         this.blockCounter = parseToBlockCounter(operations);
     }
 
-    private MinoField(List<IOperationWithKey> operations, ColumnField outerField, BlockField blockField, BlockCounter blockCounter) {
-        this.operations = operations;
-        this.outerField = outerField;
-        this.blockField = blockField;
-        this.blockCounter = blockCounter;
-    }
-
     private BlockField parseToBlockField(List<IOperationWithKey> operations, int height) {
         BlockField blockField = new BlockField(height);
         for (IOperationWithKey operation : operations) {

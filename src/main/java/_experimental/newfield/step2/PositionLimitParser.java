@@ -36,11 +36,12 @@ public class PositionLimitParser {
 
     private void initialMapSZ(EnumMap<Block, EnumMap<DeltaLimit, List<FullLimitedMino>>> maps) {
         for (Block block : Arrays.asList(Block.S, Block.Z)) {
+            Rotate side = block == Block.S ? Rotate.Left : Rotate.Right;
             List<PositionLimitedMino> minos = Arrays.asList(
                     PositionLimitedMino.create(minoFactory.create(block, Rotate.Spawn), PositionLimit.OddX),
                     PositionLimitedMino.create(minoFactory.create(block, Rotate.Spawn), PositionLimit.EvenX),
-                    PositionLimitedMino.create(minoFactory.create(block, Rotate.Left), PositionLimit.OddX),
-                    PositionLimitedMino.create(minoFactory.create(block, Rotate.Left), PositionLimit.EvenX)
+                    PositionLimitedMino.create(minoFactory.create(block, side), PositionLimit.OddX),
+                    PositionLimitedMino.create(minoFactory.create(block, side), PositionLimit.EvenX)
             );
             registerToMap(maps, block, minos, DeltaLimit.Flat);
         }

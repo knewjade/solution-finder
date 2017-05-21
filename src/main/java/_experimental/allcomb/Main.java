@@ -1,5 +1,6 @@
 package _experimental.allcomb;
 
+import _experimental.allcomb.memento.UsingBlockAndValidKeyMementoFilter;
 import _experimental.allcomb.memento.ValidKeyMementoFilter;
 import _experimental.allcomb.memento.MementoFilter;
 import _experimental.allcomb.task.Field4x10MinoPackingHelper;
@@ -47,10 +48,10 @@ public class Main {
 //        Set<MinoField> minoFields = solutions.get(new ColumnSmallField());
 //        HashSet<ColumnField> nextOuter = new HashSet<>();
         Field initField = FieldFactory.createField("" +
-                "_________X" +
-                "_________X" +
-                "_________X" +
-                "_________X" +
+                        "XX______XX" +
+                        "XX______XX" +
+                        "XX______XX" +
+                        "XX______XX" +
                 ""
         );
         List<InOutPairField> inOutPairFields = createInOutPairFields(height, initField);
@@ -61,8 +62,8 @@ public class Main {
 
         // TODO: ミノの制限をちゃんとする
         HashSet<Long> validBlockCounters = new HashSet<>();
-        List<Block> usingBlocks = Arrays.asList(Block.values());
-        for (int size = 0; size < usingBlocks.size(); size++) {
+        List<Block> usingBlocks = Arrays.asList(Block.O, Block.T, Block.S, Block.J, Block.Z, Block.L);
+        for (int size = 1; size <= usingBlocks.size(); size++) {
             CombinationIterable<Block> combinationIterable = new CombinationIterable<>(usingBlocks, size);
             for (List<Block> blocks : combinationIterable) {
                 BlockCounter counter = new BlockCounter(blocks);
@@ -70,9 +71,8 @@ public class Main {
             }
         }
         LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(height);
-        MementoFilter mementoFilter = new ValidKeyMementoFilter(initField, reachableThreadLocal, bit.height);
-//        MementoFilter mementoFilter = new UsingBlockAndValidKeyMementoFilter(initField, validBlockCounters, reachableThreadLocal, bit.height);
-//        MementoFilter mementoFilter = new AllPassedMementoFilter();
+//        MementoFilter mementoFilter = new ValidKeyMementoFilter(initField, reachableThreadLocal, bit.height);
+        MementoFilter mementoFilter = new UsingBlockAndValidKeyMementoFilter(initField, validBlockCounters, reachableThreadLocal, bit.height);
 //        MementoFilter mementoFilter = new NoDeleteLineMementoFilter(initField, reachableThreadLocal, bit.height);
 
         TaskResultHelper taskResultHelper = new Field4x10MinoPackingHelper();

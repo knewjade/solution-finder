@@ -23,18 +23,19 @@ public class UsingBlockAndValidKeyMementoFilter implements MementoFilter {
 
     @Override
     public boolean test(MinoFieldMemento memento) {
-        // 手順を連結していない場合は、チェックせずに有効とする
-        if (!memento.isConcat())
-            return true;
-
+        // TODO: 基本パターンを事前に判定し、このチェックを連結後に移動する
         // ブロックの使用状況を確認
         long counter = memento.getSumBlockCounter();
         if (!validBlockCounters.contains(counter))
             return false;
 
+        // 手順を連結していない場合は、チェックせずに有効とする
+        if (!memento.isConcat())
+            return true;
+
         // 手順のkeyに矛盾がないかを確認
         LinkedList<IOperationWithKey> rawOperations = memento.getRawOperations();
-        return BuildUp.checksKey(rawOperations, 0L, height);
+        return BuildUp.checksKeyDirectly(rawOperations, 0L, height);
     }
 
     @Override
@@ -44,6 +45,6 @@ public class UsingBlockAndValidKeyMementoFilter implements MementoFilter {
 
         LinkedList<IOperationWithKey> operations = memento.getOperations();
         Reachable reachable = reachableThreadLocal.get();
-        return BuildUp.existsValidBuildPattern(field, operations, height, reachable);
+        return BuildUp.existsValidBuildPatternDirectly(field, operations, height, reachable);
     }
 }

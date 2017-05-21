@@ -20,6 +20,8 @@ public class NoDeleteLineMementoFilter implements MementoFilter {
 
     @Override
     public boolean test(MinoFieldMemento memento) {
+        // TODO: 基本パターンを事前に判定し、このチェックを連結後に移動する
+        // ライン削除がないことを確認
         boolean noDeleted = memento.getRawOperations().stream().allMatch(key -> key.getNeedDeletedKey() == 0L);
         if (!noDeleted)
             return false;
@@ -30,7 +32,7 @@ public class NoDeleteLineMementoFilter implements MementoFilter {
 
         // 手順のkeyに矛盾がないかを確認
         LinkedList<IOperationWithKey> rawOperations = memento.getRawOperations();
-        return BuildUp.checksKey(rawOperations, 0L, height);
+        return BuildUp.checksKeyDirectly(rawOperations, 0L, height);
     }
 
     @Override
@@ -40,6 +42,6 @@ public class NoDeleteLineMementoFilter implements MementoFilter {
 
         LinkedList<IOperationWithKey> operations = memento.getOperations();
         Reachable reachable = reachableThreadLocal.get();
-        return BuildUp.existsValidBuildPattern(field, operations, height, reachable);
+        return BuildUp.existsValidBuildPatternDirectly(field, operations, height, reachable);
     }
 }

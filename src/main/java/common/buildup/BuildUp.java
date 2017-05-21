@@ -86,13 +86,17 @@ public class BuildUp {
     // 組み立てられる手順が存在するか確認
     public static boolean existsValidBuildPattern(Field fieldOrigin, List<IOperationWithKey> operationWithKeys, int height, Reachable reachable) {
         LinkedList<IOperationWithKey> keys = new LinkedList<>(operationWithKeys);
-        keys.sort((o1, o2) -> {
+        return existsValidBuildPatternDirectly(fieldOrigin, keys, height, reachable);
+    }
+
+    public static boolean existsValidBuildPatternDirectly(Field fieldOrigin, LinkedList<IOperationWithKey> operationWithKeys, int height, Reachable reachable) {
+        operationWithKeys.sort((o1, o2) -> {
             int compare = Integer.compare(o1.getY(), o2.getY());
             if (compare != 0)
                 return compare;
             return Long.compare(o1.getNeedDeletedKey(), o2.getNeedDeletedKey());
         });
-        return existsValidBuildPatternRecursive(fieldOrigin.freeze(height), keys, height, reachable);
+        return existsValidBuildPatternRecursive(fieldOrigin.freeze(height), operationWithKeys, height, reachable);
     }
 
     private static boolean existsValidBuildPatternRecursive(Field field, LinkedList<IOperationWithKey> operationWithKeys, int height, Reachable reachable) {
@@ -137,7 +141,7 @@ public class BuildUp {
     }
 
     // deleteKey・usingKeyに矛盾がないか確認
-    public static boolean checksKeyDirectory(LinkedList<IOperationWithKey> targets, long initDeleteKey, int maxClearLine) {
+    public static boolean checksKeyDirectly(LinkedList<IOperationWithKey> targets, long initDeleteKey, int maxClearLine) {
         long fillKey = KeyOperators.getMaskForKeyBelowY(maxClearLine);
         long currentValidKey = initDeleteKey;
 
@@ -174,7 +178,7 @@ public class BuildUp {
 
     public static boolean checksKey(List<IOperationWithKey> operationWithKeys, long initDeleteKey, int maxClearLine) {
         LinkedList<IOperationWithKey> targets = new LinkedList<>(operationWithKeys);
-        return checksKeyDirectory(targets, initDeleteKey, maxClearLine);
+        return checksKeyDirectly(targets, initDeleteKey, maxClearLine);
     }
 
     private static boolean includesChildKey(long parent, long child) {
