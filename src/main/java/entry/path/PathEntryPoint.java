@@ -4,7 +4,7 @@ import common.OperationHelper;
 import common.Stopwatch;
 import common.SyntaxException;
 import common.buildup.BuildUp;
-import common.datastore.IOperationWithKey;
+import common.datastore.OperationWithKey;
 import common.datastore.Operation;
 import common.datastore.Operations;
 import common.iterable.PermutationIterable;
@@ -349,10 +349,10 @@ public class PathEntryPoint implements EntryPoint {
 
                 // 組めるパターンを列挙
                 // すべての入れ替えた手順で組み直してみる
-                List<IOperationWithKey> operationWithKeys = BuildUp.createOperationWithKeys(field, allOperation, minoFactory, maxClearLine);
+                List<OperationWithKey> operationWithKeys = BuildUp.createOperationWithKeys(field, allOperation, minoFactory, maxClearLine);
                 HashSet<List<Block>> set = new HashSet<>();
-                PermutationIterable<IOperationWithKey> permutationIterable = new PermutationIterable<>(operationWithKeys, operationWithKeys.size());
-                for (List<IOperationWithKey> targetCheckOperationsWithKey : permutationIterable) {
+                PermutationIterable<OperationWithKey> permutationIterable = new PermutationIterable<>(operationWithKeys, operationWithKeys.size());
+                for (List<OperationWithKey> targetCheckOperationsWithKey : permutationIterable) {
                     boolean cansBuild = BuildUp.cansBuild(field, targetCheckOperationsWithKey, maxClearLine, reachable);
                     if (cansBuild) {
                         // 手順を入れ替えても組むことができる

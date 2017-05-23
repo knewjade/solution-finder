@@ -1,4 +1,4 @@
-package _experimental.allcomb;
+package core.column_field;
 
 public class ColumnFieldView {
     private static final String LINE_SEPARATOR = System.lineSeparator();

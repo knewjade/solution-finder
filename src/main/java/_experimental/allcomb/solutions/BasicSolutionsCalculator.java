@@ -1,49 +1,62 @@
-package _experimental.allcomb;
+package _experimental.allcomb.solutions;
 
-
+import _experimental.allcomb.SizedBit;
+import _experimental.allcomb.ColumnFieldConnection;
+import _experimental.allcomb.ColumnFieldConnections;
+import _experimental.allcomb.MinoField;
+import _experimental.allcomb.memento.MementoFilter;
 import common.buildup.BuildUp;
-import common.datastore.IOperationWithKey;
 import common.datastore.OperationWithKey;
+import common.datastore.SimpleOperationWithKey;
+import core.action.reachable.OnGrandOnlyReachable;
+import core.column_field.ColumnField;
+import core.column_field.ColumnSmallField;
 import core.field.Field;
 import core.field.SmallField;
+import pack.separable_mino.SeparableMino;
 
 import java.util.*;
 
 /**
  * マルチスレッド非対応
  */
-class BasicSolutionsCalculator {
-    private static final int WIDTH = 3;
-    public static final int WALL_START_X = 6;
+public class BasicSolutionsCalculator {
     public static final int FIELD_WIDTH = 10;
 
-    private final int height;
-    private final Bit bit;
+    private final SizedBit sizedBit;
     private final BasicReference reference;
-    private final GrandOnlyReachable grandOnlyReachable = new GrandOnlyReachable();
+    private final OnGrandOnlyReachable grandOnlyReachable = new OnGrandOnlyReachable();
 
     private HashMap<ColumnField, Set<MinoField>> resultsMap = new HashMap<>();
     private LinkedList<SeparableMino> minos = new LinkedList<>();
     private HashSet<MinoField> results = new HashSet<>();
     private SmallField wallField = new SmallField();
 
-    BasicSolutionsCalculator(List<SeparableMino> minos, int height) {
-        assert height <= 10;
-        this.height = height;
-        this.bit = new Bit(WIDTH, height);
-        this.reference = new BasicReference(bit, minos);
+    public BasicSolutionsCalculator(List<SeparableMino> minos, SizedBit sizedBit) {
+        assert sizedBit.getHeight() <= 10;
+        this.sizedBit = sizedBit;
+        this.reference = new BasicReference(sizedBit, minos);
     }
 
-    BasicSolutions calculate() {
+    public BasicSolutions calculate() {
         List<ColumnSmallField> basicFields = reference.getBasicFields();
+        HashMap<ColumnField, Set<MinoField>> map = calculateResults(basicFields);
+        return new BasicSolutions(map);
+    }
 
+    public BasicSolutions calculate(MementoFilter mementoFilter) {
+        List<ColumnSmallField> basicFields = reference.getBasicFields();
+        HashMap<ColumnField, Set<MinoField>> map = calculateResults(basicFields);
+        return new BasicSolutions(map, mementoFilter);
+    }
+
+    private HashMap<ColumnField, Set<MinoField>> calculateResults(List<ColumnSmallField> basicFields) {
         this.resultsMap = new HashMap<>();
         for (ColumnField columnField : basicFields) {
             HashSet<MinoField> results = calculate(columnField);
             resultsMap.put(columnField, results);
         }
-
-        return new BasicSolutions(resultsMap);
+        return this.resultsMap;
     }
 
     private HashSet<MinoField> calculate(ColumnField columnField) {
@@ -59,12 +72,15 @@ class BasicSolutionsCalculator {
 
     // innerと探索に関係ないブロックが埋まっているフィールド
     private SmallField createWallField(ColumnField columnField) {
-        SmallField wallField = new SmallField();
-        for (int y = 0; y < height; y++)
-            for (int x = WALL_START_X; x < FIELD_WIDTH; x++)
-                wallField.setBlock(x, y);
         Field innerField = reference.parseInnerField(columnField);
+
+        SmallField wallField = new SmallField();
+        // 横向きIをおいたとき、3ブロック分あふれる
+        for (int y = 0; y < sizedBit.getHeight(); y++)
+            for (int x = sizedBit.getWidth() + 3; x < FIELD_WIDTH; x++)
+                wallField.setBlock(x, y);
         wallField.merge(innerField);
+
         return wallField;
     }
 
@@ -76,15 +92,15 @@ class BasicSolutionsCalculator {
         // 全てが埋まったとき、それまでの手順を解とする
         if (ColumnFieldConnections.isFilled(connections)) {
             // これからブロックをおく場所以外を、すでにブロックで埋めたフィールドを作成
-            Field freeze = wallField.freeze(height);
+            Field freeze = wallField.freeze(sizedBit.getHeight());
             Field invertedOuterField = reference.parseInvertedOuterField(outerColumnField);
             freeze.merge(invertedOuterField);
 
-            List<IOperationWithKey> operations = toOperationWithKeys(minos);
+            List<OperationWithKey> operations = toOperationWithKeys(minos);
 
             // 置くブロック以外がすでに埋まっていると仮定したとき、正しく接着できる順があるか確認
             if (existsValidBuildPattern(freeze, operations))
-                recordResult(operations, outerColumnField.freeze(height));
+                recordResult(operations, outerColumnField.freeze(sizedBit.getHeight()));
 
             return;
         }
@@ -96,15 +112,15 @@ class BasicSolutionsCalculator {
                 // outerで、最終的に使用されるブロック と すでに使っているブロックが重ならないことを確認
                 ColumnField lastOuterField = minoField.getOuterField();
                 if (lastOuterField.canMerge(outerColumnField)) {
-                    List<IOperationWithKey> operations = toOperationWithKeys(this.minos);
+                    List<OperationWithKey> operations = toOperationWithKeys(this.minos);
                     operations.addAll(minoField.getOperations());
 
                     // 使用されるブロックを算出
-                    ColumnField usingBlock = lastOuterField.freeze(height);
+                    ColumnField usingBlock = lastOuterField.freeze(sizedBit.getHeight());
                     usingBlock.merge(outerColumnField);
 
                     // これからブロックをおく場所以外を、すでにブロックで埋めたフィールドを作成
-                    Field freeze = wallField.freeze(height);
+                    Field freeze = wallField.freeze(sizedBit.getHeight());
                     Field invertedOuterField = reference.parseInvertedOuterField(usingBlock);
                     freeze.merge(invertedOuterField);
 
@@ -138,10 +154,10 @@ class BasicSolutionsCalculator {
         }
     }
 
-    private List<IOperationWithKey> toOperationWithKeys(List<SeparableMino> minos) {
-        ArrayList<IOperationWithKey> operations = new ArrayList<>();
+    private List<OperationWithKey> toOperationWithKeys(List<SeparableMino> minos) {
+        ArrayList<OperationWithKey> operations = new ArrayList<>();
         for (SeparableMino mino : minos) {
-            IOperationWithKey key = new OperationWithKey(mino.getMino(), mino.getX(), mino.getDeleteKey(), mino.getUsingKey(), mino.getLowerY());
+            OperationWithKey key = new SimpleOperationWithKey(mino.getMino(), mino.getX(), mino.getDeleteKey(), mino.getUsingKey(), mino.getLowerY());
             operations.add(key);
         }
         return operations;
@@ -150,12 +166,12 @@ class BasicSolutionsCalculator {
     // 置くブロック以外がすでに埋まっていると仮定したとき、正しく接着できる順があるか確認
     // ただし、フィールドをブロックで埋めると回転入れなどができない場合があるため、判定は下に地面があるかだけを判定
     // (部分的には回転入れできなくても、左右のSolutionパターン次第では入れられる可能性がある)
-    private boolean existsValidBuildPattern(Field freeze, List<IOperationWithKey> operations) {
-        return BuildUp.existsValidBuildPattern(freeze, operations, height, grandOnlyReachable);
+    private boolean existsValidBuildPattern(Field freeze, List<OperationWithKey> operations) {
+        return BuildUp.existsValidBuildPattern(freeze, operations, sizedBit.getHeight(), grandOnlyReachable);
     }
 
-    private void recordResult(List<IOperationWithKey> operations, ColumnField outerField) {
-        MinoField result = new MinoField(operations, outerField, height);
+    private void recordResult(List<OperationWithKey> operations, ColumnField outerField) {
+        MinoField result = new MinoField(operations, outerField, sizedBit.getHeight());
         results.add(result);
     }
 }

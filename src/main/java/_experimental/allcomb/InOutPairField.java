@@ -1,5 +1,7 @@
 package _experimental.allcomb;
 
+import core.column_field.ColumnField;
+
 public class InOutPairField {
     private final ColumnField innerField;
     private final ColumnField outerField;

@@ -1,4 +1,4 @@
-package _experimental.allcomb;
+package pack.separable_mino;
 
 import common.iterable.CombinationIterable;
 import core.field.KeyOperators;
@@ -12,10 +12,10 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
-class SeparableMinoFactory {
+public class SeparableMinoFactory {
     private final EnumMap<Block, EnumMap<Rotate, List<SeparableMino>>> maps;
 
-    SeparableMinoFactory(MinoFactory minoFactory, MinoShifter minoShifter, int fieldWidth, int fieldHeight) {
+    public SeparableMinoFactory(MinoFactory minoFactory, MinoShifter minoShifter, int fieldWidth, int fieldHeight) {
         this.maps = initializeMaps(minoFactory, minoShifter, fieldWidth, fieldHeight);
     }
 
@@ -80,7 +80,7 @@ class SeparableMinoFactory {
         return maps;
     }
 
-    List<SeparableMino> create() {
+    public List<SeparableMino> create() {
         List<SeparableMino> all = new ArrayList<>();
         for (Block block : Block.values())
             for (List<SeparableMino> minos : maps.get(block).values())

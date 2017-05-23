@@ -1,7 +1,8 @@
 package _experimental.allcomb.memento;
 
+import _experimental.allcomb.MinoField;
 import common.buildup.BuildUp;
-import common.datastore.IOperationWithKey;
+import common.datastore.OperationWithKey;
 import core.action.reachable.Reachable;
 import core.field.Field;
 
@@ -25,7 +26,7 @@ public class ValidKeyMementoFilter implements MementoFilter {
             return true;
 
         // 手順のkeyに矛盾がないかを確認
-        LinkedList<IOperationWithKey> rawOperations = memento.getRawOperations();
+        LinkedList<OperationWithKey> rawOperations = memento.getRawOperations();
         return BuildUp.checksKey(rawOperations, 0L, height);
     }
 
@@ -34,8 +35,13 @@ public class ValidKeyMementoFilter implements MementoFilter {
         if (!test(memento))
             return false;
 
-        LinkedList<IOperationWithKey> operations = memento.getOperations();
+        LinkedList<OperationWithKey> operations = memento.getOperations();
         Reachable reachable = reachableThreadLocal.get();
         return BuildUp.existsValidBuildPattern(field, operations, height, reachable);
+    }
+
+    @Override
+    public boolean testMinoField(MinoField minoField) {
+        return true;
     }
 }

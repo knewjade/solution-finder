@@ -1,8 +1,8 @@
 package common.buildup;
 
-import common.datastore.IOperationWithKey;
-import common.datastore.Operation;
 import common.datastore.OperationWithKey;
+import common.datastore.Operation;
+import common.datastore.SimpleOperationWithKey;
 import common.datastore.Operations;
 import core.action.reachable.Reachable;
 import core.field.Field;
@@ -18,8 +18,8 @@ import java.util.List;
 // TODO: rewrite 移動したり、クラス化したり
 // TODO: unittest
 public class BuildUp {
-    public static List<IOperationWithKey> createOperationWithKeys(Field fieldOrigin, Operations operations, MinoFactory minoFactory, int height) {
-        ArrayList<IOperationWithKey> keys = new ArrayList<>();
+    public static List<OperationWithKey> createOperationWithKeys(Field fieldOrigin, Operations operations, MinoFactory minoFactory, int height) {
+        ArrayList<OperationWithKey> keys = new ArrayList<>();
         Field field = fieldOrigin.freeze(height);
         for (Operation op : operations.getOperations()) {
             Mino mino = minoFactory.create(op.getBlock(), op.getRotate());
@@ -43,7 +43,7 @@ public class BuildUp {
             long usingKey = keyLine & ~needDeletedKey;
 
             // 操作・消去されている必要がある行をセットで記録
-            IOperationWithKey operationWithKey = new OperationWithKey(mino, x, needDeletedKey, usingKey, lowerY);
+            OperationWithKey operationWithKey = new SimpleOperationWithKey(mino, x, needDeletedKey, usingKey, lowerY);
             keys.add(operationWithKey);
 
             // 次のフィールドを作成
@@ -54,9 +54,9 @@ public class BuildUp {
     }
 
     // 指定した手順で組み立てられるか確認
-    public static boolean cansBuild(Field fieldOrigin, List<IOperationWithKey> operationWithKeys, int height, Reachable reachable) {
+    public static boolean cansBuild(Field fieldOrigin, List<OperationWithKey> operationWithKeys, int height, Reachable reachable) {
         Field field = fieldOrigin.freeze(height);
-        for (IOperationWithKey operationWithKey : operationWithKeys) {
+        for (OperationWithKey operationWithKey : operationWithKeys) {
             long deleteKey = field.clearLineReturnKey();
             long needDeletedKey = operationWithKey.getNeedDeletedKey();
             if ((deleteKey & needDeletedKey) != needDeletedKey) {
@@ -84,12 +84,12 @@ public class BuildUp {
     }
 
     // 組み立てられる手順が存在するか確認
-    public static boolean existsValidBuildPattern(Field fieldOrigin, List<IOperationWithKey> operationWithKeys, int height, Reachable reachable) {
-        LinkedList<IOperationWithKey> keys = new LinkedList<>(operationWithKeys);
+    public static boolean existsValidBuildPattern(Field fieldOrigin, List<OperationWithKey> operationWithKeys, int height, Reachable reachable) {
+        LinkedList<OperationWithKey> keys = new LinkedList<>(operationWithKeys);
         return existsValidBuildPatternDirectly(fieldOrigin, keys, height, reachable);
     }
 
-    public static boolean existsValidBuildPatternDirectly(Field fieldOrigin, LinkedList<IOperationWithKey> operationWithKeys, int height, Reachable reachable) {
+    public static boolean existsValidBuildPatternDirectly(Field fieldOrigin, LinkedList<OperationWithKey> operationWithKeys, int height, Reachable reachable) {
         operationWithKeys.sort((o1, o2) -> {
             int compare = Integer.compare(o1.getY(), o2.getY());
             if (compare != 0)
@@ -99,11 +99,11 @@ public class BuildUp {
         return existsValidBuildPatternRecursive(fieldOrigin.freeze(height), operationWithKeys, height, reachable);
     }
 
-    private static boolean existsValidBuildPatternRecursive(Field field, LinkedList<IOperationWithKey> operationWithKeys, int height, Reachable reachable) {
+    private static boolean existsValidBuildPatternRecursive(Field field, LinkedList<OperationWithKey> operationWithKeys, int height, Reachable reachable) {
         long deleteKey = field.clearLineReturnKey();
 
         for (int index = 0; index < operationWithKeys.size(); index++) {
-            IOperationWithKey key = operationWithKeys.remove(index);
+            OperationWithKey key = operationWithKeys.remove(index);
 
             long needDeletedKey = key.getNeedDeletedKey();
             if ((deleteKey & needDeletedKey) != needDeletedKey) {
@@ -141,15 +141,15 @@ public class BuildUp {
     }
 
     // deleteKey・usingKeyに矛盾がないか確認
-    public static boolean checksKeyDirectly(LinkedList<IOperationWithKey> targets, long initDeleteKey, int maxClearLine) {
+    public static boolean checksKeyDirectly(LinkedList<OperationWithKey> targets, long initDeleteKey, int maxClearLine) {
         long fillKey = KeyOperators.getMaskForKeyBelowY(maxClearLine);
         long currentValidKey = initDeleteKey;
 
         while (!targets.isEmpty()) {
             long nextValidKey = fillKey;
-            LinkedList<IOperationWithKey> next = new LinkedList<>();
+            LinkedList<OperationWithKey> next = new LinkedList<>();
             do {
-                IOperationWithKey operationWithKey = targets.pollFirst();
+                OperationWithKey operationWithKey = targets.pollFirst();
                 long deletedKey = operationWithKey.getNeedDeletedKey();
 
                 // まだ必要なライン消去がされていないか確認
@@ -176,8 +176,8 @@ public class BuildUp {
         return true;
     }
 
-    public static boolean checksKey(List<IOperationWithKey> operationWithKeys, long initDeleteKey, int maxClearLine) {
-        LinkedList<IOperationWithKey> targets = new LinkedList<>(operationWithKeys);
+    public static boolean checksKey(List<OperationWithKey> operationWithKeys, long initDeleteKey, int maxClearLine) {
+        LinkedList<OperationWithKey> targets = new LinkedList<>(operationWithKeys);
         return checksKeyDirectly(targets, initDeleteKey, maxClearLine);
     }
 

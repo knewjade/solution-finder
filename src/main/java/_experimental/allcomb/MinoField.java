@@ -1,55 +1,34 @@
 package _experimental.allcomb;
 
+import common.comparator.OperationWithKeyComparator;
+import common.datastore.BlockCounter;
 import common.datastore.BlockField;
-import common.datastore.IOperationWithKey;
+import common.datastore.OperationWithKey;
+import core.column_field.ColumnField;
 import core.field.SmallField;
 import core.mino.Block;
 import core.mino.Mino;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class MinoField implements Comparable<MinoField> {
-    private static final Comparator<IOperationWithKey> OPERATION_WITH_KEY_COMPARATOR = (o1, o2) -> {
-        Mino mino1 = o1.getMino();
-        Mino mino2 = o2.getMino();
-
-        int compareBlock = mino1.getBlock().compareTo(mino2.getBlock());
-        if (compareBlock != 0)
-            return compareBlock;
-
-        int compareRotate = mino1.getRotate().compareTo(mino2.getRotate());
-        if (compareRotate != 0)
-            return compareRotate;
-
-        int compareX = Integer.compare(o1.getX(), o2.getX());
-        if (compareX != 0)
-            return compareX;
-
-        int compareY = Integer.compare(o1.getY(), o2.getY());
-        if (compareY != 0)
-            return compareY;
-
-        return Long.compare(o1.getNeedDeletedKey(), o2.getNeedDeletedKey());
-    };
-
-    private final List<IOperationWithKey> operations;
+    private final List<OperationWithKey> operations;
     private final ColumnField outerField;
     private final BlockField blockField;
     private final BlockCounter blockCounter;
 
-    public MinoField(List<IOperationWithKey> operations, ColumnField outerField, int height) {
-        operations.sort(OPERATION_WITH_KEY_COMPARATOR);
+    public MinoField(List<OperationWithKey> operations, ColumnField outerField, int height) {
+        operations.sort(OperationWithKeyComparator::compareOperationWithKey);
         this.operations = operations;
         this.outerField = outerField;
         this.blockField = parseToBlockField(operations, height);
         this.blockCounter = parseToBlockCounter(operations);
     }
 
-    private BlockField parseToBlockField(List<IOperationWithKey> operations, int height) {
+    private BlockField parseToBlockField(List<OperationWithKey> operations, int height) {
         BlockField blockField = new BlockField(height);
-        for (IOperationWithKey operation : operations) {
+        for (OperationWithKey operation : operations) {
             SmallField smallField = new SmallField();
             Mino mino = operation.getMino();
             smallField.putMino(mino, operation.getX(), operation.getY());
@@ -59,9 +38,9 @@ public class MinoField implements Comparable<MinoField> {
         return blockField;
     }
 
-    private BlockCounter parseToBlockCounter(List<IOperationWithKey> operations) {
+    private BlockCounter parseToBlockCounter(List<OperationWithKey> operations) {
         List<Block> blocks = operations.stream()
-                .map(IOperationWithKey::getMino)
+                .map(OperationWithKey::getMino)
                 .map(Mino::getBlock)
                 .collect(Collectors.toList());
         return new BlockCounter(blocks);
@@ -71,7 +50,7 @@ public class MinoField implements Comparable<MinoField> {
         return outerField;
     }
 
-    public List<IOperationWithKey> getOperations() {
+    public List<OperationWithKey> getOperations() {
         return operations;
     }
 
@@ -108,7 +87,7 @@ public class MinoField implements Comparable<MinoField> {
             return compareSize;
 
         for (int index = 0; index < operations.size(); index++) {
-            int compare = OPERATION_WITH_KEY_COMPARATOR.compare(operations.get(index), o.operations.get(index));
+            int compare = OperationWithKeyComparator.compareOperationWithKey(operations.get(index), o.operations.get(index));
             if (compare != 0)
                 return compare;
         }

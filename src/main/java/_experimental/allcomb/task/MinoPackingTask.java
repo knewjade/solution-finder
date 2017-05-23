@@ -1,8 +1,13 @@
 package _experimental.allcomb.task;
 
-import _experimental.allcomb.*;
+import _experimental.allcomb.InOutPairField;
+import _experimental.allcomb.MinoField;
+import _experimental.allcomb.PackSearcher;
+import _experimental.allcomb.SizedBit;
 import _experimental.allcomb.memento.MementoFilter;
 import _experimental.allcomb.memento.MinoFieldMemento;
+import core.column_field.ColumnField;
+import core.column_field.ColumnSmallField;
 
 import java.util.List;
 import java.util.Set;
@@ -11,35 +16,33 @@ import java.util.stream.Stream;
 public class MinoPackingTask {
     private static final MinoPackingTask EMPTY_TASK = null;
 
-    private final ListUpSearcher searcher;
-    private final MementoFilter mementoFilter;
+    private final PackSearcher searcher;
     private final ColumnField innerField;
     private final MinoFieldMemento memento;
     private final int index;
 
-    public MinoPackingTask(ListUpSearcher searcher, MementoFilter mementoFilter, ColumnField innerField, MinoFieldMemento memento, int index) {
+    public MinoPackingTask(PackSearcher searcher, ColumnField innerField, MinoFieldMemento memento, int index) {
         this.searcher = searcher;
-        this.mementoFilter = mementoFilter;
         this.innerField = innerField;
         this.memento = memento;
         this.index = index;
     }
 
     public Stream<Result> compute() {
-        if (innerField.getBoard(0) == searcher.getBit().fillBoard) {
+        if (innerField.getBoard(0) == searcher.getSizedBit().getFillBoard()) {
             // innerFieldが埋まっている
             List<InOutPairField> inOutPairFields = searcher.getInOutPairFields();
             if (index == searcher.getLastIndex()) {
                 // 最後の計算
                 ColumnField lastOuterField = inOutPairFields.get(index).getOuterField();
                 MinoFieldMemento nextMemento = memento.skip();
-                return searcher.getTaskResultHelper().fixResult(searcher, mementoFilter, lastOuterField, nextMemento);
+                return searcher.getTaskResultHelper().fixResult(searcher, lastOuterField, nextMemento);
             } else {
                 // 途中の計算  // 自分で計算する
                 int nextIndex = index + 1;
                 ColumnField nextInnerField = inOutPairFields.get(nextIndex).getInnerField();
                 MinoFieldMemento nextMemento = memento.skip();
-                return createTask(searcher, mementoFilter, nextInnerField, nextMemento, nextIndex).compute();
+                return createTask(searcher, nextInnerField, nextMemento, nextIndex).compute();
             }
         } else {
             Set<MinoField> minoFields = searcher.getSolutions().get(innerField);
@@ -60,8 +63,8 @@ public class MinoPackingTask {
         }
     }
 
-    private MinoPackingTask createTask(ListUpSearcher searcher, MementoFilter mementoFilter, ColumnField innerField, MinoFieldMemento memento, int index) {
-        return new MinoPackingTask(searcher, mementoFilter, innerField, memento, index);
+    private MinoPackingTask createTask(PackSearcher searcher, ColumnField innerField, MinoFieldMemento memento, int index) {
+        return new MinoPackingTask(searcher, innerField, memento, index);
     }
 
     private MinoPackingTask split(MinoField minoField) {
@@ -71,11 +74,11 @@ public class MinoPackingTask {
         // 注目範囲外outerで重なりがないか確認
         if (outerField.canMerge(minoOuterField)) {
             // 有効なおきかた
-            Bit bit = searcher.getBit();
-            ColumnField mergedOuterField = outerField.freeze(bit.height);
+            SizedBit sizedBit = searcher.getSizedBit();
+            ColumnField mergedOuterField = outerField.freeze(sizedBit.getHeight());
             mergedOuterField.merge(minoOuterField);
 
-            ColumnSmallField nextInnerField = new ColumnSmallField(mergedOuterField.getBoard(0) >> bit.maxBit);
+            ColumnSmallField nextInnerField = new ColumnSmallField(mergedOuterField.getBoard(0) >> sizedBit.getMaxBitDigit());
             MinoFieldMemento nextMemento = memento.concat(minoField);
             return checkAndCreateTask(nextInnerField, nextMemento, index + 1);
         }
@@ -84,8 +87,9 @@ public class MinoPackingTask {
     }
 
     private MinoPackingTask checkAndCreateTask(ColumnField innerField, MinoFieldMemento memento, int index) {
+        MementoFilter mementoFilter = searcher.getMementoFilter();
         if (mementoFilter.test(memento))
-            return createTask(searcher, mementoFilter, innerField, memento, index);
+            return createTask(searcher, innerField, memento, index);
         return EMPTY_TASK;
     }
 
@@ -96,10 +100,10 @@ public class MinoPackingTask {
         // 注目範囲外outerで重なりがないか確認
         if (outerField.canMerge(minoOuterField)) {
             // 有効なおきかた
-            ColumnField mergedOuterField = outerField.freeze(searcher.getBit().height);
+            ColumnField mergedOuterField = outerField.freeze(searcher.getSizedBit().getHeight());
             mergedOuterField.merge(minoOuterField);
             MinoFieldMemento nextMemento = memento.concat(minoField);
-            return searcher.getTaskResultHelper().fixResult(searcher, mementoFilter, mergedOuterField, nextMemento);
+            return searcher.getTaskResultHelper().fixResult(searcher, mergedOuterField, nextMemento);
         }
 
         return Stream.empty();

@@ -1,7 +1,8 @@
 package _experimental.allcomb.memento;
 
+import _experimental.allcomb.MinoField;
 import common.buildup.BuildUp;
-import common.datastore.IOperationWithKey;
+import common.datastore.OperationWithKey;
 import core.action.reachable.Reachable;
 import core.field.Field;
 
@@ -23,19 +24,21 @@ public class UsingBlockAndValidKeyMementoFilter implements MementoFilter {
 
     @Override
     public boolean test(MinoFieldMemento memento) {
-        // TODO: 基本パターンを事前に判定し、このチェックを連結後に移動する
-        // ブロックの使用状況を確認
-        long counter = memento.getSumBlockCounter();
-        if (!validBlockCounters.contains(counter))
-            return false;
-
         // 手順を連結していない場合は、チェックせずに有効とする
         if (!memento.isConcat())
             return true;
 
+        // ブロックの使用状況を確認
+        if (!checksValidCounter(memento.getSumBlockCounter()))
+            return false;
+
         // 手順のkeyに矛盾がないかを確認
-        LinkedList<IOperationWithKey> rawOperations = memento.getRawOperations();
+        LinkedList<OperationWithKey> rawOperations = memento.getRawOperations();
         return BuildUp.checksKeyDirectly(rawOperations, 0L, height);
+    }
+
+    private boolean checksValidCounter(long counter) {
+        return validBlockCounters.contains(counter);
     }
 
     @Override
@@ -43,8 +46,13 @@ public class UsingBlockAndValidKeyMementoFilter implements MementoFilter {
         if (!test(memento))
             return false;
 
-        LinkedList<IOperationWithKey> operations = memento.getOperations();
+        LinkedList<OperationWithKey> operations = memento.getOperations();
         Reachable reachable = reachableThreadLocal.get();
         return BuildUp.existsValidBuildPatternDirectly(field, operations, height, reachable);
+    }
+
+    @Override
+    public boolean testMinoField(MinoField minoField) {
+        return checksValidCounter(minoField.getBlockCounter().getCounter());
     }
 }

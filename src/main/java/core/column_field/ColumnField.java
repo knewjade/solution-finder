@@ -1,4 +1,4 @@
-package _experimental.allcomb;
+package core.column_field;
 
 public interface ColumnField extends Comparable<ColumnField> {
     // 指定した位置にブロックをおく

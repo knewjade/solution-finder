@@ -101,7 +101,7 @@ class PathCore {
         LinkedList<Pair<Operations, Set<List<Block>>>> masters = new LinkedList<>();
         for (BlockFieldOperations blockFieldOperations : blockFieldOperationsList) {
             Operations operations = blockFieldOperations.getOperations();
-            List<IOperationWithKey> operationWithKeys = BuildUp.createOperationWithKeys(field, operations, minoFactory, maxClearLine);
+            List<OperationWithKey> operationWithKeys = BuildUp.createOperationWithKeys(field, operations, minoFactory, maxClearLine);
             HashSet<List<Block>> canBuildBlocks = buildPattern(field, maxClearLine, isUsingHold, visitedTree, operationWithKeys);
 
             // 比較
@@ -283,7 +283,7 @@ class PathCore {
     }
 
     // ある手順をもとに、探索パターンの中で同じように組めるパターンを列挙
-    private HashSet<List<Block>> buildPattern(Field field, int maxClearLine, boolean isUsingHold, VisitedTree visitedTree, List<IOperationWithKey> operationWithKeys) {
+    private HashSet<List<Block>> buildPattern(Field field, int maxClearLine, boolean isUsingHold, VisitedTree visitedTree, List<OperationWithKey> operationWithKeys) {
         // ホールドなしのときはそのまま返却
         if (!isUsingHold) {
             List<Block> blocks = operationWithKeys.stream()
@@ -300,8 +300,8 @@ class PathCore {
 
         // すべての入れ替えた手順で組み直してみる
         HashSet<List<Block>> set = new HashSet<>();
-        PermutationIterable<IOperationWithKey> permutationIterable = new PermutationIterable<>(operationWithKeys, operationWithKeys.size());
-        for (List<IOperationWithKey> targetCheckOperationsWithKey : permutationIterable) {
+        PermutationIterable<OperationWithKey> permutationIterable = new PermutationIterable<>(operationWithKeys, operationWithKeys.size());
+        for (List<OperationWithKey> targetCheckOperationsWithKey : permutationIterable) {
             boolean cansBuild = BuildUp.cansBuild(field, targetCheckOperationsWithKey, maxClearLine, reachable);
             if (cansBuild) {
                 // 手順を入れ替えても組むことができる

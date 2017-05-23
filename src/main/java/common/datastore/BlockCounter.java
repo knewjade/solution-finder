@@ -1,4 +1,4 @@
-package _experimental.allcomb;
+package common.datastore;
 
 import core.mino.Block;
 
@@ -9,7 +9,7 @@ public class BlockCounter {
 
     private final long counter;
 
-    BlockCounter(List<Block> blocks) {
+    public BlockCounter(List<Block> blocks) {
         this(0L, blocks);
     }
 

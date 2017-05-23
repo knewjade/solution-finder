@@ -1,13 +1,13 @@
 package _experimental.allcomb;
 
-import common.datastore.IOperationWithKey;
+import common.datastore.OperationWithKey;
 import core.mino.Mino;
 
-public class SlideXOperationWithKey implements IOperationWithKey {
-    private final IOperationWithKey operationWithKey;
+public class SlideXOperationWithKey implements OperationWithKey {
+    private final OperationWithKey operationWithKey;
     private final int slideX;
 
-    public SlideXOperationWithKey(IOperationWithKey operationWithKey, int slideX) {
+    public SlideXOperationWithKey(OperationWithKey operationWithKey, int slideX) {
         this.operationWithKey = operationWithKey;
         this.slideX = slideX;
     }

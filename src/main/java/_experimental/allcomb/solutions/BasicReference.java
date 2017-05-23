@@ -1,7 +1,13 @@
-package _experimental.allcomb;
+package _experimental.allcomb.solutions;
 
+import _experimental.allcomb.SizedBit;
+import _experimental.allcomb.ColumnFieldConnection;
+import _experimental.allcomb.ColumnFieldConnections;
+import core.column_field.ColumnField;
+import core.column_field.ColumnSmallField;
 import core.field.Field;
 import core.field.SmallField;
+import pack.separable_mino.SeparableMino;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -10,16 +16,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
-public class BasicReference {
-    private final Bit bit;
+class BasicReference {
+    private final SizedBit sizedBit;
     private final List<SeparableMino> candidateMinos;
     private final List<ColumnSmallField> basicFields;
+
     private final HashMap<ColumnField, ColumnFieldConnections> fieldToConnections;
     private final HashMap<Long, Field> normalToField;
     private final HashMap<Long, Field> invertedToField;
 
-    BasicReference(Bit bit, List<SeparableMino> candidateMinos) {
-        this.bit = bit;
+    BasicReference(SizedBit sizedBit, List<SeparableMino> candidateMinos) {
+        this.sizedBit = sizedBit;
         this.candidateMinos = candidateMinos;
         this.basicFields = createBasicFields();
         this.fieldToConnections = new HashMap<>();
@@ -28,10 +35,19 @@ public class BasicReference {
         init();
     }
 
+    // 存在する基本フィールドをすべて列挙
+    private List<ColumnSmallField> createBasicFields() {
+        return LongStream.range(0, sizedBit.getFillBoard())
+                .boxed()
+                .sorted(Comparator.comparingLong(Long::bitCount).reversed())
+                .map(ColumnSmallField::new)
+                .collect(Collectors.toList());
+    }
+
     private void init() {
         // すべてのブロックが埋まった状態を保存
-        fieldToConnections.put(new ColumnSmallField(bit.fillBoard), ColumnFieldConnections.FILLED);
-        addInnerAndOuter(new ColumnSmallField(bit.fillBoard));
+        fieldToConnections.put(new ColumnSmallField(sizedBit.getFillBoard()), ColumnFieldConnections.FILLED);
+        addInnerAndOuter(new ColumnSmallField(sizedBit.getFillBoard()));
 
         for (ColumnSmallField columnField : basicFields) {
             addInnerAndOuter(columnField);
@@ -45,10 +61,10 @@ public class BasicReference {
 
         SmallField normalField = new SmallField();
         SmallField invertedField = new SmallField();
-        for (int y = 0; y < bit.height; y++) {
-            for (int x = 0; x < bit.width; x++) {
-                if (columnField.isEmpty(x, y, bit.height)) {
-                    invertedField.setBlock(x + bit.width, y);
+        for (int y = 0; y < sizedBit.getHeight(); y++) {
+            for (int x = 0; x < sizedBit.getWidth(); x++) {
+                if (columnField.isEmpty(x, y, sizedBit.getHeight())) {
+                    invertedField.setBlock(x + sizedBit.getWidth(), y);
                 } else {
                     normalField.setBlock(x, y);
                 }
@@ -56,7 +72,7 @@ public class BasicReference {
         }
 
         normalToField.put(board, normalField);
-        invertedToField.put(board << bit.maxBit, invertedField);
+        invertedToField.put(board << sizedBit.getMaxBitDigit(), invertedField);
     }
 
     // ある地形から1ミノだけ置いてできる地形を登録する
@@ -65,22 +81,14 @@ public class BasicReference {
         for (SeparableMino mino : candidateMinos) {
             ColumnField minoField = mino.getField();
             if (columnField.canMerge(minoField)) {
-                ColumnField freeze = columnField.freeze(bit.height);
+                ColumnField freeze = columnField.freeze(sizedBit.getHeight());
                 freeze.merge(minoField);
 
-                ColumnFieldConnection connection = new ColumnFieldConnection(mino, freeze, bit.height);
+                ColumnFieldConnection connection = new ColumnFieldConnection(mino, freeze, sizedBit.getHeight());
                 connectionList.add(connection);
             }
         }
         fieldToConnections.put(columnField, new ColumnFieldConnections(connectionList));
-    }
-
-    private List<ColumnSmallField> createBasicFields() {
-        return LongStream.range(0, bit.fillBoard)
-                .boxed()
-                .sorted(Comparator.comparingLong(Long::bitCount).reversed())
-                .map(ColumnSmallField::new)
-                .collect(Collectors.toList());
     }
 
     List<ColumnSmallField> getBasicFields() {

@@ -1,6 +1,5 @@
 package _experimental.newfield;
 
-import _experimental.allcomb.MinoField;
 import _experimental.newfield.step1.ColumnParityLimitation;
 import _experimental.newfield.step1.DeltaLimitedMino;
 import _experimental.newfield.step1.EstimateBuilder;
@@ -11,7 +10,7 @@ import common.OperationWithKeyHelper;
 import common.Stopwatch;
 import common.buildup.BuildUp;
 import common.datastore.BlockField;
-import common.datastore.IOperationWithKey;
+import common.datastore.OperationWithKey;
 import common.iterable.CombinationIterable;
 import common.tetfu.Tetfu;
 import common.tetfu.TetfuElement;
@@ -36,10 +35,10 @@ import java.util.stream.Stream;
 public class Main3 {
     public static void main(String[] args) {
         Field field = FieldFactory.createField("" +
-                "XX______XX" +
-                "XX______XX" +
-                "XX______XX" +
-                "XX______XX"
+                "X_______XX" +
+                "X_______XX" +
+                "X_______XX" +
+                "X_______XX"
         );
         int maxClearLine = 4;
 
@@ -66,12 +65,12 @@ public class Main3 {
             counter++;
             System.out.println(usedBlocks);
             System.out.println(counter + " / " + sets.size());
-            List<List<IOperationWithKey>> operationsWithKey = search(usedBlocks, field, maxClearLine, verifyField);
+            List<List<OperationWithKey>> operationsWithKey = search(usedBlocks, field, maxClearLine, verifyField);
             List<Obj> objs = operationsWithKey.stream()
                     .map(operationWithKeys -> {
                         boolean isDeleted = false;
                         BlockField blockField = new BlockField(maxClearLine);
-                        for (IOperationWithKey key : operationWithKeys) {
+                        for (OperationWithKey key : operationWithKeys) {
                             Field test = FieldFactory.createField(maxClearLine);
                             Mino mino = key.getMino();
                             test.putMino(mino, key.getX(), key.getY());
@@ -264,7 +263,7 @@ public class Main3 {
         }
     }
 
-    public static List<List<IOperationWithKey>> search(List<Block> usedBlocks, Field field, int maxClearLine, Field verifyField) {
+    public static List<List<OperationWithKey>> search(List<Block> usedBlocks, Field field, int maxClearLine, Field verifyField) {
         MinoFactory minoFactory = new MinoFactory();
         PositionLimitParser positionLimitParser = new PositionLimitParser(minoFactory, maxClearLine);
         LockedReachableThreadLocal threadLocal = new LockedReachableThreadLocal(maxClearLine);
@@ -317,7 +316,7 @@ public class Main3 {
                 .collect(Collectors.toList());
     }
 
-    private static final Comparator<IOperationWithKey> OPERATION_WITH_KEY_COMPARATOR = (o1, o2) -> {
+    private static final Comparator<OperationWithKey> OPERATION_WITH_KEY_COMPARATOR = (o1, o2) -> {
         Mino mino1 = o1.getMino();
         Mino mino2 = o2.getMino();
 
@@ -344,11 +343,11 @@ public class Main3 {
         private final List<Block> blocks;
         private final BlockField blockField;
         private final boolean isDeleted;
-        private final List<IOperationWithKey> operations;
+        private final List<OperationWithKey> operations;
         private final boolean isDouble;
         private int duplicate = 0;
 
-        public Obj(List<Block> blocks, BlockField blockField, boolean isDeleted, List<IOperationWithKey> operations) {
+        public Obj(List<Block> blocks, BlockField blockField, boolean isDeleted, List<OperationWithKey> operations) {
             operations.sort(OPERATION_WITH_KEY_COMPARATOR);
             this.blocks = blocks;
             this.blockField = blockField;

@@ -2,86 +2,14 @@ package common.datastore;
 
 import core.mino.Mino;
 
-public class OperationWithKey implements IOperationWithKey {
-    private final Mino mino;
-    private final int x;
-    private final int y;
-    private final long needDeletedKey;
-    private final long usingKey;
+public interface OperationWithKey {
+    Mino getMino();
 
-    // lowerY: 最も下にあるブロックのy座標
-    public OperationWithKey(Mino mino, int x, long needDeletedKey, long usingKey, int lowerY) {
-        this.mino = mino;
-        this.x = x;
-        this.y = lowerY - mino.getMinY();  // 回転軸のy座標 (ライン消去後のフィールドに対して置かれるべき位置)に直す
-        this.needDeletedKey = needDeletedKey;
-        this.usingKey = usingKey;
-    }
+    int getX();
 
-    public OperationWithKey(Mino mino, int x, int y, long needDeletedKey, long usingKey) {
-        this.mino = mino;
-        this.x = x;
-        this.y = y;
-        this.needDeletedKey = needDeletedKey;
-        this.usingKey = usingKey;
-    }
+    int getY();
 
-    @Override
-    public Mino getMino() {
-        return mino;
-    }
+    long getNeedDeletedKey();
 
-    @Override
-    public int getX() {
-        return x;
-    }
-
-    @Override
-    public int getY() {
-        return y;
-    }
-
-    @Override
-    public long getNeedDeletedKey() {
-        return needDeletedKey;
-    }
-
-    @Override
-    public long getUsingKey() {
-        return usingKey;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        OperationWithKey that = (OperationWithKey) o;
-
-        if (x != that.x) return false;
-        if (y != that.y) return false;
-        if (needDeletedKey != that.needDeletedKey) return false;
-        return mino.equals(that.mino);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = mino.getBlock().hashCode();
-        result = 31 * result + mino.getRotate().hashCode();
-        result = 31 * result + x;
-        result = 31 * result + y;
-        result = 31 * result + (int) (needDeletedKey ^ (needDeletedKey >>> 32));
-        result = 31 * result + (int) (usingKey ^ (usingKey >>> 32));
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "OperationWithKey{" +
-                "mino=" + mino.getBlock() + "-" + mino.getRotate() +
-                ", x=" + x +
-                ", y=" + y +
-                ", needDeletedKey=" + needDeletedKey +
-                '}';
-    }
+    long getUsingKey();
 }

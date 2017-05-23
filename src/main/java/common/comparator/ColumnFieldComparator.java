@@ -1,4 +1,6 @@
-package _experimental.allcomb;
+package common.comparator;
+
+import core.column_field.ColumnField;
 
 import java.util.Comparator;
 

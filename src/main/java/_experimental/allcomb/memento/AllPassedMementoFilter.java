@@ -1,10 +1,8 @@
 package _experimental.allcomb.memento;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import _experimental.allcomb.MinoField;
 
 public class AllPassedMementoFilter implements MementoFilter {
-    private AtomicInteger counter = new AtomicInteger();
-
     @Override
     public boolean test(MinoFieldMemento memento) {
         return true;
@@ -12,6 +10,11 @@ public class AllPassedMementoFilter implements MementoFilter {
 
     @Override
     public boolean testLast(MinoFieldMemento memento) {
+        return true;
+    }
+
+    @Override
+    public boolean testMinoField(MinoField minoField) {
         return true;
     }
 }

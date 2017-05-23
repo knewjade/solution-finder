@@ -1,7 +1,9 @@
-package _experimental.allcomb;
+package pack.separable_mino;
 
 import _experimental.newfield.step4.MinoMask;
 import _experimental.newfield.step4.MinoMaskFactory;
+import core.column_field.ColumnField;
+import core.column_field.ColumnSmallField;
 import core.field.Field;
 import core.mino.Mino;
 

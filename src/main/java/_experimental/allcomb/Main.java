@@ -1,83 +1,136 @@
 package _experimental.allcomb;
 
-import _experimental.allcomb.memento.UsingBlockAndValidKeyMementoFilter;
-import _experimental.allcomb.memento.ValidKeyMementoFilter;
 import _experimental.allcomb.memento.MementoFilter;
+import _experimental.allcomb.memento.UsingBlockAndValidKeyMementoFilter;
+import _experimental.allcomb.solutions.BasicSolutions;
+import _experimental.allcomb.solutions.BasicSolutionsCalculator;
 import _experimental.allcomb.task.Field4x10MinoPackingHelper;
+import _experimental.allcomb.task.Result;
 import _experimental.allcomb.task.TaskResultHelper;
 import _experimental.newfield.LockedReachableThreadLocal;
+import common.OperationWithKeyHelper;
 import common.Stopwatch;
+import common.comparator.OperationWithKeyComparator;
+import common.datastore.BlockCounter;
+import common.datastore.OperationWithKey;
 import common.iterable.CombinationIterable;
+import core.column_field.ColumnSmallField;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import pack.separable_mino.SeparableMino;
+import pack.separable_mino.SeparableMinoFactory;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
     private static final int WIDTH = 3;
+    private static final int HEIGHT = 4;
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
+        Stopwatch stopwatch1 = Stopwatch.createStartedStopwatch();
 
-        int height = 4;
+        Field initField = FieldFactory.createField("" +
+                "______XXXX" +
+                "______XXXX" +
+                "______XXXX" +
+                "______XXXX" +
+                ""
+        );
 
         // ミノのリストを作成する
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new MinoShifter();
-        SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, WIDTH, height);
-        List<SeparableMino> minos = factory.create();
+        SizedBit sizedBit = new SizedBit(WIDTH, HEIGHT);
+        List<SeparableMino> minos = createSeparableMinos(sizedBit);
 
-        // TODO: 消去ラインのフィルタをするならこの段階
-        // TODO: ミノ種類に制限がある場合はここでもする
-        BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(minos, height);
-        BasicSolutions solutions = calculator.calculate();
+        // 検索条件を決める
+        MementoFilter mementoFilter = createMementoFilter(initField, sizedBit);
 
-        stopwatch.stop();
-        System.out.println(stopwatch.toMessage(TimeUnit.SECONDS));
+        // 基本パターンを作る
+        // TODO: 結果を外部ファイルにキャッシュする
+        BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(minos, sizedBit);
+        BasicSolutions solutions = calculator.calculate(mementoFilter);
 
+        // 基本パターン生成にかかった時間を表示
+        stopwatch1.stop();
+        System.out.println(stopwatch1.toMessage(TimeUnit.SECONDS));
 
         System.out.println("========");
 
-//        Set<MinoField> minoFields = solutions.get(new ColumnSmallField());
-//        HashSet<ColumnField> nextOuter = new HashSet<>();
-        Field initField = FieldFactory.createField("" +
-                        "XX______XX" +
-                        "XX______XX" +
-                        "XX______XX" +
-                        "XX______XX" +
-                ""
-        );
-        List<InOutPairField> inOutPairFields = createInOutPairFields(height, initField);
-        Bit bit = new Bit(WIDTH, height);
-//        search(inOutPairFields, 0, inOutPairFields.get(0).getInnerField(), solutions, bit);
-        System.out.println(inOutPairFields);
+        Stopwatch stopwatch2 = Stopwatch.createStartedStopwatch();
 
+        // 探索フィールドを3x4の範囲に変換する
+        // TODO: 壁をみつけて分割統治
+        // TODO: すでにフィールドが埋まっている場合は探索しない
+        List<InOutPairField> inOutPairFields = createInOutPairFields(HEIGHT, initField);
+        TaskResultHelper taskResultHelper = new Field4x10MinoPackingHelper();
+        PackSearcher searcher = new PackSearcher(inOutPairFields, solutions, sizedBit, mementoFilter, taskResultHelper);
 
+        // リスト化するとき
+//        List<Result> results = searcher.toList();
+//        System.out.println(results.size());
+
+        // ファイルに書き出すとき
+        ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
+
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("./listup/output", false), StandardCharsets.UTF_8))) {
+
+            searcher.forEach(result -> {
+                LinkedList<OperationWithKey> operations = result.getMemento().getOperations();
+                operations.sort(OperationWithKeyComparator::compareOperationWithKey);
+                String operationString = OperationWithKeyHelper.parseToString(operations);
+                singleThreadExecutor.submit(() -> {
+                    try {
+                        writer.write(operationString);
+                        writer.newLine();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        singleThreadExecutor.shutdown();
+        singleThreadExecutor.awaitTermination(1L, TimeUnit.HOURS);  // 十分に長い時間待つ
+
+        // 探索にかかった時間を表示
+        stopwatch2.stop();
+        System.out.println(stopwatch2.toMessage(TimeUnit.MILLISECONDS));
+    }
+
+    private static List<SeparableMino> createSeparableMinos(SizedBit sizedBit) {
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, sizedBit.getWidth(), sizedBit.getHeight());
+        return factory.create();
+    }
+
+    private static MementoFilter createMementoFilter(Field initField, SizedBit sizedBit) {
         // TODO: ミノの制限をちゃんとする
         HashSet<Long> validBlockCounters = new HashSet<>();
-        List<Block> usingBlocks = Arrays.asList(Block.O, Block.T, Block.S, Block.J, Block.Z, Block.L);
-        for (int size = 1; size <= usingBlocks.size(); size++) {
+        List<Block> usingBlocks = new ArrayList<>();
+        usingBlocks.addAll(Arrays.asList(Block.values()));
+//        usingBlocks.addAll(Arrays.asList(Block.values()));
+        for (int size = 1; size <= 7; size++) {
             CombinationIterable<Block> combinationIterable = new CombinationIterable<>(usingBlocks, size);
             for (List<Block> blocks : combinationIterable) {
                 BlockCounter counter = new BlockCounter(blocks);
                 validBlockCounters.add(counter.getCounter());
             }
         }
-        LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(height);
-//        MementoFilter mementoFilter = new ValidKeyMementoFilter(initField, reachableThreadLocal, bit.height);
-        MementoFilter mementoFilter = new UsingBlockAndValidKeyMementoFilter(initField, validBlockCounters, reachableThreadLocal, bit.height);
-//        MementoFilter mementoFilter = new NoDeleteLineMementoFilter(initField, reachableThreadLocal, bit.height);
-
-        TaskResultHelper taskResultHelper = new Field4x10MinoPackingHelper();
-        ListUpSearcher searcher = new ListUpSearcher(inOutPairFields, solutions, bit, mementoFilter, taskResultHelper);
-        searcher.search();
+        LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(HEIGHT);
+//        return new ValidKeyMementoFilter(initField, reachableThreadLocal, sizedBit.getHeight());
+        return new UsingBlockAndValidKeyMementoFilter(initField, validBlockCounters, reachableThreadLocal, sizedBit.getHeight());
+//        MementoFilter mementoFilter = new NoDeleteLineMementoFilter(initField, reachableThreadLocal, sizedBit.HEIGHT);
     }
 
     private static List<InOutPairField> createInOutPairFields(int height, Field initField) {

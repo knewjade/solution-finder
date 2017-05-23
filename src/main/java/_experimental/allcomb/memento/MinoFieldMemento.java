@@ -2,14 +2,14 @@ package _experimental.allcomb.memento;
 
 import _experimental.allcomb.MinoField;
 import _experimental.allcomb.SlideXOperationWithKey;
-import common.datastore.IOperationWithKey;
+import common.datastore.OperationWithKey;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 public class MinoFieldMemento {
-    private static final List<IOperationWithKey> EMPTY_LIST = Collections.emptyList();
+    private static final List<OperationWithKey> EMPTY_LIST = Collections.emptyList();
 
     private final MinoField minoField1;
     private final MinoField minoField2;
@@ -84,8 +84,8 @@ public class MinoFieldMemento {
         throw new IllegalStateException("No reachable");
     }
 
-    public LinkedList<IOperationWithKey> getRawOperations() {
-        LinkedList<IOperationWithKey> operations = new LinkedList<>();
+    public LinkedList<OperationWithKey> getRawOperations() {
+        LinkedList<OperationWithKey> operations = new LinkedList<>();
         switch (index) {
             case 4:
                 if (minoField4 != null)
@@ -143,8 +143,8 @@ public class MinoFieldMemento {
         return index;
     }
 
-    public LinkedList<IOperationWithKey> getOperations() {
-        LinkedList<IOperationWithKey> list = new LinkedList<>();
+    public LinkedList<OperationWithKey> getOperations() {
+        LinkedList<OperationWithKey> list = new LinkedList<>();
         switch (index) {
             case 4:
                 if (minoField4 != null)
@@ -164,12 +164,12 @@ public class MinoFieldMemento {
         throw new IllegalStateException("No reachable");
     }
 
-    private void addSlideX(LinkedList<IOperationWithKey> list, List<IOperationWithKey> operations, int slideX) {
-        for (IOperationWithKey operation : operations)
+    private void addSlideX(LinkedList<OperationWithKey> list, List<OperationWithKey> operations, int slideX) {
+        for (OperationWithKey operation : operations)
             list.add(toSlideWrapper(operation, slideX));
     }
 
-    private IOperationWithKey toSlideWrapper(IOperationWithKey operationWithKey, int slideX) {
+    private OperationWithKey toSlideWrapper(OperationWithKey operationWithKey, int slideX) {
         return new SlideXOperationWithKey(operationWithKey, slideX);
     }
 }

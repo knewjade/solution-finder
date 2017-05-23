@@ -1,11 +1,13 @@
 package _experimental.allcomb.memento;
 
+import _experimental.allcomb.MinoField;
 import common.buildup.BuildUp;
-import common.datastore.IOperationWithKey;
+import common.datastore.OperationWithKey;
 import core.action.reachable.Reachable;
 import core.field.Field;
 
 import java.util.LinkedList;
+import java.util.List;
 
 public class NoDeleteLineMementoFilter implements MementoFilter {
     private final Field field;
@@ -20,19 +22,21 @@ public class NoDeleteLineMementoFilter implements MementoFilter {
 
     @Override
     public boolean test(MinoFieldMemento memento) {
-        // TODO: 基本パターンを事前に判定し、このチェックを連結後に移動する
-        // ライン削除がないことを確認
-        boolean noDeleted = memento.getRawOperations().stream().allMatch(key -> key.getNeedDeletedKey() == 0L);
-        if (!noDeleted)
-            return false;
-
         // 手順を連結していない場合は、チェックせずに有効とする
         if (!memento.isConcat())
             return true;
 
+        // ライン削除がないことを確認
+        if (!containsDeleteLineKey(memento.getRawOperations()))
+            return false;
+
         // 手順のkeyに矛盾がないかを確認
-        LinkedList<IOperationWithKey> rawOperations = memento.getRawOperations();
+        LinkedList<OperationWithKey> rawOperations = memento.getRawOperations();
         return BuildUp.checksKeyDirectly(rawOperations, 0L, height);
+    }
+
+    private boolean containsDeleteLineKey(List<OperationWithKey> operations) {
+        return operations.stream().anyMatch(key -> key.getNeedDeletedKey() != 0L);
     }
 
     @Override
@@ -40,8 +44,13 @@ public class NoDeleteLineMementoFilter implements MementoFilter {
         if (!test(memento))
             return false;
 
-        LinkedList<IOperationWithKey> operations = memento.getOperations();
+        LinkedList<OperationWithKey> operations = memento.getOperations();
         Reachable reachable = reachableThreadLocal.get();
         return BuildUp.existsValidBuildPatternDirectly(field, operations, height, reachable);
+    }
+
+    @Override
+    public boolean testMinoField(MinoField minoField) {
+        return !containsDeleteLineKey(minoField.getOperations());
     }
 }

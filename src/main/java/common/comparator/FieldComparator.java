@@ -5,8 +5,7 @@ import core.field.Field;
 import java.util.Comparator;
 
 public class FieldComparator implements Comparator<Field> {
-    @Override
-    public int compare(Field o1, Field o2) {
+    public static int compareField(Field o1, Field o2) {
         int boardCount1 = o1.getBoardCount();
         int boardCount2 = o2.getBoardCount();
 
@@ -19,7 +18,7 @@ public class FieldComparator implements Comparator<Field> {
         return compareSameSize(o1, o2, boardCount1);
     }
 
-    private int compareDifferentSize(Field small, int smallBoardCount, Field large, int largeBoardCount) {
+    private static int compareDifferentSize(Field small, int smallBoardCount, Field large, int largeBoardCount) {
         int index = 0;
         for (; index < smallBoardCount; index++) {
             int compare = Long.compare(small.getBoard(index), large.getBoard(index));
@@ -34,12 +33,17 @@ public class FieldComparator implements Comparator<Field> {
         return 0;
     }
 
-    private int compareSameSize(Field field1, Field field2, int boardCount) {
+    private static int compareSameSize(Field field1, Field field2, int boardCount) {
         for (int index = 0; index < boardCount; index++) {
             int compare = Long.compare(field1.getBoard(index), field2.getBoard(index));
             if (compare != 0)
                 return compare;
         }
         return 0;
+    }
+
+    @Override
+    public int compare(Field o1, Field o2) {
+        return compareField(o1, o2);
     }
 }

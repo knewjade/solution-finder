@@ -1,4 +1,6 @@
-package _experimental.allcomb;
+package core.column_field;
+
+import common.comparator.ColumnFieldComparator;
 
 /**
  * heightの値はメモリ節約のためインスタンス内で保持しない (ただしheight <= 10を想定)

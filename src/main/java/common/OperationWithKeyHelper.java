@@ -1,8 +1,6 @@
 package common;
 
-import common.datastore.IOperationWithKey;
-import common.datastore.Operation;
-import common.datastore.Operations;
+import common.datastore.OperationWithKey;
 import core.mino.Mino;
 import core.srs.Rotate;
 
@@ -10,13 +8,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class OperationWithKeyHelper {
-    public static String parseToString(List<IOperationWithKey> operation) {
+    public static String parseToString(List<OperationWithKey> operation) {
         return operation.stream()
                 .map(OperationWithKeyHelper::parseToString)
                 .collect(Collectors.joining(";"));
     }
 
-    private static String parseToString(IOperationWithKey operation) {
+    private static String parseToString(OperationWithKey operation) {
         Mino mino = operation.getMino();
         return String.format("%s,%s,%d,%d,%d,%d",
                 mino.getBlock().getName(),

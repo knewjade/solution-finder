@@ -1,5 +1,5 @@
 import common.datastore.BlockField;
-import common.datastore.OperationWithKey;
+import common.datastore.SimpleOperationWithKey;
 import common.tetfu.Tetfu;
 import common.tetfu.TetfuElement;
 import common.tetfu.common.ColorConverter;
@@ -63,7 +63,7 @@ public class Main4 {
                         Integer y = Integer.valueOf(split[3]);
                         Long deleteKey = Long.valueOf(split[4]);
                         Long usingKey = Long.valueOf(split[5]);
-                        return new OperationWithKey(mino, x, y, deleteKey, usingKey);
+                        return new SimpleOperationWithKey(mino, x, y, deleteKey, usingKey);
                     }))
                     .map(operationWithKeyStream -> {
                         BlockField blockField = new BlockField(maxClearLine);
