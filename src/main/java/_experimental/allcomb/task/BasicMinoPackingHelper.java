@@ -1,12 +1,14 @@
 package _experimental.allcomb.task;
 
-import _experimental.allcomb.*;
+import _experimental.allcomb.MinoField;
+import _experimental.allcomb.PackSearcher;
+import _experimental.allcomb.SizedBit;
 import _experimental.allcomb.memento.MementoFilter;
 import _experimental.allcomb.memento.MinoFieldMemento;
 import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
 
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class BasicMinoPackingHelper implements TaskResultHelper {
@@ -21,7 +23,7 @@ public class BasicMinoPackingHelper implements TaskResultHelper {
             return Stream.empty();
         } else {
             ColumnSmallField nextInnerField = new ColumnSmallField(board);
-            Set<MinoField> minoFields = searcher.getSolutions().get(nextInnerField);
+            List<MinoField> minoFields = searcher.getSolutions().get(nextInnerField);
 
             return minoFields.stream()
                     .map(nextMemento::concat)

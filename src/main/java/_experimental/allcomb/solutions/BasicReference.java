@@ -1,8 +1,9 @@
 package _experimental.allcomb.solutions;
 
-import _experimental.allcomb.SizedBit;
 import _experimental.allcomb.ColumnFieldConnection;
 import _experimental.allcomb.ColumnFieldConnections;
+import _experimental.allcomb.SeparableMinos;
+import _experimental.allcomb.SizedBit;
 import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
 import core.field.Field;
@@ -18,16 +19,16 @@ import java.util.stream.LongStream;
 
 class BasicReference {
     private final SizedBit sizedBit;
-    private final List<SeparableMino> candidateMinos;
+    private final SeparableMinos separableMinos;
     private final List<ColumnSmallField> basicFields;
 
     private final HashMap<ColumnField, ColumnFieldConnections> fieldToConnections;
     private final HashMap<Long, Field> normalToField;
     private final HashMap<Long, Field> invertedToField;
 
-    BasicReference(SizedBit sizedBit, List<SeparableMino> candidateMinos) {
+    BasicReference(SizedBit sizedBit, SeparableMinos separableMinos) {
         this.sizedBit = sizedBit;
-        this.candidateMinos = candidateMinos;
+        this.separableMinos = separableMinos;
         this.basicFields = createBasicFields();
         this.fieldToConnections = new HashMap<>();
         this.normalToField = new HashMap<>();
@@ -78,7 +79,7 @@ class BasicReference {
     // ある地形から1ミノだけ置いてできる地形を登録する
     private void addConnections(ColumnSmallField columnField) {
         ArrayList<ColumnFieldConnection> connectionList = new ArrayList<>();
-        for (SeparableMino mino : candidateMinos) {
+        for (SeparableMino mino : separableMinos.getMinos()) {
             ColumnField minoField = mino.getField();
             if (columnField.canMerge(minoField)) {
                 ColumnField freeze = columnField.freeze(sizedBit.getHeight());

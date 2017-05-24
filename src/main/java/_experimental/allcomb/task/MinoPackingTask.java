@@ -10,7 +10,6 @@ import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Stream;
 
 public class MinoPackingTask {
@@ -45,8 +44,7 @@ public class MinoPackingTask {
                 return createTask(searcher, nextInnerField, nextMemento, nextIndex).compute();
             }
         } else {
-            Set<MinoField> minoFields = searcher.getSolutions().get(innerField);
-            assert minoFields != null : innerField.getBoard(0);
+            List<MinoField> minoFields = searcher.getSolutions().get(innerField);
 
             // innerFieldが埋まっていない
             if (index == searcher.getLastIndex()) {

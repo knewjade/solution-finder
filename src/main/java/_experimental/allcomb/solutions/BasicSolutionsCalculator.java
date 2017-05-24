@@ -1,9 +1,6 @@
 package _experimental.allcomb.solutions;
 
-import _experimental.allcomb.SizedBit;
-import _experimental.allcomb.ColumnFieldConnection;
-import _experimental.allcomb.ColumnFieldConnections;
-import _experimental.allcomb.MinoField;
+import _experimental.allcomb.*;
 import _experimental.allcomb.memento.MementoFilter;
 import common.buildup.BuildUp;
 import common.datastore.OperationWithKey;
@@ -32,22 +29,16 @@ public class BasicSolutionsCalculator {
     private HashSet<MinoField> results = new HashSet<>();
     private SmallField wallField = new SmallField();
 
-    public BasicSolutionsCalculator(List<SeparableMino> minos, SizedBit sizedBit) {
+    public BasicSolutionsCalculator(SeparableMinos separableMinos, SizedBit sizedBit) {
         assert sizedBit.getHeight() <= 10;
         this.sizedBit = sizedBit;
-        this.reference = new BasicReference(sizedBit, minos);
+        this.reference = new BasicReference(sizedBit, separableMinos);
     }
 
-    public BasicSolutions calculate() {
+    public Map<ColumnField, Set<MinoField>> calculate() {
         List<ColumnSmallField> basicFields = reference.getBasicFields();
         HashMap<ColumnField, Set<MinoField>> map = calculateResults(basicFields);
-        return new BasicSolutions(map);
-    }
-
-    public BasicSolutions calculate(MementoFilter mementoFilter) {
-        List<ColumnSmallField> basicFields = reference.getBasicFields();
-        HashMap<ColumnField, Set<MinoField>> map = calculateResults(basicFields);
-        return new BasicSolutions(map, mementoFilter);
+        return map;
     }
 
     private HashMap<ColumnField, Set<MinoField>> calculateResults(List<ColumnSmallField> basicFields) {
@@ -157,8 +148,7 @@ public class BasicSolutionsCalculator {
     private List<OperationWithKey> toOperationWithKeys(List<SeparableMino> minos) {
         ArrayList<OperationWithKey> operations = new ArrayList<>();
         for (SeparableMino mino : minos) {
-            OperationWithKey key = new SimpleOperationWithKey(mino.getMino(), mino.getX(), mino.getDeleteKey(), mino.getUsingKey(), mino.getLowerY());
-            operations.add(key);
+            operations.add(mino.toOperation());
         }
         return operations;
     }

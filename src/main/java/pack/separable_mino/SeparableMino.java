@@ -2,6 +2,8 @@ package pack.separable_mino;
 
 import _experimental.newfield.step4.MinoMask;
 import _experimental.newfield.step4.MinoMaskFactory;
+import common.datastore.OperationWithKey;
+import common.datastore.SimpleOperationWithKey;
 import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
 import core.field.Field;
@@ -31,6 +33,7 @@ public class SeparableMino {
     private final int lowerY;
     private final long deleteKey;
     private final long usingKey;
+    private final OperationWithKey operation;
 
     private SeparableMino(Mino mino, ColumnField field, int x, int lowerY, long deleteKey, long usingKey) {
         this.mino = mino;
@@ -39,6 +42,7 @@ public class SeparableMino {
         this.lowerY = lowerY;
         this.deleteKey = deleteKey;
         this.usingKey = usingKey;
+        this.operation = new SimpleOperationWithKey(mino, x, deleteKey, usingKey, lowerY);
     }
 
     public Mino getMino() {
@@ -63,5 +67,9 @@ public class SeparableMino {
 
     public long getUsingKey() {
         return usingKey;
+    }
+
+    public OperationWithKey toOperation() {
+        return operation;
     }
 }
