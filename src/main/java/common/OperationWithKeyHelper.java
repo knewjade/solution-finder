@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class OperationWithKeyHelper {
-    public static String parseToString(List<OperationWithKey> operation) {
+    public static String parseToString(List<? extends OperationWithKey> operation) {
         return operation.stream()
                 .map(OperationWithKeyHelper::parseToString)
                 .collect(Collectors.joining(";"));

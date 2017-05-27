@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class PatternElement {
+public class PatternElement {
     private static final List<Block> ALL_BLOCKS = Arrays.asList(Block.values());
     private static final Map<String, Block> nameToBlock = new HashMap<>();
 
@@ -16,7 +16,7 @@ class PatternElement {
             nameToBlock.put(block.getName(), block);
     }
 
-    static Optional<PatternElement> parseWithoutCheck(String pattern) {
+    public static Optional<PatternElement> parseWithoutCheck(String pattern) {
         try {
             return Optional.of(parse(pattern));
         } catch (Exception e) {
@@ -116,11 +116,11 @@ class PatternElement {
         this.popCount = popCount;
     }
 
-    List<Block> getBlocks() {
+    public List<Block> getBlocks() {
         return blocks;
     }
 
-    int getPopCount() {
+    public int getPopCount() {
         return popCount;
     }
 }

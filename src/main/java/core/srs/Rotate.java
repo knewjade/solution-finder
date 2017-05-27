@@ -1,5 +1,7 @@
 package core.srs;
 
+import core.mino.Block;
+
 import java.util.EnumMap;
 
 public enum Rotate {
@@ -10,6 +12,7 @@ public enum Rotate {
 
     private static final EnumMap<Rotate, Rotate> toLeft = new EnumMap<>(Rotate.class);
     private static final EnumMap<Rotate, Rotate> toRight = new EnumMap<>(Rotate.class);
+    private static final Rotate[] ROTATE_MAP = new Rotate[Rotate.values().length];
 
     static {
         toLeft.put(Spawn, Left);
@@ -21,6 +24,18 @@ public enum Rotate {
         toRight.put(Right, Reverse);
         toRight.put(Reverse, Left);
         toRight.put(Left, Spawn);
+
+        for (Rotate rotate : Rotate.values())
+            ROTATE_MAP[rotate.getNumber()] = rotate;
+    }
+
+    public static Rotate getRotate(int number) {
+        assert number < ROTATE_MAP.length;
+        return ROTATE_MAP[number];
+    }
+
+    public static int getSize() {
+        return ROTATE_MAP.length;
     }
 
     private final int number;

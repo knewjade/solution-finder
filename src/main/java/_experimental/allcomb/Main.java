@@ -2,6 +2,7 @@ package _experimental.allcomb;
 
 import _experimental.allcomb.memento.MementoFilter;
 import _experimental.allcomb.memento.UsingBlockAndValidKeyMementoFilter;
+import _experimental.allcomb.memento.ValidKeyMementoFilter;
 import _experimental.allcomb.solutions.BasicSolutions;
 import _experimental.allcomb.solutions.BasicSolutionsCalculator;
 import _experimental.allcomb.task.Field4x10MinoPackingHelper;
@@ -13,7 +14,9 @@ import common.comparator.OperationWithKeyComparator;
 import common.datastore.BlockCounter;
 import common.datastore.OperationWithKey;
 import common.datastore.Pair;
+import common.datastore.SafePieces;
 import common.iterable.CombinationIterable;
+import common.pattern.PiecesGenerator;
 import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
 import core.field.Field;
@@ -33,18 +36,37 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.StreamSupport;
 
 public class Main {
     private static final int WIDTH = 3;
     private static final int HEIGHT = 4;
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
+        List<String> allOnHold = Arrays.asList(
+                "*p7, *p4",
+                "*, *p3, *p7",
+                "*, *p7, *p3",
+                "*, *p4, *p6",
+                "*, *, *p7, *p2",
+                "*, *p5, *p5",
+                "*, *p2, *p7, *",
+                "*, *p6, *p4"
+        );
+
+        PiecesGenerator pieces = new PiecesGenerator(allOnHold);
+        HashSet<BlockCounter> counters = StreamSupport.stream(pieces.spliterator(), true)
+                .map(SafePieces::getBlocks)
+                .map(BlockCounter::new)
+                .collect(Collectors.toCollection(HashSet::new));
+
+        System.out.println(counters.size());
 
         Field initField = FieldFactory.createField("" +
-                "_______XXX" +
-                "_______XXX" +
-                "_______XXX" +
-                "_______XXX" +
+                "XXXXXX____" +
+                "XXXXXXX___" +
+                "XXXXXXXX__" +
+                "XXXXXXX___" +
                 ""
         );
 
@@ -53,12 +75,12 @@ public class Main {
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
 
         // 検索条件を決める
-        MementoFilter mementoFilter = createMementoFilter(initField, sizedBit);
+        MementoFilter mementoFilter = createUsingBlockAndValidKeyMementoFilter(initField, sizedBit, counters);
 
         Stopwatch stopwatch1 = Stopwatch.createStartedStopwatch();
 
         // 基本パターンを読み込む
-        File file = new File("basic");
+        File file = new File("cache/basic");
         BasicSolutions solutions = null;
         if (file.exists()) {
             solutions = readAndCreateSolutions(file, mementoFilter, separableMinos, sizedBit);
@@ -90,7 +112,8 @@ public class Main {
         // ファイルに書き出すとき
         ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
 
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("./listup/output", false), StandardCharsets.UTF_8))) {
+        File outputFile = new File("./output/pack_result");
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile, false), StandardCharsets.UTF_8))) {
             searcher.forEach(result -> {
                 LinkedList<OperationWithKey> operations = result.getMemento().getOperations();
                 operations.sort(OperationWithKeyComparator::compareOperationWithKey);
@@ -243,22 +266,27 @@ public class Main {
     }
 
     private static MementoFilter createMementoFilter(Field initField, SizedBit sizedBit) {
-        // TODO: ミノの制限をちゃんとする
+        LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(HEIGHT);
+        return new ValidKeyMementoFilter(initField, reachableThreadLocal, sizedBit.getHeight());
+//        MementoFilter mementoFilter = new NoDeleteLineMementoFilter(initField, reachableThreadLocal, sizedBit.HEIGHT);
+    }
+
+    private static MementoFilter createUsingBlockAndValidKeyMementoFilter(Field initField, SizedBit sizedBit, HashSet<BlockCounter> counters) {
         HashSet<Long> validBlockCounters = new HashSet<>();
-        List<Block> usingBlocks = new ArrayList<>();
-        usingBlocks.addAll(Arrays.asList(Block.values()));
-//        usingBlocks.addAll(Arrays.asList(Block.values()));
-        for (int size = 1; size <= 7; size++) {
-            CombinationIterable<Block> combinationIterable = new CombinationIterable<>(usingBlocks, size);
-            for (List<Block> blocks : combinationIterable) {
-                BlockCounter counter = new BlockCounter(blocks);
-                validBlockCounters.add(counter.getCounter());
+
+        for (BlockCounter counter : counters) {
+            List<Block> usingBlocks = counter.getBlocks();
+            for (int size = 1; size <= usingBlocks.size(); size++) {
+                CombinationIterable<Block> combinationIterable = new CombinationIterable<>(usingBlocks, size);
+                for (List<Block> blocks : combinationIterable) {
+                    BlockCounter newCounter = new BlockCounter(blocks);
+                    validBlockCounters.add(newCounter.getCounter());
+                }
             }
         }
-        LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(HEIGHT);
-//        return new ValidKeyMementoFilter(initField, reachableThreadLocal, sizedBit.getHeight());
+
+        LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(sizedBit.getHeight());
         return new UsingBlockAndValidKeyMementoFilter(initField, validBlockCounters, reachableThreadLocal, sizedBit.getHeight());
-//        MementoFilter mementoFilter = new NoDeleteLineMementoFilter(initField, reachableThreadLocal, sizedBit.HEIGHT);
     }
 
     private static List<InOutPairField> createInOutPairFields(int height, Field initField) {

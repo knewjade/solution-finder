@@ -7,8 +7,23 @@ public enum Block {
     J(new int[][]{{0, 0}, {-1, 0}, {1, 0}, {-1, 1}}, 3),
     S(new int[][]{{0, 0}, {-1, 0}, {0, 1}, {1, 1}}, 4),
     Z(new int[][]{{0, 0}, {1, 0}, {0, 1}, {-1, 1}}, 5),
-    O(new int[][]{{0, 0}, {1, 0}, {0, 1}, {1, 1}}, 6),
-    ;
+    O(new int[][]{{0, 0}, {1, 0}, {0, 1}, {1, 1}}, 6),;
+
+    private static final Block[] BLOCK_MAP = new Block[Block.values().length];
+
+    static {
+        for (Block block : Block.values())
+            BLOCK_MAP[block.getNumber()] = block;
+    }
+
+    public static Block getBlock(int number) {
+        assert number < BLOCK_MAP.length;
+        return BLOCK_MAP[number];
+    }
+
+    public static int getSize() {
+        return BLOCK_MAP.length;
+    }
 
     private final int[][] positions;
     private final int number;

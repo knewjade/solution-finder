@@ -2,22 +2,11 @@ package common;
 
 import common.datastore.Operation;
 import common.datastore.SimpleOperation;
+import common.datastore.action.Action;
 import core.mino.Block;
 import core.srs.Rotate;
-import common.datastore.action.Action;
 
 class ActionParser {
-    private static final Block[] blockMap = new Block[Block.values().length];
-    private static final Rotate[] rotateMap = new Rotate[Rotate.values().length];
-
-    static {
-        for (Block block : Block.values())
-            blockMap[block.getNumber()] = block;
-
-        for (Rotate rotate : Rotate.values())
-            rotateMap[rotate.getNumber()] = rotate;
-    }
-
     static int parseToInt(Block block, Action action) {
         return parseToInt(block, action.getRotate(), action.getX(), action.getY());
     }
@@ -31,9 +20,9 @@ class ActionParser {
         value /= 10;
         int y = value % 24;
         value /= 24;
-        Rotate rotate = rotateMap[value % 4];
+        Rotate rotate = Rotate.getRotate(value % 4);
         value /= 4;
-        Block block = blockMap[value];
+        Block block = Block.getBlock(value);
         return new SimpleOperation(block, rotate, x, y);
     }
 }
