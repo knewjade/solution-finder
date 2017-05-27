@@ -2,9 +2,8 @@ package searcher.pack.task;
 
 import searcher.pack.InOutPairField;
 import searcher.pack.MinoField;
-import searcher.pack.PackSearcher;
 import searcher.pack.SizedBit;
-import searcher.pack.memento.MementoFilter;
+import searcher.pack.memento.SolutionFilter;
 import searcher.pack.memento.MinoFieldMemento;
 import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
@@ -44,7 +43,7 @@ public class MinoPackingTask {
                 return createTask(searcher, nextInnerField, nextMemento, nextIndex).compute();
             }
         } else {
-            List<MinoField> minoFields = searcher.getSolutions().get(innerField);
+            List<MinoField> minoFields = searcher.getSolutions().parse(innerField);
 
             // innerFieldが埋まっていない
             if (index == searcher.getLastIndex()) {
@@ -85,8 +84,8 @@ public class MinoPackingTask {
     }
 
     private MinoPackingTask checkAndCreateTask(ColumnField innerField, MinoFieldMemento memento, int index) {
-        MementoFilter mementoFilter = searcher.getMementoFilter();
-        if (mementoFilter.test(memento))
+        SolutionFilter solutionFilter = searcher.getSolutionFilter();
+        if (solutionFilter.test(memento))
             return createTask(searcher, innerField, memento, index);
         return EMPTY_TASK;
     }

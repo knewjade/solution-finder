@@ -1,7 +1,6 @@
 package searcher.pack.task;
 
 import core.column_field.ColumnField;
-import searcher.pack.PackSearcher;
 import searcher.pack.memento.MinoFieldMemento;
 
 import java.util.stream.Stream;

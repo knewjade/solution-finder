@@ -9,12 +9,12 @@ import core.field.Field;
 import java.util.LinkedList;
 import java.util.List;
 
-public class NoDeleteLineMementoFilter implements MementoFilter {
+public class NoDeleteLineSolutionFilter implements SolutionFilter {
     private final Field field;
     private final ThreadLocal<? extends Reachable> reachableThreadLocal;
     private final int height;
 
-    public NoDeleteLineMementoFilter(Field field, ThreadLocal<? extends Reachable> reachableThreadLocal, int height) {
+    public NoDeleteLineSolutionFilter(Field field, ThreadLocal<? extends Reachable> reachableThreadLocal, int height) {
         this.field = field;
         this.reachableThreadLocal = reachableThreadLocal;
         this.height = height;

@@ -1,14 +1,14 @@
 package searcher.pack.solutions;
 
-import searcher.pack.MinoField;
-import searcher.pack.memento.MementoFilter;
 import core.column_field.ColumnField;
+import searcher.pack.MinoField;
+import searcher.pack.memento.SolutionFilter;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class BasicSolutions {
-    static BasicSolutions createFromSet(Map<ColumnField, Set<MinoField>> solutions) {
+    public static BasicSolutions createFromSet(Map<ColumnField, Set<MinoField>> solutions) {
         HashMap<ColumnField, List<MinoField>> newHashMap = new HashMap<>();
         for (Map.Entry<ColumnField, Set<MinoField>> entry : solutions.entrySet()) {
             List<MinoField> newList = new ArrayList<>(entry.getValue());
@@ -19,24 +19,7 @@ public class BasicSolutions {
         return new BasicSolutions(newHashMap);
     }
 
-    private static final List<MinoField> EMPTY_MINO_FIELDS = Collections.emptyList();
-
-    private final Map<ColumnField, List<MinoField>> solutions;
-
-    public BasicSolutions(Map<ColumnField, List<MinoField>> solutions) {
-        this.solutions = solutions;
-    }
-
-    public BasicSolutions(Map<ColumnField, Set<MinoField>> solutions, MementoFilter filter) {
-        System.out.println(solutions.size());
-
-        int sum = 0;
-        for (Set<MinoField> minoFields : solutions.values()) {
-            sum += minoFields.size();
-        }
-        System.out.println(sum);
-
-
+    public static BasicSolutions createFromSet(Map<ColumnField, Set<MinoField>> solutions, SolutionFilter filter) {
         HashMap<ColumnField, List<MinoField>> filtered = new HashMap<>();
         for (Map.Entry<ColumnField, Set<MinoField>> entry : solutions.entrySet()) {
             List<MinoField> newList = entry.getValue().stream()
@@ -46,20 +29,19 @@ public class BasicSolutions {
             if (0 < newList.size())
                 filtered.put(entry.getKey(), newList);
         }
-        this.solutions = filtered;
+        return new BasicSolutions(filtered);
     }
 
-    public BasicSolutions(HashMap<ColumnField, List<MinoField>> solutions, MementoFilter filter) {
+    private static final List<MinoField> EMPTY_MINO_FIELDS = Collections.emptyList();
 
-        System.out.println(solutions.size());
+    private final Map<ColumnField, List<MinoField>> solutions;
 
-        int sum = 0;
-        for (List<MinoField> minoFields : solutions.values()) {
-            sum += minoFields.size();
-        }
-        System.out.println(sum);
+    public BasicSolutions(Map<ColumnField, List<MinoField>> solutions) {
+        assert solutions != null;
+        this.solutions = solutions;
+    }
 
-
+    public BasicSolutions(HashMap<ColumnField, List<MinoField>> solutions, SolutionFilter filter) {
         HashMap<ColumnField, List<MinoField>> filtered = new HashMap<>();
         for (Map.Entry<ColumnField, List<MinoField>> entry : solutions.entrySet()) {
             List<MinoField> newList = entry.getValue().stream()
@@ -72,7 +54,11 @@ public class BasicSolutions {
         this.solutions = filtered;
     }
 
-    public List<MinoField> get(ColumnField columnField) {
+    public List<MinoField> parse(ColumnField columnField) {
         return solutions.getOrDefault(columnField, EMPTY_MINO_FIELDS);
+    }
+
+    public Map<ColumnField, List<MinoField>> getSolutions() {
+        return solutions;
     }
 }

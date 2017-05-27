@@ -2,7 +2,7 @@ package searcher.pack.memento;
 
 import searcher.pack.MinoField;
 
-public class AllPassedMementoFilter implements MementoFilter {
+public class AllPassedSolutionFilter implements SolutionFilter {
     @Override
     public boolean test(MinoFieldMemento memento) {
         return true;

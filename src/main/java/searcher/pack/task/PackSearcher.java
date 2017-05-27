@@ -1,0 +1,109 @@
+package searcher.pack.task;
+
+import core.column_field.ColumnField;
+import searcher.pack.InOutPairField;
+import searcher.pack.SizedBit;
+import searcher.pack.memento.SolutionFilter;
+import searcher.pack.memento.MinoFieldMemento;
+import searcher.pack.solutions.BasicSolutions;
+
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
+public class PackSearcher {
+    private final List<InOutPairField> inOutPairFields;
+    private final BasicSolutions solutions;
+    private final SizedBit sizedBit;
+    private final int lastIndex;
+    private final SolutionFilter solutionFilter;
+    private final TaskResultHelper taskResultHelper;
+
+    public PackSearcher(List<InOutPairField> inOutPairFields, BasicSolutions solutions, SizedBit sizedBit, SolutionFilter solutionFilter, TaskResultHelper taskResultHelper) {
+        this.inOutPairFields = inOutPairFields;
+        this.solutions = solutions;
+        this.sizedBit = sizedBit;
+        this.lastIndex = inOutPairFields.size() - 1;
+        this.solutionFilter = solutionFilter;
+        this.taskResultHelper = taskResultHelper;
+    }
+
+    public List<Result> toList() throws InterruptedException, ExecutionException {
+        // 探索準備
+        MinoFieldMemento emptyMemento = new MinoFieldMemento();
+        ColumnField innerField = inOutPairFields.get(0).getInnerField();
+        MinoPackingTask task = new MinoPackingTask(this, innerField, emptyMemento, 0);
+
+        // 探索
+        ForkJoinPool forkJoinPool = new ForkJoinPool();
+
+        ForkJoinTask<List<Result>> submitTask = forkJoinPool.submit(() -> {
+            // Streamは終端操作を実行するまで実際には計算を行わない
+            // そのため、終端操作をPool内でしなければ、Pool外のスレッド場で動くため注意が必要
+            // (終端操作をしなかった場合、Pool内ではStream自体の作成をして終了する)
+            return task.compute().parallel().collect(Collectors.toList());
+        });
+
+        // 結果を取得するまで待つ
+        List<Result> results = submitTask.get();
+
+        // 終了処理
+        forkJoinPool.shutdown();
+
+        return results;
+    }
+
+    public void forEach(Consumer<Result> callback) throws InterruptedException, ExecutionException {
+        // 探索準備
+        MinoFieldMemento emptyMemento = new MinoFieldMemento();
+        ColumnField innerField = inOutPairFields.get(0).getInnerField();
+        MinoPackingTask task = new MinoPackingTask(this, innerField, emptyMemento, 0);
+
+        // 探索
+        ForkJoinPool forkJoinPool = new ForkJoinPool();
+
+        ForkJoinTask<Boolean> submitTask = forkJoinPool.submit(() -> {
+            // Streamは終端操作を実行するまで実際には計算を行わない
+            // そのため、終端操作をPool内でしなければ、Pool外のスレッド場で動くため注意が必要
+            // (終端操作をしなかった場合、Pool内ではStream自体の作成をして終了する)
+            task.compute().parallel().forEach(callback);
+
+            // 計算を最後まで行ったことを伝えるため true を返却
+            return true;
+        });
+
+        // 結果を取得するまで待つ
+        Boolean result = submitTask.get();
+        assert result;
+
+        // 終了処理
+        forkJoinPool.shutdown();
+    }
+
+    SizedBit getSizedBit() {
+        return sizedBit;
+    }
+
+    List<InOutPairField> getInOutPairFields() {
+        return inOutPairFields;
+    }
+
+    BasicSolutions getSolutions() {
+        return solutions;
+    }
+
+    int getLastIndex() {
+        return lastIndex;
+    }
+
+    TaskResultHelper getTaskResultHelper() {
+        return taskResultHelper;
+    }
+
+    SolutionFilter getSolutionFilter() {
+        return solutionFilter;
+    }
+}

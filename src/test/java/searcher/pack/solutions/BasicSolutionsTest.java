@@ -26,7 +26,7 @@ public class BasicSolutionsTest {
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
         Map<ColumnField, Set<MinoField>> calculate = calculator.calculate();
         BasicSolutions solutions = BasicSolutions.createFromSet(calculate);
-        assertThat(solutions.get(new ColumnSmallField()), hasSize(5685));
+        assertThat(solutions.parse(new ColumnSmallField()), hasSize(5685));
     }
 
     private static SeparableMinos createSeparableMinos(SizedBit sizedBit) {
