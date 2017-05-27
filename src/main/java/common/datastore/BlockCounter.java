@@ -32,7 +32,7 @@ public class BlockCounter {
         this.counter = counter + sum;
     }
 
-    public BlockCounter add(List<Block> blocks) {
+    public BlockCounter addAndReturnNew(List<Block> blocks) {
         return new BlockCounter(counter, blocks);
     }
 

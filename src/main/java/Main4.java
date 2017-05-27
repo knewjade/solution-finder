@@ -1,5 +1,6 @@
 import common.buildup.BuildUpListUp;
 import common.datastore.*;
+import common.datastore.pieces.Pieces;
 import common.iterable.CombinationIterable;
 import common.pattern.PatternElement;
 import common.pattern.PiecesGenerator;
@@ -65,7 +66,7 @@ public class Main4 {
         // ツモ順の列挙
         PiecesGenerator piecesGenerator = new PiecesGenerator(allOnHold);
         HashSet<List<Block>> leastBlocks = StreamSupport.stream(piecesGenerator.spliterator(), true)
-                .map(SafePieces::getBlocks)
+                .map(Pieces::getBlocks)
                 .collect(Collectors.toCollection(HashSet::new));
         System.out.println(leastBlocks.size());
         for (List<Block> leastBlock : leastBlocks) {
@@ -215,7 +216,7 @@ public class Main4 {
                     CombinationIterable<Block> combinationIterable = new CombinationIterable<>(blocks, popCount);
                     for (List<Block> blockList : combinationIterable) {
                         for (BlockCounter prev : fixed) {
-                            BlockCounter next = prev.add(blockList);
+                            BlockCounter next = prev.addAndReturnNew(blockList);
                             nexts.add(next);
                         }
                     }

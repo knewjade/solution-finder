@@ -1,5 +1,6 @@
 package concurrent.checker.invoker;
 
+import common.datastore.pieces.Pieces;
 import concurrent.LockedCandidateThreadLocal;
 import concurrent.checker.CheckerUsingHoldThreadLocal;
 import concurrent.checker.invoker.using_hold.ConcurrentCheckerUsingHoldInvoker;
@@ -8,7 +9,6 @@ import core.field.FieldFactory;
 import core.mino.Block;
 import common.datastore.Pair;
 import common.pattern.PiecesGenerator;
-import common.datastore.SafePieces;
 import org.junit.Test;
 import common.datastore.action.Action;
 import common.tree.AnalyzeTree;
@@ -53,7 +53,7 @@ public class ConcurrentCheckerUsingHoldInvokerTest {
 
     private List<List<Block>> toBlocksList(PiecesGenerator piecesGenerator) {
         List<List<Block>> searchingPieces = new ArrayList<>();
-        for (SafePieces pieces : piecesGenerator)
+        for (Pieces pieces : piecesGenerator)
             searchingPieces.add(pieces.getBlocks());
         return searchingPieces;
     }

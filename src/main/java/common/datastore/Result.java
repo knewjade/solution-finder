@@ -1,10 +1,9 @@
 package common.datastore;
 
-import core.mino.Block;
 import common.datastore.action.Action;
 import common.datastore.order.Order;
+import core.mino.Block;
 
-// TODO: createOperationsを外に出してdatastoreへ移動
 public class Result {
     private final Order order;
     private final Block lastBlock;
@@ -37,12 +36,24 @@ public class Result {
 
     @Override
     public boolean equals(Object o) {
-        throw new UnsupportedOperationException();
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Result result = (Result) o;
+
+        if (!order.equals(result.order)) return false;
+        if (lastBlock != result.lastBlock) return false;
+        if (!action.equals(result.action)) return false;
+        return lastHold == result.lastHold;
     }
 
     @Override
     public int hashCode() {
-        throw new UnsupportedOperationException();
+        int result = order.hashCode();
+        result = 31 * result + lastBlock.hashCode();
+        result = 31 * result + action.hashCode();
+        result = 31 * result + (lastHold != null ? lastHold.hashCode() : 0);
+        return result;
     }
 
     @Override

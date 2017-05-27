@@ -1,5 +1,9 @@
 package searcher.checker;
 
+import common.datastore.pieces.Pieces;
+import common.datastore.action.Action;
+import common.pattern.PiecesGenerator;
+import common.tree.AnalyzeTree;
 import core.action.candidate.Candidate;
 import core.action.candidate.LockedCandidate;
 import core.field.Field;
@@ -8,12 +12,8 @@ import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
-import common.pattern.PiecesGenerator;
-import common.datastore.SafePieces;
 import org.junit.Test;
-import common.datastore.action.Action;
 import searcher.common.validator.PerfectValidator;
-import common.tree.AnalyzeTree;
 
 import java.util.List;
 
@@ -35,7 +35,7 @@ public class CheckerNoHoldCountTest {
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
         AnalyzeTree tree = new AnalyzeTree();
 
-        for (SafePieces pieces : piecesGenerator) {
+        for (Pieces pieces : piecesGenerator) {
             List<Block> blocks = pieces.getBlocks();
             boolean result = checker.check(field, blocks, candidate, maxClearLine, maxDepth);
             tree.set(result, blocks);

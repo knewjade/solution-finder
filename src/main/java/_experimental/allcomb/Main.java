@@ -14,7 +14,7 @@ import common.comparator.OperationWithKeyComparator;
 import common.datastore.BlockCounter;
 import common.datastore.OperationWithKey;
 import common.datastore.Pair;
-import common.datastore.SafePieces;
+import common.datastore.pieces.Pieces;
 import common.iterable.CombinationIterable;
 import common.pattern.PiecesGenerator;
 import core.column_field.ColumnField;
@@ -56,7 +56,7 @@ public class Main {
 
         PiecesGenerator pieces = new PiecesGenerator(allOnHold);
         HashSet<BlockCounter> counters = StreamSupport.stream(pieces.spliterator(), true)
-                .map(SafePieces::getBlocks)
+                .map(Pieces::getBlocks)
                 .map(BlockCounter::new)
                 .collect(Collectors.toCollection(HashSet::new));
 

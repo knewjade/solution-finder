@@ -1,11 +1,11 @@
 package entry.searching_pieces;
 
+import common.datastore.pieces.Pieces;
+import common.order.ListPieces;
 import common.order.OrderLookup;
-import common.order.Pieces;
-import core.mino.Block;
 import common.pattern.PiecesGenerator;
-import common.datastore.SafePieces;
 import common.tree.VisitedTree;
+import core.mino.Block;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,14 +40,14 @@ public class HoldBreakEnumeratePieces implements EnumeratePiecesCore {
         boolean isOverPieces = maxDepth < combinationPopCount;
 
         // 組み合わせの列挙
-        for (SafePieces pieces : generator) {
+        for (Pieces pieces : generator) {
             counter++;
             List<Block> blocks = pieces.getBlocks();
 
             // ホールドありパターンから複数のホールドなしに分解
-            List<Pieces> forward = OrderLookup.forward(blocks, combinationPopCount);
+            List<ListPieces> forward = OrderLookup.forward(blocks, combinationPopCount);
 
-            for (Pieces piecesWithNoHold : forward) {
+            for (ListPieces piecesWithNoHold : forward) {
                 List<Block> blocksWithNoHold = piecesWithNoHold.getBlocks();
                 if (isOverPieces)
                     blocksWithNoHold = blocksWithNoHold.subList(0, maxDepth);

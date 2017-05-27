@@ -8,6 +8,17 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class BasicSolutions {
+    static BasicSolutions createFromSet(Map<ColumnField, Set<MinoField>> solutions) {
+        HashMap<ColumnField, List<MinoField>> newHashMap = new HashMap<>();
+        for (Map.Entry<ColumnField, Set<MinoField>> entry : solutions.entrySet()) {
+            List<MinoField> newList = new ArrayList<>(entry.getValue());
+
+            if (0 < newList.size())
+                newHashMap.put(entry.getKey(), newList);
+        }
+        return new BasicSolutions(newHashMap);
+    }
+
     private static final List<MinoField> EMPTY_MINO_FIELDS = Collections.emptyList();
 
     private final Map<ColumnField, List<MinoField>> solutions;

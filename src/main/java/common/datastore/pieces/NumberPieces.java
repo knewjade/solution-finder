@@ -1,4 +1,4 @@
-package common.datastore;
+package common.datastore.pieces;
 
 import core.mino.Block;
 
@@ -47,7 +47,7 @@ public class NumberPieces implements Pieces {
     }
 
     @Override
-    public Pieces add(List<Block> blocks) {
+    public Pieces addAndReturnNew(List<Block> blocks) {
         return new NumberPieces(this, blocks);
     }
 }

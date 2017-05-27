@@ -1,9 +1,9 @@
 package entry.searching_pieces;
 
-import core.mino.Block;
+import common.datastore.pieces.Pieces;
 import common.pattern.PiecesGenerator;
-import common.datastore.SafePieces;
 import common.tree.VisitedTree;
+import core.mino.Block;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ public class NormalEnumeratePieces implements EnumeratePiecesCore {
         boolean isOverPieces = combinationPopCount < generator.getDepth();
 
         // 組み合わせの列挙
-        for (SafePieces pieces : generator) {
+        for (Pieces pieces : generator) {
             counter++;
             List<Block> blocks = pieces.getBlocks();
             if (isOverPieces)

@@ -1,7 +1,8 @@
-import common.datastore.NumberPieces;
-import common.datastore.Pieces;
+package common.pattern;
+
+import common.datastore.pieces.NumberPieces;
+import common.datastore.pieces.Pieces;
 import common.iterable.PermutationIterable;
-import common.pattern.PatternElement;
 import core.mino.Block;
 
 import java.util.ArrayList;
@@ -9,16 +10,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class PiecesStreamBuilder {
-    //    private final List<Iterable<List<Block>>> iterables = new ArrayList<>();
+class PiecesStreamBuilder {
     private final List<Integer> depths = new ArrayList<>();
     private final List<List<List<Block>>> combinations = new ArrayList<>();
     private final int lastIndex;
     private Stream.Builder<Pieces> builder = null;
-
-//    private final List<Iterator<List<Block>>> iterators = new ArrayList<>();
-//    private final ArrayList<Integer> startIndexes = new ArrayList<>();
-//    private ArrayList<Block> blocks = new ArrayList<>();
 
     PiecesStreamBuilder(String pattern) {
         String[] splits = pattern.split(",");
@@ -58,7 +54,7 @@ public class PiecesStreamBuilder {
 
     private void enumerate(Pieces pieces, int index) {
         for (List<Block> combination : combinations.get(index)) {
-            Pieces newPieces = pieces.add(combination);
+            Pieces newPieces = pieces.addAndReturnNew(combination);
             if (index == lastIndex) {
                 this.builder.accept(newPieces);
             } else {

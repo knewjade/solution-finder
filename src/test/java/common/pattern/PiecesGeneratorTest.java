@@ -1,7 +1,7 @@
 package common.pattern;
 
 import common.SyntaxException;
-import common.datastore.SafePieces;
+import common.datastore.pieces.Pieces;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -14,9 +14,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class PiecesGeneratorTest {
-    private List<SafePieces> toList(Iterable<SafePieces> iterable) {
-        ArrayList<SafePieces> list = new ArrayList<>();
-        for (SafePieces pieces : iterable)
+    private List<Pieces> toList(Iterable<Pieces> iterable) {
+        ArrayList<Pieces> list = new ArrayList<>();
+        for (Pieces pieces : iterable)
             list.add(pieces);
         return list;
     }
@@ -26,7 +26,7 @@ public class PiecesGeneratorTest {
         PiecesGenerator generator = new PiecesGenerator("I # comment");
         assertThat(generator.getDepth(), is(1));
 
-        List<SafePieces> pieces = toList(generator);
+        List<Pieces> pieces = toList(generator);
         assertThat(pieces.size(), is(1));
         assertThat(pieces.get(0).getBlocks(), is(Collections.singletonList(I)));
     }
@@ -36,7 +36,7 @@ public class PiecesGeneratorTest {
         PiecesGenerator generator = new PiecesGenerator("i");
         assertThat(generator.getDepth(), is(1));
 
-        List<SafePieces> pieces = toList(generator);
+        List<Pieces> pieces = toList(generator);
         assertThat(pieces.size(), is(1));
         assertThat(pieces.get(0).getBlocks(), is(Collections.singletonList(I)));
     }
@@ -46,7 +46,7 @@ public class PiecesGeneratorTest {
         PiecesGenerator generator = new PiecesGenerator("I,J");
         assertThat(generator.getDepth(), is(2));
 
-        List<SafePieces> pieces = toList(generator);
+        List<Pieces> pieces = toList(generator);
         assertThat(pieces.size(), is(1));
         assertThat(pieces.get(0).getBlocks(), is(Arrays.asList(I, J)));
     }
@@ -56,7 +56,7 @@ public class PiecesGeneratorTest {
         PiecesGenerator generator = new PiecesGenerator(" I , J ");
         assertThat(generator.getDepth(), is(2));
 
-        List<SafePieces> pieces = toList(generator);
+        List<Pieces> pieces = toList(generator);
         assertThat(pieces.size(), is(1));
         assertThat(pieces.get(0).getBlocks(), is(Arrays.asList(I, J)));
     }
@@ -66,9 +66,9 @@ public class PiecesGeneratorTest {
         PiecesGenerator generator = new PiecesGenerator(" * ");
         assertThat(generator.getDepth(), is(1));
 
-        List<SafePieces> pieces = toList(generator);
+        List<Pieces> pieces = toList(generator);
         assertThat(pieces.size(), is(7));
-        for (SafePieces piece : pieces)
+        for (Pieces piece : pieces)
             assertThat(piece.getBlocks().size(), is(1));
     }
 
@@ -77,9 +77,9 @@ public class PiecesGeneratorTest {
         PiecesGenerator generator = new PiecesGenerator(" *, * ");
         assertThat(generator.getDepth(), is(2));
 
-        List<SafePieces> pieces = toList(generator);
+        List<Pieces> pieces = toList(generator);
         assertThat(pieces.size(), is(49));
-        for (SafePieces piece : pieces)
+        for (Pieces piece : pieces)
             assertThat(piece.getBlocks().size(), is(2));
     }
 
@@ -88,7 +88,7 @@ public class PiecesGeneratorTest {
         PiecesGenerator generator = new PiecesGenerator(" [TSZ] ");
         assertThat(generator.getDepth(), is(1));
 
-        List<SafePieces> pieces = toList(generator);
+        List<Pieces> pieces = toList(generator);
         assertThat(pieces.size(), is(3));
         assertThat(pieces.get(0).getBlocks(), is(Collections.singletonList(T)));
         assertThat(pieces.get(1).getBlocks(), is(Collections.singletonList(S)));
@@ -100,7 +100,7 @@ public class PiecesGeneratorTest {
         PiecesGenerator generator = new PiecesGenerator(" [TsZ] , [IOjl]");
         assertThat(generator.getDepth(), is(2));
 
-        List<SafePieces> pieces = toList(generator);
+        List<Pieces> pieces = toList(generator);
         assertThat(pieces.size(), is(12));
         assertThat(pieces.get(0).getBlocks(), is(Arrays.asList(T, I)));
         assertThat(pieces.get(1).getBlocks(), is(Arrays.asList(T, O)));
@@ -121,7 +121,7 @@ public class PiecesGeneratorTest {
         PiecesGenerator generator = new PiecesGenerator(" [TSZ]p2 ");
         assertThat(generator.getDepth(), is(2));
 
-        List<SafePieces> pieces = toList(generator);
+        List<Pieces> pieces = toList(generator);
         assertThat(pieces.size(), is(6));
         assertThat(pieces.get(0).getBlocks(), is(Arrays.asList(S, Z)));
         assertThat(pieces.get(1).getBlocks(), is(Arrays.asList(Z, S)));
@@ -136,7 +136,7 @@ public class PiecesGeneratorTest {
         PiecesGenerator generator = new PiecesGenerator(" *p4 ");
         assertThat(generator.getDepth(), is(4));
 
-        List<SafePieces> pieces = toList(generator);
+        List<Pieces> pieces = toList(generator);
         assertThat(pieces.size(), is(840));
     }
 
@@ -146,7 +146,7 @@ public class PiecesGeneratorTest {
         PiecesGenerator generator = new PiecesGenerator(patterns);
         assertThat(generator.getDepth(), is(1));
 
-        List<SafePieces> pieces = toList(generator);
+        List<Pieces> pieces = toList(generator);
         assertThat(pieces.size(), is(2));
     }
 
@@ -156,7 +156,7 @@ public class PiecesGeneratorTest {
         PiecesGenerator generator = new PiecesGenerator(patterns);
         assertThat(generator.getDepth(), is(5));
 
-        List<SafePieces> pieces = toList(generator);
+        List<Pieces> pieces = toList(generator);
         assertThat(pieces.size(), is(840 + 2520 + 120));
     }
 
@@ -173,7 +173,7 @@ public class PiecesGeneratorTest {
         PiecesGenerator generator = new PiecesGenerator(patterns);
         assertThat(generator.getDepth(), is(5));
 
-        List<SafePieces> pieces = toList(generator);
+        List<Pieces> pieces = toList(generator);
         assertThat(pieces.size(), is(210 + 210 + 210 + 840));
     }
 
@@ -183,7 +183,7 @@ public class PiecesGeneratorTest {
         PiecesGenerator generator = new PiecesGenerator(patterns);
         assertThat(generator.getDepth(), is(2));
 
-        List<SafePieces> pieces = toList(generator);
+        List<Pieces> pieces = toList(generator);
         assertThat(pieces.size(), is(8));
     }
 

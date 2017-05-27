@@ -1,12 +1,20 @@
 package _experimental.main;
 
+import common.ResultHelper;
+import common.Stopwatch;
 import common.datastore.Operation;
+import common.datastore.Result;
+import common.datastore.action.Action;
+import common.iterable.AllPermutationIterable;
+import common.iterable.CombinationIterable;
+import common.order.ListPieces;
+import common.order.OrderLookup;
+import common.tree.AnalyzeTree;
+import common.tree.VisitedTree;
 import core.action.candidate.FixPlaceLockedCandidate;
 import core.action.candidate.LockedCandidate;
 import core.action.reachable.LockedReachable;
 import core.action.reachable.Reachable;
-import common.tree.AnalyzeTree;
-import common.tree.VisitedTree;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.MiddleField;
@@ -15,15 +23,7 @@ import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
-import common.order.OrderLookup;
-import common.order.Pieces;
-import common.Stopwatch;
-import common.iterable.AllPermutationIterable;
-import common.iterable.CombinationIterable;
 import searcher.checker.CheckerUsingHold;
-import common.datastore.Result;
-import common.datastore.action.Action;
-import common.ResultHelper;
 import searcher.common.validator.BuildValidator;
 import searcher.common.validator.Validator;
 
@@ -98,8 +98,8 @@ public class Experiment {
                 }
 
                 int reverseMaxDepth = result.getLastHold() != null ? operationBlocks.size() + 1 : operationBlocks.size();
-                ArrayList<Pieces> reversePieces = OrderLookup.reverse(operationBlocks, reverseMaxDepth);
-                for (Pieces piece : reversePieces) {
+                ArrayList<ListPieces> reversePieces = OrderLookup.reverse(operationBlocks, reverseMaxDepth);
+                for (ListPieces piece : reversePieces) {
                     visitedTree.set(true, piece.getBlocks());
                 }
             }

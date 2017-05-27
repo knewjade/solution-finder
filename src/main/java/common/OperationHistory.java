@@ -4,6 +4,8 @@ import common.datastore.Operation;
 import common.datastore.action.Action;
 import core.mino.Block;
 
+import java.util.Arrays;
+
 public class OperationHistory {
     private final int[] operationNumbers;
     private final int nextIndex;
@@ -29,12 +31,28 @@ public class OperationHistory {
         return new OperationHistory(newArray, nextIndex + 1);
     }
 
-    public int[] getOperationNumbers() {
+    int[] getOperationNumbers() {
         return operationNumbers;
     }
 
     public int getNextIndex() {
         return nextIndex;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OperationHistory that = (OperationHistory) o;
+        if (nextIndex != that.nextIndex) return false;
+        return Arrays.equals(operationNumbers, that.operationNumbers);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = nextIndex;
+        result = 31 * result + Arrays.hashCode(operationNumbers);
+        return result;
     }
 
     @Override

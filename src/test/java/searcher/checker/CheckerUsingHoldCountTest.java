@@ -1,19 +1,19 @@
 package searcher.checker;
 
+import common.datastore.pieces.Pieces;
+import common.datastore.action.Action;
+import common.iterable.PermutationIterable;
+import common.pattern.PiecesGenerator;
+import common.tree.AnalyzeTree;
 import core.action.candidate.Candidate;
 import core.action.candidate.LockedCandidate;
-import common.pattern.PiecesGenerator;
-import common.datastore.SafePieces;
-import common.tree.AnalyzeTree;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
-import common.iterable.PermutationIterable;
 import org.junit.Test;
-import common.datastore.action.Action;
 import searcher.common.validator.PerfectValidator;
 
 import java.util.Arrays;
@@ -132,9 +132,9 @@ public class CheckerUsingHoldCountTest {
         // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
         AnalyzeTree tree = new AnalyzeTree();
-        
-        Iterable<SafePieces> combinations = new PiecesGenerator(pattern);
-        for (SafePieces pieces : combinations) {
+
+        Iterable<Pieces> combinations = new PiecesGenerator(pattern);
+        for (Pieces pieces : combinations) {
             List<Block> blocks = pieces.getBlocks();
             boolean result = checker.check(field, blocks, candidate, maxClearLine, maxDepth);
             tree.set(result, blocks);

@@ -2,14 +2,15 @@ package common.pattern;
 
 
 import common.SyntaxException;
-import common.datastore.SafePieces;
+import common.datastore.pieces.Pieces;
 
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class PiecesGenerator implements Iterable<SafePieces> {
+public class PiecesGenerator implements Iterable<Pieces> {
     public static void verify(String pattern) throws SyntaxException {
         verify(Collections.singletonList(pattern));
     }
@@ -65,12 +66,19 @@ public class PiecesGenerator implements Iterable<SafePieces> {
     }
 
     @Override
-    public Iterator<SafePieces> iterator() {
-        return new SafePiecesIterator(patterns);
+    public Iterator<Pieces> iterator() {
+        return new PiecesIterator(patterns);
     }
 
     public int getDepth() {
-        return new SafePiecesIterator(patterns).getDepths();
+        return new PiecesIterator(patterns).getDepths();
+    }
+
+    public Stream<Pieces> stream() {
+        Stream<Pieces> stream = Stream.empty();
+        for (String pattern : patterns)
+            stream = Stream.concat(stream, new PiecesStreamBuilder(pattern).stream());
+        return stream;
     }
 }
 

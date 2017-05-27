@@ -36,8 +36,8 @@ public class MinimalAction implements Action {
     @Override
     public int hashCode() {
         int result = x;
-        result = 31 * result + y;
-        result = 31 * result + rotate.getNumber();
+        result = 24 * result + y;
+        result = 4 * result + rotate.getNumber();
         return result;
     }
 

@@ -1,9 +1,16 @@
 package entry.path;
 
+import common.ResultHelper;
+import common.buildup.BuildUp;
 import common.datastore.*;
-import concurrent.LockedCandidateThreadLocal;
+import common.datastore.action.Action;
+import common.datastore.pieces.Pieces;
+import common.iterable.PermutationIterable;
+import common.order.ListPieces;
 import common.order.OrderLookup;
-import common.order.Pieces;
+import common.pattern.PiecesGenerator;
+import common.tree.VisitedTree;
+import concurrent.LockedCandidateThreadLocal;
 import concurrent.checkmate.CheckmateNoHoldThreadLocal;
 import concurrent.checkmate.invoker.no_hold.ConcurrentCheckmateCommonInvoker;
 import concurrent.full_checkmate.FullCheckmateNoHoldThreadLocal;
@@ -20,13 +27,6 @@ import core.srs.Rotate;
 import entry.searching_pieces.EnumeratePiecesCore;
 import entry.searching_pieces.HoldBreakEnumeratePieces;
 import entry.searching_pieces.NormalEnumeratePieces;
-import common.buildup.BuildUp;
-import common.iterable.PermutationIterable;
-import common.pattern.PiecesGenerator;
-import common.tree.VisitedTree;
-import common.datastore.Result;
-import common.datastore.action.Action;
-import common.ResultHelper;
 import searcher.common.validator.FullValidator;
 import searcher.common.validator.PathFullValidator;
 import searcher.common.validator.PerfectValidator;
@@ -93,7 +93,7 @@ class PathCore {
     void runForLayer3(Field field, int maxClearLine, PiecesGenerator generator, boolean isUsingHold) {
         // 探索対象のミノ順かを判定できるようにする
         VisitedTree visitedTree = new VisitedTree();
-        for (SafePieces safePieces : generator) {
+        for (Pieces safePieces : generator) {
             visitedTree.success(safePieces.getBlocks());
         }
 
@@ -311,7 +311,7 @@ class PathCore {
 
                 // ホールドありでこの手順になる可能性があるミノ順を算出
                 List<List<Block>> reverse = OrderLookup.reverse(blocks, blocks.size() + 1).stream()
-                        .map(Pieces::getBlocks)
+                        .map(ListPieces::getBlocks)
                         .collect(Collectors.toList());
 
                 for (List<Block> blockList : reverse) {

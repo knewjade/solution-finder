@@ -1,11 +1,11 @@
 package _experimental.main;
 
 import common.datastore.Operation;
+import common.order.ListPieces;
 import core.action.candidate.Candidate;
 import concurrent.checker.CheckerUsingHoldThreadLocal;
 import concurrent.LockedCandidateThreadLocal;
 import common.order.OrderLookup;
-import common.order.Pieces;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
@@ -163,8 +163,8 @@ public class Cart {
                     }
 
                     int reverseMaxDepth = result.getLastHold() != null ? operationBlocks.size() + 1 : operationBlocks.size();
-                    ArrayList<Pieces> reversePieces = OrderLookup.reverse(operationBlocks, reverseMaxDepth);
-                    for (Pieces piece : reversePieces) {
+                    ArrayList<ListPieces> reversePieces = OrderLookup.reverse(operationBlocks, reverseMaxDepth);
+                    for (ListPieces piece : reversePieces) {
                         visitedTree.set(true, piece.getBlocks());
                     }
                 }

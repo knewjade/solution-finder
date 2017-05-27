@@ -52,7 +52,10 @@ public class DepthOrder implements Order {
 
     @Override
     public int hashCode() {
-        throw new UnsupportedOperationException();
+        int result = hold != null ? hold.hashCode() : 0;
+        result = 31 * result + field.hashCode();
+        result = 31 * result + history.hashCode();
+        return result;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package _experimental.main;
 
 import common.datastore.Operation;
+import common.order.ListPieces;
 import core.action.candidate.FixPlaceLockedCandidate;
 import common.tree.AnalyzeTree;
 import common.tree.VisitedTree;
@@ -12,7 +13,6 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import common.order.OrderLookup;
-import common.order.Pieces;
 import common.Stopwatch;
 import common.iterable.AllPermutationIterable;
 import common.iterable.CombinationIterable;
@@ -91,8 +91,8 @@ public class BuilderMain {
                 }
 
                 int reverseMaxDepth = result.getLastHold() != null ? operationBlocks.size() + 1 : operationBlocks.size();
-                ArrayList<Pieces> reversePieces = OrderLookup.reverse(operationBlocks, reverseMaxDepth);
-                for (Pieces piece : reversePieces) {
+                ArrayList<ListPieces> reversePieces = OrderLookup.reverse(operationBlocks, reverseMaxDepth);
+                for (ListPieces piece : reversePieces) {
                     visitedTree.set(true, piece.getBlocks());
                 }
             }
