@@ -1,5 +1,5 @@
 group 'com.knewjade'
-version '0.32'
+version '0.40'
 
 //import jp.classmethod.aws.gradle.lambda.AWSLambdaMigrateFunctionTask
 //import com.amazonaws.services.lambda.model.Runtime

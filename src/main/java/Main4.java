@@ -97,8 +97,7 @@ public class Main4 {
 
             LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
             BuildUpListUp buildUpListUp = new BuildUpListUp(reachable, maxClearLine);
-            List<List<OperationWithKey>> solutions = buildUpListUp.existsValidBuildPattern(initField, collect);
-            solutions.stream()
+            long count = buildUpListUp.existsValidBuildPattern(initField, collect)
                     .map(operationWithKeys -> {
                         return operationWithKeys.stream()
                                 .map(OperationWithKey::getMino)
@@ -106,8 +105,9 @@ public class Main4 {
                                 .map(Block::getName)
                                 .collect(Collectors.joining(""));
                     })
-                    .forEach(System.out::println);
-            System.out.println(solutions.size());
+                    .peek(System.out::println)
+                    .count();
+            System.out.println(count);
 //            System.exit(0);
 
 //            reader.lines()

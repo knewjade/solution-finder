@@ -12,6 +12,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class PackSearcher {
@@ -81,6 +83,35 @@ public class PackSearcher {
 
         // 終了処理
         forkJoinPool.shutdown();
+    }
+
+    public <A, R> R collect(Collector<? super Result, A, R> callback) throws InterruptedException, ExecutionException {
+        // 探索準備
+        MinoFieldMemento emptyMemento = new MinoFieldMemento();
+        ColumnField innerField = inOutPairFields.get(0).getInnerField();
+        MinoPackingTask task = new MinoPackingTask(this, innerField, emptyMemento, 0);
+
+        // 探索
+        ForkJoinPool forkJoinPool = new ForkJoinPool();
+
+        ForkJoinTask<R> submitTask = forkJoinPool.submit(() -> {
+            // Streamは終端操作を実行するまで実際には計算を行わない
+            // そのため、終端操作をPool内でしなければ、Pool外のスレッド場で動くため注意が必要
+            // (終端操作をしなかった場合、Pool内ではStream自体の作成をして終了する)
+
+
+            // 計算を最後まで行ったことを伝えるため true を返却
+            return task.compute().parallel().collect(callback);
+        });
+
+        // 結果を取得するまで待つ
+        R result = submitTask.get();
+        assert result != null;
+
+        // 終了処理
+        forkJoinPool.shutdown();
+
+        return result;
     }
 
     SizedBit getSizedBit() {

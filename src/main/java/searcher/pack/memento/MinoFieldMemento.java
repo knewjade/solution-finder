@@ -63,7 +63,7 @@ public class MinoFieldMemento {
         return concat(null);
     }
 
-    long getSumBlockCounter() {
+    public long getSumBlockCounter() {
         long sum = 0L;
         switch (index) {
             case 4:
@@ -105,7 +105,7 @@ public class MinoFieldMemento {
         throw new IllegalStateException("No reachable");
     }
 
-    boolean isConcat() {
+    public boolean isConcat() {
         switch (index) {
             case 0:
                 return false;

@@ -33,7 +33,11 @@ public class SeparableMinoFactory {
                 // ミノの高さを計算
                 int minoHeight = mino.getMaxY() - mino.getMinY() + 1;
 
-                // 行候補をリストにする
+                // フィールドの高さ以上にミノを使う場合はおけない
+                if (fieldHeight < minoHeight)
+                    continue;
+
+                    // 行候補をリストにする
                 ArrayList<Integer> lineIndexes = new ArrayList<>();
                 for (int index = 0; index < fieldHeight; index++)
                     lineIndexes.add(index);

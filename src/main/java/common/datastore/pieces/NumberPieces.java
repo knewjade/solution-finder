@@ -50,4 +50,17 @@ public class NumberPieces implements Pieces {
     public Pieces addAndReturnNew(List<Block> blocks) {
         return new NumberPieces(this, blocks);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NumberPieces that = (NumberPieces) o;
+        return pieces == that.pieces;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (pieces ^ (pieces >>> 32));
+    }
 }

@@ -40,6 +40,24 @@ public class ListPieces {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ListPieces that = (ListPieces) o;
+
+        if (stockIndex != that.stockIndex) return false;
+        return blocks.equals(that.blocks);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = blocks.hashCode();
+        result = 31 * result + stockIndex;
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "ListPieces{" +
                 "blocks=" + this.blocks +

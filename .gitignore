@@ -15,6 +15,12 @@ gradle-app.setting
 # # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
 # gradle/wrapper/gradle-wrapper.properties
 
-last_output.txt
-listup/*
-basic
+# solution-finder
+output/*
+!output/.gitkeep
+
+cache/*
+!cache/.gitkeep
+
+input/*
+!input/.gitkeep

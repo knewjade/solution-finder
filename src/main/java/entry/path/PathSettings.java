@@ -19,7 +19,7 @@ public class PathSettings {
     private String logFilePath = DEFAULT_LOG_FILE_PATH;
     private List<String> patterns = new ArrayList<>();
     private String outputBaseFilePath = DEFAULT_OUTPUT_BASE_FILE_PATH;
-    private int maxLayer = 3;
+    private int maxLayer = 2;
     private OutputType outputType = OutputType.Link;
 
     // ********* Getter ************
