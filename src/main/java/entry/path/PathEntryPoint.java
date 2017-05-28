@@ -147,7 +147,6 @@ public class PathEntryPoint implements EntryPoint {
         // ========================================
         output("# Initialize / System");
         int core = Runtime.getRuntime().availableProcessors();
-        ExecutorService executorService = Executors.newFixedThreadPool(core);
 
         PiecesGenerator generator = new PiecesGenerator(patterns);
 
@@ -182,7 +181,6 @@ public class PathEntryPoint implements EntryPoint {
 
         // 検索条件を決める
         SolutionFilter solutionFilter = new ForPathSolutionFilter(patterns, maxClearLine);
-
 
         output();
         // ========================================

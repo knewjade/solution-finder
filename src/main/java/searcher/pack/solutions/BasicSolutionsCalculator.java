@@ -35,8 +35,7 @@ public class BasicSolutionsCalculator {
 
     public Map<ColumnField, Set<MinoField>> calculate() {
         List<ColumnSmallField> basicFields = reference.getBasicFields();
-        HashMap<ColumnField, Set<MinoField>> map = calculateResults(basicFields);
-        return map;
+        return calculateResults(basicFields);
     }
 
     private HashMap<ColumnField, Set<MinoField>> calculateResults(List<ColumnSmallField> basicFields) {

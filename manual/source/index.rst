@@ -53,6 +53,7 @@ https://github.com/knewjade/solution-finder/releases/
    command
    percent/main
    path/main
+   caution
 
 
 .. * :ref:`genindex`

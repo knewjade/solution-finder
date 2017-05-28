@@ -1,5 +1,6 @@
 package searcher.pack.solutions;
 
+import common.datastore.Pair;
 import searcher.pack.ColumnFieldConnection;
 import searcher.pack.ColumnFieldConnections;
 import searcher.pack.SeparableMinos;
@@ -10,10 +11,7 @@ import core.field.Field;
 import core.field.SmallField;
 import pack.separable_mino.SeparableMino;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
@@ -47,13 +45,22 @@ class BasicReference {
 
     private void init() {
         // すべてのブロックが埋まった状態を保存
-        fieldToConnections.put(new ColumnSmallField(sizedBit.getFillBoard()), ColumnFieldConnections.FILLED);
         addInnerAndOuter(new ColumnSmallField(sizedBit.getFillBoard()));
 
         for (ColumnSmallField columnField : basicFields) {
             addInnerAndOuter(columnField);
-            addConnections(columnField);
         }
+
+        Map<ColumnField, ColumnFieldConnections> collect = basicFields.parallelStream()
+                .map(columnSmallField -> {
+                    ColumnFieldConnections connections = createConnections(columnSmallField);
+                    return new Pair<>(columnSmallField, connections);
+                })
+                .collect(Collectors.toMap(Pair::getKey, Pair::getValue, (u, u2) -> {
+                    throw new IllegalStateException();
+                }));
+        this.fieldToConnections.putAll(collect);
+        this.fieldToConnections.put(new ColumnSmallField(sizedBit.getFillBoard()), ColumnFieldConnections.FILLED);
     }
 
     // ColumnFieldの一部からFieldに変換するマップを登録
@@ -77,7 +84,7 @@ class BasicReference {
     }
 
     // ある地形から1ミノだけ置いてできる地形を登録する
-    private void addConnections(ColumnSmallField columnField) {
+    private ColumnFieldConnections createConnections(ColumnSmallField columnField) {
         ArrayList<ColumnFieldConnection> connectionList = new ArrayList<>();
         for (SeparableMino mino : separableMinos.getMinos()) {
             ColumnField minoField = mino.getField();
@@ -89,7 +96,8 @@ class BasicReference {
                 connectionList.add(connection);
             }
         }
-        fieldToConnections.put(columnField, new ColumnFieldConnections(connectionList));
+//        System.out.println(connectionList.size());
+        return new ColumnFieldConnections(connectionList);
     }
 
     List<ColumnSmallField> getBasicFields() {
