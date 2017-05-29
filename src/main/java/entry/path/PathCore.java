@@ -27,19 +27,31 @@ class PathCore {
     private List<Pair<Result, HashSet<NumberPieces>>> unique = null;
     private LinkedList<Pair<Result, HashSet<NumberPieces>>> minimal = null;
 
-    PathCore(List<String> patterns, PackSearcher searcher, int maxDepth) throws ExecutionException, InterruptedException {
+    PathCore(List<String> patterns, PackSearcher searcher, int maxDepth, boolean isUsingHold) throws ExecutionException, InterruptedException {
         this.candidates = searcher.collect(Collectors.toList());
 
         // ホールド込みで有効な手順を列挙する
-        this.validPieces = new PiecesGenerator(patterns).stream()
-                .parallel()
-                .map(Pieces::getBlocks)
-                .flatMap(blocks -> OrderLookup.forward(blocks, maxDepth).stream())
-                .collect(Collectors.toCollection(HashSet::new))
-                .parallelStream()
-                .map(ListPieces::getBlocks)
-                .map(NumberPieces::new)
-                .collect(Collectors.toCollection(HashSet::new));
+        this.validPieces = getCollect(patterns, maxDepth, isUsingHold);
+    }
+
+    private HashSet<NumberPieces> getCollect(List<String> patterns, int maxDepth, boolean isUsingHold) {
+        if (isUsingHold) {
+            return new PiecesGenerator(patterns).stream()
+                    .parallel()
+                    .map(Pieces::getBlocks)
+                    .flatMap(blocks -> OrderLookup.forward(blocks, maxDepth).stream())
+                    .collect(Collectors.toCollection(HashSet::new))
+                    .parallelStream()
+                    .map(ListPieces::getBlocks)
+                    .map(NumberPieces::new)
+                    .collect(Collectors.toCollection(HashSet::new));
+        } else {
+            return new PiecesGenerator(patterns).stream()
+                    .parallel()
+                    .map(Pieces::getBlocks)
+                    .map(NumberPieces::new)
+                    .collect(Collectors.toCollection(HashSet::new));
+        }
     }
 
     void runUnique(Field field, int maxClearLine) {

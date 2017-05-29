@@ -170,7 +170,8 @@ public class PathEntryPoint implements EntryPoint {
         output("# Enumerate pieces");
 
         // Holdができるときは必要なミノ分（maxDepth + 1）だけを取り出す。maxDepth + 1だけないときはブロックの個数をそのまま指定
-        output("Piece pop count = " + (settings.isUsingHold() && maxDepth < generator.getDepth() ? maxDepth + 1 : maxDepth));
+        boolean isUsingHold = settings.isUsingHold();
+        output("Piece pop count = " + (isUsingHold && maxDepth < generator.getDepth() ? maxDepth + 1 : maxDepth));
 
         // ミノのリストを作成する
         SizedBit sizedBit = new SizedBit(BASIC_SOLUTION_WIDTH, maxClearLine);
@@ -193,13 +194,13 @@ public class PathEntryPoint implements EntryPoint {
         File file = new File("cache/basic" + maxClearLine);
         BasicSolutions solutions = null;
         if (file.exists()) {
-            System.out.println("     ... loading");
+            output("     ... loading");
             solutions = BasicSolutionsFactory.readAndCreateSolutions(file, solutionFilter, separableMinos, sizedBit);
         }
 
         // 基本パターンを読み込めていない場合は、計算し保存する
         if (solutions == null) {
-            System.out.println("     ... calculating and writing");
+            output("     ... calculating and writing");
             solutions = BasicSolutionsFactory.createAndWriteSolutions(file, solutionFilter, separableMinos, sizedBit);
         }
 
@@ -215,22 +216,22 @@ public class PathEntryPoint implements EntryPoint {
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
         // 探索して、列挙する準備を行う
-        System.out.println("     ... packing");
+        output("     ... packing");
         List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(sizedBit.getWidth(), sizedBit.getHeight(), field);
         TaskResultHelper taskResultHelper = createTaskResultHelper(maxClearLine);
         PackSearcher searcher = new PackSearcher(inOutPairFields, solutions, sizedBit, solutionFilter, taskResultHelper);
-        PathCore pathCore = new PathCore(patterns, searcher, maxDepth);
+        PathCore pathCore = new PathCore(patterns, searcher, maxDepth, isUsingHold);
 
         // 絞り込みを行う
         int maxLayer = settings.getMaxLayer();
 
         if (1 <= maxLayer) {
-            System.out.println("     ... Layer 1: unique");
+            output("     ... Layer 1: unique");
             pathCore.runUnique(field, maxClearLine);
         }
 
         if (2 <= maxLayer) {
-            System.out.println("     ... Layer 2: minimal");
+            output("     ... Layer 2: minimal");
             pathCore.runMinimal();
         }
 

@@ -1,12 +1,10 @@
 group 'com.knewjade'
-version '0.40'
-
-//import jp.classmethod.aws.gradle.lambda.AWSLambdaMigrateFunctionTask
-//import com.amazonaws.services.lambda.model.Runtime
+version '0.402'
 
 apply plugin: 'java'
 apply plugin: 'idea'
 
+archivesBaseName = 'solution-finder'
 sourceCompatibility = 1.8
 
 repositories {
@@ -20,45 +18,54 @@ dependencies {
     testCompile 'org.hamcrest:hamcrest-library:1.3.+'
 }
 
-buildscript {
-    repositories {
-        mavenCentral()
-        maven { url 'https://plugins.gradle.org/m2/' }
-    }
-
-//    dependencies {
-//        classpath 'jp.classmethod.aws:gradle-aws-plugin:0.+'
-//    }
-}
-
-
 jar {
-    manifest {
-        attributes 'Main-Class' : 'Main'
+    manifest.attributes 'Main-Class': 'Main'
+    from configurations.compile.collect {
+        it.isDirectory() ? it : zipTree(it)
     }
-    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
 }
 
-//apply plugin: 'jp.classmethod.aws'
-//apply plugin: 'base'
-//
-//apply plugin: 'jp.classmethod.aws.lambda'
+def releaseDir = file 'release'
+def distributionDir = file 'distribution'
 
-//aws {
-//    profileName = 'windows'
-//    region = 'us-west-2'
-//}
+task cleanReleaseDir(type: Task) {
+    group = 'release'
 
-//lambda {
-//    region = 'ap-northeast-1'
-//}
+    doLast {
+        delete releaseDir
+        releaseDir.mkdir()
+    }
+}
 
-//task migrateFunction(type: AWSLambdaMigrateFunctionTask, dependsOn: jar) {
-//    functionName = 'TestJava'
-//    role = 'arn:aws:iam::159022142613:role/lambda_debug'
-//    zipFile = jar.archivePath
-//    runtime = Runtime.Java8
-//    handler = 'Main::handler'
-//    memorySize = 256 // default 128 MB
-//    timeout = 30 // default 3 sec
-//}
+task copyRelease(type: Task) {
+    group = 'release'
+
+    doLast {
+        // copy distribution
+        copy {
+            from distributionDir
+            into releaseDir
+            exclude '**/.*'
+        }
+
+        def jarName = String.format '%s-%s.jar', archivesBaseName, version
+        def srcJarFile = file libsDir.canonicalPath + File.separator + jarName
+
+        // copy jar
+        copy {
+            from srcJarFile
+            into releaseDir
+            rename { file -> 'sfinder.jar' }
+        }
+    }
+}
+
+task release(type: Zip) {
+    group = 'release'
+
+    // dependency
+    dependsOn jar, cleanReleaseDir, copyRelease
+    copyRelease.mustRunAfter jar, cleanReleaseDir
+
+    from releaseDir
+}
