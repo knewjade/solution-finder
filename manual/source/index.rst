@@ -42,6 +42,18 @@ solution-finderは、探索ツールとして次の特徴を持っています�
 https://github.com/knewjade/solution-finder/releases/
 
 ※ プログラムの実行には、Java8が実行できる環境が必要です
+※ メモリの関係から 64bit版 を推奨します
+
+
+補助GUI
+-------------------------------------------
+
+solution-finderを操作しやすくするGUIを `@kitsune_fuchi (twitter) <https://twitter.com/kitsune_fuchi>`_ さんに作成していただきました。
+
+ダウンロードは 以下のツイートに記載されているリンク先 からお願いします。
+
+https://twitter.com/kitsune_fuchi/status/868826325770878976
+
 
 .. toctree::
    :maxdepth: 2
