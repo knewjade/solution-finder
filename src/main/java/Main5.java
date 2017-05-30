@@ -39,17 +39,18 @@ public class Main5 {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         int width = 3;
-        int height = 5;
+        int height = 4;
         SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, width, height);
         List<SeparableMino> minos = factory.create();
         SeparableMinos separableMinos = new SeparableMinos(minos);
         System.out.println(minos.size());
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, new SizedBit(width, height));
+//        System.out.println("calc");
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
-        System.out.println("calc");
         Map<ColumnField, Set<MinoField>> calculate = calculator.calculate();
+        stopwatch.stop();
         System.out.println(calculate.size());
-        System.out.println(stopwatch.toMessage(TimeUnit.SECONDS));
+        System.out.println(stopwatch.toMessage(TimeUnit.MILLISECONDS));
 
 
 //        HashSet<List<Block>> leastBlocks = StreamSupport.stream(piecesGenerator.spliterator(), true)

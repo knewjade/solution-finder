@@ -1,6 +1,5 @@
 package searcher.pack.solutions;
 
-import searcher.pack.*;
 import common.buildup.BuildUp;
 import common.datastore.OperationWithKey;
 import core.action.reachable.OnGrandOnlyReachable;
@@ -9,6 +8,7 @@ import core.column_field.ColumnSmallField;
 import core.field.Field;
 import core.field.SmallField;
 import pack.separable_mino.SeparableMino;
+import searcher.pack.*;
 
 import java.util.*;
 
@@ -23,7 +23,7 @@ public class BasicSolutionsCalculator {
     private final OnGrandOnlyReachable grandOnlyReachable = new OnGrandOnlyReachable();
 
     private HashMap<ColumnField, Set<MinoField>> resultsMap = new HashMap<>();
-    private LinkedList<SeparableMino> minos = new LinkedList<>();
+    private SeparableMino currentMino = null;
     private HashSet<MinoField> results = new HashSet<>();
     private SmallField wallField = new SmallField();
 
@@ -34,8 +34,8 @@ public class BasicSolutionsCalculator {
     }
 
     public Map<ColumnField, Set<MinoField>> calculate() {
-        List<ColumnSmallField> basicFields = reference.getBasicFields();
-        return calculateResults(basicFields);
+        List<ColumnSmallField> sortedBasicFields = reference.getSortedBasicFields();
+        return calculateResults(sortedBasicFields);
     }
 
     private HashMap<ColumnField, Set<MinoField>> calculateResults(List<ColumnSmallField> basicFields) {
@@ -49,7 +49,7 @@ public class BasicSolutionsCalculator {
 
     private HashSet<MinoField> calculate(ColumnField columnField) {
         // 初期化
-        this.minos = new LinkedList<>();
+        this.currentMino = null;
         this.results = new HashSet<>();
         this.wallField = createWallField(columnField);
 
@@ -77,6 +77,7 @@ public class BasicSolutionsCalculator {
     private void calculateResult(ColumnField columnField, ColumnField outerColumnField) {
         ColumnFieldConnections connections = reference.getConnections(columnField);
 
+        // 最初の関数呼び出しで通ることはない
         // 全てが埋まったとき、それまでの手順を解とする
         if (ColumnFieldConnections.isFilled(connections)) {
             // これからブロックをおく場所以外を、すでにブロックで埋めたフィールドを作成
@@ -84,7 +85,7 @@ public class BasicSolutionsCalculator {
             Field invertedOuterField = reference.parseInvertedOuterField(outerColumnField);
             freeze.merge(invertedOuterField);
 
-            List<OperationWithKey> operations = toOperationWithKeys(minos);
+            List<OperationWithKey> operations = Collections.singletonList(currentMino.toOperation());
 
             // 置くブロック以外がすでに埋まっていると仮定したとき、正しく接着できる順があるか確認
             if (existsValidBuildPattern(freeze, operations))
@@ -93,6 +94,7 @@ public class BasicSolutionsCalculator {
             return;
         }
 
+        // 最初の関数呼び出しで通ることはない
         // すでに探索済みのフィールドなら、その情報を利用する
         Set<MinoField> minoFieldSet = resultsMap.getOrDefault(columnField, null);
         if (minoFieldSet != null) {
@@ -100,8 +102,26 @@ public class BasicSolutionsCalculator {
                 // outerで、最終的に使用されるブロック と すでに使っているブロックが重ならないことを確認
                 ColumnField lastOuterField = minoField.getOuterField();
                 if (lastOuterField.canMerge(outerColumnField)) {
-                    List<OperationWithKey> operations = toOperationWithKeys(this.minos);
-                    operations.addAll(minoField.getOperations());
+                    OperationWithKey currentOperations = currentMino.toOperation();
+                    long currentDeleteKey = currentOperations.getNeedDeletedKey();
+                    long currentUsingKey = currentOperations.getUsingKey();
+
+                    // いま置こうとしているミノと、それまでの結果に矛盾があるか確認
+                    List<OperationWithKey> minoFieldOperations = minoField.getOperations();
+                    boolean isContradiction = currentDeleteKey != 0L && minoFieldOperations.stream()
+                            .anyMatch(operationWithKey -> {
+                                long deletedKey = operationWithKey.getNeedDeletedKey();
+                                long usingKey = operationWithKey.getUsingKey();
+                                return (currentUsingKey & deletedKey) != 0L && (usingKey & currentDeleteKey) != 0L;
+                            });
+
+                    // 矛盾があるときはスキップ
+                    if (isContradiction)
+                        continue;
+
+                    ArrayList<OperationWithKey> operations = new ArrayList<>();
+                    operations.add(currentOperations);
+                    operations.addAll(minoFieldOperations);
 
                     // 使用されるブロックを算出
                     ColumnField usingBlock = lastOuterField.freeze(sizedBit.getHeight());
@@ -128,7 +148,7 @@ public class BasicSolutionsCalculator {
             ColumnField nextOuterField = connection.getOuterField();
             if (nextOuterField.canMerge(outerColumnField)) {
                 // フィールドとミノ順を進める
-                minos.addLast(connection.getMino());
+                currentMino = connection.getMino();
                 nextOuterField.merge(outerColumnField);
 
                 // 新しいフィールドを基に探索
@@ -137,17 +157,8 @@ public class BasicSolutionsCalculator {
 
                 // フィールドとミノ順を戻す
                 nextOuterField.reduce(outerColumnField);
-                minos.pollLast();
             }
         }
-    }
-
-    private List<OperationWithKey> toOperationWithKeys(List<SeparableMino> minos) {
-        ArrayList<OperationWithKey> operations = new ArrayList<>();
-        for (SeparableMino mino : minos) {
-            operations.add(mino.toOperation());
-        }
-        return operations;
     }
 
     // 置くブロック以外がすでに埋まっていると仮定したとき、正しく接着できる順があるか確認

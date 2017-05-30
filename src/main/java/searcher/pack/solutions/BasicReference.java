@@ -18,7 +18,7 @@ import java.util.stream.LongStream;
 class BasicReference {
     private final SizedBit sizedBit;
     private final SeparableMinos separableMinos;
-    private final List<ColumnSmallField> basicFields;
+    private final List<ColumnSmallField> sortedBasicFields;
 
     private final HashMap<ColumnField, ColumnFieldConnections> fieldToConnections;
     private final HashMap<Long, Field> normalToField;
@@ -27,7 +27,7 @@ class BasicReference {
     BasicReference(SizedBit sizedBit, SeparableMinos separableMinos) {
         this.sizedBit = sizedBit;
         this.separableMinos = separableMinos;
-        this.basicFields = createBasicFields();
+        this.sortedBasicFields = createBasicFields();
         this.fieldToConnections = new HashMap<>();
         this.normalToField = new HashMap<>();
         this.invertedToField = new HashMap<>();
@@ -47,11 +47,11 @@ class BasicReference {
         // すべてのブロックが埋まった状態を保存
         addInnerAndOuter(new ColumnSmallField(sizedBit.getFillBoard()));
 
-        for (ColumnSmallField columnField : basicFields) {
+        for (ColumnSmallField columnField : sortedBasicFields) {
             addInnerAndOuter(columnField);
         }
 
-        Map<ColumnField, ColumnFieldConnections> collect = basicFields.parallelStream()
+        Map<ColumnField, ColumnFieldConnections> collect = sortedBasicFields.parallelStream()
                 .map(columnSmallField -> {
                     ColumnFieldConnections connections = createConnections(columnSmallField);
                     return new Pair<>(columnSmallField, connections);
@@ -100,8 +100,8 @@ class BasicReference {
         return new ColumnFieldConnections(connectionList);
     }
 
-    List<ColumnSmallField> getBasicFields() {
-        return basicFields;
+    List<ColumnSmallField> getSortedBasicFields() {
+        return sortedBasicFields;
     }
 
     Field parseInnerField(ColumnField field) {
