@@ -52,7 +52,7 @@ public interface Field {
     int getBlockCountOnY(int y);
 
     // すべてのブロックの個数を返却
-    int getAllBlockCount();
+    int getNumOfAllBlocks();
 
     // ブロックがそろった行を削除し、削除した行数を返却
     int clearLine();

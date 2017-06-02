@@ -219,7 +219,7 @@ public class MiddleField implements Field {
     }
 
     @Override
-    public int getAllBlockCount() {
+    public int getNumOfAllBlocks() {
         return Long.bitCount(xBoardLow) + Long.bitCount(xBoardHigh);
     }
 
@@ -297,32 +297,32 @@ public class MiddleField implements Field {
     // TODO: unittest
     @Override
     public void merge(Field other) {
-        int otherBlockCount = other.getAllBlockCount();
-        assert 0 < otherBlockCount && otherBlockCount <= 2;
+        int otherBoardCount = other.getBoardCount();
+        assert 0 < otherBoardCount && otherBoardCount <= 2 : otherBoardCount;
 
         xBoardLow |= other.getBoard(0);
-        if (otherBlockCount == 2)
+        if (otherBoardCount == 2)
             xBoardHigh |= other.getBoard(1);
     }
 
     // TODO: unittest
     @Override
     public void reduce(Field other) {
-        int otherBlockCount = other.getAllBlockCount();
-        assert 0 < otherBlockCount && otherBlockCount <= 2;
+        int otherBoardCount = other.getBoardCount();
+        assert 0 < otherBoardCount && otherBoardCount <= 2;
 
         xBoardLow &= ~other.getBoard(0);
-        if (otherBlockCount == 2)
+        if (otherBoardCount == 2)
             xBoardHigh &= ~other.getBoard(1);
     }
 
     // TODO: unittest
     @Override
     public boolean canMerge(Field other) {
-        int otherBlockCount = other.getAllBlockCount();
-        assert 0 < otherBlockCount && otherBlockCount <= 2;
+        int otherBoardCount = other.getBoardCount();
+        assert 0 < otherBoardCount && otherBoardCount <= 2;
 
-        if (otherBlockCount == 1) {
+        if (otherBoardCount == 1) {
             return (xBoardLow & other.getBoard(0)) == 0L && xBoardHigh == 0L;
         } else {
             return (xBoardLow & other.getBoard(0)) == 0L && (xBoardHigh & other.getBoard(1)) == 0L;

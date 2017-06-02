@@ -130,7 +130,7 @@ public class SmallField implements Field {
     }
 
     @Override
-    public int getAllBlockCount() {
+    public int getNumOfAllBlocks() {
         return Long.bitCount(xBoard);
     }
 

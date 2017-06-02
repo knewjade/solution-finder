@@ -36,6 +36,11 @@ public class ArrayColoredField implements ColoredField {
     }
 
     @Override
+    public ColorType getColorType(int x, int y) {
+        return ColorType.parse(field[y][x]);
+    }
+
+    @Override
     public void putMino(Mino mino, int x, int y) {
         Block block = mino.getBlock();
         ColorType type = converter.parseToColorType(block);
@@ -95,5 +100,13 @@ public class ArrayColoredField implements ColoredField {
     @Override
     public int getMaxHeight() {
         return field.length;
+    }
+
+    @Override
+    public boolean isFilled(int y) {
+        for (int x = 0; x < FIELD_WIDTH; x++)
+            if (field[y][x] == EMPTY_NUMBER)
+                return false;
+        return true;
     }
 }

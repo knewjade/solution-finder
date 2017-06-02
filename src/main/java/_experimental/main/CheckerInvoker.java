@@ -43,7 +43,7 @@ public class CheckerInvoker {
 
     public void measure(Field field, List<Block> blocks, int maxExecuteCount) {
         // 残りのスペースが4の倍数でないときはエラー
-        int emptyCount = maxClearLine * 10 - field.getAllBlockCount();
+        int emptyCount = maxClearLine * 10 - field.getNumOfAllBlocks();
         if (emptyCount % 4 != 0)
             throw new IllegalArgumentException("Error: EmptyCount should be mod 4: " + emptyCount);
 

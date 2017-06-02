@@ -2,11 +2,11 @@ package core.field;
 
 public class FieldFactory {
     public static Field createField(int maxHeight) {
-        if (maxHeight < 6)
+        if (maxHeight <= 6)
             return new SmallField();
-        else if (maxHeight < 12)
+        else if (maxHeight <= 12)
             return new MiddleField();
-        else if (maxHeight < 24)
+        else if (maxHeight <= 24)
             return new LargeField();
         throw new IllegalArgumentException("MaxHeight check too large. Should be equal or less than 12");
     }

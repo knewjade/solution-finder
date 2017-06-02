@@ -281,7 +281,7 @@ public class MiddleFieldTest {
                 "";
         Field field = FieldFactory.createMiddleField(marks);
 
-        assertThat(field.getAllBlockCount(), is(17));
+        assertThat(field.getNumOfAllBlocks(), is(17));
     }
 
     @Test
@@ -456,11 +456,11 @@ public class MiddleFieldTest {
                 "";
         Field field = FieldFactory.createMiddleField(marks);
 
-        assertThat(field.getAllBlockCount(), is(4));
+        assertThat(field.getNumOfAllBlocks(), is(4));
         Field freeze = field.freeze(field.getMaxFieldHeight());
         field.setBlock(9, 0);
 
-        assertThat(field.getAllBlockCount(), is(5));
-        assertThat(freeze.getAllBlockCount(), is(4));
+        assertThat(field.getNumOfAllBlocks(), is(5));
+        assertThat(freeze.getNumOfAllBlocks(), is(4));
     }
 }

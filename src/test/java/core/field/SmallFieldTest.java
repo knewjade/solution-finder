@@ -227,7 +227,7 @@ public class SmallFieldTest {
                 "";
         Field field = FieldFactory.createSmallField(marks);
 
-        assertThat(field.getAllBlockCount(), is(13));
+        assertThat(field.getNumOfAllBlocks(), is(13));
     }
 
     @Test
@@ -306,7 +306,7 @@ public class SmallFieldTest {
         assertThat(Long.bitCount(deleteKey), is(3));
         field.insertBlackLineWithKey(deleteKey);
 
-        for (int index = 0; index < freeze.getAllBlockCount(); index++)
+        for (int index = 0; index < freeze.getNumOfAllBlocks(); index++)
             assertThat(field.getBoard(index), is(freeze.getBoard(index)));
     }
 
@@ -336,7 +336,7 @@ public class SmallFieldTest {
         assertThat(Long.bitCount(deleteKey), is(3));
         field.insertWhiteLineWithKey(deleteKey);
 
-        for (int index = 0; index < expected.getAllBlockCount(); index++)
+        for (int index = 0; index < expected.getNumOfAllBlocks(); index++)
             assertThat(field.getBoard(index), is(expected.getBoard(index)));
     }
 
@@ -364,11 +364,11 @@ public class SmallFieldTest {
                 "";
         Field field = FieldFactory.createSmallField(marks);
 
-        assertThat(field.getAllBlockCount(), is(4));
+        assertThat(field.getNumOfAllBlocks(), is(4));
         Field freeze = field.freeze(field.getMaxFieldHeight());
         field.setBlock(9, 0);
 
-        assertThat(field.getAllBlockCount(), is(5));
-        assertThat(freeze.getAllBlockCount(), is(4));
+        assertThat(field.getNumOfAllBlocks(), is(5));
+        assertThat(freeze.getNumOfAllBlocks(), is(4));
     }
 }

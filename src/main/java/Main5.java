@@ -1,6 +1,8 @@
 import common.Stopwatch;
 import common.pattern.PiecesGenerator;
+import common.tetfu.field.ColoredFieldView;
 import core.column_field.ColumnField;
+import core.column_field.ColumnFieldView;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import pack.separable_mino.SeparableMino;
@@ -20,32 +22,33 @@ import java.util.concurrent.TimeUnit;
 public class Main5 {
     public static void main(String[] args) {
         // 7種1巡で可能性のあるツモ順
-        List<String> patterns = Arrays.asList(
-                "*p7, *p4",
-                "*, *p3, *p7",
-                "*, *p7, *p3",
-                "*, *p4, *p6",
-                "*, *, *p7, *p2",
-                "*, *p5, *p5",
-                "*, *p2, *p7, *",
-                "*, *p6, *p4"
-        );
+//        List<String> patterns = Arrays.asList(
+//                "*p7, *p4",
+//                "*, *p3, *p7",
+//                "*, *p7, *p3",
+//                "*, *p4, *p6",
+//                "*, *, *p7, *p2",
+//                "*, *p5, *p5",
+//                "*, *p2, *p7, *",
+//                "*, *p6, *p4"
+//        );
 
         // ツモ順の列挙
-        PiecesGenerator piecesGenerator = new PiecesGenerator(patterns);
+//        PiecesGenerator piecesGenerator = new PiecesGenerator(patterns);
 //        long count = piecesGenerator.stream().parallel().count();
 //        System.out.println(count);
 
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        int width = 3;
-        int height = 4;
+        int width = 2;
+        int height = 6;
         SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, width, height);
         List<SeparableMino> minos = factory.create();
-        SeparableMinos separableMinos = new SeparableMinos(minos);
         System.out.println(minos.size());
+        SeparableMinos separableMinos = new SeparableMinos(minos);
+
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, new SizedBit(width, height));
-//        System.out.println("calc");
+
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
         Map<ColumnField, Set<MinoField>> calculate = calculator.calculate();
         stopwatch.stop();

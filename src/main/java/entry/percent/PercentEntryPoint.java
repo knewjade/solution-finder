@@ -87,7 +87,7 @@ public class PercentEntryPoint implements EntryPoint {
         output("Available processors = " + core);
 
         // 残りのスペースが4の倍数でないときはエラー
-        int emptyCount = maxClearLine * 10 - field.getAllBlockCount();
+        int emptyCount = maxClearLine * 10 - field.getNumOfAllBlocks();
         if (emptyCount % 4 != 0)
             throw new IllegalArgumentException("Error: EmptyCount should be mod 4: " + emptyCount);
 

@@ -2,9 +2,7 @@ package entry.path;
 
 import common.Stopwatch;
 import common.SyntaxException;
-import common.buildup.BuildUp;
 import common.buildup.BuildUpListUp;
-import common.comparator.OperationWithKeyComparator;
 import common.datastore.*;
 import common.datastore.pieces.NumberPieces;
 import common.pattern.PiecesGenerator;
@@ -40,8 +38,6 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.io.*;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -153,7 +149,7 @@ public class PathEntryPoint implements EntryPoint {
         output("Available processors = " + core);
 
         // 残りのスペースが4の倍数でないときはエラー
-        int emptyCount = maxClearLine * 10 - field.getAllBlockCount();
+        int emptyCount = maxClearLine * 10 - field.getNumOfAllBlocks();
         if (emptyCount % 4 != 0)
             throw new IllegalArgumentException("Error: EmptyCount should be mod 4: " + emptyCount);
 

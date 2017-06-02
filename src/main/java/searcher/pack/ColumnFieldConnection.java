@@ -5,15 +5,13 @@ import core.column_field.ColumnSmallField;
 import pack.separable_mino.SeparableMino;
 
 public class ColumnFieldConnection {
-    public static final int WIDTH = 3;
     private final SeparableMino mino;
     private final ColumnField innerField;
     private final ColumnField outerField;
 
-    public ColumnFieldConnection(SeparableMino mino, ColumnField freeze, int height) {
-        assert 0 < height && height <= 10;
-        int maxBit = height * WIDTH;
-        long fillBoard = (1L << maxBit) - 1L;
+    public ColumnFieldConnection(SeparableMino mino, ColumnField freeze, SizedBit sizedBit) {
+        assert 0 < sizedBit.getHeight() && sizedBit.getHeight() <= 10;
+        long fillBoard = sizedBit.getFillBoard();
 
         long board = freeze.getBoard(0);
         ColumnField innerField = new ColumnSmallField(board & fillBoard);

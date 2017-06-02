@@ -1,5 +1,7 @@
 package core.column_field;
 
+import searcher.pack.SizedBit;
+
 public class ColumnFieldView {
     private static final String LINE_SEPARATOR = System.lineSeparator();
     private static final char EMPTY_CHAR = '_';
@@ -15,5 +17,9 @@ public class ColumnFieldView {
                 builder.append(LINE_SEPARATOR);
         }
         return builder.toString();
+    }
+
+    public static String toString(ColumnField columnField, SizedBit sizedBit) {
+        return toString(columnField, sizedBit.getWidth(), sizedBit.getHeight());
     }
 }

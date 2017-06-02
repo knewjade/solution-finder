@@ -1,5 +1,7 @@
 package common.tetfu.common;
 
+import java.util.HashMap;
+
 public enum ColorType {
     Empty(0),
     I(1),
@@ -10,6 +12,18 @@ public enum ColorType {
     J(6),
     S(7),
     Gray(8);
+
+    private static final HashMap<Integer, ColorType> map = new HashMap<>();
+
+    static {
+        for (ColorType type : ColorType.values())
+            map.put(type.number, type);
+    }
+
+    public static ColorType parse(int number) {
+        assert map.containsKey(number);
+        return map.get(number);
+    }
 
     private final int number;
 

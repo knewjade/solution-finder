@@ -4,6 +4,7 @@ import common.buildup.BuildUp;
 import common.datastore.OperationWithKey;
 import core.action.reachable.OnGrandOnlyReachable;
 import core.column_field.ColumnField;
+import core.column_field.ColumnFieldView;
 import core.column_field.ColumnSmallField;
 import core.field.Field;
 import core.field.SmallField;
@@ -17,6 +18,7 @@ import java.util.*;
  */
 public class BasicSolutionsCalculator {
     public static final int FIELD_WIDTH = 10;
+    public static final int WIDTH_OVER_MINO = 3;
 
     private final SizedBit sizedBit;
     private final BasicReference reference;
@@ -40,7 +42,9 @@ public class BasicSolutionsCalculator {
 
     private HashMap<ColumnField, Set<MinoField>> calculateResults(List<ColumnSmallField> basicFields) {
         this.resultsMap = new HashMap<>();
+        System.out.println(basicFields.size());
         for (ColumnField columnField : basicFields) {
+//            System.out.println(Long.bitCount(columnField.getBoard(0)));
             HashSet<MinoField> results = calculate(columnField);
             resultsMap.put(columnField, results);
         }
@@ -65,7 +69,7 @@ public class BasicSolutionsCalculator {
         SmallField wallField = new SmallField();
         // 横向きIをおいたとき、3ブロック分あふれる
         for (int y = 0; y < sizedBit.getHeight(); y++)
-            for (int x = sizedBit.getWidth() + 3; x < FIELD_WIDTH; x++)
+            for (int x = sizedBit.getWidth() + WIDTH_OVER_MINO; x < FIELD_WIDTH; x++)
                 wallField.setBlock(x, y);
         wallField.merge(innerField);
 

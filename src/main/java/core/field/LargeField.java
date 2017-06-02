@@ -86,7 +86,7 @@ public class LargeField implements Field {
     }
 
     @Override
-    public int getAllBlockCount() {
+    public int getNumOfAllBlocks() {
         throw new UnsupportedOperationException();
     }
 

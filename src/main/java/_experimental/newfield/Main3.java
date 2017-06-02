@@ -52,7 +52,7 @@ public class Main3 {
         List<Block> allBlocks = Arrays.asList(Block.values());
         List<Block> blocks = new ArrayList<>();
         blocks.addAll(allBlocks);
-        int popCount = (maxClearLine * 10 - field.getAllBlockCount()) / 4;
+        int popCount = (maxClearLine * 10 - field.getNumOfAllBlocks()) / 4;
         CombinationIterable<Block> combinationIterable = new CombinationIterable<>(blocks, popCount);
         for (List<Block> blockList : combinationIterable) {
             blockList.sort(Comparator.comparingInt(allBlocks::indexOf));

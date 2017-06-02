@@ -24,3 +24,5 @@ cache/*
 
 input/*
 !input/.gitkeep
+
+*.gif
