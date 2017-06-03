@@ -16,7 +16,6 @@ public class ColoredFieldFactory {
 
         int maxY = marks.length() / 10;
         ColoredField field = new ArrayColoredField(MAX_HEIGHT);
-        ColorConverter converter = new ColorConverter();
         for (int y = 0; y < maxY; y++) {
             for (int x = 0; x < 10; x++) {
                 char mark = marks.charAt((maxY - y - 1) * 10 + x);

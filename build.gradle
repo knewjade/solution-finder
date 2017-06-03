@@ -1,5 +1,5 @@
 group 'com.knewjade'
-version '0.402'
+version '0.41'
 
 apply plugin: 'java'
 apply plugin: 'idea'
@@ -56,6 +56,13 @@ task copyRelease(type: Task) {
             from srcJarFile
             into releaseDir
             rename { file -> 'sfinder.jar' }
+        }
+
+        // copy README
+        def readmeName = distributionDir.canonicalPath + File.separator + "README.md"
+        copy {
+            from readmeName
+            into "."
         }
     }
 }

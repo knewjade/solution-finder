@@ -28,5 +28,7 @@ public interface ColoredField {
 
     int getMaxHeight();
 
-    boolean isFilled(int y);
+    int getUsingHeight();
+
+    boolean isFilledLine(int y);
 }

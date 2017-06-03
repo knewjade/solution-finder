@@ -38,6 +38,8 @@ public class NormalCommandLineWrapper implements CommandLineWrapper {
                 return Optional.of(false);
             case "ok":
                 return Optional.of(true);
+            case "yes":
+                return Optional.of(true);
             case "no":
                 return Optional.of(false);
             case "ng":
@@ -49,6 +51,14 @@ public class NormalCommandLineWrapper implements CommandLineWrapper {
             case "use":
                 return Optional.of(true);
             case "avoid":
+                return Optional.of(false);
+            case "enable":
+                return Optional.of(true);
+            case "disable":
+                return Optional.of(false);
+            case "visible":
+                return Optional.of(true);
+            case "hidden":
                 return Optional.of(false);
         }
         throw new IllegalArgumentException(String.format("Option[%s=%s]: cannot understand", name, value));

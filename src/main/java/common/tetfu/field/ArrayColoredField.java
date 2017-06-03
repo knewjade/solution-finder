@@ -103,7 +103,16 @@ public class ArrayColoredField implements ColoredField {
     }
 
     @Override
-    public boolean isFilled(int y) {
+    public int getUsingHeight() {
+        for (int y = field.length - 1; 0 <= y; y--)
+            for (int x = 0; x < FIELD_WIDTH; x++)
+                if (field[y][x] != EMPTY_NUMBER)
+                    return y;
+        return -1;
+    }
+
+    @Override
+    public boolean isFilledLine(int y) {
         for (int x = 0; x < FIELD_WIDTH; x++)
             if (field[y][x] == EMPTY_NUMBER)
                 return false;

@@ -71,7 +71,7 @@ public class PathSettingParser {
             // テト譜から
             Optional<String> tetfuData = wrapper.getStringOption("tetfu");
             assert tetfuData.isPresent();
-            String encoded = tetfuData.get();
+            String encoded = Tetfu.extractEncodedData(tetfuData.get());
             wrapper = loadTetfu(encoded, parser, options, wrapper, settings);
         } else {
             // フィールドファイルから
@@ -94,9 +94,9 @@ public class PathSettingParser {
                 if (fieldLines.isEmpty())
                     throw new IllegalArgumentException("Empty field definition");
 
-                if (fieldLines.get(0).startsWith(SUPPORTED_TETFU_PREFIX)) {
+                String encoded = Tetfu.extractEncodedData(fieldLines.get(0));
+                if (encoded.startsWith(SUPPORTED_TETFU_PREFIX)) {
                     // テト譜から
-                    String encoded = fieldLines.get(0);
                     wrapper = loadTetfu(encoded, parser, options, wrapper, settings);
                 } else {
                     // 最大削除ラインの設定

@@ -32,7 +32,11 @@ solution-finderは、探索ツールとして次の特徴を持っています�
    - ホールドあり・なしの切り替えに対応
    - ソフトドロップありの場合のみ対応
 
+* util: solution-finderの機能を補助するユーティリティ
+   - fig: テト譜からgifによるアニメーション画像を生成
+
 **※ pathはまだ検証が不十分な部分があります。ご利用時にはご注意ください。**
+
 
 ダウンロード
 -------------------------------------------
@@ -65,6 +69,7 @@ https://twitter.com/kitsune_fuchi/status/868826325770878976
    command
    percent/main
    path/main
+   util/main
    caution
 
 

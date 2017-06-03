@@ -1,12 +1,14 @@
 package entry;
 
-import entry.EntryPoint;
 import entry.path.PathEntryPoint;
 import entry.path.PathSettingParser;
 import entry.path.PathSettings;
 import entry.percent.PercentEntryPoint;
 import entry.percent.PercentSettingParser;
 import entry.percent.PercentSettings;
+import entry.util.fig.FigUtilEntryPoint;
+import entry.util.fig.FigUtilSettingParser;
+import entry.util.fig.FigUtilSettings;
 import org.apache.commons.cli.ParseException;
 
 import java.io.IOException;
@@ -23,12 +25,12 @@ public class EntryPointMain {
 
         if (args[0].equals("-h")) {
             System.out.println("Usage: <command> [options]");
-            System.out.println("  command: percent, path");
+            System.out.println("  command: percent, path, util fig");
             System.exit(0);
         }
 
         if (args[0].equals("-v")) {
-            System.out.println("Version: 0.402");
+            System.out.println("Version: 0.41");
             System.exit(0);
         }
 
@@ -48,8 +50,10 @@ public class EntryPointMain {
                 return getPercentEntryPoint(commands);
             case "path":
                 return getPathEntryPoint(commands);
+            case "util":
+                return getUtilEntryPoint(commands);
             default:
-                throw new IllegalArgumentException("Invalid type: Use percent, path");
+                throw new IllegalArgumentException("Invalid type: Use percent, path, util");
         }
     }
 
@@ -71,5 +75,19 @@ public class EntryPointMain {
             System.exit(0);
 
         return new PercentEntryPoint(settings.get());
+    }
+
+    private static EntryPoint getUtilEntryPoint(List<String> commands) throws ParseException {
+        if (!commands.get(0).equals("fig"))
+            throw new IllegalArgumentException("util: Invalid type: Use fig");
+
+        List<String> figCommands = commands.subList(1, commands.size());
+        FigUtilSettingParser settingParser = new FigUtilSettingParser(figCommands);
+        Optional<FigUtilSettings> settings = settingParser.parse();
+
+        if (!settings.isPresent())
+            System.exit(0);
+
+        return new FigUtilEntryPoint(settings.get());
     }
 }
