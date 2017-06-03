@@ -119,6 +119,12 @@ public class FigUtilSettings {
                 this.height = 1;
         }
 
+        // ホールドを使わない場合はRightに変更
+        if (!this.isUsingHold && frameType == FrameType.Basic) {
+            frameType = FrameType.Right;
+        }
+
+        // ネクストのチェック
         // ネクストがない場合はチェックは必要がない
         if (frameType == FrameType.NoFrame) {
             return;

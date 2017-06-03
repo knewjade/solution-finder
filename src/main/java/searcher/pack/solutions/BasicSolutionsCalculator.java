@@ -42,7 +42,7 @@ public class BasicSolutionsCalculator {
 
     private HashMap<ColumnField, Set<MinoField>> calculateResults(List<ColumnSmallField> basicFields) {
         this.resultsMap = new HashMap<>();
-        System.out.println(basicFields.size());
+//        System.out.println(basicFields.size());
         for (ColumnField columnField : basicFields) {
 //            System.out.println(Long.bitCount(columnField.getBoard(0)));
             HashSet<MinoField> results = calculate(columnField);
