@@ -107,13 +107,17 @@ public class PathEntryPoint implements EntryPoint {
         String extension = getExtension();
         String outputBaseFilePath = settings.getOutputBaseFilePath();
         String outputBaseCanonicalPath = new File(outputBaseFilePath).getCanonicalPath();
-        String outputFilePath = String.format("%s%s", getRemoveExtensionFromPath(outputBaseCanonicalPath), extension);
+        String namePath = getRemoveExtensionFromPath(outputBaseCanonicalPath);
+        if (namePath.isEmpty() || namePath.endsWith(String.valueOf(File.separatorChar)))
+            namePath += "path";
+
+        String outputFilePath = String.format("%s%s", namePath, extension);
         File outputFile = new File(outputFilePath);
 
         // 親ディレクトリがない場合は作成
         if (!outputFile.getParentFile().exists()) {
-            boolean mairSuccess = outputFile.getParentFile().mkdir();
-            if (!mairSuccess) {
+            boolean mkdirsSuccess = outputFile.getParentFile().mkdirs();
+            if (!mkdirsSuccess) {
                 throw new IllegalStateException("Failed to make output directory");
             }
         }
@@ -124,7 +128,7 @@ public class PathEntryPoint implements EntryPoint {
             throw new IllegalArgumentException("Cannot write output base file");
 
         // uniqueファイル
-        String uniqueOutputFilePath = String.format("%s_unique%s", getRemoveExtensionFromPath(outputBaseCanonicalPath), extension);
+        String uniqueOutputFilePath = String.format("%s_unique%s", namePath, extension);
         File outputUniqueFile = new File(uniqueOutputFilePath);
         if (outputUniqueFile.isDirectory())
             throw new IllegalArgumentException("Cannot specify directory as output unique file path");
@@ -132,7 +136,7 @@ public class PathEntryPoint implements EntryPoint {
             throw new IllegalArgumentException("Cannot write output unique file");
 
         // minimalファイル
-        String minimalOutputFilePath = String.format("%s_minimal%s", getRemoveExtensionFromPath(outputBaseCanonicalPath), extension);
+        String minimalOutputFilePath = String.format("%s_minimal%s", namePath, extension);
         File outputMinimalFile = new File(minimalOutputFilePath);
         if (outputMinimalFile.isDirectory())
             throw new IllegalArgumentException("Cannot specify directory as output minimal file path");

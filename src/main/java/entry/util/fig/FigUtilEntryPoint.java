@@ -13,15 +13,15 @@ import entry.EntryPoint;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import util.gif.Bag;
-import util.gif.FrameType;
-import util.gif.GifSetting;
-import util.gif.generator.AllGifGenerator;
-import util.gif.generator.FieldOnlyGifGenerator;
-import util.gif.generator.GifGenerator;
-import util.gif.generator.NoHoldGifGenerator;
-import util.gif.position.BasicPositionDecider;
-import util.gif.position.RightPositionDecider;
+import util.fig.Bag;
+import util.fig.FigSetting;
+import util.fig.FrameType;
+import util.fig.generator.AllFigGenerator;
+import util.fig.generator.FieldOnlyFigGenerator;
+import util.fig.generator.FigGenerator;
+import util.fig.generator.NoHoldFigGenerator;
+import util.fig.position.BasicPositionDecider;
+import util.fig.position.RightPositionDecider;
 
 import javax.imageio.*;
 import javax.imageio.metadata.IIOInvalidTreeException;
@@ -30,6 +30,9 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -52,8 +55,6 @@ public class FigUtilEntryPoint implements EntryPoint {
 
         FrameType frameType = settings.getFrameType();
 
-        boolean usingHold = settings.isUsingHold();
-        boolean isInfiniteLoop = settings.getInfiniteLoop();
         File outputFile = new File(settings.getOutputFilePath());
 
         output();
@@ -61,6 +62,27 @@ public class FigUtilEntryPoint implements EntryPoint {
         output("  -> Stopwatch start");
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
+        FigFormat figFormat = settings.getFigFormat();
+        switch (figFormat) {
+            case Gif:
+                createGif(minoFactory, colorConverter, frameType, outputFile);
+                break;
+            case Png:
+                createPng(minoFactory, colorConverter, frameType, outputFile);
+                break;
+        }
+
+        stopwatch.stop();
+        output("  -> Stopwatch stop : " + stopwatch.toMessage(TimeUnit.MILLISECONDS));
+    }
+
+    private void createGif(MinoFactory minoFactory, ColorConverter colorConverter, FrameType frameType, File originalOutputFile) throws IOException {
+        String outputFilePath = getRemoveExtensionFromPath(originalOutputFile.getCanonicalPath());
+        if (outputFilePath.isEmpty())
+            outputFilePath = "fig";
+
+        File outputFile = new File(outputFilePath + ".gif");
+        output("  .... Output to " + outputFile.getCanonicalPath());
         try (ImageOutputStream imageOutputStream = ImageIO.createImageOutputStream(outputFile)) {
             // imageWriterの準備
             ImageWriter imageWriter = getGifImageWriter();
@@ -68,13 +90,15 @@ public class FigUtilEntryPoint implements EntryPoint {
             imageWriter.prepareWriteSequence(null);
 
             // generatorの準備
-            GifGenerator gifGenerator = createGifGenerator(frameType, usingHold, minoFactory, colorConverter);
+            boolean usingHold = settings.isUsingHold();
+            FigGenerator figGenerator = createFigGenerator(frameType, usingHold, minoFactory, colorConverter);
 
-            int startPage = settings.getStartPage();
+            // 開始ページまでにQuizが含まれているかを確認する
+            int startPageIndex = settings.getStartPageIndex();
             List<TetfuPage> tetfuPages = settings.getTetfuPages();
             String quiz = null;
             int quizIndex = -1;
-            for (int index = startPage - 1; 0 <= index; index--) {
+            for (int index = startPageIndex; 0 <= index; index--) {
                 TetfuPage tetfuPage = tetfuPages.get(index);
                 String comment = tetfuPage.getComment();
                 if (comment.startsWith("#Q=")) {
@@ -84,19 +108,22 @@ public class FigUtilEntryPoint implements EntryPoint {
                 }
             }
 
+            // Bagの作成
             int endPage = settings.getEndPage();
-            List<TetfuPage> usingTetfuPages = tetfuPages.subList(startPage - 1, endPage);
-            Bag bag = createBag(colorConverter, startPage, tetfuPages, quiz, quizIndex, usingTetfuPages);
+            List<TetfuPage> usingTetfuPages = tetfuPages.subList(startPageIndex, endPage);
+            Bag bag = createBag(colorConverter, startPageIndex, tetfuPages, quiz, quizIndex, usingTetfuPages);
 
-            if (tetfuPages.subList(startPage, endPage).stream().map(TetfuPage::getComment).anyMatch(s -> s.startsWith("#Q="))) {
+            // もし開始ページ以降にQuizが含まれるときは無視することを警告
+            if (tetfuPages.subList(startPageIndex + 1, endPage).stream().map(TetfuPage::getComment).anyMatch(s -> s.startsWith("#Q="))) {
                 output("#### WARNING: Contains Quiz in tetfu after start page. ignored");
             }
 
             // 必要な回数だけ出力する
+            boolean isInfiniteLoop = settings.getInfiniteLoop();
             int nextBoxCount = settings.getNextBoxCount();
             for (TetfuPage tetfuPage : usingTetfuPages) {
                 // リセット
-                gifGenerator.reset();
+                figGenerator.reset();
 
                 // 現在のミノを取得
                 ColorType colorType = tetfuPage.getColorType();
@@ -108,12 +135,12 @@ public class FigUtilEntryPoint implements EntryPoint {
 
                 // フィールドの更新
                 ColoredField field = tetfuPage.getField();
-                gifGenerator.updateField(field, mino, x, y);
+                figGenerator.updateField(field, mino, x, y);
 
                 // ミノを置くかチェック
                 if (ColorType.isMinoBlock(colorType)) {
                     // 現在のミノの更新
-                    gifGenerator.updateMino(colorType, rotate, x, y);
+                    figGenerator.updateMino(colorType, rotate, x, y);
 
                     // bagの更新
                     Block block = colorConverter.parseToBlock(colorType);
@@ -121,13 +148,13 @@ public class FigUtilEntryPoint implements EntryPoint {
                 }
 
                 // ネクストの更新
-                gifGenerator.updateNext(bag.getNext(nextBoxCount));
+                figGenerator.updateNext(bag.getNext(nextBoxCount));
 
                 // ホールドの更新
-                gifGenerator.updateHold(bag.getHold());
+                figGenerator.updateHold(bag.getHold());
 
-                // 画像の出力
-                BufferedImage image = gifGenerator.fix();
+                // 画像の生成
+                BufferedImage image = figGenerator.fix();
 
                 // メタデータの作成
                 int delay = settings.getDelay();
@@ -142,12 +169,131 @@ public class FigUtilEntryPoint implements EntryPoint {
             // imageWriterの終了処理
             imageWriter.endWriteSequence();
         }
-
-        stopwatch.stop();
-        output("  -> Stopwatch stop : " + stopwatch.toMessage(TimeUnit.MILLISECONDS));
     }
 
-    private Bag createBag(ColorConverter colorConverter, int startPage, List<TetfuPage> tetfuPages, String quiz, int quizIndex, List<TetfuPage> usingTetfuPages) {
+    private void createPng(MinoFactory minoFactory, ColorConverter colorConverter, FrameType frameType, File outputFile) throws IOException {
+        // 日付から新しいディレクトリ名を生成
+        Date date = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        String dateDirName = format.format(date);
+
+        // 出力先の親ディレクトリを取得
+        File originOutputFile = new File(settings.getOutputFilePath());
+        File parentDirectory = originOutputFile.getParentFile();
+
+        // 出力先ディレクトリを作成
+        String baseName = parentDirectory.getCanonicalPath() + File.separatorChar + dateDirName;
+        File outputDirectoryFile = new File(baseName);
+        for (int suffix = 0; outputDirectoryFile.exists(); suffix++) {
+            outputDirectoryFile = new File(baseName + "_" + suffix);
+        }
+
+        // ファイル名の取得
+        String outputFileName = getRemoveExtensionFromPath(originOutputFile.getName());
+        if (outputFileName.isEmpty())
+            outputFileName = "fig";
+
+        // 出力先ディレクトリがない場合は作成
+        if (!outputDirectoryFile.exists()) {
+            boolean mkdirsSuccess = outputDirectoryFile.mkdirs();
+            if (!mkdirsSuccess) {
+                throw new IllegalStateException("Failed to make output directory");
+            }
+        }
+
+        output("  .... Output to " + outputDirectoryFile.getCanonicalPath());
+
+        // generatorの準備
+        boolean usingHold = settings.isUsingHold();
+        FigGenerator figGenerator = createFigGenerator(frameType, usingHold, minoFactory, colorConverter);
+
+        // 開始ページまでにQuizが含まれているかを確認する
+        int startPageIndex = settings.getStartPageIndex();
+        List<TetfuPage> tetfuPages = settings.getTetfuPages();
+        String quiz = null;
+        int quizIndex = -1;
+        for (int index = startPageIndex; 0 <= index; index--) {
+            TetfuPage tetfuPage = tetfuPages.get(index);
+            String comment = tetfuPage.getComment();
+            if (comment.startsWith("#Q=")) {
+                quiz = comment;
+                quizIndex = index;
+                break;
+            }
+        }
+
+        // Bagの作成
+        int endPage = settings.getEndPage();
+        List<TetfuPage> usingTetfuPages = tetfuPages.subList(startPageIndex, endPage);
+        Bag bag = createBag(colorConverter, startPageIndex, tetfuPages, quiz, quizIndex, usingTetfuPages);
+
+        // もし開始ページ以降にQuizが含まれるときは無視することを警告
+        if (tetfuPages.subList(startPageIndex + 1, endPage).stream().map(TetfuPage::getComment).anyMatch(s -> s.startsWith("#Q="))) {
+            output("#### WARNING: Contains Quiz in tetfu after start page. ignored");
+        }
+
+        // 必要な回数だけ出力する
+        int page = startPageIndex + 1;
+        int nextBoxCount = settings.getNextBoxCount();
+        for (TetfuPage tetfuPage : usingTetfuPages) {
+            // リセット
+            figGenerator.reset();
+
+            // 現在のミノを取得
+            ColorType colorType = tetfuPage.getColorType();
+            Rotate rotate = tetfuPage.getRotate();
+            Mino mino = ColorType.isMinoBlock(colorType) ? minoFactory.create(colorConverter.parseToBlock(colorType), rotate) : null;
+
+            int x = tetfuPage.getX();
+            int y = tetfuPage.getY();
+
+            // フィールドの更新
+            ColoredField field = tetfuPage.getField();
+            figGenerator.updateField(field, mino, x, y);
+
+            // ミノを置くかチェック
+            if (ColorType.isMinoBlock(colorType)) {
+                // 現在のミノの更新
+                figGenerator.updateMino(colorType, rotate, x, y);
+
+                // bagの更新
+                Block block = colorConverter.parseToBlock(colorType);
+                bag.use(block);
+            }
+
+            // ネクストの更新
+            figGenerator.updateNext(bag.getNext(nextBoxCount));
+
+            // ホールドの更新
+            figGenerator.updateHold(bag.getHold());
+
+            // 画像の生成
+            BufferedImage image = figGenerator.fix();
+
+            // 画像の出力
+            String path = String.format("%s" + File.separatorChar + "%s_%03d.png", outputDirectoryFile.getCanonicalPath(), outputFileName, page);
+            ImageIO.write(image, "png", new File(path));
+
+            page++;
+        }
+    }
+
+    private String getRemoveExtensionFromPath(String path) {
+        int pointIndex = path.lastIndexOf('.');
+        int separatorIndex = path.lastIndexOf(File.separatorChar);
+
+        // .がない or セパレータより前にあるとき
+        if (pointIndex <= separatorIndex)
+            return path;
+
+        // .があるとき
+        if (pointIndex != -1)
+            return path.substring(0, pointIndex);
+
+        return path;
+    }
+
+    private Bag createBag(ColorConverter colorConverter, int startPageIndex, List<TetfuPage> tetfuPages, String quiz, int quizIndex, List<TetfuPage> usingTetfuPages) {
         if (settings.isUsingHold() && quiz != null) {
             int holdIndex = quiz.indexOf('[') + 1;
             char holdChar = quiz.charAt(holdIndex);
@@ -166,7 +312,7 @@ public class FigUtilEntryPoint implements EntryPoint {
                     .collect(Collectors.toList());
 
             Bag bag = new Bag(blocks, hold);
-            for (int index = quizIndex; index < startPage - 1; index++) {
+            for (int index = quizIndex; index < startPageIndex; index++) {
                 ColorType colorType = tetfuPages.get(index).getColorType();
                 bag.use(colorConverter.parseToBlock(colorType));
             }
@@ -185,34 +331,41 @@ public class FigUtilEntryPoint implements EntryPoint {
     public void close() throws Exception {
     }
 
-    private GifGenerator createGifGenerator(FrameType frameType, boolean isUsingHold, MinoFactory minoFactory, ColorConverter colorConverter) {
+    private FigGenerator createFigGenerator(FrameType frameType, boolean isUsingHold, MinoFactory minoFactory, ColorConverter colorConverter) {
         int height = settings.getHeight();
         int nextBoxCount = settings.getNextBoxCount();
         if (nextBoxCount < 0)
             throw new IllegalArgumentException("Next Box Count should be positive");
 
-        GifSetting gifSetting = new GifSetting(frameType, height, nextBoxCount);
+        FigSetting figSetting = new FigSetting(frameType, height, nextBoxCount);
         switch (frameType) {
             case NoFrame:
-                return new FieldOnlyGifGenerator(gifSetting, minoFactory, colorConverter);
+                return new FieldOnlyFigGenerator(figSetting, minoFactory, colorConverter);
             case Basic:
                 if (!isUsingHold)
-                    return new NoHoldGifGenerator(gifSetting, minoFactory, colorConverter);
+                    return new NoHoldFigGenerator(figSetting, minoFactory, colorConverter);
 
-                BasicPositionDecider basicPositionDecider = new BasicPositionDecider(gifSetting);
-                return new AllGifGenerator(gifSetting, basicPositionDecider, minoFactory, colorConverter);
+                BasicPositionDecider basicPositionDecider = new BasicPositionDecider(figSetting);
+                return new AllFigGenerator(figSetting, basicPositionDecider, minoFactory, colorConverter);
             case Right:
                 if (!isUsingHold)
-                    return new NoHoldGifGenerator(gifSetting, minoFactory, colorConverter);
+                    return new NoHoldFigGenerator(figSetting, minoFactory, colorConverter);
 
-                RightPositionDecider rightPositionDecider = new RightPositionDecider(gifSetting);
-                return new AllGifGenerator(gifSetting, rightPositionDecider, minoFactory, colorConverter);
+                RightPositionDecider rightPositionDecider = new RightPositionDecider(figSetting);
+                return new AllFigGenerator(figSetting, rightPositionDecider, minoFactory, colorConverter);
         }
         throw new IllegalStateException("No reachable");
     }
 
     private static ImageWriter getGifImageWriter() {
         Iterator<ImageWriter> writerIterator = ImageIO.getImageWritersByFormatName("gif");
+        if (writerIterator.hasNext())
+            return writerIterator.next();
+        throw new IllegalStateException("No reachable");
+    }
+
+    private static ImageWriter getPngImageWriter() {
+        Iterator<ImageWriter> writerIterator = ImageIO.getImageWritersByFormatName("png");
         if (writerIterator.hasNext())
             return writerIterator.next();
         throw new IllegalStateException("No reachable");

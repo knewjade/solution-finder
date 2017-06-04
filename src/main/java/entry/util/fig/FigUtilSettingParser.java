@@ -7,7 +7,7 @@ import core.mino.MinoFactory;
 import entry.CommandLineWrapper;
 import entry.NormalCommandLineWrapper;
 import org.apache.commons.cli.*;
-import util.gif.FrameType;
+import util.fig.FrameType;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -21,9 +21,7 @@ import java.util.stream.Collectors;
 
 public class FigUtilSettingParser {
     private static final String CHARSET_NAME = "utf-8";
-    private static final String DEFAULT_PATTERNS_TXT = "input/patterns.txt";
     private static final String DEFAULT_FIELD_TXT = "input/field.txt";
-    private static final String PATTERN_DELIMITER = ";";
     private static final String SUPPORTED_TETFU_PREFIX = "v115@";
 
     private final String[] commands;
@@ -79,6 +77,11 @@ public class FigUtilSettingParser {
         Optional<String> frameTypeName = wrapper.getStringOption("frame");
         Optional<FrameType> frameType = frameTypeName.map(this::parseFrameType);
         frameType.ifPresent(settings::setFrameType);
+
+        // フォーマットの設定
+        Optional<String> formatName = wrapper.getStringOption("format");
+        Optional<FigFormat> figFormat = formatName.map(this::parseFigFormat);
+        figFormat.ifPresent(settings::setFigFormat);
 
         // 高さの設定
         Optional<Integer> height = wrapper.getIntegerOption("line");
@@ -147,6 +150,16 @@ public class FigUtilSettingParser {
                 return FrameType.Right;
         }
         throw new IllegalArgumentException("Not found frame type: " + frameTypeName);
+    }
+
+    private FigFormat parseFigFormat(String formatName) {
+        switch (formatName.toLowerCase()) {
+            case "png":
+                return FigFormat.Png;
+            case "gif":
+                return FigFormat.Gif;
+        }
+        throw new IllegalArgumentException("Not found format name: " + formatName);
     }
 
     private Options createOptions() {
@@ -248,6 +261,16 @@ public class FigUtilSettingParser {
                 .desc("Frame type of figure")
                 .build();
         options.addOption(frameTypeOption);
+
+        Option formatOption = Option.builder("F")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("format-name")
+                .longOpt("format")
+                .desc("Format of figure")
+                .build();
+        options.addOption(formatOption);
 
         Option outputFileOption = Option.builder("o")
                 .optionalArg(true)

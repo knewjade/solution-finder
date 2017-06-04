@@ -8,7 +8,7 @@ import core.mino.Block;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
-import util.gif.FrameType;
+import util.fig.FrameType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +28,7 @@ public class FigUtilSettings {
     private int nextBoxCount = 5;
     private int startPage = 1;
     private int endPage = -1;  // include
+    private FigFormat figFormat = FigFormat.Gif;
 
     // ********* Getter ************
     FrameType getFrameType() {
@@ -62,12 +63,16 @@ public class FigUtilSettings {
         return delay;
     }
 
-    int getStartPage() {
-        return startPage;
+    int getStartPageIndex() {
+        return startPage - 1;
     }
 
     int getEndPage() {
         return endPage;
+    }
+
+    FigFormat getFigFormat() {
+        return figFormat;
     }
 
     // ********* Setter ************
@@ -164,5 +169,9 @@ public class FigUtilSettings {
         // ネクストを置けるようにフィールドの高さを調整
         int needHeightPx = 52 * count + 5;
         setHeight((int) Math.ceil((needHeightPx - 2) / 34.0));
+    }
+
+    void setFigFormat(FigFormat figFormat) {
+        this.figFormat = figFormat;
     }
 }
