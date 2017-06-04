@@ -23,7 +23,7 @@ short    long                   default
 ``-o``   ``--output``           output/fig.gif
 ``-F``   ``--format``           gif
 ``-n``   ``--next``             5
-``-d``   ``--delay``            20
+``-d``   ``--delay``            30
 ``-L``   ``--loop``             true
 ``-t``   ``--tetfu``            なし
 ``-s``   ``--start``            1
@@ -60,7 +60,7 @@ short    long                   default
 表示するネクストの数を指定する。
 
 
-``-d``, ``--delay`` [default: 20]
+``-d``, ``--delay`` [default: 30]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 アニメーションのフレーム間の時間を指定する。なお、単位は10ms。

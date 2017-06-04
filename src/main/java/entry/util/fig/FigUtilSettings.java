@@ -21,7 +21,7 @@ public class FigUtilSettings {
     private FrameType frameType = FrameType.Basic;
     private boolean isUsingHold = true;
     private int height = -1;
-    private int delay = 20;
+    private int delay = 30;
     private List<TetfuPage> tetfuPages = new ArrayList<>();
     private String outputFilePath = DEFAULT_OUTPUT_FILE_PATH;
     private boolean isInfiniteLoop = true;
