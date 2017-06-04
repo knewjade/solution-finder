@@ -165,6 +165,8 @@ public class Tetfu {
         }
     }
 
+    private int count = 0;
+
     public List<TetfuPage> decode(String str) {
         LinkedList<Integer> values = str.replace("?", "").chars().boxed()
                 .map(c -> decodeData((char) c.intValue()))

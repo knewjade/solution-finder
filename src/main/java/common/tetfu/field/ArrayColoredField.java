@@ -107,8 +107,8 @@ public class ArrayColoredField implements ColoredField {
         for (int y = field.length - 1; 0 <= y; y--)
             for (int x = 0; x < FIELD_WIDTH; x++)
                 if (field[y][x] != EMPTY_NUMBER)
-                    return y;
-        return -1;
+                    return y + 1;
+        return 0;
     }
 
     @Override

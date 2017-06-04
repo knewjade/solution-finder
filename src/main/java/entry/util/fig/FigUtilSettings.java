@@ -1,7 +1,13 @@
 package entry.util.fig;
 
 import common.tetfu.TetfuPage;
+import common.tetfu.common.ColorConverter;
+import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
+import core.mino.Block;
+import core.mino.Mino;
+import core.mino.MinoFactory;
+import core.srs.Rotate;
 import util.gif.FrameType;
 
 import java.util.ArrayList;
@@ -108,15 +114,31 @@ public class FigUtilSettings {
 
         // 高さの指定がないときは最も高い場所 + 1とする
         if (this.height == -1) {
+            MinoFactory minoFactory = new MinoFactory();
+            ColorConverter colorConverter = new ColorConverter();
             OptionalInt maxHeight = tetfuPages.subList(startPage - 1, endPage).stream()
-                    .map(TetfuPage::getField)
-                    .mapToInt(ColoredField::getUsingHeight)
+                    .mapToInt(page -> {
+                        ColoredField field = page.getField();
+                        int fieldHeight = field.getUsingHeight();
+                        ColorType colorType = page.getColorType();
+                        if (ColorType.isMinoBlock(colorType)) {
+                            Block block = colorConverter.parseToBlock(colorType);
+                            Rotate rotate = page.getRotate();
+                            Mino mino = minoFactory.create(block, rotate);
+                            int minoHeight = page.getY() + mino.getMaxY() + 1;
+                            return fieldHeight < minoHeight ? minoHeight : fieldHeight;
+                        } else {
+                            return fieldHeight;
+                        }
+                    })
                     .max();
 
-            this.height = maxHeight.orElse(-1) + 1;
+            this.height = maxHeight.orElse(0) + 1;
 
             if (height <= 0)
                 this.height = 1;
+            else if (23 <= height)
+                this.height = 23;
         }
 
         // ホールドを使わない場合はRightに変更

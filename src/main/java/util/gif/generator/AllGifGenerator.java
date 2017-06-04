@@ -43,12 +43,16 @@ public class AllGifGenerator implements GifGenerator {
     }
 
     @Override
-    public void updateField(ColoredField field) {
+    public void updateField(ColoredField field, Mino mino, int x, int y) {
+        ColoredField freeze = field.freeze(field.getMaxHeight());
+        if (mino != null)
+            freeze.putMino(mino, x, y);
+
         int heightBlock = setting.getFieldHeightBlock();
         int widthBlock = setting.getFieldWidthBlock();
 
         for (int yIndex = 0; yIndex < heightBlock; yIndex++) {
-            boolean isFilledLine = field.isFilledLine(yIndex);
+            boolean isFilledLine = freeze.isFilledLine(yIndex);
             for (int xIndex = 0; xIndex < widthBlock; xIndex++) {
                 ColorType type = field.getColorType(xIndex, yIndex);
                 GifColor gifColor = GifColor.parse(type);

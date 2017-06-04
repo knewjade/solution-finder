@@ -65,7 +65,7 @@ public class ActionDecoder {
 
         if (type == ColorType.O && rotate == Rotate.Left) {
             x += 1;
-            y += 1;
+            y -= 1;
         } else if (type == ColorType.O && rotate == Rotate.Reverse)
             x += 1;
         else if (type == ColorType.O && rotate == Rotate.Spawn)

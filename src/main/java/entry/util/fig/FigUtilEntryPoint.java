@@ -6,6 +6,7 @@ import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import core.mino.Block;
+import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
 import entry.EntryPoint;
@@ -87,7 +88,7 @@ public class FigUtilEntryPoint implements EntryPoint {
             List<TetfuPage> usingTetfuPages = tetfuPages.subList(startPage - 1, endPage);
             Bag bag = createBag(colorConverter, startPage, tetfuPages, quiz, quizIndex, usingTetfuPages);
 
-            if (usingTetfuPages.stream().map(TetfuPage::getComment).anyMatch(s -> s.startsWith("#Q="))) {
+            if (tetfuPages.subList(startPage, endPage).stream().map(TetfuPage::getComment).anyMatch(s -> s.startsWith("#Q="))) {
                 output("#### WARNING: Contains Quiz in tetfu after start page. ignored");
             }
 
@@ -97,17 +98,20 @@ public class FigUtilEntryPoint implements EntryPoint {
                 // リセット
                 gifGenerator.reset();
 
+                // 現在のミノを取得
+                ColorType colorType = tetfuPage.getColorType();
+                Rotate rotate = tetfuPage.getRotate();
+                Mino mino = ColorType.isMinoBlock(colorType) ? minoFactory.create(colorConverter.parseToBlock(colorType), rotate) : null;
+
+                int x = tetfuPage.getX();
+                int y = tetfuPage.getY();
+
                 // フィールドの更新
                 ColoredField field = tetfuPage.getField();
-                gifGenerator.updateField(field);
+                gifGenerator.updateField(field, mino, x, y);
 
                 // ミノを置くかチェック
-                ColorType colorType = tetfuPage.getColorType();
                 if (ColorType.isMinoBlock(colorType)) {
-                    Rotate rotate = tetfuPage.getRotate();
-                    int x = tetfuPage.getX();
-                    int y = tetfuPage.getY();
-
                     // 現在のミノの更新
                     gifGenerator.updateMino(colorType, rotate, x, y);
 
