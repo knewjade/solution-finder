@@ -56,7 +56,14 @@ solution-finderを操作しやすくするGUIを `@kitsune_fuchi (twitter) <http
 
 ダウンロードは 以下のツイートに記載されているリンク先 からお願いします。
 
-https://twitter.com/kitsune_fuchi/status/868826325770878976
+* path, percent
+
+    - https://twitter.com/kitsune_fuchi/status/868826325770878976
+
+* util fig
+
+    - https://twitter.com/kitsune_fuchi/status/871189534746202113
+
 
 
 .. toctree::
