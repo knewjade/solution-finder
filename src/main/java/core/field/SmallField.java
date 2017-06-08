@@ -1,5 +1,6 @@
 package core.field;
 
+import common.comparator.FieldComparator;
 import core.mino.Mino;
 
 /**
@@ -232,5 +233,10 @@ public class SmallField implements Field {
     @Override
     public int hashCode() {
         return (int) (xBoard ^ (xBoard >>> 32));
+    }
+
+    @Override
+    public int compareTo(Field o) {
+        return FieldComparator.compareField(this, o);
     }
 }

@@ -2,7 +2,7 @@ package core.field;
 
 import core.mino.Mino;
 
-public interface Field {
+public interface Field extends Comparable<Field> {
     // フィールドの最大高さを返却
     int getMaxFieldHeight();
 

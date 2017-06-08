@@ -1,5 +1,6 @@
 package core.field;
 
+import common.comparator.FieldComparator;
 import core.mino.Mino;
 
 // TODO: 実装する
@@ -167,6 +168,11 @@ public class LargeField implements Field {
 
     @Override
     public int hashCode() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int compareTo(Field o) {
         throw new UnsupportedOperationException();
     }
 }

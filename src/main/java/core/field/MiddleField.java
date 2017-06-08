@@ -1,5 +1,6 @@
 package core.field;
 
+import common.comparator.FieldComparator;
 import core.mino.Mino;
 
 /**
@@ -407,5 +408,10 @@ public class MiddleField implements Field {
         int result = (int) (xBoardLow ^ (xBoardLow >>> 32));
         result = 31 * result + (int) (xBoardHigh ^ (xBoardHigh >>> 32));
         return result;
+    }
+
+    @Override
+    public int compareTo(Field o) {
+        return FieldComparator.compareField(this, o);
     }
 }
