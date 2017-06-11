@@ -1,14 +1,11 @@
 package entry.path;
 
-import _experimental.newfield.LockedReachableThreadLocal;
 import common.buildup.BuildUp;
 import common.datastore.BlockCounter;
 import common.datastore.OperationWithKey;
 import common.datastore.pieces.Pieces;
 import common.iterable.CombinationIterable;
 import common.pattern.PiecesGenerator;
-import core.action.reachable.Reachable;
-import core.field.Field;
 import core.mino.Block;
 import searcher.pack.MinoField;
 import searcher.pack.memento.MinoFieldMemento;

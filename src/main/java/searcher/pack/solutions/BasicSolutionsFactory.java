@@ -4,7 +4,7 @@ import common.datastore.OperationWithKey;
 import common.datastore.Pair;
 import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
-import pack.separable_mino.SeparableMino;
+import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.MinoField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;

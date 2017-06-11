@@ -2,7 +2,7 @@ package searcher.pack;
 
 import common.datastore.OperationWithKey;
 import core.mino.Mino;
-import pack.separable_mino.SeparableMino;
+import searcher.pack.separable_mino.SeparableMino;
 
 public class MinoWrapperOperationWithKey implements OperationWithKey {
     private final SeparableMino mino;

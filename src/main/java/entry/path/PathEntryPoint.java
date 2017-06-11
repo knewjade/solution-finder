@@ -24,7 +24,7 @@ import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
 import entry.EntryPoint;
-import pack.separable_mino.SeparableMinoFactory;
+import searcher.pack.separable_mino.SeparableMinoFactory;
 import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;

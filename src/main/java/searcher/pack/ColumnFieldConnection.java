@@ -2,7 +2,7 @@ package searcher.pack;
 
 import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
-import pack.separable_mino.SeparableMino;
+import searcher.pack.separable_mino.SeparableMino;
 
 public class ColumnFieldConnection {
     private final SeparableMino mino;

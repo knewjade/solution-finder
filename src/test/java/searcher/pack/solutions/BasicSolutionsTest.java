@@ -8,8 +8,8 @@ import core.column_field.ColumnSmallField;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import org.junit.Test;
-import pack.separable_mino.SeparableMino;
-import pack.separable_mino.SeparableMinoFactory;
+import searcher.pack.separable_mino.SeparableMino;
+import searcher.pack.separable_mino.SeparableMinoFactory;
 
 import java.util.List;
 import java.util.Map;

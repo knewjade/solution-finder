@@ -4,7 +4,7 @@ import common.datastore.OperationWithKey;
 import core.mino.Block;
 import core.mino.Mino;
 import core.srs.Rotate;
-import pack.separable_mino.SeparableMino;
+import searcher.pack.separable_mino.SeparableMino;
 
 import java.util.ArrayList;
 import java.util.Comparator;

@@ -8,10 +8,9 @@ import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
 import core.field.Field;
 import core.field.SmallField;
-import pack.separable_mino.SeparableMino;
+import searcher.pack.separable_mino.SeparableMino;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collectors;

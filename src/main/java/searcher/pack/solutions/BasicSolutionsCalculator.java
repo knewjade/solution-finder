@@ -4,11 +4,10 @@ import common.buildup.BuildUp;
 import common.datastore.OperationWithKey;
 import core.action.reachable.OnGrandOnlyReachable;
 import core.column_field.ColumnField;
-import core.column_field.ColumnFieldView;
 import core.column_field.ColumnSmallField;
 import core.field.Field;
 import core.field.SmallField;
-import pack.separable_mino.SeparableMino;
+import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.*;
 
 import java.util.*;
@@ -169,7 +168,8 @@ public class BasicSolutionsCalculator {
     // ただし、フィールドをブロックで埋めると回転入れなどができない場合があるため、判定は下に地面があるかだけを判定
     // (部分的には回転入れできなくても、左右のSolutionパターン次第では入れられる可能性がある)
     private boolean existsValidBuildPattern(Field freeze, List<OperationWithKey> operations) {
-        return BuildUp.existsValidBuildPattern(freeze, operations, sizedBit.getHeight(), grandOnlyReachable);
+        return true;
+//        return BuildUp.existsValidBuildPattern(freeze, operations, sizedBit.getHeight(), grandOnlyReachable);
     }
 
     private void recordResult(List<OperationWithKey> operations, ColumnField outerField) {

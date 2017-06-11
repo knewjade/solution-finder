@@ -1,19 +1,14 @@
 import common.Stopwatch;
-import common.pattern.PiecesGenerator;
-import common.tetfu.field.ColoredFieldView;
 import core.column_field.ColumnField;
-import core.column_field.ColumnFieldView;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
-import pack.separable_mino.SeparableMino;
-import pack.separable_mino.SeparableMinoFactory;
+import searcher.pack.separable_mino.SeparableMino;
+import searcher.pack.separable_mino.SeparableMinoFactory;
 import searcher.pack.MinoField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
-import searcher.pack.solutions.BasicSolutions;
 import searcher.pack.solutions.BasicSolutionsCalculator;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;

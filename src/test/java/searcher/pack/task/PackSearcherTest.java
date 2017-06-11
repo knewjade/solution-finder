@@ -1,6 +1,6 @@
 package searcher.pack.task;
 
-import _experimental.newfield.LockedReachableThreadLocal;
+import concurrent.LockedReachableThreadLocal;
 import common.datastore.Pair;
 import core.column_field.ColumnField;
 import core.field.Field;
@@ -8,8 +8,8 @@ import core.field.FieldFactory;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import org.junit.Test;
-import pack.separable_mino.SeparableMino;
-import pack.separable_mino.SeparableMinoFactory;
+import searcher.pack.separable_mino.SeparableMino;
+import searcher.pack.separable_mino.SeparableMinoFactory;
 import searcher.pack.InOutPairField;
 import searcher.pack.MinoField;
 import searcher.pack.SeparableMinos;
