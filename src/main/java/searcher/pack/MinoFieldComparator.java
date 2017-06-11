@@ -6,6 +6,7 @@ import common.datastore.OperationWithKey;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MinoFieldComparator implements Comparator<MinoField> {
     public static int compareMinoField(MinoField o1, MinoField o2) {
@@ -15,8 +16,12 @@ public class MinoFieldComparator implements Comparator<MinoField> {
         if (compareBlockField != 0)
             return compareBlockField;
 
-        List<OperationWithKey> operations1 = o1.getOperations();
-        List<OperationWithKey> operations2 = o2.getOperations();
+        List<OperationWithKey> operations1 = o1.getOperationsStream()
+                .sorted(OperationWithKeyComparator::compareOperationWithKey)
+                .collect(Collectors.toList());
+        List<OperationWithKey> operations2 = o2.getOperationsStream()
+                .sorted(OperationWithKeyComparator::compareOperationWithKey)
+                .collect(Collectors.toList());
         int compareSize = Integer.compare(operations1.size(), operations2.size());
         if (compareSize != 0)
             return compareSize;

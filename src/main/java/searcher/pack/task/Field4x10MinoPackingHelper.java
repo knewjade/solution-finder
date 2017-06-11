@@ -50,8 +50,8 @@ public class Field4x10MinoPackingHelper implements TaskResultHelper {
         }
 
         @Override
-        public List<OperationWithKey> getOperations() {
-            return operationWithKeys;
+        public Stream<OperationWithKey> getOperationsStream() {
+            return operationWithKeys.stream();
         }
 
         @Override
@@ -67,11 +67,6 @@ public class Field4x10MinoPackingHelper implements TaskResultHelper {
         @Override
         public int getMaxIndex() {
             throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public int compareTo(MinoField o) {
-            return MinoFieldComparator.compareMinoField(this, o);
         }
     }
 

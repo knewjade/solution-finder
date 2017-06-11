@@ -1,13 +1,14 @@
 package searcher.pack.memento;
 
-import searcher.pack.MinoField;
 import common.buildup.BuildUp;
 import common.datastore.OperationWithKey;
 import core.action.reachable.Reachable;
 import core.field.Field;
+import searcher.pack.MinoField;
 
 import java.util.LinkedList;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class UsingBlockAndValidKeySolutionFilter implements SolutionFilter {
     private final Field field;
@@ -33,7 +34,7 @@ public class UsingBlockAndValidKeySolutionFilter implements SolutionFilter {
             return false;
 
         // 手順のkeyに矛盾がないかを確認
-        LinkedList<OperationWithKey> rawOperations = memento.getRawOperations();
+        LinkedList<OperationWithKey> rawOperations = memento.getRawOperationsStream().collect(Collectors.toCollection(LinkedList::new));
         return BuildUp.checksKeyDirectly(rawOperations, 0L, height);
     }
 
@@ -46,7 +47,7 @@ public class UsingBlockAndValidKeySolutionFilter implements SolutionFilter {
         if (!test(memento))
             return false;
 
-        LinkedList<OperationWithKey> operations = memento.getOperations();
+        LinkedList<OperationWithKey> operations = memento.getOperationsStream().collect(Collectors.toCollection(LinkedList::new));
         Reachable reachable = reachableThreadLocal.get();
         return BuildUp.existsValidBuildPatternDirectly(field, operations, height, reachable);
     }

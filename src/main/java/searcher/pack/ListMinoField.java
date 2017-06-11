@@ -11,6 +11,7 @@ import core.mino.Mino;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ListMinoField implements MinoField {
     private final List<OperationWithKey> operations;
@@ -54,8 +55,8 @@ public class ListMinoField implements MinoField {
     }
 
     @Override
-    public List<OperationWithKey> getOperations() {
-        return operations;
+    public Stream<OperationWithKey> getOperationsStream() {
+        return operations.stream();
     }
 
     @Override
@@ -76,19 +77,20 @@ public class ListMinoField implements MinoField {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ListMinoField minoField = (ListMinoField) o;
-        return blockField.equals(minoField.blockField) && operations.equals(minoField.operations);
+        if (o == null) return false;
+        if (getClass() == o.getClass()) {
+            ListMinoField minoField = (ListMinoField) o;
+            return blockField.equals(minoField.blockField) && operations.equals(minoField.operations);
+        } else if (o instanceof MinoField) {
+            MinoField minoField = (MinoField) o;
+            return MinoFieldComparator.compareMinoField(this, minoField) == 0;
+        }
+        return false;
     }
 
     @Override
     public int hashCode() {
         int result = blockField.hashCode();
         return result * 31 + operations.hashCode();
-    }
-
-    @Override
-    public int compareTo(MinoField o) {
-        return MinoFieldComparator.compareMinoField(this, o);
     }
 }

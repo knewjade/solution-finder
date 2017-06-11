@@ -57,7 +57,7 @@ public class ForPathSolutionFilter implements SolutionFilter {
             return false;
 
         // 手順のkeyに矛盾がないかを確認
-        LinkedList<OperationWithKey> rawOperations = memento.getRawOperations();
+        LinkedList<OperationWithKey> rawOperations = memento.getRawOperationsStream().collect(Collectors.toCollection(LinkedList::new));
         return BuildUp.checksKeyDirectly(rawOperations, 0L, height);
     }
 

@@ -14,7 +14,10 @@ import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import org.junit.Test;
-import searcher.pack.*;
+import searcher.pack.InOutPairField;
+import searcher.pack.MinoField;
+import searcher.pack.SeparableMinos;
+import searcher.pack.SizedBit;
 import searcher.pack.memento.MinoFieldMemento;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.memento.UsingBlockAndValidKeySolutionFilter;
@@ -70,11 +73,9 @@ public class PackSearcherComparingParityBasedTest {
                 List<Result> results = calculateSRSValidCount(sizedBit, basicSolutions, initField, solutionFilter);
                 Set<String> packSolutions = results.stream()
                         .map(Result::getMemento)
-                        .map(MinoFieldMemento::getOperations)
-                        .map(operationWithKeys -> {
-                            operationWithKeys.sort(OperationWithKeyComparator::compareOperationWithKey);
-                            return operationWithKeys;
-                        })
+                        .map(MinoFieldMemento::getOperationsStream)
+                        .map(stream -> stream.sorted(OperationWithKeyComparator::compareOperationWithKey))
+                        .map(stream -> stream.collect(Collectors.toList()))
                         .map(OperationWithKeyHelper::parseToString)
                         .collect(Collectors.toSet());
 

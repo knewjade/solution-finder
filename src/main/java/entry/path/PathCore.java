@@ -57,9 +57,9 @@ class PathCore {
     void runUnique(Field field, int maxClearLine) {
         // uniqueの作成
         LockedBuildUpListUpThreadLocal threadLocal = new LockedBuildUpListUpThreadLocal(maxClearLine);
-        List<Pair<Result, HashSet<NumberPieces>>> unique = candidates.parallelStream()
+        this.unique = candidates.parallelStream()
                 .map(result -> {
-                    LinkedList<OperationWithKey> operations = result.getMemento().getOperations();
+                    LinkedList<OperationWithKey> operations = result.getMemento().getOperationsStream().collect(Collectors.toCollection(LinkedList::new));
 
                     BuildUpListUp buildUpListUp = threadLocal.get();
                     HashSet<NumberPieces> pieces = buildUpListUp.existsValidBuildPatternDirectly(field, operations)
@@ -75,7 +75,6 @@ class PathCore {
                 })
                 .filter(pair -> !pair.getValue().isEmpty())
                 .collect(Collectors.toList());
-        this.unique = unique;
     }
 
     public void runMinimal() {

@@ -6,11 +6,12 @@ import common.datastore.OperationWithKey;
 import core.column_field.ColumnField;
 
 import java.util.List;
+import java.util.stream.Stream;
 
-public interface MinoField extends Comparable<MinoField> {
+public interface MinoField {
     ColumnField getOuterField();
 
-    List<OperationWithKey> getOperations();
+    Stream<OperationWithKey> getOperationsStream();
 
     BlockField getBlockField();
 

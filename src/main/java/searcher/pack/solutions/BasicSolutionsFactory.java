@@ -45,7 +45,7 @@ public class BasicSolutionsFactory {
                     // キーに対応する操作結果を出力
                     String operations = value.parallelStream()
                             .map(minoField -> {
-                                String collect = minoField.getOperations().stream()
+                                String collect = minoField.getOperationsStream()
                                         .map(separableMinos::toIndex)
                                         .map(String::valueOf)
                                         .collect(Collectors.joining(","));

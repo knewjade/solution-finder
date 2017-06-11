@@ -1,11 +1,13 @@
 package searcher.pack.solutions;
 
+import common.OperationWithKeyHelper;
 import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import org.junit.Test;
 import searcher.pack.MinoField;
+import searcher.pack.MinoFieldComparator;
 import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.separable_mino.SeparableMinoFactory;
 import searcher.pack.SeparableMinos;
@@ -13,10 +15,8 @@ import searcher.pack.SizedBit;
 import searcher.pack.memento.AllPassedSolutionFilter;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -41,8 +41,15 @@ public class BasicSolutionsFactoryTest {
 
         for (long board = 0L; board < sizedBit.getFillBoard(); board++) {
             ColumnSmallField field = new ColumnSmallField(board);
+
+            List<MinoField> list1 = new ArrayList<>(solutions1.parse(field));
+            list1.sort(MinoFieldComparator::compareMinoField);
+
             List<MinoField> minoFields = calculate.get(field);
-            assertThat(solutions1.parse(field), is(new ArrayList<>(minoFields)));
+            List<MinoField> list2 = new ArrayList<>(minoFields);
+            list2.sort(MinoFieldComparator::compareMinoField);
+
+            assertThat(list1, is(list2));
         }
 
         cacheFile.deleteOnExit();
@@ -69,7 +76,14 @@ public class BasicSolutionsFactoryTest {
 
         for (long board = 0L; board < sizedBit.getFillBoard(); board++) {
             ColumnSmallField field = new ColumnSmallField(board);
-            assertThat(solutions1.parse(field), is(solutions2.parse(field)));
+
+            List<MinoField> list1 = new ArrayList<>(solutions1.parse(field));
+            list1.sort(MinoFieldComparator::compareMinoField);
+
+            List<MinoField> list2 = new ArrayList<>(solutions2.parse(field));
+            list2.sort(MinoFieldComparator::compareMinoField);
+
+            assertThat(list1, is(list2));
         }
 
         cacheFile.deleteOnExit();

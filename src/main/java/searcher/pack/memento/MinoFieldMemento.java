@@ -1,12 +1,12 @@
 package searcher.pack.memento;
 
+import common.datastore.OperationWithKey;
 import searcher.pack.MinoField;
 import searcher.pack.SlideXOperationWithKey;
-import common.datastore.OperationWithKey;
 
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class MinoFieldMemento {
     private static final List<OperationWithKey> EMPTY_LIST = Collections.emptyList();
@@ -84,21 +84,21 @@ public class MinoFieldMemento {
         throw new IllegalStateException("No reachable");
     }
 
-    public LinkedList<OperationWithKey> getRawOperations() {
-        LinkedList<OperationWithKey> operations = new LinkedList<>();
+    public Stream<OperationWithKey> getRawOperationsStream() {
+        Stream<OperationWithKey> operations = Stream.empty();
         switch (index) {
             case 4:
                 if (minoField4 != null)
-                    operations.addAll(minoField4.getOperations());
+                    operations = Stream.concat(operations, minoField4.getOperationsStream());
             case 3:
                 if (minoField3 != null)
-                    operations.addAll(minoField3.getOperations());
+                    operations = Stream.concat(operations, minoField3.getOperationsStream());
             case 2:
                 if (minoField2 != null)
-                    operations.addAll(minoField2.getOperations());
+                    operations = Stream.concat(operations, minoField2.getOperationsStream());
             case 1:
                 if (minoField1 != null)
-                    operations.addAll(minoField1.getOperations());
+                    operations = Stream.concat(operations, minoField1.getOperationsStream());
             case 0:
                 return operations;
         }
@@ -143,30 +143,29 @@ public class MinoFieldMemento {
         return index;
     }
 
-    public LinkedList<OperationWithKey> getOperations() {
-        LinkedList<OperationWithKey> list = new LinkedList<>();
+    public Stream<OperationWithKey> getOperationsStream() {
+        Stream<OperationWithKey> operations = Stream.empty();
         switch (index) {
             case 4:
                 if (minoField4 != null)
-                    addSlideX(list, minoField4.getOperations(), 9);
+                    operations = Stream.concat(operations, addSlideX(minoField4.getOperationsStream(), 9));
             case 3:
                 if (minoField3 != null)
-                    addSlideX(list, minoField3.getOperations(), 6);
+                    operations = Stream.concat(operations, addSlideX(minoField3.getOperationsStream(), 6));
             case 2:
                 if (minoField2 != null)
-                    addSlideX(list, minoField2.getOperations(), 3);
+                    operations = Stream.concat(operations, addSlideX(minoField2.getOperationsStream(), 3));
             case 1:
                 if (minoField1 != null)
-                    addSlideX(list, minoField1.getOperations(), 0);
+                    operations = Stream.concat(operations, addSlideX(minoField1.getOperationsStream(), 0));
             case 0:
-                return list;
+                return operations;
         }
         throw new IllegalStateException("No reachable");
     }
 
-    private void addSlideX(LinkedList<OperationWithKey> list, List<OperationWithKey> operations, int slideX) {
-        for (OperationWithKey operation : operations)
-            list.add(toSlideWrapper(operation, slideX));
+    private Stream<OperationWithKey> addSlideX(Stream<OperationWithKey> operations, int slideX) {
+        return operations.map(operationWithKey -> toSlideWrapper(operationWithKey, slideX));
     }
 
     private OperationWithKey toSlideWrapper(OperationWithKey operationWithKey, int slideX) {

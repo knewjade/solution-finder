@@ -7,6 +7,7 @@ import core.mino.Block;
 
 import java.util.Comparator;
 import java.util.EnumMap;
+import java.util.Map;
 
 // TODO: unittest
 public class BlockField implements Comparable<BlockField> {
@@ -14,10 +15,15 @@ public class BlockField implements Comparable<BlockField> {
     private static final Field EMPTY_FIELD = FieldFactory.createField(1);
 
     private final int height;
-    private final EnumMap<Block, Field> map = new EnumMap<>(Block.class);
+    private final EnumMap<Block, Field> map;
 
     public BlockField(int height) {
+        this(height, new EnumMap<>(Block.class));
+    }
+
+    private BlockField(int height, EnumMap<Block, Field> map) {
         this.height = height;
+        this.map = map;
     }
 
     public void merge(Field field, Block block) {
@@ -33,6 +39,13 @@ public class BlockField implements Comparable<BlockField> {
         for (Field fieldEachBlock : map.values())
             field.merge(fieldEachBlock);
         return field;
+    }
+
+    public BlockField freeze(int height) {
+        EnumMap<Block, Field> newMap = new EnumMap<>(Block.class);
+        for (Map.Entry<Block, Field> entry : map.entrySet())
+            newMap.put(entry.getKey(), entry.getValue().freeze(height));
+        return new BlockField(height, newMap);
     }
 
     @Override

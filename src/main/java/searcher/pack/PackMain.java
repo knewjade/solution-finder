@@ -115,9 +115,11 @@ public class PackMain {
         File outputFile = new File("./output/pack_result");
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile, false), StandardCharsets.UTF_8))) {
             searcher.forEach(result -> {
-                LinkedList<OperationWithKey> operations = result.getMemento().getOperations();
-                operations.sort(OperationWithKeyComparator::compareOperationWithKey);
+                List<OperationWithKey> operations = result.getMemento().getOperationsStream()
+                        .sorted(OperationWithKeyComparator::compareOperationWithKey)
+                        .collect(Collectors.toList());
                 String operationString = OperationWithKeyHelper.parseToString(operations);
+
                 singleThreadExecutor.submit(() -> {
                     try {
                         writer.write(operationString);

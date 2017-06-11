@@ -353,7 +353,8 @@ public class PathEntryPoint implements EntryPoint {
 
         private OperationsObj(Pair<Result, HashSet<NumberPieces>> pair, Field field, BuildUpListUp buildUpListUp) {
             this.pair = pair;
-            LinkedList<OperationWithKey> origin = pair.getKey().getMemento().getOperations();
+            LinkedList<OperationWithKey> origin = pair.getKey().getMemento().getOperationsStream().collect(Collectors.toCollection(LinkedList::new));
+
             Optional<List<OperationWithKey>> first = buildUpListUp
                     .existsValidBuildPatternDirectly(field, origin)
                     .findFirst();
@@ -377,8 +378,8 @@ public class PathEntryPoint implements EntryPoint {
         List<OperationsObj> deletedOperations = new ArrayList<>();
 
         for (Pair<Result, HashSet<NumberPieces>> operation : operations) {
-            LinkedList<OperationWithKey> rawOperations = operation.getKey().getMemento().getRawOperations();
-            boolean isNoDeleted = rawOperations.stream().allMatch(operationWithKey -> operationWithKey.getNeedDeletedKey() == 0L);
+            boolean isNoDeleted = operation.getKey().getMemento().getRawOperationsStream()
+                    .allMatch(operationWithKey -> operationWithKey.getNeedDeletedKey() == 0L);
             OperationsObj operationsObj = new OperationsObj(operation, field, buildUpListUp);
             if (isNoDeleted)
                 noDeletedOperations.add(operationsObj);

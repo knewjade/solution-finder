@@ -6,6 +6,7 @@ import core.srs.Rotate;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class OperationWithKeyHelper {
     public static String parseToString(List<? extends OperationWithKey> operation) {
@@ -14,7 +15,7 @@ public class OperationWithKeyHelper {
                 .collect(Collectors.joining(";"));
     }
 
-    private static String parseToString(OperationWithKey operation) {
+    public static String parseToString(OperationWithKey operation) {
         Mino mino = operation.getMino();
         return String.format("%s,%s,%d,%d,%d,%d",
                 mino.getBlock().getName(),

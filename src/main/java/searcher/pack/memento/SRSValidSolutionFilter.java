@@ -7,6 +7,7 @@ import core.action.reachable.Reachable;
 import core.field.Field;
 
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 public class SRSValidSolutionFilter implements SolutionFilter {
     private final Field field;
@@ -26,7 +27,7 @@ public class SRSValidSolutionFilter implements SolutionFilter {
             return true;
 
         // 手順のkeyに矛盾がないかを確認
-        LinkedList<OperationWithKey> rawOperations = memento.getRawOperations();
+        LinkedList<OperationWithKey> rawOperations = memento.getRawOperationsStream().collect(Collectors.toCollection(LinkedList::new));
         return BuildUp.checksKey(rawOperations, 0L, height);
     }
 
@@ -35,7 +36,7 @@ public class SRSValidSolutionFilter implements SolutionFilter {
         if (!test(memento))
             return false;
 
-        LinkedList<OperationWithKey> operations = memento.getOperations();
+        LinkedList<OperationWithKey> operations = memento.getOperationsStream().collect(Collectors.toCollection(LinkedList::new));
         Reachable reachable = reachableThreadLocal.get();
         return BuildUp.existsValidBuildPattern(field, operations, height, reachable);
     }

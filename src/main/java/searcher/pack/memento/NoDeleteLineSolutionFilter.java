@@ -8,6 +8,8 @@ import core.field.Field;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class NoDeleteLineSolutionFilter implements SolutionFilter {
     private final Field field;
@@ -27,16 +29,12 @@ public class NoDeleteLineSolutionFilter implements SolutionFilter {
             return true;
 
         // ライン削除がないことを確認
-        if (!containsDeleteLineKey(memento.getRawOperations()))
+        if (!containsDeleteLineKey(memento.getRawOperationsStream()))
             return false;
 
         // 手順のkeyに矛盾がないかを確認
-        LinkedList<OperationWithKey> rawOperations = memento.getRawOperations();
+        LinkedList<OperationWithKey> rawOperations = memento.getRawOperationsStream().collect(Collectors.toCollection(LinkedList::new));
         return BuildUp.checksKeyDirectly(rawOperations, 0L, height);
-    }
-
-    private boolean containsDeleteLineKey(List<OperationWithKey> operations) {
-        return operations.stream().anyMatch(key -> key.getNeedDeletedKey() != 0L);
     }
 
     @Override
@@ -44,13 +42,17 @@ public class NoDeleteLineSolutionFilter implements SolutionFilter {
         if (!test(memento))
             return false;
 
-        LinkedList<OperationWithKey> operations = memento.getOperations();
+        LinkedList<OperationWithKey> operations = memento.getOperationsStream().collect(Collectors.toCollection(LinkedList::new));
         Reachable reachable = reachableThreadLocal.get();
         return BuildUp.existsValidBuildPatternDirectly(field, operations, height, reachable);
     }
 
     @Override
     public boolean testMinoField(MinoField minoField) {
-        return !containsDeleteLineKey(minoField.getOperations());
+        return containsDeleteLineKey(minoField.getOperationsStream());
+    }
+    
+    private boolean containsDeleteLineKey(Stream<OperationWithKey> operationsStream) {
+        return operationsStream.anyMatch(key -> key.getNeedDeletedKey() != 0L);
     }
 }

@@ -132,10 +132,8 @@ public class BasicSolutionsCalculator {
                 Field invertedOuterField = reference.parseInvertedOuterField(outerColumnField);
                 freeze.merge(invertedOuterField);
 
-                List<OperationWithKey> operations = Collections.singletonList(currentMino.toOperation());
-
                 // 置くブロック以外がすでに埋まっていると仮定したとき、正しく接着できる順があるか確認
-                recordResult(operations, outerColumnField.freeze(sizedBit.getHeight()));
+                recordResult(currentMino, outerColumnField.freeze(sizedBit.getHeight()));
 
                 return;
             }
@@ -158,8 +156,7 @@ public class BasicSolutionsCalculator {
                         long currentUsingKey = currentOperations.getUsingKey();
 
                         // いま置こうとしているミノと、それまでの結果に矛盾があるか確認
-                        List<OperationWithKey> minoFieldOperations = minoField.getOperations();
-                        boolean isContradiction = currentDeleteKey != 0L && minoFieldOperations.stream()
+                        boolean isContradiction = currentDeleteKey != 0L && minoField.getOperationsStream()
                                 .anyMatch(operationWithKey -> {
                                     long deletedKey = operationWithKey.getNeedDeletedKey();
                                     long usingKey = operationWithKey.getUsingKey();
@@ -169,10 +166,6 @@ public class BasicSolutionsCalculator {
                         // 矛盾があるときはスキップ
                         if (isContradiction)
                             continue;
-
-                        ArrayList<OperationWithKey> operations = new ArrayList<>();
-                        operations.add(currentOperations);
-                        operations.addAll(minoFieldOperations);
 
                         // 使用されるブロックを算出
                         ColumnField usingBlock = lastOuterField.freeze(sizedBit.getHeight());
@@ -184,7 +177,7 @@ public class BasicSolutionsCalculator {
                         freeze.merge(invertedOuterField);
 
                         // 置くブロック以外がすでに埋まっていると仮定したとき、正しく接着できる順があるか確認
-                        recordResult(operations, usingBlock);
+                        recordResult(currentMino, minoField, usingBlock);
                     }
                 }
 
@@ -211,8 +204,13 @@ public class BasicSolutionsCalculator {
             }
         }
 
-        private void recordResult(List<OperationWithKey> operations, ColumnField outerField) {
-            MinoField result = new ListMinoField(operations, outerField, sizedBit.getHeight(), separableMinos);
+        private void recordResult(SeparableMino separableMino, ColumnField outerField) {
+            MinoField result = new RecursiveMinoField(separableMino, outerField, sizedBit.getHeight(), separableMinos);
+            results.add(result);
+        }
+
+        private void recordResult(SeparableMino separableMino, MinoField minoField, ColumnField outerField) {
+            MinoField result = new RecursiveMinoField(separableMino, minoField, outerField, sizedBit.getHeight(), separableMinos);
             results.add(result);
         }
     }
