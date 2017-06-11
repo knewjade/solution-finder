@@ -1,6 +1,6 @@
 package searcher.pack.memento;
 
-import searcher.pack.IMinoField;
+import searcher.pack.MinoField;
 import common.buildup.BuildUp;
 import common.datastore.OperationWithKey;
 import core.action.reachable.Reachable;
@@ -52,7 +52,7 @@ public class UsingBlockAndValidKeySolutionFilter implements SolutionFilter {
     }
 
     @Override
-    public boolean testMinoField(IMinoField minoField) {
+    public boolean testMinoField(MinoField minoField) {
         return checksValidCounter(minoField.getBlockCounter().getCounter());
     }
 }

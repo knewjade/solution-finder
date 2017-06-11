@@ -1,6 +1,6 @@
 package searcher.pack.task;
 
-import searcher.pack.IMinoField;
+import searcher.pack.MinoField;
 import searcher.pack.SizedBit;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.memento.MinoFieldMemento;
@@ -22,7 +22,7 @@ public class BasicMinoPackingHelper implements TaskResultHelper {
             return Stream.empty();
         } else {
             ColumnSmallField nextInnerField = new ColumnSmallField(board);
-            List<IMinoField> minoFields = searcher.getSolutions().parse(nextInnerField);
+            List<MinoField> minoFields = searcher.getSolutions().parse(nextInnerField);
 
             return minoFields.stream()
                     .map(nextMemento::concat)

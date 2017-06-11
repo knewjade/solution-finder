@@ -7,8 +7,8 @@ import common.datastore.OperationWithKey;
 import java.util.Comparator;
 import java.util.List;
 
-public class MinoFieldComparator implements Comparator<IMinoField> {
-    public static int compareMinoField(IMinoField o1, IMinoField o2) {
+public class MinoFieldComparator implements Comparator<MinoField> {
+    public static int compareMinoField(MinoField o1, MinoField o2) {
         BlockField blockField1 = o1.getBlockField();
         BlockField blockField2 = o2.getBlockField();
         int compareBlockField = blockField1.compareTo(blockField2);
@@ -31,7 +31,7 @@ public class MinoFieldComparator implements Comparator<IMinoField> {
     }
 
     @Override
-    public int compare(IMinoField o1, IMinoField o2) {
+    public int compare(MinoField o1, MinoField o2) {
         return compareMinoField(o1, o2);
     }
 }

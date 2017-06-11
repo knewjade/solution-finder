@@ -10,7 +10,7 @@ import core.field.SmallField;
 import core.mino.Block;
 import core.mino.Mino;
 import core.srs.Rotate;
-import searcher.pack.IMinoField;
+import searcher.pack.MinoField;
 import searcher.pack.MinoFieldComparator;
 import searcher.pack.SizedBit;
 import searcher.pack.memento.MinoFieldMemento;
@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 
 // フィールドの探索範囲が4x10のとき限定のTask。最後のパターンが決まっているため少し高速に動作
 public class Field4x10MinoPackingHelper implements TaskResultHelper {
-    private static class IOnlyMinoField implements IMinoField {
+    private static class IOnlyMinoField implements MinoField {
         private static final List<OperationWithKey> OPERATION_WITH_KEYS = Collections.singletonList(
                 new SimpleOperationWithKey(new Mino(Block.I, Rotate.Left), 0, 0L, 1074791425L, 0)
         );
@@ -70,12 +70,12 @@ public class Field4x10MinoPackingHelper implements TaskResultHelper {
         }
 
         @Override
-        public int compareTo(IMinoField o) {
+        public int compareTo(MinoField o) {
             return MinoFieldComparator.compareMinoField(this, o);
         }
     }
 
-    private static final IMinoField LEFT_I_ONLY = new IOnlyMinoField();
+    private static final MinoField LEFT_I_ONLY = new IOnlyMinoField();
 
     // 高さが4・最後の1列がのこる場合で、パフェできるパターンは2つしか存在しない
     @Override

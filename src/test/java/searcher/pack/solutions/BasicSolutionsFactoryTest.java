@@ -5,7 +5,7 @@ import core.column_field.ColumnSmallField;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import org.junit.Test;
-import searcher.pack.IMinoField;
+import searcher.pack.MinoField;
 import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.separable_mino.SeparableMinoFactory;
 import searcher.pack.SeparableMinos;
@@ -32,16 +32,16 @@ public class BasicSolutionsFactoryTest {
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
 
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
-        Map<ColumnField, Set<IMinoField>> calculate = calculator.calculate();
+        Map<ColumnField, List<MinoField>> calculate = calculator.calculate();
 
         AllPassedSolutionFilter solutionFilter = new AllPassedSolutionFilter();
         BasicSolutions solutions1 = BasicSolutionsFactory.createAndWriteSolutions(cacheFile, solutionFilter, separableMinos, sizedBit);
         assertThat(solutions1.getSolutions().size(), is(2211));
-        assertThat(countAllItem(solutions1), is(200615));
+        assertThat(countAllItem(solutions1), is(228022));
 
         for (long board = 0L; board < sizedBit.getFillBoard(); board++) {
             ColumnSmallField field = new ColumnSmallField(board);
-            Set<IMinoField> minoFields = calculate.get(field);
+            List<MinoField> minoFields = calculate.get(field);
             assertThat(solutions1.parse(field), is(new ArrayList<>(minoFields)));
         }
 
@@ -60,12 +60,12 @@ public class BasicSolutionsFactoryTest {
         AllPassedSolutionFilter solutionFilter = new AllPassedSolutionFilter();
         BasicSolutions solutions1 = BasicSolutionsFactory.createAndWriteSolutions(cacheFile, solutionFilter, separableMinos, sizedBit);
         assertThat(solutions1.getSolutions().size(), is(2211));
-        assertThat(countAllItem(solutions1), is(200615));
+        assertThat(countAllItem(solutions1), is(228022));
 
         BasicSolutions solutions2 = BasicSolutionsFactory.readAndCreateSolutions(cacheFile, solutionFilter, separableMinos, sizedBit);
 
         assertThat(solutions2.getSolutions().size(), is(2211));
-        assertThat(countAllItem(solutions2), is(200615));
+        assertThat(countAllItem(solutions2), is(228022));
 
         for (long board = 0L; board < sizedBit.getFillBoard(); board++) {
             ColumnSmallField field = new ColumnSmallField(board);
@@ -85,8 +85,8 @@ public class BasicSolutionsFactoryTest {
 
     private static int countAllItem(BasicSolutions basicSolutions) {
         int sum = 0;
-        Map<ColumnField, List<IMinoField>> solutions = basicSolutions.getSolutions();
-        for (List<IMinoField> minoFields : solutions.values())
+        Map<ColumnField, List<MinoField>> solutions = basicSolutions.getSolutions();
+        for (List<MinoField> minoFields : solutions.values())
             sum += minoFields.size();
         return sum;
     }

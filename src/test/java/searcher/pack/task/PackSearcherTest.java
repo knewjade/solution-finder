@@ -39,17 +39,17 @@ public class PackSearcherTest {
         SizedBit sizedBit = new SizedBit(width, height);
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
-        Map<ColumnField, Set<IMinoField>> calculate = calculator.calculate();
-        BasicSolutions basicSolutions = BasicSolutions.createFromSet(calculate);
+        Map<ColumnField, List<MinoField>> calculate = calculator.calculate();
+        BasicSolutions basicSolutions = new BasicSolutions(calculate);
 
         // width = expected_count
         HashSet<Pair<Integer, Integer>> widthExpected = new HashSet<Pair<Integer, Integer>>() {
             {
-                add(new Pair<>(4, 478));
-                add(new Pair<>(5, 3976));
-                add(new Pair<>(6, 25972));
-                add(new Pair<>(7, 165155));
-                add(new Pair<>(8, 1427813));
+                add(new Pair<>(4, 840));
+                add(new Pair<>(5, 6953));
+                add(new Pair<>(6, 53418));
+                add(new Pair<>(7, 388293));
+                add(new Pair<>(8, 3195227));
             }
         };
 
@@ -71,17 +71,17 @@ public class PackSearcherTest {
         SizedBit sizedBit = new SizedBit(width, height);
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
-        Map<ColumnField, Set<IMinoField>> calculate = calculator.calculate();
-        BasicSolutions basicSolutions = BasicSolutions.createFromSet(calculate);
+        Map<ColumnField, List<MinoField>> calculate = calculator.calculate();
+        BasicSolutions basicSolutions = new BasicSolutions(calculate);
 
         // width = expected_count
         HashSet<Pair<Integer, Integer>> widthExpected = new HashSet<Pair<Integer, Integer>>() {
             {
                 add(new Pair<>(4, 424));
                 add(new Pair<>(5, 2602));
-                add(new Pair<>(6, 16917));
-                add(new Pair<>(7, 103251));
-                add(new Pair<>(8, 633207));
+                add(new Pair<>(6, 16944));
+                add(new Pair<>(7, 103465));
+                add(new Pair<>(8, 634634));
             }
         };
 

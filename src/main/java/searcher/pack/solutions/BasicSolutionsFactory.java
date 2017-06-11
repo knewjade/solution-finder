@@ -4,9 +4,9 @@ import common.datastore.OperationWithKey;
 import common.datastore.Pair;
 import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
-import searcher.pack.IMinoField;
-import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.MinoField;
+import searcher.pack.separable_mino.SeparableMino;
+import searcher.pack.ListMinoField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.memento.SolutionFilter;
@@ -21,7 +21,7 @@ public class BasicSolutionsFactory {
     public static BasicSolutions createAndWriteSolutions(File cacheFile, SolutionFilter solutionFilter, SeparableMinos separableMinos, SizedBit sizedBit) {
         // 基本パターンを計算する
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
-        Map<ColumnField, Set<IMinoField>> calculate = calculator.calculate();
+        Map<ColumnField, List<MinoField>> calculate = calculator.calculate();
 
         // ファイルに出力する
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(cacheFile), StandardCharsets.UTF_8))) {
@@ -30,8 +30,8 @@ public class BasicSolutionsFactory {
             writer.newLine();
 
             // 各基本パターンを出力する
-            for (Map.Entry<ColumnField, Set<IMinoField>> entry : calculate.entrySet()) {
-                Set<IMinoField> value = entry.getValue();
+            for (Map.Entry<ColumnField, List<MinoField>> entry : calculate.entrySet()) {
+                List<MinoField> value = entry.getValue();
                 // 空のときは出力しない
                 if (!value.isEmpty()) {
                     // 1行ごとに "キーとなる地形#対応する操作" となる
@@ -63,7 +63,7 @@ public class BasicSolutionsFactory {
             throw new RuntimeException(e);
         }
 
-        return BasicSolutions.createFromSet(calculate, solutionFilter);
+        return new BasicSolutions(calculate, solutionFilter);
     }
 
     private static String encodeColumnField(ColumnField columnField) {
@@ -82,7 +82,7 @@ public class BasicSolutionsFactory {
             if (height != sizedBit.getHeight())
                 return null;
 
-            HashMap<ColumnField, List<IMinoField>> map = reader.lines()
+            HashMap<ColumnField, List<MinoField>> map = reader.lines()
                     .parallel()
                     .map(line -> {
                         // 地形と操作結果に分割する
@@ -93,7 +93,7 @@ public class BasicSolutionsFactory {
                         ColumnField field = decodeToColumnField(sharpSplit[0]);
 
                         // 操作結果に変換
-                        ArrayList<IMinoField> minoFields = new ArrayList<>();
+                        ArrayList<MinoField> minoFields = new ArrayList<>();
                         for (String operationBoard : sharpSplit[1].split(";")) {
                             String[] slashSplit = operationBoard.split("/");
                             assert slashSplit.length == 2;
@@ -111,7 +111,7 @@ public class BasicSolutionsFactory {
                             // 結果に変換
                             ColumnField outer = decodeToColumnField(slashSplit[1]);
 
-                            minoFields.add(new MinoField(operations, outer, height, separableMinos));
+                            minoFields.add(new ListMinoField(operations, outer, height, separableMinos));
                         }
 
                         return new Pair<>(field, minoFields);

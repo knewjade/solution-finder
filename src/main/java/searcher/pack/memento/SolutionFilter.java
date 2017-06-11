@@ -1,6 +1,6 @@
 package searcher.pack.memento;
 
-import searcher.pack.IMinoField;
+import searcher.pack.MinoField;
 
 // マルチスレッドに対応していなければならない
 public interface SolutionFilter {
@@ -9,5 +9,5 @@ public interface SolutionFilter {
 
     boolean testLast(MinoFieldMemento memento);
 
-    boolean testMinoField(IMinoField minoField);
+    boolean testMinoField(MinoField minoField);
 }

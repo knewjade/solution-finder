@@ -44,7 +44,7 @@ public class PackSearcherComparingParityBasedTest {
         SizedBit sizedBit = new SizedBit(width, height);
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
-        Map<ColumnField, Set<IMinoField>> calculate = calculator.calculate();
+        Map<ColumnField, List<MinoField>> calculate = calculator.calculate();
 
         List<Block> allBlocks = new ArrayList<>();
         allBlocks.addAll(Arrays.asList(Block.values()));
@@ -66,7 +66,7 @@ public class PackSearcherComparingParityBasedTest {
 
                 // packで探索
                 SolutionFilter solutionFilter = createUsingBlockAndValidKeyMementoFilter(initField, sizedBit, blockCounters);
-                BasicSolutions basicSolutions = BasicSolutions.createFromSet(calculate, solutionFilter);
+                BasicSolutions basicSolutions = new BasicSolutions(calculate, solutionFilter);
                 List<Result> results = calculateSRSValidCount(sizedBit, basicSolutions, initField, solutionFilter);
                 Set<String> packSolutions = results.stream()
                         .map(Result::getMemento)
