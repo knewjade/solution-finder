@@ -59,6 +59,10 @@ public class SeparableMinos {
 
     public int toIndex(OperationWithKey operation) {
         Key key = new Key(operation.getMino(), operation.getX(), operation.getY(), operation.getNeedDeletedKey());
+        return toIndex(key);
+    }
+
+    private int toIndex(Key key) {
         Integer index = indexes.getOrDefault(key, -1);
         assert 0 <= index;
         return index;
@@ -66,6 +70,11 @@ public class SeparableMinos {
 
     public SeparableMino getAt(int index) {
         return separableMinos.get(index);
+    }
+
+    public int toIndex(SeparableMino separableMino) {
+        Key key = new Key(separableMino);
+        return toIndex(key);
     }
 
     private static class Key {

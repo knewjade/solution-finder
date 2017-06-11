@@ -1,9 +1,9 @@
 package common.buildup;
 
-import common.datastore.OperationWithKey;
 import common.datastore.Operation;
-import common.datastore.SimpleOperationWithKey;
+import common.datastore.OperationWithKey;
 import common.datastore.Operations;
+import common.datastore.SimpleOperationWithKey;
 import core.action.reachable.Reachable;
 import core.field.Field;
 import core.field.FieldFactory;
@@ -129,6 +129,64 @@ public class BuildUp {
                 nextField.insertBlackLineWithKey(deleteKey);
 
                 boolean exists = existsValidBuildPatternRecursive(nextField, operationWithKeys, height, reachable);
+                if (exists)
+                    return true;
+            }
+
+            operationWithKeys.add(index, key);
+        }
+
+        field.insertBlackLineWithKey(deleteKey);
+        return false;
+    }
+
+    // 組み立てられる手順が存在するか確認 (接着のみチェック)
+    public static boolean existsValidBuildPatternOnGround(Field fieldOrigin, List<OperationWithKey> operationWithKeys, int height) {
+//        LinkedList<OperationWithKey> keys = new LinkedList<>(operationWithKeys);
+//        return existsValidBuildPatternOnGroundDirectly(fieldOrigin, keys, height);
+        return true;
+    }
+
+    public static boolean existsValidBuildPatternOnGroundDirectly(Field fieldOrigin, LinkedList<OperationWithKey> operationWithKeys, int height) {
+        operationWithKeys.sort((o1, o2) -> {
+            int compare = Integer.compare(o1.getY(), o2.getY());
+            if (compare != 0)
+                return compare;
+            return Long.compare(o1.getNeedDeletedKey(), o2.getNeedDeletedKey());
+        });
+        return existsValidBuildPatternOnGroundRecursive(fieldOrigin.freeze(height), operationWithKeys, height);
+    }
+
+    private static boolean existsValidBuildPatternOnGroundRecursive(Field field, LinkedList<OperationWithKey> operationWithKeys, int height) {
+        long deleteKey = field.clearLineReturnKey();
+
+        for (int index = 0; index < operationWithKeys.size(); index++) {
+            OperationWithKey key = operationWithKeys.remove(index);
+
+            long needDeletedKey = key.getNeedDeletedKey();
+            if ((deleteKey & needDeletedKey) != needDeletedKey) {
+                // 必要な列が消えていない
+                operationWithKeys.add(index, key);
+                continue;
+            }
+
+            // すでに下のラインが消えているときは、その分スライドさせる
+            int originalY = key.getY();
+            int deletedLines = Long.bitCount(KeyOperators.getMaskForKeyBelowY(originalY) & deleteKey);
+
+            Mino mino = key.getMino();
+            int x = key.getX();
+            int y = originalY - deletedLines;
+
+            if (field.isOnGround(mino, x, y) && field.canPutMino(mino, x, y)) {
+                if (operationWithKeys.isEmpty())
+                    return true;
+
+                Field nextField = field.freeze(height);
+                nextField.putMino(mino, x, y);
+                nextField.insertBlackLineWithKey(deleteKey);
+
+                boolean exists = existsValidBuildPatternOnGroundRecursive(nextField, operationWithKeys, height);
                 if (exists)
                     return true;
             }

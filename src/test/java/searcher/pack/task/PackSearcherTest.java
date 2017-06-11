@@ -8,12 +8,9 @@ import core.field.FieldFactory;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import org.junit.Test;
+import searcher.pack.*;
 import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.separable_mino.SeparableMinoFactory;
-import searcher.pack.InOutPairField;
-import searcher.pack.MinoField;
-import searcher.pack.SeparableMinos;
-import searcher.pack.SizedBit;
 import searcher.pack.memento.AllPassedSolutionFilter;
 import searcher.pack.memento.SRSValidSolutionFilter;
 import searcher.pack.memento.SolutionFilter;
@@ -42,7 +39,7 @@ public class PackSearcherTest {
         SizedBit sizedBit = new SizedBit(width, height);
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
-        Map<ColumnField, Set<MinoField>> calculate = calculator.calculate();
+        Map<ColumnField, Set<IMinoField>> calculate = calculator.calculate();
         BasicSolutions basicSolutions = BasicSolutions.createFromSet(calculate);
 
         // width = expected_count
@@ -74,7 +71,7 @@ public class PackSearcherTest {
         SizedBit sizedBit = new SizedBit(width, height);
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
-        Map<ColumnField, Set<MinoField>> calculate = calculator.calculate();
+        Map<ColumnField, Set<IMinoField>> calculate = calculator.calculate();
         BasicSolutions basicSolutions = BasicSolutions.createFromSet(calculate);
 
         // width = expected_count

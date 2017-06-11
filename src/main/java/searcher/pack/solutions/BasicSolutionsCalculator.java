@@ -2,13 +2,12 @@ package searcher.pack.solutions;
 
 import common.buildup.BuildUp;
 import common.datastore.OperationWithKey;
-import core.action.reachable.OnGrandOnlyReachable;
 import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
 import core.field.Field;
 import core.field.SmallField;
-import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.*;
+import searcher.pack.separable_mino.SeparableMino;
 
 import java.util.*;
 
@@ -21,36 +20,37 @@ public class BasicSolutionsCalculator {
 
     private final SizedBit sizedBit;
     private final BasicReference reference;
-    private final OnGrandOnlyReachable grandOnlyReachable = new OnGrandOnlyReachable();
+    private final SeparableMinos separableMinos;
 
-    private HashMap<ColumnField, Set<MinoField>> resultsMap = new HashMap<>();
+    private HashMap<ColumnField, Set<IMinoField>> resultsMap = new HashMap<>();
     private SeparableMino currentMino = null;
-    private HashSet<MinoField> results = new HashSet<>();
+    private HashSet<IMinoField> results = new HashSet<>();
     private SmallField wallField = new SmallField();
 
     public BasicSolutionsCalculator(SeparableMinos separableMinos, SizedBit sizedBit) {
+        this.separableMinos = separableMinos;
         assert sizedBit.getHeight() <= 10;
         this.sizedBit = sizedBit;
         this.reference = new BasicReference(sizedBit, separableMinos);
     }
 
-    public Map<ColumnField, Set<MinoField>> calculate() {
+    public Map<ColumnField, Set<IMinoField>> calculate() {
         List<ColumnSmallField> sortedBasicFields = reference.getSortedBasicFields();
         return calculateResults(sortedBasicFields);
     }
 
-    private HashMap<ColumnField, Set<MinoField>> calculateResults(List<ColumnSmallField> basicFields) {
+    private HashMap<ColumnField, Set<IMinoField>> calculateResults(List<ColumnSmallField> basicFields) {
         this.resultsMap = new HashMap<>();
 //        System.out.println(basicFields.size());
         for (ColumnField columnField : basicFields) {
 //            System.out.println(Long.bitCount(columnField.getBoard(0)));
-            HashSet<MinoField> results = calculate(columnField);
+            HashSet<IMinoField> results = calculate(columnField);
             resultsMap.put(columnField, results);
         }
         return this.resultsMap;
     }
 
-    private HashSet<MinoField> calculate(ColumnField columnField) {
+    private HashSet<IMinoField> calculate(ColumnField columnField) {
         // 初期化
         this.currentMino = null;
         this.results = new HashSet<>();
@@ -99,9 +99,14 @@ public class BasicSolutionsCalculator {
 
         // 最初の関数呼び出しで通ることはない
         // すでに探索済みのフィールドなら、その情報を利用する
-        Set<MinoField> minoFieldSet = resultsMap.getOrDefault(columnField, null);
+        Set<IMinoField> minoFieldSet = resultsMap.getOrDefault(columnField, null);
         if (minoFieldSet != null) {
-            for (MinoField minoField : minoFieldSet) {
+            int index = separableMinos.toIndex(currentMino);
+
+            for (IMinoField minoField : minoFieldSet) {
+                if (index < minoField.getMaxIndex())
+                    continue;
+
                 // outerで、最終的に使用されるブロック と すでに使っているブロックが重ならないことを確認
                 ColumnField lastOuterField = minoField.getOuterField();
                 if (lastOuterField.canMerge(outerColumnField)) {
@@ -168,12 +173,11 @@ public class BasicSolutionsCalculator {
     // ただし、フィールドをブロックで埋めると回転入れなどができない場合があるため、判定は下に地面があるかだけを判定
     // (部分的には回転入れできなくても、左右のSolutionパターン次第では入れられる可能性がある)
     private boolean existsValidBuildPattern(Field freeze, List<OperationWithKey> operations) {
-        return true;
-//        return BuildUp.existsValidBuildPattern(freeze, operations, sizedBit.getHeight(), grandOnlyReachable);
+        return BuildUp.existsValidBuildPatternOnGround(freeze, operations, sizedBit.getHeight());
     }
 
     private void recordResult(List<OperationWithKey> operations, ColumnField outerField) {
-        MinoField result = new MinoField(operations, outerField, sizedBit.getHeight());
+        IMinoField result = new MinoField(operations, outerField, sizedBit.getHeight(), separableMinos);
         results.add(result);
     }
 }

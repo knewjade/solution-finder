@@ -2,9 +2,9 @@ import common.Stopwatch;
 import core.column_field.ColumnField;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import searcher.pack.IMinoField;
 import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.separable_mino.SeparableMinoFactory;
-import searcher.pack.MinoField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.solutions.BasicSolutionsCalculator;
@@ -45,7 +45,7 @@ public class Main5 {
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, new SizedBit(width, height));
 
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
-        Map<ColumnField, Set<MinoField>> calculate = calculator.calculate();
+        Map<ColumnField, Set<IMinoField>> calculate = calculator.calculate();
         stopwatch.stop();
         System.out.println(calculate.size());
         System.out.println(stopwatch.toMessage(TimeUnit.MILLISECONDS));

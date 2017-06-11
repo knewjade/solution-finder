@@ -5,9 +5,9 @@ import core.column_field.ColumnSmallField;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import org.junit.Test;
+import searcher.pack.IMinoField;
 import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.separable_mino.SeparableMinoFactory;
-import searcher.pack.MinoField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.memento.AllPassedSolutionFilter;
@@ -32,7 +32,7 @@ public class BasicSolutionsFactoryTest {
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
 
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
-        Map<ColumnField, Set<MinoField>> calculate = calculator.calculate();
+        Map<ColumnField, Set<IMinoField>> calculate = calculator.calculate();
 
         AllPassedSolutionFilter solutionFilter = new AllPassedSolutionFilter();
         BasicSolutions solutions1 = BasicSolutionsFactory.createAndWriteSolutions(cacheFile, solutionFilter, separableMinos, sizedBit);
@@ -41,7 +41,7 @@ public class BasicSolutionsFactoryTest {
 
         for (long board = 0L; board < sizedBit.getFillBoard(); board++) {
             ColumnSmallField field = new ColumnSmallField(board);
-            Set<MinoField> minoFields = calculate.get(field);
+            Set<IMinoField> minoFields = calculate.get(field);
             assertThat(solutions1.parse(field), is(new ArrayList<>(minoFields)));
         }
 
@@ -85,8 +85,8 @@ public class BasicSolutionsFactoryTest {
 
     private static int countAllItem(BasicSolutions basicSolutions) {
         int sum = 0;
-        Map<ColumnField, List<MinoField>> solutions = basicSolutions.getSolutions();
-        for (List<MinoField> minoFields : solutions.values())
+        Map<ColumnField, List<IMinoField>> solutions = basicSolutions.getSolutions();
+        for (List<IMinoField> minoFields : solutions.values())
             sum += minoFields.size();
         return sum;
     }

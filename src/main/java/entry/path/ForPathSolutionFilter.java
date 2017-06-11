@@ -7,7 +7,7 @@ import common.datastore.pieces.Pieces;
 import common.iterable.CombinationIterable;
 import common.pattern.PiecesGenerator;
 import core.mino.Block;
-import searcher.pack.MinoField;
+import searcher.pack.IMinoField;
 import searcher.pack.memento.MinoFieldMemento;
 import searcher.pack.memento.SolutionFilter;
 
@@ -72,7 +72,7 @@ public class ForPathSolutionFilter implements SolutionFilter {
     }
 
     @Override
-    public boolean testMinoField(MinoField minoField) {
+    public boolean testMinoField(IMinoField minoField) {
         return checksValidCounter(minoField.getBlockCounter().getCounter());
     }
 }

@@ -1,6 +1,6 @@
 package searcher.pack.memento;
 
-import searcher.pack.MinoField;
+import searcher.pack.IMinoField;
 import common.buildup.BuildUp;
 import common.datastore.OperationWithKey;
 import core.action.reachable.Reachable;
@@ -50,7 +50,7 @@ public class NoDeleteLineSolutionFilter implements SolutionFilter {
     }
 
     @Override
-    public boolean testMinoField(MinoField minoField) {
+    public boolean testMinoField(IMinoField minoField) {
         return !containsDeleteLineKey(minoField.getOperations());
     }
 }

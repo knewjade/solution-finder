@@ -1,6 +1,6 @@
 package searcher.pack.memento;
 
-import searcher.pack.MinoField;
+import searcher.pack.IMinoField;
 import searcher.pack.SlideXOperationWithKey;
 import common.datastore.OperationWithKey;
 
@@ -11,33 +11,33 @@ import java.util.List;
 public class MinoFieldMemento {
     private static final List<OperationWithKey> EMPTY_LIST = Collections.emptyList();
 
-    private final MinoField minoField1;
-    private final MinoField minoField2;
-    private final MinoField minoField3;
-    private final MinoField minoField4;
+    private final IMinoField minoField1;
+    private final IMinoField minoField2;
+    private final IMinoField minoField3;
+    private final IMinoField minoField4;
     private final int index;
 
     public MinoFieldMemento() {
         this(null, null, null, null, 0);
     }
 
-    private MinoFieldMemento(MinoField minoField1) {
+    private MinoFieldMemento(IMinoField minoField1) {
         this(minoField1, null, null, null, 1);
     }
 
-    private MinoFieldMemento(MinoField minoField1, MinoField minoField2) {
+    private MinoFieldMemento(IMinoField minoField1, IMinoField minoField2) {
         this(minoField1, minoField2, null, null, 2);
     }
 
-    private MinoFieldMemento(MinoField minoField1, MinoField minoField2, MinoField minoField3) {
+    private MinoFieldMemento(IMinoField minoField1, IMinoField minoField2, IMinoField minoField3) {
         this(minoField1, minoField2, minoField3, null, 3);
     }
 
-    private MinoFieldMemento(MinoField minoField1, MinoField minoField2, MinoField minoField3, MinoField minoField4) {
+    private MinoFieldMemento(IMinoField minoField1, IMinoField minoField2, IMinoField minoField3, IMinoField minoField4) {
         this(minoField1, minoField2, minoField3, minoField4, 4);
     }
 
-    private MinoFieldMemento(MinoField minoField1, MinoField minoField2, MinoField minoField3, MinoField minoField4, int index) {
+    private MinoFieldMemento(IMinoField minoField1, IMinoField minoField2, IMinoField minoField3, IMinoField minoField4, int index) {
         this.minoField1 = minoField1;
         this.minoField2 = minoField2;
         this.minoField3 = minoField3;
@@ -45,7 +45,7 @@ public class MinoFieldMemento {
         this.index = index;
     }
 
-    public MinoFieldMemento concat(MinoField minoField) {
+    public MinoFieldMemento concat(IMinoField minoField) {
         switch (index) {
             case 0:
                 return new MinoFieldMemento(minoField);

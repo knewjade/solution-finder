@@ -1,6 +1,6 @@
 package searcher.pack.memento;
 
-import searcher.pack.MinoField;
+import searcher.pack.IMinoField;
 
 public class AllPassedSolutionFilter implements SolutionFilter {
     @Override
@@ -14,7 +14,7 @@ public class AllPassedSolutionFilter implements SolutionFilter {
     }
 
     @Override
-    public boolean testMinoField(MinoField minoField) {
+    public boolean testMinoField(IMinoField minoField) {
         return true;
     }
 }

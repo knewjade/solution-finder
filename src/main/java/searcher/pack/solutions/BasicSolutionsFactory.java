@@ -4,6 +4,7 @@ import common.datastore.OperationWithKey;
 import common.datastore.Pair;
 import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
+import searcher.pack.IMinoField;
 import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.MinoField;
 import searcher.pack.SeparableMinos;
@@ -20,7 +21,7 @@ public class BasicSolutionsFactory {
     public static BasicSolutions createAndWriteSolutions(File cacheFile, SolutionFilter solutionFilter, SeparableMinos separableMinos, SizedBit sizedBit) {
         // 基本パターンを計算する
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
-        Map<ColumnField, Set<MinoField>> calculate = calculator.calculate();
+        Map<ColumnField, Set<IMinoField>> calculate = calculator.calculate();
 
         // ファイルに出力する
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(cacheFile), StandardCharsets.UTF_8))) {
@@ -29,8 +30,8 @@ public class BasicSolutionsFactory {
             writer.newLine();
 
             // 各基本パターンを出力する
-            for (Map.Entry<ColumnField, Set<MinoField>> entry : calculate.entrySet()) {
-                Set<MinoField> value = entry.getValue();
+            for (Map.Entry<ColumnField, Set<IMinoField>> entry : calculate.entrySet()) {
+                Set<IMinoField> value = entry.getValue();
                 // 空のときは出力しない
                 if (!value.isEmpty()) {
                     // 1行ごとに "キーとなる地形#対応する操作" となる
@@ -81,7 +82,7 @@ public class BasicSolutionsFactory {
             if (height != sizedBit.getHeight())
                 return null;
 
-            HashMap<ColumnField, List<MinoField>> map = reader.lines()
+            HashMap<ColumnField, List<IMinoField>> map = reader.lines()
                     .parallel()
                     .map(line -> {
                         // 地形と操作結果に分割する
@@ -92,7 +93,7 @@ public class BasicSolutionsFactory {
                         ColumnField field = decodeToColumnField(sharpSplit[0]);
 
                         // 操作結果に変換
-                        ArrayList<MinoField> minoFields = new ArrayList<>();
+                        ArrayList<IMinoField> minoFields = new ArrayList<>();
                         for (String operationBoard : sharpSplit[1].split(";")) {
                             String[] slashSplit = operationBoard.split("/");
                             assert slashSplit.length == 2;
@@ -110,7 +111,7 @@ public class BasicSolutionsFactory {
                             // 結果に変換
                             ColumnField outer = decodeToColumnField(slashSplit[1]);
 
-                            minoFields.add(new MinoField(operations, outer, height));
+                            minoFields.add(new MinoField(operations, outer, height, separableMinos));
                         }
 
                         return new Pair<>(field, minoFields);

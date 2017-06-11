@@ -1,7 +1,7 @@
 package searcher.pack.task;
 
+import searcher.pack.IMinoField;
 import searcher.pack.InOutPairField;
-import searcher.pack.MinoField;
 import searcher.pack.SizedBit;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.memento.MinoFieldMemento;
@@ -43,7 +43,7 @@ public class MinoPackingTask {
                 return createTask(searcher, nextInnerField, nextMemento, nextIndex).compute();
             }
         } else {
-            List<MinoField> minoFields = searcher.getSolutions().parse(innerField);
+            List<IMinoField> minoFields = searcher.getSolutions().parse(innerField);
 
             // innerFieldが埋まっていない
             if (index == searcher.getLastIndex()) {
@@ -64,7 +64,7 @@ public class MinoPackingTask {
         return new MinoPackingTask(searcher, innerField, memento, index);
     }
 
-    private MinoPackingTask split(MinoField minoField) {
+    private MinoPackingTask split(IMinoField minoField) {
         ColumnField outerField = searcher.getInOutPairFields().get(index).getOuterField();
         ColumnField minoOuterField = minoField.getOuterField();
 
@@ -90,7 +90,7 @@ public class MinoPackingTask {
         return EMPTY_TASK;
     }
 
-    private Stream<Result> splitAndFixResult(MinoField minoField) {
+    private Stream<Result> splitAndFixResult(IMinoField minoField) {
         ColumnField outerField = searcher.getInOutPairFields().get(index).getOuterField();
         ColumnField minoOuterField = minoField.getOuterField();
 

@@ -8,22 +8,26 @@ import core.column_field.ColumnField;
 import core.field.SmallField;
 import core.mino.Block;
 import core.mino.Mino;
+import searcher.pack.separable_mino.SeparableMino;
 
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.stream.Collectors;
 
-public class MinoField implements Comparable<MinoField> {
+public class MinoField implements IMinoField {
     private final List<OperationWithKey> operations;
     private final ColumnField outerField;
     private final BlockField blockField;
     private final BlockCounter blockCounter;
+    private final int maxIndex;
 
-    public MinoField(List<OperationWithKey> operations, ColumnField outerField, int height) {
+    public MinoField(List<OperationWithKey> operations, ColumnField outerField, int height, SeparableMinos separableMinos) {
         operations.sort(OperationWithKeyComparator::compareOperationWithKey);
         this.operations = operations;
         this.outerField = outerField;
         this.blockField = parseToBlockField(operations, height);
         this.blockCounter = parseToBlockCounter(operations);
+        this.maxIndex = operations.stream().mapToInt(separableMinos::toIndex).max().orElse(-1);
     }
 
     private BlockField parseToBlockField(List<OperationWithKey> operations, int height) {
@@ -46,20 +50,29 @@ public class MinoField implements Comparable<MinoField> {
         return new BlockCounter(blocks);
     }
 
+    @Override
     public ColumnField getOuterField() {
         return outerField;
     }
 
+    @Override
     public List<OperationWithKey> getOperations() {
         return operations;
     }
 
-    BlockField getBlockField() {
+    @Override
+    public BlockField getBlockField() {
         return blockField;
     }
 
+    @Override
     public BlockCounter getBlockCounter() {
         return blockCounter;
+    }
+
+    @Override
+    public int getMaxIndex() {
+        return maxIndex;
     }
 
     @Override
@@ -77,21 +90,7 @@ public class MinoField implements Comparable<MinoField> {
     }
 
     @Override
-    public int compareTo(MinoField o) {
-        int compareBlockField = blockField.compareTo(o.blockField);
-        if (compareBlockField != 0)
-            return compareBlockField;
-
-        int compareSize = Integer.compare(operations.size(), o.operations.size());
-        if (compareSize != 0)
-            return compareSize;
-
-        for (int index = 0; index < operations.size(); index++) {
-            int compare = OperationWithKeyComparator.compareOperationWithKey(operations.get(index), o.operations.get(index));
-            if (compare != 0)
-                return compare;
-        }
-
-        return 0;
+    public int compareTo(IMinoField o) {
+        return MinoFieldComparator.compareMinoField(this, o);
     }
 }

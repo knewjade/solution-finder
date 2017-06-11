@@ -14,10 +14,7 @@ import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import org.junit.Test;
-import searcher.pack.InOutPairField;
-import searcher.pack.MinoField;
-import searcher.pack.SeparableMinos;
-import searcher.pack.SizedBit;
+import searcher.pack.*;
 import searcher.pack.memento.MinoFieldMemento;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.memento.UsingBlockAndValidKeySolutionFilter;
@@ -47,7 +44,7 @@ public class PackSearcherComparingParityBasedTest {
         SizedBit sizedBit = new SizedBit(width, height);
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
-        Map<ColumnField, Set<MinoField>> calculate = calculator.calculate();
+        Map<ColumnField, Set<IMinoField>> calculate = calculator.calculate();
 
         List<Block> allBlocks = new ArrayList<>();
         allBlocks.addAll(Arrays.asList(Block.values()));
