@@ -3,7 +3,9 @@ package entry.path;
 import common.Stopwatch;
 import common.SyntaxException;
 import common.buildup.BuildUpListUp;
-import common.datastore.*;
+import common.datastore.BlockField;
+import common.datastore.OperationWithKey;
+import common.datastore.Pair;
 import common.datastore.pieces.NumberPieces;
 import common.pattern.PiecesGenerator;
 import common.tetfu.Tetfu;
@@ -24,20 +26,18 @@ import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
 import entry.EntryPoint;
-import searcher.pack.separable_mino.SeparableMinoFactory;
 import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.memento.SolutionFilter;
+import searcher.pack.separable_mino.SeparableMinoFactory;
 import searcher.pack.solutions.BasicSolutions;
 import searcher.pack.solutions.BasicSolutionsFactory;
 import searcher.pack.task.*;
-import searcher.pack.task.Result;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.*;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -227,7 +227,7 @@ public class PathEntryPoint implements EntryPoint {
 
         if (1 <= maxLayer) {
             output("     ... Layer 1: unique");
-            pathCore.runUnique(field, maxClearLine);
+            pathCore.runUnique(field, sizedBit);
         }
 
         if (2 <= maxLayer) {
@@ -251,14 +251,14 @@ public class PathEntryPoint implements EntryPoint {
         if (1 <= maxLayer) {
             List<Pair<Result, HashSet<NumberPieces>>> unique = pathCore.getUnique();
             output("Found path [unique] = " + unique.size());
-            outputOperations(field, maxClearLine, outputUniqueFile, minoFactory, reachable, unique);
+            outputOperations(field, maxClearLine, outputUniqueFile, minoFactory, reachable, unique, sizedBit);
         }
 
         // 少ないパターンでカバーできるパスを出力
         if (2 <= maxLayer) {
             List<Pair<Result, HashSet<NumberPieces>>> minimal = pathCore.getMinimal();
             output("Found path [minimal] = " + minimal.size());
-            outputOperations(field, maxClearLine, outputMinimalFile, minoFactory, reachable, minimal);
+            outputOperations(field, maxClearLine, outputMinimalFile, minoFactory, reachable, minimal, sizedBit);
         }
 
         output("done");
@@ -319,14 +319,14 @@ public class PathEntryPoint implements EntryPoint {
         }
     }
 
-    private void outputOperations(Field field, int maxClearLine, File file, MinoFactory minoFactory, Reachable reachable, List<Pair<Result, HashSet<NumberPieces>>> operations) {
+    private void outputOperations(Field field, int maxClearLine, File file, MinoFactory minoFactory, Reachable reachable, List<Pair<Result, HashSet<NumberPieces>>> operations, SizedBit sizedBit) {
         OutputType outputType = settings.getOutputType();
         switch (outputType) {
             case CSV:
                 outputOperationsToCSV(file, operations);
                 break;
             case Link:
-                outputOperationsToSimpleHTML(field, maxClearLine, file, minoFactory, reachable, operations);
+                outputOperationsToSimpleHTML(field, maxClearLine, file, minoFactory, reachable, operations, sizedBit);
                 break;
             default:
                 throw new UnsupportedOperationException("Unsupport output type: " + outputType);
@@ -351,9 +351,9 @@ public class PathEntryPoint implements EntryPoint {
         private final List<OperationWithKey> sample;
         private final Pair<Result, HashSet<NumberPieces>> pair;
 
-        private OperationsObj(Pair<Result, HashSet<NumberPieces>> pair, Field field, BuildUpListUp buildUpListUp) {
+        private OperationsObj(Pair<Result, HashSet<NumberPieces>> pair, Field field, BuildUpListUp buildUpListUp, SizedBit sizedBit) {
             this.pair = pair;
-            LinkedList<OperationWithKey> origin = pair.getKey().getMemento().getOperationsStream().collect(Collectors.toCollection(LinkedList::new));
+            LinkedList<OperationWithKey> origin = pair.getKey().getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toCollection(LinkedList::new));
 
             Optional<List<OperationWithKey>> first = buildUpListUp
                     .existsValidBuildPatternDirectly(field, origin)
@@ -362,7 +362,7 @@ public class PathEntryPoint implements EntryPoint {
         }
     }
 
-    private void outputOperationsToSimpleHTML(Field field, int maxClearLine, File file, MinoFactory minoFactory, Reachable reachable, List<Pair<Result, HashSet<NumberPieces>>> operations) {
+    private void outputOperationsToSimpleHTML(Field field, int maxClearLine, File file, MinoFactory minoFactory, Reachable reachable, List<Pair<Result, HashSet<NumberPieces>>> operations, SizedBit sizedBit) {
         // テト譜用のフィールド作成
         ColoredField initField = ColoredFieldFactory.createField(24);
         for (int y = 0; y < maxClearLine; y++) {
@@ -380,7 +380,7 @@ public class PathEntryPoint implements EntryPoint {
         for (Pair<Result, HashSet<NumberPieces>> operation : operations) {
             boolean isNoDeleted = operation.getKey().getMemento().getRawOperationsStream()
                     .allMatch(operationWithKey -> operationWithKey.getNeedDeletedKey() == 0L);
-            OperationsObj operationsObj = new OperationsObj(operation, field, buildUpListUp);
+            OperationsObj operationsObj = new OperationsObj(operation, field, buildUpListUp, sizedBit);
             if (isNoDeleted)
                 noDeletedOperations.add(operationsObj);
             else

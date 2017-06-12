@@ -3,6 +3,7 @@ package searcher.pack.task;
 import core.column_field.ColumnField;
 import searcher.pack.InOutPairField;
 import searcher.pack.SizedBit;
+import searcher.pack.memento.MinoFieldMementoFactory;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.memento.MinoFieldMemento;
 import searcher.pack.solutions.BasicSolutions;
@@ -35,7 +36,7 @@ public class PackSearcher {
 
     public List<Result> toList() throws InterruptedException, ExecutionException {
         // 探索準備
-        MinoFieldMemento emptyMemento = new MinoFieldMemento();
+        MinoFieldMemento emptyMemento = MinoFieldMementoFactory.create();
         ColumnField innerField = inOutPairFields.get(0).getInnerField();
         MinoPackingTask task = new MinoPackingTask(this, innerField, emptyMemento, 0);
 
@@ -60,7 +61,7 @@ public class PackSearcher {
 
     public void forEach(Consumer<Result> callback) throws InterruptedException, ExecutionException {
         // 探索準備
-        MinoFieldMemento emptyMemento = new MinoFieldMemento();
+        MinoFieldMemento emptyMemento = MinoFieldMementoFactory.create();
         ColumnField innerField = inOutPairFields.get(0).getInnerField();
         MinoPackingTask task = new MinoPackingTask(this, innerField, emptyMemento, 0);
 
@@ -87,7 +88,7 @@ public class PackSearcher {
 
     public <A, R> R collect(Collector<? super Result, A, R> callback) throws InterruptedException, ExecutionException {
         // 探索準備
-        MinoFieldMemento emptyMemento = new MinoFieldMemento();
+        MinoFieldMemento emptyMemento = MinoFieldMementoFactory.create();
         ColumnField innerField = inOutPairFields.get(0).getInnerField();
         MinoPackingTask task = new MinoPackingTask(this, innerField, emptyMemento, 0);
 

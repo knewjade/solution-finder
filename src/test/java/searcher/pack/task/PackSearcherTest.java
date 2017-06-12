@@ -116,7 +116,7 @@ public class PackSearcherTest {
         int height = sizedBit.getHeight();
         List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(width, height, initField);
         LockedReachableThreadLocal lockedReachableThreadLocal = new LockedReachableThreadLocal(height);
-        SolutionFilter solutionFilter = new SRSValidSolutionFilter(initField, lockedReachableThreadLocal, height);
+        SolutionFilter solutionFilter = new SRSValidSolutionFilter(initField, lockedReachableThreadLocal, sizedBit);
 
         TaskResultHelper taskResultHelper = new Field4x10MinoPackingHelper();
         PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);

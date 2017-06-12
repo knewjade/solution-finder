@@ -73,7 +73,7 @@ public class PackSearcherComparingParityBasedTest {
                 List<Result> results = calculateSRSValidCount(sizedBit, basicSolutions, initField, solutionFilter);
                 Set<String> packSolutions = results.stream()
                         .map(Result::getMemento)
-                        .map(MinoFieldMemento::getOperationsStream)
+                        .map(minoFieldMemento -> minoFieldMemento.getOperationsStream(sizedBit.getWidth()))
                         .map(stream -> stream.sorted(OperationWithKeyComparator::compareOperationWithKey))
                         .map(stream -> stream.collect(Collectors.toList()))
                         .map(OperationWithKeyHelper::parseToString)
@@ -150,7 +150,7 @@ public class PackSearcherComparingParityBasedTest {
         }
 
         LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(sizedBit.getHeight());
-        return new UsingBlockAndValidKeySolutionFilter(initField, validBlockCounters, reachableThreadLocal, sizedBit.getHeight());
+        return new UsingBlockAndValidKeySolutionFilter(initField, validBlockCounters, reachableThreadLocal, sizedBit);
     }
 
     private Field createSquareEmptyField(int emptyWidth, int emptyHeight) {

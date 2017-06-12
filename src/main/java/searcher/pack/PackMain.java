@@ -115,7 +115,7 @@ public class PackMain {
         File outputFile = new File("./output/pack_result");
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile, false), StandardCharsets.UTF_8))) {
             searcher.forEach(result -> {
-                List<OperationWithKey> operations = result.getMemento().getOperationsStream()
+                List<OperationWithKey> operations = result.getMemento().getOperationsStream(sizedBit.getWidth())
                         .sorted(OperationWithKeyComparator::compareOperationWithKey)
                         .collect(Collectors.toList());
                 String operationString = OperationWithKeyHelper.parseToString(operations);
@@ -151,7 +151,7 @@ public class PackMain {
 
     private static SolutionFilter createMementoFilter(Field initField, SizedBit sizedBit) {
         LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(HEIGHT);
-        return new SRSValidSolutionFilter(initField, reachableThreadLocal, sizedBit.getHeight());
+        return new SRSValidSolutionFilter(initField, reachableThreadLocal, sizedBit);
 //        SolutionFilter mementoFilter = new NoDeleteLineSolutionFilter(initField, reachableThreadLocal, sizedBit.HEIGHT);
     }
 
@@ -170,6 +170,6 @@ public class PackMain {
         }
 
         LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(sizedBit.getHeight());
-        return new UsingBlockAndValidKeySolutionFilter(initField, validBlockCounters, reachableThreadLocal, sizedBit.getHeight());
+        return new UsingBlockAndValidKeySolutionFilter(initField, validBlockCounters, reachableThreadLocal, sizedBit);
     }
 }

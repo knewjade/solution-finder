@@ -10,6 +10,7 @@ import common.order.OrderLookup;
 import common.pattern.PiecesGenerator;
 import core.field.Field;
 import core.mino.Mino;
+import searcher.pack.SizedBit;
 import searcher.pack.task.PackSearcher;
 import searcher.pack.task.Result;
 
@@ -54,12 +55,12 @@ class PathCore {
         }
     }
 
-    void runUnique(Field field, int maxClearLine) {
+    void runUnique(Field field, SizedBit sizedBit) {
         // uniqueの作成
-        LockedBuildUpListUpThreadLocal threadLocal = new LockedBuildUpListUpThreadLocal(maxClearLine);
+        LockedBuildUpListUpThreadLocal threadLocal = new LockedBuildUpListUpThreadLocal(sizedBit.getHeight());
         this.unique = candidates.parallelStream()
                 .map(result -> {
-                    LinkedList<OperationWithKey> operations = result.getMemento().getOperationsStream().collect(Collectors.toCollection(LinkedList::new));
+                    LinkedList<OperationWithKey> operations = result.getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toCollection(LinkedList::new));
 
                     BuildUpListUp buildUpListUp = threadLocal.get();
                     HashSet<NumberPieces> pieces = buildUpListUp.existsValidBuildPatternDirectly(field, operations)
