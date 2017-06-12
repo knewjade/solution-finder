@@ -70,15 +70,7 @@ public class RecursiveMinoField implements MinoField {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null) return false;
-        if (getClass() == o.getClass()) {
-            List<OperationWithKey> stream1 = this.getOperationsStream()
-                    .sorted(OperationWithKeyComparator::compareOperationWithKey)
-                    .collect(Collectors.toList());
-            List<OperationWithKey> stream2 = minoField.getOperationsStream()
-                    .sorted(OperationWithKeyComparator::compareOperationWithKey)
-                    .collect(Collectors.toList());
-            return stream1.equals(stream2);
-        } else if (o instanceof MinoField) {
+        if (o instanceof MinoField) {
             MinoField minoField = (MinoField) o;
             return MinoFieldComparator.compareMinoField(this, minoField) == 0;
         }

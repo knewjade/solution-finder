@@ -5,12 +5,18 @@ import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
 import core.field.Field;
 import core.field.SmallField;
-import searcher.pack.*;
+import searcher.pack.ColumnFieldConnections;
+import searcher.pack.RecursiveMinoField;
+import searcher.pack.SeparableMinos;
+import searcher.pack.SizedBit;
 import searcher.pack.separable_mino.SeparableMino;
 
-import java.util.*;
-import java.util.function.Function;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * マルチスレッド非対応
@@ -19,43 +25,78 @@ public class BasicSolutionsCalculator {
     public static final int FIELD_WIDTH = 10;
     public static final int WIDTH_OVER_MINO = 3;
 
+    private final SizedBit sizedBit;
     private final BasicReference reference;
-    private final ThreadLocal<CalculatorCore> coreThreadLocal;
+    private final SmallField wallField;
 
     private HashMap<ColumnField, List<RecursiveMinoField>> resultsMap = new HashMap<>();
+    private final CalculatorCoreThreadLocal coreThreadLocal;
 
     public BasicSolutionsCalculator(SeparableMinos separableMinos, SizedBit sizedBit) {
         assert sizedBit.getHeight() <= 10;
+        this.sizedBit = sizedBit;
         this.reference = new BasicReference(sizedBit, separableMinos);
         this.coreThreadLocal = new CalculatorCoreThreadLocal(sizedBit, reference, separableMinos, resultsMap);
+        this.wallField = createWallField(sizedBit);
+    }
+
+    private SmallField createWallField(SizedBit sizedBit) {
+        SmallField wallField = new SmallField();
+        // 横向きIをおいたとき、3ブロック分あふれる
+        for (int y = 0; y < sizedBit.getHeight(); y++)
+            for (int x = sizedBit.getWidth() + WIDTH_OVER_MINO; x < FIELD_WIDTH; x++)
+                wallField.setBlock(x, y);
+        return wallField;
     }
 
     public Map<ColumnField, List<RecursiveMinoField>> calculate() {
-        List<ColumnSmallField> sortedBasicFields = reference.getSortedBasicFields();
-        return calculateResults(sortedBasicFields);
-    }
-
-    private HashMap<ColumnField, List<RecursiveMinoField>> calculateResults(List<ColumnSmallField> basicFields) {
         assert resultsMap.isEmpty();
 
-        Map<Integer, List<ColumnSmallField>> fieldEachBlocks = basicFields.stream()
-                .collect(Collectors.groupingBy(columnField -> Long.bitCount(columnField.getBoard(0))));
-
-        List<Integer> keys = fieldEachBlocks.keySet().stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
-        for (Integer key : keys) {
-            System.out.println(key);
-            List<ColumnSmallField> fields = fieldEachBlocks.get(key);
-            Map<ColumnSmallField, List<RecursiveMinoField>> map = fields.parallelStream()
-                    .collect(Collectors.toMap(Function.identity(), this::calculate));
-            resultsMap.putAll(map);
+        List<ColumnSmallField> sortedBasicFields = reference.getSortedBasicFields();
+        for (ColumnSmallField basicField : sortedBasicFields) {
+            Field wallField = createWallField(basicField);
+            ColumnSmallField initOuterField = new ColumnSmallField();
+            List<RecursiveMinoField> calculate = calculate(basicField, initOuterField, wallField);
+            resultsMap.put(basicField, calculate);
         }
 
         return this.resultsMap;
     }
 
-    private List<RecursiveMinoField> calculate(ColumnField columnField) {
-        CalculatorCore calculatorCore = coreThreadLocal.get();
-        return calculatorCore.calculate(columnField);
+    // innerと探索に関係ないブロックが埋まっているフィールド
+    private Field createWallField(ColumnField columnField) {
+        Field freeze = wallField.freeze(sizedBit.getHeight());
+        Field innerField = reference.parseInnerField(columnField);
+        freeze.merge(innerField);
+        return freeze;
+    }
+
+    // columnField = inner + outer
+    // outerColumnField = outer only
+    private List<RecursiveMinoField> calculate(ColumnField columnField, ColumnField outerColumnField, Field wallField) {
+        ColumnFieldConnections connections = reference.getConnections(columnField);
+
+        // まだ探索したことのないフィールドのとき
+        // innerに対しておける可能性がある手順を取得
+        return connections.getConnections().parallelStream()
+                .flatMap(connection -> {
+                    // outerで重なりがないか確認する
+                    ColumnField nextOuterField = connection.getOuterField();
+                    if (nextOuterField.canMerge(outerColumnField)) {
+                        CalculatorCore core = coreThreadLocal.get();
+                        ColumnField freeze = nextOuterField.freeze(sizedBit.getHeight());
+
+                        // フィールドとミノ順を進める
+                        SeparableMino currentMino = connection.getMino();
+                        freeze.merge(outerColumnField);
+
+                        // 新しいフィールドを基に探索
+                        ColumnField innerField = connection.getInnerField();
+                        return core.calculate(innerField, freeze, wallField, currentMino);
+                    }
+                    return Stream.empty();
+                })
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     private static class CalculatorCoreThreadLocal extends ThreadLocal<CalculatorCore> {
@@ -83,10 +124,6 @@ public class BasicSolutionsCalculator {
         private final SeparableMinos separableMinos;
         private final HashMap<ColumnField, List<RecursiveMinoField>> resultsMap;
 
-        private SeparableMino currentMino = null;
-        private List<RecursiveMinoField> results = new ArrayList<>();
-        private SmallField wallField = new SmallField();
-
         public CalculatorCore(SizedBit sizedBit, BasicReference reference, SeparableMinos separableMinos, HashMap<ColumnField, List<RecursiveMinoField>> resultsMap) {
             this.sizedBit = sizedBit;
             this.reference = reference;
@@ -94,34 +131,9 @@ public class BasicSolutionsCalculator {
             this.resultsMap = resultsMap;
         }
 
-        private List<RecursiveMinoField> calculate(ColumnField columnField) {
-            // 初期化
-            this.currentMino = null;
-            this.results = new ArrayList<>();
-            this.wallField = createWallField(columnField);
-
-            ColumnSmallField initOuterField = new ColumnSmallField();
-            calculateResult(columnField, initOuterField);
-            return results;
-        }
-
-        // innerと探索に関係ないブロックが埋まっているフィールド
-        private SmallField createWallField(ColumnField columnField) {
-            Field innerField = reference.parseInnerField(columnField);
-
-            SmallField wallField = new SmallField();
-            // 横向きIをおいたとき、3ブロック分あふれる
-            for (int y = 0; y < sizedBit.getHeight(); y++)
-                for (int x = sizedBit.getWidth() + WIDTH_OVER_MINO; x < FIELD_WIDTH; x++)
-                    wallField.setBlock(x, y);
-            wallField.merge(innerField);
-
-            return wallField;
-        }
-
         // columnField = inner + outer
         // outerColumnField = outer only
-        private void calculateResult(ColumnField columnField, ColumnField outerColumnField) {
+        private Stream<RecursiveMinoField> calculate(ColumnField columnField, ColumnField outerColumnField, Field wallField, SeparableMino currentMino) {
             ColumnFieldConnections connections = reference.getConnections(columnField);
 
             // 最初の関数呼び出しで通ることはない
@@ -133,15 +145,16 @@ public class BasicSolutionsCalculator {
                 freeze.merge(invertedOuterField);
 
                 // 置くブロック以外がすでに埋まっていると仮定したとき、正しく接着できる順があるか確認
-                recordResult(currentMino, outerColumnField.freeze(sizedBit.getHeight()));
-
-                return;
+                RecursiveMinoField result = new RecursiveMinoField(currentMino, outerColumnField.freeze(sizedBit.getHeight()), separableMinos);
+                return Stream.of(result);
             }
 
             // 最初の関数呼び出しで通ることはない
             // すでに探索済みのフィールドなら、その情報を利用する
             List<RecursiveMinoField> minoFieldSet = resultsMap.getOrDefault(columnField, null);
             if (minoFieldSet != null) {
+                Stream.Builder<RecursiveMinoField> builder = Stream.builder();
+
                 int index = separableMinos.toIndex(currentMino);
 
                 for (RecursiveMinoField minoField : minoFieldSet) {
@@ -177,41 +190,15 @@ public class BasicSolutionsCalculator {
                         freeze.merge(invertedOuterField);
 
                         // 置くブロック以外がすでに埋まっていると仮定したとき、正しく接着できる順があるか確認
-                        recordResult(currentMino, minoField, usingBlock);
+                        RecursiveMinoField result = new RecursiveMinoField(currentMino, minoField, usingBlock, separableMinos);
+                        builder.accept(result);
                     }
                 }
 
-                return;
+                return builder.build();
             }
 
-            // まだ探索したことのないフィールドのとき
-            // innerに対しておける可能性がある手順を取得
-            for (ColumnFieldConnection connection : connections.getConnections()) {
-                // outerで重なりがないか確認する
-                ColumnField nextOuterField = connection.getOuterField();
-                if (nextOuterField.canMerge(outerColumnField)) {
-                    // フィールドとミノ順を進める
-                    currentMino = connection.getMino();
-                    nextOuterField.merge(outerColumnField);
-
-                    // 新しいフィールドを基に探索
-                    ColumnField innerField = connection.getInnerField();
-                    calculateResult(innerField, nextOuterField);
-
-                    // フィールドとミノ順を戻す
-                    nextOuterField.reduce(outerColumnField);
-                }
-            }
-        }
-
-        private void recordResult(SeparableMino separableMino, ColumnField outerField) {
-            RecursiveMinoField result = new RecursiveMinoField(separableMino, outerField, separableMinos);
-            results.add(result);
-        }
-
-        private void recordResult(SeparableMino separableMino, RecursiveMinoField minoField, ColumnField outerField) {
-            RecursiveMinoField result = new RecursiveMinoField(separableMino, minoField, outerField, separableMinos);
-            results.add(result);
+            return Stream.empty();
         }
     }
 }

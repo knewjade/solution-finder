@@ -1,6 +1,7 @@
 package searcher.pack.solutions;
 
 import searcher.pack.MinoField;
+import searcher.pack.RecursiveMinoField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import core.column_field.ColumnField;
@@ -24,8 +25,8 @@ public class BasicSolutionsTest {
         SizedBit sizedBit = new SizedBit(3, 4);
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
-        Map<ColumnField, List<MinoField>> calculate = calculator.calculate();
-        BasicSolutions solutions = new BasicSolutions(calculate);
+        Map<ColumnField, List<RecursiveMinoField>> calculate = calculator.calculate();
+        BasicSolutions solutions = BasicSolutions.create(calculate);
         assertThat(solutions.parse(new ColumnSmallField()), hasSize(8516));
     }
 

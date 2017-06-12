@@ -1,21 +1,20 @@
 package searcher.pack.solutions;
 
-import common.OperationWithKeyHelper;
 import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import org.junit.Test;
-import searcher.pack.MinoField;
-import searcher.pack.MinoFieldComparator;
+import searcher.pack.*;
+import searcher.pack.memento.AllPassedSolutionFilter;
 import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.separable_mino.SeparableMinoFactory;
-import searcher.pack.SeparableMinos;
-import searcher.pack.SizedBit;
-import searcher.pack.memento.AllPassedSolutionFilter;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -32,7 +31,7 @@ public class BasicSolutionsFactoryTest {
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
 
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
-        Map<ColumnField, List<MinoField>> calculate = calculator.calculate();
+        Map<ColumnField, List<RecursiveMinoField>> calculate = calculator.calculate();
 
         AllPassedSolutionFilter solutionFilter = new AllPassedSolutionFilter();
         BasicSolutions solutions1 = BasicSolutionsFactory.createAndWriteSolutions(cacheFile, solutionFilter, separableMinos, sizedBit);
@@ -45,8 +44,7 @@ public class BasicSolutionsFactoryTest {
             List<MinoField> list1 = new ArrayList<>(solutions1.parse(field));
             list1.sort(MinoFieldComparator::compareMinoField);
 
-            List<MinoField> minoFields = calculate.get(field);
-            List<MinoField> list2 = new ArrayList<>(minoFields);
+            List<RecursiveMinoField> list2 = calculate.get(field);
             list2.sort(MinoFieldComparator::compareMinoField);
 
             assertThat(list1, is(list2));

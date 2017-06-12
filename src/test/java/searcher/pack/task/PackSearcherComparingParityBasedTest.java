@@ -15,7 +15,7 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import org.junit.Test;
 import searcher.pack.InOutPairField;
-import searcher.pack.MinoField;
+import searcher.pack.RecursiveMinoField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.memento.MinoFieldMemento;
@@ -47,7 +47,7 @@ public class PackSearcherComparingParityBasedTest {
         SizedBit sizedBit = new SizedBit(width, height);
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
-        Map<ColumnField, List<MinoField>> calculate = calculator.calculate();
+        Map<ColumnField, List<RecursiveMinoField>> calculate = calculator.calculate();
 
         List<Block> allBlocks = new ArrayList<>();
         allBlocks.addAll(Arrays.asList(Block.values()));
@@ -69,7 +69,7 @@ public class PackSearcherComparingParityBasedTest {
 
                 // packで探索
                 SolutionFilter solutionFilter = createUsingBlockAndValidKeyMementoFilter(initField, sizedBit, blockCounters);
-                BasicSolutions basicSolutions = new BasicSolutions(calculate, solutionFilter);
+                BasicSolutions basicSolutions = BasicSolutions.create(calculate, solutionFilter);
                 List<Result> results = calculateSRSValidCount(sizedBit, basicSolutions, initField, solutionFilter);
                 Set<String> packSolutions = results.stream()
                         .map(Result::getMemento)

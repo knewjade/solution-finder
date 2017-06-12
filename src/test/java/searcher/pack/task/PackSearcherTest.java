@@ -1,26 +1,28 @@
 package searcher.pack.task;
 
-import concurrent.LockedReachableThreadLocal;
 import common.datastore.Pair;
+import concurrent.LockedReachableThreadLocal;
 import core.column_field.ColumnField;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import org.junit.Test;
-import searcher.pack.*;
-import searcher.pack.separable_mino.SeparableMino;
-import searcher.pack.separable_mino.SeparableMinoFactory;
+import searcher.pack.InOutPairField;
+import searcher.pack.RecursiveMinoField;
+import searcher.pack.SeparableMinos;
+import searcher.pack.SizedBit;
 import searcher.pack.memento.AllPassedSolutionFilter;
 import searcher.pack.memento.SRSValidSolutionFilter;
 import searcher.pack.memento.SolutionFilter;
+import searcher.pack.separable_mino.SeparableMino;
+import searcher.pack.separable_mino.SeparableMinoFactory;
 import searcher.pack.solutions.BasicSolutions;
 import searcher.pack.solutions.BasicSolutionsCalculator;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -39,8 +41,8 @@ public class PackSearcherTest {
         SizedBit sizedBit = new SizedBit(width, height);
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
-        Map<ColumnField, List<MinoField>> calculate = calculator.calculate();
-        BasicSolutions basicSolutions = new BasicSolutions(calculate);
+        Map<ColumnField, List<RecursiveMinoField>> calculate = calculator.calculate();
+        BasicSolutions basicSolutions = BasicSolutions.create(calculate);
 
         // width = expected_count
         HashSet<Pair<Integer, Integer>> widthExpected = new HashSet<Pair<Integer, Integer>>() {
@@ -71,8 +73,8 @@ public class PackSearcherTest {
         SizedBit sizedBit = new SizedBit(width, height);
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
-        Map<ColumnField, List<MinoField>> calculate = calculator.calculate();
-        BasicSolutions basicSolutions = new BasicSolutions(calculate);
+        Map<ColumnField, List<RecursiveMinoField>> calculate = calculator.calculate();
+        BasicSolutions basicSolutions = BasicSolutions.create(calculate);
 
         // width = expected_count
         HashSet<Pair<Integer, Integer>> widthExpected = new HashSet<Pair<Integer, Integer>>() {

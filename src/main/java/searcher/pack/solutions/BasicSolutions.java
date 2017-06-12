@@ -9,6 +9,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class BasicSolutions {
+    public static BasicSolutions create(Map<ColumnField, List<RecursiveMinoField>> solutions) {
+        HashMap<ColumnField, List<MinoField>> newMap = new HashMap<>();
+        for (Map.Entry<ColumnField, List<RecursiveMinoField>> entry : solutions.entrySet())
+            newMap.put(entry.getKey(), new ArrayList<>(entry.getValue()));
+        return new BasicSolutions(newMap);
+    }
+
     public static BasicSolutions create(Map<ColumnField, List<RecursiveMinoField>> solutions, SolutionFilter filter) {
         HashMap<ColumnField, List<MinoField>> filtered = new HashMap<>();
         for (Map.Entry<ColumnField, List<RecursiveMinoField>> entry : solutions.entrySet()) {
