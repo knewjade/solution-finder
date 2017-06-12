@@ -135,10 +135,6 @@ public class MinoFieldMemento4 implements MinoFieldMemento {
                 '}';
     }
 
-    public int getIndex() {
-        return index;
-    }
-
     public Stream<OperationWithKey> getOperationsStream(int width) {
         Stream<OperationWithKey> operations = Stream.empty();
         switch (index) {

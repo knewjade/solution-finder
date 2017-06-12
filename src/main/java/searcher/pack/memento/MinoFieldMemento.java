@@ -16,7 +16,5 @@ public interface MinoFieldMemento {
 
     boolean isConcat();
 
-    int getIndex();
-
     Stream<OperationWithKey> getOperationsStream(int width);
 }
