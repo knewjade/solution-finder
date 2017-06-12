@@ -42,7 +42,6 @@ public class Field4x10MinoPackingHelper implements TaskResultHelper {
         private final List<OperationWithKey> operationWithKeys = OPERATION_WITH_KEYS;
         private final ColumnSmallField columnSmallField = new ColumnSmallField();
         private final BlockCounter blockCounter = new BlockCounter(Collections.singletonList(Block.I));
-        private final BlockField blockField = parseToBlockField(OPERATION_WITH_KEYS, 4);
 
         @Override
         public ColumnField getOuterField() {
@@ -52,11 +51,6 @@ public class Field4x10MinoPackingHelper implements TaskResultHelper {
         @Override
         public Stream<OperationWithKey> getOperationsStream() {
             return operationWithKeys.stream();
-        }
-
-        @Override
-        public BlockField getBlockField() {
-            return blockField;
         }
 
         @Override

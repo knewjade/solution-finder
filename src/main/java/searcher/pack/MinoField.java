@@ -13,8 +13,6 @@ public interface MinoField {
 
     Stream<OperationWithKey> getOperationsStream();
 
-    BlockField getBlockField();
-
     BlockCounter getBlockCounter();
 
     int getMaxIndex();

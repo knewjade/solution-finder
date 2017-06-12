@@ -3,6 +3,7 @@ import core.column_field.ColumnField;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import searcher.pack.MinoField;
+import searcher.pack.RecursiveMinoField;
 import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.separable_mino.SeparableMinoFactory;
 import searcher.pack.SeparableMinos;
@@ -45,7 +46,7 @@ public class Main5 {
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, new SizedBit(width, height));
 
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
-        Map<ColumnField, List<MinoField>> calculate = calculator.calculate();
+        Map<ColumnField, List<RecursiveMinoField>> calculate = calculator.calculate();
         stopwatch.stop();
         System.out.println(calculate.size());
         System.out.println(stopwatch.toMessage(TimeUnit.MILLISECONDS));

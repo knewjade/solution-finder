@@ -4,16 +4,16 @@ import common.datastore.OperationWithKey;
 import common.datastore.Pair;
 import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
-import searcher.pack.MinoField;
-import searcher.pack.separable_mino.SeparableMino;
-import searcher.pack.ListMinoField;
-import searcher.pack.SeparableMinos;
-import searcher.pack.SizedBit;
+import searcher.pack.*;
 import searcher.pack.memento.SolutionFilter;
+import searcher.pack.separable_mino.SeparableMino;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -21,7 +21,7 @@ public class BasicSolutionsFactory {
     public static BasicSolutions createAndWriteSolutions(File cacheFile, SolutionFilter solutionFilter, SeparableMinos separableMinos, SizedBit sizedBit) {
         // 基本パターンを計算する
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
-        Map<ColumnField, List<MinoField>> calculate = calculator.calculate();
+        Map<ColumnField, List<RecursiveMinoField>> calculate = calculator.calculate();
 
         // ファイルに出力する
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(cacheFile), StandardCharsets.UTF_8))) {
@@ -30,8 +30,8 @@ public class BasicSolutionsFactory {
             writer.newLine();
 
             // 各基本パターンを出力する
-            for (Map.Entry<ColumnField, List<MinoField>> entry : calculate.entrySet()) {
-                List<MinoField> value = entry.getValue();
+            for (Map.Entry<ColumnField, List<RecursiveMinoField>> entry : calculate.entrySet()) {
+                List<RecursiveMinoField> value = entry.getValue();
                 // 空のときは出力しない
                 if (!value.isEmpty()) {
                     // 1行ごとに "キーとなる地形#対応する操作" となる
@@ -63,7 +63,7 @@ public class BasicSolutionsFactory {
             throw new RuntimeException(e);
         }
 
-        return new BasicSolutions(calculate, solutionFilter);
+        return BasicSolutions.create(calculate, solutionFilter);
     }
 
     private static String encodeColumnField(ColumnField columnField) {
@@ -111,7 +111,7 @@ public class BasicSolutionsFactory {
                             // 結果に変換
                             ColumnField outer = decodeToColumnField(slashSplit[1]);
 
-                            minoFields.add(new ListMinoField(operations, outer, height, separableMinos));
+                            minoFields.add(new ListMinoField(operations, outer, separableMinos));
                         }
 
                         return new Pair<>(field, minoFields);

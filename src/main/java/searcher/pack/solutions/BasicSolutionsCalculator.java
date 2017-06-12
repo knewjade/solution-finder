@@ -22,7 +22,7 @@ public class BasicSolutionsCalculator {
     private final BasicReference reference;
     private final ThreadLocal<CalculatorCore> coreThreadLocal;
 
-    private HashMap<ColumnField, List<MinoField>> resultsMap = new HashMap<>();
+    private HashMap<ColumnField, List<RecursiveMinoField>> resultsMap = new HashMap<>();
 
     public BasicSolutionsCalculator(SeparableMinos separableMinos, SizedBit sizedBit) {
         assert sizedBit.getHeight() <= 10;
@@ -30,12 +30,12 @@ public class BasicSolutionsCalculator {
         this.coreThreadLocal = new CalculatorCoreThreadLocal(sizedBit, reference, separableMinos, resultsMap);
     }
 
-    public Map<ColumnField, List<MinoField>> calculate() {
+    public Map<ColumnField, List<RecursiveMinoField>> calculate() {
         List<ColumnSmallField> sortedBasicFields = reference.getSortedBasicFields();
         return calculateResults(sortedBasicFields);
     }
 
-    private HashMap<ColumnField, List<MinoField>> calculateResults(List<ColumnSmallField> basicFields) {
+    private HashMap<ColumnField, List<RecursiveMinoField>> calculateResults(List<ColumnSmallField> basicFields) {
         assert resultsMap.isEmpty();
 
         Map<Integer, List<ColumnSmallField>> fieldEachBlocks = basicFields.stream()
@@ -45,7 +45,7 @@ public class BasicSolutionsCalculator {
         for (Integer key : keys) {
             System.out.println(key);
             List<ColumnSmallField> fields = fieldEachBlocks.get(key);
-            Map<ColumnSmallField, List<MinoField>> map = fields.parallelStream()
+            Map<ColumnSmallField, List<RecursiveMinoField>> map = fields.parallelStream()
                     .collect(Collectors.toMap(Function.identity(), this::calculate));
             resultsMap.putAll(map);
         }
@@ -53,7 +53,7 @@ public class BasicSolutionsCalculator {
         return this.resultsMap;
     }
 
-    private List<MinoField> calculate(ColumnField columnField) {
+    private List<RecursiveMinoField> calculate(ColumnField columnField) {
         CalculatorCore calculatorCore = coreThreadLocal.get();
         return calculatorCore.calculate(columnField);
     }
@@ -62,9 +62,9 @@ public class BasicSolutionsCalculator {
         private final SizedBit sizedBit;
         private final BasicReference reference;
         private final SeparableMinos separableMinos;
-        private final HashMap<ColumnField, List<MinoField>> resultsMap;
+        private final HashMap<ColumnField, List<RecursiveMinoField>> resultsMap;
 
-        public CalculatorCoreThreadLocal(SizedBit sizedBit, BasicReference reference, SeparableMinos separableMinos, HashMap<ColumnField, List<MinoField>> resultsMap) {
+        public CalculatorCoreThreadLocal(SizedBit sizedBit, BasicReference reference, SeparableMinos separableMinos, HashMap<ColumnField, List<RecursiveMinoField>> resultsMap) {
             this.sizedBit = sizedBit;
             this.reference = reference;
             this.separableMinos = separableMinos;
@@ -81,20 +81,20 @@ public class BasicSolutionsCalculator {
         private final SizedBit sizedBit;
         private final BasicReference reference;
         private final SeparableMinos separableMinos;
-        private final HashMap<ColumnField, List<MinoField>> resultsMap;
+        private final HashMap<ColumnField, List<RecursiveMinoField>> resultsMap;
 
         private SeparableMino currentMino = null;
-        private List<MinoField> results = new ArrayList<>();
+        private List<RecursiveMinoField> results = new ArrayList<>();
         private SmallField wallField = new SmallField();
 
-        public CalculatorCore(SizedBit sizedBit, BasicReference reference, SeparableMinos separableMinos, HashMap<ColumnField, List<MinoField>> resultsMap) {
+        public CalculatorCore(SizedBit sizedBit, BasicReference reference, SeparableMinos separableMinos, HashMap<ColumnField, List<RecursiveMinoField>> resultsMap) {
             this.sizedBit = sizedBit;
             this.reference = reference;
             this.separableMinos = separableMinos;
             this.resultsMap = resultsMap;
         }
 
-        private List<MinoField> calculate(ColumnField columnField) {
+        private List<RecursiveMinoField> calculate(ColumnField columnField) {
             // 初期化
             this.currentMino = null;
             this.results = new ArrayList<>();
@@ -140,11 +140,11 @@ public class BasicSolutionsCalculator {
 
             // 最初の関数呼び出しで通ることはない
             // すでに探索済みのフィールドなら、その情報を利用する
-            List<MinoField> minoFieldSet = resultsMap.getOrDefault(columnField, null);
+            List<RecursiveMinoField> minoFieldSet = resultsMap.getOrDefault(columnField, null);
             if (minoFieldSet != null) {
                 int index = separableMinos.toIndex(currentMino);
 
-                for (MinoField minoField : minoFieldSet) {
+                for (RecursiveMinoField minoField : minoFieldSet) {
                     if (index < minoField.getMaxIndex())
                         continue;
 
@@ -205,12 +205,12 @@ public class BasicSolutionsCalculator {
         }
 
         private void recordResult(SeparableMino separableMino, ColumnField outerField) {
-            MinoField result = new RecursiveMinoField(separableMino, outerField, sizedBit.getHeight(), separableMinos);
+            RecursiveMinoField result = new RecursiveMinoField(separableMino, outerField, separableMinos);
             results.add(result);
         }
 
-        private void recordResult(SeparableMino separableMino, MinoField minoField, ColumnField outerField) {
-            MinoField result = new RecursiveMinoField(separableMino, minoField, outerField, sizedBit.getHeight(), separableMinos);
+        private void recordResult(SeparableMino separableMino, RecursiveMinoField minoField, ColumnField outerField) {
+            RecursiveMinoField result = new RecursiveMinoField(separableMino, minoField, outerField, separableMinos);
             results.add(result);
         }
     }
