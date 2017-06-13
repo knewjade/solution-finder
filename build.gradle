@@ -7,6 +7,17 @@ apply plugin: 'idea'
 archivesBaseName = 'solution-finder'
 sourceCompatibility = 1.8
 
+// Specify encoding of sources
+def defaultEncoding = 'UTF-8'
+
+tasks.withType(AbstractCompile).each {
+    it.options.encoding = defaultEncoding
+}
+
+tasks.withType(GroovyCompile).each {
+    it.groovyOptions.encoding = defaultEncoding
+}
+
 repositories {
     mavenCentral()
 }

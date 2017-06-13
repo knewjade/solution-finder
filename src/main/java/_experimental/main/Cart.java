@@ -1,6 +1,7 @@
 package _experimental.main;
 
 import common.datastore.Operation;
+import common.datastore.Pair;
 import common.order.ListPieces;
 import core.action.candidate.Candidate;
 import concurrent.checker.CheckerUsingHoldThreadLocal;
@@ -10,7 +11,6 @@ import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
 import core.mino.Block;
-import javafx.util.Pair;
 import common.Stopwatch;
 import common.iterable.AllPermutationIterable;
 import common.iterable.CombinationIterable;
