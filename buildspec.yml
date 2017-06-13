@@ -7,7 +7,7 @@ env:
 phases:
   install:
     commands:
-      - echo `java -v`
+      - echo `java -version`
   build:
     commands:
       - ./gradlew build
