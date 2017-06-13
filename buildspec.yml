@@ -1,6 +1,13 @@
 version: 0.2
 
+env:
+  global:
+    GRADLE_OPTS: "-XX:PermSize=256m -XX:MaxPermSize=256m -Xms2048m -Xmx2048m -XX:NewRatio=2 -XX:SurvivorRatio=8"
+
 phases:
+  install:
+    commands:
+      - echo `java -v`
   build:
     commands:
       - ./gradlew build
