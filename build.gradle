@@ -94,6 +94,7 @@ mainClassName = 'Main'
 // gradle run -Pargs="arg1 args2 ..."
 run {
     if (project.hasProperty('args')) {    // "args" というプロパティが渡されていたら
-        args = project.args.split('\\s+')   // 空白文字で split して、 run タスクの args オプションにセットする
+        String str = project.args
+        args = Arrays.asList str.split('\\s+')   // 空白文字で split して、 run タスクの args オプションにセットする
     }
 }
