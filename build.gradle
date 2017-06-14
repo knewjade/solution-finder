@@ -89,12 +89,14 @@ task release(type: Zip) {
     from releaseDir
 }
 
-mainClassName = 'Main'
 
 // gradle run -Pargs="arg1 args2 ..."
 run {
-    if (project.hasProperty('args')) {    // "args" というプロパティが渡されていたら
+    mainClassName = 'Main'
+    if (project.hasProperty('args')) {
         String str = project.args
-        args = Arrays.asList str.split('\\s+')   // 空白文字で split して、 run タスクの args オプションにセットする
+        def list = Arrays.asList str.split('\\s+')
+        mainClassName = list[0]
+        args = list[1..(list.size() - 1)]  // set args in run task
     }
 }
