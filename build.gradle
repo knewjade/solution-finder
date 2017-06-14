@@ -3,6 +3,7 @@ version '0.411'
 
 apply plugin: 'java'
 apply plugin: 'idea'
+apply plugin: 'application'
 
 archivesBaseName = 'solution-finder'
 sourceCompatibility = 1.8
@@ -86,4 +87,13 @@ task release(type: Zip) {
     copyRelease.mustRunAfter jar, cleanReleaseDir
 
     from releaseDir
+}
+
+mainClassName = 'Main'
+
+// gradle run -Pargs="arg1 args2 ..."
+run {
+    if (project.hasProperty('args')) {    // "args" というプロパティが渡されていたら
+        args = project.args.split('\\s+')   // 空白文字で split して、 run タスクの args オプションにセットする
+    }
 }
