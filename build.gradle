@@ -89,7 +89,6 @@ task release(type: Zip) {
     from releaseDir
 }
 
-
 // gradle run -Pargs="arg1 args2 ..."
 run {
     mainClassName = 'Main'
