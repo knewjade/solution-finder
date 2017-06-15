@@ -45,6 +45,12 @@ public class All10Mino {
         Map<ColumnField, List<RecursiveMinoField>> calculate = calculator.calculate();
 
         Field field = FieldFactory.createField(height);
+        field = FieldFactory.createField("" +
+                "XXXX______" +
+                "XXXX______" +
+                "XXXX______" +
+                "XXXX______"
+        );
         System.out.println(FieldView.toString(field, height));
 
         System.out.println("===");
