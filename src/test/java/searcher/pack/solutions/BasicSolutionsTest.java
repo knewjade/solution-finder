@@ -1,20 +1,18 @@
 package searcher.pack.solutions;
 
-import searcher.pack.MinoField;
-import searcher.pack.RecursiveMinoField;
-import searcher.pack.SeparableMinos;
-import searcher.pack.SizedBit;
 import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import org.junit.Test;
+import searcher.pack.RecursiveMinoField;
+import searcher.pack.SeparableMinos;
+import searcher.pack.SizedBit;
 import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.separable_mino.SeparableMinoFactory;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;

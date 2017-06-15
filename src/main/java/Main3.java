@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class Main4 {
+public class Main3 {
     public static void main(String[] args) throws InterruptedException {
         // 7種1巡で可能性のあるツモ順
         List<String> allOnHold = Arrays.asList(
