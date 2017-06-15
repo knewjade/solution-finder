@@ -97,6 +97,7 @@ run {
         String str = project.args
         def list = Arrays.asList str.split('\\s+')
         mainClassName = list[0]
-        args = list[1..(list.size() - 1)]  // set args in run task
+        if (1 < list.size())
+            args = list[1..(list.size() - 1)]  // set args in run task
     }
 }
