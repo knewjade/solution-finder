@@ -3,6 +3,7 @@ version '0.411'
 
 apply plugin: 'java'
 apply plugin: 'idea'
+apply plugin: 'application'
 
 archivesBaseName = 'solution-finder'
 sourceCompatibility = 1.8
@@ -86,4 +87,16 @@ task release(type: Zip) {
     copyRelease.mustRunAfter jar, cleanReleaseDir
 
     from releaseDir
+}
+
+
+// gradle run -Pargs="arg1 args2 ..."
+run {
+    mainClassName = 'Main'
+    if (project.hasProperty('args')) {
+        String str = project.args
+        def list = Arrays.asList str.split('\\s+')
+        mainClassName = list[0]
+        args = list[1..(list.size() - 1)]  // set args in run task
+    }
 }
