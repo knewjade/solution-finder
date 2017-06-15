@@ -1,5 +1,6 @@
 package _experimental.main;
 
+import common.OperationWithKeyHelper;
 import common.Stopwatch;
 import concurrent.LockedReachableThreadLocal;
 import core.column_field.ColumnField;
@@ -22,13 +23,19 @@ import searcher.pack.task.Field4x10MinoPackingHelper;
 import searcher.pack.task.PackSearcher;
 import searcher.pack.task.TaskResultHelper;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 public class All10Mino {
+    private static int counter = 0;
+
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         int width = 3;
         int height = 4;
@@ -50,7 +57,31 @@ public class All10Mino {
 
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
-        Long counter = searcher.callback(Stream::count);
+        ExecutorService service = Executors.newSingleThreadExecutor();
+        File outputFile = new File("output/all10mino.csv");
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), StandardCharsets.UTF_8))) {
+            searcher.forEach(result -> {
+                String line = result.getMemento().getOperationsStream(width)
+                        .map(OperationWithKeyHelper::parseToString)
+                        .collect(Collectors.joining(";"));
+                service.submit(() -> {
+                    All10Mino.counter += 1;
+                    try {
+                        writer.write(line);
+                        writer.newLine();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        System.exit(1);
+                    }
+                });
+            });
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        service.shutdown();
 
         stopwatch.stop();
 
