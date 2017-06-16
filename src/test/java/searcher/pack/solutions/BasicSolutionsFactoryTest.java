@@ -23,7 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class BasicSolutionsFactoryTest {
     @Test
-    public void createWrite3x1() throws Exception {
+    public void create3x1() throws Exception {
         SizedBit sizedBit = new SizedBit(3, 1);
         int expectedSolutions = 3;
         int expectedSolutionItems = 3;
@@ -31,7 +31,7 @@ public class BasicSolutionsFactoryTest {
     }
 
     @Test
-    public void createWrite3x2() throws Exception {
+    public void create3x2() throws Exception {
         SizedBit sizedBit = new SizedBit(3, 2);
         int expectedSolutions = 28;
         int expectedSolutionItems = 88;
@@ -39,7 +39,7 @@ public class BasicSolutionsFactoryTest {
     }
 
     @Test
-    public void createWrite3x3() throws Exception {
+    public void create3x3() throws Exception {
         SizedBit sizedBit = new SizedBit(3, 3);
         int expectedSolutions = 254;
         int expectedSolutionItems = 3972;
@@ -47,7 +47,7 @@ public class BasicSolutionsFactoryTest {
     }
 
     @Test
-    public void createWrite3x4() throws Exception {
+    public void create3x4() throws Exception {
         SizedBit sizedBit = new SizedBit(3, 4);
         int expectedSolutions = 2211;
         int expectedSolutionItems = 228022;
@@ -55,7 +55,7 @@ public class BasicSolutionsFactoryTest {
     }
 
     @Test
-    public void createWrite2x5() throws Exception {
+    public void create2x5() throws Exception {
         SizedBit sizedBit = new SizedBit(2, 5);
         int expectedSolutions = 822;
         int expectedSolutionItems = 321978;
@@ -63,7 +63,7 @@ public class BasicSolutionsFactoryTest {
     }
 
     @Test
-    public void createWrite2x6() throws Exception {
+    public void create2x6() throws Exception {
         SizedBit sizedBit = new SizedBit(2, 6);
         int expectedSolutions = 3490;
         int expectedSolutionItems = 8380826;
