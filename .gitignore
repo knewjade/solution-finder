@@ -19,9 +19,6 @@ gradle-app.setting
 output/*
 !output/.gitkeep
 
-cache/*
-!cache/.gitkeep
-
 input/*
 !input/.gitkeep
 

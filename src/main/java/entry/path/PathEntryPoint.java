@@ -16,6 +16,7 @@ import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
 import core.action.reachable.LockedReachable;
 import core.action.reachable.Reachable;
+import core.column_field.ColumnField;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
@@ -27,12 +28,13 @@ import core.srs.MinoRotation;
 import core.srs.Rotate;
 import entry.EntryPoint;
 import searcher.pack.InOutPairField;
+import searcher.pack.RecursiveMinoField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.separable_mino.SeparableMinoFactory;
 import searcher.pack.solutions.BasicSolutions;
-import searcher.pack.solutions.BasicSolutionsFactory;
+import searcher.pack.solutions.BasicSolutionsCalculator;
 import searcher.pack.task.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -190,19 +192,10 @@ public class PathEntryPoint implements EntryPoint {
 
         Stopwatch stopwatch1 = Stopwatch.createStartedStopwatch();
 
-        // 基本パターンを読み込む
-        File file = new File("cache/basic" + maxClearLine);
-        BasicSolutions solutions = null;
-        if (file.exists()) {
-            output("     ... loading");
-            solutions = BasicSolutionsFactory.readAndCreateSolutions(file, solutionFilter, separableMinos, sizedBit);
-        }
-
-        // 基本パターンを読み込めていない場合は、計算し保存する
-        if (solutions == null) {
-            output("     ... calculating and writing");
-            solutions = BasicSolutionsFactory.createAndWriteSolutions(file, solutionFilter, separableMinos, sizedBit);
-        }
+        // 基本パターンを計算
+        BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
+        Map<ColumnField, List<RecursiveMinoField>> calculate = calculator.calculate();
+        BasicSolutions solutions = BasicSolutions.create(calculate, solutionFilter);
 
         output("     ... done");
 

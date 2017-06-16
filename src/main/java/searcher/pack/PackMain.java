@@ -9,18 +9,20 @@ import common.datastore.OperationWithKey;
 import common.datastore.pieces.Pieces;
 import common.iterable.CombinationIterable;
 import common.pattern.PiecesGenerator;
+import core.column_field.ColumnField;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import searcher.pack.memento.AllPassedSolutionFilter;
 import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.separable_mino.SeparableMinoFactory;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.memento.UsingBlockAndValidKeySolutionFilter;
 import searcher.pack.memento.SRSValidSolutionFilter;
 import searcher.pack.solutions.BasicSolutions;
-import searcher.pack.solutions.BasicSolutionsFactory;
+import searcher.pack.solutions.BasicSolutionsCalculator;
 import searcher.pack.task.Field4x10MinoPackingHelper;
 import searcher.pack.task.PackSearcher;
 import searcher.pack.task.TaskResultHelper;
@@ -29,8 +31,8 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -79,16 +81,10 @@ public class PackMain {
 
         Stopwatch stopwatch1 = Stopwatch.createStartedStopwatch();
 
-        // 基本パターンを読み込む
-        File file = new File("cache/basic");
-        BasicSolutions solutions = null;
-        if (file.exists()) {
-            solutions = BasicSolutionsFactory.readAndCreateSolutions(file, solutionFilter, separableMinos, sizedBit);
-        }
-
-        // 基本パターンを読み込めていない場合は、計算し保存する
-        if (solutions == null)
-            solutions = BasicSolutionsFactory.createAndWriteSolutions(file, solutionFilter, separableMinos, sizedBit);
+        // 基本パターンを計算
+        BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
+        Map<ColumnField, List<RecursiveMinoField>> calculate = calculator.calculate();
+        BasicSolutions solutions = BasicSolutions.create(calculate, solutionFilter);
 
         // 基本パターン作成にかかった時間を表示
         stopwatch1.stop();
@@ -104,10 +100,6 @@ public class PackMain {
         List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(WIDTH, HEIGHT, initField);
         TaskResultHelper taskResultHelper = new Field4x10MinoPackingHelper();
         PackSearcher searcher = new PackSearcher(inOutPairFields, solutions, sizedBit, solutionFilter, taskResultHelper);
-
-        // リスト化するとき
-//        List<Result> results = searcher.toList();
-//        System.out.println(results.size());
 
         // ファイルに書き出すとき
         ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
