@@ -111,8 +111,6 @@ public class PackSearcher {
             // そのため、終端操作をPool内でしなければ、Pool外のスレッド場で動くため注意が必要
             // (終端操作をしなかった場合、Pool内ではStream自体の作成をして終了する)
 
-
-            // 計算を最後まで行ったことを伝えるため true を返却
             return task.compute().parallel().collect(callback);
         });
 
@@ -140,8 +138,6 @@ public class PackSearcher {
             // そのため、終端操作をPool内でしなければ、Pool外のスレッド場で動くため注意が必要
             // (終端操作をしなかった場合、Pool内ではStream自体の作成をして終了する)
 
-
-            // 計算を最後まで行ったことを伝えるため true を返却
             return callback.apply(task.compute().parallel());
         });
 
