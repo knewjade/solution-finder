@@ -86,7 +86,7 @@ public class MiddleField implements Field {
 
     @Override
     public boolean canReachOnHarddrop(Mino mino, int x, int startY) {
-        int max = MAX_FIELD_HEIGHT - mino.getMaxY();
+        int max = MAX_FIELD_HEIGHT - mino.getMinY();
         for (int y = startY + 1; y < max; y++)
             if (!canPutMino(mino, x, y))
                 return false;

@@ -80,8 +80,8 @@ public class ConcurrentCheckerNoHoldInvokerTest {
         // 結果を集計する
         AnalyzeTree tree = runTestCase(marks, piecesGenerator, maxClearLine, maxDepth);
 
-        // Source: myself 20170415
-        assertThat(tree.getSuccessPercent(), is(1730 / 5040.0));
+        // Source: myself 20170616
+        assertThat(tree.getSuccessPercent(), is(1719 / 5040.0));
     }
 
     @Test
@@ -102,8 +102,8 @@ public class ConcurrentCheckerNoHoldInvokerTest {
         // 結果を集計する
         AnalyzeTree tree = runTestCase(marks, piecesGenerator, maxClearLine, maxDepth);
 
-        // Source: myself 20170415
-        assertThat(tree.getSuccessPercent(), is(2380 / 5040.0));
+        // Source: myself 20170616
+        assertThat(tree.getSuccessPercent(), is(2228 / 5040.0));
     }
 
     @Test

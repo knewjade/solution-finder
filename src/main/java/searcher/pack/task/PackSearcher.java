@@ -3,9 +3,9 @@ package searcher.pack.task;
 import core.column_field.ColumnField;
 import searcher.pack.InOutPairField;
 import searcher.pack.SizedBit;
+import searcher.pack.memento.MinoFieldMemento;
 import searcher.pack.memento.MinoFieldMementoFactory;
 import searcher.pack.memento.SolutionFilter;
-import searcher.pack.memento.MinoFieldMemento;
 import searcher.pack.solutions.BasicSolutions;
 
 import java.util.List;
@@ -14,7 +14,6 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -40,7 +39,7 @@ public class PackSearcher {
         // 探索準備
         MinoFieldMemento emptyMemento = MinoFieldMementoFactory.create();
         ColumnField innerField = inOutPairFields.get(0).getInnerField();
-        MinoPackingTask task = new MinoPackingTask(this, innerField, emptyMemento, 0);
+        PackingTask task = createPackingTask(sizedBit, emptyMemento, innerField);
 
         // 探索
         ForkJoinPool forkJoinPool = new ForkJoinPool();
@@ -61,11 +60,21 @@ public class PackSearcher {
         return results;
     }
 
+    private PackingTask createPackingTask(SizedBit sizedBit, MinoFieldMemento emptyMemento, ColumnField innerField) {
+        switch (sizedBit.getWidth()) {
+            case 2:
+                return new MinoPackingTaskWidth2(this, innerField, emptyMemento, 0);
+            case 3:
+                return new MinoPackingTaskWidth3(this, innerField, emptyMemento, 0);
+        }
+        throw new UnsupportedOperationException("No support: should be width 2 or 3");
+    }
+
     public void forEach(Consumer<Result> callback) throws InterruptedException, ExecutionException {
         // 探索準備
         MinoFieldMemento emptyMemento = MinoFieldMementoFactory.create();
         ColumnField innerField = inOutPairFields.get(0).getInnerField();
-        MinoPackingTask task = new MinoPackingTask(this, innerField, emptyMemento, 0);
+        PackingTask task = createPackingTask(sizedBit, emptyMemento, innerField);
 
         // 探索
         ForkJoinPool forkJoinPool = new ForkJoinPool();
@@ -92,7 +101,7 @@ public class PackSearcher {
         // 探索準備
         MinoFieldMemento emptyMemento = MinoFieldMementoFactory.create();
         ColumnField innerField = inOutPairFields.get(0).getInnerField();
-        MinoPackingTask task = new MinoPackingTask(this, innerField, emptyMemento, 0);
+        PackingTask task = createPackingTask(sizedBit, emptyMemento, innerField);
 
         // 探索
         ForkJoinPool forkJoinPool = new ForkJoinPool();
@@ -121,7 +130,7 @@ public class PackSearcher {
         // 探索準備
         MinoFieldMemento emptyMemento = MinoFieldMementoFactory.create();
         ColumnField innerField = inOutPairFields.get(0).getInnerField();
-        MinoPackingTask task = new MinoPackingTask(this, innerField, emptyMemento, 0);
+        PackingTask task = createPackingTask(sizedBit, emptyMemento, innerField);
 
         // 探索
         ForkJoinPool forkJoinPool = new ForkJoinPool();

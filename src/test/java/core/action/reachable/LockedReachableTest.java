@@ -141,4 +141,25 @@ public class LockedReachableTest {
 
         assertThat(reachable.checks(field, new Mino(Block.L, Rotate.Right), 3, 1, 8), is(true));
     }
+
+    @Test
+    public void checks6() throws Exception {
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new PassedMinoShifter();
+        MinoRotation minoRotation = new MinoRotation();
+        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, 6);
+
+        String marks = "" +
+                "XX_XXXXXXX" +
+                "X__XXXXXXX" +
+                "___XXXXXXX" +
+                "___XXXXXXX" +
+                "__XXXXXXXX" +
+                "_XXXXXXXXX" +
+                "";
+        Field field = FieldFactory.createField(marks
+        );
+
+        assertThat(reachable.checks(field, new Mino(Block.T, Rotate.Right), 1, 2, 6), is(false));
+    }
 }

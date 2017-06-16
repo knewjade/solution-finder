@@ -15,8 +15,9 @@ public class BasicMinoPackingHelper implements TaskResultHelper {
     public Stream<Result> fixResult(PackSearcher searcher, ColumnField lastOuterField, MinoFieldMemento nextMemento) {
         SizedBit sizedBit = searcher.getSizedBit();
         SolutionFilter solutionFilter = searcher.getSolutionFilter();
-        long board = lastOuterField.getBoard(0) >> sizedBit.getMaxBitDigit();
-        if (board == sizedBit.getFillBoard()) {
+        long fillBoard = sizedBit.getFillBoard();
+        long board = (lastOuterField.getBoard(0) >> sizedBit.getMaxBitDigit())  & fillBoard;
+        if (board == fillBoard) {
             if (solutionFilter.testLast(nextMemento))
                 return Stream.of(createResult(nextMemento));
             return Stream.empty();

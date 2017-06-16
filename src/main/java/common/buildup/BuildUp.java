@@ -120,7 +120,7 @@ public class BuildUp {
             int x = key.getX();
             int y = originalY - deletedLines;
 
-            if (field.isOnGround(mino, x, y) && field.canPutMino(mino, x, y) && reachable.checks(field, mino, x, y, height)) {
+            if (field.isOnGround(mino, x, y) && field.canPutMino(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY())) {
                 if (operationWithKeys.isEmpty())
                     return true;
 
