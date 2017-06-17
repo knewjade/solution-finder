@@ -1,8 +1,8 @@
 package entry.path;
 
+import common.comparator.FieldComparator;
 import core.field.Field;
 import core.field.FieldFactory;
-import common.comparator.FieldComparator;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -39,8 +39,9 @@ public class PathSettingParserTest {
             assertThat(settings.isUsingHold(), is(true));
             assertField(settings.getField(), expectedField);
             assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
-            assertThat(settings.getPathLayer(), is(2));
+            assertThat(settings.getPathLayer(), is(PathLayer.Minimal));
             assertThat(settings.getOutputType(), is(OutputType.Link));
+            assertThat(settings.isTetfuSplit(), is(false));
         });
     }
 
@@ -68,7 +69,7 @@ public class PathSettingParserTest {
             assertThat(settings.isUsingHold(), is(true));
             assertField(settings.getField(), expectedField);
             assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
-            assertThat(settings.getPathLayer(), is(2));
+            assertThat(settings.getPathLayer(), is(PathLayer.Minimal));
             assertThat(settings.getOutputType(), is(OutputType.Link));
         });
     }
@@ -107,8 +108,9 @@ public class PathSettingParserTest {
             assertThat(settings.isUsingHold(), is(false));
             assertField(settings.getField(), expectedField);
             assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
-            assertThat(settings.getPathLayer(), is(1));
+            assertThat(settings.getPathLayer(), is(PathLayer.Unique));
             assertThat(settings.getOutputType(), is(OutputType.CSV));
+            assertThat(settings.isTetfuSplit(), is(false));
         });
     }
 
@@ -140,8 +142,9 @@ public class PathSettingParserTest {
             assertThat(settings.isUsingHold(), is(false));
             assertField(settings.getField(), expectedField);
             assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
-            assertThat(settings.getPathLayer(), is(2));
+            assertThat(settings.getPathLayer(), is(PathLayer.Minimal));
             assertThat(settings.getOutputType(), is(OutputType.Link));
+            assertThat(settings.isTetfuSplit(), is(false));
         });
     }
 
@@ -173,8 +176,9 @@ public class PathSettingParserTest {
             assertThat(settings.isUsingHold(), is(false));
             assertField(settings.getField(), expectedField);
             assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
-            assertThat(settings.getPathLayer(), is(2));
+            assertThat(settings.getPathLayer(), is(PathLayer.Minimal));
             assertThat(settings.getOutputType(), is(OutputType.Link));
+            assertThat(settings.isTetfuSplit(), is(false));
         });
     }
 
@@ -185,7 +189,7 @@ public class PathSettingParserTest {
 
         // comment: 3 -p T,S,L,O,L
         String tetfu = "v115@vh2SSYRBFLDmClcJSAVDEHBEooRBMoAVBUujPCv3jx?CPNUPCJHWWCJtPFDs+bgC6P9VCp/dgCzn9VCzvaFDUePFDv?+TWCviLuCqe1LCqHLWCzAAAANpBXqBGjBznB0fB0rBdnBzq?BxvB/tBqsBGjBJnB1vBTmBxkB3pBikBGrByuB9tBXjB0sB0?rBTkBmfBplBxmBirBNpBWyBXqB0fBToBCjBRmBesBTmB0qB?NpBpoBXqB0fBmrBzsQaAzno2ANI98AQe88ADd88AjS88ADX?88AjCBAA3rQjAFLDmClcJSAVztSAVG88A4c88AZyKWCat/w?CJePFDvyzBA6qBzsBirB0sB/tBGjB1wBNmQSA0no2AtTKNE?M388AwBrNEJnBAA";
-        String commands = String.format("--hold use -fp %s -pp %s --tetfu %s --patterns *p5 --log-path output/dummy -P 46 -o output/result_dummy.txt", fieldPath, patternsPath, tetfu);
+        String commands = String.format("--hold use -fp %s -pp %s --tetfu %s --patterns *p5 --log-path output/dummy -P 46 -o output/result_dummy.txt -s yes", fieldPath, patternsPath, tetfu);
 
         PathSettingParser entryPoint = new PathSettingParser(commands);
         Optional<PathSettings> parse = entryPoint.parse();
@@ -205,8 +209,9 @@ public class PathSettingParserTest {
             assertThat(settings.isUsingHold(), is(true));
             assertField(settings.getField(), expectedField);
             assertThat(settings.getOutputBaseFilePath(), is("output/result_dummy.txt"));
-            assertThat(settings.getPathLayer(), is(2));
+            assertThat(settings.getPathLayer(), is(PathLayer.Minimal));
             assertThat(settings.getOutputType(), is(OutputType.Link));
+            assertThat(settings.isTetfuSplit(), is(true));
         });
     }
 
@@ -232,7 +237,7 @@ public class PathSettingParserTest {
             assertThat(settings.isUsingHold(), is(true));
             assertField(settings.getField(), expectedField);
             assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
-            assertThat(settings.getPathLayer(), is(2));
+            assertThat(settings.getPathLayer(), is(PathLayer.Minimal));
             assertThat(settings.getOutputType(), is(OutputType.Link));
         });
     }
@@ -261,7 +266,7 @@ public class PathSettingParserTest {
             assertThat(settings.isUsingHold(), is(true));
             assertField(settings.getField(), expectedField);
             assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
-            assertThat(settings.getPathLayer(), is(2));
+            assertThat(settings.getPathLayer(), is(PathLayer.Minimal));
             assertThat(settings.getOutputType(), is(OutputType.Link));
         });
     }

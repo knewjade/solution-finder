@@ -136,6 +136,10 @@ public class PathSettingParser {
         Optional<String> outputType = wrapper.getStringOption("format");
         outputType.ifPresent(settings::setOutputType);
 
+        // 出力分割の設定
+        Optional<Boolean> isSplit = wrapper.getBoolOption("split");
+        isSplit.ifPresent(settings::setTetfuSplit);
+
         // 探索パターンの設定
         if (wrapper.hasOption("patterns")) {
             // パターン定義から
@@ -280,6 +284,16 @@ public class PathSettingParser {
                 .desc("Format type for output")
                 .build();
         options.addOption(outputTypeOption);
+
+        Option splitOption = Option.builder("s")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("yes or no")
+                .longOpt("split")
+                .desc("Split outputted tetfu page")
+                .build();
+        options.addOption(splitOption);
 
         return options;
     }

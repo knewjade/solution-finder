@@ -6,7 +6,6 @@ public class Result {
     private final MinoFieldMemento memento;
 
     public Result(MinoFieldMemento memento) {
-//            System.out.println(memento.getRawOperations().size());
         this.memento = memento;
     }
 

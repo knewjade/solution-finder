@@ -17,8 +17,6 @@ import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
-import core.action.reachable.LockedReachable;
-import core.action.reachable.Reachable;
 import core.column_field.ColumnField;
 import core.field.Field;
 import core.field.FieldFactory;
@@ -27,7 +25,6 @@ import core.mino.Block;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
-import core.srs.MinoRotation;
 import core.srs.Rotate;
 import entry.EntryPoint;
 import searcher.pack.InOutPairField;
@@ -240,21 +237,18 @@ public class PathEntryPoint implements EntryPoint {
         // ========================================
         output("# Output file");
 
-        MinoRotation minoRotation = new MinoRotation();
-        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
-
         // 同一ミノ配置を取り除いたパスの出力
         if (pathLayer.contains(PathLayer.Unique)) {
             List<Pair<Result, HashSet<LongPieces>>> unique = pathCore.getUnique();
             output("Found path [unique] = " + unique.size());
-            outputOperations(field, maxClearLine, outputUniqueFile, minoFactory, reachable, unique, sizedBit);
+            outputOperations(field, outputUniqueFile, minoFactory, unique, sizedBit);
         }
 
         // 少ないパターンでカバーできるパスを出力
         if (pathLayer.contains(PathLayer.Minimal)) {
             List<Pair<Result, HashSet<LongPieces>>> minimal = pathCore.getMinimal();
             output("Found path [minimal] = " + minimal.size());
-            outputOperations(field, maxClearLine, outputMinimalFile, minoFactory, reachable, minimal, sizedBit);
+            outputOperations(field, outputMinimalFile, minoFactory, minimal, sizedBit);
         }
 
         output("done");
@@ -288,21 +282,6 @@ public class PathEntryPoint implements EntryPoint {
         return path;
     }
 
-    private String getExtensionFromPath(String path) {
-        int pointIndex = path.lastIndexOf('.');
-        int separatorIndex = path.lastIndexOf(File.separatorChar);
-
-        // .がない or セパレータより前にあるとき
-        if (pointIndex <= separatorIndex)
-            return "";
-
-        // .があるとき
-        if (pointIndex != -1)
-            return path.substring(pointIndex);
-
-        return "";
-    }
-
     private String getExtension() {
         OutputType outputType = settings.getOutputType();
         switch (outputType) {
@@ -315,14 +294,15 @@ public class PathEntryPoint implements EntryPoint {
         }
     }
 
-    private void outputOperations(Field field, int maxClearLine, File file, MinoFactory minoFactory, Reachable reachable, List<Pair<Result, HashSet<LongPieces>>> operations, SizedBit sizedBit) {
+    private void outputOperations(Field field, File file, MinoFactory minoFactory, List<Pair<Result, HashSet<LongPieces>>> operations, SizedBit sizedBit) {
         OutputType outputType = settings.getOutputType();
         switch (outputType) {
             case CSV:
                 outputOperationsToCSV(field, file, operations, sizedBit);
                 break;
             case Link:
-                outputOperationsToSimpleHTML(field, file, minoFactory, operations, sizedBit, reachable);
+                boolean isTetfuSplit = settings.isTetfuSplit();
+                outputOperationsToSimpleHTML(field, file, minoFactory, operations, sizedBit, isTetfuSplit);
                 break;
             default:
                 throw new UnsupportedOperationException("Unsupport output type: " + outputType);
@@ -357,22 +337,7 @@ public class PathEntryPoint implements EntryPoint {
         }
     }
 
-    private class OperationsObj {
-        private final List<OperationWithKey> sample;
-        private final Pair<Result, HashSet<LongPieces>> pair;
-
-        private OperationsObj(Pair<Result, HashSet<LongPieces>> pair, Field field, BuildUpStream buildUpStream, SizedBit sizedBit) {
-            this.pair = pair;
-            LinkedList<OperationWithKey> origin = pair.getKey().getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toCollection(LinkedList::new));
-
-            Optional<List<OperationWithKey>> first = buildUpStream
-                    .existsValidBuildPatternDirectly(field, origin)
-                    .findFirst();
-            this.sample = first.orElse(Collections.emptyList());
-        }
-    }
-
-    private void outputOperationsToSimpleHTML(Field field, File file, MinoFactory minoFactory, List<Pair<Result, HashSet<LongPieces>>> resultPairs, SizedBit sizedBit, Reachable reachable) {
+    private void outputOperationsToSimpleHTML(Field field, File file, MinoFactory minoFactory, List<Pair<Result, HashSet<LongPieces>>> resultPairs, SizedBit sizedBit, boolean isTetfuSplit) {
         int maxClearLine = sizedBit.getHeight();
 
         // テト譜用のフィールド作成
@@ -385,23 +350,23 @@ public class PathEntryPoint implements EntryPoint {
         }
 
         // ライン消去ありとなしに振り分ける
-        BuildUpStream buildUpStream = new BuildUpStream(reachable, maxClearLine);
-        List<OperationsObj> noDeletedOperations = new ArrayList<>();
-        List<OperationsObj> deletedOperations = new ArrayList<>();
+        LockedBuildUpListUpThreadLocal threadLocal = new LockedBuildUpListUpThreadLocal(sizedBit.getHeight());
+        Map<Boolean, List<LinkInformation>> groupByDelete = resultPairs.stream()
+                .map(resultPair -> {
+                    Result result = resultPair.getKey();
+                    LinkedList<OperationWithKey> operations = result.getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toCollection(LinkedList::new));
+                    BuildUpStream buildUpStream = threadLocal.get();
+                    List<OperationWithKey> operationWithKeys = buildUpStream.existsValidBuildPatternDirectly(field, operations)
+                            .findFirst()
+                            .orElse(Collections.emptyList());
+                    return new LinkInformation(resultPair, operationWithKeys);
+                })
+                .collect(Collectors.groupingBy(LinkInformation::isDeletedLine));
 
-        for (Pair<Result, HashSet<LongPieces>> resultPair : resultPairs) {
-            boolean isNoDeleted = resultPair.getKey().getMemento().getRawOperationsStream()
-                    .allMatch(operationWithKey -> operationWithKey.getNeedDeletedKey() == 0L);
-            OperationsObj operationsObj = new OperationsObj(resultPair, field, buildUpStream, sizedBit);
-            if (isNoDeleted)
-                noDeletedOperations.add(operationsObj);
-            else
-                deletedOperations.add(operationsObj);
-        }
-
-        Comparator<OperationsObj> comparator = (o1, o2) -> {
-            List<OperationWithKey> operations1 = o1.sample;
-            List<OperationWithKey> operations2 = o2.sample;
+        // それぞれで並び替える
+        Comparator<LinkInformation> comparator = (o1, o2) -> {
+            List<OperationWithKey> operations1 = o1.getSample();
+            List<OperationWithKey> operations2 = o2.getSample();
 
             int compareSize = Integer.compare(operations1.size(), operations2.size());
             if (compareSize != 0)
@@ -422,8 +387,8 @@ public class PathEntryPoint implements EntryPoint {
 
             return 0;
         };
-        noDeletedOperations.sort(comparator);
-        deletedOperations.sort(comparator);
+        for (List<LinkInformation> objs : groupByDelete.values())
+            objs.sort(comparator);
 
         // 出力
         ColorConverter colorConverter = new ColorConverter();
@@ -443,8 +408,8 @@ public class PathEntryPoint implements EntryPoint {
             writer.write("<h2>ライン消去なし</h2>");
             writer.newLine();
 
-            for (OperationsObj obj : noDeletedOperations) {
-                String link = createALink(obj, field, minoFactory, colorConverter, maxClearLine);
+            for (LinkInformation information : groupByDelete.get(true)) {
+                String link = createALink(information, field, minoFactory, colorConverter, maxClearLine, isTetfuSplit);
                 writer.write(String.format("<div>%s</div>", link));
                 writer.newLine();
             }
@@ -453,8 +418,8 @@ public class PathEntryPoint implements EntryPoint {
             writer.write("<h2>ライン消去あり</h2>");
             writer.newLine();
 
-            for (OperationsObj obj : deletedOperations) {
-                String link = createALink(obj, field, minoFactory, colorConverter, maxClearLine);
+            for (LinkInformation obj : groupByDelete.get(false)) {
+                String link = createALink(obj, field, minoFactory, colorConverter, maxClearLine, isTetfuSplit);
                 writer.write(String.format("<div>%s</div>", link));
                 writer.newLine();
             }
@@ -468,8 +433,14 @@ public class PathEntryPoint implements EntryPoint {
         }
     }
 
-    private String createALink(OperationsObj obj, Field field, MinoFactory minoFactory, ColorConverter colorConverter, int maxClearLine) {
-        List<OperationWithKey> operations = obj.sample;
+    private String createALink(LinkInformation information, Field field, MinoFactory minoFactory, ColorConverter colorConverter, int maxClearLine, boolean isTetfuSplit) {
+        if (isTetfuSplit)
+            return createALinkOrder(information, field, minoFactory, colorConverter);
+        return createALinkOnePage(information, field, minoFactory, colorConverter, maxClearLine);
+    }
+
+    private String createALinkOnePage(LinkInformation information, Field field, MinoFactory minoFactory, ColorConverter colorConverter, int maxClearLine) {
+        List<OperationWithKey> operations = information.getSample();
 
         // BlockField と そのパターンを表す名前 を生成
         BlockField blockField = new BlockField(maxClearLine);
@@ -486,38 +457,106 @@ public class PathEntryPoint implements EntryPoint {
                     return mino.getBlock().getName() + "-" + mino.getRotate().name();
                 })
                 .collect(Collectors.joining(" "));
+
         String blocksName = operations.stream()
                 .map(OperationWithKey::getMino)
                 .map(Mino::getBlock)
                 .map(Block::getName)
                 .collect(Collectors.joining());
 
+        // テト譜1ページを作成
         TetfuElement tetfuElement = parseBlockFieldToTetfuElement(field, colorConverter, blockField, blocksName);
 
         Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
         String encode = tetfu.encode(Collections.singletonList(tetfuElement));
 
-        HashSet<LongPieces> pieces = obj.pair.getValue();
+        // 有効なミノ順をまとめる
+        HashSet<LongPieces> pieces = information.getPiecesSet();
         String validOrders = pieces.stream()
                 .map(LongPieces::getBlocks)
                 .map(blocks -> blocks.stream().map(Block::getName).collect(Collectors.joining()))
                 .collect(Collectors.joining(", "));
 
+        // 出力
         return String.format("<a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a> [%s]", encode, linkText, validOrders);
     }
 
-    private String parseRotateToChar(Rotate rotate) {
-        switch (rotate) {
-            case Spawn:
-                return "0";
-            case Left:
-                return "L";
-            case Reverse:
-                return "2";
-            case Right:
-                return "R";
+    private static TetfuElement parseBlockFieldToTetfuElement(Field initField, ColorConverter colorConverter, BlockField blockField, String comment) {
+        ColoredField coloredField = createInitColoredField(initField);
+
+        for (Block block : Block.values()) {
+            Field target = blockField.get(block);
+            ColorType colorType = colorConverter.parseToColorType(block);
+            fillInField(coloredField, colorType, target);
         }
-        throw new IllegalStateException("No reachable");
+
+        return new TetfuElement(coloredField, ColorType.Empty, Rotate.Reverse, 0, 0, comment);
+    }
+
+    private static ColoredField createInitColoredField(Field initField) {
+        ColoredField coloredField = ColoredFieldFactory.createField(24);
+        fillInField(coloredField, ColorType.Gray, initField);
+        return coloredField;
+    }
+
+    private static void fillInField(ColoredField coloredField, ColorType colorType, Field target) {
+        for (int y = 0; y < target.getMaxFieldHeight(); y++) {
+            for (int x = 0; x < 10; x++) {
+                if (!target.isEmpty(x, y))
+                    coloredField.setColorType(colorType, x, y);
+            }
+        }
+    }
+
+    private String createALinkOrder(LinkInformation information, Field field, MinoFactory minoFactory, ColorConverter colorConverter) {
+        List<OperationWithKey> operations = information.getSample();
+
+        // ブロック順に変換
+        List<Block> blockList = operations.stream()
+                .map(OperationWithKey::getMino)
+                .map(Mino::getBlock)
+                .collect(Collectors.toList());
+
+        // そのパターンを表す名前 を生成
+        String linkText = blockList.stream()
+                .map(Block::getName)
+                .collect(Collectors.joining(" "));
+
+        // テト譜を作成
+        String quiz = Tetfu.encodeForQuiz(blockList);
+        ArrayList<TetfuElement> tetfuElements = new ArrayList<>();
+
+        // 最初のelement
+        OperationWithKey firstKey = operations.get(0);
+        Mino mino1 = firstKey.getMino();
+        ColorType colorType1 = colorConverter.parseToColorType(mino1.getBlock());
+        ColoredField coloredField = createInitColoredField(field);
+        TetfuElement firstElement = new TetfuElement(coloredField, colorType1, mino1.getRotate(), firstKey.getX(), firstKey.getY(), quiz);
+        tetfuElements.add(firstElement);
+
+        // 2番目以降のelement
+        if (1 < operations.size()) {
+            operations.subList(1, operations.size()).stream()
+                    .map(operationWithKey -> {
+                        Mino mino = operationWithKey.getMino();
+                        ColorType colorType = colorConverter.parseToColorType(mino.getBlock());
+                        return new TetfuElement(colorType, mino.getRotate(), operationWithKey.getX(), operationWithKey.getY());
+                    })
+                    .forEach(tetfuElements::add);
+        }
+
+        Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
+        String encode = tetfu.encode(tetfuElements);
+
+        // 有効なミノ順をまとめる
+        HashSet<LongPieces> pieces = information.getPiecesSet();
+        String validOrders = pieces.stream()
+                .map(LongPieces::getBlocks)
+                .map(blocks -> blocks.stream().map(Block::getName).collect(Collectors.joining()))
+                .collect(Collectors.joining(", "));
+
+        // 出力
+        return String.format("<a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a> [%s]", encode, linkText, validOrders);
     }
 
     private void output() throws IOException {
@@ -538,28 +577,5 @@ public class PathEntryPoint implements EntryPoint {
     @Override
     public void close() throws Exception {
         logWriter.close();
-    }
-
-
-    private static TetfuElement parseBlockFieldToTetfuElement(Field initField, ColorConverter colorConverter, BlockField blockField, String comment) {
-        ColoredField coloredField = ColoredFieldFactory.createField(24);
-        fillInField(coloredField, ColorType.Gray, initField);
-
-        for (Block block : Block.values()) {
-            Field target = blockField.get(block);
-            ColorType colorType = colorConverter.parseToColorType(block);
-            fillInField(coloredField, colorType, target);
-        }
-
-        return new TetfuElement(coloredField, ColorType.Empty, Rotate.Reverse, 0, 0, comment);
-    }
-
-    private static void fillInField(ColoredField coloredField, ColorType colorType, Field target) {
-        for (int y = 0; y < target.getMaxFieldHeight(); y++) {
-            for (int x = 0; x < 10; x++) {
-                if (!target.isEmpty(x, y))
-                    coloredField.setColorType(colorType, x, y);
-            }
-        }
     }
 }

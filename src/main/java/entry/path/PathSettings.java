@@ -1,9 +1,9 @@
 package entry.path;
 
-import core.field.Field;
-import core.field.FieldFactory;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
+import core.field.Field;
+import core.field.FieldFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +21,7 @@ public class PathSettings {
     private String outputBaseFilePath = DEFAULT_OUTPUT_BASE_FILE_PATH;
     private PathLayer pathLayer = PathLayer.Minimal;
     private OutputType outputType = OutputType.Link;
+    private boolean isSplit = false;
 
     // ********* Getter ************
     public boolean isUsingHold() {
@@ -57,6 +58,10 @@ public class PathSettings {
 
     OutputType getOutputType() {
         return outputType;
+    }
+
+    boolean isTetfuSplit() {
+        return isSplit;
     }
 
     // ********* Setter ************
@@ -108,5 +113,9 @@ public class PathSettings {
             default:
                 throw new UnsupportedOperationException("Unsupported output type = '" + type + "'");
         }
+    }
+
+    void setTetfuSplit(boolean isSplit) {
+        this.isSplit = isSplit;
     }
 }
