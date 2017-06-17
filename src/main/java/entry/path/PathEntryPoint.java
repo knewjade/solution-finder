@@ -45,7 +45,6 @@ import java.util.stream.Collectors;
 public class PathEntryPoint implements EntryPoint {
     private static final String LINE_SEPARATOR = System.lineSeparator();
     private static final String CHARSET = "utf-8";
-    private static final int BASIC_SOLUTION_WIDTH = 3;
 
     private final PathSettings settings;
     private final BufferedWriter logWriter;
@@ -176,7 +175,8 @@ public class PathEntryPoint implements EntryPoint {
         output("Piece pop count = " + (isUsingHold && maxDepth < generator.getDepth() ? maxDepth + 1 : maxDepth));
 
         // ミノのリストを作成する
-        SizedBit sizedBit = new SizedBit(BASIC_SOLUTION_WIDTH, maxClearLine);
+        int width = maxClearLine <= 4 ? 3 : 2;
+        SizedBit sizedBit = new SizedBit(width, maxClearLine);
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, sizedBit.getWidth(), sizedBit.getHeight());

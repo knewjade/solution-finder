@@ -235,4 +235,22 @@ public class PathEntryPointMainTest {
         assertThat(output.split(System.lineSeparator()).length, is(1));
         assertThat(output, containsString("I,L,9,1;O,0,0,0"));
     }
+
+    @Test
+    public void testUnique6() throws Exception {
+        List<String> fields = Arrays.asList(
+                "6",
+                "XXXXXX____",
+                "XXXXXX____",
+                "XXXXXX____",
+                "XXXXXX____",
+                "XXXXXX____",
+                "XXXXXX____"
+        );
+        String pattern = "*p7";
+        String log = getPathLog(fields, pattern, true);
+        System.out.println(log);
+        assertThat(log, containsString("Found path [unique] = 1002"));
+        assertThat(log, containsString("Found path [minimal] = 699"));
+    }
 }
