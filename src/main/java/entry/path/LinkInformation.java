@@ -25,8 +25,8 @@ class LinkInformation {
         return sample;
     }
 
-    boolean isDeletedLine() {
-        return sample.stream().allMatch(operationWithKey -> operationWithKey.getNeedDeletedKey() == 0L);
+    boolean containsDeletedLine() {
+        return sample.stream().anyMatch(operationWithKey -> operationWithKey.getNeedDeletedKey() != 0L);
     }
 
      HashSet<LongPieces> getPiecesSet() {

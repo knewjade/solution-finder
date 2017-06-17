@@ -2830,6 +2830,8 @@ public class PackSearcherComparingParityBasedTest {
             BasicSolutions basicSolutions = BasicSolutions.create(calculate, solutionFilter);
             long packCounter = calculateSRSValidCount(sizedBit, basicSolutions, initField, solutionFilter);
 
+            System.out.println(usingBlocks);
+
             assertThat(packCounter, is(data.getCount()));
         }
     }
@@ -2853,7 +2855,7 @@ public class PackSearcherComparingParityBasedTest {
         PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
 
         // 探索
-        return searcher.callback(Stream::count);
+        return searcher.count();
     }
 
     private TaskResultHelper createTaskResultHelper(SizedBit sizedBit) {

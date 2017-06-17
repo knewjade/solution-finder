@@ -151,6 +151,33 @@ public class PackSearcher {
         return result;
     }
 
+    public Long count() throws InterruptedException, ExecutionException {
+        // 探索準備
+        MinoFieldMemento emptyMemento = MinoFieldMementoFactory.create();
+        ColumnField innerField = inOutPairFields.get(0).getInnerField();
+        PackingTask task = createPackingTask(sizedBit, emptyMemento, innerField);
+
+        // 探索
+        ForkJoinPool forkJoinPool = new ForkJoinPool();
+
+        ForkJoinTask<Long> submitTask = forkJoinPool.submit(() -> {
+            // Streamは終端操作を実行するまで実際には計算を行わない
+            // そのため、終端操作をPool内でしなければ、Pool外のスレッド場で動くため注意が必要
+            // (終端操作をしなかった場合、Pool内ではStream自体の作成をして終了する)
+
+            return task.compute().parallel().count();
+        });
+
+        // 結果を取得するまで待つ
+        Long result = submitTask.get();
+        assert result != null;
+
+        // 終了処理
+        forkJoinPool.shutdown();
+
+        return result;
+    }
+
     SizedBit getSizedBit() {
         return sizedBit;
     }

@@ -349,7 +349,7 @@ public class PathEntryPoint implements EntryPoint {
             }
         }
 
-        // ライン消去ありとなしに振り分ける
+        // ライン消去ありとなしに振り分ける // true: ライン消去あり, false: ライン消去なし
         LockedBuildUpListUpThreadLocal threadLocal = new LockedBuildUpListUpThreadLocal(sizedBit.getHeight());
         Map<Boolean, List<LinkInformation>> groupByDelete = resultPairs.stream()
                 .map(resultPair -> {
@@ -361,7 +361,7 @@ public class PathEntryPoint implements EntryPoint {
                             .orElse(Collections.emptyList());
                     return new LinkInformation(resultPair, operationWithKeys);
                 })
-                .collect(Collectors.groupingBy(LinkInformation::isDeletedLine));
+                .collect(Collectors.groupingBy(LinkInformation::containsDeletedLine));
 
         // それぞれで並び替える
         Comparator<LinkInformation> comparator = (o1, o2) -> {
@@ -408,7 +408,7 @@ public class PathEntryPoint implements EntryPoint {
             writer.write("<h2>ライン消去なし</h2>");
             writer.newLine();
 
-            for (LinkInformation information : groupByDelete.get(true)) {
+            for (LinkInformation information : groupByDelete.getOrDefault(false, Collections.emptyList())) {
                 String link = createALink(information, field, minoFactory, colorConverter, maxClearLine, isTetfuSplit);
                 writer.write(String.format("<div>%s</div>", link));
                 writer.newLine();
@@ -418,8 +418,8 @@ public class PathEntryPoint implements EntryPoint {
             writer.write("<h2>ライン消去あり</h2>");
             writer.newLine();
 
-            for (LinkInformation obj : groupByDelete.get(false)) {
-                String link = createALink(obj, field, minoFactory, colorConverter, maxClearLine, isTetfuSplit);
+            for (LinkInformation information : groupByDelete.getOrDefault(true, Collections.emptyList())) {
+                String link = createALink(information, field, minoFactory, colorConverter, maxClearLine, isTetfuSplit);
                 writer.write(String.format("<div>%s</div>", link));
                 writer.newLine();
             }
