@@ -4,6 +4,7 @@ import common.datastore.*;
 import core.action.reachable.Reachable;
 import core.field.Field;
 import core.field.FieldFactory;
+import core.field.FieldView;
 import core.field.KeyOperators;
 import core.mino.Mino;
 import core.mino.MinoFactory;
@@ -69,6 +70,7 @@ public class BuildUp {
 
             operations.add(new SimpleOperation(mino.getBlock(), mino.getRotate(), x, y));
 
+            field.putMino(mino, x, y);
             field.insertBlackLineWithKey(deleteKey);
         }
 

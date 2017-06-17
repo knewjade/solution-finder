@@ -5,10 +5,7 @@ import common.Stopwatch;
 import common.SyntaxException;
 import common.buildup.BuildUp;
 import common.buildup.BuildUpStream;
-import common.datastore.BlockField;
-import common.datastore.OperationWithKey;
-import common.datastore.Operations;
-import common.datastore.Pair;
+import common.datastore.*;
 import common.datastore.pieces.LongPieces;
 import common.pattern.PiecesGenerator;
 import common.tetfu.Tetfu;
@@ -36,6 +33,7 @@ import searcher.pack.separable_mino.SeparableMinoFactory;
 import searcher.pack.solutions.BasicSolutions;
 import searcher.pack.solutions.BasicSolutionsCalculator;
 import searcher.pack.task.*;
+import searcher.pack.task.Result;
 
 import java.io.*;
 import java.util.*;
@@ -435,7 +433,7 @@ public class PathEntryPoint implements EntryPoint {
 
     private String createALink(LinkInformation information, Field field, MinoFactory minoFactory, ColorConverter colorConverter, int maxClearLine, boolean isTetfuSplit) {
         if (isTetfuSplit)
-            return createALinkOrder(information, field, minoFactory, colorConverter);
+            return createALinkOrder(information, field, minoFactory, colorConverter, maxClearLine);
         return createALinkOnePage(information, field, minoFactory, colorConverter, maxClearLine);
     }
 
@@ -452,10 +450,8 @@ public class PathEntryPoint implements EntryPoint {
                     test.insertWhiteLineWithKey(key.getNeedDeletedKey());
                     blockField.merge(test, mino.getBlock());
                 })
-                .map(key -> {
-                    Mino mino = key.getMino();
-                    return mino.getBlock().getName() + "-" + mino.getRotate().name();
-                })
+                .map(OperationWithKey::getMino)
+                .map(mino -> mino.getBlock().getName() + "-" + mino.getRotate().name())
                 .collect(Collectors.joining(" "));
 
         String blocksName = operations.stream()
@@ -508,18 +504,18 @@ public class PathEntryPoint implements EntryPoint {
         }
     }
 
-    private String createALinkOrder(LinkInformation information, Field field, MinoFactory minoFactory, ColorConverter colorConverter) {
-        List<OperationWithKey> operations = information.getSample();
+    private String createALinkOrder(LinkInformation information, Field field, MinoFactory minoFactory, ColorConverter colorConverter, int maxClearLine) {
+        Operations operations = BuildUp.parseToOperations(field, information.getSample(), maxClearLine);
+        List<Operation> operationsList = operations.getOperations();
 
         // ブロック順に変換
-        List<Block> blockList = operations.stream()
-                .map(OperationWithKey::getMino)
-                .map(Mino::getBlock)
+        List<Block> blockList = operationsList.stream()
+                .map(Operation::getBlock)
                 .collect(Collectors.toList());
 
-        // そのパターンを表す名前 を生成
-        String linkText = blockList.stream()
-                .map(Block::getName)
+        // そのパターンを表す名前を生成
+        String linkText = operationsList.stream()
+                .map(operation -> operation.getBlock().getName() + "-" + operation.getRotate().name())
                 .collect(Collectors.joining(" "));
 
         // テト譜を作成
@@ -527,20 +523,18 @@ public class PathEntryPoint implements EntryPoint {
         ArrayList<TetfuElement> tetfuElements = new ArrayList<>();
 
         // 最初のelement
-        OperationWithKey firstKey = operations.get(0);
-        Mino mino1 = firstKey.getMino();
-        ColorType colorType1 = colorConverter.parseToColorType(mino1.getBlock());
+        Operation firstKey = operationsList.get(0);
+        ColorType colorType1 = colorConverter.parseToColorType(firstKey.getBlock());
         ColoredField coloredField = createInitColoredField(field);
-        TetfuElement firstElement = new TetfuElement(coloredField, colorType1, mino1.getRotate(), firstKey.getX(), firstKey.getY(), quiz);
+        TetfuElement firstElement = new TetfuElement(coloredField, colorType1, firstKey.getRotate(), firstKey.getX(), firstKey.getY(), quiz);
         tetfuElements.add(firstElement);
 
         // 2番目以降のelement
-        if (1 < operations.size()) {
-            operations.subList(1, operations.size()).stream()
-                    .map(operationWithKey -> {
-                        Mino mino = operationWithKey.getMino();
-                        ColorType colorType = colorConverter.parseToColorType(mino.getBlock());
-                        return new TetfuElement(colorType, mino.getRotate(), operationWithKey.getX(), operationWithKey.getY());
+        if (1 < operationsList.size()) {
+            operationsList.subList(1, operationsList.size()).stream()
+                    .map(operation -> {
+                        ColorType colorType = colorConverter.parseToColorType(operation.getBlock());
+                        return new TetfuElement(colorType, operation.getRotate(), operation.getX(), operation.getY(), quiz);
                     })
                     .forEach(tetfuElements::add);
         }
