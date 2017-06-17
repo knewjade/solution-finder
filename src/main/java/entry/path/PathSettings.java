@@ -19,7 +19,7 @@ public class PathSettings {
     private String logFilePath = DEFAULT_LOG_FILE_PATH;
     private List<String> patterns = new ArrayList<>();
     private String outputBaseFilePath = DEFAULT_OUTPUT_BASE_FILE_PATH;
-    private int maxLayer = 2;
+    private PathLayer pathLayer = PathLayer.Minimal;
     private OutputType outputType = OutputType.Link;
 
     // ********* Getter ************
@@ -51,8 +51,8 @@ public class PathSettings {
         return outputBaseFilePath;
     }
 
-    int getMaxLayer() {
-        return maxLayer;
+    PathLayer getPathLayer() {
+        return pathLayer;
     }
 
     OutputType getOutputType() {
@@ -93,8 +93,8 @@ public class PathSettings {
         this.outputBaseFilePath = path;
     }
 
-    void setMaxLayer(int maxLayer) {
-        this.maxLayer = maxLayer;
+    void setPathLayer(PathLayer pathLayer) {
+        this.pathLayer = pathLayer;
     }
 
     void setOutputType(String type) {

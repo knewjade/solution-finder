@@ -39,7 +39,7 @@ public class PathSettingParserTest {
             assertThat(settings.isUsingHold(), is(true));
             assertField(settings.getField(), expectedField);
             assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
-            assertThat(settings.getMaxLayer(), is(2));
+            assertThat(settings.getPathLayer(), is(2));
             assertThat(settings.getOutputType(), is(OutputType.Link));
         });
     }
@@ -68,7 +68,7 @@ public class PathSettingParserTest {
             assertThat(settings.isUsingHold(), is(true));
             assertField(settings.getField(), expectedField);
             assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
-            assertThat(settings.getMaxLayer(), is(2));
+            assertThat(settings.getPathLayer(), is(2));
             assertThat(settings.getOutputType(), is(OutputType.Link));
         });
     }
@@ -107,7 +107,7 @@ public class PathSettingParserTest {
             assertThat(settings.isUsingHold(), is(false));
             assertField(settings.getField(), expectedField);
             assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
-            assertThat(settings.getMaxLayer(), is(1));
+            assertThat(settings.getPathLayer(), is(1));
             assertThat(settings.getOutputType(), is(OutputType.CSV));
         });
     }
@@ -140,7 +140,7 @@ public class PathSettingParserTest {
             assertThat(settings.isUsingHold(), is(false));
             assertField(settings.getField(), expectedField);
             assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
-            assertThat(settings.getMaxLayer(), is(2));
+            assertThat(settings.getPathLayer(), is(2));
             assertThat(settings.getOutputType(), is(OutputType.Link));
         });
     }
@@ -173,7 +173,7 @@ public class PathSettingParserTest {
             assertThat(settings.isUsingHold(), is(false));
             assertField(settings.getField(), expectedField);
             assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
-            assertThat(settings.getMaxLayer(), is(2));
+            assertThat(settings.getPathLayer(), is(2));
             assertThat(settings.getOutputType(), is(OutputType.Link));
         });
     }
@@ -205,7 +205,7 @@ public class PathSettingParserTest {
             assertThat(settings.isUsingHold(), is(true));
             assertField(settings.getField(), expectedField);
             assertThat(settings.getOutputBaseFilePath(), is("output/result_dummy.txt"));
-            assertThat(settings.getMaxLayer(), is(2));
+            assertThat(settings.getPathLayer(), is(2));
             assertThat(settings.getOutputType(), is(OutputType.Link));
         });
     }
@@ -232,7 +232,7 @@ public class PathSettingParserTest {
             assertThat(settings.isUsingHold(), is(true));
             assertField(settings.getField(), expectedField);
             assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
-            assertThat(settings.getMaxLayer(), is(2));
+            assertThat(settings.getPathLayer(), is(2));
             assertThat(settings.getOutputType(), is(OutputType.Link));
         });
     }
@@ -261,7 +261,7 @@ public class PathSettingParserTest {
             assertThat(settings.isUsingHold(), is(true));
             assertField(settings.getField(), expectedField);
             assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
-            assertThat(settings.getMaxLayer(), is(2));
+            assertThat(settings.getPathLayer(), is(2));
             assertThat(settings.getOutputType(), is(OutputType.Link));
         });
     }

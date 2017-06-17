@@ -14,7 +14,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 
 public class PercentEntryPointMainTest {
-    private String assertPercent(List<String> fields, String pattern, String expected) throws Exception {
+    private String getPercentLog(List<String> fields, String pattern, boolean isUsingHold) throws Exception {
         File fieldTempFile = createTempTextFile("field", String.join(System.lineSeparator(), fields));
         String fieldTempFilePath = fieldTempFile.getPath();
 
@@ -25,13 +25,11 @@ public class PercentEntryPointMainTest {
         // ログの作成
         File logTempFile = createTempTextFile("output");
 
-        String command = String.format("percent -fp %s -pp %s -l %s", fieldTempFilePath, patternsTempFilePath, logTempFile);
+        String command = String.format("percent -fp %s -pp %s -l %s -H %s", fieldTempFilePath, patternsTempFilePath, logTempFile, isUsingHold);
         EntryPointMain.main(command.split(" "));
 
         // 結果の取得
         List<String> lines = Files.readLines(logTempFile, Charsets.UTF_8);
-        System.out.println();
-
         return String.join(System.lineSeparator(), lines);
     }
 
@@ -57,7 +55,7 @@ public class PercentEntryPointMainTest {
         );
         String pattern = "*p7";
         String expected = "success = 99.52% (5016/5040)";
-        String join = assertPercent(fields, pattern, expected);
+        String join = getPercentLog(fields, pattern, true);
         assertThat(join, containsString(expected));
     }
 
@@ -72,7 +70,7 @@ public class PercentEntryPointMainTest {
         );
         String pattern = "*p7";
         String expected = "success = 99.96% (5038/5040)";
-        String join = assertPercent(fields, pattern, expected);
+        String join = getPercentLog(fields, pattern, true);
         assertThat(join, containsString(expected));
     }
 
@@ -87,7 +85,7 @@ public class PercentEntryPointMainTest {
         );
         String pattern = "*p7";
         String expected = "success = 99.96% (5038/5040)";
-        String join = assertPercent(fields, pattern, expected);
+        String join = getPercentLog(fields, pattern, true);
         assertThat(join, containsString(expected));
         assertThat(join, containsString("[L, S, J, T, Z, O, I]"));
         assertThat(join, containsString("[S, L, J, T, Z, O, I]"));
@@ -104,7 +102,7 @@ public class PercentEntryPointMainTest {
         );
         String pattern = "T,*p7";
         String expected = "success = 100.00% (5040/5040)";
-        String join = assertPercent(fields, pattern, expected);
+        String join = getPercentLog(fields, pattern, true);
         assertThat(join, containsString(expected));
     }
 
@@ -119,7 +117,7 @@ public class PercentEntryPointMainTest {
         );
         String pattern = "S,[TZ]p2,*p7";
         String expected = "success = 100.00% (10080/10080)";
-        String join = assertPercent(fields, pattern, expected);
+        String join = getPercentLog(fields, pattern, true);
         assertThat(join, containsString(expected));
     }
 
@@ -134,7 +132,7 @@ public class PercentEntryPointMainTest {
         );
         String pattern = "[TZ]p2,*p7";
         String expected = "success = 100.00% (10080/10080)";
-        String join = assertPercent(fields, pattern, expected);
+        String join = getPercentLog(fields, pattern, true);
         assertThat(join, containsString(expected));
     }
 
@@ -149,7 +147,7 @@ public class PercentEntryPointMainTest {
         );
         String pattern = "*p7";
         String expected = "success = 84.96% (4282/5040)";
-        String join = assertPercent(fields, pattern, expected);
+        String join = getPercentLog(fields, pattern, true);
         assertThat(join, containsString(expected));
         assertThat(join, containsString("T -> 99.9 %"));
         assertThat(join, containsString("[T, J, L, I, O, S, Z]"));
@@ -166,7 +164,7 @@ public class PercentEntryPointMainTest {
         );
         String pattern = "*p7";
         String expected = "success = 89.76% (4524/5040)";
-        String join = assertPercent(fields, pattern, expected);
+        String join = getPercentLog(fields, pattern, true);
         assertThat(join, containsString(expected));
     }
 
@@ -181,8 +179,39 @@ public class PercentEntryPointMainTest {
         );
         String pattern = "*p7";
         String expected = "success = 91.98% (4636/5040)";
-        String join = assertPercent(fields, pattern, expected);
+        String join = getPercentLog(fields, pattern, true);
         assertThat(join, containsString(expected));
         assertThat(join, containsString("T -> 100.0 %"));
+    }
+
+    @Test
+    public void test10WithHold() throws Exception {
+        List<String> fields = Arrays.asList(
+                "4",
+                "XXXXXXXXX_",
+                "XXXXXXXXX_",
+                "__XXXXXXX_",
+                "__XXXXXXX_"
+        );
+        String pattern = "[IO]p2";
+        String expected = "success = 100.00% (2/2)";
+        String join = getPercentLog(fields, pattern, true);
+        assertThat(join, containsString(expected));
+    }
+
+    @Test
+    public void test10WithoutHold() throws Exception {
+        List<String> fields = Arrays.asList(
+                "4",
+                "XXXXXXXXX_",
+                "XXXXXXXXX_",
+                "__XXXXXXX_",
+                "__XXXXXXX_"
+        );
+        String pattern = "[IO]p2";
+        String expected = "success = 50.00% (1/2)";
+        String join = getPercentLog(fields, pattern, false);
+        assertThat(join, containsString(expected));
+        assertThat(join, containsString("[O, I]"));
     }
 }

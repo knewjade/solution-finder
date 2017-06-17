@@ -28,7 +28,7 @@ public class Main2 {
         Operations operations = createOperations("T,R,4,1", "S,0,6,1", "Z,0,5,0");
         MinoFactory minoFactory = new MinoFactory();
         int height = 4;
-        List<OperationWithKey> objs = BuildUp.createOperationWithKeys(fieldOrigin, operations, minoFactory, height);
+        List<OperationWithKey> objs = BuildUp.parseToOperationWithKeys(fieldOrigin, operations, minoFactory, height);
 
         System.out.println("---");
         for (OperationWithKey obj : objs) {

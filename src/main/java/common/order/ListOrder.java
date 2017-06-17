@@ -5,15 +5,15 @@ import core.mino.Block;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListPieces {
+public class ListOrder {
     private final List<Block> blocks;
     private int stockIndex;
 
-    ListPieces() {
+    ListOrder() {
         this(new ArrayList<>(), 0);
     }
 
-    private ListPieces(List<Block> blocks, int stockIndex) {
+    private ListOrder(List<Block> blocks, int stockIndex) {
         this.blocks = blocks;
         this.stockIndex = stockIndex;
     }
@@ -35,8 +35,8 @@ public class ListPieces {
         return blocks;
     }
 
-    ListPieces freeze() {
-        return new ListPieces(new ArrayList<>(blocks), stockIndex);
+    ListOrder freeze() {
+        return new ListOrder(new ArrayList<>(blocks), stockIndex);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class ListPieces {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ListPieces that = (ListPieces) o;
+        ListOrder that = (ListOrder) o;
 
         if (stockIndex != that.stockIndex) return false;
         return blocks.equals(that.blocks);
@@ -59,7 +59,7 @@ public class ListPieces {
 
     @Override
     public String toString() {
-        return "ListPieces{" +
+        return "ListOrder{" +
                 "blocks=" + this.blocks +
                 '}';
     }

@@ -1,7 +1,7 @@
 package entry.searching_pieces;
 
 import common.datastore.pieces.Pieces;
-import common.order.ListPieces;
+import common.order.ListOrder;
 import common.order.OrderLookup;
 import common.pattern.PiecesGenerator;
 import common.tree.VisitedTree;
@@ -45,9 +45,9 @@ public class HoldBreakEnumeratePieces implements EnumeratePiecesCore {
             List<Block> blocks = pieces.getBlocks();
 
             // ホールドありパターンから複数のホールドなしに分解
-            List<ListPieces> forward = OrderLookup.forward(blocks, combinationPopCount);
+            List<ListOrder> forward = OrderLookup.forward(blocks, combinationPopCount);
 
-            for (ListPieces piecesWithNoHold : forward) {
+            for (ListOrder piecesWithNoHold : forward) {
                 List<Block> blocksWithNoHold = piecesWithNoHold.getBlocks();
                 if (isOverPieces)
                     blocksWithNoHold = blocksWithNoHold.subList(0, maxDepth);

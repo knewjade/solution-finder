@@ -1,9 +1,6 @@
 package common.buildup;
 
-import common.datastore.Operation;
-import common.datastore.OperationWithKey;
-import common.datastore.Operations;
-import common.datastore.SimpleOperationWithKey;
+import common.datastore.*;
 import core.action.reachable.Reachable;
 import core.field.Field;
 import core.field.FieldFactory;
@@ -14,11 +11,12 @@ import core.mino.MinoFactory;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Stream;
 
 // TODO: rewrite 移動したり、クラス化したり
 // TODO: unittest
 public class BuildUp {
-    public static List<OperationWithKey> createOperationWithKeys(Field fieldOrigin, Operations operations, MinoFactory minoFactory, int height) {
+    public static List<OperationWithKey> parseToOperationWithKeys(Field fieldOrigin, Operations operations, MinoFactory minoFactory, int height) {
         ArrayList<OperationWithKey> keys = new ArrayList<>();
         Field field = fieldOrigin.freeze(height);
         for (Operation op : operations.getOperations()) {
@@ -51,6 +49,30 @@ public class BuildUp {
             field.insertBlackLineWithKey(deleteKey);
         }
         return keys;
+    }
+
+    // List<Operation>に変換する。正しく組み立てられるかはチェックしない
+    public static Operations parseToOperations(Field fieldOrigin, List<OperationWithKey> operationWithKeys, int height) {
+        ArrayList<Operation> operations = new ArrayList<>();
+
+        Field field = fieldOrigin.freeze(height);
+        for (OperationWithKey operationWithKey : operationWithKeys) {
+            long deleteKey = field.clearLineReturnKey();
+
+            // すでに下のラインが消えているときは、その分スライドさせる
+            int originalY = operationWithKey.getY();
+            int deletedLines = Long.bitCount(KeyOperators.getMaskForKeyBelowY(originalY) & deleteKey);
+
+            Mino mino = operationWithKey.getMino();
+            int x = operationWithKey.getX();
+            int y = originalY - deletedLines;
+
+            operations.add(new SimpleOperation(mino.getBlock(), mino.getRotate(), x, y));
+
+            field.insertBlackLineWithKey(deleteKey);
+        }
+
+        return new Operations(operations);
     }
 
     // 指定した手順で組み立てられるか確認

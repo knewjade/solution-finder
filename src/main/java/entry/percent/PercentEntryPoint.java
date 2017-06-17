@@ -63,6 +63,7 @@ public class PercentEntryPoint implements EntryPoint {
         // ========================================
         output("# Initialize / User-defined");
         output("Max clear lines: " + maxClearLine);
+        output("Using hold: " + (settings.isUsingHold() ? "use" : "avoid"));
         output("Searching patterns:");
         List<String> patterns = settings.getPatterns();
         if (patterns.isEmpty())

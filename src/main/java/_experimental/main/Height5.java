@@ -1,6 +1,5 @@
 package _experimental.main;
 
-import common.OperationWithKeyHelper;
 import common.Stopwatch;
 import common.datastore.BlockField;
 import common.tetfu.Tetfu;
@@ -11,7 +10,6 @@ import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
 import concurrent.LockedReachableThreadLocal;
 import core.column_field.ColumnField;
-import core.column_field.ColumnFieldView;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
@@ -24,7 +22,6 @@ import searcher.pack.InOutPairField;
 import searcher.pack.RecursiveMinoField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
-import searcher.pack.memento.MinoFieldMemento;
 import searcher.pack.memento.SRSValidSolutionFilter;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.separable_mino.SeparableMino;
@@ -33,17 +30,12 @@ import searcher.pack.solutions.BasicSolutions;
 import searcher.pack.solutions.BasicSolutionsCalculator;
 import searcher.pack.task.*;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class Height5 {
     private static int counter = 0;

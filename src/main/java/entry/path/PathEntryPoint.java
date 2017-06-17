@@ -1,12 +1,15 @@
 package entry.path;
 
+import common.OperationHelper;
 import common.Stopwatch;
 import common.SyntaxException;
-import common.buildup.BuildUpListUp;
+import common.buildup.BuildUp;
+import common.buildup.BuildUpStream;
 import common.datastore.BlockField;
 import common.datastore.OperationWithKey;
+import common.datastore.Operations;
 import common.datastore.Pair;
-import common.datastore.pieces.NumberPieces;
+import common.datastore.pieces.LongPieces;
 import common.pattern.PiecesGenerator;
 import common.tetfu.Tetfu;
 import common.tetfu.TetfuElement;
@@ -36,7 +39,6 @@ import searcher.pack.separable_mino.SeparableMinoFactory;
 import searcher.pack.solutions.BasicSolutions;
 import searcher.pack.solutions.BasicSolutionsCalculator;
 import searcher.pack.task.*;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.*;
 import java.util.*;
@@ -90,6 +92,7 @@ public class PathEntryPoint implements EntryPoint {
         // ========================================
         output("# Initialize / User-defined");
         output("Max clear lines: " + maxClearLine);
+        output("Using hold: " + (settings.isUsingHold() ? "use" : "avoid"));
         output("Searching patterns:");
         List<String> patterns = settings.getPatterns();
         if (patterns.isEmpty())
@@ -216,15 +219,15 @@ public class PathEntryPoint implements EntryPoint {
         PathCore pathCore = new PathCore(patterns, searcher, maxDepth, isUsingHold);
 
         // 絞り込みを行う
-        int maxLayer = settings.getMaxLayer();
+        PathLayer pathLayer = settings.getPathLayer();
 
-        if (1 <= maxLayer) {
-            output("     ... Layer 1: unique");
+        if (pathLayer.contains(PathLayer.Unique)) {
+            output("     ... Layer: unique");
             pathCore.runUnique(field, sizedBit);
         }
 
-        if (2 <= maxLayer) {
-            output("     ... Layer 2: minimal");
+        if (pathLayer.contains(PathLayer.Minimal)) {
+            output("     ... Layer: minimal");
             pathCore.runMinimal();
         }
 
@@ -241,15 +244,15 @@ public class PathEntryPoint implements EntryPoint {
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         // 同一ミノ配置を取り除いたパスの出力
-        if (1 <= maxLayer) {
-            List<Pair<Result, HashSet<NumberPieces>>> unique = pathCore.getUnique();
+        if (pathLayer.contains(PathLayer.Unique)) {
+            List<Pair<Result, HashSet<LongPieces>>> unique = pathCore.getUnique();
             output("Found path [unique] = " + unique.size());
             outputOperations(field, maxClearLine, outputUniqueFile, minoFactory, reachable, unique, sizedBit);
         }
 
         // 少ないパターンでカバーできるパスを出力
-        if (2 <= maxLayer) {
-            List<Pair<Result, HashSet<NumberPieces>>> minimal = pathCore.getMinimal();
+        if (pathLayer.contains(PathLayer.Minimal)) {
+            List<Pair<Result, HashSet<LongPieces>>> minimal = pathCore.getMinimal();
             output("Found path [minimal] = " + minimal.size());
             outputOperations(field, maxClearLine, outputMinimalFile, minoFactory, reachable, minimal, sizedBit);
         }
@@ -312,50 +315,66 @@ public class PathEntryPoint implements EntryPoint {
         }
     }
 
-    private void outputOperations(Field field, int maxClearLine, File file, MinoFactory minoFactory, Reachable reachable, List<Pair<Result, HashSet<NumberPieces>>> operations, SizedBit sizedBit) {
+    private void outputOperations(Field field, int maxClearLine, File file, MinoFactory minoFactory, Reachable reachable, List<Pair<Result, HashSet<LongPieces>>> operations, SizedBit sizedBit) {
         OutputType outputType = settings.getOutputType();
         switch (outputType) {
             case CSV:
-                outputOperationsToCSV(file, operations);
+                outputOperationsToCSV(field, file, operations, sizedBit);
                 break;
             case Link:
-                outputOperationsToSimpleHTML(field, maxClearLine, file, minoFactory, reachable, operations, sizedBit);
+                outputOperationsToSimpleHTML(field, file, minoFactory, operations, sizedBit, reachable);
                 break;
             default:
                 throw new UnsupportedOperationException("Unsupport output type: " + outputType);
         }
     }
 
-    private void outputOperationsToCSV(File file, List<Pair<Result, HashSet<NumberPieces>>> operations) {
-        throw new NotImplementedException();
-//        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false), CHARSET))) {
-//            for (Operations allOperation : operations) {
-//                String operationLine = OperationHelper.parseToString(allOperation);
-//                writer.write(operationLine);
-//                writer.newLine();
-//            }
-//            writer.flush();
-//        } catch (Exception e) {
-//            throw new IllegalStateException("Failed to output file", e);
-//        }
+    private void outputOperationsToCSV(Field field, File file, List<Pair<Result, HashSet<LongPieces>>> resultPairs, SizedBit sizedBit) {
+        LockedBuildUpListUpThreadLocal threadLocal = new LockedBuildUpListUpThreadLocal(sizedBit.getHeight());
+        List<List<OperationWithKey>> samples = resultPairs.parallelStream()
+                .map(resultPair -> {
+                    Result result = resultPair.getKey();
+                    LinkedList<OperationWithKey> operations = result.getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toCollection(LinkedList::new));
+
+                    BuildUpStream buildUpStream = threadLocal.get();
+
+                    return buildUpStream.existsValidBuildPatternDirectly(field, operations)
+                            .findFirst()
+                            .orElse(Collections.emptyList());
+                })
+                .collect(Collectors.toList());
+
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false), CHARSET))) {
+            for (List<OperationWithKey> operationWithKeys : samples) {
+                Operations operations = BuildUp.parseToOperations(field, operationWithKeys, sizedBit.getHeight());
+                String operationLine = OperationHelper.parseToString(operations);
+                writer.write(operationLine);
+                writer.newLine();
+            }
+            writer.flush();
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to output file", e);
+        }
     }
 
     private class OperationsObj {
         private final List<OperationWithKey> sample;
-        private final Pair<Result, HashSet<NumberPieces>> pair;
+        private final Pair<Result, HashSet<LongPieces>> pair;
 
-        private OperationsObj(Pair<Result, HashSet<NumberPieces>> pair, Field field, BuildUpListUp buildUpListUp, SizedBit sizedBit) {
+        private OperationsObj(Pair<Result, HashSet<LongPieces>> pair, Field field, BuildUpStream buildUpStream, SizedBit sizedBit) {
             this.pair = pair;
             LinkedList<OperationWithKey> origin = pair.getKey().getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toCollection(LinkedList::new));
 
-            Optional<List<OperationWithKey>> first = buildUpListUp
+            Optional<List<OperationWithKey>> first = buildUpStream
                     .existsValidBuildPatternDirectly(field, origin)
                     .findFirst();
             this.sample = first.orElse(Collections.emptyList());
         }
     }
 
-    private void outputOperationsToSimpleHTML(Field field, int maxClearLine, File file, MinoFactory minoFactory, Reachable reachable, List<Pair<Result, HashSet<NumberPieces>>> operations, SizedBit sizedBit) {
+    private void outputOperationsToSimpleHTML(Field field, File file, MinoFactory minoFactory, List<Pair<Result, HashSet<LongPieces>>> resultPairs, SizedBit sizedBit, Reachable reachable) {
+        int maxClearLine = sizedBit.getHeight();
+
         // テト譜用のフィールド作成
         ColoredField initField = ColoredFieldFactory.createField(24);
         for (int y = 0; y < maxClearLine; y++) {
@@ -366,14 +385,14 @@ public class PathEntryPoint implements EntryPoint {
         }
 
         // ライン消去ありとなしに振り分ける
-        BuildUpListUp buildUpListUp = new BuildUpListUp(reachable, maxClearLine);
+        BuildUpStream buildUpStream = new BuildUpStream(reachable, maxClearLine);
         List<OperationsObj> noDeletedOperations = new ArrayList<>();
         List<OperationsObj> deletedOperations = new ArrayList<>();
 
-        for (Pair<Result, HashSet<NumberPieces>> operation : operations) {
-            boolean isNoDeleted = operation.getKey().getMemento().getRawOperationsStream()
+        for (Pair<Result, HashSet<LongPieces>> resultPair : resultPairs) {
+            boolean isNoDeleted = resultPair.getKey().getMemento().getRawOperationsStream()
                     .allMatch(operationWithKey -> operationWithKey.getNeedDeletedKey() == 0L);
-            OperationsObj operationsObj = new OperationsObj(operation, field, buildUpListUp, sizedBit);
+            OperationsObj operationsObj = new OperationsObj(resultPair, field, buildUpStream, sizedBit);
             if (isNoDeleted)
                 noDeletedOperations.add(operationsObj);
             else
@@ -417,7 +436,7 @@ public class PathEntryPoint implements EntryPoint {
             writer.newLine();
 
             // パターン数の出力
-            writer.write(String.format("<div>%dパターン</div>", operations.size()));
+            writer.write(String.format("<div>%dパターン</div>", resultPairs.size()));
             writer.newLine();
 
             // 手順の出力 (ライン消去なし)
@@ -478,9 +497,9 @@ public class PathEntryPoint implements EntryPoint {
         Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
         String encode = tetfu.encode(Collections.singletonList(tetfuElement));
 
-        HashSet<NumberPieces> pieces = obj.pair.getValue();
+        HashSet<LongPieces> pieces = obj.pair.getValue();
         String validOrders = pieces.stream()
-                .map(NumberPieces::getBlocks)
+                .map(LongPieces::getBlocks)
                 .map(blocks -> blocks.stream().map(Block::getName).collect(Collectors.joining()))
                 .collect(Collectors.joining(", "));
 

@@ -1,6 +1,6 @@
 package common.pattern;
 
-import common.datastore.pieces.NumberPieces;
+import common.datastore.pieces.LongPieces;
 import common.datastore.pieces.Pieces;
 import common.iterable.PermutationIterable;
 import core.mino.Block;
@@ -48,7 +48,7 @@ class PiecesStreamBuilder {
     Stream<Pieces> stream() {
         this.builder = Stream.builder();
         if (!combinations.isEmpty())
-            enumerate(new NumberPieces(), 0);
+            enumerate(new LongPieces(), 0);
         return builder.build();
     }
 

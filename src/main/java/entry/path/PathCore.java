@@ -1,14 +1,15 @@
 package entry.path;
 
-import common.buildup.BuildUpListUp;
+import common.buildup.BuildUpStream;
 import common.datastore.OperationWithKey;
 import common.datastore.Pair;
-import common.datastore.pieces.NumberPieces;
+import common.datastore.pieces.LongPieces;
 import common.datastore.pieces.Pieces;
-import common.order.ListPieces;
+import common.order.ListOrder;
 import common.order.OrderLookup;
 import common.pattern.PiecesGenerator;
 import core.field.Field;
+import core.mino.Block;
 import core.mino.Mino;
 import searcher.pack.SizedBit;
 import searcher.pack.task.PackSearcher;
@@ -19,14 +20,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 class PathCore {
     private final List<Result> candidates;
-    private final HashSet<NumberPieces> validPieces;
+    private final HashSet<LongPieces> validPieces;
 
-    private List<Pair<Result, HashSet<NumberPieces>>> unique = null;
-    private LinkedList<Pair<Result, HashSet<NumberPieces>>> minimal = null;
+    private List<Pair<Result, HashSet<LongPieces>>> unique = null;
+    private LinkedList<Pair<Result, HashSet<LongPieces>>> minimal = null;
 
     PathCore(List<String> patterns, PackSearcher searcher, int maxDepth, boolean isUsingHold) throws ExecutionException, InterruptedException {
         this.candidates = searcher.collect(Collectors.toList());
@@ -35,22 +37,31 @@ class PathCore {
         this.validPieces = getCollect(patterns, maxDepth, isUsingHold);
     }
 
-    private HashSet<NumberPieces> getCollect(List<String> patterns, int maxDepth, boolean isUsingHold) {
+    private HashSet<LongPieces> getCollect(List<String> patterns, int maxDepth, boolean isUsingHold) {
+        PiecesGenerator piecesGenerator = new PiecesGenerator(patterns);
+
+        // 必要以上にミノを使っている場合はリストを削減する
+        Function<List<Block>, List<Block>> reduceBlocks = Function.identity();
+        if (maxDepth < piecesGenerator.getDepth())
+            reduceBlocks = blocks -> blocks.subList(0, maxDepth);
+
         if (isUsingHold) {
-            return new PiecesGenerator(patterns).stream()
+            return piecesGenerator.stream()
                     .parallel()
                     .map(Pieces::getBlocks)
                     .flatMap(blocks -> OrderLookup.forward(blocks, maxDepth).stream())
                     .collect(Collectors.toCollection(HashSet::new))
                     .parallelStream()
-                    .map(ListPieces::getBlocks)
-                    .map(NumberPieces::new)
+                    .map(ListOrder::getBlocks)
+                    .map(reduceBlocks)
+                    .map(LongPieces::new)
                     .collect(Collectors.toCollection(HashSet::new));
         } else {
-            return new PiecesGenerator(patterns).stream()
+            return piecesGenerator.stream()
                     .parallel()
                     .map(Pieces::getBlocks)
-                    .map(NumberPieces::new)
+                    .map(reduceBlocks)
+                    .map(LongPieces::new)
                     .collect(Collectors.toCollection(HashSet::new));
         }
     }
@@ -62,14 +73,14 @@ class PathCore {
                 .map(result -> {
                     LinkedList<OperationWithKey> operations = result.getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toCollection(LinkedList::new));
 
-                    BuildUpListUp buildUpListUp = threadLocal.get();
-                    HashSet<NumberPieces> pieces = buildUpListUp.existsValidBuildPatternDirectly(field, operations)
+                    BuildUpStream buildUpStream = threadLocal.get();
+                    HashSet<LongPieces> pieces = buildUpStream.existsValidBuildPatternDirectly(field, operations)
                             .map(operationWithKeys -> operationWithKeys.stream()
                                     .map(OperationWithKey::getMino)
                                     .map(Mino::getBlock)
                                     .collect(Collectors.toList())
                             )
-                            .map(NumberPieces::new)
+                            .map(LongPieces::new)
                             .filter(validPieces::contains)
                             .collect(Collectors.toCollection(HashSet::new));
                     return new Pair<>(result, pieces);
@@ -80,20 +91,20 @@ class PathCore {
 
     public void runMinimal() {
         // 他のパターンではカバーできないものだけを列挙する
-        LinkedList<Pair<Result, HashSet<NumberPieces>>> minimal = new LinkedList<>();
-        for (Pair<Result, HashSet<NumberPieces>> pair : unique) {
-            HashSet<NumberPieces> canBuildBlocks = pair.getValue();
+        LinkedList<Pair<Result, HashSet<LongPieces>>> minimal = new LinkedList<>();
+        for (Pair<Result, HashSet<LongPieces>> pair : unique) {
+            HashSet<LongPieces> canBuildBlocks = pair.getValue();
             boolean isSetNeed = true;
-            LinkedList<Pair<Result, HashSet<NumberPieces>>> nextMasters = new LinkedList<>();
+            LinkedList<Pair<Result, HashSet<LongPieces>>> nextMasters = new LinkedList<>();
 
             // すでに登録済みのパターンでカバーできるか確認
             while (!minimal.isEmpty()) {
-                Pair<Result, HashSet<NumberPieces>> targetPair = minimal.pollFirst();
-                Set<NumberPieces> registeredBlocks = targetPair.getValue();
+                Pair<Result, HashSet<LongPieces>> targetPair = minimal.pollFirst();
+                Set<LongPieces> registeredBlocks = targetPair.getValue();
 
                 if (registeredBlocks.size() < canBuildBlocks.size()) {
                     // 新しいパターンの方が多く対応できる  // 新パターンが残る
-                    HashSet<NumberPieces> newTarget = new HashSet<>(registeredBlocks);
+                    HashSet<LongPieces> newTarget = new HashSet<>(registeredBlocks);
                     newTarget.removeAll(canBuildBlocks);
 
                     // 新パターンでも対応できないパターンがあるときは残す
@@ -101,7 +112,7 @@ class PathCore {
                         nextMasters.add(targetPair);
                 } else if (canBuildBlocks.size() < registeredBlocks.size()) {
                     // 登録済みパターンの方が多く対応できる
-                    HashSet<NumberPieces> newSet = new HashSet<>(canBuildBlocks);
+                    HashSet<LongPieces> newSet = new HashSet<>(canBuildBlocks);
                     newSet.removeAll(registeredBlocks);
 
                     // 登録済みパターンを残す
@@ -116,7 +127,7 @@ class PathCore {
                     }
                 } else {
                     // 新パターンと登録済みパターンが対応できる数は同じ
-                    HashSet<NumberPieces> newSet = new HashSet<>(canBuildBlocks);
+                    HashSet<LongPieces> newSet = new HashSet<>(canBuildBlocks);
                     newSet.retainAll(registeredBlocks);
 
                     // 登録済みパターンを残す
@@ -142,11 +153,11 @@ class PathCore {
         this.minimal = minimal;
     }
 
-    List<Pair<Result, HashSet<NumberPieces>>> getUnique() {
+    List<Pair<Result, HashSet<LongPieces>>> getUnique() {
         return unique;
     }
 
-    List<Pair<Result, HashSet<NumberPieces>>> getMinimal() {
+    List<Pair<Result, HashSet<LongPieces>>> getMinimal() {
         return minimal;
     }
 }

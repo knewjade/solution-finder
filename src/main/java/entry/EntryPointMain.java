@@ -57,16 +57,6 @@ public class EntryPointMain {
         }
     }
 
-    private static EntryPoint getPathEntryPoint(List<String> commands) throws ParseException, IOException {
-        PathSettingParser settingParser = new PathSettingParser(commands);
-        Optional<PathSettings> settings = settingParser.parse();
-
-        if (!settings.isPresent())
-            System.exit(0);
-
-        return new PathEntryPoint(settings.get());
-    }
-
     private static EntryPoint getPercentEntryPoint(List<String> commands) throws ParseException, IOException {
         PercentSettingParser settingParser = new PercentSettingParser(commands);
         Optional<PercentSettings> settings = settingParser.parse();
@@ -75,6 +65,16 @@ public class EntryPointMain {
             System.exit(0);
 
         return new PercentEntryPoint(settings.get());
+    }
+
+    private static EntryPoint getPathEntryPoint(List<String> commands) throws ParseException, IOException {
+        PathSettingParser settingParser = new PathSettingParser(commands);
+        Optional<PathSettings> settings = settingParser.parse();
+
+        if (!settings.isPresent())
+            System.exit(0);
+
+        return new PathEntryPoint(settings.get());
     }
 
     private static EntryPoint getUtilEntryPoint(List<String> commands) throws ParseException {

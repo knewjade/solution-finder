@@ -9,17 +9,17 @@ import java.util.List;
 // TODO: ListPiecesをlong実装にする
 public class OrderLookup {
     // 他のミノ列からホールドを利用して指定したミノ列にできるとき、その他のミノ列をすべて逆算して列挙
-    public static ArrayList<ListPieces> reverse(List<Block> blocks, int maxDepth) {
-        ArrayList<ListPieces> candidates = new ArrayList<>();
-        candidates.add(new ListPieces());
+    public static ArrayList<ListOrder> reverse(List<Block> blocks, int maxDepth) {
+        ArrayList<ListOrder> candidates = new ArrayList<>();
+        candidates.add(new ListOrder());
 
         for (int depth = 0; depth < maxDepth; depth++) {
             Block block = depth < blocks.size() ? blocks.get(depth) : null;
             int size = candidates.size();
             if (depth < maxDepth - 1) {
                 for (int index = 0; index < size; index++) {
-                    ListPieces pieces = candidates.get(index);
-                    ListPieces freeze = pieces.freeze();
+                    ListOrder pieces = candidates.get(index);
+                    ListOrder freeze = pieces.freeze();
 
                     pieces.addLast(block);
                     freeze.stock(block);
@@ -27,7 +27,7 @@ public class OrderLookup {
                     candidates.add(freeze);
                 }
             } else {
-                for (ListPieces pieces : candidates)
+                for (ListOrder pieces : candidates)
                     pieces.stock(block);
             }
         }
@@ -36,16 +36,16 @@ public class OrderLookup {
     }
 
     // 指定したミノ列からホールドを利用して並び替えられるミノ列をすべて列挙
-    public static ArrayList<ListPieces> forward(List<Block> blocks, int maxDepth) {
+    public static ArrayList<ListOrder> forward(List<Block> blocks, int maxDepth) {
         assert 1 < maxDepth && maxDepth <= blocks.size();
 
-        ArrayList<ListPieces> candidates = new ArrayList<>();
-        ListPieces e = new ListPieces();
+        ArrayList<ListOrder> candidates = new ArrayList<>();
+        ListOrder e = new ListOrder();
         e.addLast(blocks.get(0));
         e.addLast(blocks.get(1));
         candidates.add(e);
 
-        ListPieces e2 = new ListPieces();
+        ListOrder e2 = new ListOrder();
         e2.addLast(blocks.get(1));
         e2.addLast(blocks.get(0));
         candidates.add(e2);
@@ -54,8 +54,8 @@ public class OrderLookup {
             Block block = blocks.get(depth);
             int size = candidates.size();
             for (int index = 0; index < size; index++) {
-                ListPieces pieces = candidates.get(index);
-                ListPieces freeze = pieces.freeze();
+                ListOrder pieces = candidates.get(index);
+                ListOrder freeze = pieces.freeze();
 
                 pieces.addLastTwo(block);  // おく
                 freeze.addLast(block);  // holdする

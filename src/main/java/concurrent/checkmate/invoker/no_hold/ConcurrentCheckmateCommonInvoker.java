@@ -4,7 +4,7 @@ import core.action.candidate.Candidate;
 import common.datastore.Pair;
 import core.field.Field;
 import core.mino.Block;
-import common.datastore.ComparablePieces;
+import common.datastore.pieces.NoSafeListPieces;
 import searcher.checkmate.Checkmate;
 import common.datastore.Result;
 import common.datastore.action.Action;
@@ -31,8 +31,8 @@ public class ConcurrentCheckmateCommonInvoker {
 
     public List<Pair<List<Block>, List<Result>>> search(Field field, List<List<Block>> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
         // ミノごとにソートする
-        List<ComparablePieces> sortedPieces = searchingPieces.stream()
-                .map(ComparablePieces::new)
+        List<NoSafeListPieces> sortedPieces = searchingPieces.stream()
+                .map(NoSafeListPieces::new)
                 .sorted()
                 .collect(Collectors.toList());
 
@@ -44,7 +44,7 @@ public class ConcurrentCheckmateCommonInvoker {
         int lastIndex = 0;
         for (int count = 0; count < taskSplitCount; count++) {
             int toIndex = (int) (size * ((double) (count + 1) / taskSplitCount));
-            List<ComparablePieces> subPieces = sortedPieces.subList(lastIndex, toIndex);
+            List<NoSafeListPieces> subPieces = sortedPieces.subList(lastIndex, toIndex);
             tasks.add(new Task(obj, subPieces));
             lastIndex = toIndex;
         }

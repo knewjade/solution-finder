@@ -1,4 +1,4 @@
-import common.buildup.BuildUpListUp;
+import common.buildup.BuildUpStream;
 import common.datastore.*;
 import common.datastore.pieces.Pieces;
 import common.iterable.CombinationIterable;
@@ -96,8 +96,8 @@ public class Main3 {
             System.out.println(collect);
 
             LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
-            BuildUpListUp buildUpListUp = new BuildUpListUp(reachable, maxClearLine);
-            long count = buildUpListUp.existsValidBuildPattern(initField, collect)
+            BuildUpStream buildUpStream = new BuildUpStream(reachable, maxClearLine);
+            long count = buildUpStream.existsValidBuildPattern(initField, collect)
                     .map(operationWithKeys -> {
                         return operationWithKeys.stream()
                                 .map(OperationWithKey::getMino)

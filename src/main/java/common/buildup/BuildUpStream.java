@@ -15,13 +15,13 @@ import java.util.stream.Stream;
  * マルチスレッド非対応
  */
 // TODO: unittest
-public class BuildUpListUp {
+public class BuildUpStream {
     private final Reachable reachable;
     private final int height;
     private LinkedList<OperationWithKey> currentOperations = new LinkedList<>();
     private Stream.Builder<List<OperationWithKey>> solutions = Stream.builder();
 
-    public BuildUpListUp(Reachable reachable, int height) {
+    public BuildUpStream(Reachable reachable, int height) {
         this.reachable = reachable;
         this.height = height;
     }

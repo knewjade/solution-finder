@@ -128,8 +128,9 @@ public class PathSettingParser {
         outputBaseFilePath.ifPresent(settings::setOutputBaseFilePath);
 
         // 最大レイヤーの設定
-        Optional<Integer> maxLayer = wrapper.getIntegerOption("max-layer");
-        maxLayer.ifPresent(settings::setMaxLayer);
+        Optional<Integer> maxLayerNumber = wrapper.getIntegerOption("max-layer");
+        Optional<PathLayer> pathLayer = maxLayerNumber.map(this::getPathLayer);
+        pathLayer.ifPresent(settings::setPathLayer);
 
         // 出力タイプの設定
         Optional<String> outputType = wrapper.getStringOption("format");
@@ -357,5 +358,9 @@ public class PathSettingParser {
         } else {
             throw new IllegalArgumentException(String.format("Option[page=%d]: Over page", page));
         }
+    }
+
+    private PathLayer getPathLayer(int number) {
+        return PathLayer.parse(number);
     }
 }

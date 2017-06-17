@@ -1,5 +1,6 @@
 package common.datastore.pieces;
 
+import common.comparator.PiecesComparator;
 import core.mino.Block;
 
 import java.util.ArrayList;
@@ -7,16 +8,16 @@ import java.util.Collections;
 import java.util.List;
 
 // max <= 22であること
-public class NumberPieces implements Pieces {
+public class LongPieces implements Pieces {
     private final long pieces;
     private final int max;
 
-    public NumberPieces() {
+    public LongPieces() {
         this.pieces = 0L;
         this.max = 0;
     }
 
-    public NumberPieces(List<Block> blocks) {
+    public LongPieces(List<Block> blocks) {
         long pieces = 0L;
         for (Block block : blocks)
             pieces = pieces * 7 + block.getNumber();
@@ -24,7 +25,7 @@ public class NumberPieces implements Pieces {
         this.max = blocks.size();
     }
 
-    private NumberPieces(NumberPieces parent, List<Block> blocks) {
+    private LongPieces(LongPieces parent, List<Block> blocks) {
         long pieces = parent.pieces;
         for (Block block : blocks)
             pieces = pieces * 7 + block.getNumber();
@@ -48,15 +49,23 @@ public class NumberPieces implements Pieces {
 
     @Override
     public Pieces addAndReturnNew(List<Block> blocks) {
-        return new NumberPieces(this, blocks);
+        return new LongPieces(this, blocks);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        NumberPieces that = (NumberPieces) o;
-        return pieces == that.pieces;
+        if (o == null) return false;
+
+        if (getClass() != o.getClass()) {
+            LongPieces that = (LongPieces) o;
+            return pieces == that.pieces;
+        } else if (o instanceof Pieces) {
+            Pieces that = (Pieces) o;
+            return PiecesComparator.comparePieces(this, that) == 0;
+        }
+
+        return false;
     }
 
     @Override
