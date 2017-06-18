@@ -225,9 +225,20 @@ public class SmallField implements Field {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SmallField that = (SmallField) o;
-        return xBoard == that.xBoard;
+        if (o == null) return false;
+
+        if (getClass() == o.getClass()) {
+            SmallField that = (SmallField) o;
+            return xBoard == that.xBoard;
+        } else if (o instanceof MiddleField) {
+            MiddleField that = (MiddleField) o;
+            return that.getBoard(0) == xBoard && that.getBoard(1) == 0L;
+        } else if (o instanceof Field) {
+            Field that = (Field) o;
+            return FieldComparator.compareField(this, that) == 0;
+        }
+
+        return false;
     }
 
     @Override

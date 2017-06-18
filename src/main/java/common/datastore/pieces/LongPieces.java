@@ -1,14 +1,25 @@
 package common.datastore.pieces;
 
-import common.comparator.PiecesComparator;
+import common.comparator.PiecesNumberComparator;
 import core.mino.Block;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 // max <= 22であること
 public class LongPieces implements Pieces {
+    private static final long[] SCALE = new long[22];
+
+    static {
+        for (int index = 0; index < SCALE.length; index++)
+            SCALE[index] = pow(index);
+    }
+
+    private static long pow(int number) {
+        return (long) Math.pow(7, number);
+    }
+
     private final long pieces;
     private final int max;
 
@@ -18,19 +29,31 @@ public class LongPieces implements Pieces {
     }
 
     public LongPieces(List<Block> blocks) {
-        long pieces = 0L;
-        for (Block block : blocks)
-            pieces = pieces * 7 + block.getNumber();
-        this.pieces = pieces;
+        this.pieces = parse(0L, blocks, 0);
         this.max = blocks.size();
     }
 
     private LongPieces(LongPieces parent, List<Block> blocks) {
-        long pieces = parent.pieces;
-        for (Block block : blocks)
-            pieces = pieces * 7 + block.getNumber();
-        this.pieces = pieces;
+        this.pieces = parse(parent.pieces, blocks, parent.max);
         this.max = parent.max + blocks.size();
+    }
+
+    private LongPieces(LongPieces parent, Block block) {
+        this.pieces = parent.pieces + SCALE[parent.max] * block.getNumber();
+        this.max = parent.max + 1;
+    }
+
+    private long parse(long pieces, List<Block> blocks, int startIndex) {
+        for (int index = 0; index < blocks.size(); index++) {
+            Block block = blocks.get(index);
+            int scaleIndex = startIndex + index;
+            pieces += getScale(scaleIndex) * block.getNumber();
+        }
+        return pieces;
+    }
+
+    private long getScale(int index) {
+        return SCALE[index];
     }
 
     @Override
@@ -43,13 +66,30 @@ public class LongPieces implements Pieces {
             value = value / 7;
         }
         assert value == 0;
-        Collections.reverse(blocks);
         return blocks;
+    }
+
+    @Override
+    public Stream<Block> getBlockStream() {
+        Stream.Builder<Block> builder = Stream.builder();
+        long value = pieces;
+        for (int count = 0; count < max; count++) {
+            Block block = Block.getBlock((int) (value % 7));
+            builder.accept(block);
+            value = value / 7;
+        }
+        assert value == 0;
+        return builder.build();
     }
 
     @Override
     public Pieces addAndReturnNew(List<Block> blocks) {
         return new LongPieces(this, blocks);
+    }
+
+    @Override
+    public Pieces addAndReturnNew(Block block) {
+        return new LongPieces(this, block);
     }
 
     @Override
@@ -62,7 +102,7 @@ public class LongPieces implements Pieces {
             return pieces == that.pieces;
         } else if (o instanceof Pieces) {
             Pieces that = (Pieces) o;
-            return PiecesComparator.comparePieces(this, that) == 0;
+            return PiecesNumberComparator.comparePieces(this, that) == 0;
         }
 
         return false;

@@ -371,4 +371,18 @@ public class SmallFieldTest {
         assertThat(field.getNumOfAllBlocks(), is(5));
         assertThat(freeze.getNumOfAllBlocks(), is(4));
     }
+
+    @Test
+    public void testEqual() throws Exception {
+        String marks = "XXXXXX____";
+        SmallField field1 = FieldFactory.createSmallField(marks);
+        SmallField field2 = FieldFactory.createSmallField(marks);
+        assertThat(field1.equals(field2), is(true));
+
+        SmallField field3 = FieldFactory.createSmallField(marks + "XXXXXX____");
+        assertThat(field1.equals(field3), is(false));
+
+        MiddleField field4 = FieldFactory.createMiddleField(marks);
+        assertThat(field1.equals(field4), is(true));
+    }
 }

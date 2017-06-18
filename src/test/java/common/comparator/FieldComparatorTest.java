@@ -1,6 +1,5 @@
-package common;
+package common.comparator;
 
-import common.comparator.FieldComparator;
 import core.field.Field;
 import core.field.FieldFactory;
 import org.junit.Test;
@@ -60,7 +59,7 @@ public class FieldComparatorTest {
         assertThat(comparator.compare(field2, field3), is(not(0)));
         assertThat(comparator.compare(field1, field3), is(not(0)));
 
-        assert comparator.compare(field1, field2) < 0  && comparator.compare(field2, field3) < 0;
+        assert comparator.compare(field1, field2) < 0 && comparator.compare(field2, field3) < 0;
         assertThat(comparator.compare(field1, field3), is(lessThan(0)));
     }
 }

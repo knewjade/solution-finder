@@ -6,7 +6,7 @@ import core.mino.Block;
 import java.util.Comparator;
 import java.util.List;
 
-public class PiecesComparator implements Comparator<Pieces> {
+public class PiecesNameComparator implements Comparator<Pieces> {
     public static int comparePieces(Pieces o1, Pieces o2) {
         List<Block> blocks1 = o1.getBlocks();
         List<Block> blocks2 = o2.getBlocks();
@@ -18,7 +18,7 @@ public class PiecesComparator implements Comparator<Pieces> {
             return compareSize;
 
         for (int index = 0; index < size1; index++) {
-            int compare = blocks1.get(index).compareTo(blocks2.get(index));
+            int compare = blocks1.get(index).getName().compareTo(blocks2.get(index).getName());
             if (compare != 0)
                 return compare;
         }

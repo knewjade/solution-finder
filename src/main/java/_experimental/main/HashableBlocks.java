@@ -6,7 +6,7 @@ import java.util.List;
 
 // num of blocks <= 10 であること
 // nullを含まないこと
-public class HashableBlocks {
+class HashableBlocks {
     private final List<Block> blocks;
 
     private final int hash;

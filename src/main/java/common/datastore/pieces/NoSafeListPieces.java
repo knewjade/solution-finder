@@ -1,9 +1,10 @@
 package common.datastore.pieces;
 
-import common.comparator.PiecesComparator;
+import common.comparator.PiecesNumberComparator;
 import core.mino.Block;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 // TODO: unittest
 public class NoSafeListPieces implements Pieces, Comparable<Pieces> {
@@ -20,7 +21,17 @@ public class NoSafeListPieces implements Pieces, Comparable<Pieces> {
     }
 
     @Override
+    public Stream<Block> getBlockStream() {
+        return blocks.stream();
+    }
+
+    @Override
     public Pieces addAndReturnNew(List<Block> blocks) {
+        throw new UnsupportedOperationException("Unsafe operation");
+    }
+
+    @Override
+    public Pieces addAndReturnNew(Block block) {
         throw new UnsupportedOperationException("Unsafe operation");
     }
 
@@ -34,7 +45,7 @@ public class NoSafeListPieces implements Pieces, Comparable<Pieces> {
             return blocks.equals(that.blocks);
         } else if (o instanceof Pieces) {
             Pieces that = (Pieces) o;
-            return PiecesComparator.comparePieces(this, that) == 0;
+            return PiecesNumberComparator.comparePieces(this, that) == 0;
         }
 
         return false;
@@ -47,6 +58,6 @@ public class NoSafeListPieces implements Pieces, Comparable<Pieces> {
 
     @Override
     public int compareTo(Pieces o) {
-        return PiecesComparator.comparePieces(this, o);
+        return PiecesNumberComparator.comparePieces(this, o);
     }
 }

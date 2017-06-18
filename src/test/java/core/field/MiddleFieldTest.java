@@ -463,4 +463,18 @@ public class MiddleFieldTest {
         assertThat(field.getNumOfAllBlocks(), is(5));
         assertThat(freeze.getNumOfAllBlocks(), is(4));
     }
+
+    @Test
+    public void testEqual() throws Exception {
+        String marks = "XXXXXX____";
+        MiddleField field1 = FieldFactory.createMiddleField(marks);
+        MiddleField field2 = FieldFactory.createMiddleField(marks);
+        assertThat(field1.equals(field2), is(true));
+
+        MiddleField field3 = FieldFactory.createMiddleField(marks + "XXXXXX____");
+        assertThat(field1.equals(field3), is(false));
+
+        SmallField field4 = FieldFactory.createSmallField(marks);
+        assertThat(field1.equals(field4), is(true));
+    }
 }

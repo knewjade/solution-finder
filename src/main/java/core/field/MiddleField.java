@@ -2,6 +2,7 @@ package core.field;
 
 import common.comparator.FieldComparator;
 import core.mino.Mino;
+import searcher.pack.MinoField;
 
 /**
  * フィールドの高さ height <= 12 であること
@@ -398,9 +399,20 @@ public class MiddleField implements Field {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MiddleField that = (MiddleField) o;
-        return xBoardLow == that.xBoardLow && xBoardHigh == that.xBoardHigh;
+        if (o == null) return false;
+
+        if (getClass() == o.getClass()) {
+            MiddleField that = (MiddleField) o;
+            return xBoardLow == that.xBoardLow && xBoardHigh == that.xBoardHigh;
+        } else if (o instanceof SmallField) {
+            SmallField that = (SmallField) o;
+            return xBoardHigh == 0L && xBoardLow == that.getBoard(0);
+        } else if (o instanceof Field) {
+            Field that = (Field) o;
+            return FieldComparator.compareField(this, that) == 0;
+        }
+
+        return false;
     }
 
     @Override

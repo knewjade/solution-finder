@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 import static core.mino.Block.*;
 
+// DT砲のビルド確率
 public class Experiment {
     public static final int FIELD_WIDTH = 10;
 
