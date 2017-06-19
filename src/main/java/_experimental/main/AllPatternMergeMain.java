@@ -10,16 +10,15 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class Sort {
+public class AllPatternMergeMain {
     public static void main(String[] args) throws IOException {
         // read
         HashSet<Pieces> allSet = new HashSet<>();
-        for (Integer index : Arrays.asList(4, 5, 6, 8, 1, 2, 3, 7)) {
+        for (int index = 1; index <= 8; index++) {
             System.out.println(index);
             Path input = Paths.get(String.format("output/onhold/order%d.txt", index));
             Set<Pieces> set = Files.lines(input, Charset.forName("UTF-8"))
