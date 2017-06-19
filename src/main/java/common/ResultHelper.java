@@ -23,6 +23,8 @@ public class ResultHelper {
     public static List<Operation> createOperations(Result result) {
         OperationHistory history = result.getOrder().getHistory();
         int[] operationNumbers = history.getOperationNumbers();
+
+        // head to tail
         int max = history.getNextIndex();
         ArrayList<Operation> operations = new ArrayList<>();
         for (int index = 0; index < max; index++) {
@@ -31,6 +33,7 @@ public class ResultHelper {
             operations.add(operation);
         }
 
+        // last
         Block lastBlock = result.getLastBlock();
         Action action = result.getAction();
         SimpleOperation operation = new SimpleOperation(lastBlock, action.getRotate(), action.getX(), action.getY());

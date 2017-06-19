@@ -2,31 +2,21 @@ package core.field;
 
 import common.comparator.FieldComparator;
 import core.mino.Mino;
-import searcher.pack.MinoField;
 
 /**
  * フィールドの高さ height <= 12 であること
- * マルチスレッド非対応
  */
-public class MiddleField implements Field {
+public class FrozenMiddleField implements Field {
     private static final int FIELD_WIDTH = 10;
     private static final int MAX_FIELD_HEIGHT = 12;
     private static final int FIELD_ROW_BOARDER_Y = 6;
 
-    private long xBoardLow = 0; // x,y: 最下位 (0,0), (1,0),  ... , (9,0), (0,1), ... 最上位 // フィールド範囲外は必ず0であること
-    private long xBoardHigh = 0; // x,y: 最下位 (0,0), (1,0),  ... , (9,0), (0,1), ... 最上位 // フィールド範囲外は必ず0であること
+    private final long xBoardLow;
+    private final long xBoardHigh;
 
-    public MiddleField() {
-    }
-
-    private MiddleField(MiddleField src) {
-        this.xBoardLow = src.xBoardLow;
-        this.xBoardHigh = src.xBoardHigh;
-    }
-
-    public MiddleField(long xBoardLow, long xBoardHigh) {
-        this.xBoardLow = xBoardLow;
-        this.xBoardHigh = xBoardHigh;
+    FrozenMiddleField(MiddleField src) {
+        this.xBoardLow = src.getXBoardLow();
+        this.xBoardHigh = src.getXBoardHigh();
     }
 
     @Override
@@ -36,18 +26,12 @@ public class MiddleField implements Field {
 
     @Override
     public void setBlock(int x, int y) {
-        if (y < FIELD_ROW_BOARDER_Y)
-            xBoardLow |= getXMask(x, y);
-        else
-            xBoardHigh |= getXMask(x, y - FIELD_ROW_BOARDER_Y);
+        throw new UnsupportedOperationException("this is frozen");
     }
 
     @Override
     public void removeBlock(int x, int y) {
-        if (y < FIELD_ROW_BOARDER_Y)
-            xBoardLow &= ~getXMask(x, y);
-        else
-            xBoardHigh &= ~getXMask(x, y - FIELD_ROW_BOARDER_Y);
+        throw new UnsupportedOperationException("this is frozen");
     }
 
     private long getXMask(int x, int y) {
@@ -56,24 +40,12 @@ public class MiddleField implements Field {
 
     @Override
     public void putMino(Mino mino, int x, int y) {
-        // Lowの更新が必要
-        if (y + mino.getMinY() < FIELD_ROW_BOARDER_Y)
-            xBoardLow |= mino.getMask(x, y);
-
-        // Highの更新が必要
-        if (FIELD_ROW_BOARDER_Y <= y + mino.getMaxY())
-            xBoardHigh |= mino.getMask(x, y - FIELD_ROW_BOARDER_Y);
+        throw new UnsupportedOperationException("this is frozen");
     }
 
     @Override
     public void removeMino(Mino mino, int x, int y) {
-        // Lowの更新が必要
-        if (y + mino.getMinY() < FIELD_ROW_BOARDER_Y)
-            xBoardLow &= ~mino.getMask(x, y);
-
-        // Highの更新が必要
-        if (FIELD_ROW_BOARDER_Y <= y + mino.getMaxY())
-            xBoardHigh &= ~mino.getMask(x, y - FIELD_ROW_BOARDER_Y);
+        throw new UnsupportedOperationException("this is frozen");
     }
 
     @Override
@@ -233,46 +205,17 @@ public class MiddleField implements Field {
 
     @Override
     public long clearLineReturnKey() {
-        long deleteKeyLow = KeyOperators.getDeleteKey(xBoardLow);
-        long newXBoardLow = LongBoardMap.deleteLine(xBoardLow, deleteKeyLow);
-
-        long deleteKeyHigh = KeyOperators.getDeleteKey(xBoardHigh);
-        long newXBoardHigh = LongBoardMap.deleteLine(xBoardHigh, deleteKeyHigh);
-
-        int deleteLineLow = Long.bitCount(deleteKeyLow);
-
-        this.xBoardLow = (newXBoardLow | (newXBoardHigh << (6 - deleteLineLow) * 10)) & 0xfffffffffffffffL;
-        this.xBoardHigh = newXBoardHigh >>> deleteLineLow * 10;
-
-        return deleteKeyLow | (deleteKeyHigh << 1);
+        throw new UnsupportedOperationException("this is frozen");
     }
 
     @Override
     public void insertBlackLineWithKey(long deleteKey) {
-        long deleteKeyLow = deleteKey & 0x4010040100401L;
-        int deleteLineLow = Long.bitCount(deleteKeyLow);
-        int leftLineLow = 6 - deleteLineLow;
-        long newXBoardLow = LongBoardMap.insertBlackLine(xBoardLow & BitOperators.getRowMaskBelowY(leftLineLow), deleteKeyLow);
-
-        long deleteKeyHigh = (deleteKey & 0x8020080200802L) >> 1;
-        long newXBoardHigh = LongBoardMap.insertBlackLine((xBoardHigh << 10 * deleteLineLow) | ((xBoardLow & BitOperators.getRowMaskAboveY(leftLineLow)) >> 10 * leftLineLow), deleteKeyHigh);
-
-        this.xBoardLow = newXBoardLow;
-        this.xBoardHigh = newXBoardHigh & 0xfffffffffffffffL;
+        throw new UnsupportedOperationException("this is frozen");
     }
 
     @Override
     public void insertWhiteLineWithKey(long deleteKey) {
-        long deleteKeyLow = deleteKey & 0x4010040100401L;
-        int deleteLineLow = Long.bitCount(deleteKeyLow);
-        int leftLineLow = 6 - deleteLineLow;
-        long newXBoardLow = LongBoardMap.insertWhiteLine(xBoardLow & BitOperators.getRowMaskBelowY(leftLineLow), deleteKeyLow);
-
-        long deleteKeyHigh = (deleteKey & 0x8020080200802L) >> 1;
-        long newXBoardHigh = LongBoardMap.insertWhiteLine((xBoardHigh << 10 * deleteLineLow) | ((xBoardLow & BitOperators.getRowMaskAboveY(leftLineLow)) >> 10 * leftLineLow), deleteKeyHigh);
-
-        this.xBoardLow = newXBoardLow;
-        this.xBoardHigh = newXBoardHigh & 0xfffffffffffffffL;
+        throw new UnsupportedOperationException("this is frozen");
     }
 
     @Override
@@ -290,32 +233,19 @@ public class MiddleField implements Field {
 
     @Override
     public Field freeze(int maxHeight) {
-        assert 0 < maxHeight && maxHeight <= 12;
-        if (maxHeight <= 6)
-            return new SmallField(xBoardLow);
-        return new MiddleField(this);
+        return new MiddleField(xBoardLow, xBoardHigh);
     }
 
     // TODO: unittest
     @Override
     public void merge(Field other) {
-        int otherBoardCount = other.getBoardCount();
-        assert 0 < otherBoardCount && otherBoardCount <= 2 : otherBoardCount;
-
-        xBoardLow |= other.getBoard(0);
-        if (otherBoardCount == 2)
-            xBoardHigh |= other.getBoard(1);
+        throw new UnsupportedOperationException("this is frozen");
     }
 
     // TODO: unittest
     @Override
     public void reduce(Field other) {
-        int otherBoardCount = other.getBoardCount();
-        assert 0 < otherBoardCount && otherBoardCount <= 2;
-
-        xBoardLow &= ~other.getBoard(0);
-        if (otherBoardCount == 2)
-            xBoardHigh &= ~other.getBoard(1);
+        throw new UnsupportedOperationException("this is frozen");
     }
 
     // TODO: unittest
@@ -379,28 +309,18 @@ public class MiddleField implements Field {
     // TODO: unittest
     @Override
     public void invert(int maxHeight) {
-        if (maxHeight < 6) {
-            xBoardLow = ~xBoardLow & BitOperators.getRowMaskBelowY(maxHeight);
-            xBoardHigh = 0L;
-        } else {
-            xBoardLow = ~xBoardLow & 0xfffffffffffffffL;
-            xBoardHigh = ~xBoardHigh & BitOperators.getRowMaskBelowY(maxHeight - 6);
-        }
+        throw new UnsupportedOperationException("this is frozen");
     }
 
     // TODO: unittest
     @Override
     public void slideLeft(int slide) {
-        long mask = BitOperators.getColumnMaskRightX(slide);
-        xBoardLow = (xBoardLow & mask) >> slide;
-        xBoardHigh = (xBoardHigh & mask) >> slide;
+        throw new UnsupportedOperationException("this is frozen");
     }
 
     @Override
     public Field fix() {
-        if (this.xBoardHigh != 0L)
-            return new FrozenMiddleField(this);
-        return new FrozenSmallField(xBoardLow);
+        return this;
     }
 
     @Override
@@ -409,10 +329,10 @@ public class MiddleField implements Field {
         if (o == null) return false;
 
         if (getClass() == o.getClass()) {
-            MiddleField that = (MiddleField) o;
-            return xBoardLow == that.xBoardLow && xBoardHigh == that.xBoardHigh;
-        } else if (o instanceof FrozenMiddleField) {
             FrozenMiddleField that = (FrozenMiddleField) o;
+            return xBoardLow == that.xBoardLow && xBoardHigh == that.xBoardHigh;
+        } else if (o instanceof MiddleField) {
+            MiddleField that = (MiddleField) o;
             return xBoardLow == that.getXBoardLow() && xBoardHigh == that.getXBoardHigh();
         } else if (o instanceof SmallField) {
             SmallField that = (SmallField) o;
@@ -427,7 +347,9 @@ public class MiddleField implements Field {
 
     @Override
     public int hashCode() {
-        throw new UnsupportedOperationException("this is mutable object");
+        int result = (int) (xBoardLow ^ (xBoardLow >>> 32));
+        result = 31 * result + (int) (xBoardHigh ^ (xBoardHigh >>> 32));
+        return result;
     }
 
     @Override

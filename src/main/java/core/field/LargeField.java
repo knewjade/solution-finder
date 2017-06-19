@@ -162,6 +162,11 @@ public class LargeField implements Field {
     }
 
     @Override
+    public Field fix() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public boolean equals(Object o) {
         throw new UnsupportedOperationException();
     }

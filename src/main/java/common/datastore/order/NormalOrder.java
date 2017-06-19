@@ -20,7 +20,7 @@ public class NormalOrder implements Order {
     }
 
     public NormalOrder(Field field, Block hold, int maxClearLine, OperationHistory history) {
-        this.field = field;
+        this.field = field.fix();
         this.hold = hold;
         this.maxClearLine = maxClearLine;
         this.history = history;

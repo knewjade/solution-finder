@@ -5,23 +5,19 @@ import core.mino.Mino;
 
 /**
  * フィールドの高さ height <= 6 であること
- * マルチスレッド非対応
  */
-public class SmallField implements Field {
+public class FrozenSmallField implements Field {
     private static final int FIELD_WIDTH = 10;
     private static final int MAX_FIELD_HEIGHT = 6;
 
-    private long xBoard = 0; // x,y: 最下位 (0,0), (1,0),  ... , (9,0), (0,1), ... 最上位 // フィールド範囲外は必ず0であること
+    private final long xBoard;
 
-    public SmallField() {
+    FrozenSmallField(SmallField src) {
+        this.xBoard = src.getXBoard();
     }
 
-    private SmallField(SmallField src) {
-        this.xBoard = src.xBoard;
-    }
-
-    public SmallField(long xBoard) {
-        this.xBoard = xBoard;
+    FrozenSmallField(long board) {
+        this.xBoard = board;
     }
 
     @Override
@@ -31,22 +27,22 @@ public class SmallField implements Field {
 
     @Override
     public void setBlock(int x, int y) {
-        xBoard |= getXMask(x, y);
+        throw new UnsupportedOperationException("this is frozen");
     }
 
     @Override
     public void removeBlock(int x, int y) {
-        xBoard &= ~getXMask(x, y);
+        throw new UnsupportedOperationException("this is frozen");
     }
 
     @Override
     public void putMino(Mino mino, int x, int y) {
-        xBoard |= mino.getMask(x, y);
+        throw new UnsupportedOperationException("this is frozen");
     }
 
     @Override
     public void removeMino(Mino mino, int x, int y) {
-        xBoard &= ~mino.getMask(x, y);
+        throw new UnsupportedOperationException("this is frozen");
     }
 
     @Override
@@ -143,24 +139,22 @@ public class SmallField implements Field {
 
     @Override
     public long clearLineReturnKey() {
-        long deleteKey = KeyOperators.getDeleteKey(xBoard);
-        this.xBoard = LongBoardMap.deleteLine(xBoard, deleteKey);
-        return deleteKey;
+        throw new UnsupportedOperationException("this is frozen");
     }
 
     @Override
     public void insertBlackLineWithKey(long deleteKey) {
-        this.xBoard = LongBoardMap.insertBlackLine(xBoard, deleteKey);
+        throw new UnsupportedOperationException("this is frozen");
     }
 
     @Override
     public void insertWhiteLineWithKey(long deleteKey) {
-        this.xBoard = LongBoardMap.insertWhiteLine(xBoard, deleteKey);
+        throw new UnsupportedOperationException("this is frozen");
     }
 
     @Override
     public Field freeze(int maxHeight) {
-        return new SmallField(this);
+        return new SmallField(xBoard);
     }
 
     @Override
@@ -176,13 +170,13 @@ public class SmallField implements Field {
     // TODO: unittest
     @Override
     public void merge(Field other) {
-        xBoard |= other.getBoard(0);
+        throw new UnsupportedOperationException("this is frozen");
     }
 
     // TODO: unittest
     @Override
     public void reduce(Field other) {
-        xBoard &= ~other.getBoard(0);
+        throw new UnsupportedOperationException("this is frozen");
     }
 
     // TODO: unittest
@@ -212,19 +206,18 @@ public class SmallField implements Field {
     // TODO: unittest
     @Override
     public void invert(int maxHeight) {
-        xBoard = ~xBoard & BitOperators.getRowMaskBelowY(maxHeight);
+        throw new UnsupportedOperationException("this is frozen");
     }
 
     // TODO: unittest
     @Override
     public void slideLeft(int slide) {
-        long mask = BitOperators.getColumnMaskRightX(slide);
-        xBoard = (xBoard & mask) >> slide;
+        throw new UnsupportedOperationException("this is frozen");
     }
 
     @Override
     public Field fix() {
-        return new FrozenSmallField(this);
+        return this;
     }
 
     @Override
@@ -233,7 +226,7 @@ public class SmallField implements Field {
         if (o == null) return false;
 
         if (getClass() == o.getClass()) {
-            SmallField that = (SmallField) o;
+            FrozenSmallField that = (FrozenSmallField) o;
             return xBoard == that.xBoard;
         } else if (o instanceof MiddleField) {
             MiddleField that = (MiddleField) o;
@@ -248,15 +241,11 @@ public class SmallField implements Field {
 
     @Override
     public int hashCode() {
-        throw new UnsupportedOperationException("this is mutable object");
+        return (int) (xBoard ^ (xBoard >>> 32));
     }
 
     @Override
     public int compareTo(Field o) {
         return FieldComparator.compareField(this, o);
-    }
-
-    long getXBoard() {
-        return xBoard;
     }
 }
