@@ -2,7 +2,7 @@ package _experimental.main;
 
 import common.datastore.Operation;
 import common.datastore.Pair;
-import common.order.ListOrder;
+import common.order.StackOrder;
 import core.action.candidate.Candidate;
 import concurrent.checker.CheckerUsingHoldThreadLocal;
 import concurrent.LockedCandidateThreadLocal;
@@ -163,9 +163,9 @@ public class Cart {
                     }
 
                     int reverseMaxDepth = result.getLastHold() != null ? operationBlocks.size() + 1 : operationBlocks.size();
-                    ArrayList<ListOrder> reversePieces = OrderLookup.reverse(operationBlocks, reverseMaxDepth);
-                    for (ListOrder piece : reversePieces) {
-                        visitedTree.set(true, piece.getBlocks());
+                    ArrayList<StackOrder<Block>> reversePieces = OrderLookup.reverseBlocks(operationBlocks, reverseMaxDepth);
+                    for (StackOrder<Block> piece : reversePieces) {
+                        visitedTree.set(true, piece.toList());
                     }
                 }
 

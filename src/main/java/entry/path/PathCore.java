@@ -5,8 +5,8 @@ import common.datastore.OperationWithKey;
 import common.datastore.Pair;
 import common.datastore.pieces.LongPieces;
 import common.datastore.pieces.Pieces;
-import common.order.ListOrder;
 import common.order.OrderLookup;
+import common.order.StackOrder;
 import common.pattern.PiecesGenerator;
 import core.field.Field;
 import core.mino.Block;
@@ -49,10 +49,10 @@ class PathCore {
             return piecesGenerator.stream()
                     .parallel()
                     .map(Pieces::getBlocks)
-                    .flatMap(blocks -> OrderLookup.forward(blocks, maxDepth).stream())
+                    .flatMap(blocks -> OrderLookup.forwardBlocks(blocks, maxDepth).stream())
                     .collect(Collectors.toCollection(HashSet::new))
                     .parallelStream()
-                    .map(ListOrder::getBlocks)
+                    .map(StackOrder::toList)
                     .map(reduceBlocks)
                     .map(LongPieces::new)
                     .collect(Collectors.toCollection(HashSet::new));

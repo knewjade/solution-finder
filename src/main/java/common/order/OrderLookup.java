@@ -4,23 +4,25 @@ import core.mino.Block;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 // TODO: unittest テストを強化する
 // TODO: ListPiecesをlong実装にする
 public class OrderLookup {
     // 他のミノ列からホールドを利用して指定したミノ列にできるとき、その他のミノ列をすべて逆算して列挙
-    public static ArrayList<ListOrder> reverse(List<Block> blocks, int toDepth) {
-        assert blocks.size() <= toDepth;
-        ArrayList<ListOrder> candidates = new ArrayList<>();
-        candidates.add(new ListOrder());
+    public static ArrayList<StackOrder<Block>> reverseBlocks(List<Block> blocks, int fromDepth) {
+        assert blocks.size() <= fromDepth;
+        ArrayList<StackOrder<Block>> candidates = new ArrayList<>();
+        StackOrder<Block> e = new LongStackOrder();
+        candidates.add(e);
 
-        for (int depth = 0; depth < toDepth; depth++) {
+        for (int depth = 0; depth < fromDepth; depth++) {
             Block block = depth < blocks.size() ? blocks.get(depth) : null;
             int size = candidates.size();
-            if (depth < toDepth - 1) {
+            if (depth < fromDepth - 1) {
                 for (int index = 0; index < size; index++) {
-                    ListOrder pieces = candidates.get(index);
-                    ListOrder freeze = pieces.freeze();
+                    StackOrder<Block> pieces = candidates.get(index);
+                    StackOrder<Block> freeze = pieces.freeze();
 
                     pieces.addLast(block);
                     freeze.stock(block);
@@ -28,25 +30,27 @@ public class OrderLookup {
                     candidates.add(freeze);
                 }
             } else {
-                for (ListOrder pieces : candidates)
+                for (StackOrder<Block> pieces : candidates)
                     pieces.stock(block);
             }
         }
 
-        return candidates;
+        return candidates.stream()
+                .map(StackOrder::fix)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     // 指定したミノ列からホールドを利用して並び替えられるミノ列をすべて列挙
-    public static ArrayList<ListOrder> forward(List<Block> blocks, int toDepth) {
+    public static ArrayList<StackOrder<Block>> forwardBlocks(List<Block> blocks, int toDepth) {
         assert 1 < toDepth && toDepth <= blocks.size();
 
-        ArrayList<ListOrder> candidates = new ArrayList<>();
-        ListOrder e = new ListOrder();
+        ArrayList<StackOrder<Block>> candidates = new ArrayList<>();
+        StackOrder<Block> e = new LongStackOrder();
         e.addLast(blocks.get(0));
         e.addLast(blocks.get(1));
         candidates.add(e);
 
-        ListOrder e2 = new ListOrder();
+        StackOrder<Block> e2 = new LongStackOrder();
         e2.addLast(blocks.get(1));
         e2.addLast(blocks.get(0));
         candidates.add(e2);
@@ -55,8 +59,8 @@ public class OrderLookup {
             Block block = blocks.get(depth);
             int size = candidates.size();
             for (int index = 0; index < size; index++) {
-                ListOrder pieces = candidates.get(index);
-                ListOrder freeze = pieces.freeze();
+                StackOrder<Block> pieces = candidates.get(index);
+                StackOrder<Block> freeze = pieces.freeze();
 
                 pieces.addLastTwo(block);  // おく
                 freeze.addLast(block);  // holdする
@@ -65,7 +69,9 @@ public class OrderLookup {
             }
         }
 
-        return candidates;
+        return candidates.stream()
+                .map(StackOrder::fix)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     private OrderLookup() {

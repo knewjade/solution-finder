@@ -6,8 +6,8 @@ import common.datastore.OperationWithKey;
 import common.datastore.SimpleOperationWithKey;
 import common.datastore.pieces.LongPieces;
 import common.datastore.pieces.Pieces;
-import common.order.ListOrder;
 import common.order.OrderLookup;
+import common.order.StackOrder;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
@@ -70,9 +70,9 @@ public class Main {
                             .collect(Collectors.toList());
                     System.out.println(blocks);
                     System.out.println("---");
-                    List<ListOrder> reverse = OrderLookup.reverse(blocks, 11);
-                    for (ListOrder order : reverse) {
-                        System.out.println(order.getBlocks());
+                    List<StackOrder<Block>> reverse = OrderLookup.reverseBlocks(blocks, 11);
+                    for (StackOrder<Block> order : reverse) {
+                        System.out.println(order.toList());
                     }
                     return true;
                 })

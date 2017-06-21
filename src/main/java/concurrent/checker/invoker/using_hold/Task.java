@@ -1,7 +1,7 @@
 package concurrent.checker.invoker.using_hold;
 
 import common.datastore.Operation;
-import common.order.ListOrder;
+import common.order.StackOrder;
 import core.action.candidate.Candidate;
 import common.order.OrderLookup;
 import common.datastore.Pair;
@@ -48,10 +48,10 @@ class Task implements Callable<Pair<List<Block>, Boolean>> {
             ArrayList<Block> operationBlocks = parseOperationsToBlockList(operations);
 
             int reverseMaxDepth = result.getLastHold() != null ? operationBlocks.size() + 1 : operationBlocks.size();
-            ArrayList<ListOrder> reversePieces = OrderLookup.reverse(operationBlocks, reverseMaxDepth);
+            ArrayList<StackOrder<Block>> reversePieces = OrderLookup.reverseBlocks(operationBlocks, reverseMaxDepth);
 
-            for (ListOrder piece : reversePieces)
-                obj.visitedTree.set(true, piece.getBlocks());
+            for (StackOrder<Block> piece : reversePieces)
+                obj.visitedTree.set(true, piece.toList());
         }
 
         return new Pair<>(target, checkResult);

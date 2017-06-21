@@ -1,7 +1,7 @@
 package _experimental.main;
 
 import common.datastore.Operation;
-import common.order.ListOrder;
+import common.order.StackOrder;
 import core.action.candidate.FixPlaceLockedCandidate;
 import common.tree.AnalyzeTree;
 import common.tree.VisitedTree;
@@ -91,9 +91,9 @@ public class BuilderMain {
                 }
 
                 int reverseMaxDepth = result.getLastHold() != null ? operationBlocks.size() + 1 : operationBlocks.size();
-                ArrayList<ListOrder> reversePieces = OrderLookup.reverse(operationBlocks, reverseMaxDepth);
-                for (ListOrder piece : reversePieces) {
-                    visitedTree.set(true, piece.getBlocks());
+                ArrayList<StackOrder<Block>> reversePieces = OrderLookup.reverseBlocks(operationBlocks, reverseMaxDepth);
+                for (StackOrder<Block> piece : reversePieces) {
+                    visitedTree.set(true, piece.toList());
                 }
             }
         }

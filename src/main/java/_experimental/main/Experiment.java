@@ -7,8 +7,8 @@ import common.datastore.Result;
 import common.datastore.action.Action;
 import common.iterable.AllPermutationIterable;
 import common.iterable.CombinationIterable;
-import common.order.ListOrder;
 import common.order.OrderLookup;
+import common.order.StackOrder;
 import common.tree.AnalyzeTree;
 import common.tree.VisitedTree;
 import core.action.candidate.FixPlaceLockedCandidate;
@@ -99,9 +99,9 @@ public class Experiment {
                 }
 
                 int reverseMaxDepth = result.getLastHold() != null ? operationBlocks.size() + 1 : operationBlocks.size();
-                ArrayList<ListOrder> reversePieces = OrderLookup.reverse(operationBlocks, reverseMaxDepth);
-                for (ListOrder piece : reversePieces) {
-                    visitedTree.set(true, piece.getBlocks());
+                ArrayList<StackOrder<Block>> reversePieces = OrderLookup.reverseBlocks(operationBlocks, reverseMaxDepth);
+                for (StackOrder<Block> piece : reversePieces) {
+                    visitedTree.set(true, piece.toList());
                 }
             }
         }

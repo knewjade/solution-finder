@@ -5,6 +5,7 @@ import com.google.common.io.Files;
 import entry.EntryPointMain;
 import entry.path.OutputType;
 import entry.path.PathLayer;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -252,5 +253,22 @@ public class PathEntryPointMainTest {
         System.out.println(log);
         assertThat(log, containsString("Found path [unique] = 1002"));
         assertThat(log, containsString("Found path [minimal] = 699"));
+    }
+
+    @Ignore
+    @Test
+    public void testUnique7() throws Exception {
+        List<String> fields = Arrays.asList(
+                "4",
+                "XXXXXX____",
+                "XXXXXX____",
+                "XXXXXX____",
+                "XXXXXX____"
+        );
+        String pattern = "*p4";
+        String log = getPathLog(fields, pattern, true);
+        System.out.println(log);
+        assertThat(log, containsString("Found path [unique] = 135"));
+        assertThat(log, containsString("Found path [minimal] = 1"));
     }
 }
