@@ -12,8 +12,10 @@ import searcher.pack.SizedBit;
 import searcher.pack.mino_fields.RecursiveMinoFields;
 import searcher.pack.separable_mino.SeparableMino;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -76,7 +78,7 @@ public class BasicSolutionsCalculator {
 
         // まだ探索したことのないフィールドのとき
         // innerに対しておける可能性がある手順を取得
-        return new RecursiveMinoFields(connections.getConnections().parallelStream()
+        Stream<RecursiveMinoField> stream = connections.getConnections().parallelStream()
                 .flatMap(connection -> {
                     // outerで重なりがないか確認する
                     ColumnField nextOuterField = connection.getOuterField();
@@ -93,8 +95,8 @@ public class BasicSolutionsCalculator {
                         return core.calculate(innerField, freeze, wallField, currentMino);
                     }
                     return Stream.empty();
-                })
-                .collect(Collectors.toCollection(ArrayList::new)));
+                });
+        return new RecursiveMinoFields(stream);
     }
 
     private static class CalculatorCoreThreadLocal extends ThreadLocal<CalculatorCore> {
