@@ -41,17 +41,18 @@ public class Height5 {
     private static int counter = 0;
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        int width = 3;
-        int height = 4;
+        int width = 2;
+        int height = 7;
         SizedBit sizedBit = new SizedBit(width, height);
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
         Map<ColumnField, RecursiveMinoFields> calculate = calculator.calculate();
 
         Field field = FieldFactory.createField("" +
-                "XX_XXXXXXX" +
-                "X__XXXXXXX" +
-                "___XXXXXXX" +
+                "XXX_XXXXXX" +
+                "XX__XXXXXX" +
+                "X___XXXXXX" +
+                "____XXXXXX" +
                 "___XXXXXXX" +
                 "__XXXXXXXX" +
                 "_XXXXXXXXX" +
@@ -63,7 +64,6 @@ public class Height5 {
 
         LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(sizedBit.getHeight());
         SolutionFilter solutionFilter = new SRSValidSolutionFilter(field, reachableThreadLocal, sizedBit);
-
         BasicSolutions basicSolutions = new BasicSolutions(calculate, solutionFilter);
         PackSearcher searcher = createSearcher(sizedBit, basicSolutions, field, solutionFilter);
 
