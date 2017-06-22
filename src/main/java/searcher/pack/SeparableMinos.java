@@ -1,6 +1,5 @@
 package searcher.pack;
 
-import common.datastore.OperationWithKey;
 import core.mino.Block;
 import core.mino.Mino;
 import core.srs.Rotate;
@@ -57,19 +56,10 @@ public class SeparableMinos {
         return separableMinos;
     }
 
-    public int toIndex(OperationWithKey operation) {
-        Key key = new Key(operation.getMino(), operation.getX(), operation.getY(), operation.getNeedDeletedKey());
-        return toIndex(key);
-    }
-
     private int toIndex(Key key) {
         Integer index = indexes.getOrDefault(key, -1);
         assert 0 <= index;
         return index;
-    }
-
-    public SeparableMino getAt(int index) {
-        return separableMinos.get(index);
     }
 
     public int toIndex(SeparableMino separableMino) {
@@ -84,15 +74,7 @@ public class SeparableMinos {
         private final int y;
         private final long deleteKey;
 
-        public Key(Mino mino, int x, int y, long deleteKey) {
-            this.block = mino.getBlock();
-            this.rotate = mino.getRotate();
-            this.x = x;
-            this.y = y;
-            this.deleteKey = deleteKey;
-        }
-
-        public Key(SeparableMino separableMino) {
+        private Key(SeparableMino separableMino) {
             Mino mino = separableMino.getMino();
             this.block = mino.getBlock();
             this.rotate = mino.getRotate();

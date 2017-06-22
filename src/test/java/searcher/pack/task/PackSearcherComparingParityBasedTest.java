@@ -16,6 +16,7 @@ import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.memento.UsingBlockAndValidKeySolutionFilter;
+import searcher.pack.mino_fields.RecursiveMinoFields;
 import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.separable_mino.SeparableMinoFactory;
 import searcher.pack.solutions.BasicSolutions;
@@ -2816,7 +2817,7 @@ public class PackSearcherComparingParityBasedTest {
         SizedBit sizedBit = new SizedBit(width, height);
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
-        Map<ColumnField, List<RecursiveMinoField>> calculate = calculator.calculate();
+        Map<ColumnField, RecursiveMinoFields> calculate = calculator.calculate();
 
         for (TestData data : testDataList) {
             // 準備
@@ -2827,7 +2828,7 @@ public class PackSearcherComparingParityBasedTest {
             // packで探索
             Set<BlockCounter> blockCounters = Collections.singleton(new BlockCounter(usingBlocks));
             SolutionFilter solutionFilter = createUsingBlockAndValidKeyMementoFilter(initField, sizedBit, blockCounters);
-            BasicSolutions basicSolutions = BasicSolutions.create(calculate, solutionFilter);
+            BasicSolutions basicSolutions = new BasicSolutions(calculate, solutionFilter);
             long packCounter = calculateSRSValidCount(sizedBit, basicSolutions, initField, solutionFilter);
 
             System.out.println(usingBlocks);

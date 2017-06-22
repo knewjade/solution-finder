@@ -24,11 +24,10 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.Rotate;
 import entry.EntryPoint;
-import searcher.pack.InOutPairField;
-import searcher.pack.RecursiveMinoField;
-import searcher.pack.SeparableMinos;
-import searcher.pack.SizedBit;
+import searcher.pack.*;
 import searcher.pack.memento.SolutionFilter;
+import searcher.pack.mino_fields.MinoFields;
+import searcher.pack.mino_fields.RecursiveMinoFields;
 import searcher.pack.separable_mino.SeparableMinoFactory;
 import searcher.pack.solutions.BasicSolutions;
 import searcher.pack.solutions.BasicSolutionsCalculator;
@@ -192,8 +191,8 @@ public class PathEntryPoint implements EntryPoint {
 
         // 基本パターンを計算
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
-        Map<ColumnField, List<RecursiveMinoField>> calculate = calculator.calculate();
-        BasicSolutions solutions = BasicSolutions.create(calculate, solutionFilter);
+        Map<ColumnField, RecursiveMinoFields> calculate = calculator.calculate();
+        BasicSolutions solutions = new BasicSolutions(calculate, solutionFilter);
 
         output("     ... done");
 

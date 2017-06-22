@@ -9,12 +9,12 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import org.junit.Test;
 import searcher.pack.InOutPairField;
-import searcher.pack.RecursiveMinoField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.memento.AllPassedSolutionFilter;
 import searcher.pack.memento.SRSValidSolutionFilter;
 import searcher.pack.memento.SolutionFilter;
+import searcher.pack.mino_fields.RecursiveMinoFields;
 import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.separable_mino.SeparableMinoFactory;
 import searcher.pack.solutions.BasicSolutions;
@@ -41,8 +41,8 @@ public class PackSearcherTest {
         SizedBit sizedBit = new SizedBit(width, height);
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
-        Map<ColumnField, List<RecursiveMinoField>> calculate = calculator.calculate();
-        BasicSolutions basicSolutions = BasicSolutions.create(calculate);
+        Map<ColumnField, RecursiveMinoFields> calculate = calculator.calculate();
+        BasicSolutions basicSolutions = new BasicSolutions(calculate);
 
         // width = expected_count
         HashSet<Pair<Integer, Integer>> widthExpected = new HashSet<Pair<Integer, Integer>>() {
@@ -73,8 +73,8 @@ public class PackSearcherTest {
         SizedBit sizedBit = new SizedBit(width, height);
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
-        Map<ColumnField, List<RecursiveMinoField>> calculate = calculator.calculate();
-        BasicSolutions basicSolutions = BasicSolutions.create(calculate);
+        Map<ColumnField, RecursiveMinoFields> calculate = calculator.calculate();
+        BasicSolutions basicSolutions = new BasicSolutions(calculate);
 
         // width = expected_count
         HashSet<Pair<Integer, Integer>> widthExpected = new HashSet<Pair<Integer, Integer>>() {

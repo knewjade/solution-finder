@@ -20,6 +20,7 @@ class BasicReference {
     public static final BinaryOperator<ColumnFieldConnections> EXCEPTION_IN_MERGE_FUNCTION = (columnFieldConnections, columnFieldConnections2) -> {
         throw new IllegalStateException("Duplicate key");
     };
+
     public static final int WIDTH_OVER_MINO = 3;
     private final SizedBit sizedBit;
     private final SeparableMinos separableMinos;

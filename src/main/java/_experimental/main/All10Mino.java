@@ -9,12 +9,10 @@ import core.field.FieldFactory;
 import core.field.FieldView;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
-import searcher.pack.InOutPairField;
-import searcher.pack.RecursiveMinoField;
-import searcher.pack.SeparableMinos;
-import searcher.pack.SizedBit;
+import searcher.pack.*;
 import searcher.pack.memento.SRSValidSolutionFilter;
 import searcher.pack.memento.SolutionFilter;
+import searcher.pack.mino_fields.MinoFields;
 import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.separable_mino.SeparableMinoFactory;
 import searcher.pack.solutions.BasicSolutions;
@@ -42,7 +40,7 @@ public class All10Mino {
         SizedBit sizedBit = new SizedBit(width, height);
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
-        Map<ColumnField, List<RecursiveMinoField>> calculate = calculator.calculate();
+        Map<ColumnField, ? extends MinoFields> calculate = calculator.calculate();
 
         Field field = FieldFactory.createField(height);
         System.out.println(FieldView.toString(field, height));
@@ -52,7 +50,7 @@ public class All10Mino {
         LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(sizedBit.getHeight());
         SolutionFilter solutionFilter = new SRSValidSolutionFilter(field, reachableThreadLocal, sizedBit);
 
-        BasicSolutions basicSolutions = BasicSolutions.create(calculate, solutionFilter);
+        BasicSolutions basicSolutions = new BasicSolutions(calculate, solutionFilter);
         PackSearcher searcher = createSearcher(sizedBit, basicSolutions, field, solutionFilter);
 
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();

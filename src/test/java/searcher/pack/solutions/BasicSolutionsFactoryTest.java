@@ -2,21 +2,24 @@ package searcher.pack.solutions;
 
 import common.Stopwatch;
 import core.column_field.ColumnField;
-import core.column_field.ColumnSmallField;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import org.junit.Test;
-import searcher.pack.*;
+import searcher.pack.MinoField;
+import searcher.pack.SeparableMinos;
+import searcher.pack.SizedBit;
 import searcher.pack.memento.AllPassedSolutionFilter;
+import searcher.pack.mino_fields.MinoFields;
+import searcher.pack.mino_fields.RecursiveMinoFields;
 import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.separable_mino.SeparableMinoFactory;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -70,23 +73,23 @@ public class BasicSolutionsFactoryTest {
         assertCache(sizedBit, expectedSolutions, expectedSolutionItems);
     }
 
-    private void assertCache(SizedBit sizedBit, int expectedSolutions, int expectedSolutionItems) throws IOException {
+    private void assertCache(SizedBit sizedBit, long expectedSolutions, long expectedSolutionItems) throws IOException {
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
 
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
 
         Stopwatch stopwatch1 = Stopwatch.createStartedStopwatch();
 
-        Map<ColumnField, List<RecursiveMinoField>> calculate = calculator.calculate();
+        Map<ColumnField, RecursiveMinoFields> calculate = calculator.calculate();
 
         stopwatch1.stop();
         System.out.println("create only: " + stopwatch1.toMessage(TimeUnit.MILLISECONDS));
 
         AllPassedSolutionFilter solutionFilter = new AllPassedSolutionFilter();
-        BasicSolutions solutions = BasicSolutions.create(calculate, solutionFilter);
+        BasicSolutions solutions = new BasicSolutions(calculate, solutionFilter);
 
-        assertThat(solutions.getSolutions().size(), is(expectedSolutions));
-        assertThat(countAllItem(solutions), is(expectedSolutionItems));
+        assertThat(countValidKey(solutions), is(expectedSolutions));
+        assertThat(countValidItem(solutions), is(expectedSolutionItems));
     }
 
     private static SeparableMinos createSeparableMinos(SizedBit sizedBit) {
@@ -97,9 +100,18 @@ public class BasicSolutionsFactoryTest {
         return new SeparableMinos(separableMinos);
     }
 
-    private static int countAllItem(BasicSolutions basicSolutions) {
+    private static long countValidKey(BasicSolutions basicSolutions) {
         return basicSolutions.getSolutions().values().parallelStream()
-                .mapToInt(List::size)
+                .map(MinoFields::stream)
+                .map(Stream::findAny)
+                .filter(Optional::isPresent)
+                .count();
+    }
+
+    private static long countValidItem(BasicSolutions basicSolutions) {
+        return basicSolutions.getSolutions().values().parallelStream()
+                .map(MinoFields::stream)
+                .mapToLong(Stream::count)
                 .sum();
     }
 }

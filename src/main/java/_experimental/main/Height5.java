@@ -19,11 +19,11 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.Rotate;
 import searcher.pack.InOutPairField;
-import searcher.pack.RecursiveMinoField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.memento.SRSValidSolutionFilter;
 import searcher.pack.memento.SolutionFilter;
+import searcher.pack.mino_fields.RecursiveMinoFields;
 import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.separable_mino.SeparableMinoFactory;
 import searcher.pack.solutions.BasicSolutions;
@@ -46,7 +46,7 @@ public class Height5 {
         SizedBit sizedBit = new SizedBit(width, height);
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
-        Map<ColumnField, List<RecursiveMinoField>> calculate = calculator.calculate();
+        Map<ColumnField, RecursiveMinoFields> calculate = calculator.calculate();
 
         Field field = FieldFactory.createField("" +
                 "XX_XXXXXXX" +
@@ -64,7 +64,7 @@ public class Height5 {
         LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(sizedBit.getHeight());
         SolutionFilter solutionFilter = new SRSValidSolutionFilter(field, reachableThreadLocal, sizedBit);
 
-        BasicSolutions basicSolutions = BasicSolutions.create(calculate, solutionFilter);
+        BasicSolutions basicSolutions = new BasicSolutions(calculate, solutionFilter);
         PackSearcher searcher = createSearcher(sizedBit, basicSolutions, field, solutionFilter);
 
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();

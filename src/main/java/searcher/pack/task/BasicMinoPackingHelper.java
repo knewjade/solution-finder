@@ -1,13 +1,12 @@
 package searcher.pack.task;
 
-import searcher.pack.MinoField;
-import searcher.pack.SizedBit;
-import searcher.pack.memento.SolutionFilter;
-import searcher.pack.memento.MinoFieldMemento;
 import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
+import searcher.pack.mino_fields.MinoFields;
+import searcher.pack.SizedBit;
+import searcher.pack.memento.MinoFieldMemento;
+import searcher.pack.memento.SolutionFilter;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 public class BasicMinoPackingHelper implements TaskResultHelper {
@@ -16,14 +15,14 @@ public class BasicMinoPackingHelper implements TaskResultHelper {
         SizedBit sizedBit = searcher.getSizedBit();
         SolutionFilter solutionFilter = searcher.getSolutionFilter();
         long fillBoard = sizedBit.getFillBoard();
-        long board = (lastOuterField.getBoard(0) >> sizedBit.getMaxBitDigit())  & fillBoard;
+        long board = (lastOuterField.getBoard(0) >> sizedBit.getMaxBitDigit()) & fillBoard;
         if (board == fillBoard) {
             if (solutionFilter.testLast(nextMemento))
                 return Stream.of(createResult(nextMemento));
             return Stream.empty();
         } else {
             ColumnSmallField nextInnerField = new ColumnSmallField(board);
-            List<MinoField> minoFields = searcher.getSolutions().parse(nextInnerField);
+            MinoFields minoFields = searcher.getSolutions().parse(nextInnerField);
 
             return minoFields.stream()
                     .map(nextMemento::concat)

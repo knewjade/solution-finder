@@ -1,61 +1,39 @@
 package searcher.pack.solutions;
 
 import core.column_field.ColumnField;
-import searcher.pack.MinoField;
-import searcher.pack.RecursiveMinoField;
 import searcher.pack.memento.SolutionFilter;
+import searcher.pack.mino_fields.EmptyMinoFields;
+import searcher.pack.mino_fields.FilteredMinoFields;
+import searcher.pack.mino_fields.MinoFields;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BasicSolutions {
-    public static BasicSolutions create(Map<ColumnField, List<RecursiveMinoField>> solutions) {
-        HashMap<ColumnField, List<MinoField>> newMap = new HashMap<>();
-        for (Map.Entry<ColumnField, List<RecursiveMinoField>> entry : solutions.entrySet())
-            newMap.put(entry.getKey(), new ArrayList<>(entry.getValue()));
-        return new BasicSolutions(newMap);
-    }
+    private static final MinoFields EMPTY_MINO_FIELDS = new EmptyMinoFields();
 
-    public static BasicSolutions create(Map<ColumnField, List<RecursiveMinoField>> solutions, SolutionFilter filter) {
-        HashMap<ColumnField, List<MinoField>> filtered = new HashMap<>();
-        for (Map.Entry<ColumnField, List<RecursiveMinoField>> entry : solutions.entrySet()) {
-            List<MinoField> newList = entry.getValue().stream()
-                    .filter(filter::testMinoField)
-                    .collect(Collectors.toList());
+    private final Map<ColumnField, ? extends MinoFields> solutions;
 
-            if (0 < newList.size())
-                filtered.put(entry.getKey(), newList);
-        }
-        return new BasicSolutions(filtered);
-    }
-
-    private static final List<MinoField> EMPTY_MINO_FIELDS = Collections.emptyList();
-
-    private final Map<ColumnField, List<MinoField>> solutions;
-
-    public BasicSolutions(Map<ColumnField, List<MinoField>> solutions) {
+    public BasicSolutions(Map<ColumnField, ? extends MinoFields> solutions) {
         assert solutions != null;
         this.solutions = solutions;
     }
 
-    public BasicSolutions(Map<ColumnField, List<MinoField>> solutions, SolutionFilter filter) {
-        HashMap<ColumnField, List<MinoField>> filtered = new HashMap<>();
-        for (Map.Entry<ColumnField, List<MinoField>> entry : solutions.entrySet()) {
-            List<MinoField> newList = entry.getValue().stream()
-                    .filter(filter::testMinoField)
-                    .collect(Collectors.toList());
-
-            if (0 < newList.size())
-                filtered.put(entry.getKey(), newList);
+    public BasicSolutions(Map<ColumnField, ? extends MinoFields> solutions, SolutionFilter filter) {
+        HashMap<ColumnField, MinoFields> filtered = new HashMap<>();
+        for (Map.Entry<ColumnField, ? extends MinoFields> entry : solutions.entrySet()) {
+            FilteredMinoFields minoFields = new FilteredMinoFields(entry.getValue(), filter);
+            filtered.put(entry.getKey(), minoFields);
         }
         this.solutions = filtered;
     }
 
-    public List<MinoField> parse(ColumnField columnField) {
-        return solutions.getOrDefault(columnField, EMPTY_MINO_FIELDS);
+    public MinoFields parse(ColumnField columnField) {
+        MinoFields minoFields = solutions.get(columnField);
+        return minoFields != null ? minoFields : EMPTY_MINO_FIELDS;
     }
 
-    public Map<ColumnField, List<MinoField>> getSolutions() {
+    public Map<ColumnField, ? extends MinoFields> getSolutions() {
         return solutions;
     }
 }
