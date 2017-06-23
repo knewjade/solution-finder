@@ -165,7 +165,9 @@ public class PackSearcher {
             // そのため、終端操作をPool内でしなければ、Pool外のスレッド場で動くため注意が必要
             // (終端操作をしなかった場合、Pool内ではStream自体の作成をして終了する)
 
-            return task.compute().parallel().count();
+            return task.compute().parallel()
+                    .peek(System.out::println)
+                    .count();
         });
 
         // 結果を取得するまで待つ

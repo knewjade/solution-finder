@@ -36,26 +36,33 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 
 public class Height5 {
     private static int counter = 0;
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         int width = 2;
-        int height = 7;
+        int height = 8;
         SizedBit sizedBit = new SizedBit(width, height);
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
-        BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
+
+        Predicate<ColumnField> predicate = columnField -> {
+            int bitCount = Long.bitCount(columnField.getBoard(0));
+            return bitCount <= 12;
+        };
+        BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit, predicate);
         Map<ColumnField, RecursiveMinoFields> calculate = calculator.calculate();
 
         Field field = FieldFactory.createField("" +
-                "XXX_XXXXXX" +
-                "XX__XXXXXX" +
-                "X___XXXXXX" +
-                "____XXXXXX" +
-                "___XXXXXXX" +
                 "__XXXXXXXX" +
-                "_XXXXXXXXX" +
+                "__XXXXXXXX" +
+                "___XXXXXXX" +
+                "XX_XXXXXXX" +
+                "X__XXXXXXX" +
+                "X___XXXXXX" +
+                "XX_XXXXXXX" +
+                "XX_XXXXXXX" +
                 ""
         );
         System.out.println(FieldView.toString(field, height));
@@ -69,37 +76,39 @@ public class Height5 {
 
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
-        MinoFactory minoFactory = new MinoFactory();
-        ColorConverter colorConverter = new ColorConverter();
-        searcher.callback(resultStream -> {
-                    resultStream
-                            .limit(100L)
-                            .map(Result::getMemento)
-                            .map(minoFieldMemento -> minoFieldMemento.getOperationsStream(width))
-                            .map(operationWithKeyStream -> {
-                                BlockField blockField = new BlockField(height);
-                                StringBuilder blocks = new StringBuilder();
-                                operationWithKeyStream
-                                        .sequential()
-                                        .sorted(Comparator.comparing(o -> o.getMino().getBlock()))
-                                        .forEach(key -> {
-                                            Field test = FieldFactory.createField(height);
-                                            Mino mino = key.getMino();
-                                            test.putMino(mino, key.getX(), key.getY());
-                                            test.insertWhiteLineWithKey(key.getNeedDeletedKey());
-                                            blockField.merge(test, mino.getBlock());
-                                            blocks.append(key.getMino().getBlock());
-                                        });
-                                return parseBlockFieldToTetfuElement(field, colorConverter, blockField, blocks.toString());
-                            })
-                            .map(element -> {
-                                String encode = new Tetfu(minoFactory, colorConverter).encode(Collections.singletonList(element));
-                                return element.getComment() + ": http://fumen.zui.jp/?v115@" + encode;
-                            })
-                            .forEach(System.out::println);
-                    return true;
-                }
-        );
+        Long count = searcher.count();
+        System.out.println(count);
+//        MinoFactory minoFactory = new MinoFactory();
+//        ColorConverter colorConverter = new ColorConverter();
+//        searcher.callback(resultStream -> {
+//                    resultStream
+//                            .limit(100L)
+//                            .map(Result::getMemento)
+//                            .map(minoFieldMemento -> minoFieldMemento.getOperationsStream(width))
+//                            .map(operationWithKeyStream -> {
+//                                BlockField blockField = new BlockField(height);
+//                                StringBuilder blocks = new StringBuilder();
+//                                operationWithKeyStream
+//                                        .sequential()
+//                                        .sorted(Comparator.comparing(o -> o.getMino().getBlock()))
+//                                        .forEach(key -> {
+//                                            Field test = FieldFactory.createField(height);
+//                                            Mino mino = key.getMino();
+//                                            test.putMino(mino, key.getX(), key.getY());
+//                                            test.insertWhiteLineWithKey(key.getNeedDeletedKey());
+//                                            blockField.merge(test, mino.getBlock());
+//                                            blocks.append(key.getMino().getBlock());
+//                                        });
+//                                return parseBlockFieldToTetfuElement(field, colorConverter, blockField, blocks.toString());
+//                            })
+//                            .map(element -> {
+//                                String encode = new Tetfu(minoFactory, colorConverter).encode(Collections.singletonList(element));
+//                                return element.getComment() + ": http://fumen.zui.jp/?v115@" + encode;
+//                            })
+//                            .forEach(System.out::println);
+//                    return true;
+//                }
+//        );
 
         stopwatch.stop();
 
@@ -107,6 +116,8 @@ public class Height5 {
         System.out.println(stopwatch.toMessage(TimeUnit.SECONDS));
         System.out.println(stopwatch.toMessage(TimeUnit.MILLISECONDS));
         System.out.println("solutions = " + counter);
+
+        System.out.println(Runtime.getRuntime().totalMemory() / 1024 / 1024 + " MB");
     }
 
     private static SeparableMinos createSeparableMinos(SizedBit sizedBit) {
