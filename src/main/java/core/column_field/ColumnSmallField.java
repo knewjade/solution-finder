@@ -82,4 +82,9 @@ public class ColumnSmallField implements ColumnField {
     public int compareTo(ColumnField o) {
         return ColumnFieldComparator.compareColumnField(this, o);
     }
+
+    @Override
+    public String toString() {
+        return String.format("ColumnSmallField{board=%d}", board);
+    }
 }

@@ -19,6 +19,14 @@ public class FrozenMiddleField implements Field {
         this.xBoardHigh = src.getXBoardHigh();
     }
 
+    long getXBoardLow() {
+        return xBoardLow;
+    }
+
+    long getXBoardHigh() {
+        return xBoardHigh;
+    }
+
     @Override
     public int getMaxFieldHeight() {
         return MAX_FIELD_HEIGHT;
@@ -357,11 +365,8 @@ public class FrozenMiddleField implements Field {
         return FieldComparator.compareField(this, o);
     }
 
-    long getXBoardLow() {
-        return xBoardLow;
-    }
-
-    long getXBoardHigh() {
-        return xBoardHigh;
+    @Override
+    public String toString() {
+        return String.format("FrozenMiddleField{low=%d, high=%d}", xBoardLow, xBoardHigh);
     }
 }

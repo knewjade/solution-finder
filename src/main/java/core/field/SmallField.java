@@ -24,6 +24,10 @@ public class SmallField implements Field {
         this.xBoard = xBoard;
     }
 
+    long getXBoard() {
+        return xBoard;
+    }
+
     @Override
     public int getMaxFieldHeight() {
         return MAX_FIELD_HEIGHT;
@@ -256,7 +260,9 @@ public class SmallField implements Field {
         return FieldComparator.compareField(this, o);
     }
 
-    long getXBoard() {
-        return xBoard;
+
+    @Override
+    public String toString() {
+        return String.format("SmallField{board=%d}", xBoard);
     }
 }

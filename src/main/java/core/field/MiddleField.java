@@ -29,6 +29,14 @@ public class MiddleField implements Field {
         this.xBoardHigh = xBoardHigh;
     }
 
+    long getXBoardLow() {
+        return xBoardLow;
+    }
+
+    long getXBoardHigh() {
+        return xBoardHigh;
+    }
+
     @Override
     public int getMaxFieldHeight() {
         return MAX_FIELD_HEIGHT;
@@ -435,11 +443,8 @@ public class MiddleField implements Field {
         return FieldComparator.compareField(this, o);
     }
 
-    long getXBoardLow() {
-        return xBoardLow;
-    }
-
-    long getXBoardHigh() {
-        return xBoardHigh;
+    @Override
+    public String toString() {
+        return String.format("MiddleField{low=%d, high=%d}", xBoardLow, xBoardHigh);
     }
 }

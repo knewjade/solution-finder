@@ -16,4 +16,9 @@ public class Pair<K, V> {
     public V getValue() {
         return value;
     }
+
+    @Override
+    public String toString() {
+        return String.format("{%s=%s}", key.toString(), value.toString());
+    }
 }

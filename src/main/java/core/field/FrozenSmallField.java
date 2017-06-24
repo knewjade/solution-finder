@@ -248,4 +248,9 @@ public class FrozenSmallField implements Field {
     public int compareTo(Field o) {
         return FieldComparator.compareField(this, o);
     }
+
+    @Override
+    public String toString() {
+        return String.format("FrozenSmallField{board=%d}", xBoard);
+    }
 }
