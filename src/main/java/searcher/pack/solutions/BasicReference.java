@@ -57,14 +57,18 @@ class BasicReference {
             addInner(columnField);
         }
 
+        // TODO
         // OuterFieldのマップをつくる
         // すべてのブロックが埋まった状態を保存
         int height = sizedBit.getHeight();
         SizedBit outerSizeBit = new SizedBit(WIDTH_OVER_MINO, height);
         addOuter(new ColumnSmallField(outerSizeBit.getFillBoard()), outerSizeBit);
         for (ColumnSmallField columnField : createBasicFields(outerSizeBit)) {
+            System.out.println("ok");
+
             addOuter(columnField, outerSizeBit);
         }
+        System.out.println("ok");
 
         Map<ColumnField, ColumnFieldConnections> collect = sortedBasicFields.parallelStream()
                 .collect(Collectors.toMap(Function.identity(), this::createConnections, EXCEPTION_IN_MERGE_FUNCTION, HashMap::new));

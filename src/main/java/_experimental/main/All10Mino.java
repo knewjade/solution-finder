@@ -15,6 +15,7 @@ import searcher.pack.memento.SolutionFilter;
 import searcher.pack.mino_fields.MinoFields;
 import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.separable_mino.SeparableMinoFactory;
+import searcher.pack.solutions.MapedBasicSolutions;
 import searcher.pack.solutions.BasicSolutions;
 import searcher.pack.solutions.BasicSolutionsCalculator;
 import searcher.pack.task.Field4x10MinoPackingHelper;
@@ -50,7 +51,7 @@ public class All10Mino {
         LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(sizedBit.getHeight());
         SolutionFilter solutionFilter = new SRSValidSolutionFilter(field, reachableThreadLocal, sizedBit);
 
-        BasicSolutions basicSolutions = new BasicSolutions(calculate, solutionFilter);
+        BasicSolutions basicSolutions = new MapedBasicSolutions(calculate, solutionFilter);
         PackSearcher searcher = createSearcher(sizedBit, basicSolutions, field, solutionFilter);
 
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();

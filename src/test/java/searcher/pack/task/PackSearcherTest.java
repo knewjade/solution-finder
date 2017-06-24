@@ -17,6 +17,7 @@ import searcher.pack.memento.SolutionFilter;
 import searcher.pack.mino_fields.RecursiveMinoFields;
 import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.separable_mino.SeparableMinoFactory;
+import searcher.pack.solutions.MapedBasicSolutions;
 import searcher.pack.solutions.BasicSolutions;
 import searcher.pack.solutions.BasicSolutionsCalculator;
 
@@ -42,7 +43,7 @@ public class PackSearcherTest {
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
         Map<ColumnField, RecursiveMinoFields> calculate = calculator.calculate();
-        BasicSolutions basicSolutions = new BasicSolutions(calculate);
+        BasicSolutions basicSolutions = new MapedBasicSolutions(calculate);
 
         // width = expected_count
         HashSet<Pair<Integer, Integer>> widthExpected = new HashSet<Pair<Integer, Integer>>() {
@@ -74,7 +75,7 @@ public class PackSearcherTest {
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
         Map<ColumnField, RecursiveMinoFields> calculate = calculator.calculate();
-        BasicSolutions basicSolutions = new BasicSolutions(calculate);
+        BasicSolutions basicSolutions = new MapedBasicSolutions(calculate);
 
         // width = expected_count
         HashSet<Pair<Integer, Integer>> widthExpected = new HashSet<Pair<Integer, Integer>>() {

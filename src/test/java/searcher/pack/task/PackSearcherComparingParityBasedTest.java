@@ -11,7 +11,6 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import org.junit.Test;
 import searcher.pack.InOutPairField;
-import searcher.pack.RecursiveMinoField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.memento.SolutionFilter;
@@ -19,13 +18,13 @@ import searcher.pack.memento.UsingBlockAndValidKeySolutionFilter;
 import searcher.pack.mino_fields.RecursiveMinoFields;
 import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.separable_mino.SeparableMinoFactory;
+import searcher.pack.solutions.MapedBasicSolutions;
 import searcher.pack.solutions.BasicSolutions;
 import searcher.pack.solutions.BasicSolutionsCalculator;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -2828,7 +2827,7 @@ public class PackSearcherComparingParityBasedTest {
             // packで探索
             Set<BlockCounter> blockCounters = Collections.singleton(new BlockCounter(usingBlocks));
             SolutionFilter solutionFilter = createUsingBlockAndValidKeyMementoFilter(initField, sizedBit, blockCounters);
-            BasicSolutions basicSolutions = new BasicSolutions(calculate, solutionFilter);
+            BasicSolutions basicSolutions = new MapedBasicSolutions(calculate, solutionFilter);
             long packCounter = calculateSRSValidCount(sizedBit, basicSolutions, initField, solutionFilter);
 
             System.out.println(usingBlocks);

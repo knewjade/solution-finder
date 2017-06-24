@@ -5,7 +5,6 @@ import core.column_field.ColumnField;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import org.junit.Test;
-import searcher.pack.MinoField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.memento.AllPassedSolutionFilter;
@@ -24,7 +23,7 @@ import java.util.stream.Stream;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class BasicSolutionsFactoryTest {
+public class MapedBasicSolutionsFactoryTest {
     @Test
     public void create3x1() throws Exception {
         SizedBit sizedBit = new SizedBit(3, 1);
@@ -86,7 +85,7 @@ public class BasicSolutionsFactoryTest {
         System.out.println("create only: " + stopwatch1.toMessage(TimeUnit.MILLISECONDS));
 
         AllPassedSolutionFilter solutionFilter = new AllPassedSolutionFilter();
-        BasicSolutions solutions = new BasicSolutions(calculate, solutionFilter);
+        MapedBasicSolutions solutions = new MapedBasicSolutions(calculate, solutionFilter);
 
         assertThat(countValidKey(solutions), is(expectedSolutions));
         assertThat(countValidItem(solutions), is(expectedSolutionItems));
@@ -100,7 +99,7 @@ public class BasicSolutionsFactoryTest {
         return new SeparableMinos(separableMinos);
     }
 
-    private static long countValidKey(BasicSolutions basicSolutions) {
+    private static long countValidKey(MapedBasicSolutions basicSolutions) {
         return basicSolutions.getSolutions().values().parallelStream()
                 .map(MinoFields::stream)
                 .map(Stream::findAny)
@@ -108,7 +107,7 @@ public class BasicSolutionsFactoryTest {
                 .count();
     }
 
-    private static long countValidItem(BasicSolutions basicSolutions) {
+    private static long countValidItem(MapedBasicSolutions basicSolutions) {
         return basicSolutions.getSolutions().values().parallelStream()
                 .map(MinoFields::stream)
                 .mapToLong(Stream::count)

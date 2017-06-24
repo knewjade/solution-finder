@@ -17,14 +17,14 @@ import java.util.Map;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class BasicSolutionsTest {
+public class MapedBasicSolutionsTest {
     @Test
     public void get() throws Exception {
         SizedBit sizedBit = new SizedBit(3, 4);
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
         Map<ColumnField, RecursiveMinoFields> calculate = calculator.calculate();
-        BasicSolutions solutions = new BasicSolutions(calculate);
+        BasicSolutions solutions = new MapedBasicSolutions(calculate);
         assertThat(solutions.parse(new ColumnSmallField()).stream().count(), is(8516L));
     }
 
