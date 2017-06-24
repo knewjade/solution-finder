@@ -32,7 +32,7 @@ public class ConnectionsToStreamCallable implements Callable<Stream<RecursiveMin
     @Override
     public Stream<RecursiveMinoField> call() throws Exception {
         ColumnFieldConnections connections = calculator.getConnections(this.initColumnField);
-        return connections.getConnections().parallelStream()
+        return connections.getConnectionStream().parallel()
                 .flatMap(this::parseConnectionToMinoField);
     }
 

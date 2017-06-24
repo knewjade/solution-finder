@@ -16,11 +16,6 @@ public class ListColumnFieldConnections implements ColumnFieldConnections {
     }
 
     @Override
-    public List<ColumnFieldConnection> getConnections() {
-        return connections;
-    }
-
-    @Override
     public Stream<ColumnFieldConnection> getConnectionStream() {
         return connections.stream();
     }

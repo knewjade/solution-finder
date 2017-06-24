@@ -19,12 +19,7 @@ public class StreamColumnFieldConnections implements ColumnFieldConnections {
         this.columnField = columnField;
         this.sizedBit = sizedBit;
     }
-
-    @Override
-    public List<ColumnFieldConnection> getConnections() {
-        return getConnectionStream().collect(Collectors.toList());
-    }
-
+    
     @Override
     public Stream<ColumnFieldConnection> getConnectionStream() {
         Stream.Builder<ColumnFieldConnection> builder = Stream.builder();
