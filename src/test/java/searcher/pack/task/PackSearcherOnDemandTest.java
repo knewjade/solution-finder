@@ -11,26 +11,25 @@ import org.junit.Test;
 import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
+import searcher.pack.calculator.BasicSolutions;
 import searcher.pack.memento.AllPassedSolutionFilter;
 import searcher.pack.memento.SRSValidSolutionFilter;
 import searcher.pack.memento.SolutionFilter;
-import searcher.pack.mino_fields.RecursiveMinoFields;
 import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.separable_mino.SeparableMinoFactory;
-import searcher.pack.solutions.MappedBasicSolutions;
-import searcher.pack.calculator.BasicSolutions;
-import searcher.pack.solutions.BasicSolutionsCalculator;
+import searcher.pack.solutions.FilterOnDemandBasicSolutions;
+import searcher.pack.solutions.OnDemandBasicSolutions;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class PackSearcherTest {
+public class PackSearcherOnDemandTest {
     private static final int FIELD_WIDTH = 10;
 
     // フィールドを埋めることができる、パフェの可能性があるすべてのパターン
@@ -41,9 +40,6 @@ public class PackSearcherTest {
         int height = 4;
         SizedBit sizedBit = new SizedBit(width, height);
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
-        BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
-        Map<ColumnField, RecursiveMinoFields> calculate = calculator.calculate();
-        BasicSolutions basicSolutions = new MappedBasicSolutions(calculate);
 
         // width = expected_count
         HashSet<Pair<Integer, Integer>> widthExpected = new HashSet<Pair<Integer, Integer>>() {
@@ -59,7 +55,7 @@ public class PackSearcherTest {
         for (Pair<Integer, Integer> pair : widthExpected) {
             Integer emptyWidth = pair.getKey();
             Field initField = createSquareEmptyField(emptyWidth, height);
-            int counter = calculateAllCandidateCount(sizedBit, basicSolutions, initField);
+            int counter = calculateAllCandidateCount(separableMinos, sizedBit, initField);
 
             Integer expectedCount = pair.getValue();
             assertThat(counter, is(expectedCount));
@@ -73,9 +69,6 @@ public class PackSearcherTest {
         int height = 4;
         SizedBit sizedBit = new SizedBit(width, height);
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
-        BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
-        Map<ColumnField, RecursiveMinoFields> calculate = calculator.calculate();
-        BasicSolutions basicSolutions = new MappedBasicSolutions(calculate);
 
         // width = expected_count
         HashSet<Pair<Integer, Integer>> widthExpected = new HashSet<Pair<Integer, Integer>>() {
@@ -91,20 +84,22 @@ public class PackSearcherTest {
         for (Pair<Integer, Integer> pair : widthExpected) {
             Integer emptyWidth = pair.getKey();
             Field initField = createSquareEmptyField(emptyWidth, height);
-            int counter = calculateSRSValidCount(sizedBit, basicSolutions, initField);
+            int counter = calculateSRSValidCount(separableMinos, sizedBit, initField);
 
             Integer expectedCount = pair.getValue();
             assertThat(counter, is(expectedCount));
         }
     }
 
-    private int calculateAllCandidateCount(SizedBit sizedBit, BasicSolutions basicSolutions, Field initField) throws InterruptedException, ExecutionException {
+    private int calculateAllCandidateCount(SeparableMinos separableMinos, SizedBit sizedBit, Field initField) throws InterruptedException, ExecutionException {
         int width = sizedBit.getWidth();
         int height = sizedBit.getHeight();
         List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(width, height, initField);
-        SolutionFilter solutionFilter = new AllPassedSolutionFilter();
+        Predicate<ColumnField> memorizedPredicate = BasicSolutions.createBitCountPredicate(1);
+        OnDemandBasicSolutions basicSolutions = new OnDemandBasicSolutions(separableMinos, sizedBit, memorizedPredicate);
 
         TaskResultHelper taskResultHelper = new Field4x10MinoPackingHelper();
+        SolutionFilter solutionFilter = new AllPassedSolutionFilter();
         PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
 
         AtomicInteger counter = new AtomicInteger();
@@ -112,12 +107,14 @@ public class PackSearcherTest {
         return counter.get();
     }
 
-    private int calculateSRSValidCount(SizedBit sizedBit, BasicSolutions basicSolutions, Field initField) throws InterruptedException, ExecutionException {
+    private int calculateSRSValidCount(SeparableMinos separableMinos, SizedBit sizedBit, Field initField) throws InterruptedException, ExecutionException {
         int width = sizedBit.getWidth();
         int height = sizedBit.getHeight();
         List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(width, height, initField);
         LockedReachableThreadLocal lockedReachableThreadLocal = new LockedReachableThreadLocal(height);
         SolutionFilter solutionFilter = new SRSValidSolutionFilter(initField, lockedReachableThreadLocal, sizedBit);
+        Predicate<ColumnField> memorizedPredicate = BasicSolutions.createBitCountPredicate(1);
+        FilterOnDemandBasicSolutions basicSolutions = new FilterOnDemandBasicSolutions(separableMinos, sizedBit, memorizedPredicate, solutionFilter);
 
         TaskResultHelper taskResultHelper = new Field4x10MinoPackingHelper();
         PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);

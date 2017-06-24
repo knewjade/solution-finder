@@ -28,8 +28,8 @@ import searcher.pack.*;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.mino_fields.RecursiveMinoFields;
 import searcher.pack.separable_mino.SeparableMinoFactory;
-import searcher.pack.solutions.MapedBasicSolutions;
-import searcher.pack.solutions.BasicSolutions;
+import searcher.pack.solutions.MappedBasicSolutions;
+import searcher.pack.calculator.BasicSolutions;
 import searcher.pack.solutions.BasicSolutionsCalculator;
 import searcher.pack.task.*;
 import searcher.pack.task.Result;
@@ -192,7 +192,7 @@ public class PathEntryPoint implements EntryPoint {
         // 基本パターンを計算
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
         Map<ColumnField, RecursiveMinoFields> calculate = calculator.calculate();
-        BasicSolutions solutions = new MapedBasicSolutions(calculate, solutionFilter);
+        BasicSolutions solutions = new MappedBasicSolutions(calculate, solutionFilter);
 
         output("     ... done");
 

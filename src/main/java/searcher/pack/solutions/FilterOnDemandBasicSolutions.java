@@ -8,41 +8,39 @@ import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.calculator.*;
 import searcher.pack.connections.ColumnFieldConnections;
-import searcher.pack.mino_fields.MemorizedRecursiveMinoFields;
-import searcher.pack.mino_fields.OnDemandRecursiveMinoFields;
-import searcher.pack.mino_fields.RecursiveMinoFields;
+import searcher.pack.memento.SolutionFilter;
+import searcher.pack.mino_fields.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
-/**
- * マルチスレッド非対応
- */
-public class BasicSolutionsCalculator implements SolutionsCalculator {
+public class FilterOnDemandBasicSolutions implements BasicSolutions, SolutionsCalculator {
     private static final int FIELD_WIDTH = 10;
     private static final int WIDTH_OVER_MINO = 3;
 
+    private final SeparableMinos separableMinos;
+    private final ColumnSmallField initOuterField;
+    private final SolutionFilter solutionFilter;
     private final SizedBit sizedBit;
     private final BasicReference reference;
-    private final SeparableMinos separableMinos;
-    private final ColumnSmallField limitOuterField;
-    private final HashMap<ColumnField, RecursiveMinoFields> resultsMap = new HashMap<>();
     private final SmallField originWallField;
     private final Predicate<ColumnField> memorizedPredicate;
+    private final ConcurrentHashMap<ColumnField, RecursiveMinoFields> resultsMap;
 
-    public BasicSolutionsCalculator(SeparableMinos separableMinos, SizedBit sizedBit) {
-        this(separableMinos, sizedBit, new ColumnSmallField(), columnField -> true);
+    public FilterOnDemandBasicSolutions(SeparableMinos separableMinos, SizedBit sizedBit, Predicate<ColumnField> memorizedPredicate, SolutionFilter solutionFilter) {
+        this(separableMinos, sizedBit, new ColumnSmallField(), memorizedPredicate, solutionFilter);
     }
 
-    public BasicSolutionsCalculator(SeparableMinos separableMinos, SizedBit sizedBit, ColumnSmallField limitOuterField, Predicate<ColumnField> memorizedPredicate) {
+    public FilterOnDemandBasicSolutions(SeparableMinos separableMinos, SizedBit sizedBit, ColumnSmallField initOuterField, Predicate<ColumnField> memorizedPredicate, SolutionFilter solutionFilter) {
         this.separableMinos = separableMinos;
-        this.limitOuterField = limitOuterField;
+        this.initOuterField = initOuterField;
+        this.solutionFilter = solutionFilter;
         assert sizedBit.getHeight() <= 10;
         this.sizedBit = sizedBit;
         this.reference = createBasicReference(sizedBit, separableMinos);
-        this.originWallField = createInitialWallField(sizedBit);
+        this.originWallField = createWallField(sizedBit);
         this.memorizedPredicate = memorizedPredicate;
+        this.resultsMap = new ConcurrentHashMap<>();
     }
 
     private BasicReference createBasicReference(SizedBit sizedBit, SeparableMinos separableMinos) {
@@ -51,7 +49,7 @@ public class BasicSolutionsCalculator implements SolutionsCalculator {
         return new BasicReferenceHeight12(sizedBit, separableMinos);
     }
 
-    private SmallField createInitialWallField(SizedBit sizedBit) {
+    private SmallField createWallField(SizedBit sizedBit) {
         SmallField wallField = new SmallField();
         // 横向きIをおいたとき、3ブロック分あふれる
         for (int y = 0; y < sizedBit.getHeight(); y++)
@@ -60,19 +58,16 @@ public class BasicSolutionsCalculator implements SolutionsCalculator {
         return wallField;
     }
 
-    public Map<ColumnField, RecursiveMinoFields> calculate() {
-        assert resultsMap.isEmpty();
-
-        reference.getBasicFieldsSortedByBitCount().sequential().forEach(this::addColumnSmallField);
-
-        return this.resultsMap;
+    @Override
+    public MinoFields parse(ColumnField columnField) {
+        return getRecursiveMinoFields(columnField);
     }
 
-    private void addColumnSmallField(ColumnSmallField basicField) {
+    private RecursiveMinoFields addColumnSmallField(ColumnField basicField) {
         Field wallField = createWallField(basicField);
         ColumnSmallField initOuterField = new ColumnSmallField();
-        RecursiveMinoFields calculate = calculate(basicField, initOuterField, wallField);
-        resultsMap.put(basicField, calculate);
+        RecursiveMinoFields recursiveMinoFields = calculate(basicField, initOuterField, wallField);
+        return new FilteredRecursiveMinoFields(recursiveMinoFields, solutionFilter);
     }
 
     // innerと探索に関係ないブロックが埋まっているフィールド
@@ -85,7 +80,7 @@ public class BasicSolutionsCalculator implements SolutionsCalculator {
 
     // columnField = inner + outer
     // outerColumnField = outer only
-    private RecursiveMinoFields calculate(ColumnSmallField columnField, ColumnField outerColumnField, Field wallField) {
+    private RecursiveMinoFields calculate(ColumnField columnField, ColumnField outerColumnField, Field wallField) {
         // まだ探索したことのないフィールドのとき
         // innerに対しておける可能性がある手順を取得
         // 計算をインスタンス化して遅延させる
@@ -93,12 +88,12 @@ public class BasicSolutionsCalculator implements SolutionsCalculator {
         return createRecursiveMinoFields(columnField, outerColumnField, wallField, isMemorized);
     }
 
-    private RecursiveMinoFields createRecursiveMinoFields(ColumnSmallField columnField, ColumnField outerColumnField, Field wallField, boolean isMemorized) {
+    private RecursiveMinoFields createRecursiveMinoFields(ColumnField columnField, ColumnField outerColumnField, Field wallField, boolean isMemorized) {
         if (isMemorized) {
-            ConnectionsToListCallable callable = new ConnectionsToListCallable(this, columnField, outerColumnField, wallField, limitOuterField);
+            ConnectionsToListCallable callable = new ConnectionsToListCallable(this, columnField, outerColumnField, wallField, initOuterField);
             return new MemorizedRecursiveMinoFields(callable);
         } else {
-            ConnectionsToStreamCallable callable = new ConnectionsToStreamCallable(this, columnField, outerColumnField, wallField, limitOuterField);
+            ConnectionsToStreamCallable callable = new ConnectionsToStreamCallable(this, columnField, outerColumnField, wallField, initOuterField);
             return new OnDemandRecursiveMinoFields(callable);
         }
     }
@@ -130,6 +125,11 @@ public class BasicSolutionsCalculator implements SolutionsCalculator {
 
     @Override
     public RecursiveMinoFields getRecursiveMinoFields(ColumnField columnField) {
-        return resultsMap.getOrDefault(columnField, null);
+        return resultsMap.computeIfAbsent(columnField, this::addColumnSmallField);
+    }
+
+    public ConcurrentHashMap<ColumnField, RecursiveMinoFields> getSolutions() {
+        return resultsMap;
     }
 }
+

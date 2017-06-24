@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 
 public class MagicMain {
     public static void main(String[] args) {
-        SizedBit sizedBit = new SizedBit(2, 6);
+        SizedBit sizedBit = new SizedBit(1, 6);
         Obj obj = new Obj(sizedBit);
         Stream<ColumnSmallField> fields = obj.createBasicFields();
         List<Pair<ColumnSmallField, SmallField>> pairs = fields.map(columnSmallField -> toPair(columnSmallField, sizedBit))
@@ -23,7 +23,7 @@ public class MagicMain {
                 .collect(Collectors.toList());
 
 //        int x = 0;
-//        long board = ColumnOperators.parseColumnToBoard(x);
+//        long board = ColumnOperators.parseToBoardWidth12(x);
         System.out.println("switch (column) {");
         for (Pair<ColumnSmallField, SmallField> pair : pairs) {
             System.out.printf("case %d:%n", pair.getKey().getBoard(0));
@@ -54,7 +54,7 @@ public class MagicMain {
         SmallField invertedField = new SmallField();
         for (int y = 0; y < sizedBit.getHeight(); y++) {
             for (int x = 0; x < sizedBit.getWidth(); x++) {
-                if (!columnField.isEmpty(x, y, sizedBit.getHeight()))
+                if (columnField.isEmpty(x, y, sizedBit.getHeight()))
                     invertedField.setBlock(x, y);
             }
         }

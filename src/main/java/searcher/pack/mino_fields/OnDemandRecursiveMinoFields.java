@@ -1,8 +1,8 @@
 package searcher.pack.mino_fields;
 
-import searcher.pack.MinoField;
-import searcher.pack.RecursiveMinoField;
-import searcher.pack.solutions.ConnectionsToStreamCallable;
+import searcher.pack.mino_field.MinoField;
+import searcher.pack.mino_field.RecursiveMinoField;
+import searcher.pack.calculator.ConnectionsToStreamCallable;
 
 import java.util.stream.Stream;
 

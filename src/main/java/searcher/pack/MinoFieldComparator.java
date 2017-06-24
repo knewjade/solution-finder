@@ -1,8 +1,8 @@
 package searcher.pack;
 
 import common.comparator.OperationWithKeyComparator;
-import common.datastore.BlockField;
 import common.datastore.OperationWithKey;
+import searcher.pack.mino_field.MinoField;
 
 import java.util.Comparator;
 import java.util.List;

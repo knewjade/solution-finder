@@ -8,6 +8,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InOutPairField {
+    public static ColumnSmallField createMaxOuterBoard(int width, int height, Field initField) {
+        long maxOuterBoard = createMaxOuterBoard(width, height, initField, 9 / width);
+        return new ColumnSmallField(maxOuterBoard);
+    }
+
+    private static long createMaxOuterBoard(int width, int height, Field initField, int max) {
+        Field field = initField.freeze(height);
+
+        long board = Long.MAX_VALUE;
+        for (int count = 0; count < max - 1; count++) {
+            InOutPairField pairField = parseLast(field, width, height);
+            ColumnField outerField = pairField.getOuterField();
+            board &= outerField.getBoard(0);
+            field.slideLeft(width);
+        }
+
+        return board;
+    }
+
+
     public static List<InOutPairField> createInOutPairFields(int width, int height, Field initField) {
         return createInOutPairFields(width, height, initField, 9 / width);
     }

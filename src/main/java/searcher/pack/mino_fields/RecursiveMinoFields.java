@@ -1,6 +1,6 @@
 package searcher.pack.mino_fields;
 
-import searcher.pack.RecursiveMinoField;
+import searcher.pack.mino_field.RecursiveMinoField;
 
 import java.util.stream.Stream;
 

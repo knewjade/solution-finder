@@ -7,7 +7,7 @@ import common.datastore.pieces.Pieces;
 import common.iterable.CombinationIterable;
 import common.pattern.PiecesGenerator;
 import core.mino.Block;
-import searcher.pack.MinoField;
+import searcher.pack.mino_field.MinoField;
 import searcher.pack.memento.MinoFieldMemento;
 import searcher.pack.memento.SolutionFilter;
 

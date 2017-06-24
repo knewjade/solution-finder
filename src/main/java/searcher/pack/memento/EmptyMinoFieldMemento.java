@@ -1,7 +1,7 @@
 package searcher.pack.memento;
 
 import common.datastore.OperationWithKey;
-import searcher.pack.MinoField;
+import searcher.pack.mino_field.MinoField;
 
 import java.util.stream.Stream;
 

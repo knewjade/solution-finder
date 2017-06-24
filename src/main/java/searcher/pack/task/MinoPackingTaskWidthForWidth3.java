@@ -3,7 +3,7 @@ package searcher.pack.task;
 import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
 import searcher.pack.InOutPairField;
-import searcher.pack.MinoField;
+import searcher.pack.mino_field.MinoField;
 import searcher.pack.mino_fields.MinoFields;
 import searcher.pack.SizedBit;
 import searcher.pack.memento.MinoFieldMemento;

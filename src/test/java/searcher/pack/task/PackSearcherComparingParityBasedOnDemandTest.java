@@ -13,23 +13,23 @@ import org.junit.Test;
 import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
+import searcher.pack.calculator.BasicSolutions;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.memento.UsingBlockAndValidKeySolutionFilter;
-import searcher.pack.mino_fields.RecursiveMinoFields;
 import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.separable_mino.SeparableMinoFactory;
-import searcher.pack.solutions.MappedBasicSolutions;
-import searcher.pack.calculator.BasicSolutions;
-import searcher.pack.solutions.BasicSolutionsCalculator;
+import searcher.pack.solutions.FilterWrappedBasicSolutions;
+import searcher.pack.solutions.OnDemandBasicSolutions;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class PackSearcherComparingParityBasedTest {
+public class PackSearcherComparingParityBasedOnDemandTest {
     private static class TestData {
         private final String blockStr;
         private final long count;
@@ -2815,8 +2815,8 @@ public class PackSearcherComparingParityBasedTest {
     private void compareCount(int width, int height, List<TestData> testDataList) throws InterruptedException, ExecutionException {
         SizedBit sizedBit = new SizedBit(width, height);
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
-        BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
-        Map<ColumnField, RecursiveMinoFields> calculate = calculator.calculate();
+        Predicate<ColumnField> bitCountPredicate = BasicSolutions.createBitCountPredicate(1);
+        OnDemandBasicSolutions onDemandBasicSolutions = new OnDemandBasicSolutions(separableMinos, sizedBit, bitCountPredicate);
 
         for (TestData data : testDataList) {
             // 準備
@@ -2827,7 +2827,7 @@ public class PackSearcherComparingParityBasedTest {
             // packで探索
             Set<BlockCounter> blockCounters = Collections.singleton(new BlockCounter(usingBlocks));
             SolutionFilter solutionFilter = createUsingBlockAndValidKeyMementoFilter(initField, sizedBit, blockCounters);
-            BasicSolutions basicSolutions = new MappedBasicSolutions(calculate, solutionFilter);
+            BasicSolutions basicSolutions = new FilterWrappedBasicSolutions(onDemandBasicSolutions, solutionFilter);
             long packCounter = calculateSRSValidCount(sizedBit, basicSolutions, initField, solutionFilter);
 
             System.out.println(usingBlocks);

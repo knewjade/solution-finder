@@ -6,7 +6,7 @@ import searcher.pack.SizedBit;
 import searcher.pack.memento.MinoFieldMemento;
 import searcher.pack.memento.MinoFieldMementoFactory;
 import searcher.pack.memento.SolutionFilter;
-import searcher.pack.solutions.BasicSolutions;
+import searcher.pack.calculator.BasicSolutions;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -166,7 +166,6 @@ public class PackSearcher {
             // (終端操作をしなかった場合、Pool内ではStream自体の作成をして終了する)
 
             return task.compute().parallel()
-                    .peek(System.out::println)
                     .count();
         });
 

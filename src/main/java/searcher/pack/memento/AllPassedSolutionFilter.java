@@ -1,6 +1,6 @@
 package searcher.pack.memento;
 
-import searcher.pack.MinoField;
+import searcher.pack.mino_field.MinoField;
 
 public class AllPassedSolutionFilter implements SolutionFilter {
     @Override
