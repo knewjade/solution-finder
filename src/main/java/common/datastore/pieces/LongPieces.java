@@ -20,6 +20,10 @@ public class LongPieces implements Pieces {
         return (long) Math.pow(7, number);
     }
 
+    private static long getScale(int index) {
+        return SCALE[index];
+    }
+
     private final long pieces;
     private final int max;
 
@@ -31,6 +35,13 @@ public class LongPieces implements Pieces {
     public LongPieces(List<Block> blocks) {
         this.pieces = parse(0L, blocks, 0);
         this.max = blocks.size();
+    }
+
+    public LongPieces(Stream<Block> blocks) {
+        TemporaryCount temporary = new TemporaryCount(0L, 0);
+        blocks.sequential().forEach(temporary::add);
+        this.pieces = temporary.value;
+        this.max = temporary.index;
     }
 
     private LongPieces(LongPieces parent, List<Block> blocks) {
@@ -52,8 +63,12 @@ public class LongPieces implements Pieces {
         return pieces;
     }
 
-    private long getScale(int index) {
-        return SCALE[index];
+    public long getPieces() {
+        return pieces;
+    }
+
+    public FrozenLongPieces fix() {
+        return new FrozenLongPieces(this.pieces);
     }
 
     @Override
@@ -100,6 +115,9 @@ public class LongPieces implements Pieces {
         if (getClass() != o.getClass()) {
             LongPieces that = (LongPieces) o;
             return pieces == that.pieces;
+        } else if (o instanceof FrozenLongPieces) {
+            FrozenLongPieces that = (FrozenLongPieces) o;
+            return pieces == that.getPieces();
         } else if (o instanceof Pieces) {
             Pieces that = (Pieces) o;
             return PiecesNumberComparator.comparePieces(this, that) == 0;
@@ -111,5 +129,20 @@ public class LongPieces implements Pieces {
     @Override
     public int hashCode() {
         return (int) (pieces ^ (pieces >>> 32));
+    }
+
+    private static class TemporaryCount {
+        private long value = 0L;
+        private int index = 0;
+
+        private TemporaryCount(long value, int index) {
+            this.value = value;
+            this.index = index;
+        }
+
+        private void add(Block block) {
+            value += getScale(index) * block.getNumber();
+            index += 1;
+        }
     }
 }

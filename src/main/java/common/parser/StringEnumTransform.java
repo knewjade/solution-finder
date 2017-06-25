@@ -3,8 +3,8 @@ package common.parser;
 import core.mino.Block;
 import core.srs.Rotate;
 
-class StringEnumTransform {
-    static Block toBlock(String name) {
+public class StringEnumTransform {
+    public static Block toBlock(String name) {
         switch (name) {
             case "T":
                 return Block.T;
