@@ -6,7 +6,7 @@ import _implements.parity_based_pack.step1.EstimateBuilder;
 import _implements.parity_based_pack.step2.FullLimitedMino;
 import _implements.parity_based_pack.step2.PositionLimitParser;
 import _implements.parity_based_pack.step3.CrossBuilder;
-import common.OperationWithKeyHelper;
+import common.parser.OperationWithKeyInterpreter;
 import common.Stopwatch;
 import common.buildup.BuildUp;
 import common.datastore.BlockField;
@@ -87,7 +87,7 @@ public class Main3 {
 
             System.out.println(objs.size());
             objs.stream()
-                    .map(obj -> OperationWithKeyHelper.parseToString(obj.operations))
+                    .map(obj -> OperationWithKeyInterpreter.parseToString(obj.operations))
                     .sorted().sequential()
                     .forEach(System.out::println);
 

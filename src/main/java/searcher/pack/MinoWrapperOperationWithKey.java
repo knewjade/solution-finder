@@ -1,7 +1,9 @@
 package searcher.pack;
 
 import common.datastore.OperationWithKey;
+import core.mino.Block;
 import core.mino.Mino;
+import core.srs.Rotate;
 import searcher.pack.separable_mino.SeparableMino;
 
 public class MinoWrapperOperationWithKey implements OperationWithKey {

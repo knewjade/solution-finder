@@ -1,12 +1,13 @@
 package entry.path;
 
-import common.OperationHelper;
 import common.Stopwatch;
 import common.SyntaxException;
 import common.buildup.BuildUp;
 import common.buildup.BuildUpStream;
 import common.datastore.*;
 import common.datastore.pieces.LongPieces;
+import common.parser.OperationInterpreter;
+import common.parser.OperationTransform;
 import common.pattern.PiecesGenerator;
 import common.tetfu.Tetfu;
 import common.tetfu.TetfuElement;
@@ -24,13 +25,15 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.Rotate;
 import entry.EntryPoint;
-import searcher.pack.*;
+import searcher.pack.InOutPairField;
+import searcher.pack.SeparableMinos;
+import searcher.pack.SizedBit;
+import searcher.pack.calculator.BasicSolutions;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.mino_fields.RecursiveMinoFields;
 import searcher.pack.separable_mino.SeparableMinoFactory;
-import searcher.pack.solutions.MappedBasicSolutions;
-import searcher.pack.calculator.BasicSolutions;
 import searcher.pack.solutions.BasicSolutionsCalculator;
+import searcher.pack.solutions.MappedBasicSolutions;
 import searcher.pack.task.*;
 import searcher.pack.task.Result;
 
@@ -323,8 +326,8 @@ public class PathEntryPoint implements EntryPoint {
 
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false), CHARSET))) {
             for (List<OperationWithKey> operationWithKeys : samples) {
-                Operations operations = BuildUp.parseToOperations(field, operationWithKeys, sizedBit.getHeight());
-                String operationLine = OperationHelper.parseToString(operations);
+                Operations operations = OperationTransform.parseToOperations(field, operationWithKeys, sizedBit.getHeight());
+                String operationLine = OperationInterpreter.parseToString(operations);
                 writer.write(operationLine);
                 writer.newLine();
             }
@@ -504,7 +507,7 @@ public class PathEntryPoint implements EntryPoint {
     }
 
     private String createALinkOrder(LinkInformation information, Field field, MinoFactory minoFactory, ColorConverter colorConverter, int maxClearLine) {
-        Operations operations = BuildUp.parseToOperations(field, information.getSample(), maxClearLine);
+        Operations operations = OperationTransform.parseToOperations(field, information.getSample(), maxClearLine);
         List<Operation> operationsList = operations.getOperations();
 
         // ブロック順に変換

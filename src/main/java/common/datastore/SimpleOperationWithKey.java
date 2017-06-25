@@ -1,6 +1,8 @@
 package common.datastore;
 
+import core.mino.Block;
 import core.mino.Mino;
+import core.srs.Rotate;
 
 public class SimpleOperationWithKey implements OperationWithKey {
     private final Mino mino;

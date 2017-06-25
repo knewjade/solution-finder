@@ -1,6 +1,6 @@
 package searcher.pack;
 
-import common.OperationWithKeyHelper;
+import common.parser.OperationWithKeyInterpreter;
 import common.Stopwatch;
 import common.comparator.OperationWithKeyComparator;
 import common.datastore.BlockCounter;
@@ -111,7 +111,7 @@ public class PackMain {
                 List<OperationWithKey> operations = result.getMemento().getOperationsStream(sizedBit.getWidth())
                         .sorted(OperationWithKeyComparator::compareOperationWithKey)
                         .collect(Collectors.toList());
-                String operationString = OperationWithKeyHelper.parseToString(operations);
+                String operationString = OperationWithKeyInterpreter.parseToString(operations);
 
                 singleThreadExecutor.submit(() -> {
                     try {

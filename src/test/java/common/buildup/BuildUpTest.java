@@ -5,6 +5,8 @@ import common.datastore.Operations;
 import common.datastore.SimpleOperation;
 import common.datastore.SimpleOperationWithKey;
 import common.iterable.PermutationIterable;
+import common.parser.OperationTransform;
+import common.parser.OperationWithKeyInterpreter;
 import core.action.reachable.LockedReachable;
 import core.field.Field;
 import core.field.FieldFactory;
@@ -21,6 +23,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static core.mino.Block.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -84,7 +87,7 @@ public class BuildUpTest {
 
         // OperationWithKeyに変換
         MinoFactory minoFactory = new MinoFactory();
-        List<OperationWithKey> operationWithKeys = BuildUp.parseToOperationWithKeys(field, operations, minoFactory, height);
+        List<OperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
 
         // reachableの準備
         MinoShifter minoShifter = new MinoShifter();
@@ -129,7 +132,7 @@ public class BuildUpTest {
 
         // OperationWithKeyに変換
         MinoFactory minoFactory = new MinoFactory();
-        List<OperationWithKey> operationWithKeys = BuildUp.parseToOperationWithKeys(field, operations, minoFactory, height);
+        List<OperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
 
         // reachableの準備
         MinoShifter minoShifter = new MinoShifter();
@@ -154,5 +157,38 @@ public class BuildUpTest {
             boolean checksKey = BuildUp.checksKey(withKeys, 0L, height);
             assertThat(checksKey, is(true));
         }
+    }
+
+    @Test
+    public void existsValidByOrder() throws Exception {
+        Field field = FieldFactory.createField("" +
+                "____XXXXXX" +
+                "____XXXXXX" +
+                "____XXXXXX" +
+                "____XXXXXX" +
+                ""
+        );
+        String line = "L,L,3,1,0,1049601;L,R,1,1,0,1049601;I,L,0,1,0,1074791425;T,2,2,2,1048576,1073742848";
+        MinoFactory minoFactory = new MinoFactory();
+        Stream<OperationWithKey> stream = OperationWithKeyInterpreter.parseToStream(line, minoFactory);
+        List<OperationWithKey> operations = stream.collect(Collectors.toList());
+        System.out.println(operations);
+
+        int height = 4;
+        MinoRotation minoRotation = new MinoRotation();
+        MinoShifter minoShifter = new MinoShifter();
+        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
+
+        // true
+        assertThat(BuildUp.existsValidByOrder(field, operations.stream(), Arrays.asList(L, L, I, T), height, reachable), is(true));
+        assertThat(BuildUp.existsValidByOrder(field, operations.stream(), Arrays.asList(L, I, L, T), height, reachable), is(true));
+        assertThat(BuildUp.existsValidByOrder(field, operations.stream(), Arrays.asList(I, L, L, T), height, reachable), is(true));
+
+        // false
+        assertThat(BuildUp.existsValidByOrder(field, operations.stream(), Arrays.asList(L, L, T, I), height, reachable), is(false));
+        assertThat(BuildUp.existsValidByOrder(field, operations.stream(), Arrays.asList(L, T, L, I), height, reachable), is(false));
+        assertThat(BuildUp.existsValidByOrder(field, operations.stream(), Arrays.asList(L, T, I, L), height, reachable), is(false));
+        assertThat(BuildUp.existsValidByOrder(field, operations.stream(), Arrays.asList(T, L, I, L), height, reachable), is(false));
+        assertThat(BuildUp.existsValidByOrder(field, operations.stream(), Arrays.asList(T, I, L, L), height, reachable), is(false));
     }
 }
