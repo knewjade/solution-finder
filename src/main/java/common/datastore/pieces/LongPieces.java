@@ -67,10 +67,6 @@ public class LongPieces implements Pieces {
         return pieces;
     }
 
-    public FrozenLongPieces fix() {
-        return new FrozenLongPieces(this.pieces);
-    }
-
     @Override
     public List<Block> getBlocks() {
         ArrayList<Block> blocks = new ArrayList<>();
@@ -115,9 +111,6 @@ public class LongPieces implements Pieces {
         if (getClass() != o.getClass()) {
             LongPieces that = (LongPieces) o;
             return pieces == that.pieces;
-        } else if (o instanceof FrozenLongPieces) {
-            FrozenLongPieces that = (FrozenLongPieces) o;
-            return pieces == that.getPieces();
         } else if (o instanceof Pieces) {
             Pieces that = (Pieces) o;
             return PiecesNumberComparator.comparePieces(this, that) == 0;

@@ -66,4 +66,15 @@ public class BlockCounter {
         }
         return blocks;
     }
+
+    public Stream<Block> getBlockStream() {
+        Stream.Builder<Block> builder = Stream.builder();
+        for (int index = 0, max = Block.getSize(); index < max; index++) {
+            Block block = Block.getBlock(index);
+            long size = (counter >>> 8 * index) & 0xff;
+            for (int counter = 0; counter < size; counter++)
+                builder.accept(block);
+        }
+        return builder.build();
+    }
 }

@@ -156,7 +156,7 @@ public class BuildUp {
             operationWithKeys.add(operationWithKey);
         }, EnumMap::putAll);
 
-        return existsValidByOrder(field, eachBlocks, blocks, height, reachable, 0);
+        return existsValidByOrder(field.freeze(height), eachBlocks, blocks, height, reachable, 0);
     }
 
     private static boolean existsValidByOrder(Field field, EnumMap<Block, LinkedList<OperationWithKey>> eachBlocks, List<Block> blocks, int height, Reachable reachable, int depth) {
