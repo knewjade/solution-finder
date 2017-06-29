@@ -17,7 +17,6 @@ public class ForwardOrderLookUp {
 
     public ForwardOrderLookUp(int toDepth, boolean isOverBlock) {
         this.indexesList = forward(toDepth, isOverBlock);
-        indexesList.forEach(System.out::println);
     }
 
     private List<List<Integer>> forward(int toDepth, boolean isOverBlock) {

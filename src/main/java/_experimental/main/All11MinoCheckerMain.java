@@ -54,12 +54,9 @@ public class All11MinoCheckerMain {
                     LongPieces pieces = new LongPieces(parse10(line));
                     return ngPieces.contains(pieces);
                 })
-                .limit(1L)
                 .filter(line -> {
                     List<Block> blocks = parse11(line).collect(Collectors.toList());
                     ForwardOrderLookUp orderLookUp = new ForwardOrderLookUp(10, true);
-
-                    System.out.println(line);
 
                     // すべてのパターンでパフェできないものは true で次に送る
                     return orderLookUp.parse(blocks)
@@ -67,27 +64,17 @@ public class All11MinoCheckerMain {
                             .distinct()
                             .allMatch(pieces -> {
                                 // パフェできないものは true で次に送る
-                                System.out.println(pieces.getBlocks());
 
                                 // パフェできない順序である
-                                if (ngPieces.contains(pieces)) {
-                                    System.out.println("  ==> no piece");
+                                if (ngPieces.contains(pieces))
                                     return true;
-                                }
 
                                 // パフェできない組み合わせである
                                 BlockCounter blockCounter = new BlockCounter(pieces.getBlockStream());
-                                if (blockCounters.contains(blockCounter)) {
-                                    System.out.println("  ==> " + blockCounter.getBlocks());
-                                    System.out.println("  ==> no comb");
-                                    return true;
-                                }
-
-                                return false;  // パフェできる
+                                return blockCounters.contains(blockCounter);
                             });
 
                 })
-                .peek(System.out::println)
                 .collect(Collectors.toList());
 
         System.out.println(blockCounters.size());
