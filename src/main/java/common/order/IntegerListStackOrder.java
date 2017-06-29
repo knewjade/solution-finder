@@ -32,6 +32,14 @@ public class IntegerListStackOrder implements StackOrder<Integer> {
         blocks.add(blocks.size() - 1, number);
     }
 
+
+    @Override
+    public void addLastTwoAndRemoveLast(Integer number) {
+        assert number != null;
+        blocks.add(blocks.size() - 1, number);
+        blocks.remove(blocks.size() - 1);
+    }
+
     @Override
     public void stock(Integer number) {
         assert number != null;

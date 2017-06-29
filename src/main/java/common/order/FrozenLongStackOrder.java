@@ -40,6 +40,11 @@ public class FrozenLongStackOrder implements StackOrder<Block> {
     }
 
     @Override
+    public void addLastTwoAndRemoveLast(Block block) {
+        throw new UnsupportedOperationException("this is frozen");
+    }
+
+    @Override
     public void stock(Block block) {
         throw new UnsupportedOperationException("this is frozen");
     }

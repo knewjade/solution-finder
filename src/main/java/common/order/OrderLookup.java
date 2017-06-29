@@ -41,7 +41,7 @@ public class OrderLookup {
     }
 
     // 指定したミノ列からホールドを利用して並び替えられるミノ列をすべて列挙
-    public static ArrayList<StackOrder<Block>> forwardBlocks(List<Block> blocks, int toDepth) {
+    public static ArrayList<StackOrder<Block>> forwardBlocks2(List<Block> blocks, int toDepth) {
         assert 1 < toDepth && toDepth <= blocks.size();
 
         ArrayList<StackOrder<Block>> candidates = new ArrayList<>();
@@ -64,6 +64,19 @@ public class OrderLookup {
 
                 pieces.addLastTwo(block);  // おく
                 freeze.addLast(block);  // holdする
+
+                candidates.add(freeze);
+            }
+        }
+
+        if (toDepth < blocks.size()) {
+            Block block = blocks.get(toDepth);
+            int size = candidates.size();
+            for (int index = 0; index < size; index++) {
+                StackOrder<Block> pieces = candidates.get(index);
+                StackOrder<Block> freeze = pieces.freeze();
+
+                pieces.addLastTwoAndRemoveLast(block);  // おく
 
                 candidates.add(freeze);
             }

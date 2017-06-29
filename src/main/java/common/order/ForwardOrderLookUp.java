@@ -11,11 +11,16 @@ import java.util.stream.Stream;
 public class ForwardOrderLookUp {
     private final List<List<Integer>> indexesList;
 
-    public ForwardOrderLookUp(int toDepth) {
-        this.indexesList = forward(toDepth);
+    public ForwardOrderLookUp(int toDepth, int fromDepth) {
+        this(toDepth, toDepth < fromDepth);
     }
 
-    private List<List<Integer>> forward(int toDepth) {
+    public ForwardOrderLookUp(int toDepth, boolean isOverBlock) {
+        this.indexesList = forward(toDepth, isOverBlock);
+        indexesList.forEach(System.out::println);
+    }
+
+    private List<List<Integer>> forward(int toDepth, boolean isOverBlock) {
         List<Integer> indexes = IntStream.range(0, toDepth).boxed().collect(Collectors.toList());
 
         ArrayList<StackOrder<Integer>> candidates = new ArrayList<>();
@@ -38,6 +43,19 @@ public class ForwardOrderLookUp {
 
                 pieces.addLastTwo(number);  // おく
                 freeze.addLast(number);  // holdする
+
+                candidates.add(freeze);
+            }
+        }
+
+        if (isOverBlock) {
+            Integer number = toDepth;
+            int size = candidates.size();
+            for (int index = 0; index < size; index++) {
+                StackOrder<Integer> pieces = candidates.get(index);
+                StackOrder<Integer> freeze = pieces.freeze();
+
+                pieces.addLastTwoAndRemoveLast(number);  // おく
 
                 candidates.add(freeze);
             }

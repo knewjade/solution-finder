@@ -1,7 +1,5 @@
 package common.order;
 
-import core.mino.Block;
-
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -19,4 +17,6 @@ public interface StackOrder<T> {
     StackOrder<T> freeze();
 
     StackOrder<T> fix();
+
+    void addLastTwoAndRemoveLast(T block);
 }

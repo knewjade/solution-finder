@@ -17,7 +17,29 @@ import static org.junit.Assert.*;
 
 public class ForwardOrderLookUpTest {
     @Test
-    public void parse() throws Exception {
+    public void parseJustBlocks() throws Exception {
+        List<Block> blockList = Arrays.asList(Block.I, Block.T, Block.Z, Block.O, Block.I, Block.L);
+        int toDepth = blockList.size();
+
+        PiecesNumberComparator comparator = new PiecesNumberComparator();
+        List<Pieces> forward1 = OrderLookup.forwardBlocks(blockList, toDepth).stream()
+                .map(StackOrder::toList)
+                .map(LongPieces::new)
+                .sorted(comparator)
+                .collect(Collectors.toList());
+
+        ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth, blockList.size());
+        List<Pieces> forward2 = lookUp.parse(blockList)
+                .map(blockStream -> blockStream.collect(Collectors.toList()))
+                .map(LongPieces::new)
+                .sorted(comparator)
+                .collect(Collectors.toList());
+
+        assertThat(forward2, is(forward1));
+    }
+
+    @Test
+    public void parseOverBlocks() throws Exception {
         List<Block> blockList = Arrays.asList(Block.I, Block.T, Block.Z, Block.O, Block.I, Block.L);
         int toDepth = blockList.size() - 1;
 
@@ -28,7 +50,7 @@ public class ForwardOrderLookUpTest {
                 .sorted(comparator)
                 .collect(Collectors.toList());
 
-        ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth);
+        ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth, blockList.size());
         List<Pieces> forward2 = lookUp.parse(blockList)
                 .map(blockStream -> blockStream.collect(Collectors.toList()))
                 .map(LongPieces::new)

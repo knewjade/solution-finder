@@ -47,4 +47,13 @@ public class OrderLookupTest {
             assertThat(forward.size(), is((int) Math.pow(2, depth - 1)));
         }
     }
+
+    @Test
+    public void forwardWithLessBlocks() throws Exception {
+        List<Block> blocks = Arrays.asList(T, I, O, S, Z, J, L, T, I, O, S, Z, J, L);
+        for (int depth = 3; depth < blocks.size(); depth++) {
+            ArrayList<StackOrder<Block>> forward = OrderLookup.forwardBlocks(blocks.subList(0, depth), depth - 1);
+            assertThat(forward.size(), is((int) Math.pow(2, depth - 1)));
+        }
+    }
 }

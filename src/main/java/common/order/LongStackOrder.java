@@ -57,6 +57,14 @@ public class LongStackOrder implements StackOrder<Block> {
         max += 1;
     }
 
+    @Override
+    public void addLastTwoAndRemoveLast(Block block) {
+        assert 1 <= max;
+        int index = max - 1;
+        long head = pieces % getScale(index);
+        pieces = toNumber(block, index) + head;
+    }
+
     private void insertBlock(Block block, int index) {
         long head = pieces % getScale(index);
         long last = pieces - head;
