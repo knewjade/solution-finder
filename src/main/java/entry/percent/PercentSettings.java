@@ -1,9 +1,9 @@
 package entry.percent;
 
-import core.field.Field;
-import core.field.FieldFactory;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
+import core.field.Field;
+import core.field.FieldFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +17,8 @@ public class PercentSettings {
     private Field field = null;
     private String logFilePath = DEFAULT_LOG_FILE_PATH;
     private List<String> patterns = new ArrayList<>();
+    private int treeDepth = 3;
+    private int failedCount = 100;
 
     // ********* Getter ************
     public boolean isUsingHold() {
@@ -41,6 +43,14 @@ public class PercentSettings {
 
     List<String> getPatterns() {
         return patterns;
+    }
+
+    int getTreeDepth() {
+        return treeDepth;
+    }
+
+    int getFailedCount() {
+        return failedCount;
     }
 
     // ********* Setter ************
@@ -71,5 +81,13 @@ public class PercentSettings {
 
     void setPatterns(List<String> patterns) {
         this.patterns = patterns;
+    }
+
+    void setTreeDepth(int depth) {
+        this.treeDepth = depth;
+    }
+
+    void setFailedCount(int maxCount) {
+        this.failedCount = maxCount;
     }
 }

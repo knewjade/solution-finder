@@ -170,7 +170,7 @@ public class PercentSettingParserTest {
 
         // comment: 3 -p T,S,L,O,L
         String tetfu = "v115@vh2SSYRBFLDmClcJSAVDEHBEooRBMoAVBUujPCv3jx?CPNUPCJHWWCJtPFDs+bgC6P9VCp/dgCzn9VCzvaFDUePFDv?+TWCviLuCqe1LCqHLWCzAAAANpBXqBGjBznB0fB0rBdnBzq?BxvB/tBqsBGjBJnB1vBTmBxkB3pBikBGrByuB9tBXjB0sB0?rBTkBmfBplBxmBirBNpBWyBXqB0fBToBCjBRmBesBTmB0qB?NpBpoBXqB0fBmrBzsQaAzno2ANI98AQe88ADd88AjS88ADX?88AjCBAA3rQjAFLDmClcJSAVztSAVG88A4c88AZyKWCat/w?CJePFDvyzBA6qBzsBirB0sB/tBGjB1wBNmQSA0no2AtTKNE?M388AwBrNEJnBAA";
-        String commands = String.format("--hold use -fp %s -pp %s --tetfu %s --patterns *p5 --log-path output/dummy -P 46", fieldPath, patternsPath, tetfu);
+        String commands = String.format("--hold use -fp %s -pp %s --tetfu %s --patterns *p5 --log-path output/dummy -P 46 --tree-depth 1 --failed-count 10", fieldPath, patternsPath, tetfu);
 
         PercentSettingParser entryPoint = new PercentSettingParser(commands);
         Optional<PercentSettings> parse = entryPoint.parse();
@@ -188,6 +188,8 @@ public class PercentSettingParserTest {
             assertThat(settings.getPatterns(), is(Collections.singletonList("T,S,L,O,L")));
             assertThat(settings.isOutputToConsole(), is(true));
             assertThat(settings.isUsingHold(), is(true));
+            assertThat(settings.getTreeDepth(), is(1));
+            assertThat(settings.getFailedCount(), is(10));
             assertField(settings.getField(), expectedField);
         });
     }
@@ -195,7 +197,7 @@ public class PercentSettingParserTest {
     @Test
     public void testTetfu1InField() throws Exception {
         String fieldPath = ClassLoader.getSystemResource("field/tetfu1.txt").getPath();
-        String commands = String.format("-fp %s -P 46", fieldPath);
+        String commands = String.format("-fp %s -P 46 -td 4", fieldPath);
 
         PercentSettingParser entryPoint = new PercentSettingParser(commands);
         Optional<PercentSettings> parse = entryPoint.parse();
@@ -212,6 +214,8 @@ public class PercentSettingParserTest {
             assertThat(settings.getPatterns(), is(Collections.singletonList("T,S,L,O,L")));
             assertThat(settings.isOutputToConsole(), is(true));
             assertThat(settings.isUsingHold(), is(true));
+            assertThat(settings.getTreeDepth(), is(4));
+            assertThat(settings.getFailedCount(), is(100));
             assertField(settings.getField(), expectedField);
         });
     }
@@ -219,7 +223,7 @@ public class PercentSettingParserTest {
     @Test
     public void testTetfu2InField() throws Exception {
         String fieldPath = ClassLoader.getSystemResource("field/tetfu2.txt").getPath();
-        String commands = String.format("-fp %s -P 6 -p *p4", fieldPath);
+        String commands = String.format("-fp %s -P 6 -p *p4 -td 2 -fc 50", fieldPath);
 
         PercentSettingParser entryPoint = new PercentSettingParser(commands);
         Optional<PercentSettings> parse = entryPoint.parse();
@@ -238,6 +242,8 @@ public class PercentSettingParserTest {
             assertThat(settings.getPatterns(), is(Collections.singletonList("*p4")));
             assertThat(settings.isOutputToConsole(), is(true));
             assertThat(settings.isUsingHold(), is(true));
+            assertThat(settings.getTreeDepth(), is(2));
+            assertThat(settings.getFailedCount(), is(50));
             assertField(settings.getField(), expectedField);
         });
     }
@@ -264,6 +270,8 @@ public class PercentSettingParserTest {
             assertThat(settings.getPatterns(), is(Collections.singletonList("*p4")));
             assertThat(settings.isOutputToConsole(), is(true));
             assertThat(settings.isUsingHold(), is(true));
+            assertThat(settings.getTreeDepth(), is(3));
+            assertThat(settings.getFailedCount(), is(100));
             assertField(settings.getField(), expectedField);
         });
     }

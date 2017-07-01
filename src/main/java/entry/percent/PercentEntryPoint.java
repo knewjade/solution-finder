@@ -1,21 +1,22 @@
 package entry.percent;
 
+import common.Stopwatch;
+import common.SyntaxException;
 import common.datastore.Pair;
+import common.pattern.PiecesGenerator;
+import common.tree.AnalyzeTree;
 import core.field.Field;
 import core.field.FieldView;
 import core.mino.Block;
 import entry.EntryPoint;
 import entry.searching_pieces.NormalEnumeratePieces;
-import common.pattern.PiecesGenerator;
-import common.Stopwatch;
-import common.SyntaxException;
-import common.tree.AnalyzeTree;
 
 import java.io.*;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class PercentEntryPoint implements EntryPoint {
     private static final String LINE_SEPARATOR = System.lineSeparator();
@@ -143,24 +144,42 @@ public class PercentEntryPoint implements EntryPoint {
         output(tree.show());
 
         output();
-        output("Success pattern tree [Head 3 pieces]:");
-        output(tree.tree(3));
+
+        int treeDepth = settings.getTreeDepth();
+        if (piecesDepth < treeDepth)
+            treeDepth = piecesDepth;
+        output(String.format("Success pattern tree [Head %d pieces]:", treeDepth));
+        output(tree.tree(treeDepth));
 
         output("-------------------");
-        output("Fail pattern (Max. 100)");
-        int counter = 0;
-        for (Pair<List<Block>, Boolean> resultPair : resultPairs) {
-            Boolean result = resultPair.getValue();
-            if (!result) {
-                output(resultPair.getKey().toString());
-                counter += 1;
-                if (100 <= counter)
-                    break;
-            }
-        }
+        int failedMaxCount = settings.getFailedCount();
+        // skip if failedMaxCount == 0
+        if (0 < failedMaxCount) {
+            output(String.format("Fail pattern (max. %d)", failedMaxCount));
 
-        if (counter == 0)
-            output("nothing");
+            List<Pair<List<Block>, Boolean>> failedPairs = resultPairs.stream()
+                    .filter(pair -> !pair.getValue())
+                    .limit(failedMaxCount)
+                    .collect(Collectors.toList());
+
+            for (Pair<List<Block>, Boolean> resultPair : failedPairs)
+                output(resultPair.getKey().toString());
+
+            if (failedPairs.isEmpty())
+                output("nothing");
+        } else if (failedMaxCount < 0) {
+            output("Fail pattern (all)");
+
+            List<Pair<List<Block>, Boolean>> failedPairs = resultPairs.stream()
+                    .filter(pair -> !pair.getValue())
+                    .collect(Collectors.toList());
+
+            for (Pair<List<Block>, Boolean> resultPair : failedPairs)
+                output(resultPair.getKey().toString());
+
+            if (failedPairs.isEmpty())
+                output("nothing");
+        }
 
         output();
         // ========================================

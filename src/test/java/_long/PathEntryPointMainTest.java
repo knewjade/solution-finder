@@ -238,7 +238,7 @@ public class PathEntryPointMainTest {
     }
 
     @Test
-    public void testUnique6() throws Exception {
+    public void testMinimal6() throws Exception {
         List<String> fields = Arrays.asList(
                 "6",
                 "XXXXXX____",
@@ -250,14 +250,13 @@ public class PathEntryPointMainTest {
         );
         String pattern = "*p7";
         String log = getPathLog(fields, pattern, true);
-        System.out.println(log);
         assertThat(log, containsString("Found path [unique] = 1002"));
         assertThat(log, containsString("Found path [minimal] = 699"));
     }
 
     @Ignore
     @Test
-    public void testUnique7() throws Exception {
+    public void testMinimal7() throws Exception {
         List<String> fields = Arrays.asList(
                 "4",
                 "XXXXXX____",
@@ -267,8 +266,22 @@ public class PathEntryPointMainTest {
         );
         String pattern = "*p4";
         String log = getPathLog(fields, pattern, true);
-        System.out.println(log);
         assertThat(log, containsString("Found path [unique] = 135"));
         assertThat(log, containsString("Found path [minimal] = 1"));
+    }
+
+    @Test
+    public void testMinimal8() throws Exception {
+        List<String> fields = Arrays.asList(
+                "4",
+                "__________",
+                "__________",
+                "__________",
+                "__________"
+        );
+        String pattern = "J,Z,O,S,L,I,I,J,S,O,Z";
+        String log = getPathLog(fields, pattern, true);
+        assertThat(log, containsString("Found path [unique] = 71"));
+        assertThat(log, containsString("Found path [minimal] = 10"));
     }
 }

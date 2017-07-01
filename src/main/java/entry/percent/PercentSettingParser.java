@@ -115,6 +115,14 @@ public class PercentSettingParser {
             }
         }
 
+        // パフェ成功確率ツリーの深さの設定
+        Optional<Integer> treeDepth = wrapper.getIntegerOption("tree-depth");
+        treeDepth.ifPresent(settings::setTreeDepth);
+
+        // パフェ失敗パターンの表示個数の設定
+        Optional<Integer> failedCount = wrapper.getIntegerOption("failed-count");
+        failedCount.ifPresent(settings::setFailedCount);
+
         // ホールドの設定
         Optional<Boolean> isUsingHold = wrapper.getBoolOption("hold");
         isUsingHold.ifPresent(settings::setUsingHold);
@@ -237,6 +245,26 @@ public class PercentSettingParser {
                 .desc("Max clear line")
                 .build();
         options.addOption(clearLineOption);
+
+        Option treeDepthOption = Option.builder("td")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("depth")
+                .longOpt("tree-depth")
+                .desc("Depth of percent tree each head pieces")
+                .build();
+        options.addOption(treeDepthOption);
+
+        Option failedCountOption = Option.builder("fc")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("max-count")
+                .longOpt("failed-count")
+                .desc("Max count of failed patterns when output")
+                .build();
+        options.addOption(failedCountOption);
 
         return options;
     }
