@@ -42,6 +42,7 @@ public class PathSettingParserTest {
             assertThat(settings.getPathLayer(), is(PathLayer.Minimal));
             assertThat(settings.getOutputType(), is(OutputType.Link));
             assertThat(settings.isTetfuSplit(), is(false));
+            assertThat(settings.getCachedMinBit(), is(0));
         });
     }
 
@@ -71,6 +72,7 @@ public class PathSettingParserTest {
             assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
             assertThat(settings.getPathLayer(), is(PathLayer.Minimal));
             assertThat(settings.getOutputType(), is(OutputType.Link));
+            assertThat(settings.getCachedMinBit(), is(0));
         });
     }
 
@@ -87,7 +89,7 @@ public class PathSettingParserTest {
         String fieldPath = ClassLoader.getSystemResource("field/4row.txt").getPath();
         String patternsPath = ClassLoader.getSystemResource("patterns/7mino.txt").getPath();
         String tetfu = "v115@9gB8DeG8CeH8BeG8CeD8JeAgWBAUAAAA";  // comment: 4
-        String commands = String.format("--hold avoid -fp %s -pp %s --tetfu %s --max-layer 1 --format csv", fieldPath, patternsPath, tetfu);
+        String commands = String.format("--hold avoid -fp %s -pp %s --tetfu %s --max-layer 1 --format csv --cached-bit 1", fieldPath, patternsPath, tetfu);
 
         PathSettingParser entryPoint = new PathSettingParser(commands);
         Optional<PathSettings> parse = entryPoint.parse();
@@ -111,6 +113,7 @@ public class PathSettingParserTest {
             assertThat(settings.getPathLayer(), is(PathLayer.Unique));
             assertThat(settings.getOutputType(), is(OutputType.CSV));
             assertThat(settings.isTetfuSplit(), is(false));
+            assertThat(settings.getCachedMinBit(), is(1));
         });
     }
 
@@ -145,6 +148,7 @@ public class PathSettingParserTest {
             assertThat(settings.getPathLayer(), is(PathLayer.Minimal));
             assertThat(settings.getOutputType(), is(OutputType.Link));
             assertThat(settings.isTetfuSplit(), is(false));
+            assertThat(settings.getCachedMinBit(), is(0));
         });
     }
 
@@ -179,6 +183,7 @@ public class PathSettingParserTest {
             assertThat(settings.getPathLayer(), is(PathLayer.Minimal));
             assertThat(settings.getOutputType(), is(OutputType.Link));
             assertThat(settings.isTetfuSplit(), is(false));
+            assertThat(settings.getCachedMinBit(), is(0));
         });
     }
 
@@ -212,6 +217,7 @@ public class PathSettingParserTest {
             assertThat(settings.getPathLayer(), is(PathLayer.Minimal));
             assertThat(settings.getOutputType(), is(OutputType.Link));
             assertThat(settings.isTetfuSplit(), is(true));
+            assertThat(settings.getCachedMinBit(), is(0));
         });
     }
 
@@ -239,6 +245,7 @@ public class PathSettingParserTest {
             assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
             assertThat(settings.getPathLayer(), is(PathLayer.Minimal));
             assertThat(settings.getOutputType(), is(OutputType.Link));
+            assertThat(settings.getCachedMinBit(), is(0));
         });
     }
 
@@ -268,6 +275,7 @@ public class PathSettingParserTest {
             assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
             assertThat(settings.getPathLayer(), is(PathLayer.Minimal));
             assertThat(settings.getOutputType(), is(OutputType.Link));
+            assertThat(settings.getCachedMinBit(), is(0));
         });
     }
 }

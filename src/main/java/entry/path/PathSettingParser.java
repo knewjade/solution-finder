@@ -1,5 +1,10 @@
 package entry.path;
 
+import common.tetfu.Tetfu;
+import common.tetfu.TetfuPage;
+import common.tetfu.common.ColorConverter;
+import common.tetfu.common.ColorType;
+import common.tetfu.field.ColoredField;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Mino;
@@ -8,11 +13,6 @@ import core.srs.Rotate;
 import entry.CommandLineWrapper;
 import entry.NormalCommandLineWrapper;
 import entry.PriorityCommandLineWrapper;
-import common.tetfu.Tetfu;
-import common.tetfu.TetfuPage;
-import common.tetfu.common.ColorConverter;
-import common.tetfu.common.ColorType;
-import common.tetfu.field.ColoredField;
 import org.apache.commons.cli.*;
 
 import java.io.IOException;
@@ -118,6 +118,10 @@ public class PathSettingParser {
         // ホールドの設定
         Optional<Boolean> isUsingHold = wrapper.getBoolOption("hold");
         isUsingHold.ifPresent(settings::setUsingHold);
+
+        // キャッシュ
+        Optional<Integer> cachedMinBit = wrapper.getIntegerOption("cached-bit");
+        cachedMinBit.ifPresent(settings::setCachedMinBit);
 
         // ログファイルの設定
         Optional<String> logFilePath = wrapper.getStringOption("log-path");
@@ -294,6 +298,16 @@ public class PathSettingParser {
                 .desc("Split outputted tetfu page")
                 .build();
         options.addOption(splitOption);
+
+        Option cachedMinBitOption = Option.builder("cb")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("minimum bit")
+                .longOpt("cached-bit")
+                .desc("Minimum bit of cached basic solution used by inner algorithm")
+                .build();
+        options.addOption(cachedMinBitOption);
 
         return options;
     }

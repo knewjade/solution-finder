@@ -75,6 +75,7 @@ short    long                   default
 ``-f``   ``--format``           link
 ``-s``   ``--split``            no
 ``-L``   ``--max-layer``        3
+``-cb``  ``--cached-bit``       0
 ``-o``   ``--output-base``      output/path.txt
 ``-l``   ``--log-path``         output/last_output.txt
 ``-fp``  ``--field-path``       input/field.txt
@@ -150,6 +151,19 @@ v115のテト譜データにのみ対応。
 
 * 1: unique
 * 2: unique, minimal の両方
+
+``-cb``, ``--cached-bit`` [default: 0]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+内部のアルゴリズムで使用するキャッシュの最小ビットを指定します。
+
+基本的にこの値を変更する必要はありません。
+
+実行環境で使用できるメモリが小さく、OutOfMemoryErrorが頻発して計算が続行できなくなる場合のみ、この値を変更してください。
+
+この数値を大きくすることで計算結果を保存せずにその都度計算するようになるため、実行時間が非常に長くなります。
+
+そのため、値を調節するときは1ずつ大きくしていき、再実行して確認しながら調整してください。
 
 
 ``-o``, ``--output-base`` [default: output/path.txt]

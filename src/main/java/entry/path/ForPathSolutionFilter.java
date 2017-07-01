@@ -43,7 +43,6 @@ public class ForPathSolutionFilter implements SolutionFilter {
                 }
             }
         }
-
     }
 
     @Override

@@ -22,6 +22,7 @@ public class PathSettings {
     private PathLayer pathLayer = PathLayer.Minimal;
     private OutputType outputType = OutputType.Link;
     private boolean isSplit = false;
+    private int cachedMinBit = 0;
 
     // ********* Getter ************
     public boolean isUsingHold() {
@@ -62,6 +63,10 @@ public class PathSettings {
 
     boolean isTetfuSplit() {
         return isSplit;
+    }
+
+    int getCachedMinBit() {
+        return cachedMinBit;
     }
 
     // ********* Setter ************
@@ -117,5 +122,9 @@ public class PathSettings {
 
     void setTetfuSplit(boolean isSplit) {
         this.isSplit = isSplit;
+    }
+
+    void setCachedMinBit(int minBit) {
+        this.cachedMinBit = minBit;
     }
 }

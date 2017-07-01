@@ -2,7 +2,6 @@ package entry.path;
 
 import common.Stopwatch;
 import common.SyntaxException;
-import common.buildup.BuildUp;
 import common.buildup.BuildUpStream;
 import common.datastore.*;
 import common.datastore.pieces.LongPieces;
@@ -16,6 +15,7 @@ import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
 import core.column_field.ColumnField;
+import core.column_field.ColumnSmallField;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
@@ -30,16 +30,15 @@ import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.calculator.BasicSolutions;
 import searcher.pack.memento.SolutionFilter;
-import searcher.pack.mino_fields.RecursiveMinoFields;
 import searcher.pack.separable_mino.SeparableMinoFactory;
-import searcher.pack.solutions.BasicSolutionsCalculator;
-import searcher.pack.solutions.MappedBasicSolutions;
+import searcher.pack.solutions.FilterOnDemandBasicSolutions;
 import searcher.pack.task.*;
 import searcher.pack.task.Result;
 
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class PathEntryPoint implements EntryPoint {
@@ -193,9 +192,10 @@ public class PathEntryPoint implements EntryPoint {
         Stopwatch stopwatch1 = Stopwatch.createStartedStopwatch();
 
         // 基本パターンを計算
-        BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
-        Map<ColumnField, RecursiveMinoFields> calculate = calculator.calculate();
-        BasicSolutions solutions = new MappedBasicSolutions(calculate, solutionFilter);
+        int cachedMinBit = settings.getCachedMinBit();
+        Predicate<ColumnField> predicate = createPredicate(cachedMinBit);
+        ColumnSmallField maxOuterBoard = InOutPairField.createMaxOuterBoard(sizedBit, field);
+        BasicSolutions basicSolutions = new FilterOnDemandBasicSolutions(separableMinos, sizedBit, maxOuterBoard, predicate, solutionFilter);
 
         output("     ... done");
 
@@ -210,9 +210,9 @@ public class PathEntryPoint implements EntryPoint {
 
         // 探索して、列挙する準備を行う
         output("     ... packing");
-        List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(sizedBit.getWidth(), sizedBit.getHeight(), field);
+        List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(sizedBit, field);
         TaskResultHelper taskResultHelper = createTaskResultHelper(maxClearLine);
-        PackSearcher searcher = new PackSearcher(inOutPairFields, solutions, sizedBit, solutionFilter, taskResultHelper);
+        PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
         PathCore pathCore = new PathCore(patterns, searcher, maxDepth, isUsingHold);
 
         // 絞り込みを行う
@@ -259,6 +259,14 @@ public class PathEntryPoint implements EntryPoint {
         output("done");
 
         flush();
+    }
+
+    private Predicate<ColumnField> createPredicate(int cachedMinBit) {
+        if (cachedMinBit == 0)
+            return columnField -> true;
+        else if (0 < cachedMinBit)
+            return BasicSolutions.createBitCountPredicate(cachedMinBit);
+        throw new IllegalArgumentException("cached-min-bit should be 0 <=");
     }
 
     private TaskResultHelper createTaskResultHelper(int height) {

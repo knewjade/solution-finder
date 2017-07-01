@@ -89,7 +89,7 @@ class PathCore {
                 .collect(Collectors.toList());
     }
 
-    public void runMinimal() {
+    void runMinimal() {
         // 他のパターンではカバーできないものだけを列挙する
         LinkedList<Pair<Result, HashSet<LongPieces>>> minimal = new LinkedList<>();
         for (Pair<Result, HashSet<LongPieces>> pair : unique) {
