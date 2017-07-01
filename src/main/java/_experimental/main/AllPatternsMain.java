@@ -13,8 +13,11 @@ import java.util.stream.Collectors;
 public class AllPatternsMain {
     public static void main(String[] args) throws IOException {
         switch (args[0]) {
-            case "use":
-                runOnHold(Integer.valueOf(args[1]));
+            case "use11":
+                runOnHold11(Integer.valueOf(args[1]));
+                break;
+            case "use10":
+                runOnHold10(Integer.valueOf(args[1]));
                 break;
             case "avoid":
                 runWithoutHold(Integer.valueOf(args[1]));
@@ -22,7 +25,7 @@ public class AllPatternsMain {
         }
     }
 
-    private static void runOnHold(int index) throws IOException {
+    private static void runOnHold11(int index) throws IOException {
         // 7種1巡で可能性のあるツモ順
         // 4line on hold
         List<String> patternsOnHold = Arrays.asList(
@@ -37,11 +40,34 @@ public class AllPatternsMain {
         );
 
         String pattern = patternsOnHold.get(index);
-        createOnHold(pattern, index);
+        createOnHold10(pattern, index);
     }
 
-    private static void createOnHold(String pattern, int index) throws IOException {
+    private static void createOnHold10(String pattern, int index) throws IOException {
         String path = String.format("output/order%donhold.csv", index + 1);
+        output(pattern, path);
+    }
+
+    private static void runOnHold10(int index) throws IOException {
+        // 7種1巡で可能性のあるツモ順
+        // 4line on hold
+        List<String> patternsOnHold = Arrays.asList(
+                "*p7, *p3",
+                "*, *p3, *p6",
+                "*, *p7, *p2",
+                "*, *p4, *p5",
+                "*, *, *p7, *",
+                "*, *p5, *p4",
+                "*, *p2, *p7",
+                "*, *p6, *p3"
+        );
+
+        String pattern = patternsOnHold.get(index);
+        createOnHold11(pattern, index);
+    }
+
+    private static void createOnHold11(String pattern, int index) throws IOException {
+        String path = String.format("output/order%donhold10.csv", index + 1);
         output(pattern, path);
     }
 
