@@ -40,11 +40,11 @@ public class AllPatternsMain {
         );
 
         String pattern = patternsOnHold.get(index);
-        createOnHold10(pattern, index);
+        createOnHold11(pattern, index);
     }
 
-    private static void createOnHold10(String pattern, int index) throws IOException {
-        String path = String.format("output/order%donhold.csv", index + 1);
+    private static void createOnHold11(String pattern, int index) throws IOException {
+        String path = String.format("output/order%donhold11.csv", index + 1);
         output(pattern, path);
     }
 
@@ -63,10 +63,10 @@ public class AllPatternsMain {
         );
 
         String pattern = patternsOnHold.get(index);
-        createOnHold11(pattern, index);
+        createOnHold10(pattern, index);
     }
 
-    private static void createOnHold11(String pattern, int index) throws IOException {
+    private static void createOnHold10(String pattern, int index) throws IOException {
         String path = String.format("output/order%donhold10.csv", index + 1);
         output(pattern, path);
     }
