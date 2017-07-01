@@ -4,7 +4,7 @@ import common.datastore.Pair;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
-import _experimental.main.CheckmateInvoker;
+import _experimental.unused.CheckmateInvoker;
 import org.junit.Test;
 import common.datastore.Result;
 import common.ResultHelper;

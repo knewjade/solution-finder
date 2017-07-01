@@ -1,4 +1,4 @@
-package _experimental.main;
+package _experimental.unused;
 
 import core.mino.Block;
 import core.field.Field;

@@ -15,13 +15,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 // all10mino.csvを使用するミノごとにファイルで分割する
-public class Splitter {
+public class All10MinoSplitter {
     public static void main(String[] args) throws IOException {
-        String inputFilePath = "output/all10mino.csv";
+        String inputFilePath = "deploy/all10mino.csv";
         Path piecesPath = Paths.get(inputFilePath);
         Files.lines(piecesPath, Charset.forName("UTF-8"))
-                .limit(10L)
                 .forEach(s -> {
+                    // Piecesに変換
                     String[] array = s.split(";");
                     Pieces pieces = new LongPieces();
                     for (String operation : array) {
@@ -29,12 +29,17 @@ public class Splitter {
                         Block block = Block.valueOf(split[0]);
                         pieces = pieces.addAndReturnNew(block);
                     }
+
+                    // BlockCounterに変換
                     Stream<Block> stream = pieces.getBlockStream();
                     BlockCounter counter = new BlockCounter(stream);
+
+                    // 使用ミノ文字列に変換
                     String collect = counter.getBlocks().stream()
                             .map(Block::getName)
                             .collect(Collectors.joining());
 
+                    // 書き出し
                     String outputFilePath = String.format("output/sp/%s.csv", collect);
                     File outputFile = new File(outputFilePath);
                     try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile, true), StandardCharsets.UTF_8))) {

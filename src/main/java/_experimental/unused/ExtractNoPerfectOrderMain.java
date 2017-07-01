@@ -1,8 +1,9 @@
-package _experimental.main;
+package _experimental.unused;
 
 import common.buildup.BuildUp;
 import common.datastore.OperationWithKey;
 import common.datastore.pieces.LongPieces;
+import common.datastore.pieces.Pieces;
 import common.order.OrderLookup;
 import common.parser.OperationWithKeyInterpreter;
 import concurrent.LockedReachableThreadLocal;
@@ -11,19 +12,20 @@ import core.field.FieldFactory;
 import core.mino.Block;
 import core.mino.MinoFactory;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-// 10ミノでパフェできるものをフィルタする
-public class Filter10MinoPerfectMain {
+// 10ミノでパフェできない組み合わせのうち、できない順序のものだけを抽出
+public class ExtractNoPerfectOrderMain {
     public static void main(String[] args) throws IOException {
         String inputFilePath = "output/minosp";
         Path path = Paths.get(inputFilePath);
@@ -34,6 +36,7 @@ public class Filter10MinoPerfectMain {
                 .filter(File::isFile)
                 .collect(Collectors.toCollection(LinkedList::new));
 
+        ArrayList<LongPieces> noPerfects = new ArrayList<>();
         while (!targets.isEmpty()) {
             // ミノの組みあわせを決定
             File targetFile = targets.pop();
@@ -41,14 +44,13 @@ public class Filter10MinoPerfectMain {
 
             // ツモ順一覧
             List<LongPieces> pieces = Files.lines(targetFile.toPath(), Charset.forName("UTF-8"))
-                    .map(Filter10MinoPerfectMain::parse)
+                    .map(ExtractNoPerfectOrderMain::parse)
                     .map(LongPieces::new)
                     .collect(Collectors.toList());
 
             /// パフェ地形一覧
             File perfectsFile = new File(String.format("output/pfsp/%s.csv", name));
             if (!perfectsFile.exists()) {
-                System.out.println("skip: no file # " + name);
                 continue;
             }
 
@@ -60,31 +62,46 @@ public class Filter10MinoPerfectMain {
             System.out.println(String.format("%s => %s: %d orders in %d fields", targetFile, name, pieces.size(), perfects.size()));
 
 
-            // 最初10ミノをホールドなしでパフェできるか確認
+            // 一部ができないものに対して、パフェできない順序だけを抽出
             int height = 4;
             LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(height);
             Field field = FieldFactory.createField(height);
-            boolean noPerfect = pieces.parallelStream()
-                    .map(LongPieces::getBlocks)
-                    .filter(blocks -> {
+            List<LongPieces> noList = pieces.parallelStream()
+                    .filter(longPieces -> {
+                        List<Block> blocks = longPieces.getBlocks();
                         return perfects.parallelStream()
                                 .noneMatch(operationWithKeys -> BuildUp.existsValidByOrder(field, operationWithKeys.stream(), blocks, 4, reachableThreadLocal.get()));
                     })
-                    .anyMatch(blocks -> {
+                    .filter(longPieces -> {
+                        List<Block> blocks = longPieces.getBlocks();
                         return OrderLookup.forwardBlocks(blocks, 10).stream()
                                 .noneMatch(forward -> perfects.parallelStream()
                                         .anyMatch(operationWithKeys -> BuildUp.existsValidByOrder(field, operationWithKeys.stream(), forward.toList(), 4, reachableThreadLocal.get())));
-                    });
+                    })
+                    .collect(Collectors.toList());
 
+            System.out.println(noList.size());
 
-            // できないパターンがあるときはストップ
-            if (noPerfect) {
-                System.out.println("    => skip: no all building");
-                continue;
-            }
+            noPerfects.addAll(noList);
 
-            Files.move(targetFile.toPath(), Paths.get(String.format("output/okmino/%s.txt", name)));
+            Files.move(targetFile.toPath(), Paths.get(String.format("output/ngexistmino/%s.txt", name)));
         }
+
+        // output
+        File outputFile = new File("output/nonono.txt");
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), StandardCharsets.UTF_8))) {
+            for (Pieces pieces : noPerfects) {
+                String blocks = pieces.getBlockStream().map(Block::getName).collect(Collectors.joining());
+                try {
+                    writer.write(blocks);
+                    writer.newLine();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            writer.flush();
+        }
+
 
 
 //        String inputFilePath = "output/cut.txt";
