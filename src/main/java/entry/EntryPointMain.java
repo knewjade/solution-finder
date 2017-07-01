@@ -30,7 +30,7 @@ public class EntryPointMain {
         }
 
         if (args[0].equals("-v")) {
-            System.out.println("Version: 0.42");
+            System.out.println("Version: 0.43");
             System.exit(0);
         }
 
