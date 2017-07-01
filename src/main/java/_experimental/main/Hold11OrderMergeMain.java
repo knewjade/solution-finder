@@ -48,7 +48,7 @@ public class Hold11OrderMergeMain {
             allOrders.stream()
                     .map(Pieces::getBlocks)
                     .map(blocks -> blocks.stream().map(Block::getName).collect(Collectors.joining()))
-                    .sorted()
+//                    .sorted()
                     .forEach(line -> {
                         try {
                             writer.write(line);
