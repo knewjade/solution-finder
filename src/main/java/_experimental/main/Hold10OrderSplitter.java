@@ -15,24 +15,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 // all10mino.csvを使用するミノごとにファイルで分割する
-public class All10MinoSplitter {
+public class Hold10OrderSplitter {
     public static void main(String[] args) throws IOException {
-        String inputFilePath = "deploy/all10mino.csv";
+        String inputFilePath = "output/orderhold10.csv";
         Path piecesPath = Paths.get(inputFilePath);
         Files.lines(piecesPath, Charset.forName("UTF-8"))
                 .sequential()
                 .forEach(s -> {
-                    // Piecesに変換
-                    String[] array = s.split(";");
-                    Pieces pieces = new LongPieces();
-                    for (String operation : array) {
-                        String[] split = operation.split(",");
-                        Block block = Block.valueOf(split[0]);
-                        pieces = pieces.addAndReturnNew(block);
-                    }
-
                     // BlockCounterに変換
-                    Stream<Block> stream = pieces.getBlockStream();
+                    Stream<Block> stream = parse10(s);
                     BlockCounter counter = new BlockCounter(stream);
 
                     // 使用ミノ文字列に変換
@@ -41,7 +32,7 @@ public class All10MinoSplitter {
                             .collect(Collectors.joining());
 
                     // 書き出し
-                    String outputFilePath = String.format("output/sp/%s.csv", using);
+                    String outputFilePath = String.format("output/order/%s.csv", using);
                     File outputFile = new File(outputFilePath);
                     try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile, true), StandardCharsets.UTF_8))) {
                         writer.write(s);
@@ -54,5 +45,40 @@ public class All10MinoSplitter {
                 });
 
         System.out.println(inputFilePath);
+    }
+
+    private static Stream<Block> parse10(String a) {
+        return Stream.of(
+                parse(a.charAt(0)),
+                parse(a.charAt(1)),
+                parse(a.charAt(2)),
+                parse(a.charAt(3)),
+                parse(a.charAt(4)),
+                parse(a.charAt(5)),
+                parse(a.charAt(6)),
+                parse(a.charAt(7)),
+                parse(a.charAt(8)),
+                parse(a.charAt(9))
+        );
+    }
+
+    private static Block parse(char ch) {
+        switch (ch) {
+            case 'T':
+                return Block.T;
+            case 'S':
+                return Block.S;
+            case 'Z':
+                return Block.Z;
+            case 'O':
+                return Block.O;
+            case 'I':
+                return Block.I;
+            case 'L':
+                return Block.L;
+            case 'J':
+                return Block.J;
+        }
+        throw new IllegalStateException("No reachable");
     }
 }
