@@ -12,11 +12,17 @@ import java.util.stream.Collectors;
 
 public class AllPatternsMain {
     public static void main(String[] args) throws IOException {
-        runOnHold();
-        runWithoutHold();
+        switch (args[0]) {
+            case "use":
+                runOnHold(Integer.valueOf(args[1]));
+                break;
+            case "avoid":
+                runWithoutHold(Integer.valueOf(args[1]));
+                break;
+        }
     }
 
-    private static void runOnHold() throws IOException {
+    private static void runOnHold(int index) throws IOException {
         // 7種1巡で可能性のあるツモ順
         // 4line on hold
         List<String> patternsOnHold = Arrays.asList(
@@ -30,10 +36,8 @@ public class AllPatternsMain {
                 "*, *p6, *p4"
         );
 
-        for (int index = 0; index < patternsOnHold.size(); index++) {
-            String pattern = patternsOnHold.get(index);
-            createOnHold(pattern, index);
-        }
+        String pattern = patternsOnHold.get(index);
+        createOnHold(pattern, index);
     }
 
     private static void createOnHold(String pattern, int index) throws IOException {
@@ -41,7 +45,7 @@ public class AllPatternsMain {
         output(pattern, path);
     }
 
-    private static void runWithoutHold() throws IOException {
+    private static void runWithoutHold(int index) throws IOException {
         // 4line without hold
         List<String> patternsWithoutHold = Arrays.asList(
                 "*p7, *p3",
@@ -53,10 +57,8 @@ public class AllPatternsMain {
                 "*p3, *p7"
         );
 
-        for (int index = 0; index < patternsWithoutHold.size(); index++) {
-            String pattern = patternsWithoutHold.get(index);
-            createWithoutHold(pattern, index);
-        }
+        String pattern = patternsWithoutHold.get(index);
+        createWithoutHold(pattern, index);
     }
 
     private static void createWithoutHold(String pattern, int index) throws IOException {
