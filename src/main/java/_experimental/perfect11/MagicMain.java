@@ -1,8 +1,7 @@
-package _experimental.main;
+package _experimental.perfect11;
 
 import common.datastore.Pair;
 import core.column_field.ColumnSmallField;
-import core.field.ColumnOperators;
 import core.field.SmallField;
 import searcher.pack.SizedBit;
 

@@ -1,4 +1,4 @@
-package _experimental.main;
+package _experimental.perfect11;
 
 import common.parser.OperationWithKeyInterpreter;
 import common.Stopwatch;

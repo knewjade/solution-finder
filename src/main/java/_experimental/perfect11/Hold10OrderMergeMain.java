@@ -1,4 +1,4 @@
-package _experimental.main;
+package _experimental.perfect11;
 
 import common.datastore.pieces.LongPieces;
 import common.datastore.pieces.Pieces;
@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Hold11OrderMergeMain {
+public class Hold10OrderMergeMain {
     public static void main(String[] args) throws IOException {
-        Path src = Paths.get("deploy/hold11list/");
+        Path src = Paths.get("output/hold10list/");
 
         // すべての手順ファイルを列挙
         List<File> files = Files.walk(src)
@@ -35,20 +35,20 @@ public class Hold11OrderMergeMain {
             System.out.println(file);
             Files.lines(file.toPath())
                     .sequential()
-                    .map(Hold11OrderMergeMain::parse11)
+                    .map(Hold10OrderMergeMain::parse10)
                     .map(LongPieces::new)
                     .forEach(allOrders::add);
             System.out.println(allOrders.size());
         }
 
         // ファイルに出力
-        String outputPath = "output/allorderhold11.csv";
+        String outputPath = "output/allorderhold10.csv";
         File outputFile = new File(outputPath);
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), StandardCharsets.UTF_8))) {
             allOrders.stream()
                     .map(Pieces::getBlocks)
                     .map(blocks -> blocks.stream().map(Block::getName).collect(Collectors.joining()))
-//                    .sorted()
+                    .sorted()
                     .forEach(line -> {
                         try {
                             writer.write(line);
@@ -61,7 +61,7 @@ public class Hold11OrderMergeMain {
         }
     }
 
-    private static Stream<Block> parse11(String a) {
+    private static Stream<Block> parse10(String a) {
         return Stream.of(
                 parse(a.charAt(0)),
                 parse(a.charAt(1)),
@@ -72,8 +72,7 @@ public class Hold11OrderMergeMain {
                 parse(a.charAt(6)),
                 parse(a.charAt(7)),
                 parse(a.charAt(8)),
-                parse(a.charAt(9)),
-                parse(a.charAt(10))
+                parse(a.charAt(9))
         );
     }
 
