@@ -13,34 +13,38 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class All11MinoCheckerMain {
     public static void main(String[] args) throws IOException {
-        Path allNG = Paths.get("output/allNG");
+        System.out.println("start");
 
         // パフェできない組みあわせ
-        HashSet<BlockCounter> blockCounters = Files.walk(allNG)
-                .map(Path::toFile)
-                .filter(File::isFile)
-                .map(File::getName)
-                .map(name -> name.substring(0, 10))
+        Path allNGOrders = Paths.get("output/combAllNG.csv");
+        HashSet<BlockCounter> blockCounters = Files.lines(allNGOrders)
                 .map(All11MinoCheckerMain::parse10)
                 .map(BlockCounter::new)
                 .collect(Collectors.toCollection(HashSet::new));
 
         // パフェできない順序
-        Path ngOrders = Paths.get("output/NGorders.txt");
-        Set<LongPieces> ngPieces = Files.lines(ngOrders)
+        Path includeNGOrder = Paths.get("output/orderNG.csv");
+        Set<LongPieces> ngPieces = Files.lines(includeNGOrder)
                 .map(All11MinoCheckerMain::parse10)
                 .map(LongPieces::new)
                 .collect(Collectors.toSet());
 
         //
-        Path all11onhold = Paths.get("output/all11onhold.txt");
+        Path all11onhold = Paths.get("output/all11onhold.csv");
+        AtomicInteger counter = new AtomicInteger();
         List<String> failed = Files.lines(all11onhold)
-//                .parallel()
+                .parallel()
+                .peek(s -> {
+                    int i = counter.incrementAndGet();
+                    if (i % 10000000 == 0)
+                        System.out.println(i);
+                })
                 .filter(line -> {
                     // パフェできないものは true で次に送る
 
@@ -60,7 +64,6 @@ public class All11MinoCheckerMain {
                     // すべてのパターンでパフェできないものは true で次に送る
                     return orderLookUp.parse(blocks)
                             .map(LongPieces::new)
-                            .distinct()
                             .allMatch(pieces -> {
                                 // パフェできないものは true で次に送る
 
@@ -74,12 +77,15 @@ public class All11MinoCheckerMain {
                             });
 
                 })
+                .peek(System.out::println)
                 .collect(Collectors.toList());
 
-        System.out.println(blockCounters.size());
-        System.out.println(ngPieces.size());
-        System.out.println(failed.size());
+        System.out.println("check count: " + counter);
+
+        System.out.println("failed: " + failed.size());
         failed.forEach(System.out::println);
+
+        System.out.println("end");
     }
 
     private static Stream<Block> parse10(String a) {
@@ -98,6 +104,7 @@ public class All11MinoCheckerMain {
     }
 
     private static Stream<Block> parse11(String a) {
+        assert a.length() == 11;
         return Stream.of(
                 parse(a.charAt(0)),
                 parse(a.charAt(1)),
