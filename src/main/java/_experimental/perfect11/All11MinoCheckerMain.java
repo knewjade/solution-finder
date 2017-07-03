@@ -3,6 +3,7 @@ package _experimental.perfect11;
 import common.datastore.BlockCounter;
 import common.datastore.pieces.LongPieces;
 import common.order.ForwardOrderLookUp;
+import common.parser.BlockInterpreter;
 import core.mino.Block;
 
 import java.io.IOException;
@@ -14,7 +15,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class All11MinoCheckerMain {
     public static void main(String[] args) throws IOException {
@@ -23,14 +23,14 @@ public class All11MinoCheckerMain {
         // パフェできない組みあわせ
         Path allNGOrders = Paths.get("output/combAllNG.csv");
         HashSet<BlockCounter> blockCounters = Files.lines(allNGOrders)
-                .map(All11MinoCheckerMain::parse10)
+                .map(BlockInterpreter::parse10)
                 .map(BlockCounter::new)
                 .collect(Collectors.toCollection(HashSet::new));
 
         // パフェできない順序
         Path includeNGOrder = Paths.get("output/orderNG.csv");
         Set<LongPieces> ngPieces = Files.lines(includeNGOrder)
-                .map(All11MinoCheckerMain::parse10)
+                .map(BlockInterpreter::parse10)
                 .map(LongPieces::new)
                 .collect(Collectors.toSet());
 
@@ -48,16 +48,16 @@ public class All11MinoCheckerMain {
                     // パフェできないものは true で次に送る
 
                     // パフェできない組み合わせである
-                    BlockCounter blockCounter = new BlockCounter(parse10(line));
+                    BlockCounter blockCounter = new BlockCounter(BlockInterpreter.parse10(line));
                     if (blockCounters.contains(blockCounter))
                         return true;
 
                     // パフェできない順序である
-                    LongPieces pieces = new LongPieces(parse10(line));
+                    LongPieces pieces = new LongPieces(BlockInterpreter.parse10(line));
                     return ngPieces.contains(pieces);
                 })
                 .filter(line -> {
-                    List<Block> blocks = parse11(line).collect(Collectors.toList());
+                    List<Block> blocks = BlockInterpreter.parse11(line).collect(Collectors.toList());
                     ForwardOrderLookUp orderLookUp = new ForwardOrderLookUp(10, true);
 
                     // すべてのパターンでパフェできないものは true で次に送る
@@ -85,57 +85,5 @@ public class All11MinoCheckerMain {
         failed.forEach(System.out::println);
 
         System.out.println("end");
-    }
-
-    private static Stream<Block> parse10(String a) {
-        return Stream.of(
-                parse(a.charAt(0)),
-                parse(a.charAt(1)),
-                parse(a.charAt(2)),
-                parse(a.charAt(3)),
-                parse(a.charAt(4)),
-                parse(a.charAt(5)),
-                parse(a.charAt(6)),
-                parse(a.charAt(7)),
-                parse(a.charAt(8)),
-                parse(a.charAt(9))
-        );
-    }
-
-    private static Stream<Block> parse11(String a) {
-        assert a.length() == 11;
-        return Stream.of(
-                parse(a.charAt(0)),
-                parse(a.charAt(1)),
-                parse(a.charAt(2)),
-                parse(a.charAt(3)),
-                parse(a.charAt(4)),
-                parse(a.charAt(5)),
-                parse(a.charAt(6)),
-                parse(a.charAt(7)),
-                parse(a.charAt(8)),
-                parse(a.charAt(9)),
-                parse(a.charAt(10))
-        );
-    }
-
-    private static Block parse(char ch) {
-        switch (ch) {
-            case 'T':
-                return Block.T;
-            case 'S':
-                return Block.S;
-            case 'Z':
-                return Block.Z;
-            case 'O':
-                return Block.O;
-            case 'I':
-                return Block.I;
-            case 'L':
-                return Block.L;
-            case 'J':
-                return Block.J;
-        }
-        throw new IllegalStateException("No reachable");
     }
 }

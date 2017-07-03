@@ -5,6 +5,7 @@ import common.datastore.OperationWithKey;
 import common.datastore.pieces.LongPieces;
 import common.datastore.pieces.Pieces;
 import common.order.OrderLookup;
+import common.parser.BlockInterpreter;
 import common.parser.OperationWithKeyInterpreter;
 import concurrent.LockedReachableThreadLocal;
 import core.field.Field;
@@ -20,7 +21,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 // 10ミノでパフェできない組み合わせのうち、できない順序のものだけを抽出
 public class ExtractNoPerfectOrderMain {
@@ -41,7 +41,7 @@ public class ExtractNoPerfectOrderMain {
 
                     try {
                         return Files.lines(orderPath, StandardCharsets.UTF_8)
-                                .map(ExtractNoPerfectOrderMain::parse)
+                                .map(BlockInterpreter::parse10)
                                 .map(LongPieces::new)
                                 .filter(longPieces -> {
                                     List<Block> blocks = longPieces.getBlocks();
@@ -87,41 +87,6 @@ public class ExtractNoPerfectOrderMain {
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);
-        }
-        throw new IllegalStateException("No reachable");
-    }
-
-    private static Stream<Block> parse(String a) {
-        return Stream.of(
-                parse(a.charAt(0)),
-                parse(a.charAt(1)),
-                parse(a.charAt(2)),
-                parse(a.charAt(3)),
-                parse(a.charAt(4)),
-                parse(a.charAt(5)),
-                parse(a.charAt(6)),
-                parse(a.charAt(7)),
-                parse(a.charAt(8)),
-                parse(a.charAt(9))
-        );
-    }
-
-    private static Block parse(char ch) {
-        switch (ch) {
-            case 'T':
-                return Block.T;
-            case 'S':
-                return Block.S;
-            case 'Z':
-                return Block.Z;
-            case 'O':
-                return Block.O;
-            case 'I':
-                return Block.I;
-            case 'L':
-                return Block.L;
-            case 'J':
-                return Block.J;
         }
         throw new IllegalStateException("No reachable");
     }

@@ -3,6 +3,7 @@ package common.datastore;
 import core.mino.Block;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -41,20 +42,6 @@ public class BlockCounter {
         return counter;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        BlockCounter that = (BlockCounter) o;
-
-        return counter == that.counter;
-    }
-
-    @Override
-    public int hashCode() {
-        return (int) (counter ^ (counter >>> 32));
-    }
 
     public List<Block> getBlocks() {
         ArrayList<Block> blocks = new ArrayList<>();
@@ -76,5 +63,36 @@ public class BlockCounter {
                 builder.accept(block);
         }
         return builder.build();
+    }
+
+    public EnumMap<Block, Integer> getEnumMap() {
+        EnumMap<Block, Integer> map = new EnumMap<>(Block.class);
+        for (int index = 0, max = Block.getSize(); index < max; index++) {
+            Block block = Block.getBlock(index);
+            long size = (counter >>> 8 * index) & 0xff;
+            if (size != 0)
+                map.put(block, (int) size);
+        }
+        return map;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BlockCounter that = (BlockCounter) o;
+
+        return counter == that.counter;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (counter ^ (counter >>> 32));
+    }
+
+    @Override
+    public String toString() {
+        return "BlockCounter" + getEnumMap();
     }
 }

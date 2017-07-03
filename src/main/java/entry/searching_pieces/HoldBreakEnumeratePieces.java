@@ -21,15 +21,9 @@ public class HoldBreakEnumeratePieces implements EnumeratePiecesCore {
     private int duplicate = -1;
 
     public HoldBreakEnumeratePieces(PiecesGenerator generator, int maxDepth) {
-        int piecesDepth = generator.getDepth();
-
-        int combinationPopCount = maxDepth + 1;
-        if (piecesDepth < combinationPopCount)
-            combinationPopCount = piecesDepth;
-
         this.generator = generator;
         this.maxDepth = maxDepth;
-        this.combinationPopCount = combinationPopCount;
+        this.combinationPopCount = maxDepth;
     }
 
     @Override
@@ -37,7 +31,6 @@ public class HoldBreakEnumeratePieces implements EnumeratePiecesCore {
         int counter = 0;
         List<List<Block>> searchingPieces = new ArrayList<>();
         VisitedTree duplicateCheckTree = new VisitedTree();
-        boolean isOverPieces = maxDepth < combinationPopCount;
 
         // 組み合わせの列挙
         for (Pieces pieces : generator) {
@@ -49,8 +42,6 @@ public class HoldBreakEnumeratePieces implements EnumeratePiecesCore {
 
             for (StackOrder<Block> piecesWithNoHold : forward) {
                 List<Block> blocksWithNoHold = piecesWithNoHold.toList();
-                if (isOverPieces)
-                    blocksWithNoHold = blocksWithNoHold.subList(0, maxDepth);
 
                 // 重複するホールドなしパターンを除去
                 if (!duplicateCheckTree.isVisited(blocksWithNoHold)) {

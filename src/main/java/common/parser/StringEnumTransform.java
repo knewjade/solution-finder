@@ -24,6 +24,26 @@ public class StringEnumTransform {
         throw new IllegalArgumentException("No reachable");
     }
 
+    public static Block toBlock(char ch) {
+        switch (ch) {
+            case 'T':
+                return Block.T;
+            case 'S':
+                return Block.S;
+            case 'Z':
+                return Block.Z;
+            case 'O':
+                return Block.O;
+            case 'I':
+                return Block.I;
+            case 'L':
+                return Block.L;
+            case 'J':
+                return Block.J;
+        }
+        throw new IllegalArgumentException("No reachable");
+    }
+
     static Rotate toRotate(String name) {
         switch (name) {
             case "0":
