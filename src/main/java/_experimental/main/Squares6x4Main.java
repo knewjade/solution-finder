@@ -13,6 +13,7 @@ import concurrent.LockedReachableThreadLocal;
 import core.column_field.ColumnField;
 import core.field.Field;
 import core.field.FieldFactory;
+import core.field.FieldView;
 import core.mino.Block;
 import core.mino.Mino;
 import core.mino.MinoFactory;
@@ -204,6 +205,7 @@ public class Squares6x4Main {
 
                 List<Result> values = eachBlockCounter.get(counterKey);
 
+                TreeSet<BlockField> sets = new TreeSet<>();
                 for (int index = 0; index < values.size(); index++) {
                     Result result = values.get(index);
                     // パターンを表す名前 を生成
@@ -218,6 +220,11 @@ public class Squares6x4Main {
                                 blockField.merge(test, mino.getBlock());
                             });
 
+                    boolean add = sets.add(blockField);
+                    if (!add) {
+                        System.out.println(counterKey);
+                        System.out.println(FieldView.toString(blockField.get(counterKey.getBlocks().get(0)), 4));
+                    }
 
                     // テト譜の生成
                     TetfuElement element = parseBlockFieldToTetfuElement(field, colorConverter, blockField, keyName);
