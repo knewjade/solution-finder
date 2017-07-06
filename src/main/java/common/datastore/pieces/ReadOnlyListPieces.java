@@ -6,11 +6,10 @@ import core.mino.Block;
 import java.util.List;
 import java.util.stream.Stream;
 
-// TODO: unittest
-public class NoSafeListPieces implements Pieces, Comparable<Pieces> {
+public class ReadOnlyListPieces implements Pieces, Comparable<Pieces> {
     private final List<Block> blocks;
 
-    public NoSafeListPieces(List<Block> blocks) {
+    public ReadOnlyListPieces(List<Block> blocks) {
         assert blocks != null;
         this.blocks = blocks;
     }
@@ -41,7 +40,7 @@ public class NoSafeListPieces implements Pieces, Comparable<Pieces> {
         if (o == null) return false;
 
         if (getClass() != o.getClass()) {
-            NoSafeListPieces that = (NoSafeListPieces) o;
+            ReadOnlyListPieces that = (ReadOnlyListPieces) o;
             return blocks.equals(that.blocks);
         } else if (o instanceof Pieces) {
             Pieces that = (Pieces) o;
@@ -53,7 +52,8 @@ public class NoSafeListPieces implements Pieces, Comparable<Pieces> {
 
     @Override
     public int hashCode() {
-        return blocks.hashCode();
+        long pieces = LongPieces.parse(blocks);
+        return LongPieces.toHash(pieces);
     }
 
     @Override

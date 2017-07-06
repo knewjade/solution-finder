@@ -24,6 +24,23 @@ public class LongPieces implements Pieces {
         return SCALE[index];
     }
 
+    static long parse(List<Block> blocks) {
+        return parse(0L, blocks, 0);
+    }
+
+    private static long parse(long pieces, List<Block> blocks, int startIndex) {
+        for (int index = 0; index < blocks.size(); index++) {
+            Block block = blocks.get(index);
+            int scaleIndex = startIndex + index;
+            pieces += getScale(scaleIndex) * block.getNumber();
+        }
+        return pieces;
+    }
+
+    static int toHash(long pieces) {
+        return (int) (pieces ^ (pieces >>> 32));
+    }
+
     private final long pieces;
     private final int max;
 
@@ -52,15 +69,6 @@ public class LongPieces implements Pieces {
     private LongPieces(LongPieces parent, Block block) {
         this.pieces = parent.pieces + SCALE[parent.max] * block.getNumber();
         this.max = parent.max + 1;
-    }
-
-    private long parse(long pieces, List<Block> blocks, int startIndex) {
-        for (int index = 0; index < blocks.size(); index++) {
-            Block block = blocks.get(index);
-            int scaleIndex = startIndex + index;
-            pieces += getScale(scaleIndex) * block.getNumber();
-        }
-        return pieces;
     }
 
     public long getPieces() {
@@ -121,7 +129,7 @@ public class LongPieces implements Pieces {
 
     @Override
     public int hashCode() {
-        return (int) (pieces ^ (pieces >>> 32));
+        return toHash(pieces);
     }
 
     private static class TemporaryCount {

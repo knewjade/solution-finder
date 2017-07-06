@@ -1,20 +1,23 @@
 package entry.percent;
 
+import common.datastore.Pair;
+import common.datastore.action.Action;
+import common.datastore.pieces.Pieces;
+import common.tree.AnalyzeTree;
 import concurrent.LockedCandidateThreadLocal;
 import concurrent.checker.CheckerNoHoldThreadLocal;
 import concurrent.checker.CheckerUsingHoldThreadLocal;
 import concurrent.checker.invoker.ConcurrentCheckerInvoker;
-import common.datastore.Pair;
 import concurrent.checker.invoker.no_hold.ConcurrentCheckerNoHoldInvoker;
 import concurrent.checker.invoker.using_hold.ConcurrentCheckerUsingHoldInvoker;
 import core.field.Field;
 import core.mino.Block;
-import common.datastore.action.Action;
-import common.tree.AnalyzeTree;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
 
 class PercentCore {
     private final ConcurrentCheckerInvoker invoker;
@@ -38,7 +41,11 @@ class PercentCore {
         }
     }
 
-    void run(Field field, List<List<Block>> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
+    void run(Field field, Set<Pieces> searchingPiecesSet, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
+        List<List<Block>> searchingPieces = searchingPiecesSet.stream()
+                .map(Pieces::getBlocks)
+                .collect(Collectors.toList());
+
         this.resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
 
         // 最低限の探索結果を集計する

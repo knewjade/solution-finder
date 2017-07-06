@@ -1,5 +1,6 @@
 package entry.percent;
 
+import common.datastore.pieces.Pieces;
 import common.pattern.PiecesGenerator;
 import core.field.Field;
 import core.field.FieldFactory;
@@ -10,6 +11,7 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -46,7 +48,7 @@ public class PercentCoreTest {
 
         PiecesGenerator generator = new PiecesGenerator(obj.patterns);
         NormalEnumeratePieces enumeratePieces = new NormalEnumeratePieces(generator, obj.maxDepth, obj.isUsingHold);
-        List<List<Block>> blocks = enumeratePieces.enumerate();
+        Set<Pieces> blocks = enumeratePieces.enumerate();
         percentCore.run(field, blocks, obj.maxClearLine, obj.maxDepth);
 
         assertThat(percentCore.getResultTree().getSuccessPercent(), is(successPercent));

@@ -7,7 +7,10 @@ import core.mino.Block;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 通常の組み合わせ
@@ -30,11 +33,21 @@ public class NormalEnumeratePieces implements EnumeratePiecesCore {
     }
 
     @Override
-    public List<List<Block>> enumerate() throws IOException {
+    public Set<Pieces> enumerate() throws IOException {
         int counter = 0;
+        HashSet<Pieces> uniquePieces = new HashSet<>();
+
+        boolean isOverPieces = combinationPopCount < generator.getDepth();
+        if (isOverPieces) {
+            // generatorが必要なミノ数以上に生成するとき
+
+        } else {
+            return generator.stream().collect(Collectors.toCollection(HashSet::new));
+        }
+
+
         List<List<Block>> searchingPieces = new ArrayList<>();
         VisitedTree duplicateCheckTree = new VisitedTree();
-        boolean isOverPieces = combinationPopCount < generator.getDepth();
 
         // 組み合わせの列挙
         for (Pieces pieces : generator) {
@@ -52,7 +65,7 @@ public class NormalEnumeratePieces implements EnumeratePiecesCore {
 
         this.duplicate = counter;
 
-        return searchingPieces;
+        return uniquePieces;
     }
 
     @Override

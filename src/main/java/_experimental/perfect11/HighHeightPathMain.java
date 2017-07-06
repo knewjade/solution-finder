@@ -70,13 +70,10 @@ public class HighHeightPathMain {
 
         System.out.println("===");
 
-        ColumnSmallField initOuterField = InOutPairField.createMaxOuterBoard(sizedBit.getWidth(), sizedBit.getHeight(), field);
-        System.out.println(ColumnFieldView.toString(initOuterField, 5, height));
-
         LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(sizedBit.getHeight());
         SolutionFilter solutionFilter = new SRSValidSolutionFilter(field, reachableThreadLocal, sizedBit);
         Predicate<ColumnField> predicate = BasicSolutions.createBitCountPredicate(2);
-        BasicSolutions basicSolutions = new FilterOnDemandBasicSolutions(separableMinos, sizedBit, initOuterField, predicate, solutionFilter);
+        BasicSolutions basicSolutions = new FilterOnDemandBasicSolutions(separableMinos, sizedBit, predicate, solutionFilter);
         PackSearcher searcher = createSearcher(sizedBit, basicSolutions, field, solutionFilter);
 
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();

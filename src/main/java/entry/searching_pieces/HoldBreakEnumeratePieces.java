@@ -9,7 +9,9 @@ import core.mino.Block;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * ホールドありの組み合わせから複数のホールドなしの組み合わせに分解し、重複を取り除く
@@ -27,7 +29,7 @@ public class HoldBreakEnumeratePieces implements EnumeratePiecesCore {
     }
 
     @Override
-    public List<List<Block>> enumerate() throws IOException {
+    public Set<Pieces> enumerate() throws IOException {
         int counter = 0;
         List<List<Block>> searchingPieces = new ArrayList<>();
         VisitedTree duplicateCheckTree = new VisitedTree();
@@ -53,7 +55,7 @@ public class HoldBreakEnumeratePieces implements EnumeratePiecesCore {
 
         this.duplicate = counter;
 
-        return searchingPieces;
+        return new HashSet<>();
     }
 
     @Override

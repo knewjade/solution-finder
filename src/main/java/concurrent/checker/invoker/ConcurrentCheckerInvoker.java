@@ -1,8 +1,8 @@
 package concurrent.checker.invoker;
 
+import common.datastore.Pair;
 import core.field.Field;
 import core.mino.Block;
-import common.datastore.Pair;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
