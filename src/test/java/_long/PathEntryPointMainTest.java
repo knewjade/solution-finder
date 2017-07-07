@@ -290,6 +290,7 @@ public class PathEntryPointMainTest {
         assertThat(log, containsString("Found path [minimal] = 10"));
     }
 
+    @Ignore
     @Test
     public void testMinimal9() throws Exception {
         List<String> fields = Arrays.asList(
@@ -309,5 +310,22 @@ public class PathEntryPointMainTest {
         // Source: myself 20170701
         assertThat(log, containsString("Found path [unique] = 298"));
         assertThat(log, containsString("Found path [minimal] = 239"));
+    }
+
+    @Test
+    public void testMinimal10() throws Exception {
+        List<String> fields = Arrays.asList(
+                "4",
+                "X_________",
+                "XXXXXXXX__",
+                "XXXXXXXXX_",
+                "XXXXXX____"
+        );
+        String pattern = "S,L,O,I,T";
+        String log = getPathLog(fields, pattern, true);
+
+        // Source: myself 20170701
+        assertThat(log, containsString("Found path [unique] = 3"));
+        assertThat(log, containsString("Found path [minimal] = 3"));
     }
 }

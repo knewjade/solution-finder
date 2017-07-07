@@ -214,4 +214,20 @@ public class PercentEntryPointMainTest {
         assertThat(join, containsString(expected));
         assertThat(join, containsString("[O, I]"));
     }
+
+    @Test
+    public void test11() throws Exception {
+        List<String> fields = Arrays.asList(
+                "4",
+                "XXXXXX____",
+                "XXXXX_____",
+                "XXXXXXXXXX",
+                "XXXXXX___X"
+        );
+        String pattern = "T, *p3";
+        String expected = "success = 90.48% (190/210)";
+        String join = getPercentLog(fields, pattern, true);
+        assertThat(join, containsString(expected));
+        assertThat(join, containsString("Max clear lines: 4"));
+    }
 }

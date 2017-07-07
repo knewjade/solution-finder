@@ -178,4 +178,40 @@ public class CheckerNoHoldTest {
             assertThat(checker.check(field, blocks, candidate, maxClearLine, maxDepth), is(testCase.getValue()));
         }
     }
+
+    @Test
+    public void testCaseFilledLine() throws Exception {
+        List<Pair<List<Block>, Boolean>> testCases = new ArrayList<Pair<List<Block>, Boolean>>() {
+            {
+                add(new Pair<>(Arrays.asList(I, Z, L, I), true));
+            }
+        };
+
+        // Field
+        String marks = "" +
+                "XXXXX_____" +
+                "XXXXXXXXXX" +
+                "XXXXXX____" +
+                "XXXXXXX___" +
+                "XXXXXX____" +
+                "";
+        Field field = FieldFactory.createField(marks);
+        int maxClearLine = 5;
+        int maxDepth = 4;
+
+        // Initialize
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        MinoRotation minoRotation = new MinoRotation();
+        PerfectValidator validator = new PerfectValidator();
+        CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
+
+        // Measure
+        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+
+        for (Pair<List<Block>, Boolean> testCase : testCases) {
+            List<Block> blocks = testCase.getKey();
+            assertThat(checker.check(field, blocks, candidate, maxClearLine, maxDepth), is(testCase.getValue()));
+        }
+    }
 }

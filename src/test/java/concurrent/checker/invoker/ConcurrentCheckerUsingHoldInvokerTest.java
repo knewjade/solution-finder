@@ -252,4 +252,23 @@ public class ConcurrentCheckerUsingHoldInvokerTest {
         // Source: Nilgiri: https://docs.google.com/spreadsheets/d/1bVY3t_X96xRmUL0qdgB9tViSIGenu6RMKX4RW7qWg8Y/edit#gid=0
         assertThat(tree.getSuccessPercent(), is(744 / 840.0));
     }
+
+    @Test
+    public void testSearch12() throws Exception {
+        PiecesGenerator piecesGenerator = new PiecesGenerator("*p5");
+        int maxClearLine = 4;
+        int maxDepth = 4;
+
+        String marks = "" +
+                "XXXX______" +
+                "XXXXXXXXXX" +
+                "XXXXX_____" +
+                "XXXX_____X" +
+                "";
+
+        AnalyzeTree tree = runTestCase(marks, piecesGenerator, maxClearLine, maxDepth);
+
+        // Source: myself 20170707
+        assertThat(tree.getSuccessPercent(), is(1758 / 2520.0));
+    }
 }

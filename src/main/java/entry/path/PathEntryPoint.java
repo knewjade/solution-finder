@@ -194,8 +194,7 @@ public class PathEntryPoint implements EntryPoint {
         // 基本パターンを計算
         int cachedMinBit = settings.getCachedMinBit();
         Predicate<ColumnField> predicate = createPredicate(cachedMinBit);
-        ColumnSmallField maxOuterBoard = InOutPairField.createMaxOuterBoard(sizedBit, field);
-        BasicSolutions basicSolutions = new FilterOnDemandBasicSolutions(separableMinos, sizedBit, maxOuterBoard, predicate, solutionFilter);
+        BasicSolutions basicSolutions = new FilterOnDemandBasicSolutions(separableMinos, sizedBit, predicate, solutionFilter);
 
         output("     ... done");
 

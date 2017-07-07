@@ -102,7 +102,7 @@ public class CheckmateNoHoldTest {
         // Invoker
         List<Block> blocks = Arrays.asList(J, L, S, Z);
         int maxClearLine = 3;
-        CheckmateInvoker invoker = CheckmateInvoker.createPerfectCheckmateUsingHold(maxClearLine);
+        CheckmateInvoker invoker = CheckmateInvoker.createPerfectCheckmateNoHold(maxClearLine);
 
         // Field
         String marks = "" +
@@ -117,7 +117,7 @@ public class CheckmateNoHoldTest {
         invoker.show(true);
 
         List<Result> results = invoker.getLastResults();
-        assertThat(ResultHelper.uniquify(results).size(), is(4));
+        assertThat(ResultHelper.uniquify(results).size(), is(2));
     }
 
     @Test
@@ -125,7 +125,7 @@ public class CheckmateNoHoldTest {
         // Invoker
         List<Block> blocks = Arrays.asList(S, Z, O);
         int maxClearLine = 5;
-        CheckmateInvoker invoker = CheckmateInvoker.createPerfectCheckmateUsingHold(maxClearLine);
+        CheckmateInvoker invoker = CheckmateInvoker.createPerfectCheckmateNoHold(maxClearLine);
 
         // Field
         String marks = "" +
@@ -134,6 +134,31 @@ public class CheckmateNoHoldTest {
                 "XX__XXXXXX" +
                 "XXXXXX__XX" +
                 "XXXXXX__XX" +
+                "";
+        Field field = FieldFactory.createField(marks);
+
+        // Measure
+        invoker.measure(field, blocks, 1);
+        invoker.show(true);
+
+        List<Result> results = invoker.getLastResults();
+        assertThat(ResultHelper.uniquify(results).size(), is(1));
+    }
+
+    @Test
+    public void testFilledLine() throws Exception {
+        // Invoker
+        List<Block> blocks = Arrays.asList(I, Z, L, I);
+        int maxClearLine = 5;
+        CheckmateInvoker invoker = CheckmateInvoker.createPerfectCheckmateNoHold(maxClearLine);
+
+        // Field
+        String marks = "" +
+                "XXXXX_____" +
+                "XXXXXXXXXX" +
+                "XXXXXX____" +
+                "XXXXXXX___" +
+                "XXXXXX____" +
                 "";
         Field field = FieldFactory.createField(marks);
 

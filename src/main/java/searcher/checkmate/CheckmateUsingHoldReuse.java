@@ -1,17 +1,17 @@
 package searcher.checkmate;
 
+import common.comparator.FieldComparator;
+import common.datastore.Result;
+import common.datastore.action.Action;
+import common.datastore.order.NormalOrder;
+import common.datastore.order.Order;
 import core.action.candidate.Candidate;
 import core.field.Field;
 import core.field.SmallField;
 import core.mino.Block;
 import core.mino.MinoFactory;
-import common.comparator.FieldComparator;
-import common.datastore.Result;
-import searcher.core.SimpleSearcherCore;
-import common.datastore.action.Action;
-import common.datastore.order.NormalOrder;
-import common.datastore.order.Order;
 import searcher.common.validator.Validator;
+import searcher.core.SimpleSearcherCore;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -39,7 +39,11 @@ public class CheckmateUsingHoldReuse<T extends Action> implements Checkmate<T> {
     }
 
     @Override
-    public List<Result> search(Field initField, Block[] pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
+    public List<Result> search(Field initFieldOrigin, Block[] pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
+        Field initField = initFieldOrigin.freeze(maxClearLine);
+        int deleteLine = initField.clearLine();
+        int height = maxClearLine - deleteLine;
+
         TreeSet<Order> orders = new TreeSet<>();
 
         // 最初の探索開始depthとordersを調整
@@ -48,7 +52,7 @@ public class CheckmateUsingHoldReuse<T extends Action> implements Checkmate<T> {
             // mementoの初期化
             // 初めから
             memento = new ArrayList<>();
-            orders.add(new NormalOrder(initField, pieces[0], maxClearLine, maxDepth));
+            orders.add(new NormalOrder(initField, pieces[0], height, maxDepth));
             startDepth = 1;
             memento.add(new TreeSet<>(orders));
         } else {
@@ -64,7 +68,7 @@ public class CheckmateUsingHoldReuse<T extends Action> implements Checkmate<T> {
 
             if (reuseIndex < 0) {
                 memento = new ArrayList<>();
-                orders.add(new NormalOrder(initField, pieces[0], maxClearLine, maxDepth));
+                orders.add(new NormalOrder(initField, pieces[0], height, maxDepth));
                 startDepth = 1;
                 memento.add(new TreeSet<>(orders));
             } else if (reuseIndex == maxDepth) {
