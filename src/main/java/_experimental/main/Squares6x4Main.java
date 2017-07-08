@@ -1,8 +1,8 @@
 package _experimental.main;
 
-import common.datastore.BlockCounter;
-import common.datastore.BlockField;
-import common.datastore.OperationWithKey;
+import common.buildup.BuildUpStream;
+import common.datastore.*;
+import common.parser.OperationTransform;
 import common.tetfu.Tetfu;
 import common.tetfu.TetfuElement;
 import common.tetfu.common.ColorConverter;
@@ -10,6 +10,7 @@ import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
 import concurrent.LockedReachableThreadLocal;
+import core.action.reachable.LockedReachable;
 import core.column_field.ColumnField;
 import core.field.Field;
 import core.field.FieldFactory;
@@ -18,6 +19,7 @@ import core.mino.Block;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import core.srs.MinoRotation;
 import core.srs.Rotate;
 import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
@@ -42,15 +44,15 @@ import java.util.stream.Collectors;
 public class Squares6x4Main {
     public static void main(String[] args) throws ExecutionException, InterruptedException, IOException {
         Field field = FieldFactory.createField("" +
-                "______XXXX" +
-                "______XXXX" +
-                "______XXXX" +
-                "______XXXX"
+                "_____XXXXX" +
+                "_____XXXXX" +
+                "_____XXXXX" +
+                "_____XXXXX"
         );
 
-        File file = new File("output/6x4sample.html");
+        File file = new File("output/5x4sample.html");
 
-        String title = "All squares: 6x4";
+        String title = "All squares: 5x4";
 
         int width = 3;
         int height = 4;
@@ -96,6 +98,9 @@ public class Squares6x4Main {
 
         ColorConverter colorConverter = new ColorConverter();
         MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        MinoRotation minoRotation = new MinoRotation();
+        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
 
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false), StandardCharsets.UTF_8))) {
             // headerの出力
@@ -199,19 +204,20 @@ public class Squares6x4Main {
                         })
                         .collect(Collectors.joining());
 
-                // 手順の出力 (ライン消去なし)
+                // 手順の出力
                 writer.write(String.format("<h2 id='%s'>%s</h2><section><ul>", keyName, keyName));
                 writer.newLine();
 
                 List<Result> values = eachBlockCounter.get(counterKey);
 
-                TreeSet<BlockField> sets = new TreeSet<>();
                 for (int index = 0; index < values.size(); index++) {
                     Result result = values.get(index);
+                    List<OperationWithKey> operationWithKeys = result.getMemento().getOperationsStream(width).collect(Collectors.toList());
+
                     // パターンを表す名前 を生成
                     // BlockField を生成
                     BlockField blockField = new BlockField(height);
-                    result.getMemento().getOperationsStream(width)
+                    operationWithKeys
                             .forEach(key -> {
                                 Field test = FieldFactory.createField(height);
                                 Mino mino = key.getMino();
@@ -220,18 +226,44 @@ public class Squares6x4Main {
                                 blockField.merge(test, mino.getBlock());
                             });
 
-                    boolean add = sets.add(blockField);
-                    if (!add) {
-                        System.out.println(counterKey);
-                        System.out.println(FieldView.toString(blockField.get(counterKey.getBlocks().get(0)), 4));
+                    // テト譜の生成 (on 1page)
+                    TetfuElement elementOnePage = parseBlockFieldToTetfuElement(field, colorConverter, blockField, keyName);
+                    Tetfu tetfuOnePage = new Tetfu(minoFactory, colorConverter);
+                    String encodeOnePage = tetfuOnePage.encode(Collections.singletonList(elementOnePage));
+
+                    // テト譜の生成 (for operations)
+                    BuildUpStream buildUpStream = new BuildUpStream(reachable, height);
+                    Optional<List<OperationWithKey>> first = buildUpStream.existsValidBuildPatternDirectly(field, new LinkedList<>(operationWithKeys)).findFirst();
+
+                    assert first.isPresent();
+
+                    Operations operations = OperationTransform.parseToOperations(field, first.get(), height);
+                    List<Operation> operationsList = operations.getOperations();
+
+                    ArrayList<TetfuElement> tetfuElements = new ArrayList<>();
+
+                    // 最初のelement
+                    Operation firstKey = operationsList.get(0);
+                    ColorType colorType1 = colorConverter.parseToColorType(firstKey.getBlock());
+                    ColoredField coloredField = createInitColoredField(field);
+                    TetfuElement firstElement = new TetfuElement(coloredField, colorType1, firstKey.getRotate(), firstKey.getX(), firstKey.getY(), keyName);
+                    tetfuElements.add(firstElement);
+
+                    // 2番目以降のelement
+                    if (1 < operationsList.size()) {
+                        operationsList.subList(1, operationsList.size()).stream()
+                                .map(operation -> {
+                                    ColorType colorType = colorConverter.parseToColorType(operation.getBlock());
+                                    return new TetfuElement(colorType, operation.getRotate(), operation.getX(), operation.getY(), keyName);
+                                })
+                                .forEach(tetfuElements::add);
                     }
 
-                    // テト譜の生成
-                    TetfuElement element = parseBlockFieldToTetfuElement(field, colorConverter, blockField, keyName);
-                    Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
-                    String encode = tetfu.encode(Collections.singletonList(element));
+                    Tetfu tetfuOperations = new Tetfu(minoFactory, colorConverter);
+                    String encodeOperations = tetfuOperations.encode(tetfuElements);
 
-                    writer.write(String.format("<li><a href='http://harddrop.com/fumen/?v115@%s' target='_blank'>pattern %d</a></li>", encode, index + 1));
+
+                    writer.write(String.format("<li><a href='http://harddrop.com/fumen/?v115@%s' target='_blank'>pattern %d</a> (<a href='http://harddrop.com/fumen/?v115@%s' target='_blank'>detail</a>)</li>", encodeOnePage, index + 1, encodeOperations));
 //                    System.out.println(encode);
                 }
 
