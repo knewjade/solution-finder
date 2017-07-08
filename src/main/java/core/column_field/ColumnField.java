@@ -4,6 +4,9 @@ public interface ColumnField extends Comparable<ColumnField> {
     // 指定した位置にブロックをおく
     void setBlock(int x, int y, int height);
 
+    // 指定した位置からブロックを取り除く
+    void removeBlock(int x, int y, int height);
+
     // 指定した位置にブロックがないとき true を返却
     boolean isEmpty(int x, int y, int height);
 

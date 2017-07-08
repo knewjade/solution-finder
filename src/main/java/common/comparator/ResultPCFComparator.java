@@ -7,7 +7,7 @@ import core.mino.Block;
 import java.util.Comparator;
 
 // TODO: unittest
-public class ResultComparator implements Comparator<Result> {
+public class ResultPCFComparator implements Comparator<Result> {
     @Override
     public int compare(Result o1, Result o2) {
         Block lastHold1 = o1.getLastHold();

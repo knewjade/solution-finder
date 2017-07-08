@@ -18,7 +18,7 @@ public class MinimalAction implements Action {
     private final int y;
     private final Rotate rotate;
 
-    private MinimalAction(int x, int y, Rotate rotate) {
+    public MinimalAction(int x, int y, Rotate rotate) {
         assert y < 24 && rotate != null;
         this.x = x;
         this.y = y;

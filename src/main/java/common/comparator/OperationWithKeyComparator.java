@@ -5,7 +5,6 @@ import core.mino.Mino;
 
 import java.util.Comparator;
 
-// TODO: unittest: write
 public class OperationWithKeyComparator implements Comparator<OperationWithKey> {
     public static int compareOperationWithKey(OperationWithKey o1, OperationWithKey o2) {
         Mino mino1 = o1.getMino();

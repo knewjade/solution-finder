@@ -36,6 +36,11 @@ public class ColumnSmallField implements ColumnField {
     }
 
     @Override
+    public void removeBlock(int x, int y, int height) {
+        board &= ~getYMask(x, y, height);
+    }
+
+    @Override
     public long getBoard(int index) {
         return board;
     }

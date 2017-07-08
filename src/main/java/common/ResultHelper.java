@@ -1,6 +1,6 @@
 package common;
 
-import common.comparator.ResultComparator;
+import common.comparator.ResultPCFComparator;
 import common.datastore.Operation;
 import common.datastore.Result;
 import common.datastore.SimpleOperation;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.TreeSet;
 
 public class ResultHelper {
-    private static final ResultComparator COMPARATOR = new ResultComparator();
+    private static final ResultPCFComparator COMPARATOR = new ResultPCFComparator();
 
     public static List<Result> uniquify(List<Result> results) {
         TreeSet<Result> set = new TreeSet<>(COMPARATOR);
