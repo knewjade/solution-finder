@@ -1,13 +1,13 @@
 package searcher.checkmate;
 
+import _experimental.unused.CheckmateInvoker;
+import common.ResultHelper;
 import common.datastore.Pair;
-import core.mino.Block;
+import common.datastore.Result;
 import core.field.Field;
 import core.field.FieldFactory;
-import _experimental.unused.CheckmateInvoker;
+import core.mino.Block;
 import org.junit.Test;
-import common.datastore.Result;
-import common.ResultHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -139,21 +139,27 @@ public class CheckmateUsingHoldTest {
     }
 
     @Test
-    public void test() throws Exception {
-        int maxClearLine = 4;
+    public void testFilledLine() throws Exception {
+        // Invoker
+        List<Block> blocks = Arrays.asList(I, Z, L, I);
+        int maxClearLine = 5;
         CheckmateInvoker invoker = CheckmateInvoker.createPerfectCheckmateUsingHold(maxClearLine);
 
         // Field
-        Field field = FieldFactory.createField(maxClearLine);
+        String marks = "" +
+                "XXXXX_____" +
+                "XXXXXXXXXX" +
+                "XXXXXX____" +
+                "XXXXXXX___" +
+                "XXXXXX____" +
+                "";
+        Field field = FieldFactory.createField(marks);
 
         // Measure
-        List<Block> blocks = Arrays.asList(I, O, O, T, T, L, J, S, Z, Z);
         invoker.measure(field, blocks, 1);
-        invoker.show(false);
+        invoker.show(true);
 
         List<Result> results = invoker.getLastResults();
-        for (Result result : results) {
-            System.out.println(result);
-        }
+        assertThat(ResultHelper.uniquify(results).size(), is(2));
     }
 }

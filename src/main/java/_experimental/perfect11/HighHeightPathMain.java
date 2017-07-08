@@ -32,6 +32,7 @@ import searcher.pack.task.Field4x10MinoPackingHelper;
 import searcher.pack.task.PackSearcher;
 import searcher.pack.task.TaskResultHelper;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -41,6 +42,17 @@ public class HighHeightPathMain {
     private static int counter = 0;
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
+        Field field2 = FieldFactory.createField("" +
+                "X_________" +
+                "XXXXXXXX__" +
+                "XXXXXXXXX_" +
+                "XXXXXX____"
+        );
+        ColumnSmallField initOuterField2 = InOutPairField.createMaxOuterBoard(3, 4, field2);
+        System.out.println(ColumnFieldView.toString(initOuterField2, 6, 4));
+
+    System.exit(0);
+
         int width = 2;
         int height = 8;
         SizedBit sizedBit = new SizedBit(width, height);
@@ -69,6 +81,10 @@ public class HighHeightPathMain {
         System.out.println(FieldView.toString(field, height));
 
         System.out.println("===");
+
+        // not use now
+        ColumnSmallField initOuterField = InOutPairField.createMaxOuterBoard(sizedBit.getWidth(), sizedBit.getHeight(), field);
+        System.out.println(ColumnFieldView.toString(initOuterField, 5, height));
 
         LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(sizedBit.getHeight());
         SolutionFilter solutionFilter = new SRSValidSolutionFilter(field, reachableThreadLocal, sizedBit);

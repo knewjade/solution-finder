@@ -31,10 +31,13 @@ public class CheckmateUsingHold<T extends Action> implements Checkmate<T> {
 
     @Override
     public List<Result> search(Field initField, Block[] pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
+        Field freeze = initField.freeze(maxClearLine);
+        int deleteLine = freeze.clearLine();
+
         dataPool.initFirst();
 
         TreeSet<Order> orders = new TreeSet<>();
-        orders.add(new NormalOrder(initField, pieces[0], maxClearLine, maxDepth));
+        orders.add(new NormalOrder(freeze, pieces[0], maxClearLine - deleteLine, maxDepth));
 
         for (int depth = 1; depth <= maxDepth; depth++) {
             dataPool.initEachDepth();
