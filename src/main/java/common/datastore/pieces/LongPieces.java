@@ -125,7 +125,7 @@ public class LongPieces implements Pieces {
 
         if (o instanceof LongPieces) {
             LongPieces that = (LongPieces) o;
-            return pieces == that.pieces;
+            return pieces == that.pieces && max == that.max;
         } else if (o instanceof Pieces) {
             Pieces that = (Pieces) o;
             return PiecesNumberComparator.comparePieces(this, that) == 0;

@@ -41,6 +41,14 @@ public class LongPiecesTest {
     }
 
     @Test
+    public void checkEquals() throws Exception {
+        Block block = Block.getBlock(0);
+        Pieces pieces1 = new LongPieces(Arrays.asList(block, block, block));
+        Pieces pieces2 = new LongPieces(Arrays.asList(block, block, block, block));
+        assertThat(pieces1.equals(pieces2), is(false));
+    }
+
+    @Test
     public void createRandom() throws Exception {
         Randoms randoms = new Randoms();
 
@@ -63,9 +71,30 @@ public class LongPiecesTest {
         Randoms randoms = new Randoms();
 
         for (int count = 0; count < 10000; count++) {
-            ArrayList<Block> blocks = new ArrayList<>(randoms.blocks(22));
+            List<Block> blocks = randoms.blocks(22);
             Pieces pieces = new LongPieces(blocks);
             assertThat(pieces.getBlocks(), contains(blocks.toArray()));
+        }
+    }
+
+    @Test
+    public void createEqualsRandom() throws Exception {
+        Randoms randoms = new Randoms();
+
+        for (int count = 0; count < 10000; count++) {
+            int size1 = randoms.nextInt(1, 21);
+            List<Block> blocks1 = randoms.blocks(size1);
+
+            int size2 = randoms.nextInt(1, 22);
+            List<Block> blocks2 = randoms.blocks(size2);
+
+            if (blocks1.equals(blocks2))
+                blocks1.add(Block.I);
+
+            Pieces pieces1 = new LongPieces(blocks1);
+            Pieces pieces2 = new LongPieces(blocks2);
+
+            assertThat(pieces1.equals(pieces2), is(false));
         }
     }
 
@@ -75,7 +104,7 @@ public class LongPiecesTest {
 
         for (int count = 0; count < 10000; count++) {
             int size = randoms.nextInt(1, 22);
-            ArrayList<Block> blocks = new ArrayList<>(size);
+            List<Block> blocks = randoms.blocks(size);
             LongPieces longPieces = new LongPieces(blocks);
             Pieces readOnlyListPieces = new ReadOnlyListPieces(blocks);
             assertThat(longPieces.getBlocks().toString(), longPieces.equals(readOnlyListPieces), is(true));
