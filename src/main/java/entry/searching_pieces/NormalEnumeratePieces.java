@@ -1,15 +1,13 @@
 package entry.searching_pieces;
 
+import common.datastore.pieces.LongPieces;
 import common.datastore.pieces.Pieces;
 import common.pattern.PiecesGenerator;
-import common.tree.VisitedTree;
-import core.mino.Block;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -18,58 +16,53 @@ import java.util.stream.Collectors;
  */
 public class NormalEnumeratePieces implements EnumeratePiecesCore {
     private final PiecesGenerator generator;
-    private final int combinationPopCount;
-    private int duplicate = -1;
+    private final int maxDepth;
+    private int counter = -1;
 
     public NormalEnumeratePieces(PiecesGenerator generator, int maxDepth, boolean isUsingHold) {
-        int piecesDepth = generator.getDepth();
-
-        int combinationPopCount = isUsingHold ? maxDepth + 1 : maxDepth;
-        if (piecesDepth < combinationPopCount)
-            combinationPopCount = piecesDepth;
-
         this.generator = generator;
-        this.combinationPopCount = combinationPopCount;
+        this.maxDepth = isUsingHold ? maxDepth + 1 : maxDepth;
     }
 
     @Override
     public Set<Pieces> enumerate() throws IOException {
-        int counter = 0;
-        HashSet<Pieces> uniquePieces = new HashSet<>();
+        assert counter == -1;
 
-        boolean isOverPieces = combinationPopCount < generator.getDepth();
-        if (isOverPieces) {
-            // generatorが必要なミノ数以上に生成するとき
+        int depth = generator.getDepth();
 
-        } else {
-            return generator.stream().collect(Collectors.toCollection(HashSet::new));
-        }
+        AtomicInteger counter = new AtomicInteger();
+        HashSet<Pieces> searchingPieces = create(depth, counter);
 
+        this.counter = counter.get();
+        return searchingPieces;
+    }
 
-        List<List<Block>> searchingPieces = new ArrayList<>();
-        VisitedTree duplicateCheckTree = new VisitedTree();
+    private HashSet<Pieces> create(int depth, AtomicInteger counter) {
+        if (maxDepth < depth)
+            return createOverMinos(counter);
+        else
+            return createJustMinos(counter);
+    }
 
-        // 組み合わせの列挙
-        for (Pieces pieces : generator) {
-            counter++;
-            List<Block> blocks = pieces.getBlocks();
-            if (isOverPieces)
-                blocks = blocks.subList(0, combinationPopCount);
+    private HashSet<Pieces> createJustMinos(AtomicInteger counter) {
+        return generator.stream()
+                .peek(pieces -> counter.incrementAndGet())
+                .map(Pieces::getBlockStream)
+                .map(LongPieces::new)
+                .collect(Collectors.toCollection(HashSet::new));
+    }
 
-            // 重複を削除
-            if (!duplicateCheckTree.isVisited(blocks)) {
-                searchingPieces.add(blocks);
-                duplicateCheckTree.success(blocks);
-            }
-        }
-
-        this.duplicate = counter;
-
-        return uniquePieces;
+    private HashSet<Pieces> createOverMinos(AtomicInteger counter) {
+        return generator.stream()
+                .peek(pieces -> counter.incrementAndGet())
+                .map(Pieces::getBlockStream)
+                .map(stream -> stream.limit(maxDepth))
+                .map(LongPieces::new)
+                .collect(Collectors.toCollection(HashSet::new));
     }
 
     @Override
     public int getCounter() {
-        return duplicate;
+        return counter;
     }
 }

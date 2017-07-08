@@ -14,7 +14,7 @@ import static org.junit.Assert.assertThat;
 
 public class NormalEnumeratePiecesTest {
     @Test
-    public void enumerateHoldJust() throws Exception {
+    public void enumerateHoldOver1() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("*p7");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 3, true);
         Set<Pieces> pieces = core.enumerate();
@@ -23,7 +23,7 @@ public class NormalEnumeratePiecesTest {
     }
 
     @Test
-    public void enumerateHoldOver() throws Exception {
+    public void enumerateHoldOver2() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("*p7");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 4, true);
         Set<Pieces> pieces = core.enumerate();
@@ -32,7 +32,7 @@ public class NormalEnumeratePiecesTest {
     }
 
     @Test
-    public void enumerateHoldOver2() throws Exception {
+    public void enumerateHoldOver3() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("I, *p7");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 4, true);
         Set<Pieces> pieces = core.enumerate();
@@ -41,8 +41,8 @@ public class NormalEnumeratePiecesTest {
     }
 
     @Test
-    public void enumerateHoldOne() throws Exception {
-        PiecesGenerator generator = new PiecesGenerator("I, S, Z, O");
+    public void enumerateHoldOverOne() throws Exception {
+        PiecesGenerator generator = new PiecesGenerator("I, S, Z, O, T, J, L");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 4, true);
         Set<Pieces> pieces = core.enumerate();
         assertThat(pieces.size(), is(1));
@@ -64,7 +64,7 @@ public class NormalEnumeratePiecesTest {
     }
 
     @Test
-    public void enumerateNoHoldJust() throws Exception {
+    public void enumerateNoHoldOver1() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("*p7");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 3, false);
         Set<Pieces> pieces = core.enumerate();
@@ -73,7 +73,7 @@ public class NormalEnumeratePiecesTest {
     }
 
     @Test
-    public void enumerateNoHoldOver() throws Exception {
+    public void enumerateNoHoldOver2() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("*p7");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 4, false);
         Set<Pieces> pieces = core.enumerate();
@@ -82,7 +82,7 @@ public class NormalEnumeratePiecesTest {
     }
 
     @Test
-    public void enumerateNoHoldOver2() throws Exception {
+    public void enumerateNoHoldOver3() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("I, *p7");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 4, false);
         Set<Pieces> pieces = core.enumerate();
@@ -91,7 +91,7 @@ public class NormalEnumeratePiecesTest {
     }
 
     @Test
-    public void enumerateNoHoldOne() throws Exception {
+    public void enumerateNoHoldOverOne() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("I, S, Z, O");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 4, false);
         Set<Pieces> pieces = core.enumerate();
@@ -109,6 +109,51 @@ public class NormalEnumeratePiecesTest {
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 3, false);
         Set<Pieces> pieces = core.enumerate();
         assertThat(pieces.size(), is(2));
+        assertThat(core.getCounter(), is(3));
+    }
+
+    @Test
+    public void enumerateHoldJust() throws Exception {
+        PiecesGenerator generator = new PiecesGenerator("*p3");
+        NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 3, true);
+        Set<Pieces> pieces = core.enumerate();
+        assertThat(pieces.size(), is(210));
+        assertThat(core.getCounter(), is(210));
+    }
+
+    @Test
+    public void enumerateNoHoldJust() throws Exception {
+        PiecesGenerator generator = new PiecesGenerator("*p3");
+        NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 3, false);
+        Set<Pieces> pieces = core.enumerate();
+        assertThat(pieces.size(), is(210));
+        assertThat(core.getCounter(), is(210));
+    }
+
+    @Test
+    public void enumerateHoldJustMulti() throws Exception {
+        PiecesGenerator generator = new PiecesGenerator(Arrays.asList(
+                "T, J, O, Z, I",
+                "J, O, S, T, Z",
+                "T, J, O, I, S",
+                "T, J, O, Z, I"
+        ));
+        NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 5, true);
+        Set<Pieces> pieces = core.enumerate();
+        assertThat(pieces.size(), is(3));
+        assertThat(core.getCounter(), is(4));
+    }
+
+    @Test
+    public void enumerateNoHoldJustMulti() throws Exception {
+        PiecesGenerator generator = new PiecesGenerator(Arrays.asList(
+                "T, J, O, Z",
+                "J, O, S, T",
+                "T, J, O, I"
+        ));
+        NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 4, false);
+        Set<Pieces> pieces = core.enumerate();
+        assertThat(pieces.size(), is(3));
         assertThat(core.getCounter(), is(3));
     }
 }

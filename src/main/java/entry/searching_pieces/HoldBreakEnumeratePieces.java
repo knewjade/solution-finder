@@ -1,17 +1,15 @@
 package entry.searching_pieces;
 
+import common.datastore.pieces.LongPieces;
 import common.datastore.pieces.Pieces;
-import common.order.OrderLookup;
-import common.order.StackOrder;
+import common.order.ForwardOrderLookUp;
 import common.pattern.PiecesGenerator;
-import common.tree.VisitedTree;
-import core.mino.Block;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * ホールドありの組み合わせから複数のホールドなしの組み合わせに分解し、重複を取り除く
@@ -19,47 +17,56 @@ import java.util.Set;
 public class HoldBreakEnumeratePieces implements EnumeratePiecesCore {
     private final PiecesGenerator generator;
     private final int maxDepth;
-    private final int combinationPopCount;
-    private int duplicate = -1;
+    private int counter = -1;
 
-    public HoldBreakEnumeratePieces(PiecesGenerator generator, int maxDepth) {
+    HoldBreakEnumeratePieces(PiecesGenerator generator, int maxDepth) {
+        assert maxDepth <= generator.getDepth();
         this.generator = generator;
         this.maxDepth = maxDepth;
-        this.combinationPopCount = maxDepth;
     }
 
     @Override
     public Set<Pieces> enumerate() throws IOException {
-        int counter = 0;
-        List<List<Block>> searchingPieces = new ArrayList<>();
-        VisitedTree duplicateCheckTree = new VisitedTree();
+        assert counter == -1;
 
-        // 組み合わせの列挙
-        for (Pieces pieces : generator) {
-            counter++;
-            List<Block> blocks = pieces.getBlocks();
+        int depth = generator.getDepth();
+        ForwardOrderLookUp forwardOrderLookUp = new ForwardOrderLookUp(maxDepth, depth);
 
-            // ホールドありパターンから複数のホールドなしに分解
-            List<StackOrder<Block>> forward = OrderLookup.forwardBlocks(blocks, combinationPopCount);
+        AtomicInteger counter = new AtomicInteger();
+        HashSet<Pieces> searchingPieces = create(depth, forwardOrderLookUp, counter);
 
-            for (StackOrder<Block> piecesWithNoHold : forward) {
-                List<Block> blocksWithNoHold = piecesWithNoHold.toList();
+        this.counter = counter.get();
+        return searchingPieces;
+    }
 
-                // 重複するホールドなしパターンを除去
-                if (!duplicateCheckTree.isVisited(blocksWithNoHold)) {
-                    searchingPieces.add(blocksWithNoHold);
-                    duplicateCheckTree.success(blocksWithNoHold);
-                }
-            }
-        }
+    private HashSet<Pieces> create(int depth, ForwardOrderLookUp forwardOrderLookUp, AtomicInteger counter) {
+        if (maxDepth < depth)
+            return createOverMinos(forwardOrderLookUp, counter);
+        else
+            return createJustMinos(forwardOrderLookUp, counter);
+    }
 
-        this.duplicate = counter;
+    private HashSet<Pieces> createJustMinos(ForwardOrderLookUp forwardOrderLookUp, AtomicInteger counter) {
+        return generator.stream()
+                .peek(pieces -> counter.incrementAndGet())
+                .map(Pieces::getBlocks)
+                .flatMap(forwardOrderLookUp::parse)
+                .map(LongPieces::new)
+                .collect(Collectors.toCollection(HashSet::new));
+    }
 
-        return new HashSet<>();
+    private HashSet<Pieces> createOverMinos(ForwardOrderLookUp forwardOrderLookUp, AtomicInteger counter) {
+        return generator.stream()
+                .peek(pieces -> counter.incrementAndGet())
+                .map(Pieces::getBlocks)
+                .map(blocks -> blocks.subList(0, maxDepth + 1))  // ホールドありなので+1ミノ分使用する
+                .flatMap(forwardOrderLookUp::parse)
+                .map(LongPieces::new)
+                .collect(Collectors.toCollection(HashSet::new));
     }
 
     @Override
     public int getCounter() {
-        return duplicate;
+        return counter;
     }
 }

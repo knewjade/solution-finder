@@ -14,7 +14,7 @@ import static org.junit.Assert.assertThat;
 
 public class HoldBreakEnumeratePiecesTest {
     @Test
-    public void enumerateJust() throws Exception {
+    public void enumerate1() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("*p7");
         HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(generator, 3);
         Set<Pieces> pieces = core.enumerate();
@@ -23,7 +23,7 @@ public class HoldBreakEnumeratePiecesTest {
     }
 
     @Test
-    public void enumerateOver() throws Exception {
+    public void enumerate2() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("*p7");
         HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(generator, 4);
         Set<Pieces> pieces = core.enumerate();
@@ -32,7 +32,7 @@ public class HoldBreakEnumeratePiecesTest {
     }
 
     @Test
-    public void enumerateOne() throws Exception {
+    public void enumerateOverAny() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("T, J, O, Z");
         HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(generator, 3);
         Set<Pieces> pieces = core.enumerate();
@@ -51,5 +51,23 @@ public class HoldBreakEnumeratePiecesTest {
         Set<Pieces> pieces = core.enumerate();
         assertThat(pieces.size(), is(13));
         assertThat(core.getCounter(), is(3));
+    }
+
+    @Test
+    public void enumerateJust() throws Exception {
+        PiecesGenerator generator = new PiecesGenerator("*p3");
+        HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(generator, 3);
+        Set<Pieces> pieces = core.enumerate();
+        assertThat(pieces.size(), is(210));
+        assertThat(core.getCounter(), is(210));
+    }
+
+    @Test
+    public void enumerateJustAny() throws Exception {
+        PiecesGenerator generator = new PiecesGenerator("T, O, S");
+        HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(generator, 3);
+        Set<Pieces> pieces = core.enumerate();
+        assertThat(pieces.size(), is(4));
+        assertThat(core.getCounter(), is(1));
     }
 }

@@ -150,7 +150,6 @@ public class PercentEntryPointMainTest {
         String join = getPercentLog(fields, pattern, true);
         assertThat(join, containsString(expected));
         assertThat(join, containsString("T -> 99.9 %"));
-        assertThat(join, containsString("[T, J, L, I, O, S, Z]"));
     }
 
     @Test
