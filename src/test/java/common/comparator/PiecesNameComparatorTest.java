@@ -37,7 +37,7 @@ public class PiecesNameComparatorTest {
         List<Block> allBlocks = Arrays.asList(Block.T, Block.I, Block.O, Block.S, Block.Z, Block.J, Block.L, Block.T, Block.I, Block.O, Block.S, Block.Z, Block.J, Block.L);
 
         Randoms randoms = new Randoms();
-        for (int count = 0; count < 1000; count++) {
+        for (int count = 0; count < 10000; count++) {
             List<Block> blocks1 = randoms.combinations(allBlocks, randoms.nextInt(10));
             List<Block> blocks2 = randoms.combinations(allBlocks, randoms.nextInt(10));
 

@@ -17,7 +17,10 @@ public class LongPieces implements Pieces {
     }
 
     private static long pow(int number) {
-        return (long) Math.pow(7, number);
+        long value = 1L;
+        for (int count = 0; count < number; count++)
+            value *= 7L;
+        return value;
     }
 
     private static long getScale(int index) {
@@ -50,6 +53,7 @@ public class LongPieces implements Pieces {
     }
 
     public LongPieces(List<Block> blocks) {
+        assert blocks.size() <= 22;
         this.pieces = parse(0L, blocks, 0);
         this.max = blocks.size();
     }
@@ -59,16 +63,19 @@ public class LongPieces implements Pieces {
         blocks.sequential().forEach(temporary::add);
         this.pieces = temporary.value;
         this.max = temporary.index;
+        assert this.max <= 22;
     }
 
     private LongPieces(LongPieces parent, List<Block> blocks) {
         this.pieces = parse(parent.pieces, blocks, parent.max);
         this.max = parent.max + blocks.size();
+        assert this.max <= 22;
     }
 
     private LongPieces(LongPieces parent, Block block) {
         this.pieces = parent.pieces + SCALE[parent.max] * block.getNumber();
         this.max = parent.max + 1;
+        assert this.max <= 22;
     }
 
     public long getPieces() {
@@ -116,7 +123,7 @@ public class LongPieces implements Pieces {
         if (this == o) return true;
         if (o == null) return false;
 
-        if (getClass() != o.getClass()) {
+        if (o instanceof LongPieces) {
             LongPieces that = (LongPieces) o;
             return pieces == that.pieces;
         } else if (o instanceof Pieces) {

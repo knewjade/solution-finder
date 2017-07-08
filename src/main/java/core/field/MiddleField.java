@@ -415,7 +415,7 @@ public class MiddleField implements Field {
         if (this == o) return true;
         if (o == null) return false;
 
-        if (getClass() == o.getClass()) {
+        if (o instanceof MiddleField) {
             MiddleField that = (MiddleField) o;
             return xBoardLow == that.xBoardLow && xBoardHigh == that.xBoardHigh;
         } else if (o instanceof FrozenMiddleField) {

@@ -236,7 +236,7 @@ public class SmallField implements Field {
         if (this == o) return true;
         if (o == null) return false;
 
-        if (getClass() == o.getClass()) {
+        if (o instanceof SmallField) {
             SmallField that = (SmallField) o;
             return xBoard == that.xBoard;
         } else if (o instanceof MiddleField) {

@@ -5,11 +5,7 @@ import common.comparator.FieldComparator;
 import core.field.Field;
 import core.mino.Block;
 
-import java.util.Comparator;
-
 public class NormalOrder implements Order {
-    private static final Comparator<Field> FIELD_COMPARATOR = new FieldComparator();
-
     private final Block hold;
     private final Field field;
     private final int maxClearLine;
@@ -46,9 +42,7 @@ public class NormalOrder implements Order {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Order order = (Order) o;
-
         return this.compareTo(order) == 0;
     }
 
@@ -63,7 +57,7 @@ public class NormalOrder implements Order {
     @Override
     public int compareTo(Order o) {
         if (hold == o.getHold()) {
-            return FIELD_COMPARATOR.compare(field, o.getField());
+            return FieldComparator.compareField(field, o.getField());
         } else {
             int number = hold != null ? hold.getNumber() : 7;
             int number1 = o.getHold() != null ? o.getHold().getNumber() : 7;

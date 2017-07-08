@@ -6,10 +6,6 @@ import core.srs.Rotate;
  * y < 24であること
  */
 public class MinimalAction implements Action {
-    private static final int MAX_FIELD_WIDTH = 10;
-    private static final int MAX_FIELD_HEIGHT = 24;
-    private static final int MAX_FIELD_BLOCK = MAX_FIELD_WIDTH * MAX_FIELD_HEIGHT;
-
     public static MinimalAction create(int x, int y, Rotate rotate) {
         return new MinimalAction(x, y, rotate);
     }

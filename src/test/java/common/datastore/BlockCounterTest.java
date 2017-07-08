@@ -1,14 +1,16 @@
 package common.datastore;
 
 import core.mino.Block;
+import lib.Randoms;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class BlockCounterTest {
     @Test
@@ -47,5 +49,27 @@ public class BlockCounterTest {
         assertThat(map.get(Block.L), is(nullValue()));
         assertThat(map.get(Block.Z), is(nullValue()));
         assertThat(map.get(Block.O), is(nullValue()));
+    }
+
+    @Test
+    public void testRandom() throws Exception {
+        Randoms randoms = new Randoms();
+
+        LOOP:
+        for (int count = 0; count < 10000; count++) {
+            List<Block> blocks = randoms.blocks(randoms.nextInt(0, 1000));
+            Map<Block, List<Block>> group = blocks.stream().collect(Collectors.groupingBy(Function.identity()));
+
+            for (List<Block> eachBlock : group.values())
+                if (256 <= eachBlock.size())
+                    continue LOOP;
+
+            BlockCounter blockCounter = new BlockCounter(blocks);
+            EnumMap<Block, Integer> counterMap = blockCounter.getEnumMap();
+            for (Block block : Block.values()) {
+                int expected = group.getOrDefault(block, Collections.emptyList()).size();
+                assertThat(counterMap.getOrDefault(block, 0), is(expected));
+            }
+        }
     }
 }

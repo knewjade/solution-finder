@@ -39,7 +39,7 @@ public class ReadOnlyListPieces implements Pieces, Comparable<Pieces> {
         if (this == o) return true;
         if (o == null) return false;
 
-        if (getClass() != o.getClass()) {
+        if (o instanceof ReadOnlyListPieces) {
             ReadOnlyListPieces that = (ReadOnlyListPieces) o;
             return blocks.equals(that.blocks);
         } else if (o instanceof Pieces) {
