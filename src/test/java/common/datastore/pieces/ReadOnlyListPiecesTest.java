@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -33,7 +34,7 @@ public class ReadOnlyListPiecesTest {
 
         for (int count = 0; count < 10000; count++) {
             int size = randoms.nextInt(1, 22);
-            ArrayList<Block> blocks = new ArrayList<>(size);
+            List<Block> blocks = randoms.blocks(size);
             Pieces pieces = new ReadOnlyListPieces(blocks);
             assertThat(pieces.getBlocks(), contains(blocks.toArray()));
         }
@@ -45,7 +46,7 @@ public class ReadOnlyListPiecesTest {
 
         for (int count = 0; count < 10000; count++) {
             int size = randoms.nextInt(1, 22);
-            ArrayList<Block> blocks = new ArrayList<>(size);
+            List<Block> blocks = randoms.blocks(size);
             Pieces pieces = new ReadOnlyListPieces(blocks);
             assertThat(pieces.getBlockStream().collect(Collectors.toList()), contains(blocks.toArray()));
         }
@@ -57,7 +58,7 @@ public class ReadOnlyListPiecesTest {
 
         for (int count = 0; count < 10000; count++) {
             int size = randoms.nextInt(1, 22);
-            ArrayList<Block> blocks = new ArrayList<>(size);
+            List<Block> blocks = randoms.blocks(size);
             Pieces readOnlyListPieces = new ReadOnlyListPieces(blocks);
             LongPieces longPieces = new LongPieces(blocks);
             assertThat(longPieces.getBlocks().toString(), readOnlyListPieces.equals(longPieces), is(true));

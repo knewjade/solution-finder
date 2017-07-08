@@ -1,6 +1,7 @@
 package lib;
 
 import core.mino.Block;
+import core.srs.Rotate;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -25,6 +26,15 @@ public class RandomsTest {
     }
 
     @Test
+    public void block() throws Exception {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 10000; count++) {
+            Block block = randoms.block();
+            assertThat(block, isIn(Block.values()));
+        }
+    }
+
+    @Test
     public void blocks() throws Exception {
         Randoms randoms = new Randoms();
         for (int count = 0; count < 10000; count++) {
@@ -32,6 +42,15 @@ public class RandomsTest {
             List<Block> blocks = randoms.blocks(size);
             assertThat(blocks, hasSize(size));
             assertThat(blocks, is(allOf(notNullValue())));
+        }
+    }
+
+    @Test
+    public void rotate() throws Exception {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 10000; count++) {
+            Rotate rotate = randoms.rotate();
+            assertThat(rotate, isIn(Rotate.values()));
         }
     }
 

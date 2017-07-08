@@ -1,5 +1,7 @@
 package common.datastore;
 
+import common.comparator.OperationListComparator;
+
 import java.util.List;
 
 public class Operations implements Comparable<Operations> {
@@ -29,18 +31,7 @@ public class Operations implements Comparable<Operations> {
 
     @Override
     public int compareTo(Operations o) {
-        int size = this.operations.size();
-        int oSize = o.operations.size();
-        if (size == oSize) {
-            for (int index = 0; index < size; index++) {
-                int compare = Operation.compareTo(operations.get(index), o.operations.get(index));
-                if (compare != 0)
-                    return compare;
-            }
-            return 0;
-        } else {
-            return Integer.compare(size, oSize);
-        }
+        return OperationListComparator.compareOperation(this.operations, o.operations);
     }
 
     @Override

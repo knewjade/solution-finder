@@ -1,6 +1,7 @@
 package lib;
 
 import core.mino.Block;
+import core.srs.Rotate;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,11 +25,18 @@ public class Randoms {
         return origin + random.nextInt(size);
     }
 
+    public Block block() {
+        return Block.getBlock(random.nextInt(Block.getSize()));
+    }
+
     public List<Block> blocks(int size) {
-        return random.ints(0, Block.getSize())
-                .limit(size)
+        return random.ints(size, 0, Block.getSize())
                 .mapToObj(Block::getBlock)
                 .collect(Collectors.toList());
+    }
+
+    public Rotate rotate() {
+        return Rotate.getRotate(random.nextInt(Rotate.getSize()));
     }
 
     public <T> T choose(List<T> bag) {
