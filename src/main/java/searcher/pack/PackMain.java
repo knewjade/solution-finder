@@ -1,12 +1,12 @@
 package searcher.pack;
 
-import common.parser.OperationWithKeyInterpreter;
 import common.Stopwatch;
 import common.comparator.OperationWithKeyComparator;
 import common.datastore.BlockCounter;
 import common.datastore.OperationWithKey;
 import common.datastore.pieces.Pieces;
 import common.iterable.CombinationIterable;
+import common.parser.OperationWithKeyInterpreter;
 import common.pattern.PiecesGenerator;
 import concurrent.LockedReachableThreadLocal;
 import core.column_field.ColumnField;
@@ -15,15 +15,12 @@ import core.field.FieldFactory;
 import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
-import searcher.pack.memento.SRSValidSolutionFilter;
+import searcher.pack.calculator.BasicSolutions;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.memento.UsingBlockAndValidKeySolutionFilter;
 import searcher.pack.mino_fields.RecursiveMinoFields;
-import searcher.pack.separable_mino.SeparableMino;
-import searcher.pack.separable_mino.SeparableMinoFactory;
-import searcher.pack.solutions.MappedBasicSolutions;
-import searcher.pack.calculator.BasicSolutions;
 import searcher.pack.solutions.BasicSolutionsCalculator;
+import searcher.pack.solutions.MappedBasicSolutions;
 import searcher.pack.task.Field4x10MinoPackingHelper;
 import searcher.pack.task.PackSearcher;
 import searcher.pack.task.TaskResultHelper;
@@ -75,7 +72,9 @@ public class PackMain {
 
         // ミノのリストを作成する
         SizedBit sizedBit = new SizedBit(WIDTH, HEIGHT);
-        SeparableMinos separableMinos = createSeparableMinos(sizedBit);
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        SeparableMinos separableMinos = SeparableMinos.createSeparableMinos(minoFactory, minoShifter, sizedBit);
 
         // 検索条件を決める
         SolutionFilter solutionFilter = createUsingBlockAndValidKeyMementoFilter(initField, sizedBit, counters);
@@ -132,20 +131,6 @@ public class PackMain {
         // 探索にかかった時間を表示
         stopwatch2.stop();
         System.out.println(stopwatch2.toMessage(TimeUnit.MILLISECONDS));
-    }
-
-    private static SeparableMinos createSeparableMinos(SizedBit sizedBit) {
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new MinoShifter();
-        SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, sizedBit.getWidth(), sizedBit.getHeight());
-        List<SeparableMino> separableMinos = factory.create();
-        return new SeparableMinos(separableMinos);
-    }
-
-    private static SolutionFilter createMementoFilter(Field initField, SizedBit sizedBit) {
-        LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(HEIGHT);
-        return new SRSValidSolutionFilter(initField, reachableThreadLocal, sizedBit);
-//        SolutionFilter mementoFilter = new NoDeleteLineSolutionFilter(initField, reachableThreadLocal, sizedBit.HEIGHT);
     }
 
     private static SolutionFilter createUsingBlockAndValidKeyMementoFilter(Field initField, SizedBit sizedBit, HashSet<BlockCounter> counters) {

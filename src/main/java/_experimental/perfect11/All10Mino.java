@@ -40,7 +40,10 @@ public class All10Mino {
         int width = 3;
         int height = 4;
         SizedBit sizedBit = new SizedBit(width, height);
-        SeparableMinos separableMinos = createSeparableMinos(sizedBit);
+
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        SeparableMinos separableMinos = SeparableMinos.createSeparableMinos(minoFactory, minoShifter, sizedBit);
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
         Map<ColumnField, ? extends MinoFields> calculate = calculator.calculate();
 
@@ -87,14 +90,6 @@ public class All10Mino {
         System.out.println(stopwatch.toMessage(TimeUnit.SECONDS));
         System.out.println(stopwatch.toMessage(TimeUnit.MILLISECONDS));
         System.out.println("solutions = " + counter);
-    }
-
-    private static SeparableMinos createSeparableMinos(SizedBit sizedBit) {
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new MinoShifter();
-        SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, sizedBit.getWidth(), sizedBit.getHeight());
-        List<SeparableMino> separableMinos = factory.create();
-        return new SeparableMinos(separableMinos);
     }
 
     private static PackSearcher createSearcher(SizedBit sizedBit, BasicSolutions basicSolutions, Field initField, SolutionFilter solutionFilter) throws InterruptedException, ExecutionException {

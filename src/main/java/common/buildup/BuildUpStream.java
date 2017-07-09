@@ -14,7 +14,6 @@ import java.util.stream.Stream;
 /**
  * マルチスレッド非対応
  */
-// TODO: unittest
 public class BuildUpStream {
     private final Reachable reachable;
     private final int height;

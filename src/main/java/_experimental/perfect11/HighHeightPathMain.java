@@ -56,7 +56,9 @@ public class HighHeightPathMain {
         int width = 2;
         int height = 8;
         SizedBit sizedBit = new SizedBit(width, height);
-        SeparableMinos separableMinos = createSeparableMinos(sizedBit);
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        SeparableMinos separableMinos = SeparableMinos.createSeparableMinos(minoFactory, minoShifter, sizedBit);
 
         Field field = FieldFactory.createField("" +
                 "X_XXXXXXXX" +
@@ -136,14 +138,6 @@ public class HighHeightPathMain {
         System.out.println("solutions = " + counter);
 
         System.out.println(Runtime.getRuntime().totalMemory() / 1024 / 1024 + " MB");
-    }
-
-    private static SeparableMinos createSeparableMinos(SizedBit sizedBit) {
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new MinoShifter();
-        SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, sizedBit.getWidth(), sizedBit.getHeight());
-        List<SeparableMino> separableMinos = factory.create();
-        return new SeparableMinos(separableMinos);
     }
 
     private static PackSearcher createSearcher(SizedBit sizedBit, BasicSolutions basicSolutions, Field initField, SolutionFilter solutionFilter) throws InterruptedException, ExecutionException {

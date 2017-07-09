@@ -3,20 +3,19 @@ package searcher.pack.task;
 import core.column_field.ColumnField;
 import searcher.pack.InOutPairField;
 import searcher.pack.SizedBit;
+import searcher.pack.calculator.BasicSolutions;
 import searcher.pack.memento.MinoFieldMemento;
 import searcher.pack.memento.MinoFieldMementoFactory;
 import searcher.pack.memento.SolutionFilter;
-import searcher.pack.calculator.BasicSolutions;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class PackSearcher {
     private final List<InOutPairField> inOutPairFields;
@@ -124,7 +123,7 @@ public class PackSearcher {
         return result;
     }
 
-    public <R> R callback(Function<Stream<Result>, R> callback) throws InterruptedException, ExecutionException {
+    public Optional<Result> findAny() throws InterruptedException, ExecutionException {
         // 探索準備
         MinoFieldMemento emptyMemento = MinoFieldMementoFactory.create();
         ColumnField innerField = inOutPairFields.get(0).getInnerField();
@@ -133,16 +132,16 @@ public class PackSearcher {
         // 探索
         ForkJoinPool forkJoinPool = new ForkJoinPool();
 
-        ForkJoinTask<R> submitTask = forkJoinPool.submit(() -> {
+        ForkJoinTask<Optional<Result>> submitTask = forkJoinPool.submit(() -> {
             // Streamは終端操作を実行するまで実際には計算を行わない
             // そのため、終端操作をPool内でしなければ、Pool外のスレッド場で動くため注意が必要
             // (終端操作をしなかった場合、Pool内ではStream自体の作成をして終了する)
 
-            return callback.apply(task.compute().parallel());
+            return task.compute().parallel().findAny();
         });
 
         // 結果を取得するまで待つ
-        R result = submitTask.get();
+        Optional<Result> result = submitTask.get();
         assert result != null;
 
         // 終了処理

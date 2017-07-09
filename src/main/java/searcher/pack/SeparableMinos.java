@@ -2,8 +2,11 @@ package searcher.pack;
 
 import core.mino.Block;
 import core.mino.Mino;
+import core.mino.MinoFactory;
+import core.mino.MinoShifter;
 import core.srs.Rotate;
 import searcher.pack.separable_mino.SeparableMino;
+import searcher.pack.separable_mino.SeparableMinoFactory;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -33,6 +36,13 @@ public class SeparableMinos {
 
         return Long.compare(o1.getDeleteKey(), o2.getDeleteKey());
     };
+
+
+    public static SeparableMinos createSeparableMinos(MinoFactory minoFactory, MinoShifter minoShifter, SizedBit sizedBit) {
+        SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, sizedBit.getWidth(), sizedBit.getHeight());
+        List<SeparableMino> separableMinos = factory.create();
+        return new SeparableMinos(separableMinos);
+    }
 
     private final ArrayList<SeparableMino> separableMinos;
     private final HashMap<Key, Integer> indexes;

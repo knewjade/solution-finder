@@ -1,5 +1,7 @@
 package lib;
 
+import core.field.Field;
+import core.field.FieldFactory;
 import core.mino.Block;
 import core.srs.Rotate;
 
@@ -10,6 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Randoms {
+    public static final int FIELD_WIDTH = 10;
     private final Random random;
 
     public Randoms() {
@@ -23,6 +26,10 @@ public class Randoms {
     public int nextInt(int origin, int bound) {
         int size = bound - origin;
         return origin + random.nextInt(size);
+    }
+
+    public int nextIntClosed(int origin, int boundClosed) {
+        return nextInt(origin, boundClosed + 1);
     }
 
     public Block block() {
@@ -61,5 +68,69 @@ public class Randoms {
         return Arrays.stream(indexes)
                 .mapToObj(bag::get)
                 .collect(Collectors.toList());
+    }
+
+    public Field field(int height, int numOfEmpty) {
+        assert numOfEmpty % 4 == 0;
+
+        int[] emptyEachLine = new int[height];
+        int numOfBlocks = 10 * height - numOfEmpty;
+        if (numOfEmpty < numOfBlocks) {
+            // 空白のほうが少ないとき
+            int count = 0;
+            while (count < numOfEmpty) {
+                int index = nextInt(height);
+                if (emptyEachLine[index] < 10) {
+                    emptyEachLine[index] += 1;
+                    count += 1;
+                }
+            }
+        } else {
+            // ブロックのほうが少ないとき
+            Arrays.fill(emptyEachLine, 10);
+
+            int count = 0;
+            while (count < numOfBlocks) {
+                int index = nextInt(height);
+                if (0 < emptyEachLine[index]) {
+                    emptyEachLine[index] -= 1;
+                    count += 1;
+                }
+            }
+        }
+
+        Field field = FieldFactory.createField(height);
+        int prevStart = 0;
+        int prevEnd = 10;
+        for (int y = height - 1; 0 <= y; y--) {
+            int count = emptyEachLine[y];
+            if (count == 0) {
+                // すべてのブロックを埋める
+                for (int x = 0; x < FIELD_WIDTH; x++)
+                    field.setBlock(x, y);
+            } else if (count != FIELD_WIDTH) {
+                // 一部に空白をつくる
+                int min = count <= prevStart ? prevStart - count + 1 : 0;
+                int max = prevEnd <= FIELD_WIDTH - count ? prevEnd : FIELD_WIDTH - count;
+
+                int start = nextInt(min, max);
+                assert 0 <= start && start < FIELD_WIDTH : Arrays.toString(emptyEachLine);
+                int end = start + count;
+                assert 0 <= end && end < FIELD_WIDTH : Arrays.toString(emptyEachLine);
+
+                for (int x = 0; x < start; x++)
+                    field.setBlock(x, y);
+
+                for (int x = end; x < 10; x++)
+                    field.setBlock(x, y);
+
+                prevStart = start;
+                prevEnd = end;
+            }
+        }
+
+        assert height * FIELD_WIDTH - field.getNumOfAllBlocks() == numOfEmpty;
+
+        return field;
     }
 }
