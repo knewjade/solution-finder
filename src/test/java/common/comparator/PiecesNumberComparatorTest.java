@@ -38,8 +38,8 @@ public class PiecesNumberComparatorTest {
 
         Randoms randoms = new Randoms();
         for (int count = 0; count < 10000; count++) {
-            List<Block> blocks1 = randoms.combinations(allBlocks, randoms.nextInt(10));
-            List<Block> blocks2 = randoms.combinations(allBlocks, randoms.nextInt(10));
+            List<Block> blocks1 = randoms.sample(allBlocks, randoms.nextInt(10));
+            List<Block> blocks2 = randoms.sample(allBlocks, randoms.nextInt(10));
 
             if (blocks1.equals(blocks2))
                 blocks1.add(Block.O);

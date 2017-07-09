@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
  * 通常の組み合わせ
  * PiecesGeneratorから重複を取り除く
  */
+// TODO: write unittest: random pickup test
 public class NormalEnumeratePieces implements EnumeratePiecesCore {
     private final PiecesGenerator generator;
     private final int maxDepth;
@@ -25,26 +26,26 @@ public class NormalEnumeratePieces implements EnumeratePiecesCore {
     }
 
     @Override
-    public Set<Pieces> enumerate() throws IOException {
+    public Set<LongPieces> enumerate() throws IOException {
         assert counter == -1;
 
         int depth = generator.getDepth();
 
         AtomicInteger counter = new AtomicInteger();
-        HashSet<Pieces> searchingPieces = create(depth, counter);
+        HashSet<LongPieces> searchingPieces = create(depth, counter);
 
         this.counter = counter.get();
         return searchingPieces;
     }
 
-    private HashSet<Pieces> create(int depth, AtomicInteger counter) {
+    private HashSet<LongPieces> create(int depth, AtomicInteger counter) {
         if (maxDepth < depth)
             return createOverMinos(counter);
         else
             return createJustMinos(counter);
     }
 
-    private HashSet<Pieces> createJustMinos(AtomicInteger counter) {
+    private HashSet<LongPieces> createJustMinos(AtomicInteger counter) {
         return generator.stream()
                 .peek(pieces -> counter.incrementAndGet())
                 .map(Pieces::getBlockStream)
@@ -52,7 +53,7 @@ public class NormalEnumeratePieces implements EnumeratePiecesCore {
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
-    private HashSet<Pieces> createOverMinos(AtomicInteger counter) {
+    private HashSet<LongPieces> createOverMinos(AtomicInteger counter) {
         return generator.stream()
                 .peek(pieces -> counter.incrementAndGet())
                 .map(Pieces::getBlockStream)

@@ -17,7 +17,7 @@ public class ParityBasedPackMain {
         );
         int maxClearLine = 4;
 
-        List<Block> usingBlocks = Arrays.asList(Block.values());
+        List<Block> usingBlocks = Block.valueList();
 
         ParityBasedPackSearcher searcher = new ParityBasedPackSearcher(field, maxClearLine);
         long count = searcher.search(usingBlocks).count();

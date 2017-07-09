@@ -50,7 +50,7 @@ public class Main3 {
         stopwatch.start();
 
         Set<List<Block>> sets = new HashSet<>();
-        List<Block> allBlocks = Arrays.asList(Block.values());
+        List<Block> allBlocks = Block.valueList();
         List<Block> blocks = new ArrayList<>();
         blocks.addAll(allBlocks);
         int popCount = (maxClearLine * 10 - field.getNumOfAllBlocks()) / 4;

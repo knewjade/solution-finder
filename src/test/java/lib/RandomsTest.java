@@ -5,7 +5,6 @@ import core.mino.Block;
 import core.srs.Rotate;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,7 +41,7 @@ class RandomsTest {
         for (int count = 0; count < 10000; count++) {
             Block block = randoms.block();
             assertThat(block)
-                    .isIn(Arrays.asList(Block.values()));
+                    .isIn(Block.valueList());
         }
     }
 
@@ -64,30 +63,30 @@ class RandomsTest {
         for (int count = 0; count < 10000; count++) {
             Rotate rotate = randoms.rotate();
             assertThat(rotate)
-                    .isIn(Arrays.asList(Rotate.values()));
+                    .isIn(Rotate.valueList());
         }
     }
 
     @Test
-    void choose() throws Exception {
+    void pick() throws Exception {
         Randoms randoms = new Randoms();
         List<Integer> bag = IntStream.range(1, 100).boxed().collect(Collectors.toList());
         for (int count = 0; count < 10000; count++) {
-            Integer choose = randoms.choose(bag);
+            Integer choose = randoms.pick(bag);
             assertThat(choose).isIn(bag);
         }
     }
 
     @Test
-    void combinations() throws Exception {
+    void sample() throws Exception {
         Randoms randoms = new Randoms();
         List<Integer> bag = IntStream.range(1, 100).boxed().collect(Collectors.toList());
         for (int count = 0; count < 10000; count++) {
             int size = randoms.nextInt(1, 15);
-            List<Integer> combinations = randoms.combinations(bag, size);
-            assertThat(combinations).hasSize(size);
-            assertThat(bag).containsAll(combinations);
-            assertThat(new HashSet<>(combinations)).hasSize(size);
+            List<Integer> sample = randoms.sample(bag, size);
+            assertThat(sample).hasSize(size);
+            assertThat(bag).containsAll(sample);
+            assertThat(new HashSet<>(sample)).hasSize(size);
         }
     }
 

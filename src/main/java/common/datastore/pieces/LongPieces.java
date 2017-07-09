@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 // max <= 22であること
-public class LongPieces implements Pieces {
+public class LongPieces implements Pieces, Comparable<LongPieces> {
     private static final long[] SCALE = new long[22];
 
     static {
@@ -137,6 +137,10 @@ public class LongPieces implements Pieces {
     @Override
     public int hashCode() {
         return toHash(pieces);
+    }
+
+    public int compareTo(LongPieces o) {
+        return Long.compare(this.pieces, o.pieces);
     }
 
     private static class TemporaryCount {

@@ -50,12 +50,12 @@ public class Randoms {
         return Rotate.getRotate(random.nextInt(Rotate.getSize()));
     }
 
-    public <T> T choose(List<T> bag) {
+    public <T> T pick(List<T> bag) {
         int index = random.nextInt(bag.size());
         return bag.get(index);
     }
 
-    public <T> List<T> combinations(List<T> bag, int size) {
+    public <T> List<T> sample(List<T> bag, int size) {
         int[] indexes = IntStream.range(0, size)
                 .map(value -> bag.size() - value)
                 .map(this::nextInt)

@@ -3,6 +3,7 @@ package entry.percent;
 import common.Stopwatch;
 import common.SyntaxException;
 import common.datastore.Pair;
+import common.datastore.pieces.LongPieces;
 import common.datastore.pieces.Pieces;
 import common.pattern.PiecesGenerator;
 import common.tree.AnalyzeTree;
@@ -120,7 +121,7 @@ public class PercentEntryPoint implements EntryPoint {
 
         // 探索パターンの列挙
         NormalEnumeratePieces normalEnumeratePieces = new NormalEnumeratePieces(generator, maxDepth, settings.isUsingHold());
-        Set<Pieces> searchingPieces = normalEnumeratePieces.enumerate();
+        Set<LongPieces> searchingPieces = normalEnumeratePieces.enumerate();
 
         output("Searching pattern size (duplicate) = " + normalEnumeratePieces.getCounter());
         output("Searching pattern size ( no dup. ) = " + searchingPieces.size());

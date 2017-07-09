@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 /**
  * ホールドありの組み合わせから複数のホールドなしの組み合わせに分解し、重複を取り除く
  */
+// TODO: write unittest: random pickup test
 public class HoldBreakEnumeratePieces implements EnumeratePiecesCore {
     private final PiecesGenerator generator;
     private final int maxDepth;
@@ -26,27 +27,27 @@ public class HoldBreakEnumeratePieces implements EnumeratePiecesCore {
     }
 
     @Override
-    public Set<Pieces> enumerate() throws IOException {
+    public Set<LongPieces> enumerate() throws IOException {
         assert counter == -1;
 
         int depth = generator.getDepth();
         ForwardOrderLookUp forwardOrderLookUp = new ForwardOrderLookUp(maxDepth, depth);
 
         AtomicInteger counter = new AtomicInteger();
-        HashSet<Pieces> searchingPieces = create(depth, forwardOrderLookUp, counter);
+        HashSet<LongPieces> searchingPieces = create(depth, forwardOrderLookUp, counter);
 
         this.counter = counter.get();
         return searchingPieces;
     }
 
-    private HashSet<Pieces> create(int depth, ForwardOrderLookUp forwardOrderLookUp, AtomicInteger counter) {
+    private HashSet<LongPieces> create(int depth, ForwardOrderLookUp forwardOrderLookUp, AtomicInteger counter) {
         if (maxDepth < depth)
             return createOverMinos(forwardOrderLookUp, counter);
         else
             return createJustMinos(forwardOrderLookUp, counter);
     }
 
-    private HashSet<Pieces> createJustMinos(ForwardOrderLookUp forwardOrderLookUp, AtomicInteger counter) {
+    private HashSet<LongPieces> createJustMinos(ForwardOrderLookUp forwardOrderLookUp, AtomicInteger counter) {
         return generator.stream()
                 .peek(pieces -> counter.incrementAndGet())
                 .map(Pieces::getBlocks)
@@ -55,7 +56,7 @@ public class HoldBreakEnumeratePieces implements EnumeratePiecesCore {
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
-    private HashSet<Pieces> createOverMinos(ForwardOrderLookUp forwardOrderLookUp, AtomicInteger counter) {
+    private HashSet<LongPieces> createOverMinos(ForwardOrderLookUp forwardOrderLookUp, AtomicInteger counter) {
         return generator.stream()
                 .peek(pieces -> counter.incrementAndGet())
                 .map(Pieces::getBlocks)

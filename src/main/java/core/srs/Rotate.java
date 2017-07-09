@@ -1,8 +1,8 @@
 package core.srs;
 
-import core.mino.Block;
-
+import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.List;
 
 public enum Rotate {
     Spawn(0),
@@ -32,6 +32,10 @@ public enum Rotate {
     public static Rotate getRotate(int number) {
         assert number < ROTATE_MAP.length;
         return ROTATE_MAP[number];
+    }
+
+    public static List<Rotate> valueList() {
+        return Arrays.asList(Rotate.values());
     }
 
     public static int getSize() {

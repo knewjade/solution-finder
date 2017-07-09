@@ -1,14 +1,14 @@
 package common.pattern;
 
-import core.mino.Block;
 import common.SyntaxException;
+import core.mino.Block;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PatternElement {
-    private static final List<Block> ALL_BLOCKS = Arrays.asList(Block.values());
+    private static final List<Block> ALL_BLOCKS = Block.valueList();
     private static final Map<String, Block> nameToBlock = new HashMap<>();
 
     static {
@@ -16,7 +16,7 @@ public class PatternElement {
             nameToBlock.put(block.getName(), block);
     }
 
-    public static Optional<PatternElement> parseWithoutCheck(String pattern) {
+    static Optional<PatternElement> parseWithoutCheck(String pattern) {
         try {
             return Optional.of(parse(pattern));
         } catch (Exception e) {

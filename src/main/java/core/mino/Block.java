@@ -1,5 +1,8 @@
 package core.mino;
 
+import java.util.Arrays;
+import java.util.List;
+
 public enum Block {
     T(new int[][]{{0, 0}, {-1, 0}, {1, 0}, {0, 1}}, 0),
     I(new int[][]{{0, 0}, {-1, 0}, {1, 0}, {2, 0}}, 1),
@@ -19,6 +22,10 @@ public enum Block {
     public static Block getBlock(int number) {
         assert number < BLOCK_MAP.length;
         return BLOCK_MAP[number];
+    }
+
+    public static List<Block> valueList() {
+        return Arrays.asList(values());
     }
 
     public static int getSize() {
