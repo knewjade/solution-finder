@@ -14,7 +14,6 @@ import core.action.reachable.LockedReachable;
 import core.column_field.ColumnField;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.field.FieldView;
 import core.mino.Block;
 import core.mino.Mino;
 import core.mino.MinoFactory;
@@ -26,8 +25,6 @@ import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.memento.SRSValidSolutionFilter;
 import searcher.pack.memento.SolutionFilter;
-import searcher.pack.separable_mino.SeparableMino;
-import searcher.pack.separable_mino.SeparableMinoFactory;
 import searcher.pack.solutions.OnDemandBasicSolutions;
 import searcher.pack.task.Field4x10MinoPackingHelper;
 import searcher.pack.task.PackSearcher;
@@ -57,7 +54,10 @@ public class Squares6x4Main {
         int width = 3;
         int height = 4;
         SizedBit sizedBit = new SizedBit(width, height);
-        SeparableMinos separableMinos = createSeparableMinos(sizedBit);
+
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        SeparableMinos separableMinos = SeparableMinos.createSeparableMinos(minoFactory, minoShifter, sizedBit);
 
         List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(width, height, field);
         Predicate<ColumnField> memorizedPredicate = (columnField) -> true;
@@ -97,8 +97,6 @@ public class Squares6x4Main {
                         .map(Mino::getBlock))));
 
         ColorConverter colorConverter = new ColorConverter();
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = new MinoRotation();
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
 
@@ -280,14 +278,6 @@ public class Squares6x4Main {
         }
     }
 
-    private static SeparableMinos createSeparableMinos(SizedBit sizedBit) {
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new MinoShifter();
-        SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, sizedBit.getWidth(), sizedBit.getHeight());
-        List<SeparableMino> separableMinos = factory.create();
-        return new SeparableMinos(separableMinos);
-    }
-
     private static TetfuElement parseBlockFieldToTetfuElement(Field initField, ColorConverter colorConverter, BlockField blockField, String comment) {
         ColoredField coloredField = createInitColoredField(initField);
 
@@ -314,5 +304,4 @@ public class Squares6x4Main {
             }
         }
     }
-
 }
