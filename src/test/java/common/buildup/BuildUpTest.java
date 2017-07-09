@@ -1,35 +1,159 @@
 package common.buildup;
 
-import common.datastore.OperationWithKey;
-import common.datastore.Operations;
-import common.datastore.SimpleOperation;
-import common.datastore.SimpleOperationWithKey;
+import common.ResultHelper;
+import common.datastore.*;
+import common.datastore.action.Action;
 import common.iterable.PermutationIterable;
+import common.parser.OperationInterpreter;
 import common.parser.OperationTransform;
 import common.parser.OperationWithKeyInterpreter;
+import concurrent.LockedReachableThreadLocal;
+import core.action.candidate.Candidate;
+import core.action.candidate.LockedCandidate;
 import core.action.reachable.LockedReachable;
+import core.column_field.ColumnField;
 import core.field.Field;
 import core.field.FieldFactory;
+import core.field.FieldView;
 import core.mino.Block;
+import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
-import org.junit.Test;
+import lib.Randoms;
+import org.junit.jupiter.api.Test;
+import searcher.checker.CheckerUsingHold;
+import searcher.common.validator.PerfectValidator;
+import searcher.pack.InOutPairField;
+import searcher.pack.SeparableMinos;
+import searcher.pack.SizedBit;
+import searcher.pack.memento.AllPassedSolutionFilter;
+import searcher.pack.memento.SolutionFilter;
+import searcher.pack.solutions.OnDemandBasicSolutions;
+import searcher.pack.task.Field4x10MinoPackingHelper;
+import searcher.pack.task.PackSearcher;
+import searcher.pack.task.Result;
+import searcher.pack.task.TaskResultHelper;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import static core.mino.Block.*;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class BuildUpTest {
+class BuildUpTest {
     @Test
-    public void existsValidBuildPattern1() throws Exception {
+    void cansBuild() {
+        Field field = FieldFactory.createField("" +
+                "____XXXXXX" +
+                "____XXXXXX" +
+                "____XXXXXX" +
+                "____XXXXXX"
+        );
+        int height = 4;
+
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        MinoRotation minoRotation = new MinoRotation();
+        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
+
+        Operations operations = OperationInterpreter.parseToOperations("J,0,1,0;S,L,1,2;O,0,2,1;J,2,2,1");
+        List<OperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
+        assertThat(BuildUp.cansBuild(field, operationWithKeys, height, reachable)).isTrue();
+
+        OperationWithKey remove = operationWithKeys.remove(0);
+        operationWithKeys.add(1, remove);
+        assertThat(BuildUp.cansBuild(field, operationWithKeys, height, reachable)).isFalse();
+    }
+
+    @Test
+    void cansBuildRandomShortByCheck() {
+        Randoms randoms = new Randoms();
+
+        // Create field
+        int height = 4;
+
+        // Initialize
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        MinoRotation minoRotation = new MinoRotation();
+        PerfectValidator validator = new PerfectValidator();
+        CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
+
+        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
+        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
+
+        AtomicInteger counter = new AtomicInteger();
+
+        for (int count = 0; count < 10000; count++) {
+            // Pickup solution from checker
+            int numOfMinos = randoms.nextInt(1, 7);
+            Field field = randoms.field(height, numOfMinos);
+            List<Block> blocks = randoms.blocks(numOfMinos);
+            boolean check = checker.check(field, blocks, candidate, height, numOfMinos);
+
+            if (check) {
+                counter.incrementAndGet();
+                List<Operation> operationList = ResultHelper.createOperations(checker.getResult());
+                Operations operations = new Operations(operationList);
+                List<OperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
+                assertThat(BuildUp.cansBuild(field, operationWithKeys, height, reachable))
+                        .as(FieldView.toString(field) + blocks)
+                        .isTrue();
+            }
+        }
+
+        System.out.println(counter);
+    }
+
+    @Test
+    void cansBuildRandomLongByCheck() {
+        Randoms randoms = new Randoms();
+
+        // Create field
+        int height = 4;
+
+        // Initialize
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        MinoRotation minoRotation = new MinoRotation();
+        PerfectValidator validator = new PerfectValidator();
+        CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
+
+        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
+        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
+
+        AtomicInteger counter = new AtomicInteger();
+
+        for (int count = 0; count < 100; count++) {
+            // Pickup solution from checker
+            int numOfMinos = randoms.nextIntClosed(7, 10);
+            Field field = randoms.field(height, numOfMinos);
+            List<Block> blocks = randoms.blocks(numOfMinos);
+            boolean check = checker.check(field, blocks, candidate, height, numOfMinos);
+
+            if (check) {
+                counter.incrementAndGet();
+                List<Operation> operationList = ResultHelper.createOperations(checker.getResult());
+                Operations operations = new Operations(operationList);
+                List<OperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
+                assertThat(BuildUp.cansBuild(field, operationWithKeys, height, reachable))
+                        .as(FieldView.toString(field) + blocks)
+                        .isTrue();
+            }
+        }
+
+        System.out.println(counter);
+    }
+
+    @Test
+    void existsValidBuildPattern1() throws Exception {
         Field field = FieldFactory.createField("" +
                 "_________X" +
                 "_________X"
@@ -49,11 +173,11 @@ public class BuildUpTest {
         );
 
         boolean exists = BuildUp.existsValidBuildPattern(field, operationWithKeys, maxY, reachable);
-        assertThat(exists, is(true));
+        assertThat(exists).isTrue();
     }
 
     @Test
-    public void existsValidBuildPattern2() throws Exception {
+    void existsValidBuildPattern2() throws Exception {
         Field field = FieldFactory.createField("" +
                 "__XXXXXXXX" +
                 "__XXXXXXXX" +
@@ -73,11 +197,175 @@ public class BuildUpTest {
         );
 
         boolean exists = BuildUp.existsValidBuildPattern(field, operationWithKeys, maxY, reachable);
-        assertThat(exists, is(true));
+        assertThat(exists).isTrue();
     }
 
     @Test
-    public void checksAllPatterns1() throws Exception {
+    void randomShortByPacking() throws ExecutionException, InterruptedException {
+        // Initialize
+        Randoms randoms = new Randoms();
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        MinoRotation minoRotation = new MinoRotation();
+
+        // Define size
+        int height = 4;
+        int basicWidth = 3;
+        SizedBit sizedBit = new SizedBit(basicWidth, height);
+        SeparableMinos separableMinos = SeparableMinos.createSeparableMinos(minoFactory, minoShifter, sizedBit);
+
+        // Create basic solutions
+        TaskResultHelper taskResultHelper = new Field4x10MinoPackingHelper();
+        LockedReachableThreadLocal lockedReachableThreadLocal = new LockedReachableThreadLocal(minoFactory, minoShifter, minoRotation, height);
+        Predicate<ColumnField> memorizedPredicate = (columnField) -> true;
+        OnDemandBasicSolutions basicSolutions = new OnDemandBasicSolutions(separableMinos, sizedBit, memorizedPredicate);
+
+        AtomicInteger counter = new AtomicInteger();
+
+        for (int count = 0; count < 10000; count++) {
+            // Create field
+            int numOfMinos = randoms.nextInt(1, 7);
+            Field field = randoms.field(height, numOfMinos);
+
+            // Search
+            List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(basicWidth, height, field);
+            SolutionFilter solutionFilter = new AllPassedSolutionFilter();
+            PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
+            Optional<Result> resultOptional = searcher.findAny();
+
+            // If found solution
+            resultOptional.ifPresent(result -> {
+                counter.incrementAndGet();
+
+                LinkedList<OperationWithKey> operationWithKeys = result.getMemento().getOperationsStream(basicWidth)
+                        .collect(Collectors.toCollection(LinkedList::new));
+
+                LockedReachable reachable = lockedReachableThreadLocal.get();
+                boolean exists = BuildUp.existsValidBuildPattern(field, operationWithKeys, height, reachable);
+
+                if (exists) {
+                    // cansBuildでtrueとなるものがあることを確認
+                    Optional<List<OperationWithKey>> valid = StreamSupport.stream(new PermutationIterable<>(operationWithKeys, operationWithKeys.size()).spliterator(), false)
+                            .filter(combination -> BuildUp.cansBuild(field, combination, height, lockedReachableThreadLocal.get()))
+                            .findAny();
+                    assertThat(valid.isPresent())
+                            .as(FieldView.toString(field) + OperationWithKeyInterpreter.parseToString(operationWithKeys))
+                            .isTrue();
+
+                    // checksKeyは必ずtrueとなる
+                    assertThat(BuildUp.checksKey(operationWithKeys, 0L, height))
+                            .as(FieldView.toString(field) + OperationWithKeyInterpreter.parseToString(operationWithKeys))
+                            .isTrue();
+
+                    // existsValidByOrderは必ずtrueになる
+                    assert valid.isPresent();
+                    List<OperationWithKey> keys = valid.get();
+                    List<Block> blocks = keys.stream().map(OperationWithKey::getMino).map(Mino::getBlock).collect(Collectors.toList());
+                    assertThat(BuildUp.existsValidByOrder(field, keys.stream(), blocks, height, reachable))
+                            .isTrue();
+                } else {
+                    // cansBuildですべてがfalseとなることを確認
+                    boolean noneMatch = StreamSupport.stream(new PermutationIterable<>(operationWithKeys, operationWithKeys.size()).spliterator(), false)
+                            .noneMatch(combination -> BuildUp.cansBuild(field, combination, height, lockedReachableThreadLocal.get()));
+                    assertThat(noneMatch)
+                            .as(FieldView.toString(field) + OperationWithKeyInterpreter.parseToString(operationWithKeys))
+                            .isTrue();
+
+                    // existsValidByOrderは必ずfalseになる
+                    List<Block> blocks = operationWithKeys.stream().map(OperationWithKey::getMino).map(Mino::getBlock).collect(Collectors.toList());
+                    assertThat(BuildUp.existsValidByOrder(field, operationWithKeys.stream(), blocks, height, reachable))
+                            .isFalse();
+                }
+            });
+        }
+
+        System.out.println(counter);
+    }
+
+    @Test
+    void randomLongByPacking() throws ExecutionException, InterruptedException {
+        // Initialize
+        Randoms randoms = new Randoms();
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        MinoRotation minoRotation = new MinoRotation();
+
+        // Define size
+        int height = 4;
+        int basicWidth = 3;
+        SizedBit sizedBit = new SizedBit(basicWidth, height);
+        SeparableMinos separableMinos = SeparableMinos.createSeparableMinos(minoFactory, minoShifter, sizedBit);
+
+        // Create basic solutions
+        TaskResultHelper taskResultHelper = new Field4x10MinoPackingHelper();
+        LockedReachableThreadLocal lockedReachableThreadLocal = new LockedReachableThreadLocal(minoFactory, minoShifter, minoRotation, height);
+        Predicate<ColumnField> memorizedPredicate = (columnField) -> true;
+        OnDemandBasicSolutions basicSolutions = new OnDemandBasicSolutions(separableMinos, sizedBit, memorizedPredicate);
+
+        AtomicInteger counter = new AtomicInteger();
+
+        for (int count = 0; count < 100; count++) {
+            // Create field
+            int numOfMinos = randoms.nextIntClosed(7, 10);
+            Field field = randoms.field(height, numOfMinos);
+
+            // Search
+            List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(basicWidth, height, field);
+            SolutionFilter solutionFilter = new AllPassedSolutionFilter();
+            PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
+            Optional<Result> resultOptional = searcher.findAny();
+
+            // If found solution
+            resultOptional.ifPresent(result -> {
+                counter.incrementAndGet();
+
+                LinkedList<OperationWithKey> operationWithKeys = result.getMemento().getOperationsStream(basicWidth)
+                        .collect(Collectors.toCollection(LinkedList::new));
+
+                LockedReachable reachable = lockedReachableThreadLocal.get();
+                boolean exists = BuildUp.existsValidBuildPattern(field, operationWithKeys, height, reachable);
+
+                if (exists) {
+                    // cansBuildでtrueとなるものがあることを確認
+                    Optional<List<OperationWithKey>> valid = StreamSupport.stream(new PermutationIterable<>(operationWithKeys, operationWithKeys.size()).spliterator(), false)
+                            .filter(combination -> BuildUp.cansBuild(field, combination, height, lockedReachableThreadLocal.get()))
+                            .findAny();
+                    assertThat(valid.isPresent())
+                            .as(FieldView.toString(field) + OperationWithKeyInterpreter.parseToString(operationWithKeys))
+                            .isTrue();
+
+                    // checksKeyは必ずtrueとなる
+                    assertThat(BuildUp.checksKey(operationWithKeys, 0L, height))
+                            .as(FieldView.toString(field) + OperationWithKeyInterpreter.parseToString(operationWithKeys))
+                            .isTrue();
+
+                    // existsValidByOrderは必ずtrueになる
+                    assert valid.isPresent();
+                    List<OperationWithKey> keys = valid.get();
+                    List<Block> blocks = keys.stream().map(OperationWithKey::getMino).map(Mino::getBlock).collect(Collectors.toList());
+                    assertThat(BuildUp.existsValidByOrder(field, keys.stream(), blocks, height, reachable))
+                            .isTrue();
+                } else {
+                    // cansBuildですべてがfalseとなることを確認
+                    boolean noneMatch = StreamSupport.stream(new PermutationIterable<>(operationWithKeys, operationWithKeys.size()).spliterator(), false)
+                            .noneMatch(combination -> BuildUp.cansBuild(field, combination, height, lockedReachableThreadLocal.get()));
+                    assertThat(noneMatch)
+                            .as(FieldView.toString(field) + OperationWithKeyInterpreter.parseToString(operationWithKeys))
+                            .isTrue();
+
+                    // existsValidByOrderは必ずfalseになる
+                    List<Block> blocks = operationWithKeys.stream().map(OperationWithKey::getMino).map(Mino::getBlock).collect(Collectors.toList());
+                    assertThat(BuildUp.existsValidByOrder(field, operationWithKeys.stream(), blocks, height, reachable))
+                            .isFalse();
+                }
+            });
+        }
+
+        System.out.println(counter);
+    }
+
+    @Test
+    void checksAllPatterns1() throws Exception {
         int height = 4;
         Field field = FieldFactory.createField("" +
                 "____XXXXXX" +
@@ -102,7 +390,7 @@ public class BuildUpTest {
 
         // existsValidBuildPatternのチェック
         boolean exists = BuildUp.existsValidBuildPattern(field, operationWithKeys, height, reachable);
-        assertThat(exists, is(true));
+        assertThat(exists).isTrue();
 
         // 有効な手順を列挙する
         BuildUpStream buildUpStream = new BuildUpStream(reachable, height);
@@ -113,15 +401,15 @@ public class BuildUpTest {
         Iterable<List<OperationWithKey>> iterable = new PermutationIterable<>(operationWithKeys, operationWithKeys.size());
         for (List<OperationWithKey> withKeys : iterable) {
             boolean canBuild = BuildUp.cansBuild(field, withKeys, height, reachable);
-            assertThat(canBuild, is(validPatterns.contains(withKeys)));
+            assertThat(canBuild).isEqualTo(validPatterns.contains(withKeys));
 
             boolean checksKey = BuildUp.checksKey(withKeys, 0L, height);
-            assertThat(checksKey, is(true));
+            assertThat(checksKey).isTrue();
         }
     }
 
     @Test
-    public void checksAllPatterns2() throws Exception {
+    void checksAllPatterns2() throws Exception {
         int height = 4;
         Field field = FieldFactory.createField("" +
                 "_____XXXXX" +
@@ -147,7 +435,7 @@ public class BuildUpTest {
 
         // existsValidBuildPatternのチェック
         boolean exists = BuildUp.existsValidBuildPattern(field, operationWithKeys, height, reachable);
-        assertThat(exists, is(true));
+        assertThat(exists).isTrue();
 
         // 有効な手順を列挙する
         BuildUpStream buildUpStream = new BuildUpStream(reachable, height);
@@ -158,15 +446,15 @@ public class BuildUpTest {
         Iterable<List<OperationWithKey>> iterable = new PermutationIterable<>(operationWithKeys, operationWithKeys.size());
         for (List<OperationWithKey> withKeys : iterable) {
             boolean canBuild = BuildUp.cansBuild(field, withKeys, height, reachable);
-            assertThat(canBuild, is(validPatterns.contains(withKeys)));
+            assertThat(canBuild).isEqualTo(validPatterns.contains(withKeys));
 
             boolean checksKey = BuildUp.checksKey(withKeys, 0L, height);
-            assertThat(checksKey, is(true));
+            assertThat(checksKey).isTrue();
         }
     }
 
     @Test
-    public void existsValidByOrder() throws Exception {
+    void existsValidByOrder() throws Exception {
         Field field = FieldFactory.createField("" +
                 "____XXXXXX" +
                 "____XXXXXX" +
@@ -186,15 +474,15 @@ public class BuildUpTest {
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
 
         // true
-        assertThat(BuildUp.existsValidByOrder(field, operations.stream(), Arrays.asList(L, L, I, T), height, reachable), is(true));
-        assertThat(BuildUp.existsValidByOrder(field, operations.stream(), Arrays.asList(L, I, L, T), height, reachable), is(true));
-        assertThat(BuildUp.existsValidByOrder(field, operations.stream(), Arrays.asList(I, L, L, T), height, reachable), is(true));
+        assertThat(BuildUp.existsValidByOrder(field, operations.stream(), Arrays.asList(L, L, I, T), height, reachable)).isTrue();
+        assertThat(BuildUp.existsValidByOrder(field, operations.stream(), Arrays.asList(L, I, L, T), height, reachable)).isTrue();
+        assertThat(BuildUp.existsValidByOrder(field, operations.stream(), Arrays.asList(I, L, L, T), height, reachable)).isTrue();
 
         // false
-        assertThat(BuildUp.existsValidByOrder(field, operations.stream(), Arrays.asList(L, L, T, I), height, reachable), is(false));
-        assertThat(BuildUp.existsValidByOrder(field, operations.stream(), Arrays.asList(L, T, L, I), height, reachable), is(false));
-        assertThat(BuildUp.existsValidByOrder(field, operations.stream(), Arrays.asList(L, T, I, L), height, reachable), is(false));
-        assertThat(BuildUp.existsValidByOrder(field, operations.stream(), Arrays.asList(T, L, I, L), height, reachable), is(false));
-        assertThat(BuildUp.existsValidByOrder(field, operations.stream(), Arrays.asList(T, I, L, L), height, reachable), is(false));
+        assertThat(BuildUp.existsValidByOrder(field, operations.stream(), Arrays.asList(L, L, T, I), height, reachable)).isFalse();
+        assertThat(BuildUp.existsValidByOrder(field, operations.stream(), Arrays.asList(L, T, L, I), height, reachable)).isFalse();
+        assertThat(BuildUp.existsValidByOrder(field, operations.stream(), Arrays.asList(L, T, I, L), height, reachable)).isFalse();
+        assertThat(BuildUp.existsValidByOrder(field, operations.stream(), Arrays.asList(T, L, I, L), height, reachable)).isFalse();
+        assertThat(BuildUp.existsValidByOrder(field, operations.stream(), Arrays.asList(T, I, L, L), height, reachable)).isFalse();
     }
 }

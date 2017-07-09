@@ -2,7 +2,7 @@ package common.buildup;
 
 import common.datastore.OperationWithKey;
 import common.datastore.Operations;
-import common.iterable.CombinationIterable;
+import common.iterable.PermutationIterable;
 import common.parser.OperationInterpreter;
 import common.parser.OperationTransform;
 import concurrent.LockedReachableThreadLocal;
@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
+import searcher.pack.memento.AllPassedSolutionFilter;
 import searcher.pack.memento.SRSValidSolutionFilter;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.solutions.OnDemandBasicSolutions;
@@ -34,6 +35,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -105,7 +107,7 @@ class BuildUpStreamTest {
     }
 
     @Test
-    void random() throws ExecutionException, InterruptedException {
+    void randomShort() throws ExecutionException, InterruptedException {
         // Initialize
         Randoms randoms = new Randoms();
         MinoFactory minoFactory = new MinoFactory();
@@ -124,19 +126,23 @@ class BuildUpStreamTest {
         Predicate<ColumnField> memorizedPredicate = (columnField) -> true;
         OnDemandBasicSolutions basicSolutions = new OnDemandBasicSolutions(separableMinos, sizedBit, memorizedPredicate);
 
-        for (int count = 0; count < 1000; count++) {
+        AtomicInteger counter = new AtomicInteger();
+
+        for (int count = 0; count < 10000; count++) {
             // Create field
-            Field field = randoms.field(height, 16);
+            int numOfMinos = randoms.nextInt(1, 7);
+            Field field = randoms.field(height, numOfMinos);
 
             // Search
             List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(basicWidth, height, field);
-            SolutionFilter solutionFilter = new SRSValidSolutionFilter(field, lockedReachableThreadLocal, sizedBit);
+            SolutionFilter solutionFilter = createRandomSolutionFilter(randoms, sizedBit, lockedReachableThreadLocal, field);
             PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
             Optional<Result> resultOptional = searcher.findAny();
 
             // If found solution
             resultOptional.ifPresent(result -> {
-                System.out.println("found");
+                counter.incrementAndGet();
+
                 LinkedList<OperationWithKey> operationWithKeys = result.getMemento().getOperationsStream(basicWidth)
                         .collect(Collectors.toCollection(LinkedList::new));
 
@@ -146,21 +152,96 @@ class BuildUpStreamTest {
                         .existsValidBuildPattern(field, operationWithKeys)
                         .collect(Collectors.toSet());
 
-                CombinationIterable<OperationWithKey> combinations = new CombinationIterable<>(operationWithKeys, operationWithKeys.size());
-                for (List<OperationWithKey> combination : combinations) {
-                    boolean canBuild = BuildUp.cansBuild(field, combination, height, reachable);
+                PermutationIterable<OperationWithKey> permutations = new PermutationIterable<>(operationWithKeys, operationWithKeys.size());
+                for (List<OperationWithKey> permutation : permutations) {
+                    boolean canBuild = BuildUp.cansBuild(field, permutation, height, reachable);
 
                     if (canBuild) {
                         assertThat(valid)
                                 .as(FieldView.toString(field))
-                                .contains(combination);
+                                .contains(permutation);
                     } else {
                         assertThat(valid)
                                 .as(FieldView.toString(field))
-                                .doesNotContain(combination);
+                                .doesNotContain(permutation);
                     }
                 }
             });
         }
+
+        System.out.println(counter);
+    }
+
+    @Test
+    void randomLong() throws ExecutionException, InterruptedException {
+        // Initialize
+        Randoms randoms = new Randoms();
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        MinoRotation minoRotation = new MinoRotation();
+
+        // Define size
+        int height = 4;
+        int basicWidth = 3;
+        SizedBit sizedBit = new SizedBit(basicWidth, height);
+        SeparableMinos separableMinos = SeparableMinos.createSeparableMinos(minoFactory, minoShifter, sizedBit);
+
+        // Create basic solutions
+        TaskResultHelper taskResultHelper = new Field4x10MinoPackingHelper();
+        LockedReachableThreadLocal lockedReachableThreadLocal = new LockedReachableThreadLocal(minoFactory, minoShifter, minoRotation, height);
+        Predicate<ColumnField> memorizedPredicate = (columnField) -> true;
+        OnDemandBasicSolutions basicSolutions = new OnDemandBasicSolutions(separableMinos, sizedBit, memorizedPredicate);
+
+        AtomicInteger counter = new AtomicInteger();
+
+        for (int count = 0; count < 10; count++) {
+            // Create field
+            int numOfMinos = randoms.nextIntClosed(7, 9);
+            Field field = randoms.field(height, numOfMinos);
+
+            // Search
+            List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(basicWidth, height, field);
+            SolutionFilter solutionFilter = createRandomSolutionFilter(randoms, sizedBit, lockedReachableThreadLocal, field);
+            PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
+            Optional<Result> resultOptional = searcher.findAny();
+
+            // If found solution
+            resultOptional.ifPresent(result -> {
+                counter.incrementAndGet();
+
+                LinkedList<OperationWithKey> operationWithKeys = result.getMemento().getOperationsStream(basicWidth)
+                        .collect(Collectors.toCollection(LinkedList::new));
+
+                // Create Blocks
+                LockedReachable reachable = lockedReachableThreadLocal.get();
+                Set<List<OperationWithKey>> valid = new BuildUpStream(reachable, height)
+                        .existsValidBuildPattern(field, operationWithKeys)
+                        .collect(Collectors.toSet());
+
+                PermutationIterable<OperationWithKey> permutations = new PermutationIterable<>(operationWithKeys, operationWithKeys.size());
+                for (List<OperationWithKey> permutation : permutations) {
+                    boolean canBuild = BuildUp.cansBuild(field, permutation, height, reachable);
+
+                    if (canBuild) {
+                        assertThat(valid)
+                                .as(FieldView.toString(field))
+                                .contains(permutation);
+                    } else {
+                        assertThat(valid)
+                                .as(FieldView.toString(field))
+                                .doesNotContain(permutation);
+                    }
+                }
+            });
+        }
+
+        System.out.println(counter);
+    }
+
+    private SolutionFilter createRandomSolutionFilter(Randoms randoms, SizedBit sizedBit, LockedReachableThreadLocal lockedReachableThreadLocal, Field field) {
+        if (randoms.nextBoolean())
+            return new SRSValidSolutionFilter(field, lockedReachableThreadLocal, sizedBit);
+        else
+            return new AllPassedSolutionFilter();
     }
 }

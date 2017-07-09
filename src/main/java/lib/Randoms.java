@@ -19,6 +19,10 @@ public class Randoms {
         this.random = new Random();
     }
 
+    public boolean nextBoolean() {
+        return random.nextBoolean();
+    }
+
     public int nextInt(int bound) {
         return random.nextInt(bound);
     }
@@ -70,8 +74,10 @@ public class Randoms {
                 .collect(Collectors.toList());
     }
 
-    public Field field(int height, int numOfEmpty) {
-        assert numOfEmpty % 4 == 0;
+    public Field field(int height, int numOfMinos) {
+        assert numOfMinos <= (10 * height / 4);
+
+        int numOfEmpty = numOfMinos * 4;
 
         int[] emptyEachLine = new int[height];
         int numOfBlocks = 10 * height - numOfEmpty;

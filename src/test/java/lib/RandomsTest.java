@@ -96,11 +96,10 @@ class RandomsTest {
         Randoms randoms = new Randoms();
         for (int count = 0; count < 10000; count++) {
             int height = randoms.nextIntClosed(1, 12);
-            int rand = randoms.nextInt(1, height * 10);
-            int numOfEmpty = rand - rand % 4;
-            Field randomField = randoms.field(height, numOfEmpty);
+            int numOfMinos = randoms.nextInt(1, height * 10 / 4);
+            Field randomField = randoms.field(height, numOfMinos);
             assertThat(randomField)
-                    .matches(field -> field.getNumOfAllBlocks() == 10 * height - numOfEmpty);
+                    .matches(field -> field.getNumOfAllBlocks() == 10 * height - numOfMinos * 4);
         }
     }
 }
