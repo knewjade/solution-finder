@@ -1,48 +1,49 @@
 package entry.searching_pieces;
 
 import common.datastore.pieces.LongPieces;
-import common.datastore.pieces.Pieces;
-import core.mino.Block;
 import common.pattern.PiecesGenerator;
-import org.junit.Test;
+import core.mino.Block;
+import lib.Randoms;
+import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class HoldBreakEnumeratePiecesTest {
+class HoldBreakEnumeratePiecesTest {
     @Test
-    public void enumerate1() throws Exception {
+    void enumerate1() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("*p7");
         HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(generator, 3);
         Set<LongPieces> pieces = core.enumerate();
-        assertThat(pieces.size(), is(210));
-        assertThat(core.getCounter(), is(5040));
+        assertThat(pieces).hasSize(210);
+        assertThat(core.getCounter()).isEqualTo(5040);
     }
 
     @Test
-    public void enumerate2() throws Exception {
+    void enumerate2() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("*p7");
         HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(generator, 4);
         Set<LongPieces> pieces = core.enumerate();
-        assertThat(pieces.size(), is(840));
-        assertThat(core.getCounter(), is(5040));
+        assertThat(pieces).hasSize(840);
+        assertThat(core.getCounter()).isEqualTo(5040);
     }
 
     @Test
-    public void enumerateOverAny() throws Exception {
+    void enumerateOverAny() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("T, J, O, Z");
         HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(generator, 3);
         Set<LongPieces> pieces = core.enumerate();
-        assertThat(pieces.size(), is(8));
-        assertThat(core.getCounter(), is(1));
+        assertThat(pieces).hasSize(8);
+        assertThat(core.getCounter()).isEqualTo(1);
     }
 
     @Test
-    public void enumerateMulti() throws Exception {
+    void enumerateMulti() throws Exception {
         PiecesGenerator generator = new PiecesGenerator(Arrays.asList(
                 "T, J, O, Z",
                 "T, O, J, T",
@@ -50,25 +51,90 @@ public class HoldBreakEnumeratePiecesTest {
         ));
         HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(generator, 3);
         Set<LongPieces> pieces = core.enumerate();
-        assertThat(pieces.size(), is(13));
-        assertThat(core.getCounter(), is(3));
+        assertThat(pieces).hasSize(13);
+        assertThat(core.getCounter()).isEqualTo(3);
     }
 
     @Test
-    public void enumerateJust() throws Exception {
+    void enumerateJust() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("*p3");
         HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(generator, 3);
         Set<LongPieces> pieces = core.enumerate();
-        assertThat(pieces.size(), is(210));
-        assertThat(core.getCounter(), is(210));
+        assertThat(pieces).hasSize(210);
+        assertThat(core.getCounter()).isEqualTo(210);
     }
 
     @Test
-    public void enumerateJustAny() throws Exception {
+    void enumerateJustAny() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("T, O, S");
         HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(generator, 3);
         Set<LongPieces> pieces = core.enumerate();
-        assertThat(pieces.size(), is(4));
-        assertThat(core.getCounter(), is(1));
+        assertThat(pieces).hasSize(4);
+        assertThat(core.getCounter()).isEqualTo(1);
+    }
+
+    @Test
+    void enumerateJustRandom() throws Exception {
+        Randoms randoms = new Randoms();
+        for (int size = 3; size <= 15; size++) {
+            List<Block> blocks = randoms.blocks(size);
+            String pattern = blocks.stream()
+                    .map(Block::getName)
+                    .collect(Collectors.joining(","));
+            PiecesGenerator piecesGenerator = new PiecesGenerator(pattern);
+            HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(piecesGenerator, size);
+            Set<LongPieces> pieces = core.enumerate();
+
+            for (int count = 0; count < 10000; count++) {
+                ArrayList<Block> sample = new ArrayList<>();
+                int holdIndex = 0;
+                for (int index = 1; index < size; index++) {
+                    if (randoms.nextBoolean()) {
+                        // そのまま追加
+                        sample.add(blocks.get(index));
+                    } else {
+                        // ホールドを追加
+                        sample.add(blocks.get(holdIndex));
+                        holdIndex = index;
+                    }
+                }
+
+                // ホールドを追加
+                sample.add(blocks.get(holdIndex));
+
+                assertThat(new LongPieces(sample)).isIn(pieces);
+            }
+        }
+    }
+
+    @Test
+    void enumerateOverRandom() throws Exception {
+        Randoms randoms = new Randoms();
+        for (int size = 3; size <= 15; size++) {
+            List<Block> blocks = randoms.blocks(size);
+            String pattern = blocks.stream()
+                    .map(Block::getName)
+                    .collect(Collectors.joining(","));
+            PiecesGenerator piecesGenerator = new PiecesGenerator(pattern);
+            HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(piecesGenerator, size - 1);
+            Set<LongPieces> pieces = core.enumerate();
+
+            for (int count = 0; count < 10000; count++) {
+                ArrayList<Block> sample = new ArrayList<>();
+                int holdIndex = 0;
+                for (int index = 1; index < size; index++) {
+                    if (randoms.nextBoolean()) {
+                        // そのまま追加
+                        sample.add(blocks.get(index));
+                    } else {
+                        // ホールドを追加
+                        sample.add(blocks.get(holdIndex));
+                        holdIndex = index;
+                    }
+                }
+
+                assertThat(new LongPieces(sample)).isIn(pieces);
+            }
+        }
     }
 }

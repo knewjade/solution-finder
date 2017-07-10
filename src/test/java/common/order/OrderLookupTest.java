@@ -1,59 +1,210 @@
 package common.order;
 
+import common.comparator.PiecesNumberComparator;
+import common.datastore.pieces.LongPieces;
 import core.mino.Block;
-import org.junit.Test;
+import lib.ListComparator;
+import lib.Randoms;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static core.mino.Block.*;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class OrderLookupTest {
+class OrderLookupTest {
     @Test
-    public void reverseWithJustBlocks() throws Exception {
+    void reverseWithJustBlocks() throws Exception {
         List<Block> blocks = Arrays.asList(T, I, O, S, Z, J, L, T, I, O, S, Z, J, L);
         for (int depth = 1; depth < blocks.size(); depth++) {
             ArrayList<StackOrder<Block>> reverse = OrderLookup.reverseBlocks(blocks.subList(0, depth), depth);
-            assertThat(reverse.size(), is((int) Math.pow(2, depth - 1)));
+            assertThat(reverse).hasSize((int) Math.pow(2, depth - 1));
         }
     }
 
     @Test
-    public void reverseWithOverBlocks() throws Exception {
+    void reverseWithOverBlocks() throws Exception {
         List<Block> blocks = Arrays.asList(T, I, O, S, Z, J, L, T, I, O, S, Z, J, L);
         for (int depth = 1; depth < blocks.size(); depth++) {
             ArrayList<StackOrder<Block>> reverse = OrderLookup.reverseBlocks(blocks.subList(0, depth), depth + 1);
-            assertThat(reverse.size(), is((int) Math.pow(2, depth)));
+            assertThat(reverse).hasSize((int) Math.pow(2, depth));
         }
     }
 
     @Test
-    public void reverseWithJustBlocks2() throws Exception {
+    void reverseWithJustBlocks2() throws Exception {
         List<Block> blocks = Arrays.asList(O, J, L, T, I, S, Z);
         for (int depth = 1; depth < blocks.size(); depth++) {
             ArrayList<StackOrder<Block>> reverse = OrderLookup.reverseBlocks(blocks.subList(0, depth), depth + 1);
-            assertThat(reverse.size(), is((int) Math.pow(2, depth)));
+            assertThat(reverse).hasSize((int) Math.pow(2, depth));
         }
     }
 
     @Test
-    public void forwardWithJustBlocks() throws Exception {
+    void forwardWithJustBlocks() throws Exception {
         List<Block> blocks = Arrays.asList(T, I, O, S, Z, J, L, T, I, O, S, Z, J, L);
         for (int depth = 2; depth < blocks.size(); depth++) {
             ArrayList<StackOrder<Block>> forward = OrderLookup.forwardBlocks(blocks.subList(0, depth), depth);
-            assertThat(forward.size(), is((int) Math.pow(2, depth - 1)));
+            assertThat(forward).hasSize((int) Math.pow(2, depth - 1));
         }
     }
 
     @Test
-    public void forwardWithLessBlocks() throws Exception {
+    void forwardWithLessBlocks() throws Exception {
         List<Block> blocks = Arrays.asList(T, I, O, S, Z, J, L, T, I, O, S, Z, J, L);
         for (int depth = 3; depth < blocks.size(); depth++) {
             ArrayList<StackOrder<Block>> forward = OrderLookup.forwardBlocks(blocks.subList(0, depth), depth - 1);
-            assertThat(forward.size(), is((int) Math.pow(2, depth - 1)));
+            assertThat(forward).hasSize((int) Math.pow(2, depth - 1));
+        }
+    }
+
+    @Test
+    void forwardJustBlocks() throws Exception {
+        Randoms randoms = new Randoms();
+        for (int size = 2; size <= 13; size++) {
+            List<Block> blockList = randoms.blocks(size);
+            int toDepth = blockList.size();
+
+            PiecesNumberComparator comparator = new PiecesNumberComparator();
+            List<LongPieces> forward1 = OrderLookup.forwardBlocks(blockList, toDepth).stream()
+                    .map(StackOrder::toList)
+                    .map(LongPieces::new)
+                    .sorted(comparator)
+                    .collect(Collectors.toList());
+
+            ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth, blockList.size());
+            List<LongPieces> forward2 = lookUp.parse(blockList)
+                    .map(blockStream -> blockStream.collect(Collectors.toList()))
+                    .map(LongPieces::new)
+                    .sorted(comparator)
+                    .collect(Collectors.toList());
+
+            assertThat(forward2).isEqualTo(forward1);
+        }
+    }
+
+    @Test
+    void forwardOverBlocks() throws Exception {
+        Randoms randoms = new Randoms();
+        for (int size = 3; size <= 13; size++) {
+            List<Block> blockList = randoms.blocks(size);
+            int toDepth = blockList.size() - 1;
+
+            PiecesNumberComparator comparator = new PiecesNumberComparator();
+            List<LongPieces> forward1 = OrderLookup.forwardBlocks(blockList, toDepth).stream()
+                    .map(StackOrder::toList)
+                    .map(LongPieces::new)
+                    .sorted(comparator)
+                    .collect(Collectors.toList());
+
+            ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth, blockList.size());
+            List<LongPieces> forward2 = lookUp.parse(blockList)
+                    .map(blockStream -> blockStream.collect(Collectors.toList()))
+                    .map(LongPieces::new)
+                    .sorted(comparator)
+                    .collect(Collectors.toList());
+
+            assertThat(forward2).isEqualTo(forward1);
+        }
+    }
+
+    @Test
+    void forwardOver2Blocks() throws Exception {
+        Randoms randoms = new Randoms();
+        for (int size = 4; size <= 13; size++) {
+            List<Block> blockList = randoms.blocks(size);
+            int toDepth = blockList.size() - 2;
+
+            PiecesNumberComparator comparator = new PiecesNumberComparator();
+            List<LongPieces> forward1 = OrderLookup.forwardBlocks(blockList, toDepth).stream()
+                    .map(StackOrder::toList)
+                    .map(LongPieces::new)
+                    .sorted(comparator)
+                    .collect(Collectors.toList());
+
+            ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth, blockList.size());
+            List<LongPieces> forward2 = lookUp.parse(blockList)
+                    .map(blockStream -> blockStream.collect(Collectors.toList()))
+                    .map(LongPieces::new)
+                    .sorted(comparator)
+                    .collect(Collectors.toList());
+
+            assertThat(forward2).isEqualTo(forward1);
+        }
+    }
+
+    @Test
+    void reverseJustBlocks() throws Exception {
+        Randoms randoms = new Randoms();
+        for (int size = 1; size <= 13; size++) {
+            List<Block> blockList = randoms.blocks(size);
+            int fromDepth = blockList.size();
+
+            PiecesNumberComparator comparator = new PiecesNumberComparator();
+            List<LongPieces> forward1 = OrderLookup.reverseBlocks(blockList, fromDepth).stream()
+                    .map(StackOrder::toList)
+                    .map(LongPieces::new)
+                    .sorted(comparator)
+                    .collect(Collectors.toList());
+
+            ReverseOrderLookUp lookUp = new ReverseOrderLookUp(blockList.size(), fromDepth);
+            List<LongPieces> forward2 = lookUp.parse(blockList)
+                    .map(blockStream -> blockStream.collect(Collectors.toList()))
+                    .map(LongPieces::new)
+                    .sorted(comparator)
+                    .collect(Collectors.toList());
+
+            assertThat(forward2).isEqualTo(forward1);
+        }
+    }
+
+    @Test
+    void reverseOverBlocks() throws Exception {
+        Randoms randoms = new Randoms();
+        for (int size = 1; size <= 13; size++) {
+            List<Block> blockList = randoms.blocks(size);
+            int fromDepth = blockList.size() + 1;
+
+            Comparator<List<Block>> comparator = new ListComparator<>(Comparator.nullsFirst(Comparator.comparingInt(Block::getNumber)));
+            List<List<Block>> forward1 = OrderLookup.reverseBlocks(blockList, fromDepth).stream()
+                    .map(StackOrder::toList)
+                    .sorted(comparator)
+                    .collect(Collectors.toList());
+
+            ReverseOrderLookUp lookUp = new ReverseOrderLookUp(blockList.size(), fromDepth);
+            List<List<Block>> forward2 = lookUp.parse(blockList)
+                    .map(blockStream -> blockStream.collect(Collectors.toList()))
+                    .sorted(comparator)
+                    .collect(Collectors.toList());
+
+            assertThat(forward2).isEqualTo(forward1);
+        }
+    }
+
+    @Test
+    void reverseOver2Blocks() throws Exception {
+        Randoms randoms = new Randoms();
+        for (int size = 1; size <= 13; size++) {
+            List<Block> blockList = randoms.blocks(size);
+            int fromDepth = blockList.size() + 2;
+
+            Comparator<List<Block>> comparator = new ListComparator<>(Comparator.nullsFirst(Comparator.comparingInt(Block::getNumber)));
+            List<List<Block>> forward1 = OrderLookup.reverseBlocks(blockList, fromDepth).stream()
+                    .map(StackOrder::toList)
+                    .sorted(comparator)
+                    .collect(Collectors.toList());
+
+            ReverseOrderLookUp lookUp = new ReverseOrderLookUp(blockList.size(), fromDepth);
+            List<List<Block>> forward2 = lookUp.parse(blockList)
+                    .map(blockStream -> blockStream.collect(Collectors.toList()))
+                    .sorted(comparator)
+                    .collect(Collectors.toList());
+
+            assertThat(forward2).isEqualTo(forward1);
         }
     }
 }

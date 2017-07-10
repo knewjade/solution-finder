@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+// 指定したミノ列からホールドを利用して並び替えられるミノ列をすべて列挙
 public class ForwardOrderLookUp {
     private final List<List<Integer>> indexesList;
 
@@ -20,6 +21,7 @@ public class ForwardOrderLookUp {
     }
 
     private List<List<Integer>> forward(int toDepth, boolean isOverBlock) {
+        assert 1 < toDepth;
         List<Integer> indexes = IntStream.range(0, toDepth).boxed().collect(Collectors.toList());
 
         ArrayList<StackOrder<Integer>> candidates = new ArrayList<>();

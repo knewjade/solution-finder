@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+// 他のミノ列からホールドを利用して指定したミノ列にできるとき、その他のミノ列をすべて逆算して列挙
 public class ReverseOrderLookUp {
     private final List<List<Integer>> indexesList;
 
@@ -16,6 +17,8 @@ public class ReverseOrderLookUp {
     }
 
     private List<List<Integer>> reverse(int toDepth, int fromDepth) {
+        assert 1 <= toDepth;
+        assert toDepth <= fromDepth;
         List<Integer> indexes = IntStream.range(0, toDepth).boxed().collect(Collectors.toList());
 
         ArrayList<StackOrder<Integer>> candidates = new ArrayList<>();
