@@ -48,6 +48,7 @@ public class OperationTransform {
     }
 
     // List<Operation>に変換する。正しく組み立てられるかはチェックしない
+    // operationWithKeysは組み立てられる順番に並んでいること
     public static Operations parseToOperations(Field fieldOrigin, List<OperationWithKey> operationWithKeys, int height) {
         ArrayList<Operation> operations = new ArrayList<>();
 

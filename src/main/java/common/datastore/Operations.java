@@ -5,14 +5,14 @@ import common.comparator.OperationListComparator;
 import java.util.List;
 
 public class Operations implements Comparable<Operations> {
-    private final List<Operation> operations;
+    private final List<? extends Operation> operations;
 
-    public Operations(List<Operation> operations) {
+    public Operations(List<? extends Operation> operations) {
         assert operations != null;
         this.operations = operations;
     }
 
-    public List<Operation> getOperations() {
+    public List<? extends Operation> getOperations() {
         return operations;
     }
 

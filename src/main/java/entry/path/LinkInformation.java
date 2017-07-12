@@ -17,10 +17,6 @@ class LinkInformation {
         this.sample = sample;
     }
 
-    Pair<Result, HashSet<LongPieces>> getPair2() {
-        return pair;
-    }
-
     List<OperationWithKey> getSample() {
         return sample;
     }

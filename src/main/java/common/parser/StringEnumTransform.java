@@ -58,10 +58,6 @@ public class StringEnumTransform {
         throw new IllegalArgumentException("No reachable");
     }
 
-    static String toString(Block block) {
-        return block.getName().toLowerCase();
-    }
-
     static String toString(Rotate rotate) {
         switch (rotate) {
             case Spawn:

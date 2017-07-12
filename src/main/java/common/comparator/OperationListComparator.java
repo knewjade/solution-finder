@@ -5,8 +5,8 @@ import common.datastore.Operation;
 import java.util.Comparator;
 import java.util.List;
 
-public class OperationListComparator implements Comparator<List<Operation>> {
-    public static int compareOperation(List<Operation> o1, List<Operation> o2) {
+public class OperationListComparator implements Comparator<List<? extends Operation>> {
+    public static int compareOperation(List<? extends Operation> o1, List<? extends Operation> o2) {
         int size1 = o1.size();
         int size2 = o2.size();
         int compareSize = Integer.compare(size1, size2);
@@ -23,7 +23,7 @@ public class OperationListComparator implements Comparator<List<Operation>> {
     }
 
     @Override
-    public int compare(List<Operation> o1, List<Operation> o2) {
+    public int compare(List<? extends Operation> o1, List<? extends Operation> o2) {
         return compareOperation(o1, o2);
     }
 }

@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// TODO: unittest
 public class OperationInterpreter {
     public static Operations parseToOperations(String strings) {
         List<Operation> operationList = Arrays.stream(strings.split(";"))

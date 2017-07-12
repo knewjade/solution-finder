@@ -15,7 +15,6 @@ import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
 import core.column_field.ColumnField;
-import core.column_field.ColumnSmallField;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
@@ -515,7 +514,7 @@ public class PathEntryPoint implements EntryPoint {
 
     private String createALinkOrder(LinkInformation information, Field field, MinoFactory minoFactory, ColorConverter colorConverter, int maxClearLine) {
         Operations operations = OperationTransform.parseToOperations(field, information.getSample(), maxClearLine);
-        List<Operation> operationsList = operations.getOperations();
+        List<? extends Operation> operationsList = operations.getOperations();
 
         // ブロック順に変換
         List<Block> blockList = operationsList.stream()

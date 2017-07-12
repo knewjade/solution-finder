@@ -231,12 +231,12 @@ public class Squares6x4Main {
 
                     // テト譜の生成 (for operations)
                     BuildUpStream buildUpStream = new BuildUpStream(reachable, height);
-                    Optional<List<OperationWithKey>> first = buildUpStream.existsValidBuildPatternDirectly(field, new LinkedList<>(operationWithKeys)).findFirst();
+                    Optional<List<OperationWithKey>> first = buildUpStream.existsValidBuildPattern(field, operationWithKeys).findFirst();
 
                     assert first.isPresent();
 
                     Operations operations = OperationTransform.parseToOperations(field, first.get(), height);
-                    List<Operation> operationsList = operations.getOperations();
+                    List<?extends Operation> operationsList = operations.getOperations();
 
                     ArrayList<TetfuElement> tetfuElements = new ArrayList<>();
 

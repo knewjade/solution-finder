@@ -9,8 +9,6 @@ import core.srs.Rotate;
 import lib.Randoms;
 import org.junit.Test;
 
-import java.util.Arrays;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertThat;
@@ -87,7 +85,7 @@ public class OperationWithKeyComparatorTest {
         OperationWithKey operationWithKey1 = new SimpleOperationWithKey(minoFactory.create(Block.I, Rotate.Spawn), x, y, deleteKey, usingKey);
 
         Mino newMino = new MinoFactory().create(Block.I, Rotate.Spawn);
-        Long choose = randoms.pick(Arrays.asList(1024L, 1025L, 1049601L, 1049600L, 1048576L, 1074790400L));
+        Long choose = randoms.keys();
         OperationWithKey operationWithKey2 = createNewOperationWithKey(newMino, x, y, choose, usingKey);
 
         // assert is not 0 & sign reversed
@@ -106,7 +104,7 @@ public class OperationWithKeyComparatorTest {
         OperationWithKey operationWithKey1 = new SimpleOperationWithKey(minoFactory.create(Block.I, Rotate.Spawn), x, y, deleteKey, usingKey);
 
         Mino newMino = new MinoFactory().create(Block.I, Rotate.Spawn);
-        Long choose = randoms.pick(Arrays.asList(0L, 1024L, 1025L, 1049601L, 1048576L, 1074790400L));
+        Long choose = randoms.keys();
         OperationWithKey operationWithKey2 = createNewOperationWithKey(newMino, x, y, deleteKey, choose);
 
         // assert is 0

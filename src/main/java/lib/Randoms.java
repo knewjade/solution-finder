@@ -14,6 +14,7 @@ import java.util.stream.IntStream;
 public class Randoms {
     public static final int FIELD_WIDTH = 10;
     private final Random random;
+    public static final String[] STRINGS = "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ?/_-^¥=~|[]@:1234567890!\"#$%&'()<>あいうえおかきくけこさしすせそタチツテトナニヌネノハヒフヘホ朝午前後電話時計机携帯光空雨青赤車動力鉄　＿？：；：。＾ー￥：＄”（）".split("");
 
     public Randoms() {
         this.random = new Random();
@@ -21,6 +22,11 @@ public class Randoms {
 
     public boolean nextBoolean() {
         return random.nextBoolean();
+    }
+
+    // TODO: unittest
+    public boolean nextBoolean(double truePercent) {
+        return random.nextDouble() < truePercent;
     }
 
     public int nextInt(int bound) {
@@ -138,5 +144,14 @@ public class Randoms {
         assert height * FIELD_WIDTH - field.getNumOfAllBlocks() == numOfEmpty;
 
         return field;
+    }
+
+    // TODO: add key candidate
+    public long keys() {
+        return pick(Arrays.asList(0L, 1024L, 1025L, 1049601L, 1048576L, 1074790400L));
+    }
+
+    public String string() {
+        return STRINGS[nextInt(STRINGS.length)];
     }
 }

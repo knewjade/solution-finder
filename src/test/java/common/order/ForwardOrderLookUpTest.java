@@ -2,7 +2,6 @@ package common.order;
 
 import common.comparator.PiecesNumberComparator;
 import common.datastore.pieces.LongPieces;
-import common.datastore.pieces.Pieces;
 import core.mino.Block;
 import lib.Randoms;
 import org.junit.jupiter.api.Test;
@@ -102,7 +101,7 @@ class ForwardOrderLookUpTest {
                 ArrayList<Block> sample = new ArrayList<>();
                 int holdIndex = 0;
                 for (int index = 1; index < size; index++) {
-                    if (randoms.nextBoolean()) {
+                    if (randoms.nextBoolean(0.3)) {
                         // そのまま追加
                         sample.add(blocks.get(index));
                     } else {
@@ -136,7 +135,7 @@ class ForwardOrderLookUpTest {
                 ArrayList<Block> sample = new ArrayList<>();
                 int holdIndex = 0;
                 for (int index = 1; index < size; index++) {
-                    if (randoms.nextBoolean()) {
+                    if (randoms.nextBoolean(0.3)) {
                         // そのまま追加
                         sample.add(blocks.get(index));
                     } else {
@@ -167,7 +166,7 @@ class ForwardOrderLookUpTest {
                 ArrayList<Block> sample = new ArrayList<>();
                 int holdIndex = 0;
                 for (int index = 1; index < size - 1; index++) {
-                    if (randoms.nextBoolean()) {
+                    if (randoms.nextBoolean(0.3)) {
                         // そのまま追加
                         sample.add(blocks.get(index));
                     } else {

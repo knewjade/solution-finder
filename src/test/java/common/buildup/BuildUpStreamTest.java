@@ -239,7 +239,7 @@ class BuildUpStreamTest {
     }
 
     private SolutionFilter createRandomSolutionFilter(Randoms randoms, SizedBit sizedBit, LockedReachableThreadLocal lockedReachableThreadLocal, Field field) {
-        if (randoms.nextBoolean())
+        if (randoms.nextBoolean(0.3))
             return new SRSValidSolutionFilter(field, lockedReachableThreadLocal, sizedBit);
         else
             return new AllPassedSolutionFilter();

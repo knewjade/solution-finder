@@ -89,7 +89,7 @@ class HoldBreakEnumeratePiecesTest {
                 ArrayList<Block> sample = new ArrayList<>();
                 int holdIndex = 0;
                 for (int index = 1; index < size; index++) {
-                    if (randoms.nextBoolean()) {
+                    if (randoms.nextBoolean(0.3)) {
                         // そのまま追加
                         sample.add(blocks.get(index));
                     } else {
@@ -123,7 +123,7 @@ class HoldBreakEnumeratePiecesTest {
                 ArrayList<Block> sample = new ArrayList<>();
                 int holdIndex = 0;
                 for (int index = 1; index < size; index++) {
-                    if (randoms.nextBoolean()) {
+                    if (randoms.nextBoolean(0.3)) {
                         // そのまま追加
                         sample.add(blocks.get(index));
                     } else {
