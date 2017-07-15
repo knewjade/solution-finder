@@ -112,7 +112,7 @@ public class SmallField implements Field {
 
     @Override
     public boolean canPutMino(Mino mino, int x, int y) {
-        return (xBoard & mino.getMask(x, y)) == 0L;
+        return MAX_FIELD_HEIGHT + 2 <= y || (xBoard & mino.getMask(x, y)) == 0L;
     }
 
     @Override

@@ -80,10 +80,10 @@ public class Randoms {
                 .collect(Collectors.toList());
     }
 
-    public Field field(int height, int numOfMinos) {
-        assert numOfMinos <= (10 * height / 4);
+    public Field field(int height, int numOfEmptyMinos) {
+        assert numOfEmptyMinos <= (10 * height / 4);
 
-        int numOfEmpty = numOfMinos * 4;
+        int numOfEmpty = numOfEmptyMinos * 4;
 
         int[] emptyEachLine = new int[height];
         int numOfBlocks = 10 * height - numOfEmpty;

@@ -21,6 +21,12 @@ public class Stopwatch {
         return new Stopwatch();
     }
 
+    public static Stopwatch createLoopedStopwatch(Runnable runnable, int maxCount) {
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.loop(runnable, maxCount);
+        return stopwatch;
+    }
+
     private Stopwatch() {
     }
 
@@ -80,5 +86,13 @@ public class Stopwatch {
 
     public double getNanoAverageTime() {
         return average;
+    }
+
+    private void loop(Runnable runnable, int maxCount) {
+        for (int count = 0; count < maxCount; count++) {
+            this.start();
+            runnable.run();
+            this.stop();
+        }
     }
 }

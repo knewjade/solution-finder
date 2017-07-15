@@ -1,8 +1,8 @@
 package core.field;
 
 import core.mino.Block;
-import core.srs.Rotate;
 import core.mino.Mino;
+import core.srs.Rotate;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -168,6 +168,24 @@ public class SmallFieldTest {
         assertThat(field.canPutMino(new Mino(Block.T, Rotate.Right), 0, 1), is(false));
         assertThat(field.canPutMino(new Mino(Block.T, Rotate.Reverse), 1, 1), is(false));
         assertThat(field.canPutMino(new Mino(Block.T, Rotate.Left), 1, 1), is(false));
+    }
+
+    @Test
+    public void testCanPutMino2() throws Exception {
+        String marks = "" +
+                "XXXXXXXX_X" +
+                "XXXXXXXX_X" +
+                "XXXXXXXX_X" +
+                "XXXXXXXX_X" +
+                "XXXXXXXX_X" +
+                "XXXXXXXX_X";
+        Field field = FieldFactory.createSmallField(marks);
+
+        assertThat(field.canPutMino(new Mino(Block.I, Rotate.Left), 8, 1), is(true));
+        assertThat(field.canPutMino(new Mino(Block.I, Rotate.Left), 8, 6), is(true));
+        assertThat(field.canPutMino(new Mino(Block.I, Rotate.Left), 8, 7), is(true));
+        assertThat(field.canPutMino(new Mino(Block.I, Rotate.Left), 8, 8), is(true));
+        assertThat(field.canPutMino(new Mino(Block.I, Rotate.Left), 8, 9), is(true));
     }
 
     @Test

@@ -49,9 +49,9 @@ class ResultHelperTest {
 
     @Test
     void uniquify() {
-        Result result1 = new Result(new DummyOrder(Block.O), Block.I, new MinimalAction(0, 1, Rotate.Spawn), Block.L);
-        Result result2 = new Result(new DummyOrder(Block.O), Block.I, new MinimalAction(0, 1, Rotate.Spawn), Block.L);
-        Result result3 = new Result(new DummyOrder(Block.O), Block.I, new MinimalAction(0, 1, Rotate.Spawn), Block.L);
+        Result result1 = new Result(new DummyOrder(Block.O), Block.I, MinimalAction.create(0, 1, Rotate.Spawn), Block.L);
+        Result result2 = new Result(new DummyOrder(Block.O), Block.I, MinimalAction.create(0, 1, Rotate.Spawn), Block.L);
+        Result result3 = new Result(new DummyOrder(Block.O), Block.I, MinimalAction.create(0, 1, Rotate.Spawn), Block.L);
         List<Result> uniquify = ResultHelper.uniquify(Arrays.asList(result1, result2, result3));
         assertThat(uniquify).hasSize(1);
     }
@@ -59,13 +59,13 @@ class ResultHelperTest {
     @Test
     void uniquifyDiff() {
         List<Result> results = Arrays.asList(
-                new Result(new DummyOrder(Block.O), Block.I, new MinimalAction(0, 1, Rotate.Spawn), Block.L),
-                new Result(new DummyOrder(Block.O), Block.S, new MinimalAction(0, 1, Rotate.Spawn), Block.L),
-                new Result(new DummyOrder(Block.O), Block.I, new MinimalAction(1, 1, Rotate.Spawn), Block.L),
-                new Result(new DummyOrder(Block.O), Block.I, new MinimalAction(0, 2, Rotate.Spawn), Block.L),
-                new Result(new DummyOrder(Block.O), Block.I, new MinimalAction(0, 1, Rotate.Left), Block.L),
-                new Result(new DummyOrder(Block.O), Block.I, new MinimalAction(0, 1, Rotate.Left), Block.J),
-                new Result(new DummyOrder(Block.T), Block.I, new MinimalAction(0, 1, Rotate.Spawn), Block.L)
+                new Result(new DummyOrder(Block.O), Block.I, MinimalAction.create(0, 1, Rotate.Spawn), Block.L),
+                new Result(new DummyOrder(Block.O), Block.S, MinimalAction.create(0, 1, Rotate.Spawn), Block.L),
+                new Result(new DummyOrder(Block.O), Block.I, MinimalAction.create(1, 1, Rotate.Spawn), Block.L),
+                new Result(new DummyOrder(Block.O), Block.I, MinimalAction.create(0, 2, Rotate.Spawn), Block.L),
+                new Result(new DummyOrder(Block.O), Block.I, MinimalAction.create(0, 1, Rotate.Left), Block.L),
+                new Result(new DummyOrder(Block.O), Block.I, MinimalAction.create(0, 1, Rotate.Left), Block.J),
+                new Result(new DummyOrder(Block.T), Block.I, MinimalAction.create(0, 1, Rotate.Spawn), Block.L)
         );
         List<Result> uniquify = ResultHelper.uniquify(results);
 

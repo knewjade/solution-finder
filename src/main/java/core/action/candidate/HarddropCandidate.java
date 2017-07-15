@@ -28,10 +28,10 @@ public class HarddropCandidate implements Candidate<Action> {
 
         for (Rotate rotate : Rotate.values()) {
             Mino mino = minoFactory.create(block, rotate);
-            int y = appearY - mino.getMaxY() - 1;
+            int y = appearY - mino.getMinY();
             for (int x = -mino.getMinX(); x < FIELD_WIDTH - mino.getMaxX(); x++) {
-                if (field.canPutMino(mino, x, y)) {
-                    int harddropY = field.getYOnHarddrop(mino, x, y);
+                int harddropY = field.getYOnHarddrop(mino, x, y);
+                if (harddropY < appearY) {
                     Action action = minoShifter.createTransformedAction(block, x, harddropY, rotate);
                     actions.add(action);
                 }

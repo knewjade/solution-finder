@@ -1,12 +1,12 @@
 package core.action.candidate;
 
+import common.datastore.action.Action;
 import core.field.Field;
 import core.mino.Block;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.Rotate;
-import common.datastore.action.Action;
 
 import java.util.HashSet;
 import java.util.Set;

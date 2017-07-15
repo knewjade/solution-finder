@@ -1,85 +1,60 @@
 package core.action.cache;
 
 import core.srs.Rotate;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class LockedCacheTest {
+class LockedCacheTest {
     @Test
-    public void testLockedCache6() throws Exception {
+    void testLockedCache6() throws Exception {
         int height = 6;
+        assertCache(height);
+    }
+
+    private void assertCache(int height) {
         LockedCache cache = new LockedCache(height);
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < 10; x++) {
                 for (Rotate rotate : Rotate.values()) {
-                    assertThat(cache.isVisit(x, y, rotate), is(false));
+                    assertThat(cache.isVisit(x, y, rotate)).isFalse();
                     cache.visit(x, y, rotate);
-                    assertThat(cache.isVisit(x, y, rotate), is(true));
-                    assertThat(cache.isFound(x, y, rotate), is(false));
+                    assertThat(cache.isVisit(x, y, rotate)).isTrue();
+                    assertThat(cache.isFound(x, y, rotate)).isFalse();
                     cache.found(x, y, rotate);
-                    assertThat(cache.isFound(x, y, rotate), is(true));
+                    assertThat(cache.isFound(x, y, rotate)).isTrue();
+                }
+            }
+        }
+
+        cache.clear();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < 10; x++) {
+                for (Rotate rotate : Rotate.values()) {
+                    assertThat(cache.isVisit(x, y, rotate)).isFalse();
+                    assertThat(cache.isFound(x, y, rotate)).isFalse();
                 }
             }
         }
     }
 
     @Test
-    public void testLockedCache12() throws Exception {
+    void testLockedCache12() throws Exception {
         int height = 12;
-        LockedCache cache = new LockedCache(height);
-
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < 10; x++) {
-                for (Rotate rotate : Rotate.values()) {
-                    assertThat(cache.isVisit(x, y, rotate), is(false));
-                    cache.visit(x, y, rotate);
-                    assertThat(cache.isVisit(x, y, rotate), is(true));
-                    assertThat(cache.isFound(x, y, rotate), is(false));
-                    cache.found(x, y, rotate);
-                    assertThat(cache.isFound(x, y, rotate), is(true));
-                }
-            }
-        }
+        assertCache(height);
     }
 
     @Test
-    public void testLockedCache24() throws Exception {
+    void testLockedCache24() throws Exception {
         int height = 24;
-        LockedCache cache = new LockedCache(height);
-
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < 10; x++) {
-                for (Rotate rotate : Rotate.values()) {
-                    assertThat(cache.isVisit(x, y, rotate), is(false));
-                    cache.visit(x, y, rotate);
-                    assertThat(cache.isVisit(x, y, rotate), is(true));
-                    assertThat(cache.isFound(x, y, rotate), is(false));
-                    cache.found(x, y, rotate);
-                    assertThat(cache.isFound(x, y, rotate), is(true));
-                }
-            }
-        }
+        assertCache(height);
     }
 
     @Test
-    public void testLockedCache48() throws Exception {
+    void testLockedCache48() throws Exception {
         int height = 48;
-        LockedCache cache = new LockedCache(height);
-
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < 10; x++) {
-                for (Rotate rotate : Rotate.values()) {
-                    assertThat(cache.isVisit(x, y, rotate), is(false));
-                    cache.visit(x, y, rotate);
-                    assertThat(cache.isVisit(x, y, rotate), is(true));
-                    assertThat(cache.isFound(x, y, rotate), is(false));
-                    cache.found(x, y, rotate);
-                    assertThat(cache.isFound(x, y, rotate), is(true));
-                }
-            }
-        }
+        assertCache(height);
     }
 }

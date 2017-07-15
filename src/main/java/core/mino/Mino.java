@@ -146,6 +146,8 @@ public class Mino {
     }
 
     public long getMask(int x, int y) {
+        assert 0 <= x && x < 10 : x;
+        assert -4 < y && y < 8 : y;
         int slide = x - MASK_CENTER_X + (y - MASK_CENTER_Y) * 10;
         return 0 < slide ? mask << slide : mask >>> -slide;
     }

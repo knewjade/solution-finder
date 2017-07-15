@@ -43,8 +43,8 @@ public class ResultPCFComparatorTest {
 
     @Test
     public void compare1() throws Exception {
-        Result result1 = new Result(DUMMY_ORDER, Block.I, new MinimalAction(0, 1, Rotate.Spawn), Block.L);
-        Result result2 = new Result(DUMMY_ORDER, Block.I, new MinimalAction(0, 1, Rotate.Spawn), Block.L);
+        Result result1 = new Result(DUMMY_ORDER, Block.I, MinimalAction.create(0, 1, Rotate.Spawn), Block.L);
+        Result result2 = new Result(DUMMY_ORDER, Block.I, MinimalAction.create(0, 1, Rotate.Spawn), Block.L);
         ResultPCFComparator comparator = new ResultPCFComparator();
         assertThat(result1.toString(), comparator.compare(result1, result2), is(0));
         assertThat(result1.toString(), comparator.compare(result2, result1), is(0));
@@ -52,8 +52,8 @@ public class ResultPCFComparatorTest {
 
     @Test
     public void compare2() throws Exception {
-        Result result1 = new Result(DUMMY_ORDER, Block.T, new MinimalAction(8, 2, Rotate.Left), null);
-        Result result2 = new Result(DUMMY_ORDER, Block.T, new MinimalAction(8, 2, Rotate.Left), null);
+        Result result1 = new Result(DUMMY_ORDER, Block.T, MinimalAction.create(8, 2, Rotate.Left), null);
+        Result result2 = new Result(DUMMY_ORDER, Block.T, MinimalAction.create(8, 2, Rotate.Left), null);
         ResultPCFComparator comparator = new ResultPCFComparator();
         assertThat(result1.toString(), comparator.compare(result1, result2), is(0));
         assertThat(result1.toString(), comparator.compare(result2, result1), is(0));
@@ -61,8 +61,8 @@ public class ResultPCFComparatorTest {
 
     @Test
     public void compareDiffLastBlock() throws Exception {
-        Result result1 = new Result(DUMMY_ORDER, Block.I, new MinimalAction(0, 1, Rotate.Spawn), Block.L);
-        Result result2 = new Result(DUMMY_ORDER, Block.J, new MinimalAction(0, 1, Rotate.Spawn), Block.L);
+        Result result1 = new Result(DUMMY_ORDER, Block.I, MinimalAction.create(0, 1, Rotate.Spawn), Block.L);
+        Result result2 = new Result(DUMMY_ORDER, Block.J, MinimalAction.create(0, 1, Rotate.Spawn), Block.L);
         ResultPCFComparator comparator = new ResultPCFComparator();
 
         // assert is not 0 & sign reversed
@@ -71,8 +71,8 @@ public class ResultPCFComparatorTest {
 
     @Test
     public void compareDiffLastX() throws Exception {
-        Result result1 = new Result(DUMMY_ORDER, Block.I, new MinimalAction(0, 1, Rotate.Spawn), Block.L);
-        Result result2 = new Result(DUMMY_ORDER, Block.I, new MinimalAction(1, 1, Rotate.Spawn), Block.L);
+        Result result1 = new Result(DUMMY_ORDER, Block.I, MinimalAction.create(0, 1, Rotate.Spawn), Block.L);
+        Result result2 = new Result(DUMMY_ORDER, Block.I, MinimalAction.create(1, 1, Rotate.Spawn), Block.L);
         ResultPCFComparator comparator = new ResultPCFComparator();
 
         // assert is not 0 & sign reversed
@@ -81,8 +81,8 @@ public class ResultPCFComparatorTest {
 
     @Test
     public void compareDiffLastY() throws Exception {
-        Result result1 = new Result(DUMMY_ORDER, Block.I, new MinimalAction(0, 1, Rotate.Spawn), Block.L);
-        Result result2 = new Result(DUMMY_ORDER, Block.I, new MinimalAction(0, 4, Rotate.Spawn), Block.L);
+        Result result1 = new Result(DUMMY_ORDER, Block.I, MinimalAction.create(0, 1, Rotate.Spawn), Block.L);
+        Result result2 = new Result(DUMMY_ORDER, Block.I, MinimalAction.create(0, 4, Rotate.Spawn), Block.L);
         ResultPCFComparator comparator = new ResultPCFComparator();
 
         // assert is not 0 & sign reversed
@@ -91,8 +91,8 @@ public class ResultPCFComparatorTest {
 
     @Test
     public void compareDiffLastRotate() throws Exception {
-        Result result1 = new Result(DUMMY_ORDER, Block.I, new MinimalAction(0, 1, Rotate.Spawn), Block.L);
-        Result result2 = new Result(DUMMY_ORDER, Block.I, new MinimalAction(0, 1, Rotate.Reverse), Block.L);
+        Result result1 = new Result(DUMMY_ORDER, Block.I, MinimalAction.create(0, 1, Rotate.Spawn), Block.L);
+        Result result2 = new Result(DUMMY_ORDER, Block.I, MinimalAction.create(0, 1, Rotate.Reverse), Block.L);
         ResultPCFComparator comparator = new ResultPCFComparator();
 
         // assert is not 0 & sign reversed
@@ -101,8 +101,8 @@ public class ResultPCFComparatorTest {
 
     @Test
     public void compareDiffLastHold1() throws Exception {
-        Result result1 = new Result(DUMMY_ORDER, Block.I, new MinimalAction(0, 1, Rotate.Spawn), Block.L);
-        Result result2 = new Result(DUMMY_ORDER, Block.I, new MinimalAction(0, 1, Rotate.Spawn), Block.I);
+        Result result1 = new Result(DUMMY_ORDER, Block.I, MinimalAction.create(0, 1, Rotate.Spawn), Block.L);
+        Result result2 = new Result(DUMMY_ORDER, Block.I, MinimalAction.create(0, 1, Rotate.Spawn), Block.I);
         ResultPCFComparator comparator = new ResultPCFComparator();
 
         // assert is not 0 & sign reversed
@@ -111,8 +111,8 @@ public class ResultPCFComparatorTest {
 
     @Test
     public void compareDiffLastHold2() throws Exception {
-        Result result1 = new Result(DUMMY_ORDER, Block.I, new MinimalAction(0, 1, Rotate.Spawn), Block.L);
-        Result result2 = new Result(DUMMY_ORDER, Block.I, new MinimalAction(0, 1, Rotate.Spawn), null);
+        Result result1 = new Result(DUMMY_ORDER, Block.I, MinimalAction.create(0, 1, Rotate.Spawn), Block.L);
+        Result result2 = new Result(DUMMY_ORDER, Block.I, MinimalAction.create(0, 1, Rotate.Spawn), null);
         ResultPCFComparator comparator = new ResultPCFComparator();
 
         // assert is not 0 & sign reversed
@@ -121,8 +121,8 @@ public class ResultPCFComparatorTest {
 
     @Test
     public void compareDiffLastHold3() throws Exception {
-        Result result1 = new Result(DUMMY_ORDER, Block.I, new MinimalAction(0, 1, Rotate.Spawn), null);
-        Result result2 = new Result(DUMMY_ORDER, Block.I, new MinimalAction(0, 1, Rotate.Spawn), Block.I);
+        Result result1 = new Result(DUMMY_ORDER, Block.I, MinimalAction.create(0, 1, Rotate.Spawn), null);
+        Result result2 = new Result(DUMMY_ORDER, Block.I, MinimalAction.create(0, 1, Rotate.Spawn), Block.I);
         ResultPCFComparator comparator = new ResultPCFComparator();
 
         // assert is not 0 & sign reversed

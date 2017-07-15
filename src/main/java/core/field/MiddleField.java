@@ -184,7 +184,9 @@ public class MiddleField implements Field {
 
     @Override
     public boolean canPutMino(Mino mino, int x, int y) {
-        if (y + mino.getMaxY() < FIELD_ROW_BOARDER_Y) {
+        if (MAX_FIELD_HEIGHT + 2 <= y) {
+            return true;
+        } else if (y + mino.getMaxY() < FIELD_ROW_BOARDER_Y) {
             // Lowで完結
             return (xBoardLow & mino.getMask(x, y)) == 0L;
         } else if (FIELD_ROW_BOARDER_Y <= y + mino.getMinY()) {

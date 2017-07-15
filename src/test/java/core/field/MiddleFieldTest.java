@@ -213,6 +213,30 @@ public class MiddleFieldTest {
     }
 
     @Test
+    public void testCanPutMino2() throws Exception {
+        String marks = "" +
+                "XXXXXXXX_X" +
+                "XXXXXXXX_X" +
+                "XXXXXXXX_X" +
+                "XXXXXXXX_X" +
+                "XXXXXXXX_X" +
+                "XXXXXXXX_X" +
+                "XXXXXXXX_X" +
+                "XXXXXXXX_X" +
+                "XXXXXXXX_X" +
+                "XXXXXXXX_X" +
+                "XXXXXXXX_X" +
+                "XXXXXXXX_X";
+        Field field = FieldFactory.createMiddleField(marks);
+
+        assertThat(field.canPutMino(new Mino(Block.I, Rotate.Left), 8, 1), is(true));
+        assertThat(field.canPutMino(new Mino(Block.I, Rotate.Left), 8, 11), is(true));
+        assertThat(field.canPutMino(new Mino(Block.I, Rotate.Left), 8, 12), is(true));
+        assertThat(field.canPutMino(new Mino(Block.I, Rotate.Left), 8, 13), is(true));
+        assertThat(field.canPutMino(new Mino(Block.I, Rotate.Left), 8, 14), is(true));
+    }
+
+    @Test
     public void testIsOnGround() throws Exception {
         String marks = "" +
                 "X_________" +
