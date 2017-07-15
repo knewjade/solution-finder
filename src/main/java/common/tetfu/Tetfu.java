@@ -38,6 +38,10 @@ public class Tetfu {
             return str.substring(21);
         } else if (str.startsWith("fumen.zui.jp/?")) {
             return str.substring(14);
+        } else if (str.startsWith("http://harddrop.com/fumen/?")) {
+            return str.substring(27);
+        } else if (str.startsWith("harddrop.com/fumen/?")) {
+            return str.substring(20);
         }
         return str;
     }

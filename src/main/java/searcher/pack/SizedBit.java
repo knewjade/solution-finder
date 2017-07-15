@@ -22,7 +22,7 @@ public class SizedBit {
     }
 
     public int getMaxBitDigit() {
-        return maxBitDigit;
+        return  maxBitDigit;
     }
 
     public long getFillBoard() {

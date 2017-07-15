@@ -23,15 +23,17 @@ public class HarddropCandidate implements Candidate<Action> {
     }
 
     @Override
+    // ハードドロップで置くことができ、appearY以下にミノがすべて収まる場所を列挙する
     public Set<Action> search(Field field, Block block, int appearY) {
         HashSet<Action> actions = new HashSet<>();
 
         for (Rotate rotate : Rotate.values()) {
             Mino mino = minoFactory.create(block, rotate);
             int y = appearY - mino.getMinY();
+            int maxY = appearY - mino.getMaxY();
             for (int x = -mino.getMinX(); x < FIELD_WIDTH - mino.getMaxX(); x++) {
                 int harddropY = field.getYOnHarddrop(mino, x, y);
-                if (harddropY < appearY) {
+                if (harddropY < maxY) {
                     Action action = minoShifter.createTransformedAction(block, x, harddropY, rotate);
                     actions.add(action);
                 }

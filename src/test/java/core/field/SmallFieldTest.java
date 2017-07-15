@@ -3,75 +3,72 @@ package core.field;
 import core.mino.Block;
 import core.mino.Mino;
 import core.srs.Rotate;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class SmallFieldTest {
-    public static final int FIELD_WIDTH = 10;
+class SmallFieldTest {
+    private static final int FIELD_WIDTH = 10;
 
     @Test
-    public void testGetMaxFieldHeight() throws Exception {
+    void testGetMaxFieldHeight() throws Exception {
         Field field = FieldFactory.createSmallField();
-        assertThat(field.getMaxFieldHeight(), is(6));
+        assertThat(field.getMaxFieldHeight()).isEqualTo(6);
     }
 
     @Test
-    public void testPutAndRemoveBlock() throws Exception {
+    void testPutAndRemoveBlock() throws Exception {
         Field field = FieldFactory.createSmallField();
-        assertThat(field.isEmpty(0, 0), is(true));
+        assertThat(field.isEmpty(0, 0)).isTrue();
         field.setBlock(0, 0);
-        assertThat(field.isEmpty(0, 0), is(false));
+        assertThat(field.isEmpty(0, 0)).isFalse();
         field.removeBlock(0, 0);
-        assertThat(field.isEmpty(0, 0), is(true));
+        assertThat(field.isEmpty(0, 0)).isTrue();
     }
 
     @Test
-    public void testPutAndRemoveMino() throws Exception {
+    void testPutAndRemoveMino() throws Exception {
         Field field = FieldFactory.createSmallField();
         field.putMino(new Mino(Block.T, Rotate.Spawn), 1, 0);
-        assertThat(field.isEmpty(0, 0), is(false));
-        assertThat(field.isEmpty(1, 0), is(false));
-        assertThat(field.isEmpty(2, 0), is(false));
-        assertThat(field.isEmpty(1, 1), is(false));
+        assertThat(field.isEmpty(0, 0)).isFalse();
+        assertThat(field.isEmpty(1, 0)).isFalse();
+        assertThat(field.isEmpty(2, 0)).isFalse();
+        assertThat(field.isEmpty(1, 1)).isFalse();
 
         field.removeMino(new Mino(Block.T, Rotate.Spawn), 1, 0);
-        assertThat(field.isPerfect(), is(true));
+        assertThat(field.isPerfect()).isTrue();
     }
 
     @Test
-    public void testGetYOnHarddrop() throws Exception {
+    void testGetYOnHarddrop() throws Exception {
         String marks = "" +
                 "__________" +
                 "_________X" +
                 "____X_____" +
                 "";
         Field field = FieldFactory.createSmallField(marks);
-
-        assertThat(field.getYOnHarddrop(new Mino(Block.T, Rotate.Spawn), 1, 4), is(0));
-        assertThat(field.getYOnHarddrop(new Mino(Block.T, Rotate.Spawn), 3, 4), is(1));
-        assertThat(field.getYOnHarddrop(new Mino(Block.T, Rotate.Spawn), 8, 4), is(2));
+        assertThat(field.getYOnHarddrop(new Mino(Block.T, Rotate.Spawn), 1, 4)).isEqualTo(0);
+        assertThat(field.getYOnHarddrop(new Mino(Block.T, Rotate.Spawn), 3, 4)).isEqualTo(1);
+        assertThat(field.getYOnHarddrop(new Mino(Block.T, Rotate.Spawn), 8, 4)).isEqualTo(2);
     }
 
     @Test
-    public void testCanReachOnHarddrop() throws Exception {
+    void testCanReachOnHarddrop() throws Exception {
         String marks = "" +
                 "x_________" +
                 "_________X" +
                 "____X_____" +
                 "";
         Field field = FieldFactory.createSmallField(marks);
-
-        assertThat(field.canReachOnHarddrop(new Mino(Block.T, Rotate.Spawn), 1, 4), is(true));
-        assertThat(field.canReachOnHarddrop(new Mino(Block.T, Rotate.Spawn), 1, 3), is(true));
-        assertThat(field.canReachOnHarddrop(new Mino(Block.T, Rotate.Spawn), 1, 1), is(false));
+        assertThat(field.canReachOnHarddrop(new Mino(Block.T, Rotate.Spawn), 1, 4)).isTrue();
+        assertThat(field.canReachOnHarddrop(new Mino(Block.T, Rotate.Spawn), 1, 3)).isTrue();
+        assertThat(field.canReachOnHarddrop(new Mino(Block.T, Rotate.Spawn), 1, 1)).isFalse();
     }
 
     @Test
-    public void testExistAbove() throws Exception {
+    void testExistAbove() throws Exception {
         String marks = "" +
                 "__________" +
                 "__________" +
@@ -82,29 +79,29 @@ public class SmallFieldTest {
                 "";
         Field field = FieldFactory.createSmallField(marks);
 
-        assertThat(field.existsAbove(0), is(true));
-        assertThat(field.existsAbove(1), is(true));
-        assertThat(field.existsAbove(2), is(true));
-        assertThat(field.existsAbove(3), is(true));
-        assertThat(field.existsAbove(4), is(false));
-        assertThat(field.existsAbove(5), is(false));
+        assertThat(field.existsAbove(0)).isTrue();
+        assertThat(field.existsAbove(1)).isTrue();
+        assertThat(field.existsAbove(2)).isTrue();
+        assertThat(field.existsAbove(3)).isTrue();
+        assertThat(field.existsAbove(4)).isFalse();
+        assertThat(field.existsAbove(5)).isFalse();
     }
 
     @Test
-    public void testIsPerfect() throws Exception {
+    void testIsPerfect() throws Exception {
         Field field = FieldFactory.createSmallField();
 
-        assertThat(field.isEmpty(0, 0), is(true));
-        assertThat(field.isPerfect(), is(true));
+        assertThat(field.isEmpty(0, 0)).isTrue();
+        assertThat(field.isPerfect()).isTrue();
 
         field.setBlock(0, 0);
 
-        assertThat(field.isEmpty(0, 0), is(false));
-        assertThat(field.isPerfect(), is(false));
+        assertThat(field.isEmpty(0, 0)).isFalse();
+        assertThat(field.isPerfect()).isFalse();
     }
 
     @Test
-    public void testIsFilledInColumn() throws Exception {
+    void testIsFilledInColumn() throws Exception {
         String marks = "" +
                 "____X_____" +
                 "____X_____" +
@@ -115,18 +112,18 @@ public class SmallFieldTest {
                 "";
         Field field = FieldFactory.createSmallField(marks);
 
-        assertThat(field.isFilledInColumn(0, 4), is(false));
-        assertThat(field.isFilledInColumn(1, 4), is(false));
-        assertThat(field.isFilledInColumn(2, 4), is(false));
-        assertThat(field.isFilledInColumn(3, 4), is(true));
-        assertThat(field.isFilledInColumn(3, 6), is(false));
-        assertThat(field.isFilledInColumn(4, 4), is(true));
-        assertThat(field.isFilledInColumn(4, 6), is(true));
-        assertThat(field.isFilledInColumn(5, 0), is(true));
+        assertThat(field.isFilledInColumn(0, 4)).isFalse();
+        assertThat(field.isFilledInColumn(1, 4)).isFalse();
+        assertThat(field.isFilledInColumn(2, 4)).isFalse();
+        assertThat(field.isFilledInColumn(3, 4)).isTrue();
+        assertThat(field.isFilledInColumn(3, 6)).isFalse();
+        assertThat(field.isFilledInColumn(4, 4)).isTrue();
+        assertThat(field.isFilledInColumn(4, 6)).isTrue();
+        assertThat(field.isFilledInColumn(5, 0)).isTrue();
     }
 
     @Test
-    public void testIsWallBetweenLeft() throws Exception {
+    void testIsWallBetweenLeft() throws Exception {
         String marks = "" +
                 "____X_____" +
                 "____X_____" +
@@ -137,19 +134,19 @@ public class SmallFieldTest {
                 "";
         Field field = FieldFactory.createSmallField(marks);
 
-        assertThat(field.isWallBetweenLeft(1, 4), is(true));
-        assertThat(field.isWallBetweenLeft(1, 5), is(false));
-        assertThat(field.isWallBetweenLeft(2, 3), is(true));
-        assertThat(field.isWallBetweenLeft(2, 4), is(false));
-        assertThat(field.isWallBetweenLeft(2, 3), is(true));
-        assertThat(field.isWallBetweenLeft(2, 4), is(false));
-        assertThat(field.isWallBetweenLeft(4, 6), is(true));
-        assertThat(field.isWallBetweenLeft(5, 6), is(true));
-        assertThat(field.isWallBetweenLeft(6, 6), is(false));
+        assertThat(field.isWallBetweenLeft(1, 4)).isTrue();
+        assertThat(field.isWallBetweenLeft(1, 5)).isFalse();
+        assertThat(field.isWallBetweenLeft(2, 3)).isTrue();
+        assertThat(field.isWallBetweenLeft(2, 4)).isFalse();
+        assertThat(field.isWallBetweenLeft(2, 3)).isTrue();
+        assertThat(field.isWallBetweenLeft(2, 4)).isFalse();
+        assertThat(field.isWallBetweenLeft(4, 6)).isTrue();
+        assertThat(field.isWallBetweenLeft(5, 6)).isTrue();
+        assertThat(field.isWallBetweenLeft(6, 6)).isFalse();
     }
 
     @Test
-    public void testCanPutMino() throws Exception {
+    void testCanPutMino() throws Exception {
         String marks = "" +
                 "___X______" +
                 "___XX_____" +
@@ -159,19 +156,19 @@ public class SmallFieldTest {
                 "";
         Field field = FieldFactory.createSmallField(marks);
 
-        assertThat(field.canPutMino(new Mino(Block.T, Rotate.Spawn), 5, 4), is(true));
-        assertThat(field.canPutMino(new Mino(Block.T, Rotate.Right), 1, 1), is(true));
-        assertThat(field.canPutMino(new Mino(Block.T, Rotate.Reverse), 1, 3), is(true));
-        assertThat(field.canPutMino(new Mino(Block.T, Rotate.Left), 3, 1), is(true));
+        assertThat(field.canPutMino(new Mino(Block.T, Rotate.Spawn), 5, 4)).isTrue();
+        assertThat(field.canPutMino(new Mino(Block.T, Rotate.Right), 1, 1)).isTrue();
+        assertThat(field.canPutMino(new Mino(Block.T, Rotate.Reverse), 1, 3)).isTrue();
+        assertThat(field.canPutMino(new Mino(Block.T, Rotate.Left), 3, 1)).isTrue();
 
-        assertThat(field.canPutMino(new Mino(Block.T, Rotate.Spawn), 3, 0), is(false));
-        assertThat(field.canPutMino(new Mino(Block.T, Rotate.Right), 0, 1), is(false));
-        assertThat(field.canPutMino(new Mino(Block.T, Rotate.Reverse), 1, 1), is(false));
-        assertThat(field.canPutMino(new Mino(Block.T, Rotate.Left), 1, 1), is(false));
+        assertThat(field.canPutMino(new Mino(Block.T, Rotate.Spawn), 3, 0)).isFalse();
+        assertThat(field.canPutMino(new Mino(Block.T, Rotate.Right), 0, 1)).isFalse();
+        assertThat(field.canPutMino(new Mino(Block.T, Rotate.Reverse), 1, 1)).isFalse();
+        assertThat(field.canPutMino(new Mino(Block.T, Rotate.Left), 1, 1)).isFalse();
     }
 
     @Test
-    public void testCanPutMino2() throws Exception {
+    void testCanPutMino2() throws Exception {
         String marks = "" +
                 "XXXXXXXX_X" +
                 "XXXXXXXX_X" +
@@ -181,15 +178,15 @@ public class SmallFieldTest {
                 "XXXXXXXX_X";
         Field field = FieldFactory.createSmallField(marks);
 
-        assertThat(field.canPutMino(new Mino(Block.I, Rotate.Left), 8, 1), is(true));
-        assertThat(field.canPutMino(new Mino(Block.I, Rotate.Left), 8, 6), is(true));
-        assertThat(field.canPutMino(new Mino(Block.I, Rotate.Left), 8, 7), is(true));
-        assertThat(field.canPutMino(new Mino(Block.I, Rotate.Left), 8, 8), is(true));
-        assertThat(field.canPutMino(new Mino(Block.I, Rotate.Left), 8, 9), is(true));
+        assertThat(field.canPutMino(new Mino(Block.I, Rotate.Left), 8, 1)).isTrue();
+        assertThat(field.canPutMino(new Mino(Block.I, Rotate.Left), 8, 6)).isTrue();
+        assertThat(field.canPutMino(new Mino(Block.I, Rotate.Left), 8, 7)).isTrue();
+        assertThat(field.canPutMino(new Mino(Block.I, Rotate.Left), 8, 8)).isTrue();
+        assertThat(field.canPutMino(new Mino(Block.I, Rotate.Left), 8, 9)).isTrue();
     }
 
     @Test
-    public void testIsOnGround() throws Exception {
+    void testIsOnGround() throws Exception {
         String marks = "" +
                 "___X______" +
                 "___XX_____" +
@@ -200,20 +197,20 @@ public class SmallFieldTest {
                 "";
         Field field = FieldFactory.createSmallField(marks);
 
-        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Spawn), 5, 5), is(true));
-        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Right), 8, 1), is(true));
-        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Reverse), 1, 3), is(true));
-        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Left), 1, 2), is(true));
+        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Spawn), 5, 5)).isTrue();
+        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Right), 8, 1)).isTrue();
+        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Reverse), 1, 3)).isTrue();
+        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Left), 1, 2)).isTrue();
 
-        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Spawn), 6, 5), is(false));
-        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Spawn), 8, 1), is(false));
-        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Right), 8, 2), is(false));
-        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Reverse), 7, 3), is(false));
-        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Left), 9, 2), is(false));
+        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Spawn), 6, 5)).isFalse();
+        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Spawn), 8, 1)).isFalse();
+        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Right), 8, 2)).isFalse();
+        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Reverse), 7, 3)).isFalse();
+        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Left), 9, 2)).isFalse();
     }
 
     @Test
-    public void testGetBlockCountBelowOnX() throws Exception {
+    void testGetBlockCountBelowOnX() throws Exception {
         String marks = "" +
                 "___XX_____" +
                 "___XX_____" +
@@ -224,17 +221,17 @@ public class SmallFieldTest {
                 "";
         Field field = FieldFactory.createSmallField(marks);
 
-        assertThat(field.getBlockCountBelowOnX(0, 1), is(0));
-        assertThat(field.getBlockCountBelowOnX(0, 2), is(1));
-        assertThat(field.getBlockCountBelowOnX(2, 4), is(2));
-        assertThat(field.getBlockCountBelowOnX(3, 4), is(1));
-        assertThat(field.getBlockCountBelowOnX(3, 6), is(3));
-        assertThat(field.getBlockCountBelowOnX(4, 4), is(4));
-        assertThat(field.getBlockCountBelowOnX(4, 6), is(6));
+        assertThat(field.getBlockCountBelowOnX(0, 1)).isEqualTo(0);
+        assertThat(field.getBlockCountBelowOnX(0, 2)).isEqualTo(1);
+        assertThat(field.getBlockCountBelowOnX(2, 4)).isEqualTo(2);
+        assertThat(field.getBlockCountBelowOnX(3, 4)).isEqualTo(1);
+        assertThat(field.getBlockCountBelowOnX(3, 6)).isEqualTo(3);
+        assertThat(field.getBlockCountBelowOnX(4, 4)).isEqualTo(4);
+        assertThat(field.getBlockCountBelowOnX(4, 6)).isEqualTo(6);
     }
 
     @Test
-    public void testGetAllBlockCount() throws Exception {
+    void testGetAllBlockCount() throws Exception {
         String marks = "" +
                 "___XX_____" +
                 "___XX_____" +
@@ -245,11 +242,11 @@ public class SmallFieldTest {
                 "";
         Field field = FieldFactory.createSmallField(marks);
 
-        assertThat(field.getNumOfAllBlocks(), is(13));
+        assertThat(field.getNumOfAllBlocks()).isEqualTo(13);
     }
 
     @Test
-    public void testClearLine() throws Exception {
+    void testClearLine() throws Exception {
         String marks = "" +
                 "XXX_XXXXXX" +
                 "XXXXXXXXXX" +
@@ -260,19 +257,19 @@ public class SmallFieldTest {
         Field field = FieldFactory.createSmallField(marks);
 
         int deleteLine = field.clearLine();
-        assertThat(deleteLine, is(3));
+        assertThat(deleteLine).isEqualTo(3);
 
-        assertThat(field.existsAbove(2), is(true));
-        assertThat(field.existsAbove(3), is(false));
+        assertThat(field.existsAbove(2)).isTrue();
+        assertThat(field.existsAbove(3)).isFalse();
 
-        assertThat(field.isEmpty(0, 0), is(false));
-        assertThat(field.isEmpty(4, 0), is(true));
-        assertThat(field.isEmpty(1, 1), is(true));
-        assertThat(field.isEmpty(3, 2), is(true));
+        assertThat(field.isEmpty(0, 0)).isFalse();
+        assertThat(field.isEmpty(4, 0)).isTrue();
+        assertThat(field.isEmpty(1, 1)).isTrue();
+        assertThat(field.isEmpty(3, 2)).isTrue();
     }
 
     @Test
-    public void testClearLine2() throws Exception {
+    void testClearLine2() throws Exception {
         int fieldHeight = 6;
 
         for (int pattern = 0; pattern < 64; pattern++) {
@@ -299,16 +296,16 @@ public class SmallFieldTest {
             }
 
             int line = field.clearLine();
-            assertThat(line, is(deleteLines));
+            assertThat(line).isEqualTo(deleteLines);
 
             if (deleteLines < 6)
-                assertThat(field.existsAbove(fieldHeight - deleteLines - 1), is(true));
-            assertThat(field.existsAbove(fieldHeight - deleteLines), is(false));
+                assertThat(field.existsAbove(fieldHeight - deleteLines - 1)).isTrue();
+            assertThat(field.existsAbove(fieldHeight - deleteLines)).isFalse();
         }
     }
 
     @Test
-    public void testClearLineAndInsertBlackLine() throws Exception {
+    void testClearLineAndInsertBlackLine() throws Exception {
         String marks = "" +
                 "XXX_XXXXXX" +
                 "XXXXXXXXXX" +
@@ -321,15 +318,15 @@ public class SmallFieldTest {
         Field freeze = field.freeze(field.getMaxFieldHeight());
 
         long deleteKey = field.clearLineReturnKey();
-        assertThat(Long.bitCount(deleteKey), is(3));
+        assertThat(Long.bitCount(deleteKey)).isEqualTo(3);
         field.insertBlackLineWithKey(deleteKey);
 
         for (int index = 0; index < freeze.getNumOfAllBlocks(); index++)
-            assertThat(field.getBoard(index), is(freeze.getBoard(index)));
+            assertThat(field.getBoard(index)).isEqualTo(freeze.getBoard(index));
     }
 
     @Test
-    public void testClearLineAndInsertWhiteLine() throws Exception {
+    void testClearLineAndInsertWhiteLine() throws Exception {
         String marks = "" +
                 "XXX_XXXXXX" +
                 "XXXXXXXXXX" +
@@ -351,15 +348,15 @@ public class SmallFieldTest {
         Field expected = FieldFactory.createSmallField(expectMarks);
 
         long deleteKey = field.clearLineReturnKey();
-        assertThat(Long.bitCount(deleteKey), is(3));
+        assertThat(Long.bitCount(deleteKey)).isEqualTo(3);
         field.insertWhiteLineWithKey(deleteKey);
 
         for (int index = 0; index < expected.getNumOfAllBlocks(); index++)
-            assertThat(field.getBoard(index), is(expected.getBoard(index)));
+            assertThat(field.getBoard(index)).isEqualTo(expected.getBoard(index));
     }
 
     @Test
-    public void testGetBoard() throws Exception {
+    void testGetBoard() throws Exception {
         String marks = "" +
                 "X_________" +
                 "X_________" +
@@ -368,12 +365,12 @@ public class SmallFieldTest {
                 "";
         Field field = FieldFactory.createSmallField(marks);
 
-        assertThat(field.getBoardCount(), is(1));
-        assertThat(field.getBoard(0), is(0x40100401L));
+        assertThat(field.getBoardCount()).isEqualTo(1);
+        assertThat(field.getBoard(0)).isEqualTo(0x40100401L);
     }
 
     @Test
-    public void testFreeze() throws Exception {
+    void testFreeze() throws Exception {
         String marks = "" +
                 "X_________" +
                 "X_________" +
@@ -382,25 +379,25 @@ public class SmallFieldTest {
                 "";
         Field field = FieldFactory.createSmallField(marks);
 
-        assertThat(field.getNumOfAllBlocks(), is(4));
+        assertThat(field.getNumOfAllBlocks()).isEqualTo(4);
         Field freeze = field.freeze(field.getMaxFieldHeight());
         field.setBlock(9, 0);
 
-        assertThat(field.getNumOfAllBlocks(), is(5));
-        assertThat(freeze.getNumOfAllBlocks(), is(4));
+        assertThat(field.getNumOfAllBlocks()).isEqualTo(5);
+        assertThat(freeze.getNumOfAllBlocks()).isEqualTo(4);
     }
 
     @Test
-    public void testEqual() throws Exception {
+    void testEqual() throws Exception {
         String marks = "XXXXXX____";
         SmallField field1 = FieldFactory.createSmallField(marks);
         SmallField field2 = FieldFactory.createSmallField(marks);
-        assertThat(field1.equals(field2), is(true));
+        assertThat(field1.equals(field2)).isTrue();
 
         SmallField field3 = FieldFactory.createSmallField(marks + "XXXXXX____");
-        assertThat(field1.equals(field3), is(false));
+        assertThat(field1.equals(field3)).isFalse();
 
         MiddleField field4 = FieldFactory.createMiddleField(marks);
-        assertThat(field1.equals(field4), is(true));
+        assertThat(field1.equals(field4)).isTrue();
     }
 }

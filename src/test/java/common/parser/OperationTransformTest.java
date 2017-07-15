@@ -93,7 +93,6 @@ class OperationTransformTest {
         OnDemandBasicSolutions basicSolutions = new OnDemandBasicSolutions(separableMinos, sizedBit, memorizedPredicate);
 
         for (int count = 0; count < 100; count++) {
-            System.out.println(count);
             // Create field
             int numOfMinos = randoms.nextInt(6, 10);
             Field field = randoms.field(height, numOfMinos);

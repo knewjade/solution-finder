@@ -112,6 +112,5 @@ public class LimitIterationCandidateTest {
 
         Set<Action> actions = candidate.search(field, Block.T, 4);
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Spawn).toArray().length, is(1));
-        System.out.println(actions);
     }
 }
