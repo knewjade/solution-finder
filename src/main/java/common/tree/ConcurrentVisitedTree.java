@@ -5,8 +5,6 @@ import core.mino.Block;
 import java.util.EnumMap;
 import java.util.List;
 
-// TODO: rewrite VidistedTreeのWrapperに
-// TODO: unittest
 public class ConcurrentVisitedTree {
     public static final short NO_RESULT = -1;
     public static final short SUCCEED = 0;

@@ -6,7 +6,6 @@ import java.util.EnumMap;
 import java.util.List;
 
 // TODO: rewrite 結果はEnumにする
-// TODO: unittest
 public class VisitedTree {
     public static final short NO_RESULT = -1;
     public static final short SUCCEED = 0;

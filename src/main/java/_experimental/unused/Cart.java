@@ -11,7 +11,7 @@ import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
 import core.mino.Block;
-import common.Stopwatch;
+import lib.Stopwatch;
 import common.iterable.AllPermutationIterable;
 import common.iterable.CombinationIterable;
 import searcher.checker.Checker;

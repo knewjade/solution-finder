@@ -1,6 +1,6 @@
 package entry.path;
 
-import common.Stopwatch;
+import lib.Stopwatch;
 import common.SyntaxException;
 import common.buildup.BuildUpStream;
 import common.datastore.*;

@@ -6,7 +6,7 @@ import common.tree.AnalyzeTree;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
-import common.Stopwatch;
+import lib.Stopwatch;
 import common.iterable.CombinationIterable;
 import common.iterable.AllPermutationIterable;
 import concurrent.LockedCandidateThreadLocal;

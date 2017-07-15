@@ -395,7 +395,6 @@ class TetfuTest {
         Predicate<ColumnField> memorizedPredicate = (columnField) -> true;
         OnDemandBasicSolutions basicSolutions = new OnDemandBasicSolutions(separableMinos, sizedBit, memorizedPredicate);
 
-
         for (int count = 0; count < 20; count++) {
             System.out.println(count);
             // Create field

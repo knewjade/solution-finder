@@ -1,6 +1,6 @@
 package searcher.pack;
 
-import common.Stopwatch;
+import lib.Stopwatch;
 import common.comparator.OperationWithKeyComparator;
 import common.datastore.BlockCounter;
 import common.datastore.OperationWithKey;

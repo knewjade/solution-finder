@@ -8,8 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-// TODO: rewrite
-// TODO: unittest
+/**
+ * マルチスレッド非対応
+ * 同じミノを入れたとき親の要素は複数回分追加される
+ */
 public class AnalyzeTree {
     private static class Element {
         private final EnumMap<Block, Element> current = new EnumMap<>(Block.class);
@@ -82,16 +84,12 @@ public class AnalyzeTree {
         return rootElement.getSuccessPercent();
     }
 
-    public boolean isVisited(List<Block> blocks) {
+    boolean isVisited(List<Block> blocks) {
         return rootElement.isVisited(blocks, 0);
     }
 
-    public boolean isSucceed(List<Block> blocks) {
+    boolean isSucceed(List<Block> blocks) {
         return rootElement.isSuccess(blocks, 0);
-    }
-
-    void tree() {
-        tree(-1);
     }
 
     public String tree(int maxDepth) {

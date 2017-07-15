@@ -1,11 +1,9 @@
 package _experimental.main;
 
-import common.Stopwatch;
+import lib.Stopwatch;
 import common.datastore.OperationWithKey;
 import concurrent.LockedReachableThreadLocal;
 import core.column_field.ColumnField;
-import core.column_field.ColumnFieldView;
-import core.column_field.ColumnSmallField;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
@@ -17,8 +15,6 @@ import searcher.pack.SizedBit;
 import searcher.pack.calculator.BasicSolutions;
 import searcher.pack.memento.SRSValidSolutionFilter;
 import searcher.pack.memento.SolutionFilter;
-import searcher.pack.separable_mino.SeparableMino;
-import searcher.pack.separable_mino.SeparableMinoFactory;
 import searcher.pack.solutions.FilterOnDemandBasicSolutions;
 import searcher.pack.task.*;
 

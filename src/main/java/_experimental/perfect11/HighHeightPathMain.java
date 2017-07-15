@@ -1,6 +1,6 @@
 package _experimental.perfect11;
 
-import common.Stopwatch;
+import lib.Stopwatch;
 import common.datastore.BlockField;
 import common.tetfu.TetfuElement;
 import common.tetfu.common.ColorConverter;
@@ -24,15 +24,12 @@ import searcher.pack.SizedBit;
 import searcher.pack.calculator.BasicSolutions;
 import searcher.pack.memento.SRSValidSolutionFilter;
 import searcher.pack.memento.SolutionFilter;
-import searcher.pack.separable_mino.SeparableMino;
-import searcher.pack.separable_mino.SeparableMinoFactory;
 import searcher.pack.solutions.FilterOnDemandBasicSolutions;
 import searcher.pack.task.BasicMinoPackingHelper;
 import searcher.pack.task.Field4x10MinoPackingHelper;
 import searcher.pack.task.PackSearcher;
 import searcher.pack.task.TaskResultHelper;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;

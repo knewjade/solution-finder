@@ -8,7 +8,7 @@ import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
-import common.Stopwatch;
+import lib.Stopwatch;
 import org.junit.Test;
 import common.datastore.Result;
 import common.ResultHelper;

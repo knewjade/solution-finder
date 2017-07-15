@@ -7,7 +7,7 @@ import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
-import common.Stopwatch;
+import lib.Stopwatch;
 import searcher.checkmate.Checkmate;
 import searcher.checkmate.CheckmateNoHold;
 import searcher.checkmate.CheckmateUsingHold;

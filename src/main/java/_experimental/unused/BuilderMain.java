@@ -13,7 +13,7 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import common.order.OrderLookup;
-import common.Stopwatch;
+import lib.Stopwatch;
 import common.iterable.AllPermutationIterable;
 import common.iterable.CombinationIterable;
 import searcher.checker.CheckerUsingHold;

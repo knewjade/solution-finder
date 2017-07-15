@@ -1,6 +1,6 @@
 package _experimental.perfect11;
 
-import common.Stopwatch;
+import lib.Stopwatch;
 import common.parser.OperationWithKeyInterpreter;
 import concurrent.LockedReachableThreadLocal;
 import core.column_field.ColumnField;
@@ -16,8 +16,6 @@ import searcher.pack.calculator.BasicSolutions;
 import searcher.pack.memento.SRSValidSolutionFilter;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.mino_fields.MinoFields;
-import searcher.pack.separable_mino.SeparableMino;
-import searcher.pack.separable_mino.SeparableMinoFactory;
 import searcher.pack.solutions.BasicSolutionsCalculator;
 import searcher.pack.solutions.MappedBasicSolutions;
 import searcher.pack.task.Field4x10MinoPackingHelper;

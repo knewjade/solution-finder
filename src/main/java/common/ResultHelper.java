@@ -20,6 +20,7 @@ public class ResultHelper {
         return new ArrayList<>(set);
     }
 
+    // TODO: to stream
     public static List<Operation> createOperations(Result result) {
         OperationHistory history = result.getOrder().getHistory();
         int[] operationNumbers = history.getOperationNumbers();

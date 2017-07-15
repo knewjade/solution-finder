@@ -7,7 +7,7 @@ import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
-import common.Stopwatch;
+import lib.Stopwatch;
 import searcher.checker.CheckerUsingHold;
 import common.datastore.action.Action;
 import searcher.common.validator.PerfectValidator;

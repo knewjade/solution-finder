@@ -1,6 +1,6 @@
 package entry.util.fig;
 
-import common.Stopwatch;
+import lib.Stopwatch;
 import common.tetfu.TetfuPage;
 import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;

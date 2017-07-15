@@ -5,6 +5,7 @@ import common.datastore.action.Action;
 import core.mino.Block;
 
 import java.util.Arrays;
+import java.util.stream.Stream;
 
 public class OperationHistory {
     private final int[] operationNumbers;
@@ -31,8 +32,16 @@ public class OperationHistory {
         return new OperationHistory(newArray, nextIndex + 1);
     }
 
+    // TODO: delete method
     int[] getOperationNumbers() {
         return operationNumbers;
+    }
+
+    Stream<Operation> getOperationStream() {
+        Stream.Builder<Operation> builder = Stream.builder();
+        for (int index = 0; index < nextIndex; index++)
+            builder.accept(ActionParser.parseToOperation(operationNumbers[index]));
+        return builder.build();
     }
 
     public int getNextIndex() {

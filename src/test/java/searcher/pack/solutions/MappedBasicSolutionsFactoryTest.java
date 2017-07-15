@@ -1,6 +1,6 @@
 package searcher.pack.solutions;
 
-import common.Stopwatch;
+import lib.Stopwatch;
 import core.column_field.ColumnField;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;

@@ -1,10 +1,9 @@
 package entry.percent;
 
-import common.Stopwatch;
+import lib.Stopwatch;
 import common.SyntaxException;
 import common.datastore.Pair;
 import common.datastore.pieces.LongPieces;
-import common.datastore.pieces.Pieces;
 import common.pattern.PiecesGenerator;
 import common.tree.AnalyzeTree;
 import core.field.Field;
