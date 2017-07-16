@@ -91,7 +91,7 @@ class DeepdropCandidateTest {
         DeepdropCandidate candidate = new DeepdropCandidate(minoFactory, minoShifter);
 
         for (int count = 0; count < 10000; count++) {
-            int height = randoms.nextIntClosed(2, 8);
+            int height = randoms.nextIntClosed(2, 12);
             int numOfMinos = randoms.nextIntClosed(4, height * 10 / 4 - 1);
             Field field = randoms.field(height, numOfMinos);
             height -= field.clearLine();

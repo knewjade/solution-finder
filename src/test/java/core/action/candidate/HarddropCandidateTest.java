@@ -124,7 +124,7 @@ class HarddropCandidateTest {
         HarddropCandidate candidate = new HarddropCandidate(minoFactory, minoShifter);
 
         for (int count = 0; count < 10000; count++) {
-            int randomHeight = randoms.nextInt(2, 12);
+            int randomHeight = randoms.nextIntClosed(2, 12);
             int numOfMinos = randoms.nextIntClosed(4, randomHeight * 10 / 4 - 1);
             Field field = randoms.field(randomHeight, numOfMinos);
             int clearLine = field.clearLine();
