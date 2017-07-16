@@ -38,8 +38,10 @@ class MinoPackingTaskWidthForWidth2 implements PackingTask {
             // innerFieldが埋まっている
             if (index == searcher.getLastIndex()) {
                 // 最後の計算
+                SizedBit sizedBit = searcher.getSizedBit();
+                long innerFieldBoard = outerField.getBoard(0) >> sizedBit.getMaxBitDigit();
                 MinoFieldMemento nextMemento = memento.skip();
-                return searcher.getTaskResultHelper().fixResult(searcher, outerField, nextMemento);
+                return searcher.getTaskResultHelper().fixResult(searcher, innerFieldBoard, nextMemento);
             } else {
                 // 途中の計算  // 自分で計算する
                 MinoFieldMemento nextMemento = memento.skip();
@@ -109,10 +111,13 @@ class MinoPackingTaskWidthForWidth2 implements PackingTask {
         // 注目範囲外outerで重なりがないか確認
         if (outerField.canMerge(minoOuterField)) {
             // 有効なおきかた
+            SizedBit sizedBit = searcher.getSizedBit();
             ColumnField mergedOuterField = outerField.freeze(searcher.getSizedBit().getHeight());
             mergedOuterField.merge(minoOuterField);
+
+            long innerFieldBoard = mergedOuterField.getBoard(0) >> sizedBit.getMaxBitDigit();
             MinoFieldMemento nextMemento = memento.concat(minoField);
-            return searcher.getTaskResultHelper().fixResult(searcher, mergedOuterField, nextMemento);
+            return searcher.getTaskResultHelper().fixResult(searcher, innerFieldBoard, nextMemento);
         }
 
         return Stream.empty();

@@ -3,11 +3,11 @@ package searcher.pack.task;
 import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
 import searcher.pack.InOutPairField;
-import searcher.pack.mino_field.MinoField;
-import searcher.pack.mino_fields.MinoFields;
 import searcher.pack.SizedBit;
 import searcher.pack.memento.MinoFieldMemento;
 import searcher.pack.memento.SolutionFilter;
+import searcher.pack.mino_field.MinoField;
+import searcher.pack.mino_fields.MinoFields;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -35,9 +35,11 @@ class MinoPackingTaskWidthForWidth3 implements PackingTask {
             List<InOutPairField> inOutPairFields = searcher.getInOutPairFields();
             if (index == searcher.getLastIndex()) {
                 // 最後の計算
+                SizedBit sizedBit = searcher.getSizedBit();
                 ColumnField lastOuterField = inOutPairFields.get(index).getOuterField();
+                long innerFieldBoard = lastOuterField.getBoard(0) >> sizedBit.getMaxBitDigit();
                 MinoFieldMemento nextMemento = memento.skip();
-                return searcher.getTaskResultHelper().fixResult(searcher, lastOuterField, nextMemento);
+                return searcher.getTaskResultHelper().fixResult(searcher, innerFieldBoard, nextMemento);
             } else {
                 // 途中の計算  // 自分で計算する
                 int nextIndex = index + 1;
@@ -100,10 +102,13 @@ class MinoPackingTaskWidthForWidth3 implements PackingTask {
         // 注目範囲外outerで重なりがないか確認
         if (outerField.canMerge(minoOuterField)) {
             // 有効なおきかた
+            SizedBit sizedBit = searcher.getSizedBit();
             ColumnField mergedOuterField = outerField.freeze(searcher.getSizedBit().getHeight());
             mergedOuterField.merge(minoOuterField);
+
+            long innerFieldBoard = mergedOuterField.getBoard(0) >> sizedBit.getMaxBitDigit();
             MinoFieldMemento nextMemento = memento.concat(minoField);
-            return searcher.getTaskResultHelper().fixResult(searcher, mergedOuterField, nextMemento);
+            return searcher.getTaskResultHelper().fixResult(searcher, innerFieldBoard, nextMemento);
         }
 
         return Stream.empty();

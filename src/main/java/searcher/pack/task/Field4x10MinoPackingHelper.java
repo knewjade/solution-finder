@@ -55,14 +55,14 @@ public class Field4x10MinoPackingHelper implements TaskResultHelper {
 
     // 高さが4・最後の1列がのこる場合で、パフェできるパターンは2つしか存在しない
     @Override
-    public Stream<Result> fixResult(PackSearcher searcher, ColumnField lastOuterField, MinoFieldMemento nextMemento) {
+    public Stream<Result> fixResult(PackSearcher searcher, long innerFieldBoard, MinoFieldMemento nextMemento) {
         SizedBit sizedBit = searcher.getSizedBit();
         SolutionFilter solutionFilter = searcher.getSolutionFilter();
-        long board = lastOuterField.getBoard(0) >> sizedBit.getMaxBitDigit();
-        if (board == sizedBit.getFillBoard()) {
+        if (innerFieldBoard == sizedBit.getFillBoard()) {
             if (solutionFilter.testLast(nextMemento))
                 return Stream.of(createResult(nextMemento));
-        } else if (board == 0b111111110000L) {
+        } else {
+            assert innerFieldBoard == 0b111111110000L;
             MinoFieldMemento concatILeft = nextMemento.concat(LEFT_I_ONLY);
             if (solutionFilter.testLast(concatILeft))
                 return Stream.of(createResult(concatILeft));
