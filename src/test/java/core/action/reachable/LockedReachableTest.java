@@ -253,87 +253,826 @@ class LockedReachableTest {
         }
     }
 
+    @Nested
+    class WithS {
+        @Test
+        void checks1ok1() throws Exception {
+            String marks = "" +
+                    "XX__XXXXXX" +
+                    "X__XXXXXXX";
+            success(marks, S, Reverse, 2, 1);
+            fail(marks, S, Spawn, 2, 0);
+        }
 
-    @Test
-    void checks3() throws Exception {
-        String marks = "" +
-                "XXXX______" +
-                "XXX_______" +
-                "XXX_XXXXXX" +
-                "XXX__XXXXX" +
-                "XXX_XXXXXX" +
-                "";
-        Field field = FieldFactory.createField(marks);
+        @Test
+        void checks2ok1() throws Exception {
+            String marks = "" +
+                    "XX__XXXXXX" +
+                    "XX__XXXXXX" +
+                    "X__XXXXXXX";
+            success(marks, S, Reverse, 2, 1);
+            fail(marks, S, Spawn, 2, 0);
+        }
 
-        assertThat(reachable.checks(field, new Mino(T, Right), 3, 1, 8)).isTrue();
+        @Test
+        void checks2ng1() throws Exception {
+            String marks = "" +
+                    "XX________" +
+                    "XX__XXXXXX" +
+                    "X__XXXXXXX";
+            fail(marks, S, Reverse, 2, 1);
+            fail(marks, S, Spawn, 2, 0);
+        }
+
+        @Test
+        void checks3ok1() throws Exception {
+            String marks = "" +
+                    "___X______" +
+                    "X_XXXXXXXX" +
+                    "X__XXXXXXX" +
+                    "XX_XXXXXXX";
+            success(marks, S, Left, 2, 1);
+            fail(marks, S, Right, 1, 1);
+        }
+
+        @Test
+        void checks3ng1() throws Exception {
+            String marks = "" +
+                    "__________" +
+                    "X_XXXXXXXX" +
+                    "X__XXXXXXX" +
+                    "XX_XXXXXXX";
+            fail(marks, S, Left, 2, 1);
+            fail(marks, S, Right, 1, 1);
+        }
+
+        @Test
+        void checks4ok1() throws Exception {
+            String marks = "" +
+                    "XX________" +
+                    "X_________" +
+                    "X_XXXXXXXX" +
+                    "X__XXXXXXX" +
+                    "XX_XXXXXXX";
+            success(marks, S, Right, 1, 1);
+            fail(marks, S, Left, 2, 1);
+        }
+
+        @Test
+        void checks4ok2() throws Exception {
+            String marks = "" +
+                    "XX________" +
+                    "X_________" +
+                    "X_________" +
+                    "X_XXXXXXXX" +
+                    "X__XXXXXXX" +
+                    "XX_XXXXXXX";
+            success(marks, S, Right, 1, 1);
+            fail(marks, S, Left, 2, 1);
+        }
+
+        @Test
+        void checks4ok3() throws Exception {
+            String marks = "" +
+                    "X_________" +
+                    "__________" +
+                    "X_XXXXXXXX" +
+                    "X__XXXXXXX" +
+                    "XX_XXXXXXX";
+            success(marks, S, Right, 1, 1);
+            fail(marks, S, Left, 2, 1);
+        }
+
+        @Test
+        void checks4ng1() throws Exception {
+            String marks = "" +
+                    "X_________" +
+                    "__________" +
+                    "__________" +
+                    "X_XXXXXXXX" +
+                    "X__XXXXXXX" +
+                    "XX_XXXXXXX";
+            fail(marks, S, Right, 1, 1);
+            fail(marks, S, Left, 2, 1);
+        }
     }
 
-    @Test
-    void checks4false() throws Exception {
-        String marks = "" +
-                "__________" +
-                "XXX_XXXXXX" +
-                "XXX__XXXXX" +
-                "XXXX_XXXXX" +
-                "";
-        Field field = FieldFactory.createField(marks);
+    @Nested
+    class WithZ {
+        @Test
+        void checks1ok1() throws Exception {
+            String marks = "" +
+                    "X__XXXXXXX" +
+                    "XX__XXXXXX";
+            success(marks, Z, Reverse, 2, 1);
+            fail(marks, Z, Spawn, 2, 0);
+        }
 
-        assertThat(reachable.checks(field, new Mino(S, Left), 4, 1, 8)).isFalse();
+        @Test
+        void checks2ok1() throws Exception {
+            String marks = "" +
+                    "X__XXXXXXX" +
+                    "X__XXXXXXX" +
+                    "XX__XXXXXX";
+            success(marks, Z, Reverse, 2, 1);
+            fail(marks, Z, Spawn, 2, 0);
+        }
+
+        @Test
+        void checks2ng1() throws Exception {
+            String marks = "" +
+                    "___XXXXXXX" +
+                    "X__XXXXXXX" +
+                    "XX__XXXXXX";
+            fail(marks, Z, Reverse, 2, 1);
+            fail(marks, Z, Spawn, 2, 0);
+        }
+
+        @Test
+        void checks3ok1() throws Exception {
+            String marks = "" +
+                    "__X_______" +
+                    "XXXX_XXXXX" +
+                    "XXX__XXXXX" +
+                    "XXX_XXXXXX";
+            success(marks, Z, Right, 3, 1);
+            fail(marks, Z, Left, 4, 1);
+        }
+
+        @Test
+        void checks3ng1() throws Exception {
+            String marks = "" +
+                    "__________" +
+                    "XXXX_XXXXX" +
+                    "XXX__XXXXX" +
+                    "XXX_XXXXXX";
+            fail(marks, Z, Right, 3, 1);
+            fail(marks, Z, Left, 4, 1);
+        }
+
+        @Test
+        void checks4ok1() throws Exception {
+            String marks = "" +
+                    "____XX____" +
+                    "_____X____" +
+                    "XXXX_XXXXX" +
+                    "XXX__XXXXX" +
+                    "XXX_XXXXXX";
+            success(marks, Z, Left, 4, 1);
+            fail(marks, Z, Right, 3, 1);
+        }
+
+        @Test
+        void checks4ok2() throws Exception {
+            String marks = "" +
+                    "____XX____" +
+                    "_____X____" +
+                    "_____X____" +
+                    "XXXX_XXXXX" +
+                    "XXX__XXXXX" +
+                    "XXX_XXXXXX";
+            success(marks, Z, Left, 4, 1);
+            fail(marks, Z, Right, 3, 1);
+        }
+
+        @Test
+        void checks4ok3() throws Exception {
+            String marks = "" +
+                    "_____XX___" +
+                    "______X___" +
+                    "XXXX_XXXXX" +
+                    "XXX__XXXXX" +
+                    "XXX_XXXXXX";
+            success(marks, Z, Left, 4, 1);
+            fail(marks, Z, Right, 3, 1);
+        }
+
+        @Test
+        void checks4ng1() throws Exception {
+            String marks = "" +
+                    "_____XX___" +
+                    "______X___" +
+                    "______X___" +
+                    "XXXX_XXXXX" +
+                    "XXX__XXXXX" +
+                    "XXX_XXXXXX";
+            fail(marks, Z, Left, 4, 1);
+            fail(marks, Z, Right, 3, 1);
+        }
     }
 
-    @Test
-    void checks4true() throws Exception {
-        String marks = "" +
-                "_____X____" +
-                "XXX_XXXXXX" +
-                "XXX__XXXXX" +
-                "XXXX_XXXXX" +
-                "";
-        Field field = FieldFactory.createField(marks);
+    @Nested
+    class WithL {
+        @Test
+        void checks1ok1() throws Exception {
+            String marks = "" +
+                    "XXX_______" +
+                    "XX________" +
+                    "XX_X______";
+            success(marks, L, Reverse, 3, 1);
+        }
 
-        assertThat(reachable.checks(field, new Mino(S, Left), 4, 1, 8)).isTrue();
+        @Test
+        void checks2ok1() throws Exception {
+            String marks = "" +
+                    "XXX__XXXXX" +
+                    "XX___XXXXX" +
+                    "XX_XXXXXXX";
+            success(marks, L, Reverse, 3, 1);
+        }
+
+        @Test
+        void checks2ng1() throws Exception {
+            String marks = "" +
+                    "XXX___XXXX" +
+                    "XX___XXXXX" +
+                    "XX_XXXXXXX";
+            fail(marks, L, Reverse, 3, 1);
+        }
+
+        @Test
+        void checks3ok1() throws Exception {
+            String marks = "" +
+                    "XXXX______" +
+                    "XX________" +
+                    "XX_XXXXXXX";
+            success(marks, L, Reverse, 3, 1);
+        }
+
+        @Test
+        void checks3ng1() throws Exception {
+            String marks = "" +
+                    "XXX_______" +
+                    "XX________" +
+                    "XX_XXXXXXX";
+            fail(marks, L, Reverse, 3, 1);
+        }
+
+        @Test
+        void checks4ok1() throws Exception {
+            String marks = "" +
+                    "____XXXXXX" +
+                    "XX___XXXXX" +
+                    "XX_XXXXXXX";
+            success(marks, L, Reverse, 3, 1);
+        }
+
+        @Test
+        void checks4ng1() throws Exception {
+            String marks = "" +
+                    "____XXXXXX" +
+                    "X____XXXXX" +
+                    "XX_XXXXXXX";
+            fail(marks, L, Reverse, 3, 1);
+        }
+
+        @Test
+        void checks5ok1() throws Exception {
+            String marks = "" +
+                    "___XXXXXXX" +
+                    "_____XXXXX" +
+                    "XX_XXXXXXX";
+            success(marks, L, Reverse, 3, 1);
+        }
+
+        @Test
+        void checks5ng1() throws Exception {
+            String marks = "" +
+                    "____XXXXXX" +
+                    "_____XXXXX" +
+                    "XX_XXXXXXX";
+            fail(marks, L, Reverse, 3, 1);
+        }
+
+        @Test
+        void checks6ok1() throws Exception {
+            String marks = "" +
+                    "XXXX_XXXXX" +
+                    "XX___XXXXX";
+            success(marks, L, Spawn, 3, 0);
+        }
+
+        @Test
+        void checks6ok2() throws Exception {
+            String marks = "" +
+                    "XXX__XXXXX" +
+                    "XX___XXXXX";
+            success(marks, L, Spawn, 3, 0);
+        }
+
+        @Test
+        void checks6ok3() throws Exception {
+            String marks = "" +
+                    "XXXX__XXXX" +
+                    "XX___XXXXX";
+            success(marks, L, Spawn, 3, 0);
+        }
+
+        @Test
+        void checks6ng1() throws Exception {
+            String marks = "" +
+                    "XXX___XXXX" +
+                    "XX___XXXXX";
+            fail(marks, L, Spawn, 3, 0);
+        }
+
+        @Test
+        void checks7ok1() throws Exception {
+            String marks = "" +
+                    "____XXXXXX" +
+                    "XX___XXXXX" +
+                    "XX___XXXXX";
+            success(marks, L, Spawn, 3, 0);
+        }
+
+        @Test
+        void checks7ng1() throws Exception {
+            String marks = "" +
+                    "____XXXXXX" +
+                    "X____XXXXX" +
+                    "XX___XXXXX";
+            fail(marks, L, Spawn, 3, 0);
+        }
+
+        @Test
+        void checks8ok1() throws Exception {
+            String marks = "" +
+                    "XXX_______" +
+                    "XX________" +
+                    "XX_XXXXXXX" +
+                    "XX_XXXXXXX" +
+                    "XX__XXXXXX";
+            success(marks, L, Right, 2, 1);
+        }
+
+        @Test
+        void checks8ok2() throws Exception {
+            String marks = "" +
+                    "XXX_______" +
+                    "XX________" +
+                    "XX________" +
+                    "XX_XXXXXXX" +
+                    "XX_XXXXXXX" +
+                    "XX__XXXXXX";
+            success(marks, L, Right, 2, 1);
+        }
+
+        @Test
+        void checks8ok3() throws Exception {
+            String marks = "" +
+                    "XX________" +
+                    "X_________" +
+                    "XX_XXXXXXX" +
+                    "XX_XXXXXXX" +
+                    "XX__XXXXXX";
+            success(marks, L, Right, 2, 1);
+        }
+
+        @Test
+        void checks8ok4() throws Exception {
+            String marks = "" +
+                    "XX________" +
+                    "X_________" +
+                    "X_________" +
+                    "XX_XXXXXXX" +
+                    "XX_XXXXXXX" +
+                    "XX__XXXXXX";
+            success(marks, L, Right, 2, 1);
+        }
+
+        @Test
+        void checks8ng1() throws Exception {
+            String marks = "" +
+                    "XX_XXXXXXX" +
+                    "XX_XXXXXXX" +
+                    "XX__XXXXXX";
+            fail(marks, L, Right, 2, 1);
+        }
     }
 
-    @Test
-    void checks5false() throws Exception {
-        String marks = "" +
-                "__________" +
-                "XXX_XXXXXX" +
-                "XXX_XXXXXX" +
-                "XXX__XXXXX" +
-                "";
-        Field field = FieldFactory.createField(marks);
+    @Nested
+    class WithJ {
+        @Test
+        void checks1ok1() throws Exception {
+            String marks = "" +
+                    "_______XXX" +
+                    "________XX" +
+                    "______X_XX";
+            success(marks, J, Reverse, 6, 1);
+        }
 
-        assertThat(reachable.checks(field, new Mino(L, Right), 3, 1, 8)).isFalse();
+        @Test
+        void checks2ok1() throws Exception {
+            String marks = "" +
+                    "XXXXX__XXX" +
+                    "XXXXX___XX" +
+                    "XXXXXXX_XX";
+            success(marks, J, Reverse, 6, 1);
+        }
+
+        @Test
+        void checks2ng1() throws Exception {
+            String marks = "" +
+                    "XXXX___XXX" +
+                    "XXXXX___XX" +
+                    "XXXXXXX_XX";
+            fail(marks, J, Reverse, 6, 1);
+        }
+
+        @Test
+        void checks3ok1() throws Exception {
+            String marks = "" +
+                    "______XXXX" +
+                    "________XX" +
+                    "XXXXXXX_XX";
+            success(marks, J, Reverse, 6, 1);
+        }
+
+        @Test
+        void checks3ng1() throws Exception {
+            String marks = "" +
+                    "_______XXX" +
+                    "________XX" +
+                    "XXXXXXX_XX";
+            fail(marks, J, Reverse, 6, 1);
+        }
+
+        @Test
+        void checks4ok1() throws Exception {
+            String marks = "" +
+                    "XXXXXX____" +
+                    "XXXXX___XX" +
+                    "XXXXXXX_XX";
+            success(marks, J, Reverse, 6, 1);
+        }
+
+        @Test
+        void checks4ng1() throws Exception {
+            String marks = "" +
+                    "XXXXXX____" +
+                    "XXXXX____X" +
+                    "XXXXXXX_XX";
+            fail(marks, J, Reverse, 6, 1);
+        }
+
+        @Test
+        void checks5ok1() throws Exception {
+            String marks = "" +
+                    "XXXXXXX___" +
+                    "XXXXX_____" +
+                    "XXXXXXX_XX";
+            success(marks, J, Reverse, 6, 1);
+        }
+
+        @Test
+        void checks5ng1() throws Exception {
+            String marks = "" +
+                    "XXXXXX____" +
+                    "XXXXX_____" +
+                    "XXXXXXX_XX";
+            fail(marks, J, Reverse, 6, 1);
+        }
+
+        @Test
+        void checks6ok1() throws Exception {
+            String marks = "" +
+                    "XXXXX_XXXX" +
+                    "XXXXX___XX";
+            success(marks, J, Spawn, 6, 0);
+        }
+
+        @Test
+        void checks6ok2() throws Exception {
+            String marks = "" +
+                    "XXXXX__XXX" +
+                    "XXXXX___XX";
+            success(marks, J, Spawn, 6, 0);
+        }
+
+        @Test
+        void checks6ok3() throws Exception {
+            String marks = "" +
+                    "XXXX__XXXX" +
+                    "XXXXX___XX";
+            success(marks, J, Spawn, 6, 0);
+        }
+
+        @Test
+        void checks6ng1() throws Exception {
+            String marks = "" +
+                    "XXXX___XXX" +
+                    "XXXXX___XX";
+            fail(marks, J, Spawn, 6, 0);
+        }
+
+        @Test
+        void checks7ok1() throws Exception {
+            String marks = "" +
+                    "XXXXXX____" +
+                    "XXXXX___XX" +
+                    "XXXXX___XX";
+            success(marks, J, Spawn, 6, 0);
+        }
+
+        @Test
+        void checks7ng1() throws Exception {
+            String marks = "" +
+                    "XXXXXX____" +
+                    "XXXXX____X" +
+                    "XXXXX___XX";
+            fail(marks, J, Spawn, 6, 0);
+        }
+
+        @Test
+        void checks8ok1() throws Exception {
+            String marks = "" +
+                    "_______XXX" +
+                    "________XX" +
+                    "XXXXXXX_XX" +
+                    "XXXXXXX_XX" +
+                    "XXXXXX__XX";
+            success(marks, J, Left, 7, 1);
+        }
+
+        @Test
+        void checks8ok2() throws Exception {
+            String marks = "" +
+                    "_______XXX" +
+                    "________XX" +
+                    "________XX" +
+                    "XXXXXXX_XX" +
+                    "XXXXXXX_XX" +
+                    "XXXXXX__XX";
+            success(marks, J, Left, 7, 1);
+        }
+
+        @Test
+        void checks8ok3() throws Exception {
+            String marks = "" +
+                    "________XX" +
+                    "_________X" +
+                    "XXXXXXX_XX" +
+                    "XXXXXXX_XX" +
+                    "XXXXXX__XX";
+            success(marks, J, Left, 7, 1);
+        }
+
+        @Test
+        void checks8ok4() throws Exception {
+            String marks = "" +
+                    "________XX" +
+                    "_________X" +
+                    "_________X" +
+                    "XXXXXXX_XX" +
+                    "XXXXXXX_XX" +
+                    "XXXXXX__XX";
+            success(marks, J, Left, 7, 1);
+        }
+
+        @Test
+        void checks8ng1() throws Exception {
+            String marks = "" +
+                    "XXXXXXX_XX" +
+                    "XXXXXXX_XX" +
+                    "XXXXXX__XX";
+            fail(marks, J, Left, 7, 1);
+        }
     }
 
-    @Test
-    void checks5true() throws Exception {
-        String marks = "" +
-                "XXX_______" +
-                "XX________" +
-                "XX________" +
-                "XXX_XXXXXX" +
-                "XXX_XXXXXX" +
-                "XXX__XXXXX" +
-                "";
-        Field field = FieldFactory.createField(marks);
+    @Nested
+    class WithT {
+        @Test
+        void checks1ok1() throws Exception {
+            String marks = "" +
+                    "XX________" +
+                    "X_________" +
+                    "X_________" +
+                    "X_XXXXXXXX";
+            success(marks, T, Right, 1, 1);
+        }
 
-        assertThat(reachable.checks(field, new Mino(L, Right), 3, 1, 8)).isTrue();
+        @Test
+        void checks1ok2() throws Exception {
+            String marks = "" +
+                    "________XX" +
+                    "_________X" +
+                    "_________X" +
+                    "XXXXXXXX_X";
+            success(marks, T, Left, 8, 1);
+        }
+
+        @Test
+        void checks2ok1() throws Exception {
+            String marks = "" +
+                    "_____XXXXX" +
+                    "XXX__XXXXX" +
+                    "XX___XXXXX";
+            success(marks, T, Spawn, 3, 0);
+        }
+
+        @Test
+        void checks2ok2() throws Exception {
+            String marks = "" +
+                    "XX________" +
+                    "XX__XXXXXX" +
+                    "XX___XXXXX";
+            success(marks, T, Spawn, 3, 0);
+        }
+
+        @Test
+        void checks2ng1() throws Exception {
+            String marks = "" +
+                    "_____XXXXX" +
+                    "XXX___XXXX" +
+                    "XX___XXXXX";
+            fail(marks, T, Spawn, 3, 0);
+        }
+
+        @Test
+        void checks2ng2() throws Exception {
+            String marks = "" +
+                    "XX________" +
+                    "X___XXXXXX" +
+                    "XX___XXXXX";
+            fail(marks, T, Spawn, 3, 0);
+        }
+
+        @Test
+        void checks3ok1() throws Exception {
+            String marks = "" +
+                    "____XXXXXX" +
+                    "XX___XXXXX" +
+                    "XXX_XXXXXX";
+            success(marks, T, Reverse, 3, 1);
+        }
+
+        @Test
+        void checks3ok2() throws Exception {
+            String marks = "" +
+                    "XXX_______" +
+                    "XX___XXXXX" +
+                    "XXX_XXXXXX";
+            success(marks, T, Reverse, 3, 1);
+        }
+
+        @Test
+        void checks4ok1() throws Exception {
+            String marks = "" +
+                    "XXXX______" +
+                    "XXX_______" +
+                    "XXX_XXXXXX" +
+                    "XXX__XXXXX" +
+                    "XXX_XXXXXX" +
+                    "";
+            success(marks, T, Right, 3, 1);
+        }
+
+        @Test
+        void checks4ok2() throws Exception {
+            String marks = "" +
+                    "___XX_____" +
+                    "____X_____" +
+                    "XXX_XXXXXX" +
+                    "XX__XXXXXX" +
+                    "XXX_XXXXXX" +
+                    "";
+            success(marks, T, Left, 3, 1);
+        }
+
+        @Test
+        void checks4ng1() throws Exception {
+            String marks = "" +
+                    "XXXX______" +
+                    "XXX_______" +
+                    "XXX_______" +
+                    "XXX_XXXXXX" +
+                    "XXX__XXXXX" +
+                    "XXX_XXXXXX" +
+                    "";
+            fail(marks, T, Right, 3, 1);
+        }
+
+        @Test
+        void checks4ng2() throws Exception {
+            String marks = "" +
+                    "___XX_____" +
+                    "____X_____" +
+                    "____X_____" +
+                    "XXX_XXXXXX" +
+                    "XX__XXXXXX" +
+                    "XXX_XXXXXX" +
+                    "";
+            fail(marks, T, Left, 3, 1);
+        }
+
+        @Test
+        void checks4ng3() throws Exception {
+            String marks = "" +
+                    "XXX_XXXXXX" +
+                    "XXX__XXXXX" +
+                    "XXX_XXXXXX" +
+                    "";
+            fail(marks, T, Right, 3, 1);
+        }
+
+        @Test
+        void checks4ng4() throws Exception {
+            String marks = "" +
+                    "XXX_XXXXXX" +
+                    "XX__XXXXXX" +
+                    "XXX_XXXXXX" +
+                    "";
+            fail(marks, T, Left, 3, 1);
+        }
+
+        @Test
+        void checks4ng5() throws Exception {
+            String marks = "" +
+                    "XXXX______" +
+                    "XXX_______" +
+                    "XXX__XXXXX" +
+                    "XXX__XXXXX" +
+                    "XXX_XXXXXX" +
+                    "";
+            fail(marks, T, Right, 3, 1);
+        }
+
+        @Test
+        void checks4ng6() throws Exception {
+            String marks = "" +
+                    "___XX_____" +
+                    "____X_____" +
+                    "XX__XXXXXX" +
+                    "XX__XXXXXX" +
+                    "XXX_XXXXXX" +
+                    "";
+            fail(marks, T, Left, 3, 1);
+        }
+
+        @Test
+        void checks5ok1() throws Exception {
+            String marks = "" +
+                    "__XXXX____" +
+                    "_____X____" +
+                    "____XXXXXX" +
+                    "XXX__XXXXX" +
+                    "XXX_XXXXXX" +
+                    "";
+            success(marks, T, Right, 3, 1);
+        }
+
+        @Test
+        void checks5ok2() throws Exception {
+            String marks = "" +
+                    "_XXXX_____" +
+                    "_X________" +
+                    "XXX_______" +
+                    "XX__XXXXXX" +
+                    "XXX_XXXXXX" +
+                    "";
+            success(marks, T, Left, 3, 1);
+        }
+
+        @Test
+        void checks5ng1() throws Exception {
+            String marks = "" +
+                    "___XXX____" +
+                    "_____X____" +
+                    "____XXXXXX" +
+                    "XXX__XXXXX" +
+                    "XXX_XXXXXX" +
+                    "";
+            fail(marks, T, Right, 3, 1);
+        }
+
+        @Test
+        void checks5ng2() throws Exception {
+            String marks = "" +
+                    "_XXX______" +
+                    "_X________" +
+                    "XXX_______" +
+                    "XX__XXXXXX" +
+                    "XXX_XXXXXX" +
+                    "";
+            fail(marks, T, Left, 3, 1);
+        }
     }
 
-    @Test
-    void checks6() throws Exception {
-        String marks = "" +
-                "XX_XXXXXXX" +
-                "X__XXXXXXX" +
-                "___XXXXXXX" +
-                "___XXXXXXX" +
-                "__XXXXXXXX" +
-                "_XXXXXXXXX" +
-                "";
-        Field field = FieldFactory.createField(marks);
+    @Nested
+    class Other {
+        @Test
+        void checksLimit() throws Exception {
+            String marks = "" +
+                    "XX_XXXXXXX" +
+                    "X__XXXXXXX" +
+                    "___XXXXXXX" +
+                    "___XXXXXXX" +
+                    "__XXXXXXXX" +
+                    "_XXXXXXXXX" +
+                    "";
+            Field field = FieldFactory.createField(marks);
 
-        assertThat(reachable.checks(field, new Mino(T, Right), 1, 2, 6)).isFalse();
+            assertThat(reachable.checks(field, new Mino(T, Right), 1, 2, 6)).isFalse();
+        }
     }
 }
