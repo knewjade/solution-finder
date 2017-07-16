@@ -86,6 +86,9 @@ public class OperationWithKeyComparatorTest {
 
         Mino newMino = new MinoFactory().create(Block.I, Rotate.Spawn);
         Long choose = randoms.keys();
+        while (choose == deleteKey)
+            choose = randoms.keys();
+
         OperationWithKey operationWithKey2 = createNewOperationWithKey(newMino, x, y, choose, usingKey);
 
         // assert is not 0 & sign reversed
