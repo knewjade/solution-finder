@@ -5,54 +5,257 @@ import core.field.FieldFactory;
 import core.mino.*;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static core.mino.Block.*;
+import static core.srs.Rotate.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class LockedReachableTest {
-    @Test
-    void checks1() throws Exception {
-        LockedReachable reachable = createLockedReachable();
-
-        String marks = "" +
-                "XX________" +
-                "X_________" +
-                "X_XXXXXXXX" +
-                "X_XXXXXXXX" +
-                "X_XXXXXXXX";
-        Field field = FieldFactory.createField(marks);
-
-        assertThat(reachable.checks(field, new Mino(Block.I, Rotate.Left), 1, 1, 8)).isFalse();
-        assertThat(reachable.checks(field, new Mino(Block.I, Rotate.Right), 1, 2, 8)).isTrue();
-    }
+    private final LockedReachable reachable = createLockedReachable();
 
     private LockedReachable createLockedReachable() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new PassedMinoShifter();
         MinoRotation minoRotation = new MinoRotation();
-        return new LockedReachable(minoFactory, minoShifter, minoRotation, 4);
+        return new LockedReachable(minoFactory, minoShifter, minoRotation, 8);
     }
 
-    @Test
-    void checks2() throws Exception {
-        LockedReachable reachable = createLockedReachable();
-
-        String marks = "" +
-                "XXX_______" +
-                "XXX_______" +
-                "XXX_XXXXXX" +
-                "XXX____XXX" +
-                "";
+    private void success(String marks, Block block, Rotate rotate, int x, int y) {
         Field field = FieldFactory.createField(marks);
-
-        assertThat(reachable.checks(field, new Mino(Block.I, Rotate.Left), 4, 0, 8)).isTrue();
-        assertThat(reachable.checks(field, new Mino(Block.I, Rotate.Right), 5, 0, 8)).isFalse();
+        Mino mino = new Mino(block, rotate);
+        assert field.canPutMino(mino, x, y);
+        assertThat(reachable.checks(field, mino, x, y, 8)).isTrue();
     }
+
+    private void fail(String marks, Block block, Rotate rotate, int x, int y) {
+        Field field = FieldFactory.createField(marks);
+        Mino mino = new Mino(block, rotate);
+        assert field.canPutMino(mino, x, y);
+        assertThat(reachable.checks(field, mino, x, y, 8)).isFalse();
+    }
+
+    @Nested
+    class WithI {
+        @Test
+        void checks1ok1() throws Exception {
+            String marks = "" +
+                    "XX________" +
+                    "X_________" +
+                    "X_XXXXXXXX" +
+                    "X_XXXXXXXX" +
+                    "X_XXXXXXXX";
+            fail(marks, I, Left, 1, 1);
+            success(marks, I, Right, 1, 2);
+        }
+
+        @Test
+        void checks1ng1() throws Exception {
+            String marks = "" +
+                    "XX________" +
+                    "X_________" +
+                    "X_X_XXXXXX" +
+                    "X_X_XXXXXX" +
+                    "X_XXXXXXXX";
+            fail(marks, I, Left, 1, 1);
+            fail(marks, I, Right, 1, 2);
+        }
+
+        @Test
+        void checks1ng2() throws Exception {
+            String marks = "" +
+                    "XX________" +
+                    "X_________" +
+                    "X_XX_XXXXX" +
+                    "X_XX_XXXXX" +
+                    "X_XXXXXXXX";
+            fail(marks, I, Left, 1, 1);
+            fail(marks, I, Right, 1, 2);
+        }
+
+        @Test
+        void checks2ok1() throws Exception {
+            String marks = "" +
+                    "________XX" +
+                    "_________X" +
+                    "XXXXXXXX_X" +
+                    "XXXXXXXX_X" +
+                    "XXXXXXXX_X";
+            success(marks, I, Right, 8, 2);
+            fail(marks, I, Left, 8, 1);
+        }
+
+        @Test
+        void checks2ng1() throws Exception {
+            String marks = "" +
+                    "________XX" +
+                    "_________X" +
+                    "XXXXXXX__X" +
+                    "XXXXXXXX_X" +
+                    "XXXXXXXX_X";
+            fail(marks, I, Right, 8, 2);
+            fail(marks, I, Left, 8, 1);
+        }
+
+        @Test
+        void checks2ng2() throws Exception {
+            String marks = "" +
+                    "________XX" +
+                    "_________X" +
+                    "XXXXX_XX_X" +
+                    "XXXXXXXX_X" +
+                    "XXXXXXXX_X";
+            fail(marks, I, Right, 8, 2);
+            fail(marks, I, Left, 8, 1);
+        }
+
+        @Test
+        void checks3ok1() throws Exception {
+            String marks = "" +
+                    "XXX_______" +
+                    "XXX_______" +
+                    "XXX_XXXXXX" +
+                    "XXX____XXX" +
+                    "";
+            success(marks, I, Reverse, 5, 0);
+            fail(marks, I, Spawn, 4, 0);
+        }
+
+        @Test
+        void checks3ng1() throws Exception {
+            String marks = "" +
+                    "__________" +
+                    "XXX_______" +
+                    "XXX_XXXXXX" +
+                    "XXX____XXX" +
+                    "";
+            fail(marks, I, Reverse, 5, 0);
+            fail(marks, I, Spawn, 4, 0);
+        }
+
+        @Test
+        void checks3ok2() throws Exception {
+            String marks = "" +
+                    "__________" +
+                    "XXX_______" +
+                    "X____XXXXX" +
+                    "XXX____XXX" +
+                    "";
+            success(marks, I, Reverse, 3, 1);
+            fail(marks, I, Spawn, 2, 1);
+
+            fail(marks, I, Reverse, 5, 0);
+            fail(marks, I, Spawn, 4, 0);
+        }
+
+        @Test
+        void checks3ok3() throws Exception {
+            String marks = "" +
+                    "X_________" +
+                    "XXX___XXXX" +
+                    "XXX_XXXXXX" +
+                    "XXX____XXX" +
+                    "";
+            success(marks, I, Reverse, 5, 0);
+            success(marks, I, Spawn, 4, 0);
+        }
+
+        @Test
+        void checks3ok4() throws Exception {
+            String marks = "" +
+                    "__________" +
+                    "XXX___XXXX" +
+                    "XXX_XXXXXX" +
+                    "XXX____XXX" +
+                    "";
+            fail(marks, I, Reverse, 5, 0);
+            success(marks, I, Spawn, 4, 0);
+        }
+
+        @Test
+        void checks4ok1() throws Exception {
+            String marks = "" +
+                    "_______XXX" +
+                    "_______XXX" +
+                    "XXXXXX_XXX" +
+                    "XXX____XXX" +
+                    "";
+            success(marks, I, Reverse, 5, 0);
+            fail(marks, I, Spawn, 4, 0);
+        }
+
+        @Test
+        void checks4ok2() throws Exception {
+            String marks = "" +
+                    "__________" +
+                    "_______XXX" +
+                    "XXXXXX_XXX" +
+                    "XXX____XXX" +
+                    "";
+            success(marks, I, Reverse, 5, 0);
+            fail(marks, I, Spawn, 4, 0);
+        }
+
+        @Test
+        void checks4ok3() throws Exception {
+            String marks = "" +
+                    "__________" +
+                    "_______XXX" +
+                    "XXXXX____X" +
+                    "XXX____XXX" +
+                    "";
+            success(marks, I, Reverse, 7, 1);
+            fail(marks, I, Spawn, 6, 1);
+
+            fail(marks, I, Reverse, 5, 0);
+            fail(marks, I, Spawn, 4, 0);
+        }
+
+        @Test
+        void checks4ok4() throws Exception {
+            String marks = "" +
+                    "_______XXX" +
+                    "XXXX___XXX" +
+                    "XXXXXX_XXX" +
+                    "XXX____XXX" +
+                    "";
+            success(marks, I, Reverse, 5, 0);
+            success(marks, I, Spawn, 4, 0);
+        }
+
+        @Test
+        void checks4ok5() throws Exception {
+            String marks = "" +
+                    "_________X" +
+                    "XXXX___XXX" +
+                    "XXXXXX_XXX" +
+                    "XXX____XXX" +
+                    "";
+            success(marks, I, Reverse, 5, 0);
+            success(marks, I, Spawn, 4, 0);
+        }
+    }
+
+    @Nested
+    class WithO {
+        @Test
+        void checks1ok1() throws Exception {
+            String marks = "" +
+                    "X__XXXXXXX" +
+                    "X___XXXXXX" +
+                    "XX__XXXXXX";
+            success(marks, O, Spawn, 1, 1);
+            fail(marks, O, Spawn, 2, 0);
+            fail(marks, O, Right, 2, 1);
+            fail(marks, O, Reverse, 3, 1);
+            fail(marks, O, Left, 3, 0);
+        }
+    }
+
 
     @Test
     void checks3() throws Exception {
-        LockedReachable reachable = createLockedReachable();
-
         String marks = "" +
                 "XXXX______" +
                 "XXX_______" +
@@ -62,13 +265,11 @@ class LockedReachableTest {
                 "";
         Field field = FieldFactory.createField(marks);
 
-        assertThat(reachable.checks(field, new Mino(Block.T, Rotate.Right), 3, 1, 8)).isTrue();
+        assertThat(reachable.checks(field, new Mino(T, Right), 3, 1, 8)).isTrue();
     }
 
     @Test
     void checks4false() throws Exception {
-        LockedReachable reachable = createLockedReachable();
-
         String marks = "" +
                 "__________" +
                 "XXX_XXXXXX" +
@@ -77,13 +278,11 @@ class LockedReachableTest {
                 "";
         Field field = FieldFactory.createField(marks);
 
-        assertThat(reachable.checks(field, new Mino(Block.S, Rotate.Left), 4, 1, 8)).isFalse();
+        assertThat(reachable.checks(field, new Mino(S, Left), 4, 1, 8)).isFalse();
     }
 
     @Test
     void checks4true() throws Exception {
-        LockedReachable reachable = createLockedReachable();
-
         String marks = "" +
                 "_____X____" +
                 "XXX_XXXXXX" +
@@ -92,13 +291,11 @@ class LockedReachableTest {
                 "";
         Field field = FieldFactory.createField(marks);
 
-        assertThat(reachable.checks(field, new Mino(Block.S, Rotate.Left), 4, 1, 8)).isTrue();
+        assertThat(reachable.checks(field, new Mino(S, Left), 4, 1, 8)).isTrue();
     }
 
     @Test
     void checks5false() throws Exception {
-        LockedReachable reachable = createLockedReachable();
-
         String marks = "" +
                 "__________" +
                 "XXX_XXXXXX" +
@@ -107,13 +304,11 @@ class LockedReachableTest {
                 "";
         Field field = FieldFactory.createField(marks);
 
-        assertThat(reachable.checks(field, new Mino(Block.L, Rotate.Right), 3, 1, 8)).isFalse();
+        assertThat(reachable.checks(field, new Mino(L, Right), 3, 1, 8)).isFalse();
     }
 
     @Test
     void checks5true() throws Exception {
-        LockedReachable reachable = createLockedReachable();
-
         String marks = "" +
                 "XXX_______" +
                 "XX________" +
@@ -124,16 +319,11 @@ class LockedReachableTest {
                 "";
         Field field = FieldFactory.createField(marks);
 
-        assertThat(reachable.checks(field, new Mino(Block.L, Rotate.Right), 3, 1, 8)).isTrue();
+        assertThat(reachable.checks(field, new Mino(L, Right), 3, 1, 8)).isTrue();
     }
 
     @Test
     void checks6() throws Exception {
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new PassedMinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
-        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, 6);
-
         String marks = "" +
                 "XX_XXXXXXX" +
                 "X__XXXXXXX" +
@@ -144,6 +334,6 @@ class LockedReachableTest {
                 "";
         Field field = FieldFactory.createField(marks);
 
-        assertThat(reachable.checks(field, new Mino(Block.T, Rotate.Right), 1, 2, 6)).isFalse();
+        assertThat(reachable.checks(field, new Mino(T, Right), 1, 2, 6)).isFalse();
     }
 }
