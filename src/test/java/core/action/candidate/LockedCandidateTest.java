@@ -117,7 +117,7 @@ class LockedCandidateTest {
         Randoms randoms = new Randoms();
 
         MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new MinoShifter();
+        MinoShifter minoShifter = new PassedMinoShifter();
         MinoRotation minoRotation = new MinoRotation();
 
         for (int count = 0; count < 10000; count++) {
@@ -140,8 +140,7 @@ class LockedCandidateTest {
                             int y = action.getY();
                             Mino mino = minoFactory.create(block, action.getRotate());
 
-                            Action transformedAction = minoShifter.createTransformedAction(block, action);
-                            if (actions.contains(transformedAction)) {
+                            if (actions.contains(action)) {
                                 // おける
                                 assertThat(field.canPutMino(mino, x, y)).isTrue();
                                 assertThat(field.isOnGround(mino, x, y)).isTrue();

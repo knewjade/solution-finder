@@ -5,18 +5,14 @@ import core.field.FieldFactory;
 import core.mino.*;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class LockedReachableTest {
+class LockedReachableTest {
     @Test
-    public void checks1() throws Exception {
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new PassedMinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
-        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, 4);
+    void checks1() throws Exception {
+        LockedReachable reachable = createLockedReachable();
 
         String marks = "" +
                 "XX________" +
@@ -26,16 +22,20 @@ public class LockedReachableTest {
                 "X_XXXXXXXX";
         Field field = FieldFactory.createField(marks);
 
-        assertThat(reachable.checks(field, new Mino(Block.I, Rotate.Left), 1, 1, 8), is(false));
-        assertThat(reachable.checks(field, new Mino(Block.I, Rotate.Right), 1, 2, 8), is(true));
+        assertThat(reachable.checks(field, new Mino(Block.I, Rotate.Left), 1, 1, 8)).isFalse();
+        assertThat(reachable.checks(field, new Mino(Block.I, Rotate.Right), 1, 2, 8)).isTrue();
     }
 
-    @Test
-    public void checks2() throws Exception {
+    private LockedReachable createLockedReachable() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new PassedMinoShifter();
         MinoRotation minoRotation = new MinoRotation();
-        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, 4);
+        return new LockedReachable(minoFactory, minoShifter, minoRotation, 4);
+    }
+
+    @Test
+    void checks2() throws Exception {
+        LockedReachable reachable = createLockedReachable();
 
         String marks = "" +
                 "XXX_______" +
@@ -45,16 +45,13 @@ public class LockedReachableTest {
                 "";
         Field field = FieldFactory.createField(marks);
 
-        assertThat(reachable.checks(field, new Mino(Block.I, Rotate.Left), 4, 0, 8), is(true));
-        assertThat(reachable.checks(field, new Mino(Block.I, Rotate.Right), 5, 0, 8), is(false));
+        assertThat(reachable.checks(field, new Mino(Block.I, Rotate.Left), 4, 0, 8)).isTrue();
+        assertThat(reachable.checks(field, new Mino(Block.I, Rotate.Right), 5, 0, 8)).isFalse();
     }
 
     @Test
-    public void checks3() throws Exception {
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new PassedMinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
-        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, 4);
+    void checks3() throws Exception {
+        LockedReachable reachable = createLockedReachable();
 
         String marks = "" +
                 "XXXX______" +
@@ -65,15 +62,12 @@ public class LockedReachableTest {
                 "";
         Field field = FieldFactory.createField(marks);
 
-        assertThat(reachable.checks(field, new Mino(Block.T, Rotate.Right), 3, 1, 8), is(true));
+        assertThat(reachable.checks(field, new Mino(Block.T, Rotate.Right), 3, 1, 8)).isTrue();
     }
 
     @Test
-    public void checks4false() throws Exception {
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new PassedMinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
-        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, 4);
+    void checks4false() throws Exception {
+        LockedReachable reachable = createLockedReachable();
 
         String marks = "" +
                 "__________" +
@@ -83,15 +77,12 @@ public class LockedReachableTest {
                 "";
         Field field = FieldFactory.createField(marks);
 
-        assertThat(reachable.checks(field, new Mino(Block.S, Rotate.Left), 4, 1, 8), is(false));
+        assertThat(reachable.checks(field, new Mino(Block.S, Rotate.Left), 4, 1, 8)).isFalse();
     }
 
     @Test
-    public void checks4true() throws Exception {
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new PassedMinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
-        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, 4);
+    void checks4true() throws Exception {
+        LockedReachable reachable = createLockedReachable();
 
         String marks = "" +
                 "_____X____" +
@@ -101,15 +92,12 @@ public class LockedReachableTest {
                 "";
         Field field = FieldFactory.createField(marks);
 
-        assertThat(reachable.checks(field, new Mino(Block.S, Rotate.Left), 4, 1, 8), is(true));
+        assertThat(reachable.checks(field, new Mino(Block.S, Rotate.Left), 4, 1, 8)).isTrue();
     }
 
     @Test
-    public void checks5false() throws Exception {
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new PassedMinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
-        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, 4);
+    void checks5false() throws Exception {
+        LockedReachable reachable = createLockedReachable();
 
         String marks = "" +
                 "__________" +
@@ -119,15 +107,12 @@ public class LockedReachableTest {
                 "";
         Field field = FieldFactory.createField(marks);
 
-        assertThat(reachable.checks(field, new Mino(Block.L, Rotate.Right), 3, 1, 8), is(false));
+        assertThat(reachable.checks(field, new Mino(Block.L, Rotate.Right), 3, 1, 8)).isFalse();
     }
 
     @Test
-    public void checks5true() throws Exception {
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new PassedMinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
-        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, 4);
+    void checks5true() throws Exception {
+        LockedReachable reachable = createLockedReachable();
 
         String marks = "" +
                 "XXX_______" +
@@ -139,11 +124,11 @@ public class LockedReachableTest {
                 "";
         Field field = FieldFactory.createField(marks);
 
-        assertThat(reachable.checks(field, new Mino(Block.L, Rotate.Right), 3, 1, 8), is(true));
+        assertThat(reachable.checks(field, new Mino(Block.L, Rotate.Right), 3, 1, 8)).isTrue();
     }
 
     @Test
-    public void checks6() throws Exception {
+    void checks6() throws Exception {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new PassedMinoShifter();
         MinoRotation minoRotation = new MinoRotation();
@@ -157,9 +142,8 @@ public class LockedReachableTest {
                 "__XXXXXXXX" +
                 "_XXXXXXXXX" +
                 "";
-        Field field = FieldFactory.createField(marks
-        );
+        Field field = FieldFactory.createField(marks);
 
-        assertThat(reachable.checks(field, new Mino(Block.T, Rotate.Right), 1, 2, 6), is(false));
+        assertThat(reachable.checks(field, new Mino(Block.T, Rotate.Right), 1, 2, 6)).isFalse();
     }
 }
