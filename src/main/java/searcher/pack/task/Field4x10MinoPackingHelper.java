@@ -26,18 +26,6 @@ public class Field4x10MinoPackingHelper implements TaskResultHelper {
                 new SimpleOperationWithKey(new Mino(Block.I, Rotate.Left), 0, 0L, 1074791425L, 0)
         );
 
-        private static BlockField parseToBlockField(List<OperationWithKey> operations, int height) {
-            BlockField blockField = new BlockField(height);
-            for (OperationWithKey operation : operations) {
-                SmallField smallField = new SmallField();
-                Mino mino = operation.getMino();
-                smallField.putMino(mino, operation.getX(), operation.getY());
-                smallField.insertWhiteLineWithKey(operation.getNeedDeletedKey());
-                blockField.merge(smallField, mino.getBlock());
-            }
-            return blockField;
-        }
-
         private final List<OperationWithKey> operationWithKeys = OPERATION_WITH_KEYS;
         private final ColumnSmallField columnSmallField = new ColumnSmallField();
         private final BlockCounter blockCounter = new BlockCounter(Collections.singletonList(Block.I));
