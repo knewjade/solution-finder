@@ -32,7 +32,7 @@ public class OperationHistory {
         return new OperationHistory(newArray, nextIndex + 1);
     }
 
-    // TODO: delete method
+    // TODO: delete method: using getOperationStream
     int[] getOperationNumbers() {
         return operationNumbers;
     }

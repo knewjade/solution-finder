@@ -14,7 +14,7 @@ import java.util.stream.IntStream;
 public class Randoms {
     public static final int FIELD_WIDTH = 10;
     private final Random random;
-    public static final String[] STRINGS = "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ?/_-^¥=~|[]@:1234567890!\"#$%&'()<>あいうえおかきくけこさしすせそタチツテトナニヌネノハヒフヘホ朝午前後電話時計机携帯光空雨青赤車動力鉄　＿？：；：。＾ー￥：＄”（）".split("");
+    private static final String[] STRINGS = "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ?/_-^¥=~|[]@:1234567890!\"#$%&'()<>あいうえおかきくけこさしすせそタチツテトナニヌネノハヒフヘホ朝午前後電話時計机携帯光空雨青赤車動力鉄　＿？：；：。＾ー￥：＄”（）".split("");
 
     public Randoms() {
         this.random = new Random();
@@ -24,7 +24,6 @@ public class Randoms {
         return random.nextBoolean();
     }
 
-    // TODO: unittest
     public boolean nextBoolean(double truePercent) {
         return random.nextDouble() < truePercent;
     }
@@ -153,5 +152,9 @@ public class Randoms {
 
     public String string() {
         return STRINGS[nextInt(STRINGS.length)];
+    }
+
+    public double nextDouble() {
+        return random.nextDouble();
     }
 }

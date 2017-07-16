@@ -63,7 +63,7 @@ class OrderLookupTest {
     }
 
     @Test
-    void forwardJustBlocks() throws Exception {
+    void forwardJustBlocksRandom() throws Exception {
         Randoms randoms = new Randoms();
         for (int size = 2; size <= 13; size++) {
             List<Block> blockList = randoms.blocks(size);
@@ -88,7 +88,7 @@ class OrderLookupTest {
     }
 
     @Test
-    void forwardOverBlocks() throws Exception {
+    void forwardOverBlocksRandom() throws Exception {
         Randoms randoms = new Randoms();
         for (int size = 3; size <= 13; size++) {
             List<Block> blockList = randoms.blocks(size);
@@ -113,7 +113,7 @@ class OrderLookupTest {
     }
 
     @Test
-    void forwardOver2Blocks() throws Exception {
+    void forwardOver2BlocksRandom() throws Exception {
         Randoms randoms = new Randoms();
         for (int size = 4; size <= 13; size++) {
             List<Block> blockList = randoms.blocks(size);
@@ -138,7 +138,7 @@ class OrderLookupTest {
     }
 
     @Test
-    void reverseJustBlocks() throws Exception {
+    void reverseJustBlocksRandom() throws Exception {
         Randoms randoms = new Randoms();
         for (int size = 1; size <= 13; size++) {
             List<Block> blockList = randoms.blocks(size);
@@ -163,7 +163,7 @@ class OrderLookupTest {
     }
 
     @Test
-    void reverseOverBlocks() throws Exception {
+    void reverseOverBlocksRandom() throws Exception {
         Randoms randoms = new Randoms();
         for (int size = 1; size <= 13; size++) {
             List<Block> blockList = randoms.blocks(size);
@@ -186,7 +186,7 @@ class OrderLookupTest {
     }
 
     @Test
-    void reverseOver2Blocks() throws Exception {
+    void reverseOver2BlocksRandom() throws Exception {
         Randoms randoms = new Randoms();
         for (int size = 1; size <= 13; size++) {
             List<Block> blockList = randoms.blocks(size);

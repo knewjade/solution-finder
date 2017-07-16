@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-// TODO: unittest: write
+// TODO: 削除する
 public class BlockCounterMap {
     private static final int[] HASHCODE_PRIMARIES = new int[]{2, 3, 5, 7, 11, 13, 17};
     private static final BiFunction<Block, Integer, Integer> remapCountUp = (block, count) -> count + 1;

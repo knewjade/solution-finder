@@ -127,7 +127,6 @@ public class SmallField implements Field {
         return Long.bitCount(xBoard & column);
     }
 
-    // TODO: unittest
     @Override
     public int getBlockCountOnY(int y) {
         long mask = 0x3ffL << y * FIELD_WIDTH;
@@ -177,25 +176,21 @@ public class SmallField implements Field {
         return 1;
     }
 
-    // TODO: unittest
     @Override
     public void merge(Field other) {
         xBoard |= other.getBoard(0);
     }
 
-    // TODO: unittest
     @Override
     public void reduce(Field other) {
         xBoard &= ~other.getBoard(0);
     }
 
-    // TODO: unittest
     @Override
     public boolean canMerge(Field other) {
         return (xBoard & other.getBoard(0)) == 0L;
     }
 
-    // TODO: unittest
     @Override
     public int getUpperYWith4Blocks() {
         assert Long.bitCount(xBoard) == 4;
@@ -206,29 +201,18 @@ public class SmallField implements Field {
         return BitOperators.bitToY(board);
     }
 
-    // TODO: unittest
     @Override
     public int getLowerY() {
+        if (xBoard == 0)
+            return -1;
         long lowerBit = xBoard & (-xBoard);
         return BitOperators.bitToY(lowerBit);
     }
 
-    // TODO: unittest
-    @Override
-    public void invert(int maxHeight) {
-        xBoard = ~xBoard & BitOperators.getRowMaskBelowY(maxHeight);
-    }
-
-    // TODO: unittest
     @Override
     public void slideLeft(int slide) {
         long mask = BitOperators.getColumnMaskRightX(slide);
         xBoard = (xBoard & mask) >> slide;
-    }
-
-    @Override
-    public Field fix() {
-        return new FrozenSmallField(this);
     }
 
     @Override
@@ -252,14 +236,13 @@ public class SmallField implements Field {
 
     @Override
     public int hashCode() {
-        throw new UnsupportedOperationException("this is mutable object");
+        return (int) (xBoard ^ (xBoard >>> 32));
     }
 
     @Override
     public int compareTo(Field o) {
         return FieldComparator.compareField(this, o);
     }
-
 
     @Override
     public String toString() {

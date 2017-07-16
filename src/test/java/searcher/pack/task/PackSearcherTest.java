@@ -30,6 +30,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+// TODO: write unittest: 4x3専用 resulthelperとbasicが同じ結果になる
+// TODO: write unittest: basic resulthelperでwidthを変えてもが同じ結果になる
 public class PackSearcherTest {
     private static final int FIELD_WIDTH = 10;
 

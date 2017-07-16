@@ -7,7 +7,6 @@ import java.util.*;
  *
  * 指定した要素の順列をすべて列挙する
  */
-// TODO: unittest
 public class AllPermutationIterable<T> implements Iterable<List<T>> {
     private static class PermutationIterator<E> implements Iterator<List<E>> {
         private final int[] keys;  // Permutation check done on theses keys to handle equal objects.

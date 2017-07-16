@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// TODO: unittest テストを強化する
-// TODO: ListPiecesをlong実装にする
 public class OrderLookup {
     // 他のミノ列からホールドを利用して指定したミノ列にできるとき、その他のミノ列をすべて逆算して列挙
     public static ArrayList<StackOrder<Block>> reverseBlocks(List<Block> blocks, int fromDepth) {

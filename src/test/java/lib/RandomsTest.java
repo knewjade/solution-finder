@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.offset;
+import static org.assertj.core.api.Assertions.within;
 
 class RandomsTest {
     @Test
@@ -33,6 +35,42 @@ class RandomsTest {
                     .isGreaterThanOrEqualTo(3)
                     .isLessThanOrEqualTo(19);
         }
+    }
+
+    @Test
+    void nextDouble() {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 10000; count++) {
+            double next = randoms.nextDouble();
+            assertThat(next)
+                    .isGreaterThanOrEqualTo(0.0)
+                    .isLessThan(1.0);
+        }
+    }
+
+    @Test
+    void nextBoolean() {
+        Randoms randoms = new Randoms();
+        int trueCount = 0;
+        int maxCount = 2000000;
+        for (int count = 0; count < maxCount; count++) {
+            if (randoms.nextBoolean())
+                trueCount += 1;
+        }
+        assertThat((double) trueCount / maxCount).isCloseTo(0.5, offset(0.001));
+    }
+
+    @Test
+    void nextBooleanWithPercent() {
+        Randoms randoms = new Randoms();
+        double percent = randoms.nextDouble();
+        int trueCount = 0;
+        int maxCount = 2000000;
+        for (int count = 0; count < maxCount; count++) {
+            if (randoms.nextBoolean(percent))
+                trueCount += 1;
+        }
+        assertThat((double) trueCount / maxCount).isCloseTo(percent, offset(0.001));
     }
 
     @Test

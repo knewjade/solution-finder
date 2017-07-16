@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 /**
  * ホールドありの組み合わせから複数のホールドなしの組み合わせに分解し、重複を取り除く
  */
-// TODO: write unittest: random pickup test
 public class HoldBreakEnumeratePieces implements EnumeratePiecesCore {
     private final PiecesGenerator generator;
     private final int maxDepth;

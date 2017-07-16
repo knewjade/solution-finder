@@ -12,8 +12,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
-// TODO: rewrite 移動したり、クラス化したり
-// TODO: unittest
 public class BuildUp {
     // 指定した手順で組み立てられるか確認
     public static boolean cansBuild(Field fieldOrigin, List<OperationWithKey> operationWithKeys, int height, Reachable reachable) {

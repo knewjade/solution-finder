@@ -97,12 +97,6 @@ public interface Field extends Comparable<Field> {
     // 最も低い位置にあるブロックのY座標を取得
     int getLowerY();
 
-    // maxHeight行より下にあるブロックと空を反転させる  // maxHeight行以上のブロックは削除する
-    void invert(int maxHeight);
-
     // フィールドを左に指定したブロック分スライドさせる
     void slideLeft(int slide);
-
-    // フィールドを完全に固定する
-    Field fix();
 }

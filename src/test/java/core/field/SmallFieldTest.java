@@ -3,6 +3,7 @@ package core.field;
 import core.mino.Block;
 import core.mino.Mino;
 import core.srs.Rotate;
+import lib.Randoms;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -399,5 +400,273 @@ class SmallFieldTest {
 
         MiddleField field4 = FieldFactory.createMiddleField(marks);
         assertThat(field1.equals(field4)).isTrue();
+    }
+
+    @Test
+    void testGetBlockCountOnY() {
+        String marks = "" +
+                "__________" +
+                "X___XXX__X" +
+                "X__X___XX_" +
+                "X____X____" +
+                "X_________" +
+                "";
+        Field field = FieldFactory.createSmallField(marks);
+        assertThat(field.getBlockCountOnY(0)).isEqualTo(1);
+        assertThat(field.getBlockCountOnY(1)).isEqualTo(2);
+        assertThat(field.getBlockCountOnY(2)).isEqualTo(4);
+        assertThat(field.getBlockCountOnY(3)).isEqualTo(5);
+        assertThat(field.getBlockCountOnY(4)).isEqualTo(0);
+    }
+
+    @Test
+    void testCanMerge1() {
+        String marks1 = "" +
+                "XXX_XXX__X" +
+                "X__X___XX_" +
+                "__________" +
+                "__________" +
+                "";
+        Field field1 = FieldFactory.createSmallField(marks1);
+
+        String marks2 = "" +
+                "__________" +
+                "__________" +
+                "X__X_X_X__" +
+                "XXX_XX___X" +
+                "";
+        Field field2 = FieldFactory.createSmallField(marks2);
+
+        assertThat(field1.canMerge(field2)).isTrue();
+    }
+
+    @Test
+    void testCanMerge2() {
+        String marks1 = "" +
+                "XXX_XXX__X" +
+                "X__X___XX_" +
+                "XXXXX_____" +
+                "XXXXX_____" +
+                "";
+        Field field1 = FieldFactory.createSmallField(marks1);
+
+        String marks2 = "" +
+                "__________" +
+                "__________" +
+                "X__X_X_X__" +
+                "XXX_XX___X" +
+                "";
+        Field field2 = FieldFactory.createSmallField(marks2);
+
+        assertThat(field1.canMerge(field2)).isFalse();
+    }
+
+    @Test
+    void testMerge1() {
+        String marks1 = "" +
+                "XXX_XXX__X" +
+                "X__X___XX_" +
+                "__________" +
+                "__________" +
+                "";
+        Field field1 = FieldFactory.createSmallField(marks1);
+
+        String marks2 = "" +
+                "__________" +
+                "__________" +
+                "X__X_X_X__" +
+                "XXX_XX___X" +
+                "";
+        Field field2 = FieldFactory.createSmallField(marks2);
+
+        String expectedMarks = "" +
+                "XXX_XXX__X" +
+                "X__X___XX_" +
+                "X__X_X_X__" +
+                "XXX_XX___X" +
+                "";
+        Field fieldExpected = FieldFactory.createSmallField(expectedMarks);
+
+        field1.merge(field2);
+        assertThat(field1).isEqualTo(fieldExpected);
+        assertThat(field2).isNotEqualTo(fieldExpected);
+    }
+
+    @Test
+    void testMerge2() {
+        String marks1 = "" +
+                "XXX_XXX__X" +
+                "X__X___XX_" +
+                "XXXXX_____" +
+                "XXXXX_____" +
+                "";
+        Field field1 = FieldFactory.createSmallField(marks1);
+
+        String marks2 = "" +
+                "__________" +
+                "__________" +
+                "X__X_X_X__" +
+                "XXX_XX___X" +
+                "";
+        Field field2 = FieldFactory.createSmallField(marks2);
+
+        String expectedMarks = "" +
+                "XXX_XXX__X" +
+                "X__X___XX_" +
+                "XXXXXX_X__" +
+                "XXXXXX___X" +
+                "";
+        Field fieldExpected = FieldFactory.createSmallField(expectedMarks);
+
+        field1.merge(field2);
+        assertThat(field1).isEqualTo(fieldExpected);
+        assertThat(field2).isNotEqualTo(fieldExpected);
+    }
+
+    @Test
+    void testReduce() {
+        String marks1 = "" +
+                "XXXXXXXXX_" +
+                "__________" +
+                "__________" +
+                "XXXXXXXXX_" +
+                "";
+        Field field1 = FieldFactory.createSmallField(marks1);
+
+        String marks2 = "" +
+                "XXXXX_____" +
+                "_X___X____" +
+                "X__X_X_X__" +
+                "XXX_XX___X" +
+                "";
+        Field field2 = FieldFactory.createSmallField(marks2);
+
+        String expectedMarks = "" +
+                "_____XXXX_" +
+                "__________" +
+                "__________" +
+                "___X__XXX_" +
+                "";
+        Field fieldExpected = FieldFactory.createSmallField(expectedMarks);
+
+        field1.reduce(field2);
+        assertThat(field1).isEqualTo(fieldExpected);
+        assertThat(field2).isNotEqualTo(fieldExpected);
+    }
+
+    @Test
+    void testGetUpperYWith4Blocks() {
+        String marks = "" +
+                "__________" +
+                "_____X____" +
+                "____XXX___" +
+                "__________" +
+                "";
+        Field field = FieldFactory.createSmallField(marks);
+        assertThat(field.getUpperYWith4Blocks()).isEqualTo(2);
+    }
+
+    @Test
+    void testGetUpperYWith4BlocksRandom() {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 10000; count++) {
+            SmallField field = FieldFactory.createSmallField();
+            int maxY = -1;
+            while (field.getNumOfAllBlocks() != 4) {
+                int x = randoms.nextInt(10);
+                int y = randoms.nextInt(0, 6);
+                field.setBlock(x, y);
+
+                if (maxY < y)
+                    maxY = y;
+            }
+
+            assertThat(field.getUpperYWith4Blocks()).isEqualTo(maxY);
+        }
+    }
+
+    @Test
+    void testGetLowerY() {
+        String marks = "" +
+                "__________" +
+                "_____X____" +
+                "____XXX___" +
+                "__________" +
+                "";
+        Field field = FieldFactory.createSmallField(marks);
+        assertThat(field.getLowerY()).isEqualTo(1);
+    }
+
+    @Test
+    void testGetLowerYWithEmpty() {
+        Field field = FieldFactory.createSmallField();
+        assertThat(field.getLowerY()).isEqualTo(-1);
+    }
+
+    @Test
+    void testGetLowerYRandom() {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 10000; count++) {
+            SmallField field = FieldFactory.createSmallField();
+            int minY = Integer.MAX_VALUE;
+
+            int numOfBlocks = randoms.nextInt(1, 60);
+            for (int block = 0; block < numOfBlocks; block++) {
+                int x = randoms.nextInt(10);
+                int y = randoms.nextInt(0, 6);
+                field.setBlock(x, y);
+
+                if (y < minY)
+                    minY = y;
+            }
+
+            assertThat(field.getLowerY()).isEqualTo(minY);
+        }
+    }
+
+    @Test
+    void testSlideLeft() {
+        String marks = "" +
+                "__________" +
+                "_____X____" +
+                "____XXX___" +
+                "__________" +
+                "";
+        Field field = FieldFactory.createSmallField(marks);
+
+        field.slideLeft(3);
+
+        String expectedMarks = "" +
+                "__________" +
+                "__X_______" +
+                "_XXX______" +
+                "__________" +
+                "";
+        Field expectedField = FieldFactory.createSmallField(expectedMarks);
+        assertThat(field).isEqualTo(expectedField);
+    }
+
+    @Test
+    void testSlideLeftRandom() {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 10000; count++) {
+            int slide = randoms.nextInt(10);
+
+            SmallField field = FieldFactory.createSmallField();
+            SmallField expect = FieldFactory.createSmallField();
+
+            int numOfBlocks = randoms.nextInt(1, 60);
+            for (int block = 0; block < numOfBlocks; block++) {
+                int x = randoms.nextInt(10);
+                int y = randoms.nextInt(0, 6);
+                field.setBlock(x, y);
+                if (0 <= x - slide)
+                    expect.setBlock(x - slide, y);
+            }
+
+            field.slideLeft(slide);
+
+            assertThat(field).isEqualTo(expect);
+        }
     }
 }

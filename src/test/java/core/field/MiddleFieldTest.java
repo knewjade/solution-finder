@@ -3,6 +3,7 @@ package core.field;
 import core.mino.Block;
 import core.mino.Mino;
 import core.srs.Rotate;
+import lib.Randoms;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -499,5 +500,355 @@ class MiddleFieldTest {
 
         SmallField field4 = FieldFactory.createSmallField(marks);
         assertThat(field1.equals(field4)).isTrue();
+    }
+
+    @Test
+    void testGetBlockCountOnY() {
+        String marks = "" +
+                "X__X__X___" +
+                "XXXXXXXXXX" +
+                "XXX_XXX__X" +
+                "__________" +
+                "X___XXX__X" +
+                "X__X___XX_" +
+                "X____X____" +
+                "X_________" +
+                "";
+        MiddleField field = FieldFactory.createMiddleField(marks);
+        assertThat(field.getBlockCountOnY(0)).isEqualTo(1);
+        assertThat(field.getBlockCountOnY(1)).isEqualTo(2);
+        assertThat(field.getBlockCountOnY(2)).isEqualTo(4);
+        assertThat(field.getBlockCountOnY(3)).isEqualTo(5);
+        assertThat(field.getBlockCountOnY(4)).isEqualTo(0);
+        assertThat(field.getBlockCountOnY(5)).isEqualTo(7);
+        assertThat(field.getBlockCountOnY(6)).isEqualTo(10);
+        assertThat(field.getBlockCountOnY(7)).isEqualTo(3);
+    }
+
+    @Test
+    void testCanMerge1() {
+        String marks1 = "" +
+                "X_X_X_X__X" +
+                "X__X____XX" +
+                "__________" +
+                "__________" +
+                "XXX_XXX__X" +
+                "X__X___XX_" +
+                "__________" +
+                "__________" +
+                "";
+        MiddleField field1 = FieldFactory.createMiddleField(marks1);
+
+        String marks2 = "" +
+                "__________" +
+                "__________" +
+                "X_XX_X_X_X" +
+                "XXXXXXXXXX" +
+                "__________" +
+                "__________" +
+                "X__X_X_X__" +
+                "XXX_XX___X" +
+                "";
+        MiddleField field2 = FieldFactory.createMiddleField(marks2);
+
+        assertThat(field1.canMerge(field2)).isTrue();
+    }
+
+    @Test
+    void testCanMerge2() {
+        String marks1 = "" +
+                "__XX_X_X__" +
+                "__________" +
+                "__________" +
+                "__XX_X_X__" +
+                "XXX_XXX__X" +
+                "X__X___XX_" +
+                "XXXXX_____" +
+                "XXXXX_____" +
+                "";
+        MiddleField field1 = FieldFactory.createMiddleField(marks1);
+
+        String marks2 = "" +
+                "__________" +
+                "__________" +
+                "X__X_X_X__" +
+                "XXXXXXXXXX" +
+                "__________" +
+                "__________" +
+                "__________" +
+                "__________" +
+                "";
+        MiddleField field2 = FieldFactory.createMiddleField(marks2);
+
+        assertThat(field1.canMerge(field2)).isFalse();
+    }
+
+    @Test
+    void testMerge1() {
+        String marks1 = "" +
+                "XXX_XXX__X" +
+                "X__X___XX_" +
+                "__________" +
+                "__________" +
+                "XXX_XXX__X" +
+                "X__X___XX_" +
+                "__________" +
+                "__________" +
+                "";
+        MiddleField field1 = FieldFactory.createMiddleField(marks1);
+
+        String marks2 = "" +
+                "__________" +
+                "__________" +
+                "X__X_X_X__" +
+                "XXX_XX___X" +
+                "__________" +
+                "__________" +
+                "X__X_X_X__" +
+                "XXX_XX___X" +
+                "";
+        MiddleField field2 = FieldFactory.createMiddleField(marks2);
+
+        String expectedMarks = "" +
+                "XXX_XXX__X" +
+                "X__X___XX_" +
+                "X__X_X_X__" +
+                "XXX_XX___X" +
+                "XXX_XXX__X" +
+                "X__X___XX_" +
+                "X__X_X_X__" +
+                "XXX_XX___X" +
+                "";
+        MiddleField fieldExpected = FieldFactory.createMiddleField(expectedMarks);
+
+        field1.merge(field2);
+        assertThat(field1).isEqualTo(fieldExpected);
+        assertThat(field2).isNotEqualTo(fieldExpected);
+    }
+
+    @Test
+    void testMerge2() {
+        String marks1 = "" +
+                "XXX_XXX__X" +
+                "X__X___XX_" +
+                "XXXXX_____" +
+                "XXXXX_____" +
+                "XXX_XXX__X" +
+                "X__X___XX_" +
+                "XXXXX_____" +
+                "XXXXX_____" +
+                "";
+        MiddleField field1 = FieldFactory.createMiddleField(marks1);
+
+        String marks2 = "" +
+                "__________" +
+                "__________" +
+                "X__X_X_X__" +
+                "XXX_XX___X" +
+                "__________" +
+                "__________" +
+                "X__X_X_X__" +
+                "XXX_XX___X" +
+                "";
+        MiddleField field2 = FieldFactory.createMiddleField(marks2);
+
+        String expectedMarks = "" +
+                "XXX_XXX__X" +
+                "X__X___XX_" +
+                "XXXXXX_X__" +
+                "XXXXXX___X" +
+                "XXX_XXX__X" +
+                "X__X___XX_" +
+                "XXXXXX_X__" +
+                "XXXXXX___X" +
+                "";
+        MiddleField fieldExpected = FieldFactory.createMiddleField(expectedMarks);
+
+        field1.merge(field2);
+        assertThat(field1).isEqualTo(fieldExpected);
+        assertThat(field2).isNotEqualTo(fieldExpected);
+    }
+
+    @Test
+    void testReduce() {
+        String marks1 = "" +
+                "XXXXXXXXX_" +
+                "__________" +
+                "__________" +
+                "XXXXXXXXX_" +
+                "XXXXXXXXX_" +
+                "__________" +
+                "__________" +
+                "XXXXXXXXX_" +
+                "";
+        MiddleField field1 = FieldFactory.createMiddleField(marks1);
+
+        String marks2 = "" +
+                "XXXXX_____" +
+                "_X___X____" +
+                "X__X_X_X__" +
+                "XXX_XX___X" +
+                "XXXXX_____" +
+                "_X___X____" +
+                "X__X_X_X__" +
+                "XXX_XX___X" +
+                "";
+        MiddleField field2 = FieldFactory.createMiddleField(marks2);
+
+        String expectedMarks = "" +
+                "_____XXXX_" +
+                "__________" +
+                "__________" +
+                "___X__XXX_" +
+                "_____XXXX_" +
+                "__________" +
+                "__________" +
+                "___X__XXX_" +
+                "";
+        MiddleField fieldExpected = FieldFactory.createMiddleField(expectedMarks);
+
+        field1.reduce(field2);
+        assertThat(field1).isEqualTo(fieldExpected);
+        assertThat(field2).isNotEqualTo(fieldExpected);
+    }
+
+    @Test
+    void testGetUpperYWith4Blocks() {
+        String marks = "" +
+                "__________" +
+                "_____X____" +
+                "____XXX___" +
+                "__________" +
+                "__________" +
+                "__________" +
+                "__________" +
+                "__________" +
+                "__________" +
+                "";
+        MiddleField field = FieldFactory.createMiddleField(marks);
+        assertThat(field.getUpperYWith4Blocks()).isEqualTo(7);
+    }
+
+    @Test
+    void testGetUpperYWith4BlocksRandom() {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 10000; count++) {
+            MiddleField field = FieldFactory.createMiddleField();
+            int maxY = -1;
+            while (field.getNumOfAllBlocks() != 4) {
+                int x = randoms.nextInt(10);
+                int y = randoms.nextInt(0, 12);
+                field.setBlock(x, y);
+
+                if (maxY < y)
+                    maxY = y;
+            }
+
+            assertThat(field.getUpperYWith4Blocks()).isEqualTo(maxY);
+        }
+    }
+
+    @Test
+    void testGetLowerY() {
+        String marks = "" +
+                "__________" +
+                "_____X____" +
+                "____XXX___" +
+                "__________" +
+                "__________" +
+                "__________" +
+                "__________" +
+                "__________" +
+                "__________" +
+                "__________" +
+                "__________" +
+                "";
+        MiddleField field = FieldFactory.createMiddleField(marks);
+        assertThat(field.getLowerY()).isEqualTo(8);
+    }
+
+    @Test
+    void testGetLowerYWithEmpty() {
+        MiddleField field = FieldFactory.createMiddleField();
+        assertThat(field.getLowerY()).isEqualTo(-1);
+    }
+
+    @Test
+    void testGetLowerYRandom() {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 10000; count++) {
+            MiddleField field = FieldFactory.createMiddleField();
+            int minY = Integer.MAX_VALUE;
+
+            int numOfBlocks = randoms.nextInt(1, 120);
+            for (int block = 0; block < numOfBlocks; block++) {
+                int x = randoms.nextInt(10);
+                int y = randoms.nextInt(0, 12);
+                field.setBlock(x, y);
+
+                if (y < minY)
+                    minY = y;
+            }
+
+            assertThat(field.getLowerY()).isEqualTo(minY);
+        }
+    }
+
+    @Test
+    void testSlideLeft() {
+        String marks = "" +
+                "__________" +
+                "_____X____" +
+                "____XXX___" +
+                "__________" +
+                "__________" +
+                "__________" +
+                "__________" +
+                "__________" +
+                "__________" +
+                "__________" +
+                "";
+        MiddleField field = FieldFactory.createMiddleField(marks);
+
+        field.slideLeft(3);
+
+        String expectedMarks = "" +
+                "__________" +
+                "__X_______" +
+                "_XXX______" +
+                "__________" +
+                "__________" +
+                "__________" +
+                "__________" +
+                "__________" +
+                "__________" +
+                "__________" +
+                "";
+        MiddleField expectedField = FieldFactory.createMiddleField(expectedMarks);
+        assertThat(field).isEqualTo(expectedField);
+    }
+
+    @Test
+    void testSlideLeftRandom() {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 10000; count++) {
+            int slide = randoms.nextInt(10);
+
+            MiddleField field = FieldFactory.createMiddleField();
+            MiddleField expect = FieldFactory.createMiddleField();
+
+            int numOfBlocks = randoms.nextInt(1, 120);
+            for (int block = 0; block < numOfBlocks; block++) {
+                int x = randoms.nextInt(10);
+                int y = randoms.nextInt(0, 12);
+                field.setBlock(x, y);
+                if (0 <= x - slide)
+                    expect.setBlock(x - slide, y);
+            }
+
+            field.slideLeft(slide);
+
+            assertThat(field).isEqualTo(expect);
+        }
     }
 }

@@ -99,7 +99,7 @@ class BitOperators {
 
     // 1ビットがオンになっているとき、そのビットのy座標を返却
     static int bitToY(long bit) {
-        assert Long.bitCount(bit) == 1;
+        assert Long.bitCount(bit) == 1 : bit;
         assert bit < (1L << 60);
         if (bit < 0x40000000L) {
             if (bit < 0x400L)

@@ -80,7 +80,6 @@ public class LargeField implements Field {
         throw new UnsupportedOperationException();
     }
 
-    // TODO: write unittest
     @Override
     public int getBlockCountOnY(int y) {
         throw new UnsupportedOperationException();
@@ -152,17 +151,7 @@ public class LargeField implements Field {
     }
 
     @Override
-    public void invert(int maxHeight) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void slideLeft(int slide) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Field fix() {
         throw new UnsupportedOperationException();
     }
 

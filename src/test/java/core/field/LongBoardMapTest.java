@@ -1,54 +1,120 @@
 package core.field;
 
-
+import lib.BooleanWalker;
+import lib.Randoms;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-// TODO: unittest: LongBoardのinsertWhiteLineのテスト
 class LongBoardMapTest {
-    private static final int FIELD_WIDTH = 10;
-
     @Test
-    void testDeleteAll() throws Exception {
-        for (int pattern = 0; pattern < 64; pattern++) {
-            List<Boolean> leftFlags = createLeftFlags(pattern);
-            long mask = 0L;
-            for (int index = 0; index < leftFlags.size(); index++) {
-                if (!leftFlags.get(index))
-                    mask |= 1L << (index * 10);
-            }
+    void deleteLine() {
+        Randoms randoms = new Randoms();
+        BooleanWalker.walk(6)
+                .forEach(booleans -> {
+                    SmallField field = new SmallField();
+                    SmallField expect = new SmallField();
 
-            SmallField field = FieldFactory.createSmallField();
-            Random random = new Random();
-            for (int index = 0; index < leftFlags.size(); index++) {
-                for (int x = 0; x < FIELD_WIDTH; x++)
-                    field.setBlock(x, index);
+                    int expectY = 0;
+                    for (int y = 0; y < booleans.size(); y++) {
+                        if (booleans.get(y)) {
+                            // ラインを全て埋める
+                            for (int x = 0; x < 10; x++)
+                                field.setBlock(x, y);
+                        } else {
+                            // ラインを全て埋めない
+                            for (int x = 0; x < 10; x++) {
+                                if (randoms.nextBoolean(0.8)) {
+                                    field.setBlock(x, y);
+                                    expect.setBlock(x, expectY);
+                                }
+                            }
 
-                if (leftFlags.get(index))
-                    field.removeBlock(random.nextInt(10), index);
-            }
+                            int removeX = randoms.nextInt(0, 10);
+                            field.removeBlock(removeX, y);
+                            expect.removeBlock(removeX, expectY);
 
-            long board = field.getBoard(0);
-            long deleted = LongBoardMap.deleteLine(board, mask);
+                            expectY += 1;
+                        }
+                    }
 
-            long inserted = LongBoardMap.insertBlackLine(deleted, mask);
-
-            assertThat(inserted).isEqualTo(board);
-        }
+                    long board = field.getXBoard();
+                    long deleteKey = KeyOperators.getDeleteKey(board);
+                    assertThat(LongBoardMap.deleteLine(board, deleteKey)).isEqualTo(expect.getXBoard());
+                });
     }
 
-    private static ArrayList<Boolean> createLeftFlags(int pattern) {
-        ArrayList<Boolean> booleans = new ArrayList<>();
-        int value = pattern;
-        for (int i = 0; i < 6; i++) {
-            booleans.add((value & 1) != 0);
-            value >>>= 1;
-        }
-        return booleans;
+    @Test
+    void insertBlackLine() {
+        Randoms randoms = new Randoms();
+        BooleanWalker.walk(6)
+                .forEach(booleans -> {
+                    SmallField expect = new SmallField();
+                    SmallField field = new SmallField();
+                    long deleteKey = 0L;
+
+                    int expectY = 0;
+                    for (int y = 0; y < booleans.size(); y++) {
+                        if (booleans.get(y)) {
+                            // ラインを全て埋める
+                            for (int x = 0; x < 10; x++)
+                                expect.setBlock(x, y);
+                            deleteKey += KeyOperators.getDeleteBitKey(y);
+                        } else {
+                            // ラインを全て埋めない
+                            for (int x = 0; x < 10; x++) {
+                                if (randoms.nextBoolean(0.8)) {
+                                    expect.setBlock(x, y);
+                                    field.setBlock(x, expectY);
+                                }
+                            }
+
+                            int removeX = randoms.nextInt(0, 10);
+                            expect.removeBlock(removeX, y);
+                            field.removeBlock(removeX, expectY);
+
+                            expectY += 1;
+                        }
+                    }
+
+                    long board = field.getXBoard();
+                    assertThat(LongBoardMap.insertBlackLine(board, deleteKey)).isEqualTo(expect.getXBoard());
+                });
+    }
+
+    @Test
+    void insertWhiteLine() {
+        Randoms randoms = new Randoms();
+        BooleanWalker.walk(6)
+                .forEach(booleans -> {
+                    SmallField expect = new SmallField();
+                    SmallField field = new SmallField();
+                    long deleteKey = 0L;
+
+                    int expectY = 0;
+                    for (int y = 0; y < booleans.size(); y++) {
+                        if (booleans.get(y)) {
+                            // ラインを空白にする
+                            deleteKey += KeyOperators.getDeleteBitKey(y);
+                        } else {
+                            // ラインを全て埋めない
+                            for (int x = 0; x < 10; x++) {
+                                if (randoms.nextBoolean(0.8)) {
+                                    expect.setBlock(x, y);
+                                    field.setBlock(x, expectY);
+                                }
+                            }
+
+                            int removeX = randoms.nextInt(0, 10);
+                            expect.removeBlock(removeX, y);
+                            field.removeBlock(removeX, expectY);
+
+                            expectY += 1;
+                        }
+                    }
+
+                    long board = field.getXBoard();
+                    assertThat(LongBoardMap.insertWhiteLine(board, deleteKey)).isEqualTo(expect.getXBoard());
+                });
     }
 }

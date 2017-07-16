@@ -217,14 +217,14 @@ public class MiddleField implements Field {
         }
     }
 
-    // TODO: unittest
     @Override
     public int getBlockCountOnY(int y) {
         if (y < 6) {
-            long mask = 0x3ff << y * FIELD_WIDTH;
-            return Long.bitCount(xBoardLow & mask);
+            long mask = 0x3ffL << y * FIELD_WIDTH;
+            long i = xBoardLow & mask;
+            return Long.bitCount(i);
         } else {
-            long mask = 0x3ff << (y - 6) * FIELD_WIDTH;
+            long mask = 0x3ffL << (y - 6) * FIELD_WIDTH;
             return Long.bitCount(xBoardHigh & mask);
         }
     }
@@ -305,7 +305,6 @@ public class MiddleField implements Field {
         return new MiddleField(this);
     }
 
-    // TODO: unittest
     @Override
     public void merge(Field other) {
         int otherBoardCount = other.getBoardCount();
@@ -316,7 +315,6 @@ public class MiddleField implements Field {
             xBoardHigh |= other.getBoard(1);
     }
 
-    // TODO: unittest
     @Override
     public void reduce(Field other) {
         int otherBoardCount = other.getBoardCount();
@@ -327,7 +325,6 @@ public class MiddleField implements Field {
             xBoardHigh &= ~other.getBoard(1);
     }
 
-    // TODO: unittest
     @Override
     public boolean canMerge(Field other) {
         int otherBoardCount = other.getBoardCount();
@@ -340,7 +337,6 @@ public class MiddleField implements Field {
         }
     }
 
-    // TODO: unittest
     @Override
     public int getUpperYWith4Blocks() {
         assert Long.bitCount(xBoardLow) + Long.bitCount(xBoardHigh) == 4;
@@ -373,43 +369,24 @@ public class MiddleField implements Field {
         }
     }
 
-    // TODO: unittest
     @Override
     public int getLowerY() {
         if (xBoardLow != 0L) {
             long lowerBit = xBoardLow & (-xBoardLow);
             return BitOperators.bitToY(lowerBit);
+        } else if (xBoardHigh == 0L) {
+            return -1;
         } else {
             long lowerBit = xBoardHigh & (-xBoardHigh);
             return BitOperators.bitToY(lowerBit) + 6;
         }
     }
 
-    // TODO: unittest
-    @Override
-    public void invert(int maxHeight) {
-        if (maxHeight < 6) {
-            xBoardLow = ~xBoardLow & BitOperators.getRowMaskBelowY(maxHeight);
-            xBoardHigh = 0L;
-        } else {
-            xBoardLow = ~xBoardLow & 0xfffffffffffffffL;
-            xBoardHigh = ~xBoardHigh & BitOperators.getRowMaskBelowY(maxHeight - 6);
-        }
-    }
-
-    // TODO: unittest
     @Override
     public void slideLeft(int slide) {
         long mask = BitOperators.getColumnMaskRightX(slide);
         xBoardLow = (xBoardLow & mask) >> slide;
         xBoardHigh = (xBoardHigh & mask) >> slide;
-    }
-
-    @Override
-    public Field fix() {
-        if (this.xBoardHigh != 0L)
-            return new FrozenMiddleField(this);
-        return new FrozenSmallField(xBoardLow);
     }
 
     @Override
@@ -420,9 +397,6 @@ public class MiddleField implements Field {
         if (o instanceof MiddleField) {
             MiddleField that = (MiddleField) o;
             return xBoardLow == that.xBoardLow && xBoardHigh == that.xBoardHigh;
-        } else if (o instanceof FrozenMiddleField) {
-            FrozenMiddleField that = (FrozenMiddleField) o;
-            return xBoardLow == that.getXBoardLow() && xBoardHigh == that.getXBoardHigh();
         } else if (o instanceof SmallField) {
             SmallField that = (SmallField) o;
             return xBoardHigh == 0L && xBoardLow == that.getBoard(0);
@@ -436,7 +410,9 @@ public class MiddleField implements Field {
 
     @Override
     public int hashCode() {
-        throw new UnsupportedOperationException("this is mutable object");
+        int result = (int) (xBoardLow ^ (xBoardLow >>> 32));
+        result = 31 * result + (int) (xBoardHigh ^ (xBoardHigh >>> 32));
+        return result;
     }
 
     @Override

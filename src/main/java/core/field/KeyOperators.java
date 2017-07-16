@@ -1,6 +1,5 @@
 package core.field;
 
-// TODO: unittest: すべてのメソッド
 public class KeyOperators {
     static long getDeleteKey(long board) {
         long a1010101010 = 768614336404564650L;
@@ -15,6 +14,7 @@ public class KeyOperators {
 
     // y行上のブロックは対象に含まない
     public static long getMaskForKeyBelowY(int y) {
+        assert 0 <= y && y <= 24;
         switch (y) {
             case 0:
                 return 0L;

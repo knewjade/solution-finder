@@ -1,11 +1,8 @@
 package core.field;
 
-import common.datastore.Operation;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-
 
 class BitOperatorsTest {
     @Test
@@ -84,5 +81,4 @@ class BitOperatorsTest {
             }
         }
     }
-
 }

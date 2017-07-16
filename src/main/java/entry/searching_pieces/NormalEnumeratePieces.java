@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
  * 通常の組み合わせ
  * PiecesGeneratorから重複を取り除く
  */
-// TODO: write unittest: random pickup test
 public class NormalEnumeratePieces implements EnumeratePiecesCore {
     private final PiecesGenerator generator;
     private final int maxDepth;
