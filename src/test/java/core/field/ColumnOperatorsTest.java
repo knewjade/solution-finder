@@ -1,13 +1,12 @@
 package core.field;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class ColumnOperatorsTest {
+class ColumnOperatorsTest {
     @Test
-    public void parseColumnToBoard6() throws Exception {
+    void parseColumnToBoard6() throws Exception {
         for (int column = 0; column < 64; column++) {
             SmallField field = new SmallField();
             for (int y = 0; y < 6; y++) {
@@ -18,12 +17,12 @@ public class ColumnOperatorsTest {
             }
 
             long board = ColumnOperators.parseToBoardWidth6(column);
-            assertThat(board, is(field.getBoard(0)));
+            assertThat(board).isEqualTo(field.getBoard(0));
         }
     }
 
     @Test
-    public void parseColumnToInvertedBoard6() throws Exception {
+    void parseColumnToInvertedBoard6() throws Exception {
         for (int column = 0; column < 64; column++) {
             SmallField invertedField = new SmallField();
             for (int y = 0; y < 6; y++) {
@@ -34,7 +33,16 @@ public class ColumnOperatorsTest {
             }
 
             long inverted = ColumnOperators.parseToInvertedBoardWidth6(column);
-            assertThat(inverted, is(invertedField.getBoard(0)));
+            assertThat(inverted).isEqualTo(invertedField.getBoard(0));
+        }
+    }
+
+    @Test
+    void parseColumn() throws Exception {
+        for (int column = 0; column < 64; column++) {
+            long board = ColumnOperators.parseToBoardWidth6(column);
+            long inverted = ColumnOperators.parseToInvertedBoardWidth6(~column & 0b111111);
+            assertThat(board).isEqualTo(inverted);
         }
     }
 }

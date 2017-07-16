@@ -1,9 +1,9 @@
 package core.field;
 
-// TODO: unittest: すべてのメソッド
 class BitOperators {
     // y行より下の1列ブロックマスクを取得する（y行を含まない）
     static long getColumnOneLineBelowY(int maxY) {
+        assert 0 <= maxY && maxY <= 6;
         switch (maxY) {
             case 0:
                 return 0;
@@ -25,6 +25,7 @@ class BitOperators {
 
     // x列より右の列を選択するマスクを作成（x列を含む）
     static long getColumnMaskRightX(int minX) {
+        assert 0 <= minX && minX <= 10;
         switch (minX) {
             case 0:
                 return 0xfffffffffffffffL;
@@ -54,6 +55,7 @@ class BitOperators {
 
     // yより下の行を選択するマスクを作成 (y行は含まない)
     static long getRowMaskBelowY(int y) {
+        assert 0 <= y && y <= 6;
         switch (y) {
             case 0:
                 return 0L;
@@ -75,6 +77,7 @@ class BitOperators {
 
     // yより上の行を選択するマスクを作成 (y行を含む)
     static long getRowMaskAboveY(int y) {
+        assert 0 <= y && y <= 6;
         switch (y) {
             case 0:
                 return 0xfffffffffffffffL;
@@ -96,7 +99,8 @@ class BitOperators {
 
     // 1ビットがオンになっているとき、そのビットのy座標を返却
     static int bitToY(long bit) {
-        assert bit < 0x100000000000000L;
+        assert Long.bitCount(bit) == 1;
+        assert bit < (1L << 60);
         if (bit < 0x40000000L) {
             if (bit < 0x400L)
                 return 0;

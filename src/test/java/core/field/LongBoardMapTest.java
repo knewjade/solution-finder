@@ -1,20 +1,20 @@
 package core.field;
 
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 // TODO: unittest: LongBoardのinsertWhiteLineのテスト
-public class LongBoardMapTest {
+class LongBoardMapTest {
     private static final int FIELD_WIDTH = 10;
 
     @Test
-    public void testDeleteAll() throws Exception {
+    void testDeleteAll() throws Exception {
         for (int pattern = 0; pattern < 64; pattern++) {
             List<Boolean> leftFlags = createLeftFlags(pattern);
             long mask = 0L;
@@ -22,8 +22,6 @@ public class LongBoardMapTest {
                 if (!leftFlags.get(index))
                     mask |= 1L << (index * 10);
             }
-//            System.out.println(leftFlags);
-//            System.out.println((int) ((mask >> 29) | (mask & 1073741823)));
 
             SmallField field = FieldFactory.createSmallField();
             Random random = new Random();
@@ -35,18 +33,12 @@ public class LongBoardMapTest {
                     field.removeBlock(random.nextInt(10), index);
             }
 
-//            System.out.println(FieldView.toString(field));
-
             long board = field.getBoard(0);
             long deleted = LongBoardMap.deleteLine(board, mask);
 
-//            System.out.println(FieldView.toString(new SmallField(deleted)));
-
             long inserted = LongBoardMap.insertBlackLine(deleted, mask);
 
-//            System.out.println(FieldView.toString(new SmallField(inserted)));
-
-            assertThat(inserted, is(board));
+            assertThat(inserted).isEqualTo(board);
         }
     }
 

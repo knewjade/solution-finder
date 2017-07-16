@@ -2,7 +2,7 @@ package core.field;
 
 class LongBoardMap {
     static long deleteLine(long x, long mask) {
-//        // 1073741823 = (1 << 30) - 1
+        // 1073741823 = (1 << 30) - 1
         int key = (int) ((mask >> 29) | (mask & 1073741823));
         return deleteLine(x, key);
     }
@@ -143,7 +143,7 @@ class LongBoardMap {
     }
 
     static long insertBlackLine(long x, long mask) {
-//        // 1073741823 = (1 << 30) - 1
+        // 1073741823 = (1 << 30) - 1
         int key = (int) ((mask >> 29) | (mask & 1073741823));
         return insertBlackLine(x, key);
     }
@@ -284,7 +284,7 @@ class LongBoardMap {
     }
 
     static long insertWhiteLine(long x, long mask) {
-//        // 1073741823 = (1 << 30) - 1
+        // 1073741823 = (1 << 30) - 1
         int key = (int) ((mask >> 29) | (mask & 1073741823));
         return insertWhiteLine(x, key);
     }

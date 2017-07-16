@@ -4,6 +4,7 @@ public class ColumnOperators {
     // 列を表すビット列をFieldのビット列に変換 (width=1,height=6 の 6bitまで)
     @SuppressWarnings("ConstantConditions")
     public static long parseToBoardWidth6(int column) {
+        assert 0 <= column && column < 64;
         switch (column) {
             case 63:
                 return 1127000493261825L;
@@ -140,6 +141,7 @@ public class ColumnOperators {
     // 列を表すビット列を反転したFieldのビット列に変換 (width=1,height=6 の 6bitまで)
     @SuppressWarnings("ConstantConditions")
     public static long parseToInvertedBoardWidth6(int column) {
+        assert 0 <= column && column < 64;
         switch (column) {
             case 63:
                 return 0L;
