@@ -1,7 +1,7 @@
 package searcher.pack.solutions;
 
 import core.column_field.ColumnField;
-import core.column_field.ColumnSmallField;
+import core.column_field.ColumnFieldFactory;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import org.junit.Test;
@@ -26,7 +26,7 @@ public class MappedBasicSolutionsTest {
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
         Map<ColumnField, RecursiveMinoFields> calculate = calculator.calculate();
         BasicSolutions solutions = new MappedBasicSolutions(calculate);
-        assertThat(solutions.parse(new ColumnSmallField()).stream().count(), is(8516L));
+        assertThat(solutions.parse(ColumnFieldFactory.createField()).stream().count(), is(8516L));
     }
 
     private static SeparableMinos createSeparableMinos(SizedBit sizedBit) {

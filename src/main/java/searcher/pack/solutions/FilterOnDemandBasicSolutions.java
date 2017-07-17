@@ -1,6 +1,7 @@
 package searcher.pack.solutions;
 
 import core.column_field.ColumnField;
+import core.column_field.ColumnFieldFactory;
 import core.column_field.ColumnSmallField;
 import core.field.Field;
 import core.field.SmallField;
@@ -29,7 +30,7 @@ public class FilterOnDemandBasicSolutions implements BasicSolutions, SolutionsCa
 
     public FilterOnDemandBasicSolutions(SeparableMinos separableMinos, SizedBit sizedBit, Predicate<ColumnField> memorizedPredicate, SolutionFilter solutionFilter) {
         this.separableMinos = separableMinos;
-        this.initOuterField = new ColumnSmallField();
+        this.initOuterField = ColumnFieldFactory.createField();
         this.solutionFilter = solutionFilter;
         assert sizedBit.getHeight() <= 10;
         this.sizedBit = sizedBit;
@@ -61,7 +62,7 @@ public class FilterOnDemandBasicSolutions implements BasicSolutions, SolutionsCa
 
     private RecursiveMinoFields addColumnSmallField(ColumnField basicField) {
         Field wallField = createWallField(basicField);
-        ColumnSmallField initOuterField = new ColumnSmallField();
+        ColumnSmallField initOuterField = ColumnFieldFactory.createField();
         RecursiveMinoFields recursiveMinoFields = calculate(basicField, initOuterField, wallField);
         return new FilteredRecursiveMinoFields(recursiveMinoFields, solutionFilter);
     }

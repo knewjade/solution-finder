@@ -1,6 +1,7 @@
 package _experimental.perfect11;
 
 import common.datastore.Pair;
+import core.column_field.ColumnFieldFactory;
 import core.column_field.ColumnSmallField;
 import core.field.SmallField;
 import searcher.pack.SizedBit;
@@ -73,7 +74,7 @@ public class MagicMain {
             return LongStream.rangeClosed(0, sizedBit.getFillBoard())
                     .boxed()
                     .sorted(Comparator.comparingLong(Long::bitCount).reversed())
-                    .map(ColumnSmallField::new);
+                    .map(ColumnFieldFactory::createField);
         }
     }
 }

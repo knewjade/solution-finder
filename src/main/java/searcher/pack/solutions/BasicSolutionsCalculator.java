@@ -1,6 +1,7 @@
 package searcher.pack.solutions;
 
 import core.column_field.ColumnField;
+import core.column_field.ColumnFieldFactory;
 import core.column_field.ColumnSmallField;
 import core.field.Field;
 import core.field.SmallField;
@@ -32,7 +33,7 @@ public class BasicSolutionsCalculator implements SolutionsCalculator {
     private final Predicate<ColumnField> memorizedPredicate;
 
     public BasicSolutionsCalculator(SeparableMinos separableMinos, SizedBit sizedBit) {
-        this(separableMinos, sizedBit, new ColumnSmallField(), columnField -> true);
+        this(separableMinos, sizedBit, ColumnFieldFactory.createField(), columnField -> true);
     }
 
     public BasicSolutionsCalculator(SeparableMinos separableMinos, SizedBit sizedBit, ColumnSmallField limitOuterField, Predicate<ColumnField> memorizedPredicate) {
@@ -70,7 +71,7 @@ public class BasicSolutionsCalculator implements SolutionsCalculator {
 
     private void addColumnSmallField(ColumnSmallField basicField) {
         Field wallField = createWallField(basicField);
-        ColumnSmallField initOuterField = new ColumnSmallField();
+        ColumnSmallField initOuterField = ColumnFieldFactory.createField();
         RecursiveMinoFields calculate = calculate(basicField, initOuterField, wallField);
         resultsMap.put(basicField, calculate);
     }

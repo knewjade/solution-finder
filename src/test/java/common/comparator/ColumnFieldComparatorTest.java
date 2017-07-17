@@ -1,5 +1,6 @@
 package common.comparator;
 
+import core.column_field.ColumnFieldFactory;
 import core.column_field.ColumnSmallField;
 import lib.Randoms;
 import org.junit.Test;
@@ -17,8 +18,8 @@ public class ColumnFieldComparatorTest {
         for (int count = 0; count < 10000; count++) {
             // same field
             int height = randoms.nextInt(1, 10);
-            ColumnSmallField field1 = new ColumnSmallField();
-            ColumnSmallField field2 = new ColumnSmallField();
+            ColumnSmallField field1 = ColumnFieldFactory.createField();
+            ColumnSmallField field2 = ColumnFieldFactory.createField();
 
             int maxBlock = randoms.nextInt(1, 15);
             for (int block = 0; block < maxBlock; block++) {

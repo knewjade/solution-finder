@@ -1,12 +1,13 @@
 package searcher.pack.task;
 
 import core.column_field.ColumnField;
+import core.column_field.ColumnFieldFactory;
 import core.column_field.ColumnSmallField;
-import searcher.pack.mino_field.MinoField;
-import searcher.pack.mino_fields.MinoFields;
 import searcher.pack.SizedBit;
 import searcher.pack.memento.MinoFieldMemento;
 import searcher.pack.memento.SolutionFilter;
+import searcher.pack.mino_field.MinoField;
+import searcher.pack.mino_fields.MinoFields;
 
 import java.util.stream.Stream;
 
@@ -68,12 +69,12 @@ class MinoPackingTaskWidthForWidth2 implements PackingTask {
 
     private PackingTask createTask(PackSearcher searcher, long innerFieldBoard, MinoFieldMemento memento, int index) {
         long fillBoard = searcher.getSizedBit().getFillBoard();
-        ColumnSmallField over = new ColumnSmallField(innerFieldBoard & ~fillBoard);
+        ColumnSmallField over = ColumnFieldFactory.createField(innerFieldBoard & ~fillBoard);
         ColumnField outerField = searcher.getInOutPairFields().get(index).getOuterField();
 
         if (over.canMerge(outerField)) {
             over.merge(outerField);
-            ColumnSmallField innerField = new ColumnSmallField(innerFieldBoard & fillBoard);
+            ColumnSmallField innerField = ColumnFieldFactory.createField(innerFieldBoard & fillBoard);
             return new MinoPackingTaskWidthForWidth2(searcher, innerField, over, memento, index);
         }
 

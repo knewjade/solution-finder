@@ -3,6 +3,7 @@ package searcher.pack.separable_mino;
 import common.datastore.OperationWithKey;
 import common.datastore.SimpleOperationWithKey;
 import core.column_field.ColumnField;
+import core.column_field.ColumnFieldFactory;
 import core.column_field.ColumnSmallField;
 import core.field.Field;
 import core.mino.Mino;
@@ -16,7 +17,7 @@ public class SeparableMino {
         MinoMask minoMask = MinoMaskFactory.create(fieldHeight, mino, lowerY - mino.getMinY(), deleteKey);
         Field mask = minoMask.getMinoMask(x);
 
-        ColumnSmallField field = new ColumnSmallField();
+        ColumnSmallField field = ColumnFieldFactory.createField();
         for (int ny = lowerY; ny <= upperY; ny++) {
             for (int nx = x + mino.getMinX(); nx <= x + mino.getMaxX(); nx++) {
                 if (!mask.isEmpty(nx, ny))

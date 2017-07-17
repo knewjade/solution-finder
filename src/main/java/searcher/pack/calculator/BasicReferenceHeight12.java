@@ -1,6 +1,7 @@
 package searcher.pack.calculator;
 
 import core.column_field.ColumnField;
+import core.column_field.ColumnFieldFactory;
 import core.column_field.ColumnSmallField;
 import core.field.ColumnOperators;
 import core.field.Field;
@@ -31,7 +32,7 @@ public class BasicReferenceHeight12 implements BasicReference {
         return LongStream.range(0, sizedBit.getFillBoard())
                 .boxed()
                 .sorted(Comparator.comparingLong(Long::bitCount).reversed())
-                .map(ColumnSmallField::new);
+                .map(ColumnFieldFactory::createField);
     }
 
     // ColumnFieldの一部からFieldに変換する

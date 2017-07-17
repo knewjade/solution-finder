@@ -10,10 +10,10 @@ import common.comparator.ColumnFieldComparator;
 public class ColumnSmallField implements ColumnField {
     private long board = 0L;
 
-    public ColumnSmallField() {
+     ColumnSmallField() {
     }
 
-    public ColumnSmallField(long board) {
+     ColumnSmallField(long board) {
         this.board = board;
     }
 
@@ -48,6 +48,11 @@ public class ColumnSmallField implements ColumnField {
     @Override
     public int getBoardCount() {
         return 1;
+    }
+
+    @Override
+    public int getNumOfAllBlocks() {
+        return Long.bitCount(board);
     }
 
     @Override

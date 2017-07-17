@@ -1,6 +1,7 @@
 package searcher.pack.task;
 
 import core.column_field.ColumnField;
+import core.column_field.ColumnFieldFactory;
 import core.column_field.ColumnSmallField;
 import searcher.pack.InOutPairField;
 import searcher.pack.SizedBit;
@@ -80,7 +81,7 @@ class MinoPackingTaskWidthForWidth3 implements PackingTask {
             ColumnField mergedOuterField = outerField.freeze(sizedBit.getHeight());
             mergedOuterField.merge(minoOuterField);
 
-            ColumnSmallField nextInnerField = new ColumnSmallField(mergedOuterField.getBoard(0) >> sizedBit.getMaxBitDigit());
+            ColumnSmallField nextInnerField = ColumnFieldFactory.createField(mergedOuterField.getBoard(0) >> sizedBit.getMaxBitDigit());
             MinoFieldMemento nextMemento = memento.concat(minoField);
             return checkAndCreateTask(nextInnerField, nextMemento, index + 1);
         }

@@ -1,10 +1,10 @@
 package searcher.pack.solutions;
 
-import lib.Stopwatch;
 import core.column_field.ColumnField;
-import core.column_field.ColumnSmallField;
+import core.column_field.ColumnFieldFactory;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import lib.Stopwatch;
 import org.junit.Test;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
@@ -87,7 +87,7 @@ public class OnDemandBasicSolutionsFactoryTest {
                 .parallel()
                 .boxed()
                 .sorted(Comparator.comparingLong(Long::bitCount).reversed())
-                .map(ColumnSmallField::new)
+                .map(ColumnFieldFactory::createField)
                 .forEach(solutions::parse);
 
         stopwatch1.stop();

@@ -1,7 +1,7 @@
 package searcher.pack.connections;
 
 import core.column_field.ColumnField;
-import core.column_field.ColumnSmallField;
+import core.column_field.ColumnFieldFactory;
 import searcher.pack.SizedBit;
 import searcher.pack.separable_mino.SeparableMino;
 
@@ -15,8 +15,8 @@ public class ColumnFieldConnection {
         long fillBoard = sizedBit.getFillBoard();
 
         long board = freeze.getBoard(0);
-        ColumnField innerField = new ColumnSmallField(board & fillBoard);
-        ColumnField outerField = new ColumnSmallField(board & ~fillBoard);
+        ColumnField innerField = ColumnFieldFactory.createField(board & fillBoard);
+        ColumnField outerField = ColumnFieldFactory.createField(board & ~fillBoard);
 
         this.mino = mino;
         this.innerField = innerField;

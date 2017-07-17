@@ -1,6 +1,7 @@
 package searcher.pack;
 
 import core.column_field.ColumnField;
+import core.column_field.ColumnFieldFactory;
 import core.column_field.ColumnSmallField;
 import core.field.Field;
 
@@ -12,12 +13,12 @@ public class InOutPairField {
         int width = sizedBit.getWidth();
         int height = sizedBit.getHeight();
         long maxOuterBoard = createMaxOuterBoard(width, height, initField, 9 / width);
-        return new ColumnSmallField(maxOuterBoard);
+        return ColumnFieldFactory.createField(maxOuterBoard);
     }
 
     public static ColumnSmallField createMaxOuterBoard(int width, int height, Field initField) {
         long maxOuterBoard = createMaxOuterBoard(width, height, initField, 9 / width);
-        return new ColumnSmallField(maxOuterBoard);
+        return ColumnFieldFactory.createField(maxOuterBoard);
     }
 
     private static long createMaxOuterBoard(int width, int height, Field initField, int max) {
@@ -65,8 +66,8 @@ public class InOutPairField {
     }
 
     private static InOutPairField parse(Field field, int width, int height) {
-        ColumnSmallField innerField = new ColumnSmallField();
-        ColumnSmallField outerField = new ColumnSmallField();
+        ColumnSmallField innerField = ColumnFieldFactory.createField();
+        ColumnSmallField outerField = ColumnFieldFactory.createField();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 if (!field.isEmpty(x, y))
@@ -81,8 +82,8 @@ public class InOutPairField {
     }
 
     private static InOutPairField parseLast(Field field, int width, int height) {
-        ColumnSmallField innerField = new ColumnSmallField();
-        ColumnSmallField outerField = new ColumnSmallField();
+        ColumnSmallField innerField = ColumnFieldFactory.createField();
+        ColumnSmallField outerField = ColumnFieldFactory.createField();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 if (!field.isEmpty(x, y))

@@ -16,6 +16,9 @@ public interface ColumnField extends Comparable<ColumnField> {
     // 6列分のフィールドを表現するボードの個数を返却
     int getBoardCount();
 
+    // すべてのブロックの個数を返却
+    int getNumOfAllBlocks();
+
     // 指定したフィールドのブロックを重ね合せる
     void merge(ColumnField field);
 

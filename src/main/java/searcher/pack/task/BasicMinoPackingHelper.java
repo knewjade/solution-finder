@@ -1,5 +1,6 @@
 package searcher.pack.task;
 
+import core.column_field.ColumnFieldFactory;
 import core.column_field.ColumnSmallField;
 import searcher.pack.SizedBit;
 import searcher.pack.memento.MinoFieldMemento;
@@ -14,7 +15,7 @@ public class BasicMinoPackingHelper implements TaskResultHelper {
         SizedBit sizedBit = searcher.getSizedBit();
         SolutionFilter solutionFilter = searcher.getSolutionFilter();
         long fillBoard = sizedBit.getFillBoard();
-        ColumnSmallField over = new ColumnSmallField(innerFieldBoard & ~fillBoard);
+        ColumnSmallField over = ColumnFieldFactory.createField(innerFieldBoard & ~fillBoard);
 
         long board = innerFieldBoard & fillBoard;
         if (board == fillBoard) {
@@ -22,7 +23,7 @@ public class BasicMinoPackingHelper implements TaskResultHelper {
                 return Stream.of(createResult(nextMemento));
             return Stream.empty();
         } else {
-            ColumnSmallField nextInnerField = new ColumnSmallField(board);
+            ColumnSmallField nextInnerField = ColumnFieldFactory.createField(board);
             MinoFields minoFields = searcher.getSolutions().parse(nextInnerField);
 
             return minoFields.stream()

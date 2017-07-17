@@ -1,19 +1,18 @@
 package searcher.pack.task;
 
 import common.datastore.BlockCounter;
-import common.datastore.BlockField;
 import common.datastore.OperationWithKey;
 import common.datastore.SimpleOperationWithKey;
 import core.column_field.ColumnField;
+import core.column_field.ColumnFieldFactory;
 import core.column_field.ColumnSmallField;
-import core.field.SmallField;
 import core.mino.Block;
 import core.mino.Mino;
 import core.srs.Rotate;
-import searcher.pack.mino_field.MinoField;
 import searcher.pack.SizedBit;
 import searcher.pack.memento.MinoFieldMemento;
 import searcher.pack.memento.SolutionFilter;
+import searcher.pack.mino_field.MinoField;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +26,7 @@ public class Field4x10MinoPackingHelper implements TaskResultHelper {
         );
 
         private final List<OperationWithKey> operationWithKeys = OPERATION_WITH_KEYS;
-        private final ColumnSmallField columnSmallField = new ColumnSmallField();
+        private final ColumnSmallField columnSmallField = ColumnFieldFactory.createField();
         private final BlockCounter blockCounter = new BlockCounter(Collections.singletonList(Block.I));
 
         @Override

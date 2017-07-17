@@ -1,6 +1,7 @@
 package searcher.pack.solutions;
 
 import core.column_field.ColumnField;
+import core.column_field.ColumnFieldFactory;
 import core.column_field.ColumnSmallField;
 import core.field.Field;
 import core.field.SmallField;
@@ -29,7 +30,7 @@ public class OnDemandBasicSolutions implements BasicSolutions, SolutionsCalculat
     private final ConcurrentHashMap<ColumnField, RecursiveMinoFields> resultsMap;
 
     public OnDemandBasicSolutions(SeparableMinos separableMinos, SizedBit sizedBit, Predicate<ColumnField> memorizedPredicate) {
-        this(separableMinos, sizedBit, new ColumnSmallField(), memorizedPredicate);
+        this(separableMinos, sizedBit, ColumnFieldFactory.createField(), memorizedPredicate);
     }
 
     public OnDemandBasicSolutions(SeparableMinos separableMinos, SizedBit sizedBit, ColumnSmallField limitOuterField, Predicate<ColumnField> memorizedPredicate) {
@@ -65,7 +66,7 @@ public class OnDemandBasicSolutions implements BasicSolutions, SolutionsCalculat
 
     private RecursiveMinoFields addColumnSmallField(ColumnField basicField) {
         Field wallField = createWallField(basicField);
-        ColumnSmallField initOuterField = new ColumnSmallField();
+        ColumnSmallField initOuterField = ColumnFieldFactory.createField();
         return calculate(basicField, initOuterField, wallField);
     }
 

@@ -1,6 +1,7 @@
 package searcher.pack.solutions;
 
 import core.column_field.ColumnField;
+import core.column_field.ColumnFieldFactory;
 import core.column_field.ColumnSmallField;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
@@ -25,7 +26,7 @@ public class OnDemandBasicSolutionsTest {
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
         Predicate<ColumnField> memorizedPredicate = columnField -> true;
         OnDemandBasicSolutions solutions = new OnDemandBasicSolutions(separableMinos, sizedBit, memorizedPredicate);
-        Stream<? extends MinoField> stream = solutions.parse(new ColumnSmallField()).stream();
+        Stream<? extends MinoField> stream = solutions.parse(ColumnFieldFactory.createField()).stream();
         long count = stream.count();
         assertThat(count, is(8516L));
     }
