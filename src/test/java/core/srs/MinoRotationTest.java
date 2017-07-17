@@ -2,13 +2,15 @@ package core.srs;
 
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.*;
+import core.mino.Block;
+import core.mino.Mino;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static core.mino.Block.*;
-import static core.srs.Rotate.*;
-import static org.assertj.core.api.Assertions.*;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class MinoRotationTest {
     private final MinoRotation minoRotation = new MinoRotation();
@@ -1075,6 +1077,292 @@ class MinoRotationTest {
                         "XXXXXX_XXX" +
                         "";
                 assertThat(kicksLeft(marks, new Mino(Block.T, Rotate.Reverse), 6, 3)).containsExactly(0, -2);
+            }
+        }
+    }
+
+    @Nested
+    class Offset {
+        @Nested
+        class JLSTZ {
+            private final List<Block> blocks = Arrays.asList(Block.J, Block.L, Block.S, Block.T, Block.Z);
+
+            @Test
+            void leftFromSpawn() {
+                for (Block block : blocks) {
+                    int[][] patterns = minoRotation.getLeftPatternsFrom(new Mino(block, Rotate.Spawn));
+                    assertThat(patterns).containsExactly(
+                            new int[]{0, 0},
+                            new int[]{1, 0},
+                            new int[]{1, 1},
+                            new int[]{0, -2},
+                            new int[]{1, -2}
+                    );
+                }
+            }
+
+            @Test
+            void rightFromSpawn() {
+                for (Block block : blocks) {
+                    int[][] patterns = minoRotation.getRightPatternsFrom(new Mino(block, Rotate.Spawn));
+                    assertThat(patterns).containsExactly(
+                            new int[]{0, 0},
+                            new int[]{-1, 0},
+                            new int[]{-1, 1},
+                            new int[]{0, -2},
+                            new int[]{-1, -2}
+                    );
+                }
+            }
+
+            @Test
+            void leftFromLeft() {
+                for (Block block : blocks) {
+                    int[][] patterns = minoRotation.getLeftPatternsFrom(new Mino(block, Rotate.Left));
+                    assertThat(patterns).containsExactly(
+                            new int[]{0, 0},
+                            new int[]{-1, 0},
+                            new int[]{-1, -1},
+                            new int[]{0, 2},
+                            new int[]{-1, 2}
+                    );
+                }
+            }
+
+            @Test
+            void rightFromLeft() {
+                for (Block block : blocks) {
+                    int[][] patterns = minoRotation.getRightPatternsFrom(new Mino(block, Rotate.Left));
+                    assertThat(patterns).containsExactly(
+                            new int[]{0, 0},
+                            new int[]{-1, 0},
+                            new int[]{-1, -1},
+                            new int[]{0, 2},
+                            new int[]{-1, 2}
+                    );
+                }
+            }
+
+            @Test
+            void leftFromReverse() {
+                for (Block block : blocks) {
+                    int[][] patterns = minoRotation.getLeftPatternsFrom(new Mino(block, Rotate.Reverse));
+                    assertThat(patterns).containsExactly(
+                            new int[]{0, 0},
+                            new int[]{-1, 0},
+                            new int[]{-1, 1},
+                            new int[]{0, -2},
+                            new int[]{-1, -2}
+                    );
+                }
+            }
+
+            @Test
+            void rightFromReverse() {
+                for (Block block : blocks) {
+                    int[][] patterns = minoRotation.getRightPatternsFrom(new Mino(block, Rotate.Reverse));
+                    assertThat(patterns).containsExactly(
+                            new int[]{0, 0},
+                            new int[]{1, 0},
+                            new int[]{1, 1},
+                            new int[]{0, -2},
+                            new int[]{1, -2}
+                    );
+                }
+            }
+
+            @Test
+            void leftFromRight() {
+                for (Block block : blocks) {
+                    int[][] patterns = minoRotation.getLeftPatternsFrom(new Mino(block, Rotate.Right));
+                    assertThat(patterns).containsExactly(
+                            new int[]{0, 0},
+                            new int[]{1, 0},
+                            new int[]{1, -1},
+                            new int[]{0, 2},
+                            new int[]{1, 2}
+                    );
+                }
+            }
+
+            @Test
+            void rightFromRight() {
+                for (Block block : blocks) {
+                    int[][] patterns = minoRotation.getRightPatternsFrom(new Mino(block, Rotate.Right));
+                    assertThat(patterns).containsExactly(
+                            new int[]{0, 0},
+                            new int[]{1, 0},
+                            new int[]{1, -1},
+                            new int[]{0, 2},
+                            new int[]{1, 2}
+                    );
+                }
+            }
+        }
+
+        @Nested
+        class I {
+            @Test
+            void leftFromSpawn() {
+                int[][] patterns = minoRotation.getLeftPatternsFrom(new Mino(Block.I, Rotate.Spawn));
+                assertThat(patterns).containsExactly(
+                        new int[]{0, -1},
+                        new int[]{-1, -1},
+                        new int[]{2, -1},
+                        new int[]{-1, 1},
+                        new int[]{2, -2}
+                );
+            }
+
+            @Test
+            void rightFromSpawn() {
+                int[][] patterns = minoRotation.getRightPatternsFrom(new Mino(Block.I, Rotate.Spawn));
+                assertThat(patterns).containsExactly(
+                        new int[]{1, 0},
+                        new int[]{-1, 0},
+                        new int[]{2, 0},
+                        new int[]{-1, -1},
+                        new int[]{2, 2}
+                );
+            }
+
+            @Test
+            void leftFromLeft() {
+                int[][] patterns = minoRotation.getLeftPatternsFrom(new Mino(Block.I, Rotate.Left));
+                assertThat(patterns).containsExactly(
+                        new int[]{1, 0},
+                        new int[]{-1, 0},
+                        new int[]{2, 0},
+                        new int[]{-1, -1},
+                        new int[]{2, 2}
+                );
+            }
+
+            @Test
+            void rightFromLeft() {
+                int[][] patterns = minoRotation.getRightPatternsFrom(new Mino(Block.I, Rotate.Left));
+                assertThat(patterns).containsExactly(
+                        new int[]{0, 1},
+                        new int[]{1, 1},
+                        new int[]{-2, 1},
+                        new int[]{1, -1},
+                        new int[]{-2, 2}
+                );
+            }
+
+            @Test
+            void leftFromReverse() {
+                int[][] patterns = minoRotation.getLeftPatternsFrom(new Mino(Block.I, Rotate.Reverse));
+                assertThat(patterns).containsExactly(
+                        new int[]{0, 1},
+                        new int[]{1, 1},
+                        new int[]{-2, 1},
+                        new int[]{1, -1},
+                        new int[]{-2, 2}
+                );
+            }
+
+            @Test
+            void rightFromReverse() {
+                int[][] patterns = minoRotation.getRightPatternsFrom(new Mino(Block.I, Rotate.Reverse));
+                assertThat(patterns).containsExactly(
+                        new int[]{-1, 0},
+                        new int[]{1, 0},
+                        new int[]{-2, 0},
+                        new int[]{1, 1},
+                        new int[]{-2, -2}
+                );
+            }
+
+            @Test
+            void leftFromRight() {
+                int[][] patterns = minoRotation.getLeftPatternsFrom(new Mino(Block.I, Rotate.Right));
+                assertThat(patterns).containsExactly(
+                        new int[]{-1, 0},
+                        new int[]{1, 0},
+                        new int[]{-2, 0},
+                        new int[]{1, 1},
+                        new int[]{-2, -2}
+                );
+            }
+
+            @Test
+            void rightFromRight() {
+                int[][] patterns = minoRotation.getRightPatternsFrom(new Mino(Block.I, Rotate.Right));
+                assertThat(patterns).containsExactly(
+                        new int[]{0, -1},
+                        new int[]{-1, -1},
+                        new int[]{2, -1},
+                        new int[]{-1, 1},
+                        new int[]{2, -2}
+                );
+            }
+        }
+
+        @Nested
+        class O {
+            @Test
+            void leftFromSpawn() {
+                int[][] patterns = minoRotation.getLeftPatternsFrom(new Mino(Block.O, Rotate.Spawn));
+                assertThat(patterns).containsExactly(
+                        new int[]{1, 0}
+                );
+            }
+
+            @Test
+            void rightFromSpawn() {
+                int[][] patterns = minoRotation.getRightPatternsFrom(new Mino(Block.O, Rotate.Spawn));
+                assertThat(patterns).containsExactly(
+                        new int[]{0, 1}
+                );
+            }
+
+            @Test
+            void leftFromLeft() {
+                int[][] patterns = minoRotation.getLeftPatternsFrom(new Mino(Block.O, Rotate.Left));
+                assertThat(patterns).containsExactly(
+                        new int[]{0, 1}
+                );
+            }
+
+            @Test
+            void rightFromLeft() {
+                int[][] patterns = minoRotation.getRightPatternsFrom(new Mino(Block.O, Rotate.Left));
+                assertThat(patterns).containsExactly(
+                        new int[]{-1, 0}
+                );
+            }
+
+            @Test
+            void leftFromReverse() {
+                int[][] patterns = minoRotation.getLeftPatternsFrom(new Mino(Block.O, Rotate.Reverse));
+                assertThat(patterns).containsExactly(
+                        new int[]{-1, 0}
+                );
+            }
+
+            @Test
+            void rightFromReverse() {
+                int[][] patterns = minoRotation.getRightPatternsFrom(new Mino(Block.O, Rotate.Reverse));
+                assertThat(patterns).containsExactly(
+                        new int[]{0, -1}
+                );
+            }
+
+            @Test
+            void leftFromRight() {
+                int[][] patterns = minoRotation.getLeftPatternsFrom(new Mino(Block.O, Rotate.Right));
+                assertThat(patterns).containsExactly(
+                        new int[]{0, -1}
+                );
+            }
+
+            @Test
+            void rightFromRight() {
+                int[][] patterns = minoRotation.getRightPatternsFrom(new Mino(Block.O, Rotate.Right));
+                assertThat(patterns).containsExactly(
+                        new int[]{1, 0}
+                );
             }
         }
     }
