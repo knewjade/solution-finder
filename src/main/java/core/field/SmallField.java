@@ -24,7 +24,7 @@ public class SmallField implements Field {
         this.xBoard = xBoard;
     }
 
-    long getXBoard() {
+    public long getXBoard() {
         return xBoard;
     }
 

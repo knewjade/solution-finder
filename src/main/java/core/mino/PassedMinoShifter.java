@@ -19,4 +19,8 @@ public class PassedMinoShifter extends MinoShifter {
     public List<Action> enumerateSameOtherActions(Block block, int x, int y, Rotate rotate) {
         return Collections.emptyList();
     }
+
+    public Rotate createTransformedRotate(Block block, Rotate rotate) {
+        return rotate;
+    }
 }

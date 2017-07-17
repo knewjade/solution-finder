@@ -1,40 +1,690 @@
 package core.mino;
 
+import core.field.FieldFactory;
+import core.field.SmallField;
 import core.srs.Rotate;
-import org.junit.Test;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import java.util.List;
 
-public class MinoTest {
-    private void assertMinMax(Mino mino, int xMin, int xMax, int yMin, int yMax) {
-        assertThat(mino.getMinX(), is(xMin));
-        assertThat(mino.getMaxX(), is(xMax));
-        assertThat(mino.getMinY(), is(yMin));
-        assertThat(mino.getMaxY(), is(yMax));
+import static org.assertj.core.api.Assertions.assertThat;
+
+class MinoTest {
+    @Nested
+    class I {
+        @Test
+        void spawn() {
+            Mino mino = new Mino(Block.I, Rotate.Spawn);
+            assertThat(mino)
+                    .returns(-1, Mino::getMinX)
+                    .returns(2, Mino::getMaxX)
+                    .returns(0, Mino::getMinY)
+                    .returns(0, Mino::getMaxY)
+                    .returns(Block.I, Mino::getBlock)
+                    .returns(Rotate.Spawn, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{-1, 0})
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{1, 0})
+                    .contains(new int[]{2, 0});
+
+            SmallField mask = FieldFactory.createSmallField(
+                    "XXXX______"
+            );
+            assertThat(mino.getMask(1, 0)).isEqualTo(mask.getXBoard());
+        }
+
+        @Test
+        void left() {
+            Mino mino = new Mino(Block.I, Rotate.Left);
+            assertThat(mino)
+                    .returns(0, Mino::getMinX)
+                    .returns(0, Mino::getMaxX)
+                    .returns(-1, Mino::getMinY)
+                    .returns(2, Mino::getMaxY)
+                    .returns(Block.I, Mino::getBlock)
+                    .returns(Rotate.Left, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{0, -1})
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{0, 1})
+                    .contains(new int[]{0, 2});
+
+            SmallField mask = FieldFactory.createSmallField("" +
+                    "X_________" +
+                    "X_________" +
+                    "X_________" +
+                    "X_________"
+            );
+            assertThat(mino.getMask(0, 1)).isEqualTo(mask.getXBoard());
+        }
+
+        @Test
+        void reverse() {
+            Mino mino = new Mino(Block.I, Rotate.Reverse);
+            assertThat(mino)
+                    .returns(-2, Mino::getMinX)
+                    .returns(1, Mino::getMaxX)
+                    .returns(0, Mino::getMinY)
+                    .returns(0, Mino::getMaxY)
+                    .returns(Block.I, Mino::getBlock)
+                    .returns(Rotate.Reverse, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{-2, 0})
+                    .contains(new int[]{-1, 0})
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{1, 0});
+
+            SmallField mask = FieldFactory.createSmallField(
+                    "XXXX______"
+            );
+            assertThat(mino.getMask(2, 0)).isEqualTo(mask.getXBoard());
+        }
+
+        @Test
+        void right() {
+            Mino mino = new Mino(Block.I, Rotate.Right);
+            assertThat(mino)
+                    .returns(0, Mino::getMinX)
+                    .returns(0, Mino::getMaxX)
+                    .returns(-2, Mino::getMinY)
+                    .returns(1, Mino::getMaxY)
+                    .returns(Block.I, Mino::getBlock)
+                    .returns(Rotate.Right, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{0, -2})
+                    .contains(new int[]{0, -1})
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{0, 1});
+
+            SmallField mask = FieldFactory.createSmallField("" +
+                    "X_________" +
+                    "X_________" +
+                    "X_________" +
+                    "X_________"
+            );
+            assertThat(mino.getMask(0, 2)).isEqualTo(mask.getXBoard());
+        }
     }
 
-    @Test
-    public void testTMinoMinMax() throws Exception {
-        assertMinMax(new Mino(Block.T, Rotate.Spawn), -1, 1, 0, 1);
-        assertMinMax(new Mino(Block.T, Rotate.Right), 0, 1, -1, 1);
-        assertMinMax(new Mino(Block.T, Rotate.Reverse), -1, 1, -1, 0);
-        assertMinMax(new Mino(Block.T, Rotate.Left), -1, 0, -1, 1);
+    @Nested
+    class O {
+        @Test
+        void spawn() {
+            Mino mino = new Mino(Block.O, Rotate.Spawn);
+            assertThat(mino)
+                    .returns(0, Mino::getMinX)
+                    .returns(1, Mino::getMaxX)
+                    .returns(0, Mino::getMinY)
+                    .returns(1, Mino::getMaxY)
+                    .returns(Block.O, Mino::getBlock)
+                    .returns(Rotate.Spawn, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{1, 0})
+                    .contains(new int[]{0, 1})
+                    .contains(new int[]{1, 1});
+
+            SmallField mask = FieldFactory.createSmallField("" +
+                    "XX________" +
+                    "XX________"
+            );
+            assertThat(mino.getMask(0, 0)).isEqualTo(mask.getXBoard());
+        }
+
+        @Test
+        void left() {
+            Mino mino = new Mino(Block.O, Rotate.Left);
+            assertThat(mino)
+                    .returns(-1, Mino::getMinX)
+                    .returns(0, Mino::getMaxX)
+                    .returns(0, Mino::getMinY)
+                    .returns(1, Mino::getMaxY)
+                    .returns(Block.O, Mino::getBlock)
+                    .returns(Rotate.Left, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{-1, 0})
+                    .contains(new int[]{-1, 1})
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{0, 1});
+
+            SmallField mask = FieldFactory.createSmallField("" +
+                    "XX________" +
+                    "XX________"
+            );
+            assertThat(mino.getMask(1, 0)).isEqualTo(mask.getXBoard());
+        }
+
+        @Test
+        void reverse() {
+            Mino mino = new Mino(Block.O, Rotate.Reverse);
+            assertThat(mino)
+                    .returns(-1, Mino::getMinX)
+                    .returns(0, Mino::getMaxX)
+                    .returns(-1, Mino::getMinY)
+                    .returns(0, Mino::getMaxY)
+                    .returns(Block.O, Mino::getBlock)
+                    .returns(Rotate.Reverse, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{-1, 0})
+                    .contains(new int[]{-1, -1})
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{0, -1});
+
+            SmallField mask = FieldFactory.createSmallField("" +
+                    "XX________" +
+                    "XX________"
+            );
+            assertThat(mino.getMask(1, 1)).isEqualTo(mask.getXBoard());
+        }
+
+        @Test
+        void right() {
+            Mino mino = new Mino(Block.O, Rotate.Right);
+            assertThat(mino)
+                    .returns(0, Mino::getMinX)
+                    .returns(1, Mino::getMaxX)
+                    .returns(-1, Mino::getMinY)
+                    .returns(0, Mino::getMaxY)
+                    .returns(Block.O, Mino::getBlock)
+                    .returns(Rotate.Right, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{0, -1})
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{1, -1})
+                    .contains(new int[]{1, 0});
+
+            SmallField mask = FieldFactory.createSmallField("" +
+                    "XX________" +
+                    "XX________"
+            );
+            assertThat(mino.getMask(0, 1)).isEqualTo(mask.getXBoard());
+        }
     }
 
-    @Test
-    public void testIMinoMinMax() throws Exception {
-        assertMinMax(new Mino(Block.I, Rotate.Spawn), -1, 2, 0, 0);
-        assertMinMax(new Mino(Block.I, Rotate.Right), 0, 0, -2, 1);
-        assertMinMax(new Mino(Block.I, Rotate.Reverse), -2, 1, 0, 0);
-        assertMinMax(new Mino(Block.I, Rotate.Left), 0, 0, -1, 2);
+    @Nested
+    class S {
+        @Test
+        void spawn() {
+            Mino mino = new Mino(Block.S, Rotate.Spawn);
+            assertThat(mino)
+                    .returns(-1, Mino::getMinX)
+                    .returns(1, Mino::getMaxX)
+                    .returns(0, Mino::getMinY)
+                    .returns(1, Mino::getMaxY)
+                    .returns(Block.S, Mino::getBlock)
+                    .returns(Rotate.Spawn, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{-1, 0})
+                    .contains(new int[]{0, 1})
+                    .contains(new int[]{1, 1});
+
+            SmallField mask = FieldFactory.createSmallField("" +
+                    "_XX_______" +
+                    "XX________"
+            );
+            assertThat(mino.getMask(1, 0)).isEqualTo(mask.getXBoard());
+        }
+
+        @Test
+        void left() {
+            Mino mino = new Mino(Block.S, Rotate.Left);
+            assertThat(mino)
+                    .returns(-1, Mino::getMinX)
+                    .returns(0, Mino::getMaxX)
+                    .returns(-1, Mino::getMinY)
+                    .returns(1, Mino::getMaxY)
+                    .returns(Block.S, Mino::getBlock)
+                    .returns(Rotate.Left, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{-1, 0})
+                    .contains(new int[]{-1, 1})
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{0, -1});
+
+            SmallField mask = FieldFactory.createSmallField("" +
+                    "X_________" +
+                    "XX________" +
+                    "_X________"
+            );
+            assertThat(mino.getMask(1, 1)).isEqualTo(mask.getXBoard());
+        }
+
+        @Test
+        void reverse() {
+            Mino mino = new Mino(Block.S, Rotate.Reverse);
+            assertThat(mino)
+                    .returns(-1, Mino::getMinX)
+                    .returns(1, Mino::getMaxX)
+                    .returns(-1, Mino::getMinY)
+                    .returns(0, Mino::getMaxY)
+                    .returns(Block.S, Mino::getBlock)
+                    .returns(Rotate.Reverse, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{1, 0})
+                    .contains(new int[]{0, -1})
+                    .contains(new int[]{-1, -1});
+
+            SmallField mask = FieldFactory.createSmallField("" +
+                    "_XX_______" +
+                    "XX________"
+            );
+            assertThat(mino.getMask(1, 1)).isEqualTo(mask.getXBoard());
+        }
+
+        @Test
+        void right() {
+            Mino mino = new Mino(Block.S, Rotate.Right);
+            assertThat(mino)
+                    .returns(0, Mino::getMinX)
+                    .returns(1, Mino::getMaxX)
+                    .returns(-1, Mino::getMinY)
+                    .returns(1, Mino::getMaxY)
+                    .returns(Block.S, Mino::getBlock)
+                    .returns(Rotate.Right, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{0, 1})
+                    .contains(new int[]{1, 0})
+                    .contains(new int[]{1, -1});
+
+            SmallField mask = FieldFactory.createSmallField("" +
+                    "X_________" +
+                    "XX________" +
+                    "_X________"
+            );
+            assertThat(mino.getMask(0, 1)).isEqualTo(mask.getXBoard());
+        }
     }
 
-    @Test
-    public void testTMinoMask() throws Exception {
-        assertThat(new Mino(Block.T, Rotate.Spawn).getMask(1, 0), is(0x807L));
-        assertThat(new Mino(Block.T, Rotate.Right).getMask(0, 1), is(0x100c01L));
-        assertThat(new Mino(Block.T, Rotate.Reverse).getMask(1, 1), is(0x1c02L));
-        assertThat(new Mino(Block.T, Rotate.Left).getMask(1, 1), is(0x200c02L));
+    @Nested
+    class Z {
+        @Test
+        void spawn() {
+            Mino mino = new Mino(Block.Z, Rotate.Spawn);
+            assertThat(mino)
+                    .returns(-1, Mino::getMinX)
+                    .returns(1, Mino::getMaxX)
+                    .returns(0, Mino::getMinY)
+                    .returns(1, Mino::getMaxY)
+                    .returns(Block.Z, Mino::getBlock)
+                    .returns(Rotate.Spawn, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{-1, 1})
+                    .contains(new int[]{0, 1})
+                    .contains(new int[]{1, 0});
+
+            SmallField mask = FieldFactory.createSmallField("" +
+                    "XX________" +
+                    "_XX_______"
+            );
+            assertThat(mino.getMask(1, 0)).isEqualTo(mask.getXBoard());
+        }
+
+        @Test
+        void left() {
+            Mino mino = new Mino(Block.Z, Rotate.Left);
+            assertThat(mino)
+                    .returns(-1, Mino::getMinX)
+                    .returns(0, Mino::getMaxX)
+                    .returns(-1, Mino::getMinY)
+                    .returns(1, Mino::getMaxY)
+                    .returns(Block.Z, Mino::getBlock)
+                    .returns(Rotate.Left, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{-1, 0})
+                    .contains(new int[]{-1, -1})
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{0, 1});
+
+            SmallField mask = FieldFactory.createSmallField("" +
+                    "_X________" +
+                    "XX________" +
+                    "X_________"
+            );
+            assertThat(mino.getMask(1, 1)).isEqualTo(mask.getXBoard());
+        }
+
+        @Test
+        void reverse() {
+            Mino mino = new Mino(Block.Z, Rotate.Reverse);
+            assertThat(mino)
+                    .returns(-1, Mino::getMinX)
+                    .returns(1, Mino::getMaxX)
+                    .returns(-1, Mino::getMinY)
+                    .returns(0, Mino::getMaxY)
+                    .returns(Block.Z, Mino::getBlock)
+                    .returns(Rotate.Reverse, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{-1, 0})
+                    .contains(new int[]{0, -1})
+                    .contains(new int[]{1, -1});
+
+            SmallField mask = FieldFactory.createSmallField("" +
+                    "XX________" +
+                    "_XX_______"
+            );
+            assertThat(mino.getMask(1, 1)).isEqualTo(mask.getXBoard());
+        }
+
+        @Test
+        void right() {
+            Mino mino = new Mino(Block.Z, Rotate.Right);
+            assertThat(mino)
+                    .returns(0, Mino::getMinX)
+                    .returns(1, Mino::getMaxX)
+                    .returns(-1, Mino::getMinY)
+                    .returns(1, Mino::getMaxY)
+                    .returns(Block.Z, Mino::getBlock)
+                    .returns(Rotate.Right, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{0, -1})
+                    .contains(new int[]{1, 0})
+                    .contains(new int[]{1, 1});
+
+            SmallField mask = FieldFactory.createSmallField("" +
+                    "_X________" +
+                    "XX________" +
+                    "X_________"
+            );
+            assertThat(mino.getMask(0, 1)).isEqualTo(mask.getXBoard());
+        }
+    }
+
+    @Nested
+    class L {
+        @Test
+        void spawn() {
+            Mino mino = new Mino(Block.L, Rotate.Spawn);
+            assertThat(mino)
+                    .returns(-1, Mino::getMinX)
+                    .returns(1, Mino::getMaxX)
+                    .returns(0, Mino::getMinY)
+                    .returns(1, Mino::getMaxY)
+                    .returns(Block.L, Mino::getBlock)
+                    .returns(Rotate.Spawn, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{-1, 0})
+                    .contains(new int[]{1, 0})
+                    .contains(new int[]{1, 1});
+
+            SmallField mask = FieldFactory.createSmallField("" +
+                    "__X_______" +
+                    "XXX_______"
+            );
+            assertThat(mino.getMask(1, 0)).isEqualTo(mask.getXBoard());
+        }
+
+        @Test
+        void left() {
+            Mino mino = new Mino(Block.L, Rotate.Left);
+            assertThat(mino)
+                    .returns(-1, Mino::getMinX)
+                    .returns(0, Mino::getMaxX)
+                    .returns(-1, Mino::getMinY)
+                    .returns(1, Mino::getMaxY)
+                    .returns(Block.L, Mino::getBlock)
+                    .returns(Rotate.Left, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{-1, 1})
+                    .contains(new int[]{0, 1})
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{0, -1});
+
+            SmallField mask = FieldFactory.createSmallField("" +
+                    "XX________" +
+                    "_X________" +
+                    "_X________"
+            );
+            assertThat(mino.getMask(1, 1)).isEqualTo(mask.getXBoard());
+        }
+
+        @Test
+        void reverse() {
+            Mino mino = new Mino(Block.L, Rotate.Reverse);
+            assertThat(mino)
+                    .returns(-1, Mino::getMinX)
+                    .returns(1, Mino::getMaxX)
+                    .returns(-1, Mino::getMinY)
+                    .returns(0, Mino::getMaxY)
+                    .returns(Block.L, Mino::getBlock)
+                    .returns(Rotate.Reverse, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{1, 0})
+                    .contains(new int[]{-1, 0})
+                    .contains(new int[]{-1, -1});
+
+            SmallField mask = FieldFactory.createSmallField("" +
+                    "XXX_______" +
+                    "X_________"
+            );
+            assertThat(mino.getMask(1, 1)).isEqualTo(mask.getXBoard());
+        }
+
+        @Test
+        void right() {
+            Mino mino = new Mino(Block.L, Rotate.Right);
+            assertThat(mino)
+                    .returns(0, Mino::getMinX)
+                    .returns(1, Mino::getMaxX)
+                    .returns(-1, Mino::getMinY)
+                    .returns(1, Mino::getMaxY)
+                    .returns(Block.L, Mino::getBlock)
+                    .returns(Rotate.Right, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{0, 1})
+                    .contains(new int[]{0, -1})
+                    .contains(new int[]{1, -1});
+
+            SmallField mask = FieldFactory.createSmallField("" +
+                    "X_________" +
+                    "X_________" +
+                    "XX________"
+            );
+            assertThat(mino.getMask(0, 1)).isEqualTo(mask.getXBoard());
+        }
+    }
+
+    @Nested
+    class J {
+        @Test
+        void spawn() {
+            Mino mino = new Mino(Block.J, Rotate.Spawn);
+            assertThat(mino)
+                    .returns(-1, Mino::getMinX)
+                    .returns(1, Mino::getMaxX)
+                    .returns(0, Mino::getMinY)
+                    .returns(1, Mino::getMaxY)
+                    .returns(Block.J, Mino::getBlock)
+                    .returns(Rotate.Spawn, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{-1, 0})
+                    .contains(new int[]{1, 0})
+                    .contains(new int[]{-1, 1});
+
+            SmallField mask = FieldFactory.createSmallField("" +
+                    "X_________" +
+                    "XXX_______"
+            );
+            assertThat(mino.getMask(1, 0)).isEqualTo(mask.getXBoard());
+        }
+
+        @Test
+        void left() {
+            Mino mino = new Mino(Block.J, Rotate.Left);
+            assertThat(mino)
+                    .returns(-1, Mino::getMinX)
+                    .returns(0, Mino::getMaxX)
+                    .returns(-1, Mino::getMinY)
+                    .returns(1, Mino::getMaxY)
+                    .returns(Block.J, Mino::getBlock)
+                    .returns(Rotate.Left, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{0, 1})
+                    .contains(new int[]{0, -1})
+                    .contains(new int[]{-1, -1});
+
+            SmallField mask = FieldFactory.createSmallField("" +
+                    "_X________" +
+                    "_X________" +
+                    "XX________"
+            );
+            assertThat(mino.getMask(1, 1)).isEqualTo(mask.getXBoard());
+        }
+
+        @Test
+        void reverse() {
+            Mino mino = new Mino(Block.J, Rotate.Reverse);
+            assertThat(mino)
+                    .returns(-1, Mino::getMinX)
+                    .returns(1, Mino::getMaxX)
+                    .returns(-1, Mino::getMinY)
+                    .returns(0, Mino::getMaxY)
+                    .returns(Block.J, Mino::getBlock)
+                    .returns(Rotate.Reverse, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{-1, 0})
+                    .contains(new int[]{1, 0})
+                    .contains(new int[]{1, -1});
+
+            SmallField mask = FieldFactory.createSmallField("" +
+                    "XXX_______" +
+                    "__X_______"
+            );
+            assertThat(mino.getMask(1, 1)).isEqualTo(mask.getXBoard());
+        }
+
+        @Test
+        void right() {
+            Mino mino = new Mino(Block.J, Rotate.Right);
+            assertThat(mino)
+                    .returns(0, Mino::getMinX)
+                    .returns(1, Mino::getMaxX)
+                    .returns(-1, Mino::getMinY)
+                    .returns(1, Mino::getMaxY)
+                    .returns(Block.J, Mino::getBlock)
+                    .returns(Rotate.Right, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{0, -1})
+                    .contains(new int[]{0, 1})
+                    .contains(new int[]{1, 1});
+
+            SmallField mask = FieldFactory.createSmallField("" +
+                    "XX________" +
+                    "X_________" +
+                    "X_________"
+            );
+            assertThat(mino.getMask(0, 1)).isEqualTo(mask.getXBoard());
+        }
+    }
+
+    @Nested
+    class T {
+        @Test
+        void spawn() {
+            Mino mino = new Mino(Block.T, Rotate.Spawn);
+            assertThat(mino)
+                    .returns(-1, Mino::getMinX)
+                    .returns(1, Mino::getMaxX)
+                    .returns(0, Mino::getMinY)
+                    .returns(1, Mino::getMaxY)
+                    .returns(Block.T, Mino::getBlock)
+                    .returns(Rotate.Spawn, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{-1, 0})
+                    .contains(new int[]{0, 1})
+                    .contains(new int[]{0, 1});
+
+            SmallField mask = FieldFactory.createSmallField("" +
+                    "_X________" +
+                    "XXX_______"
+            );
+            assertThat(mino.getMask(1, 0)).isEqualTo(mask.getXBoard());
+        }
+
+        @Test
+        void left() {
+            Mino mino = new Mino(Block.T, Rotate.Left);
+            assertThat(mino)
+                    .returns(-1, Mino::getMinX)
+                    .returns(0, Mino::getMaxX)
+                    .returns(-1, Mino::getMinY)
+                    .returns(1, Mino::getMaxY)
+                    .returns(Block.T, Mino::getBlock)
+                    .returns(Rotate.Left, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{-1, 0})
+                    .contains(new int[]{0, 1})
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{0, -1});
+
+            SmallField mask = FieldFactory.createSmallField("" +
+                    "_X________" +
+                    "XX________" +
+                    "_X________"
+            );
+            assertThat(mino.getMask(1, 1)).isEqualTo(mask.getXBoard());
+        }
+
+        @Test
+        void reverse() {
+            Mino mino = new Mino(Block.T, Rotate.Reverse);
+            assertThat(mino)
+                    .returns(-1, Mino::getMinX)
+                    .returns(1, Mino::getMaxX)
+                    .returns(-1, Mino::getMinY)
+                    .returns(0, Mino::getMaxY)
+                    .returns(Block.T, Mino::getBlock)
+                    .returns(Rotate.Reverse, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{1, 0})
+                    .contains(new int[]{0, -1})
+                    .contains(new int[]{0, -1});
+
+            SmallField mask = FieldFactory.createSmallField("" +
+                    "XXX_______" +
+                    "_X________"
+            );
+            assertThat(mino.getMask(1, 1)).isEqualTo(mask.getXBoard());
+        }
+
+        @Test
+        void right() {
+            Mino mino = new Mino(Block.T, Rotate.Right);
+            assertThat(mino)
+                    .returns(0, Mino::getMinX)
+                    .returns(1, Mino::getMaxX)
+                    .returns(-1, Mino::getMinY)
+                    .returns(1, Mino::getMaxY)
+                    .returns(Block.T, Mino::getBlock)
+                    .returns(Rotate.Right, Mino::getRotate);
+            assertThat(mino.getPositions())
+                    .contains(new int[]{0, 0})
+                    .contains(new int[]{0, 1})
+                    .contains(new int[]{1, 0})
+                    .contains(new int[]{0, -1});
+
+            SmallField mask = FieldFactory.createSmallField("" +
+                    "X_________" +
+                    "XX________" +
+                    "X_________"
+            );
+            assertThat(mino.getMask(0, 1)).isEqualTo(mask.getXBoard());
+        }
     }
 }
