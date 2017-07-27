@@ -3,6 +3,7 @@ package lib;
 import core.field.Field;
 import core.mino.Block;
 import core.srs.Rotate;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
@@ -12,7 +13,6 @@ import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.offset;
-import static org.assertj.core.api.Assertions.within;
 
 class RandomsTest {
     @Test
@@ -137,6 +137,207 @@ class RandomsTest {
             Field randomField = randoms.field(height, numOfMinos);
             assertThat(randomField)
                     .matches(field -> field.getNumOfAllBlocks() == 10 * height - numOfMinos * 4);
+        }
+    }
+
+    @Nested
+    class Blocks11 {
+        boolean isUnique(List<Block> list) {
+            return new HashSet<>(list).size() == list.size();
+        }
+
+        @Test
+        void first() {
+            Randoms randoms = new Randoms();
+            for (int count = 0; count < 100000; count++) {
+                List<Block> blocks = randoms.block11InCycle(0);
+                assertThat(blocks).hasSize(11);
+                assertThat(isUnique(blocks.subList(0, 7))).isTrue();
+                assertThat(isUnique(blocks.subList(7, 11))).isTrue();
+            }
+        }
+
+        @Test
+        void second() {
+            Randoms randoms = new Randoms();
+            for (int count = 0; count < 100000; count++) {
+                List<Block> blocks = randoms.block11InCycle(1);
+                assertThat(blocks).hasSize(11);
+                assertThat(isUnique(blocks.subList(0, 1))).isTrue();
+                assertThat(isUnique(blocks.subList(1, 4))).isTrue();
+                assertThat(isUnique(blocks.subList(4, 11))).isTrue();
+            }
+        }
+
+        @Test
+        void third() {
+            Randoms randoms = new Randoms();
+            for (int count = 0; count < 100000; count++) {
+                List<Block> blocks = randoms.block11InCycle(2);
+                assertThat(blocks).hasSize(11);
+                assertThat(isUnique(blocks.subList(0, 1))).isTrue();
+                assertThat(isUnique(blocks.subList(1, 8))).isTrue();
+                assertThat(isUnique(blocks.subList(8, 11))).isTrue();
+            }
+        }
+
+        @Test
+        void forth() {
+            Randoms randoms = new Randoms();
+            for (int count = 0; count < 100000; count++) {
+                List<Block> blocks = randoms.block11InCycle(3);
+                assertThat(blocks).hasSize(11);
+                assertThat(isUnique(blocks.subList(0, 1))).isTrue();
+                assertThat(isUnique(blocks.subList(1, 5))).isTrue();
+                assertThat(isUnique(blocks.subList(5, 11))).isTrue();
+            }
+        }
+
+        @Test
+        void fifth() {
+            Randoms randoms = new Randoms();
+            for (int count = 0; count < 100000; count++) {
+                List<Block> blocks = randoms.block11InCycle(4);
+                assertThat(blocks).hasSize(11);
+                assertThat(isUnique(blocks.subList(0, 1))).isTrue();
+                assertThat(isUnique(blocks.subList(1, 2))).isTrue();
+                assertThat(isUnique(blocks.subList(2, 9))).isTrue();
+                assertThat(isUnique(blocks.subList(9, 11))).isTrue();
+            }
+        }
+
+        @Test
+        void sixth() {
+            Randoms randoms = new Randoms();
+            for (int count = 0; count < 100000; count++) {
+                List<Block> blocks = randoms.block11InCycle(5);
+                assertThat(blocks).hasSize(11);
+                assertThat(isUnique(blocks.subList(0, 1))).isTrue();
+                assertThat(isUnique(blocks.subList(1, 6))).isTrue();
+                assertThat(isUnique(blocks.subList(6, 11))).isTrue();
+            }
+        }
+
+        @Test
+        void seventh() {
+            Randoms randoms = new Randoms();
+            for (int count = 0; count < 100000; count++) {
+                List<Block> blocks = randoms.block11InCycle(6);
+                assertThat(blocks).hasSize(11);
+                assertThat(isUnique(blocks.subList(0, 1))).isTrue();
+                assertThat(isUnique(blocks.subList(1, 3))).isTrue();
+                assertThat(isUnique(blocks.subList(3, 10))).isTrue();
+                assertThat(isUnique(blocks.subList(10, 11))).isTrue();
+            }
+        }
+
+        @Test
+        void eighth() {
+            Randoms randoms = new Randoms();
+            for (int count = 0; count < 100000; count++) {
+                List<Block> blocks = randoms.block11InCycle(7);
+                assertThat(blocks).hasSize(11);
+                assertThat(isUnique(blocks.subList(0, 1))).isTrue();
+                assertThat(isUnique(blocks.subList(1, 7))).isTrue();
+                assertThat(isUnique(blocks.subList(7, 11))).isTrue();
+            }
+        }
+    }
+
+    @Nested
+    class Blocks10 {
+        boolean isUnique(List<Block> list) {
+            return new HashSet<>(list).size() == list.size();
+        }
+
+        @Test
+        void first() {
+            Randoms randoms = new Randoms();
+            for (int count = 0; count < 100000; count++) {
+                List<Block> blocks = randoms.block10InCycle(0);
+                assertThat(blocks).hasSize(10);
+                assertThat(isUnique(blocks.subList(0, 7))).isTrue();
+                assertThat(isUnique(blocks.subList(7, 10))).isTrue();
+            }
+        }
+
+        @Test
+        void second() {
+            Randoms randoms = new Randoms();
+            for (int count = 0; count < 100000; count++) {
+                List<Block> blocks = randoms.block10InCycle(1);
+                assertThat(blocks).hasSize(10);
+                assertThat(isUnique(blocks.subList(0, 4))).isTrue();
+                assertThat(isUnique(blocks.subList(4, 10))).isTrue();
+            }
+        }
+
+        @Test
+        void third() {
+            Randoms randoms = new Randoms();
+            for (int count = 0; count < 100000; count++) {
+                List<Block> blocks = randoms.block10InCycle(2);
+                assertThat(blocks).hasSize(10);
+                assertThat(isUnique(blocks.subList(0, 1))).isTrue();
+                assertThat(isUnique(blocks.subList(1, 8))).isTrue();
+                assertThat(isUnique(blocks.subList(8, 10))).isTrue();
+            }
+        }
+
+        @Test
+        void forth() {
+            Randoms randoms = new Randoms();
+            for (int count = 0; count < 100000; count++) {
+                List<Block> blocks = randoms.block10InCycle(3);
+                assertThat(blocks).hasSize(10);
+                assertThat(isUnique(blocks.subList(0, 5))).isTrue();
+                assertThat(isUnique(blocks.subList(5, 10))).isTrue();
+            }
+        }
+
+        @Test
+        void fifth() {
+            Randoms randoms = new Randoms();
+            for (int count = 0; count < 100000; count++) {
+                List<Block> blocks = randoms.block10InCycle(4);
+                assertThat(blocks).hasSize(10);
+                assertThat(isUnique(blocks.subList(0, 2))).isTrue();
+                assertThat(isUnique(blocks.subList(2, 9))).isTrue();
+                assertThat(isUnique(blocks.subList(9, 10))).isTrue();
+            }
+        }
+
+        @Test
+        void sixth() {
+            Randoms randoms = new Randoms();
+            for (int count = 0; count < 100000; count++) {
+                List<Block> blocks = randoms.block10InCycle(5);
+                assertThat(blocks).hasSize(10);
+                assertThat(isUnique(blocks.subList(0, 6))).isTrue();
+                assertThat(isUnique(blocks.subList(6, 10))).isTrue();
+            }
+        }
+
+        @Test
+        void seventh() {
+            Randoms randoms = new Randoms();
+            for (int count = 0; count < 100000; count++) {
+                List<Block> blocks = randoms.block10InCycle(6);
+                assertThat(blocks).hasSize(10);
+                assertThat(isUnique(blocks.subList(0, 3))).isTrue();
+                assertThat(isUnique(blocks.subList(3, 10))).isTrue();
+            }
+        }
+
+        @Test
+        void eighth() {
+            Randoms randoms = new Randoms();
+            for (int count = 0; count < 100000; count++) {
+                List<Block> blocks = randoms.block10InCycle(7);
+                assertThat(blocks).hasSize(10);
+                assertThat(isUnique(blocks.subList(0, 7))).isTrue();
+                assertThat(isUnique(blocks.subList(7, 10))).isTrue();
+            }
         }
     }
 }

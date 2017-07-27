@@ -25,7 +25,7 @@ public class FieldFactory {
         throw new UnsupportedOperationException("Too large field height: " + maxY);
     }
 
-    static SmallField createSmallField() {
+    public static SmallField createSmallField() {
         return new SmallField();
     }
 
@@ -49,7 +49,7 @@ public class FieldFactory {
         return field;
     }
 
-    static MiddleField createMiddleField() {
+    public static MiddleField createMiddleField() {
         return new MiddleField();
     }
 

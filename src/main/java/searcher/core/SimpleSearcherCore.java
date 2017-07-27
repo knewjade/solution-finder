@@ -1,16 +1,16 @@
 package searcher.core;
 
+import common.OperationHistory;
+import common.datastore.Result;
+import common.datastore.action.Action;
+import common.datastore.order.NormalOrder;
+import common.datastore.order.Order;
 import core.action.candidate.Candidate;
 import core.field.Field;
 import core.mino.Block;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import searcher.common.DataPool;
-import common.OperationHistory;
-import common.datastore.Result;
-import common.datastore.action.Action;
-import common.datastore.order.NormalOrder;
-import common.datastore.order.Order;
 import searcher.common.validator.Validator;
 
 import java.util.Set;

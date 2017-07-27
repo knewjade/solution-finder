@@ -5,9 +5,7 @@ import core.field.FieldFactory;
 import core.mino.Block;
 import core.srs.Rotate;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -156,5 +154,56 @@ public class Randoms {
 
     public double nextDouble() {
         return random.nextDouble();
+    }
+
+    public List<Block> block11InCycle(int cycle) {
+        assert 0 <= cycle;
+        ArrayList<Block> blocks = new ArrayList<>();
+        ArrayList<Block> allBlocks = new ArrayList<>(Block.valueList());
+        List<Integer> cycleCounts = get11CycleCounts(cycle);
+        for (int count : cycleCounts) {
+            Collections.shuffle(allBlocks);
+            blocks.addAll(allBlocks.subList(0, count));
+        }
+        return blocks;
+    }
+
+    private List<Integer> get11CycleCounts(int cycle) {
+        if (cycle == 0)
+            return Arrays.asList(7, 4);
+
+        cycle %= 7;
+        int prevLastUsed = (10 * cycle + 1) % 7;
+        int firstLoop = 7 - prevLastUsed;
+
+        if (firstLoop <= 2) {
+            return Arrays.asList(1, firstLoop, 7, 3 - firstLoop);
+        } else {
+            return Arrays.asList(1, firstLoop, 10 - firstLoop);
+        }
+    }
+
+    public List<Block> block10InCycle(int cycle) {
+        assert 0 <= cycle;
+        ArrayList<Block> blocks = new ArrayList<>();
+        ArrayList<Block> allBlocks = new ArrayList<>(Block.valueList());
+        List<Integer> cycleCounts = get10CycleCounts(cycle);
+        for (int count : cycleCounts) {
+            Collections.shuffle(allBlocks);
+            blocks.addAll(allBlocks.subList(0, count));
+        }
+        return blocks;
+    }
+
+    private List<Integer> get10CycleCounts(int cycle) {
+        cycle %= 7;
+        int prevLastUsed = (10 * cycle) % 7;
+        int firstLoop = 7 - prevLastUsed;
+
+        if (firstLoop <= 2) {
+            return Arrays.asList(firstLoop, 7, 3 - firstLoop);
+        } else {
+            return Arrays.asList(firstLoop, 10 - firstLoop);
+        }
     }
 }

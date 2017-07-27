@@ -1,30 +1,34 @@
 package searcher.checker;
 
+import common.datastore.Pair;
+import common.datastore.action.Action;
+import common.datastore.pieces.LongPieces;
+import common.parser.BlockInterpreter;
 import core.action.candidate.Candidate;
 import core.action.candidate.LockedCandidate;
-import common.datastore.Pair;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
+import lib.Randoms;
 import org.junit.Test;
-import common.datastore.action.Action;
 import searcher.common.validator.PerfectValidator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static core.mino.Block.*;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CheckerUsingHoldTest {
     @Test
     public void testGraceSystem() throws Exception {
-        List<Pair<List<Block>, Boolean>> testCases = new ArrayList<Pair<List<Block>, Boolean>>(){
+        List<Pair<List<Block>, Boolean>> testCases = new ArrayList<Pair<List<Block>, Boolean>>() {
             {
                 add(new Pair<>(Arrays.asList(T, S, O, J), false));
                 add(new Pair<>(Arrays.asList(T, O, J, S), false));
@@ -62,7 +66,7 @@ public class CheckerUsingHoldTest {
 
         for (Pair<List<Block>, Boolean> testCase : testCases) {
             List<Block> blocks = testCase.getKey();
-            assertThat(checker.check(field, blocks, candidate, maxClearLine, maxDepth), is(testCase.getValue()));
+            assertThat(checker.check(field, blocks, candidate, maxClearLine, maxDepth)).isEqualTo(testCase.getValue());
         }
     }
 
@@ -98,7 +102,74 @@ public class CheckerUsingHoldTest {
 
         for (Pair<List<Block>, Boolean> testCase : testCases) {
             List<Block> blocks = testCase.getKey();
-            assertThat(checker.check(field, blocks, candidate, maxClearLine, maxDepth), is(testCase.getValue()));
+            assertThat(checker.check(field, blocks, candidate, maxClearLine, maxDepth)).isEqualTo(testCase.getValue());
+        }
+    }
+
+    @Test
+    public void testNoPerfect() throws Exception {
+        // Field
+        Field field = FieldFactory.createSmallField();
+        int maxClearLine = 4;
+        int maxDepth = 10;
+
+        // Initialize
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        MinoRotation minoRotation = new MinoRotation();
+        PerfectValidator validator = new PerfectValidator();
+        CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
+
+        // Measure
+        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+
+        // Block
+        URL noPerfect = ClassLoader.getSystemResource("orders/noperfect.txt");
+        List<LongPieces> piecesList = Files.lines(Paths.get(noPerfect.toURI()))
+                .map(BlockInterpreter::parse11)
+                .map(LongPieces::new)
+                .collect(Collectors.toList());
+        Collections.shuffle(piecesList);
+
+        for (LongPieces pieces : piecesList.subList(0, 10)) {
+            System.out.println(pieces);
+            List<Block> blocks = pieces.getBlocks();
+            assertThat(checker.check(field, blocks, candidate, maxClearLine, maxDepth)).isFalse();
+        }
+    }
+
+    @Test
+    public void testPerfect() throws Exception {
+        // Field
+        Field field = FieldFactory.createSmallField();
+        int maxClearLine = 4;
+        int maxDepth = 10;
+
+        // Initialize
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        MinoRotation minoRotation = new MinoRotation();
+        PerfectValidator validator = new PerfectValidator();
+        CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
+
+        // Measure
+        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+
+        // Block
+        URL noPerfect = ClassLoader.getSystemResource("orders/noperfect.txt");
+        HashSet<LongPieces> piecesSet = Files.lines(Paths.get(noPerfect.toURI()))
+                .map(BlockInterpreter::parse11)
+                .map(LongPieces::new)
+                .collect(Collectors.toCollection(HashSet::new));
+
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 100; count++) {
+            int cycle = randoms.nextIntClosed(0, 8);
+            List<Block> blocks = randoms.block11InCycle(cycle);
+            System.out.println(blocks);
+            LongPieces pieces = new LongPieces(blocks);
+            boolean contains = piecesSet.contains(pieces);
+            assertThat(checker.check(field, blocks, candidate, maxClearLine, maxDepth)).isEqualTo(!contains);
         }
     }
 }
