@@ -1,7 +1,7 @@
 package searcher.checker;
 
-import common.datastore.pieces.Pieces;
 import common.datastore.action.Action;
+import common.datastore.pieces.Pieces;
 import common.pattern.PiecesGenerator;
 import common.tree.AnalyzeTree;
 import core.action.candidate.Candidate;
@@ -12,15 +12,16 @@ import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import searcher.common.validator.PerfectValidator;
 
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class CheckerNoHoldCountTest {
+class CheckerNoHoldCountTest {
     private AnalyzeTree runTestCase(PiecesGenerator piecesGenerator, int maxClearLine, int maxDepth, String marks) {
         Field field = FieldFactory.createField(marks);
 
@@ -45,7 +46,7 @@ public class CheckerNoHoldCountTest {
     }
 
     @Test
-    public void testCase1() throws Exception {
+    void testCase1() throws Exception {
         // Invoker
         PiecesGenerator piecesGenerator = new PiecesGenerator("*p7");
         int maxClearLine = 4;
@@ -62,11 +63,11 @@ public class CheckerNoHoldCountTest {
         AnalyzeTree tree = runTestCase(piecesGenerator, maxClearLine, maxDepth, marks);
 
         // Source: reply in twitter from @fullfool_14
-        assertThat(tree.getSuccessPercent(), is(1439 / 5040.0));
+        assertThat(tree.getSuccessPercent()).isEqualTo(1439 / 5040.0);
     }
 
     @Test
-    public void testCase2() throws Exception {
+    void testCase2() throws Exception {
         // Invoker
         PiecesGenerator piecesGenerator = new PiecesGenerator("*p4");
         int maxClearLine = 5;
@@ -83,11 +84,11 @@ public class CheckerNoHoldCountTest {
         AnalyzeTree tree = runTestCase(piecesGenerator, maxClearLine, maxDepth, marks);
 
         // Source: reply in twitter from @fullfool_14
-        assertThat(tree.getSuccessPercent(), is(477 / 2520.0));
+        assertThat(tree.getSuccessPercent()).isEqualTo(477 / 2520.0);
     }
 
     @Test
-    public void testCase3() throws Exception {
+    void testCase3() throws Exception {
         // Invoker
         PiecesGenerator piecesGenerator = new PiecesGenerator("*p7");
         int maxClearLine = 4;
@@ -103,11 +104,11 @@ public class CheckerNoHoldCountTest {
         AnalyzeTree tree = runTestCase(piecesGenerator, maxClearLine, maxDepth, marks);
 
         // Source: reply in twitter from @fullfool_14
-        assertThat(tree.getSuccessPercent(), is(727 / 5040.0));
+        assertThat(tree.getSuccessPercent()).isEqualTo(727 / 5040.0);
     }
 
     @Test
-    public void testCase4() throws Exception {
+    void testCase4() throws Exception {
         // Invoker
         PiecesGenerator piecesGenerator = new PiecesGenerator("*p7");
         int maxClearLine = 4;
@@ -123,6 +124,139 @@ public class CheckerNoHoldCountTest {
         AnalyzeTree tree = runTestCase(piecesGenerator, maxClearLine, maxDepth, marks);
 
         // Source: myself 20170415
-        assertThat(tree.getSuccessPercent(), is(1902 / 5040.0));
+        assertThat(tree.getSuccessPercent()).isEqualTo(1902 / 5040.0);
+    }
+
+    @Nested
+    class BT {
+        private final int maxClearLine = 4;
+        private final int maxDepth = 6;
+        private final String pattern = "*p7";
+        private PiecesGenerator piecesGenerator;
+
+        @BeforeEach
+        void setUp() {
+            this.piecesGenerator = new PiecesGenerator(pattern);
+        }
+
+        @Test
+        void case1() {
+            // Field
+            String marks = "" +
+                    "XX________" +
+                    "XX________" +
+                    "XXX______X" +
+                    "XXXXXXX__X" +
+                    "";
+
+            // Source: twitter from @26_nameless 20170729
+            AnalyzeTree tree = runTestCase(piecesGenerator, maxClearLine, maxDepth, marks);
+            assertThat(tree.getSuccessPercent()).isEqualTo(1439 / 5040.0);
+        }
+
+        @Test
+        void case2() {
+            // Field
+            String marks = "" +
+                    "___XX_____" +
+                    "___XX_____" +
+                    "__XXX____X" +
+                    "XXXXXXX__X" +
+                    "";
+
+            // Source: twitter from @26_nameless 20170729
+            AnalyzeTree tree = runTestCase(piecesGenerator, maxClearLine, maxDepth, marks);
+            assertThat(tree.getSuccessPercent()).isEqualTo(475 / 5040.0);
+        }
+
+        @Test
+        void case3() {
+            // Field
+            String marks = "" +
+                    "__________" +
+                    "XX________" +
+                    "XXXXX____X" +
+                    "XXXXXXX__X" +
+                    "";
+
+            // Source: twitter from @26_nameless 20170729
+            AnalyzeTree tree = runTestCase(piecesGenerator, maxClearLine, maxDepth, marks);
+            assertThat(tree.getSuccessPercent()).isEqualTo(353 / 5040.0);
+        }
+
+        @Test
+        void case4() {
+            // Field
+            String marks = "" +
+                    "__________" +
+                    "_XX_______" +
+                    "XXXXX____X" +
+                    "XXXXXXX__X" +
+                    "";
+
+            // Source: twitter from @26_nameless 20170729
+            AnalyzeTree tree = runTestCase(piecesGenerator, maxClearLine, maxDepth, marks);
+            assertThat(tree.getSuccessPercent()).isEqualTo(290 / 5040.0);
+        }
+
+        @Test
+        void case5() {
+            // Field
+            String marks = "" +
+                    "__________" +
+                    "__XX______" +
+                    "XXXXX____X" +
+                    "XXXXXXX__X" +
+                    "";
+
+            // Source: twitter from @26_nameless 20170729
+            AnalyzeTree tree = runTestCase(piecesGenerator, maxClearLine, maxDepth, marks);
+            assertThat(tree.getSuccessPercent()).isEqualTo(434 / 5040.0);
+        }
+
+        @Test
+        void case6() {
+            // Field
+            String marks = "" +
+                    "__________" +
+                    "___XX_____" +
+                    "XXXXX____X" +
+                    "XXXXXXX__X" +
+                    "";
+
+            // Source: twitter from @26_nameless 20170729
+            AnalyzeTree tree = runTestCase(piecesGenerator, maxClearLine, maxDepth, marks);
+            assertThat(tree.getSuccessPercent()).isEqualTo(328 / 5040.0);
+        }
+
+        @Test
+        void case7() {
+            // Field
+            String marks = "" +
+                    "__________" +
+                    "_X__X_____" +
+                    "XXXXX____X" +
+                    "XXXXXXX__X" +
+                    "";
+
+            // Source: twitter from @26_nameless 20170729
+            AnalyzeTree tree = runTestCase(piecesGenerator, maxClearLine, maxDepth, marks);
+            assertThat(tree.getSuccessPercent()).isEqualTo(346 / 5040.0);
+        }
+
+        @Test
+        void case8() {
+            // Field
+            String marks = "" +
+                    "XXX_______" +
+                    "XX________" +
+                    "XX_______X" +
+                    "XXXXXXX__X" +
+                    "";
+
+            // Source: twitter from @26_nameless 20170729
+            AnalyzeTree tree = runTestCase(piecesGenerator, maxClearLine, maxDepth, marks);
+            assertThat(tree.getSuccessPercent()).isEqualTo(843 / 5040.0);
+        }
     }
 }

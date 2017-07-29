@@ -1,29 +1,35 @@
 package searcher.checker;
 
+import common.datastore.Pair;
+import common.datastore.action.Action;
+import common.datastore.pieces.LongPieces;
+import common.datastore.pieces.Pieces;
+import common.parser.BlockInterpreter;
 import core.action.candidate.Candidate;
 import core.action.candidate.LockedCandidate;
-import common.datastore.Pair;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
-import org.junit.Test;
-import common.datastore.action.Action;
+import org.junit.jupiter.api.Test;
 import searcher.common.validator.PerfectValidator;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static core.mino.Block.*;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class CheckerNoHoldTest {
+class CheckerNoHoldTest {
     @Test
-    public void testGraceSystem() throws Exception {
+    void testGraceSystem() throws Exception {
         List<Pair<List<Block>, Boolean>> testCases = new ArrayList<Pair<List<Block>, Boolean>>() {
             {
                 add(new Pair<>(Arrays.asList(T, S, O, J), false));
@@ -56,18 +62,16 @@ public class CheckerNoHoldTest {
         MinoRotation minoRotation = new MinoRotation();
         PerfectValidator validator = new PerfectValidator();
         CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
-
-        // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         for (Pair<List<Block>, Boolean> testCase : testCases) {
             List<Block> blocks = testCase.getKey();
-            assertThat(checker.check(field, blocks, candidate, maxClearLine, maxDepth), is(testCase.getValue()));
+            assertThat(checker.check(field, blocks, candidate, maxClearLine, maxDepth)).isEqualTo(testCase.getValue());
         }
     }
 
     @Test
-    public void testCase1() throws Exception {
+    void testCase1() throws Exception {
         List<Pair<List<Block>, Boolean>> testCases = new ArrayList<Pair<List<Block>, Boolean>>() {
             {
                 add(new Pair<>(Arrays.asList(J, I, O, L, S, Z, T), true));
@@ -93,18 +97,16 @@ public class CheckerNoHoldTest {
         MinoRotation minoRotation = new MinoRotation();
         PerfectValidator validator = new PerfectValidator();
         CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
-
-        // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         for (Pair<List<Block>, Boolean> testCase : testCases) {
             List<Block> blocks = testCase.getKey();
-            assertThat(checker.check(field, blocks, candidate, maxClearLine, maxDepth), is(testCase.getValue()));
+            assertThat(checker.check(field, blocks, candidate, maxClearLine, maxDepth)).isEqualTo(testCase.getValue());
         }
     }
 
     @Test
-    public void testCase2() throws Exception {
+    void testCase2() throws Exception {
         List<Pair<List<Block>, Boolean>> testCases = new ArrayList<Pair<List<Block>, Boolean>>() {
             {
                 add(new Pair<>(Arrays.asList(I, L, T, S, Z), true));
@@ -128,18 +130,16 @@ public class CheckerNoHoldTest {
         MinoRotation minoRotation = new MinoRotation();
         PerfectValidator validator = new PerfectValidator();
         CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
-
-        // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         for (Pair<List<Block>, Boolean> testCase : testCases) {
             List<Block> blocks = testCase.getKey();
-            assertThat(checker.check(field, blocks, candidate, maxClearLine, maxDepth), is(testCase.getValue()));
+            assertThat(checker.check(field, blocks, candidate, maxClearLine, maxDepth)).isEqualTo(testCase.getValue());
         }
     }
 
     @Test
-    public void testCase3() throws Exception {
+    void testCase3() throws Exception {
         List<Pair<List<Block>, Boolean>> testCases = new ArrayList<Pair<List<Block>, Boolean>>() {
             {
                 add(new Pair<>(Arrays.asList(T, I, L, S, O, Z, J), false));
@@ -169,18 +169,16 @@ public class CheckerNoHoldTest {
         MinoRotation minoRotation = new MinoRotation();
         PerfectValidator validator = new PerfectValidator();
         CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
-
-        // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         for (Pair<List<Block>, Boolean> testCase : testCases) {
             List<Block> blocks = testCase.getKey();
-            assertThat(checker.check(field, blocks, candidate, maxClearLine, maxDepth), is(testCase.getValue()));
+            assertThat(checker.check(field, blocks, candidate, maxClearLine, maxDepth)).isEqualTo(testCase.getValue());
         }
     }
 
     @Test
-    public void testCaseFilledLine() throws Exception {
+    void testCaseFilledLine() throws Exception {
         List<Pair<List<Block>, Boolean>> testCases = new ArrayList<Pair<List<Block>, Boolean>>() {
             {
                 add(new Pair<>(Arrays.asList(I, Z, L, I), true));
@@ -205,13 +203,44 @@ public class CheckerNoHoldTest {
         MinoRotation minoRotation = new MinoRotation();
         PerfectValidator validator = new PerfectValidator();
         CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
-
-        // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         for (Pair<List<Block>, Boolean> testCase : testCases) {
             List<Block> blocks = testCase.getKey();
-            assertThat(checker.check(field, blocks, candidate, maxClearLine, maxDepth), is(testCase.getValue()));
+            assertThat(checker.check(field, blocks, candidate, maxClearLine, maxDepth)).isEqualTo(testCase.getValue());
+        }
+    }
+
+    @Test
+    void testCaseList() throws Exception {
+        String resultPath = ClassLoader.getSystemResource("perfects/checker_avoidhold.txt").getPath();
+        List<Pair<Pieces, Boolean>> list = Files.lines(Paths.get(resultPath))
+                .filter(line -> !line.startsWith("//"))
+                .map(line -> line.split("="))
+                .map(split -> {
+                    Stream<Block> blocks = BlockInterpreter.parse10(split[0]);
+                    LongPieces pieces = new LongPieces(blocks);
+                    boolean isSucceed = "o".equals(split[1]);
+                    return new Pair<Pieces, Boolean>(pieces, isSucceed);
+                })
+                .collect(Collectors.toList());
+
+        int maxDepth = 10;
+        int maxClearLine = 4;
+        Field field = FieldFactory.createField(maxClearLine);
+
+        // Initialize
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        MinoRotation minoRotation = new MinoRotation();
+        PerfectValidator validator = new PerfectValidator();
+        CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
+        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+
+        for (Pair<Pieces, Boolean> pair : list) {
+            List<Block> blocks = pair.getKey().getBlocks();
+            System.out.println(blocks);
+            assertThat(checker.check(field, blocks, candidate, maxClearLine, maxDepth)).isEqualTo(pair.getValue());
         }
     }
 }

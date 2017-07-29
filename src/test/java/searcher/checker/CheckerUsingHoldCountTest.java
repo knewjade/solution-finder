@@ -1,7 +1,7 @@
 package searcher.checker;
 
-import common.datastore.pieces.Pieces;
 import common.datastore.action.Action;
+import common.datastore.pieces.Pieces;
 import common.iterable.PermutationIterable;
 import common.pattern.PiecesGenerator;
 import common.tree.AnalyzeTree;
@@ -13,17 +13,16 @@ import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import searcher.common.validator.PerfectValidator;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static core.mino.Block.*;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class CheckerUsingHoldCountTest {
+class CheckerUsingHoldCountTest {
     private AnalyzeTree runTestCase(List<Block> blocks, int popCount, int maxClearLine, int maxDepth, String marks) {
         Field field = FieldFactory.createField(marks);
 
@@ -48,7 +47,7 @@ public class CheckerUsingHoldCountTest {
     }
 
     @Test
-    public void testGraceSystem() throws Exception {
+    void testGraceSystem() throws Exception {
         // Invoker
         List<Block> blocks = Arrays.asList(I, T, S, Z, J, L, O);
         int popCount = 4;
@@ -66,11 +65,11 @@ public class CheckerUsingHoldCountTest {
         AnalyzeTree tree = runTestCase(blocks, popCount, maxClearLine, maxDepth, marks);
 
         // Source: Nilgiri: https://docs.google.com/spreadsheets/d/1bVY3t_X96xRmUL0qdgB9tViSIGenu6RMKX4RW7qWg8Y/edit#gid=0
-        assertThat(tree.getSuccessPercent(), is(744 / 840.0));
+        assertThat(tree.getSuccessPercent()).isEqualTo(744 / 840.0);
     }
 
     @Test
-    public void testTemplate() throws Exception {
+    void testTemplate() throws Exception {
         // Invoker
         List<Block> blocks = Arrays.asList(I, T, S, Z, J, L, O);
         int popCount = 4;
@@ -103,11 +102,11 @@ public class CheckerUsingHoldCountTest {
         }
 
         // Source: Nilgiri: https://docs.google.com/spreadsheets/d/1bVY3t_X96xRmUL0qdgB9tViSIGenu6RMKX4RW7qWg8Y/edit#gid=0
-        assertThat(tree.getSuccessPercent(), is(514 / 840.0));
+        assertThat(tree.getSuccessPercent()).isEqualTo(514 / 840.0);
     }
 
     @Test
-    public void testTemplateWithHoldI() throws Exception {
+    void testTemplateWithHoldI() throws Exception {
         // Invoker
         String pattern = "I, *p4";
         int maxClearLine = 4;
@@ -141,11 +140,11 @@ public class CheckerUsingHoldCountTest {
         }
 
         // Source: Nilgiri: https://docs.google.com/spreadsheets/d/1bVY3t_X96xRmUL0qdgB9tViSIGenu6RMKX4RW7qWg8Y/edit#gid=0
-        assertThat(tree.getSuccessPercent(), is(711 / 840.0));
+        assertThat(tree.getSuccessPercent()).isEqualTo(711 / 840.0);
     }
 
     @Test
-    public void testAfter4Line() throws Exception {
+    void testAfter4Line() throws Exception {
         // Invoker
         List<Block> blocks = Arrays.asList(I, T, S, Z, J, L, O);
         int popCount = 7;
@@ -178,11 +177,11 @@ public class CheckerUsingHoldCountTest {
         }
 
         // Source: myself 20170415
-        assertThat(tree.getSuccessPercent(), is(5040 / 5040.0));
+        assertThat(tree.getSuccessPercent()).isEqualTo(5040 / 5040.0);
     }
 
     @Test
-    public void testBT4_5() throws Exception {
+    void testBT4_5() throws Exception {
         // Invoker
         List<Block> blocks = Arrays.asList(I, T, S, Z, J, L, O);
         int popCount = 7;
@@ -217,6 +216,6 @@ public class CheckerUsingHoldCountTest {
         }
 
         // Source: myself 20170415
-        assertThat(tree.getSuccessPercent(), is(5038 / 5040.0));
+        assertThat(tree.getSuccessPercent()).isEqualTo(5038 / 5040.0);
     }
 }

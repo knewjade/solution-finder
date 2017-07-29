@@ -107,7 +107,7 @@ public class CheckerUsingHoldTest {
     }
 
     @Test
-    public void testNoPerfect() throws Exception {
+    public void testNoPossiblePerfect() throws Exception {
         // Field
         Field field = FieldFactory.createSmallField();
         int maxClearLine = 4;
@@ -139,7 +139,7 @@ public class CheckerUsingHoldTest {
     }
 
     @Test
-    public void testPerfect() throws Exception {
+    public void testPossiblePerfect() throws Exception {
         // Field
         Field field = FieldFactory.createSmallField();
         int maxClearLine = 4;
