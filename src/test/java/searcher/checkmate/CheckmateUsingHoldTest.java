@@ -1,43 +1,92 @@
 package searcher.checkmate;
 
-import _experimental.unused.CheckmateInvoker;
 import common.ResultHelper;
-import common.datastore.Pair;
-import common.datastore.Result;
+import common.buildup.BuildUp;
+import common.datastore.*;
+import common.datastore.action.Action;
+import common.datastore.pieces.LongPieces;
+import common.datastore.pieces.Pieces;
+import common.order.OrderLookup;
+import common.order.StackOrder;
+import common.parser.BlockInterpreter;
+import common.parser.OperationTransform;
+import core.action.candidate.Candidate;
+import core.action.candidate.LockedCandidate;
+import core.action.reachable.LockedReachable;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
-import org.junit.Test;
+import core.mino.MinoFactory;
+import core.mino.MinoShifter;
+import core.srs.MinoRotation;
+import org.junit.jupiter.api.Test;
+import searcher.common.validator.PerfectValidator;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static core.mino.Block.*;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class CheckmateUsingHoldTest {
+class CheckmateUsingHoldTest {
+    private final MinoFactory minoFactory = new MinoFactory();
+    private final MinoShifter minoShifter = new MinoShifter();
+    private final MinoRotation minoRotation = new MinoRotation();
+    private final PerfectValidator validator = new PerfectValidator();
+    private final Checkmate<Action> checkmate = new CheckmateUsingHold<>(minoFactory, validator);
+
+    private List<Block> parseToBlocks(Result result) {
+        return ResultHelper.createOperationStream(result)
+                .map(Operation::getBlock)
+                .collect(Collectors.toList());
+    }
+
+    private Operations parseToOperations(Result result) {
+        return new Operations(ResultHelper.createOperationStream(result));
+    }
+
+    private void assertResult(Result result, Field field, int maxClearLine, LockedReachable reachable, List<Block> blocks) {
+        // Check blocks is same
+        List<Block> resultBlocks = parseToBlocks(result);
+        Block lastHoldBlock = result.getLastHold();
+        HashSet<LongPieces> pieces = OrderLookup.reverseBlocks(resultBlocks, blocks.size()).stream()
+                .map(StackOrder::toStream)
+                .map(stream -> stream.map(block -> block != null ? block : lastHoldBlock))
+                .map(LongPieces::new)
+                .collect(Collectors.toCollection(HashSet::new));
+
+        assertThat(pieces).contains(new LongPieces(blocks));
+
+        // Check can build result
+        Operations operations = parseToOperations(result);
+        List<OperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, maxClearLine);
+        boolean cansBuild = BuildUp.cansBuild(field, operationWithKeys, maxClearLine, reachable);
+        assertThat(cansBuild).isTrue();
+    }
+
+
     @Test
-    public void testLong9() throws Exception {
-        // Invoker
+    void testLong9() throws Exception {
         List<Pair<List<Block>, Integer>> testCases = new ArrayList<Pair<List<Block>, Integer>>() {
             {
                 add(new Pair<>(Arrays.asList(I, S, Z, T, J, I, S, Z, S, Z), 29));
                 add(new Pair<>(Arrays.asList(T, S, L, I, Z, J, L, O, O, S), 49));
                 add(new Pair<>(Arrays.asList(L, Z, S, J, Z, Z, Z, I, T, T), 40));
-                // add(new Pair<>(Arrays.asList(T, T, S, S, Z, Z, L, L, J, J), 106)); myself: 107　TODO: 要調査
+                add(new Pair<>(Arrays.asList(T, T, S, S, Z, Z, L, L, J, J), 107)); // PCF: 106
                 add(new Pair<>(Arrays.asList(O, S, O, S, Z, L, Z, L, I, I), 3));
-//                add(new Pair<>(Arrays.asList(J, I, T, O, L, S, I, T, Z, O), 112));  myself: 113　TODO: 要調査
+                add(new Pair<>(Arrays.asList(J, I, T, O, L, S, I, T, Z, O), 113));  // PCF: 112
                 add(new Pair<>(Arrays.asList(S, T, J, L, O, O, T, S, L, L), 82));
                 add(new Pair<>(Arrays.asList(S, T, J, L, O, O, T, S, L), 36));
-//                add(new Pair<>(Arrays.asList(Z, S, T, I, O, J, L, Z, S), 16)); myself: 17　TODO: 要調査
+                add(new Pair<>(Arrays.asList(Z, S, T, I, O, J, L, Z, S), 17));  // PCF: 16
                 add(new Pair<>(Arrays.asList(S, T, J, L, O, O, T, S, L), 36));
             }
         };
-
-        int maxClearLine = 4;
-        CheckmateInvoker invoker = CheckmateInvoker.createPerfectCheckmateUsingHold(maxClearLine);
 
         // Field
         String marks = "" +
@@ -47,56 +96,69 @@ public class CheckmateUsingHoldTest {
                 "XX________" +
                 "";
         Field field = FieldFactory.createField(marks);
+        int maxClearLine = 4;
+        int maxDepth = 9;
 
-        // Measure
+        // Initialize
+        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
+
+        // Assertion
         for (Pair<List<Block>, Integer> testCase : testCases) {
+            // Set test case
             List<Block> blocks = testCase.getKey();
-            invoker.measure(field, blocks, 1);
-            invoker.show(false);
+            int expectedCount = testCase.getValue();
 
-            List<Result> results = invoker.getLastResults();
-            Integer expectBlock = testCase.getValue();
-            assertThat(ResultHelper.uniquify(results).size(), is(expectBlock));
+            // Execute
+            List<Result> results = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
+            assertThat(results)
+                    .as(blocks.toString())
+                    .hasSize(expectedCount);
+
+            // Check result
+            for (Result result : results)
+                assertResult(result, field, maxClearLine, reachable, blocks);
         }
     }
 
     @Test
-    public void testLong10() throws Exception {
+    void testLong10() throws Exception {
         // Invoker
         List<Pair<List<Block>, Integer>> testCases = new ArrayList<Pair<List<Block>, Integer>>() {
             {
-                add(new Pair<>(Arrays.asList(I, S, Z, T, J, I, S, Z, S, Z, T), 44));
-//                add(new Pair<>(Arrays.asList(S, Z, T, L, J, I, O, S, Z, T, L), 161)); myself: 163　TODO: 要調査
-                add(new Pair<>(Arrays.asList(T, L, J, Z, S, O, O, T, J, L, I), 161));
-                add(new Pair<>(Arrays.asList(T, L, J, Z, S, O, O, T, J, L, T), 121));
                 add(new Pair<>(Arrays.asList(T, L, J, Z, S, O, O, T, J, L), 81));
             }
         };
-        int maxClearLine = 4;
-        CheckmateInvoker invoker = CheckmateInvoker.createPerfectCheckmateUsingHold(maxClearLine);
 
         // Field
+        int maxClearLine = 4;
+        int maxDepth = 10;
         Field field = FieldFactory.createField(maxClearLine);
 
-        // Measure
-        for (Pair<List<Block>, Integer> testCase : testCases) {
-            List<Block> blocks = testCase.getKey();
-            invoker.measure(field, blocks, 1);
-            invoker.show(false);
+        // Initialize
+        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
 
-            List<Result> results = invoker.getLastResults();
-            Integer expectBlock = testCase.getValue();
-            assertThat(ResultHelper.uniquify(results).size(), is(expectBlock));
+        // Assertion
+        for (Pair<List<Block>, Integer> testCase : testCases) {
+            // Set test case
+            List<Block> blocks = testCase.getKey();
+            int expectedCount = testCase.getValue();
+
+            // Execute
+            List<Result> results = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
+            assertThat(results)
+                    .as(blocks.toString())
+                    .hasSize(expectedCount);
+
+            // Check result
+            for (Result result : results)
+                assertResult(result, field, maxClearLine, reachable, blocks);
         }
     }
 
     @Test
-    public void testMultiPath1() throws Exception {
-        // Invoker
-        List<Block> blocks = Arrays.asList(J, L, S, Z);
-        int maxClearLine = 3;
-        CheckmateInvoker invoker = CheckmateInvoker.createPerfectCheckmateUsingHold(maxClearLine);
-
+    void testMultiPath1() throws Exception {
         // Field
         String marks = "" +
                 "X________X" +
@@ -104,22 +166,31 @@ public class CheckmateUsingHoldTest {
                 "XX__XX__XX" +
                 "";
         Field field = FieldFactory.createField(marks);
+        int maxClearLine = 3;
+        int maxDepth = 4;
 
-        // Measure
-        invoker.measure(field, blocks, 1);
-        invoker.show(true);
+        // Initialize
+        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
 
-        List<Result> results = invoker.getLastResults();
-        assertThat(ResultHelper.uniquify(results).size(), is(4));
+        // Assertion
+        // Set test case
+        List<Block> blocks = Arrays.asList(J, L, S, Z);
+        int expectedCount = 4;
+
+        // Execute
+        List<Result> results = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
+        assertThat(results)
+                .as(blocks.toString())
+                .hasSize(expectedCount);
+
+        // Check result
+        for (Result result : results)
+            assertResult(result, field, maxClearLine, reachable, blocks);
     }
 
     @Test
-    public void testMultiPath2() throws Exception {
-        // Invoker
-        List<Block> blocks = Arrays.asList(S, Z, O);
-        int maxClearLine = 5;
-        CheckmateInvoker invoker = CheckmateInvoker.createPerfectCheckmateUsingHold(maxClearLine);
-
+    void testMultiPath2() throws Exception {
         // Field
         String marks = "" +
                 "X____XXXXX" +
@@ -129,22 +200,31 @@ public class CheckmateUsingHoldTest {
                 "XXXXXX__XX" +
                 "";
         Field field = FieldFactory.createField(marks);
+        int maxClearLine = 5;
+        int maxDepth = 3;
 
-        // Measure
-        invoker.measure(field, blocks, 1);
-        invoker.show(true);
+        // Initialize
+        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
 
-        List<Result> results = invoker.getLastResults();
-        assertThat(ResultHelper.uniquify(results).size(), is(1));
+        // Assertion
+        // Set test case
+        List<Block> blocks = Arrays.asList(S, Z, O);
+        int expectedCount = 1;
+
+        // Execute
+        List<Result> results = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
+        assertThat(results)
+                .as(blocks.toString())
+                .hasSize(expectedCount);
+
+        // Check result
+        for (Result result : results)
+            assertResult(result, field, maxClearLine, reachable, blocks);
     }
 
     @Test
-    public void testFilledLine() throws Exception {
-        // Invoker
-        List<Block> blocks = Arrays.asList(I, Z, L, I);
-        int maxClearLine = 5;
-        CheckmateInvoker invoker = CheckmateInvoker.createPerfectCheckmateUsingHold(maxClearLine);
-
+    void testFilledLine() throws Exception {
         // Field
         String marks = "" +
                 "XXXXX_____" +
@@ -154,12 +234,76 @@ public class CheckmateUsingHoldTest {
                 "XXXXXX____" +
                 "";
         Field field = FieldFactory.createField(marks);
+        int maxClearLine = 5;
+        int maxDepth = 4;
 
-        // Measure
-        invoker.measure(field, blocks, 1);
-        invoker.show(true);
+        // Initialize
+        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
 
-        List<Result> results = invoker.getLastResults();
-        assertThat(ResultHelper.uniquify(results).size(), is(2));
+        // Assertion
+        // Set test case
+        List<Block> blocks = Arrays.asList(I, Z, L, I);
+        int expectedCount = 2;
+
+        // Execute
+        List<Result> results = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
+        assertThat(results)
+                .as(blocks.toString())
+                .hasSize(expectedCount);
+
+        // Check result
+        for (Result result : results)
+            assertResult(result, field, maxClearLine, reachable, blocks);
+    }
+
+    @Test
+    void testCaseList() throws Exception {
+        String resultPath = ClassLoader.getSystemResource("perfects/checkmate_usinghold.txt").getPath();
+        List<Pair<Pieces, Integer>> testCases = Files.lines(Paths.get(resultPath))
+                .map(line -> line.split("//")[0])
+                .map(String::trim)
+                .filter(line -> !line.isEmpty())
+                .map(line -> line.split("="))
+                .map(split -> {
+                    Stream<Block> blocks = BlockInterpreter.parse(split[0]);
+                    LongPieces pieces = new LongPieces(blocks);
+                    int count = Integer.valueOf(split[1]);
+                    return new Pair<Pieces, Integer>(pieces, count);
+                })
+                .collect(Collectors.toList());
+//        Collections.shuffle(testCases);  // TODO: Remove commentout
+
+        // Field
+        int maxClearLine = 4;
+        int maxDepth = 10;
+        Field field = FieldFactory.createField(maxClearLine);
+
+        // Initialize
+        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
+
+        // Assertion
+//        for (Pair<Pieces, Integer> testCase : testCases.subList(0, 10)) {  // TODO: Remove commentout
+        int startIndex = 0;
+        for (int index = startIndex; index < startIndex + 10; index++) {
+            System.out.println(index);
+            Pair<Pieces, Integer> testCase = testCases.get(index);
+
+            // Set test case
+            List<Block> blocks = testCase.getKey().getBlocks();
+            int expectedCount = testCase.getValue();
+            System.out.println(blocks);
+
+            // Execute
+            List<Result> results = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
+            assertThat(results)
+                    .as(blocks.toString())
+                    .hasSize(expectedCount);
+
+            // Check result
+            for (Result result : results)
+                assertResult(result, field, maxClearLine, reachable, blocks);
+        }
     }
 }

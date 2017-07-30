@@ -24,8 +24,8 @@ public class ResultPCFComparator implements Comparator<Result> {
         if (lastBlock != 0)
             return lastBlock;
 
-        Action action1 = o1.getAction();
-        Action action2 = o2.getAction();
+        Action action1 = o1.getLastAction();
+        Action action2 = o2.getLastAction();
         int rotate = action1.getRotate().compareTo(action2.getRotate());
         if (rotate != 0)
             return rotate;

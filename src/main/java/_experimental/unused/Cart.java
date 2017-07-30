@@ -1,26 +1,26 @@
 package _experimental.unused;
 
+import common.ResultHelper;
 import common.datastore.Operation;
 import common.datastore.Pair;
-import common.order.StackOrder;
-import core.action.candidate.Candidate;
-import concurrent.checker.CheckerUsingHoldThreadLocal;
-import concurrent.LockedCandidateThreadLocal;
+import common.datastore.Result;
+import common.datastore.action.Action;
+import common.iterable.AllPermutationIterable;
+import common.iterable.CombinationIterable;
 import common.order.OrderLookup;
+import common.order.StackOrder;
+import common.tree.AnalyzeTree;
+import common.tree.ConcurrentVisitedTree;
+import common.tree.VisitedTree;
+import concurrent.LockedCandidateThreadLocal;
+import concurrent.checker.CheckerUsingHoldThreadLocal;
+import core.action.candidate.Candidate;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
 import core.mino.Block;
 import lib.Stopwatch;
-import common.iterable.AllPermutationIterable;
-import common.iterable.CombinationIterable;
 import searcher.checker.Checker;
-import common.datastore.Result;
-import common.datastore.action.Action;
-import common.tree.AnalyzeTree;
-import common.tree.ConcurrentVisitedTree;
-import common.tree.VisitedTree;
-import common.ResultHelper;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static core.mino.Block.*;
 
@@ -156,14 +157,12 @@ public class Cart {
 
                 if (checkResult) {
                     Result result = checker.getResult();
-                    List<Operation> operations = ResultHelper.createOperations(result);
-                    ArrayList<Block> operationBlocks = new ArrayList<>();
-                    for (Operation operation : operations) {
-                        operationBlocks.add(operation.getBlock());
-                    }
+                    List<Block> blocks = ResultHelper.createOperationStream(result)
+                            .map(Operation::getBlock)
+                            .collect(Collectors.toList());
 
-                    int reverseMaxDepth = result.getLastHold() != null ? operationBlocks.size() + 1 : operationBlocks.size();
-                    ArrayList<StackOrder<Block>> reversePieces = OrderLookup.reverseBlocks(operationBlocks, reverseMaxDepth);
+                    int reverseMaxDepth = result.getLastHold() != null ? blocks.size() + 1 : blocks.size();
+                    ArrayList<StackOrder<Block>> reversePieces = OrderLookup.reverseBlocks(blocks, reverseMaxDepth);
                     for (StackOrder<Block> piece : reversePieces) {
                         visitedTree.set(true, piece.toList());
                     }

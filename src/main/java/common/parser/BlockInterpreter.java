@@ -37,4 +37,14 @@ public class BlockInterpreter {
                 toBlock(a.charAt(10))
         );
     }
+
+    public static Stream<Block> parse(String str) {
+        switch (str.length()) {
+            case 10:
+                return parse10(str);
+            case 11:
+                return parse11(str);
+        }
+        throw new UnsupportedOperationException();
+    }
 }

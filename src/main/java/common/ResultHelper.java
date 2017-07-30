@@ -2,14 +2,18 @@ package common;
 
 import common.comparator.ResultPCFComparator;
 import common.datastore.Operation;
+import common.datastore.Operations;
 import common.datastore.Result;
 import common.datastore.SimpleOperation;
 import common.datastore.action.Action;
+import common.datastore.order.Order;
 import core.mino.Block;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ResultHelper {
     private static final ResultPCFComparator COMPARATOR = new ResultPCFComparator();
@@ -20,25 +24,14 @@ public class ResultHelper {
         return new ArrayList<>(set);
     }
 
-    // TODO: to stream
-    public static List<Operation> createOperations(Result result) {
-        OperationHistory history = result.getOrder().getHistory();
-        int[] operationNumbers = history.getOperationNumbers();
+    public static Stream<Operation> createOperationStream(Result result) {
+        Order order = result.getOrder();
+        OperationHistory history = order.getHistory();
+        Stream<Operation> operationStream = history.getOperationStream();
 
-        // head to tail
-        int max = history.getNextIndex();
-        ArrayList<Operation> operations = new ArrayList<>();
-        for (int index = 0; index < max; index++) {
-            int value = operationNumbers[index];
-            Operation operation = ActionParser.parseToOperation(value);
-            operations.add(operation);
-        }
-
-        // last
         Block lastBlock = result.getLastBlock();
-        Action action = result.getAction();
-        SimpleOperation operation = new SimpleOperation(lastBlock, action.getRotate(), action.getX(), action.getY());
-        operations.add(operation);
-        return operations;
+        Action lastAction = result.getLastAction();
+        SimpleOperation lastOperation = new SimpleOperation(lastBlock, lastAction.getRotate(), lastAction.getX(), lastAction.getY());
+        return Stream.concat(operationStream, Stream.of(lastOperation));
     }
 }

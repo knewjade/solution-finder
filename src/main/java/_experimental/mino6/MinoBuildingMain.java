@@ -1,20 +1,17 @@
 package _experimental.mino6;
 
 import common.ResultHelper;
-import common.comparator.FieldComparator;
 import common.datastore.Operation;
 import common.datastore.Result;
 import common.datastore.action.Action;
 import common.iterable.PermutationIterable;
 import core.action.candidate.Candidate;
 import core.action.candidate.HarddropCandidate;
-import core.action.candidate.LockedCandidate;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
-import core.srs.MinoRotation;
 import core.srs.Rotate;
 import searcher.checkmate.Checkmate;
 import searcher.checkmate.CheckmateNoHold;
@@ -28,7 +25,6 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 // 7ミノでできる地形を列挙する
@@ -73,9 +69,9 @@ public class MinoBuildingMain {
 
             // 操作からfieldに変換
             List<Field> operationsList = results.stream()
-                    .map(ResultHelper::createOperations)
-                    .map(operations -> {
+                    .map(result -> {
                         Field field1 = FieldFactory.createField(maxClearLine);
+                        List<Operation> operations = ResultHelper.createOperationStream(result).collect(Collectors.toList());
                         for (Operation operation : operations) {
                             Block block = operation.getBlock();
                             Rotate rotate = operation.getRotate();

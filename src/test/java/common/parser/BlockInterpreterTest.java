@@ -1,42 +1,47 @@
 package common.parser;
 
 import core.mino.Block;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static core.mino.Block.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class BlockInterpreterTest {
+class BlockInterpreterTest {
     @Test
-    public void parse10WithJust() throws Exception {
+    void parse10WithJust() throws Exception {
         Stream<Block> stream = BlockInterpreter.parse10("TIJLOSZTIJ");
-        List<Block> blocks = stream.collect(Collectors.toList());
-        assertThat(blocks, is(Arrays.asList(Block.T, Block.I, Block.J, Block.L, Block.O, Block.S, Block.Z, Block.T, Block.I, Block.J)));
+        assertThat(stream).containsExactly(T, I, J, L, O, S, Z, T, I, J);
     }
 
     @Test
-    public void parse10Over() throws Exception {
+    void parse10Over() throws Exception {
         Stream<Block> stream = BlockInterpreter.parse10("SJOTLZOJSZIJLTIO");
-        List<Block> blocks = stream.collect(Collectors.toList());
-        assertThat(blocks, is(Arrays.asList(Block.S, Block.J, Block.O, Block.T, Block.L, Block.Z, Block.O, Block.J, Block.S, Block.Z)));
+        assertThat(stream).containsExactly(S, J, O, T, L, Z, O, J, S, Z);
     }
 
     @Test
-    public void parse11Just() throws Exception {
+    void parse11Just() throws Exception {
         Stream<Block> stream = BlockInterpreter.parse11("ZLSJZLSJTIO");
-        List<Block> blocks = stream.collect(Collectors.toList());
-        assertThat(blocks, is(Arrays.asList(Block.Z, Block.L, Block.S, Block.J, Block.Z, Block.L, Block.S, Block.J, Block.T, Block.I, Block.O)));
+        assertThat(stream).containsExactly(Z, L, S, J, Z, L, S, J, T, I, O);
     }
 
     @Test
-    public void parse11Over() throws Exception {
+    void parse11Over() throws Exception {
         Stream<Block> stream = BlockInterpreter.parse11("LZISTOJLZISTOJ");
-        List<Block> blocks = stream.collect(Collectors.toList());
-        assertThat(blocks, is(Arrays.asList(Block.L, Block.Z, Block.I, Block.S, Block.T, Block.O, Block.J, Block.L, Block.Z, Block.I, Block.S)));
+        assertThat(stream).containsExactly(L, Z, I, S, T, O, J, L, Z, I, S);
+    }
+
+    @Test
+    void parseWhenSizeIs10() throws Exception {
+        Stream<Block> stream = BlockInterpreter.parse("SZSZSIOIOI");
+        assertThat(stream).containsExactly(S, Z, S, Z, S, I, O, I, O, I);
+    }
+
+    @Test
+    void parseWhenSizeIs11() throws Exception {
+        Stream<Block> stream = BlockInterpreter.parse("LLLJJTTTTTO");
+        assertThat(stream).containsExactly(L, L, L, J, J, T, T, T, T, T, O);
     }
 }

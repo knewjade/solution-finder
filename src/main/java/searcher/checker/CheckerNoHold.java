@@ -49,6 +49,7 @@ public class CheckerNoHold<T extends Action> implements Checker<T> {
     }
 
     public Result getResult() {
+        assert !dataPool.getResults().isEmpty();
         return dataPool.getResults().get(0);
     }
 }

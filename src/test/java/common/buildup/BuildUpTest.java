@@ -100,8 +100,8 @@ class BuildUpTest {
 
             if (check) {
                 counter.incrementAndGet();
-                List<Operation> operationList = ResultHelper.createOperations(checker.getResult());
-                Operations operations = new Operations(operationList);
+                Stream<Operation> operationStream = ResultHelper.createOperationStream(checker.getResult());
+                Operations operations = new Operations(operationStream);
                 List<OperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
                 assertThat(BuildUp.cansBuild(field, operationWithKeys, height, reachable))
                         .as(FieldView.toString(field) + blocks)
@@ -140,8 +140,8 @@ class BuildUpTest {
 
             if (check) {
                 counter.incrementAndGet();
-                List<Operation> operationList = ResultHelper.createOperations(checker.getResult());
-                Operations operations = new Operations(operationList);
+                Stream<Operation> operationStream = ResultHelper.createOperationStream(checker.getResult());
+                Operations operations = new Operations(operationStream);
                 List<OperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
                 assertThat(BuildUp.cansBuild(field, operationWithKeys, height, reachable))
                         .as(FieldView.toString(field) + blocks)

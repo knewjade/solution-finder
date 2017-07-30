@@ -1,11 +1,17 @@
 package searcher.checker;
 
-import common.datastore.Pair;
+import common.ResultHelper;
+import common.buildup.BuildUp;
+import common.datastore.*;
 import common.datastore.action.Action;
 import common.datastore.pieces.LongPieces;
+import common.order.OrderLookup;
+import common.order.StackOrder;
 import common.parser.BlockInterpreter;
+import common.parser.OperationTransform;
 import core.action.candidate.Candidate;
 import core.action.candidate.LockedCandidate;
+import core.action.reachable.LockedReachable;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
@@ -13,7 +19,7 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import lib.Randoms;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import searcher.common.validator.PerfectValidator;
 
 import java.net.URL;
@@ -25,9 +31,46 @@ import java.util.stream.Collectors;
 import static core.mino.Block.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CheckerUsingHoldTest {
+class CheckerUsingHoldTest {
+    private final MinoFactory minoFactory = new MinoFactory();
+    private final MinoShifter minoShifter = new MinoShifter();
+    private final MinoRotation minoRotation = new MinoRotation();
+    private final PerfectValidator validator = new PerfectValidator();
+    private final CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
+
+    private List<Block> parseToBlocks(Result result) {
+        return ResultHelper.createOperationStream(result)
+                .map(Operation::getBlock)
+                .collect(Collectors.toList());
+    }
+
+    private Operations parseToOperations(Result result) {
+        return new Operations(ResultHelper.createOperationStream(result));
+    }
+
+    private void assertResult(Field field, int maxClearLine, LockedReachable reachable, List<Block> blocks) {
+        Result result = checker.getResult();
+
+        // Check blocks is same
+        List<Block> resultBlocks = parseToBlocks(result);
+        Block lastHoldBlock = result.getLastHold();
+        HashSet<LongPieces> pieces = OrderLookup.reverseBlocks(resultBlocks, blocks.size()).stream()
+                .map(StackOrder::toStream)
+                .map(stream -> stream.map(block -> block != null ? block : lastHoldBlock))
+                .map(LongPieces::new)
+                .collect(Collectors.toCollection(HashSet::new));
+
+        assertThat(pieces).contains(new LongPieces(blocks));
+
+        // Check can build result
+        Operations operations = parseToOperations(result);
+        List<OperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, maxClearLine);
+        boolean cansBuild = BuildUp.cansBuild(field, operationWithKeys, maxClearLine, reachable);
+        assertThat(cansBuild).isTrue();
+    }
+
     @Test
-    public void testGraceSystem() throws Exception {
+    void testGraceSystem() throws Exception {
         List<Pair<List<Block>, Boolean>> testCases = new ArrayList<Pair<List<Block>, Boolean>>() {
             {
                 add(new Pair<>(Arrays.asList(T, S, O, J), false));
@@ -55,23 +98,27 @@ public class CheckerUsingHoldTest {
         int maxDepth = 4;
 
         // Initialize
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
-        PerfectValidator validator = new PerfectValidator();
-        CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
-
-        // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
 
+        // Assertion
         for (Pair<List<Block>, Boolean> testCase : testCases) {
+            // Set test case
             List<Block> blocks = testCase.getKey();
-            assertThat(checker.check(field, blocks, candidate, maxClearLine, maxDepth)).isEqualTo(testCase.getValue());
+            Boolean expectedCheckFlag = testCase.getValue();
+
+            // Execute
+            boolean isSucceed = checker.check(field, blocks, candidate, maxClearLine, maxDepth);
+            assertThat(isSucceed).isEqualTo(expectedCheckFlag);
+
+            // Check result
+            if (isSucceed)
+                assertResult(field, maxClearLine, reachable, blocks);
         }
     }
 
     @Test
-    public void testCaseFilledLine() throws Exception {
+    void testCaseFilledLine() throws Exception {
         List<Pair<List<Block>, Boolean>> testCases = new ArrayList<Pair<List<Block>, Boolean>>() {
             {
                 add(new Pair<>(Arrays.asList(I, Z, L, I), true));
@@ -91,85 +138,92 @@ public class CheckerUsingHoldTest {
         int maxDepth = 4;
 
         // Initialize
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
-        PerfectValidator validator = new PerfectValidator();
-        CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
-
-        // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
 
+        // Assertion
         for (Pair<List<Block>, Boolean> testCase : testCases) {
+            // Set test case
             List<Block> blocks = testCase.getKey();
-            assertThat(checker.check(field, blocks, candidate, maxClearLine, maxDepth)).isEqualTo(testCase.getValue());
+            Boolean expectedCheckFlag = testCase.getValue();
+
+            // Execute
+            boolean isSucceed = checker.check(field, blocks, candidate, maxClearLine, maxDepth);
+            assertThat(isSucceed).isEqualTo(expectedCheckFlag);
+
+            // Check result
+            if (isSucceed)
+                assertResult(field, maxClearLine, reachable, blocks);
         }
     }
 
     @Test
-    public void testNoPossiblePerfect() throws Exception {
+    void testNoPossiblePerfect() throws Exception {
         // Field
         Field field = FieldFactory.createSmallField();
         int maxClearLine = 4;
         int maxDepth = 10;
 
-        // Initialize
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
-        PerfectValidator validator = new PerfectValidator();
-        CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
-
-        // Measure
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
-
         // Block
         URL noPerfect = ClassLoader.getSystemResource("orders/noperfect.txt");
-        List<LongPieces> piecesList = Files.lines(Paths.get(noPerfect.toURI()))
-                .map(BlockInterpreter::parse11)
+        List<LongPieces> testCases = Files.lines(Paths.get(noPerfect.toURI()))
+                .map(BlockInterpreter::parse)
                 .map(LongPieces::new)
                 .collect(Collectors.toList());
-        Collections.shuffle(piecesList);
+        Collections.shuffle(testCases);
 
-        for (LongPieces pieces : piecesList.subList(0, 10)) {
-            System.out.println(pieces);
+        // Initialize
+        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
+
+        // Assertion
+        for (LongPieces pieces : testCases.subList(0, 10)) {
+            // Set test case
             List<Block> blocks = pieces.getBlocks();
-            assertThat(checker.check(field, blocks, candidate, maxClearLine, maxDepth)).isFalse();
+
+            // Execute
+            boolean isSucceed = checker.check(field, blocks, candidate, maxClearLine, maxDepth);
+            assertThat(isSucceed).isFalse();
+
+            // Check result
+            if (isSucceed)
+                assertResult(field, maxClearLine, reachable, blocks);
         }
     }
 
     @Test
-    public void testPossiblePerfect() throws Exception {
+    void testPossiblePerfect() throws Exception {
         // Field
         Field field = FieldFactory.createSmallField();
         int maxClearLine = 4;
         int maxDepth = 10;
 
-        // Initialize
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
-        PerfectValidator validator = new PerfectValidator();
-        CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
-
-        // Measure
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
-
-        // Block
+        // Set to check No Possible Perfect
         URL noPerfect = ClassLoader.getSystemResource("orders/noperfect.txt");
-        HashSet<LongPieces> piecesSet = Files.lines(Paths.get(noPerfect.toURI()))
-                .map(BlockInterpreter::parse11)
+        HashSet<LongPieces> noPerfectSet = Files.lines(Paths.get(noPerfect.toURI()))
+                .map(BlockInterpreter::parse)
                 .map(LongPieces::new)
                 .collect(Collectors.toCollection(HashSet::new));
 
+        // Initialize
+        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
+
+        // Assertion
         Randoms randoms = new Randoms();
         for (int count = 0; count < 100; count++) {
+            // Set test case
             int cycle = randoms.nextIntClosed(0, 8);
             List<Block> blocks = randoms.block11InCycle(cycle);
-            System.out.println(blocks);
-            LongPieces pieces = new LongPieces(blocks);
-            boolean contains = piecesSet.contains(pieces);
-            assertThat(checker.check(field, blocks, candidate, maxClearLine, maxDepth)).isEqualTo(!contains);
+
+            // Execute
+            boolean isSucceed = checker.check(field, blocks, candidate, maxClearLine, maxDepth);
+            boolean expectedFlag = !noPerfectSet.contains(new LongPieces(blocks));
+            assertThat(isSucceed).isEqualTo(expectedFlag);
+
+            // Check result
+            if (isSucceed)
+                assertResult(field, maxClearLine, reachable, blocks);
         }
     }
 }

@@ -32,12 +32,7 @@ public class OperationHistory {
         return new OperationHistory(newArray, nextIndex + 1);
     }
 
-    // TODO: delete method: using getOperationStream
-    int[] getOperationNumbers() {
-        return operationNumbers;
-    }
-
-    Stream<Operation> getOperationStream() {
+    public Stream<Operation> getOperationStream() {
         Stream.Builder<Operation> builder = Stream.builder();
         for (int index = 0; index < nextIndex; index++)
             builder.accept(ActionParser.parseToOperation(operationNumbers[index]));

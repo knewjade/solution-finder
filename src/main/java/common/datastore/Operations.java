@@ -3,9 +3,15 @@ package common.datastore;
 import common.comparator.OperationListComparator;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Operations implements Comparable<Operations> {
     private final List<? extends Operation> operations;
+
+    public Operations(Stream<? extends Operation> operationStream) {
+        this(operationStream.collect(Collectors.toList()));
+    }
 
     public Operations(List<? extends Operation> operations) {
         assert operations != null;

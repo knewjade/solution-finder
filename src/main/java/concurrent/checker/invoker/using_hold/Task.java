@@ -1,20 +1,21 @@
 package concurrent.checker.invoker.using_hold;
 
+import common.ResultHelper;
 import common.datastore.Operation;
-import common.order.StackOrder;
-import core.action.candidate.Candidate;
-import common.order.OrderLookup;
 import common.datastore.Pair;
-import core.mino.Block;
-import searcher.checker.Checker;
 import common.datastore.Result;
 import common.datastore.action.Action;
+import common.order.OrderLookup;
+import common.order.StackOrder;
 import common.tree.VisitedTree;
-import common.ResultHelper;
+import core.action.candidate.Candidate;
+import core.mino.Block;
+import searcher.checker.Checker;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 class Task implements Callable<Pair<List<Block>, Boolean>> {
     private final Obj obj;
@@ -44,23 +45,17 @@ class Task implements Callable<Pair<List<Block>, Boolean>> {
         // パフェが見つかったツモ順(≠探索時のツモ順)へと、ホールドを使ってできるパターンを逆算
         if (checkResult) {
             Result result = checker.getResult();
-            List<Operation> operations = ResultHelper.createOperations(result);
-            ArrayList<Block> operationBlocks = parseOperationsToBlockList(operations);
+            List<Block> blocks = ResultHelper.createOperationStream(result)
+                    .map(Operation::getBlock)
+                    .collect(Collectors.toList());
 
-            int reverseMaxDepth = result.getLastHold() != null ? operationBlocks.size() + 1 : operationBlocks.size();
-            ArrayList<StackOrder<Block>> reversePieces = OrderLookup.reverseBlocks(operationBlocks, reverseMaxDepth);
+            int reverseMaxDepth = result.getLastHold() != null ? blocks.size() + 1 : blocks.size();
+            ArrayList<StackOrder<Block>> reversePieces = OrderLookup.reverseBlocks(blocks, reverseMaxDepth);
 
             for (StackOrder<Block> piece : reversePieces)
                 obj.visitedTree.set(true, piece.toList());
         }
 
         return new Pair<>(target, checkResult);
-    }
-
-    private ArrayList<Block> parseOperationsToBlockList(List<Operation> operations) {
-        ArrayList<Block> operationBlocks = new ArrayList<>();
-        for (Operation operation : operations)
-            operationBlocks.add(operation.getBlock());
-        return operationBlocks;
     }
 }

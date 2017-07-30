@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 public class OrderLookup {
     // 他のミノ列からホールドを利用して指定したミノ列にできるとき、その他のミノ列をすべて逆算して列挙
+    // ??? -- [hold] --> blocks
+    // fromDepth: ???の深さ
     public static ArrayList<StackOrder<Block>> reverseBlocks(List<Block> blocks, int fromDepth) {
         assert blocks.size() <= fromDepth;
         ArrayList<StackOrder<Block>> candidates = new ArrayList<>();
@@ -39,6 +41,8 @@ public class OrderLookup {
     }
 
     // 指定したミノ列からホールドを利用して並び替えられるミノ列をすべて列挙
+    // blocks -- [hold] --> ???
+    // toDepth: ???の深さ
     public static ArrayList<StackOrder<Block>> forwardBlocks(List<Block> blocks, int toDepth) {
         assert 1 < toDepth && toDepth <= blocks.size();
 

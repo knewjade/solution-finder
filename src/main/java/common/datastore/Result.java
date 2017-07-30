@@ -22,7 +22,7 @@ public class Result {
         return lastBlock;
     }
 
-    public Action getAction() {
+    public Action getLastAction() {
         return action;
     }
 
