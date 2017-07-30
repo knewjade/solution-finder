@@ -35,8 +35,8 @@ class OperationWithKeyInterpreterTest {
                 Rotate rotate = randoms.rotate();
                 int x = randoms.nextInt(10);
                 int y = randoms.nextInt(4);
-                long deleteKey = randoms.keys();
-                long usingKey = randoms.keys();
+                long deleteKey = randoms.key();
+                long usingKey = randoms.key();
                 return new SimpleOperationWithKey(minoFactory.create(block, rotate), x, y, deleteKey, usingKey);
             }).limit(size).collect(Collectors.toList());
 

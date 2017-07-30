@@ -85,9 +85,9 @@ public class OperationWithKeyComparatorTest {
         OperationWithKey operationWithKey1 = new SimpleOperationWithKey(minoFactory.create(Block.I, Rotate.Spawn), x, y, deleteKey, usingKey);
 
         Mino newMino = new MinoFactory().create(Block.I, Rotate.Spawn);
-        Long choose = randoms.keys();
+        Long choose = randoms.key();
         while (choose == deleteKey)
-            choose = randoms.keys();
+            choose = randoms.key();
 
         OperationWithKey operationWithKey2 = createNewOperationWithKey(newMino, x, y, choose, usingKey);
 
@@ -107,7 +107,7 @@ public class OperationWithKeyComparatorTest {
         OperationWithKey operationWithKey1 = new SimpleOperationWithKey(minoFactory.create(Block.I, Rotate.Spawn), x, y, deleteKey, usingKey);
 
         Mino newMino = new MinoFactory().create(Block.I, Rotate.Spawn);
-        Long choose = randoms.keys();
+        Long choose = randoms.key();
         OperationWithKey operationWithKey2 = createNewOperationWithKey(newMino, x, y, deleteKey, choose);
 
         // assert is 0

@@ -19,7 +19,6 @@ public class SlideXOperationWithKey implements OperationWithKey {
         return operationWithKey.getMino();
     }
 
-
     @Override
     public int getX() {
         return operationWithKey.getX() + slideX;

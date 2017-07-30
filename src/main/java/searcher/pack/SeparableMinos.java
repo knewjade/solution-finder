@@ -14,29 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class SeparableMinos {
-    public static final Comparator<SeparableMino> SEPARABLE_MINO_COMPARATOR = (o1, o2) -> {
-        Mino mino1 = o1.getMino();
-        Mino mino2 = o2.getMino();
-
-        int blockCompare = mino1.getBlock().compareTo(mino2.getBlock());
-        if (blockCompare != 0)
-            return blockCompare;
-
-        int rotateCompare = mino1.getRotate().compareTo(mino2.getRotate());
-        if (rotateCompare != 0)
-            return rotateCompare;
-
-        int xCompare = Integer.compare(o1.getX(), o2.getX());
-        if (xCompare != 0)
-            return xCompare;
-
-        int yCompare = Integer.compare(o1.getLowerY(), o2.getLowerY());
-        if (yCompare != 0)
-            return yCompare;
-
-        return Long.compare(o1.getDeleteKey(), o2.getDeleteKey());
-    };
-
+    private static final Comparator<SeparableMino> SEPARABLE_MINO_COMPARATOR = new SeparableMinoComparator();
 
     public static SeparableMinos createSeparableMinos(MinoFactory minoFactory, MinoShifter minoShifter, SizedBit sizedBit) {
         SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, sizedBit.getWidth(), sizedBit.getHeight());
@@ -116,5 +94,7 @@ public class SeparableMinos {
             result = 31 * result + (int) (deleteKey ^ (deleteKey >>> 32));
             return result;
         }
+
+        // TODO: Add Comparable: compareTo
     }
 }

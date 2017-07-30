@@ -39,12 +39,12 @@ public class BlockInterpreter {
     }
 
     public static Stream<Block> parse(String str) {
-        switch (str.length()) {
-            case 10:
-                return parse10(str);
-            case 11:
-                return parse11(str);
+        Stream.Builder<Block> builder = Stream.builder();
+        for (int index = 0; index < str.length(); index++) {
+            char c = str.charAt(index);
+            Block block = StringEnumTransform.toBlock(c);
+            builder.accept(block);
         }
-        throw new UnsupportedOperationException();
+        return builder.build();
     }
 }

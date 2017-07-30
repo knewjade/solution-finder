@@ -1,5 +1,7 @@
 package searcher.pack.separable_mino;
 
+import core.column_field.ColumnField;
+import core.column_field.ColumnFieldView;
 import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
@@ -38,6 +40,13 @@ class SeparableMinoFactoryTest {
         int height = 4;
         SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, width, height);
         List<SeparableMino> minos = factory.create();
+
+        for (SeparableMino separableMino : minos) {
+
+            ColumnField field = separableMino.getField();
+            System.out.println(ColumnFieldView.toString(field, 5, 4));
+            System.out.println("===");
+        }
 
         assertThat(minos.stream()).hasSize(182);
         assertThat(minos.stream().filter(createBlockPredicate(Block.T))).hasSize(40);

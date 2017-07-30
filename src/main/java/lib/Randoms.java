@@ -1,5 +1,6 @@
 package lib;
 
+import common.datastore.OperationWithKey;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
@@ -144,7 +145,7 @@ public class Randoms {
     }
 
     // TODO: add key candidate
-    public long keys() {
+    public long key() {
         return pick(Arrays.asList(0L, 1024L, 1025L, 1049601L, 1048576L, 1074790400L));
     }
 

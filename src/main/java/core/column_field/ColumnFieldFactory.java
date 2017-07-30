@@ -23,8 +23,8 @@ public class ColumnFieldFactory {
 
     public static ColumnSmallField createField(String marks, int height) {
         int max = height * 6;
-        if (max <= marks.length())
-            throw new IllegalArgumentException(String.format("length of marks should be <= %d in height %d", max, height));
+        if (max < marks.length())
+            throw new IllegalArgumentException(String.format("length of marks should be < %d in height %d", max, height));
 
         if (marks.length() % height != 0)
             throw new IllegalArgumentException(String.format("length of marks should be 'mod %d'", height));

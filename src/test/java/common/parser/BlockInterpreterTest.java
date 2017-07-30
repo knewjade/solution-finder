@@ -1,8 +1,11 @@
 package common.parser;
 
 import core.mino.Block;
+import lib.Randoms;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static core.mino.Block.*;
@@ -43,5 +46,19 @@ class BlockInterpreterTest {
     void parseWhenSizeIs11() throws Exception {
         Stream<Block> stream = BlockInterpreter.parse("LLLJJTTTTTO");
         assertThat(stream).containsExactly(L, L, L, J, J, T, T, T, T, T, O);
+    }
+
+    @Test
+    void parseRandom() {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 10000; count++) {
+            int size = randoms.nextInt(1, 100);
+            List<Block> blocks = randoms.blocks(size);
+            String name = blocks.stream()
+                    .map(Block::getName)
+                    .collect(Collectors.joining());
+            Stream<Block> stream = BlockInterpreter.parse(name);
+            assertThat(stream).containsExactlyElementsOf(blocks);
+        }
     }
 }
