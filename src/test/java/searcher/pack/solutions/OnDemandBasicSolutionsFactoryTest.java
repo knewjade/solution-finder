@@ -5,7 +5,7 @@ import core.column_field.ColumnFieldFactory;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import lib.Stopwatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.calculator.BasicSolutions;
@@ -22,12 +22,11 @@ import java.util.function.Predicate;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class OnDemandBasicSolutionsFactoryTest {
+class OnDemandBasicSolutionsFactoryTest {
     @Test
-    public void create3x1() throws Exception {
+    void create3x1() throws Exception {
         SizedBit sizedBit = new SizedBit(3, 1);
         int expectedSolutions = 3;
         int expectedSolutionItems = 3;
@@ -35,7 +34,7 @@ public class OnDemandBasicSolutionsFactoryTest {
     }
 
     @Test
-    public void create3x2() throws Exception {
+    void create3x2() throws Exception {
         SizedBit sizedBit = new SizedBit(3, 2);
         int expectedSolutions = 28;
         int expectedSolutionItems = 88;
@@ -43,7 +42,7 @@ public class OnDemandBasicSolutionsFactoryTest {
     }
 
     @Test
-    public void create3x3() throws Exception {
+    void create3x3() throws Exception {
         SizedBit sizedBit = new SizedBit(3, 3);
         int expectedSolutions = 254;
         int expectedSolutionItems = 3972;
@@ -51,7 +50,7 @@ public class OnDemandBasicSolutionsFactoryTest {
     }
 
     @Test
-    public void create3x4() throws Exception {
+    void create3x4() throws Exception {
         SizedBit sizedBit = new SizedBit(3, 4);
         int expectedSolutions = 2211;
         int expectedSolutionItems = 228022;
@@ -59,7 +58,7 @@ public class OnDemandBasicSolutionsFactoryTest {
     }
 
     @Test
-    public void create2x5() throws Exception {
+    void create2x5() throws Exception {
         SizedBit sizedBit = new SizedBit(2, 5);
         int expectedSolutions = 822;
         int expectedSolutionItems = 321978;
@@ -67,7 +66,7 @@ public class OnDemandBasicSolutionsFactoryTest {
     }
 
     @Test
-    public void create2x6() throws Exception {
+    void create2x6() throws Exception {
         SizedBit sizedBit = new SizedBit(2, 6);
         int expectedSolutions = 3490;
         int expectedSolutionItems = 8380826;
@@ -94,8 +93,8 @@ public class OnDemandBasicSolutionsFactoryTest {
 
         System.out.println("create only: " + stopwatch1.toMessage(TimeUnit.MILLISECONDS));
 
-        assertThat(countValidKey(solutions), is(expectedSolutions));
-        assertThat(countValidItem(solutions), is(expectedSolutionItems));
+        assertThat(countValidKey(solutions)).isEqualTo(expectedSolutions);
+        assertThat(countValidItem(solutions)).isEqualTo(expectedSolutionItems);
     }
 
     private static SeparableMinos createSeparableMinos(SizedBit sizedBit) {

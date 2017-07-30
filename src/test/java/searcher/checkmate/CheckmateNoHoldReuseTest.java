@@ -1,281 +1,194 @@
 package searcher.checkmate;
 
+import common.datastore.Result;
+import common.datastore.action.Action;
 import core.action.candidate.Candidate;
 import core.action.candidate.LockedCandidate;
 import core.field.Field;
-import core.field.FieldFactory;
 import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
+import lib.Randoms;
 import lib.Stopwatch;
-import org.junit.Test;
-import common.datastore.Result;
-import common.ResultHelper;
-import common.datastore.action.Action;
+import org.junit.jupiter.api.Test;
 import searcher.common.validator.PerfectValidator;
 
-import java.util.*;
+import java.util.List;
 
-import static core.mino.Block.*;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.lessThan;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class CheckmateNoHoldReuseTest {
+class CheckmateNoHoldReuseTest {
+    private final MinoFactory minoFactory = new MinoFactory();
+    private final MinoShifter minoShifter = new MinoShifter();
+    private final MinoRotation minoRotation = new MinoRotation();
+    private final PerfectValidator validator = new PerfectValidator();
+    private final CheckmateNoHold<Action> checkmate = new CheckmateNoHold<>(minoFactory, validator);
+    private final CheckmateNoHoldReuse<Action> checkmateReuse = new CheckmateNoHoldReuse<>(minoFactory, validator);
+
     @Test
-    public void testCheckmateWhenSwappingJustBlock() throws Exception {
-        // Invoker
-        List<Block> blocks = new ArrayList<>(Arrays.asList(I, S, Z, T, J, L, O));
-        int maxClearLine = 4;
-        int maxDepth = 7;
+    void randomCheckmateWithJustBlock() {
+        Randoms randoms = new Randoms();
 
-        // Field
-        String marks = "" +
-                "XXX_______" +
-                "XXX_______" +
-                "XXX_______" +
-                "XXX_______" +
-                "";
-        Field field = FieldFactory.createField(marks);
+        for (int count = 0; count < 100; count++) {
+            int maxClearLine = randoms.nextInt(3, 8);
 
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
-        PerfectValidator validator = new PerfectValidator();
+            int maxDepth = randoms.nextIntClosed(5, 7);
+            List<Block> blocks = randoms.blocks(maxDepth);
 
-        CheckmateNoHold<Action> checkmate = new CheckmateNoHold<>(minoFactory, validator);
-        CheckmateNoHoldReuse<Action> CheckmateReuse = new CheckmateNoHoldReuse<>(minoFactory, validator);
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+            Field field = randoms.field(maxClearLine, maxDepth);
 
-        Stopwatch stopwatchNoUse = Stopwatch.createStoppedStopwatch();
-        Stopwatch stopwatchReuse = Stopwatch.createStoppedStopwatch();
+            Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
 
-        Random random = new Random();
+            Stopwatch stopwatchNoUse = Stopwatch.createStoppedStopwatch();
+            Stopwatch stopwatchReuse = Stopwatch.createStoppedStopwatch();
 
-        for (int count = 0; count < 500; count++) {
-            int index = random.nextInt(blocks.size());
-            Block pop = blocks.remove(index);
-            blocks.add(pop);
+            for (int swap = 0; swap < 250; swap++) {
+                int index = randoms.nextInt(3, blocks.size());
+                Block pop = blocks.remove(index);
+                blocks.add(pop);
 
-            stopwatchNoUse.start();
-            List<Result> result1 = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
-            stopwatchNoUse.stop();
+                stopwatchNoUse.start();
+                List<Result> result1 = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
+                stopwatchNoUse.stop();
 
-            stopwatchReuse.start();
-            List<Result> result2 = CheckmateReuse.search(field, blocks, candidate, maxClearLine, maxDepth);
-            stopwatchReuse.stop();
+                stopwatchReuse.start();
+                List<Result> result2 = checkmateReuse.search(field, blocks, candidate, maxClearLine, maxDepth);
+                stopwatchReuse.stop();
 
-            assertResult(ResultHelper.uniquify(result1), ResultHelper.uniquify(result2));
+                assertThat(result2)
+                        .hasSameSizeAs(result1)
+                        .containsAll(result1);
+            }
+
+            assertThat(stopwatchReuse.getNanoAverageTime()).isLessThan(stopwatchNoUse.getNanoAverageTime());
         }
-
-        assertThat(stopwatchReuse.getNanoAverageTime(), is(lessThan(stopwatchNoUse.getNanoAverageTime())));
     }
 
     @Test
-    public void testCheckmateWhenSwappingOverBlock() throws Exception {
-        // Invoker
-        List<Block> blocks = new ArrayList<>(Arrays.asList(I, S, Z, T, J, L, O));
-        int maxClearLine = 4;
-        int maxDepth = 6;
+    void randomCheckmateWithJustBlockTwice() {
+        Randoms randoms = new Randoms();
 
-        // Field
-        String marks = "" +
-                "XXXX______" +
-                "XXXX______" +
-                "XXXX______" +
-                "XXXX______" +
-                "";
-        Field field = FieldFactory.createField(marks);
+        for (int count = 0; count < 100; count++) {
+            int maxClearLine = randoms.nextInt(3, 8);
 
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
-        PerfectValidator validator = new PerfectValidator();
+            int maxDepth = randoms.nextIntClosed(5, 7);
+            List<Block> blocks = randoms.blocks(maxDepth);
 
-        CheckmateNoHold<Action> checkmate = new CheckmateNoHold<>(minoFactory, validator);
-        CheckmateNoHoldReuse<Action> CheckmateReuse = new CheckmateNoHoldReuse<>(minoFactory, validator);
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+            Field field = randoms.field(maxClearLine, maxDepth);
 
-        Stopwatch stopwatchNoUse = Stopwatch.createStoppedStopwatch();
-        Stopwatch stopwatchReuse = Stopwatch.createStoppedStopwatch();
+            Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
 
-        Random random = new Random();
+            Stopwatch stopwatchNoUse = Stopwatch.createStoppedStopwatch();
+            Stopwatch stopwatchReuse1 = Stopwatch.createStoppedStopwatch();
+            Stopwatch stopwatchReuse2 = Stopwatch.createStoppedStopwatch();
 
-        for (int count = 0; count < 500; count++) {
-            int index = random.nextInt(blocks.size());
-            Block pop = blocks.remove(index);
-            blocks.add(pop);
+            for (int swap = 0; swap < 250; swap++) {
+                int index = randoms.nextInt(3, blocks.size());
+                Block pop = blocks.remove(index);
+                blocks.add(pop);
 
-            stopwatchNoUse.start();
-            List<Result> result1 = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
-            stopwatchNoUse.stop();
+                stopwatchNoUse.start();
+                List<Result> result1 = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
+                stopwatchNoUse.stop();
 
-            stopwatchReuse.start();
-            List<Result> result2 = CheckmateReuse.search(field, blocks, candidate, maxClearLine, maxDepth);
-            stopwatchReuse.stop();
+                stopwatchReuse1.start();
+                List<Result> result2 = checkmateReuse.search(field, blocks, candidate, maxClearLine, maxDepth);
+                stopwatchReuse1.stop();
 
-            assertResult(ResultHelper.uniquify(result1), ResultHelper.uniquify(result2));
+                assertThat(result2)
+                        .hasSameSizeAs(result1)
+                        .containsAll(result1);
+
+                stopwatchReuse2.start();
+                List<Result> result3 = checkmateReuse.search(field, blocks, candidate, maxClearLine, maxDepth);
+                stopwatchReuse2.stop();
+
+                assertThat(result3)
+                        .hasSameSizeAs(result1)
+                        .containsAll(result1);
+            }
+
+            assertThat(stopwatchReuse1.getNanoAverageTime()).isLessThan(stopwatchNoUse.getNanoAverageTime());
+            assertThat(stopwatchReuse2.getNanoAverageTime()).isLessThan(stopwatchReuse1.getNanoAverageTime());
         }
-
-        assertThat(stopwatchReuse.getNanoAverageTime(), is(lessThan(stopwatchNoUse.getNanoAverageTime())));
     }
 
     @Test
-    public void testCheckmateWhenSameSwappingOverBlock() throws Exception {
-        // Invoker
-        List<Block> blocks = new ArrayList<>(Arrays.asList(I, S, Z, T, J, L, O));
-        int maxClearLine = 4;
-        int maxDepth = 6;
+    void randomCheckmateOverBlock() {
+        Randoms randoms = new Randoms();
 
-        // Field
-        String marks = "" +
-                "XXXX______" +
-                "XXXX______" +
-                "XXXX______" +
-                "XXXX______" +
-                "";
-        Field field = FieldFactory.createField(marks);
+        for (int count = 0; count < 100; count++) {
+            int maxClearLine = randoms.nextInt(3, 8);
 
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
-        PerfectValidator validator = new PerfectValidator();
+            int maxDepth = randoms.nextIntClosed(5, 7);
+            List<Block> blocks = randoms.blocks(maxDepth + 1);
 
-        CheckmateNoHold<Action> checkmate = new CheckmateNoHold<>(minoFactory, validator);
-        CheckmateNoHoldReuse<Action> CheckmateReuse = new CheckmateNoHoldReuse<>(minoFactory, validator);
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+            Field field = randoms.field(maxClearLine, maxDepth);
 
-        Stopwatch stopwatchNoUse = Stopwatch.createStoppedStopwatch();
-        Stopwatch stopwatchReuse = Stopwatch.createStoppedStopwatch();
+            Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
 
-        Random random = new Random();
+            Stopwatch stopwatchNoUse = Stopwatch.createStoppedStopwatch();
+            Stopwatch stopwatchReuse = Stopwatch.createStoppedStopwatch();
 
-        for (int count = 0; count < 500; count++) {
-            int index = random.nextInt(blocks.size());
-            Block pop = blocks.remove(index);
-            blocks.add(pop);
+            for (int swap = 0; swap < 250; swap++) {
+                int index = randoms.nextInt(3, blocks.size());
+                Block pop = blocks.remove(index);
+                blocks.add(pop);
 
-            stopwatchNoUse.start();
-            List<Result> result1 = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
-            stopwatchNoUse.stop();
+                stopwatchNoUse.start();
+                List<Result> result1 = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
+                stopwatchNoUse.stop();
 
-            stopwatchReuse.start();
-            List<Result> result2 = CheckmateReuse.search(field, blocks, candidate, maxClearLine, maxDepth);
-            List<Result> result3 = CheckmateReuse.search(field, blocks, candidate, maxClearLine, maxDepth);
-            stopwatchReuse.stop();
+                stopwatchReuse.start();
+                List<Result> result2 = checkmateReuse.search(field, blocks, candidate, maxClearLine, maxDepth);
+                stopwatchReuse.stop();
 
-            assertResult(ResultHelper.uniquify(result1), ResultHelper.uniquify(result2));
-            assertResult(ResultHelper.uniquify(result1), ResultHelper.uniquify(result3));
+                assertThat(result2)
+                        .hasSameSizeAs(result1)
+                        .containsAll(result1);
+            }
+
+            assertThat(stopwatchReuse.getNanoAverageTime()).isLessThan(stopwatchNoUse.getNanoAverageTime());
         }
-
-        assertThat(stopwatchReuse.getNanoAverageTime(), is(lessThan(stopwatchNoUse.getNanoAverageTime())));
     }
 
     @Test
-    public void testCheckmateWhenSwappingOverMoreBlock() throws Exception {
-        // Invoker
-        List<Block> blocks = new ArrayList<>(Arrays.asList(I, S, Z, T, J, L, O, I, S, Z, T, J, L, O));
-        int maxClearLine = 4;
-        int maxDepth = 6;
+    void randomCheckmateOverMoreBlock() {
+        Randoms randoms = new Randoms();
 
-        // Field
-        String marks = "" +
-                "XXXX______" +
-                "XXXX______" +
-                "XXXX______" +
-                "XXXX______" +
-                "";
-        Field field = FieldFactory.createField(marks);
+        for (int count = 0; count < 100; count++) {
+            int maxClearLine = randoms.nextInt(3, 8);
 
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
-        PerfectValidator validator = new PerfectValidator();
+            int maxDepth = randoms.nextIntClosed(5, 7);
+            List<Block> blocks = randoms.blocks(maxDepth + 10);
 
-        CheckmateNoHold<Action> checkmate = new CheckmateNoHold<>(minoFactory, validator);
-        CheckmateNoHoldReuse<Action> CheckmateReuse = new CheckmateNoHoldReuse<>(minoFactory, validator);
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+            Field field = randoms.field(maxClearLine, maxDepth);
 
-        Stopwatch stopwatchNoUse = Stopwatch.createStoppedStopwatch();
-        Stopwatch stopwatchReuse = Stopwatch.createStoppedStopwatch();
+            Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
 
-        Random random = new Random();
+            Stopwatch stopwatchNoUse = Stopwatch.createStoppedStopwatch();
+            Stopwatch stopwatchReuse = Stopwatch.createStoppedStopwatch();
 
-        for (int count = 0; count < 500; count++) {
-            int index = random.nextInt(blocks.size());
-            Block pop = blocks.remove(index);
-            blocks.add(pop);
+            for (int swap = 0; swap < 250; swap++) {
+                int index = randoms.nextInt(3, blocks.size());
+                Block pop = blocks.remove(index);
+                blocks.add(pop);
 
-            stopwatchNoUse.start();
-            List<Result> result1 = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
-            stopwatchNoUse.stop();
+                stopwatchNoUse.start();
+                List<Result> result1 = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
+                stopwatchNoUse.stop();
 
-            stopwatchReuse.start();
-            List<Result> result2 = CheckmateReuse.search(field, blocks, candidate, maxClearLine, maxDepth);
-            stopwatchReuse.stop();
+                stopwatchReuse.start();
+                List<Result> result2 = checkmateReuse.search(field, blocks, candidate, maxClearLine, maxDepth);
+                stopwatchReuse.stop();
 
-            assertResult(ResultHelper.uniquify(result1), ResultHelper.uniquify(result2));
+                assertThat(result2)
+                        .hasSameSizeAs(result1)
+                        .containsAll(result1);
+            }
+
+            assertThat(stopwatchReuse.getNanoAverageTime()).isLessThan(stopwatchNoUse.getNanoAverageTime());
         }
-
-        assertThat(stopwatchReuse.getNanoAverageTime(), is(lessThan(stopwatchNoUse.getNanoAverageTime())));
-    }
-
-    private void assertResult(List<Result> left, List<Result> right) {
-        assertThat(left.size(), is(right.size()));
-
-        HashSet<Result> commons = new HashSet<>(left);
-        commons.retainAll(right);
-        assertThat(commons.size(), is(right.size()));
-    }
-
-    @Test
-    public void testCheckmateWhenSwappingFilledLine() throws Exception {
-        // Invoker
-        List<Block> blocks = new ArrayList<>(Arrays.asList(I, S, Z, T, J, L, O, I, S, Z, T, J, L, O));
-        int maxClearLine = 4;
-        int maxDepth = 6;
-
-        // Field
-        String marks = "" +
-                "XXXXXXXXXX" +
-                "XXX_______" +
-                "XXX_______" +
-                "XXXX_____X" +
-                "XXXX_____X" +
-                "";
-        Field field = FieldFactory.createField(marks);
-
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
-        PerfectValidator validator = new PerfectValidator();
-
-        CheckmateNoHold<Action> checkmate = new CheckmateNoHold<>(minoFactory, validator);
-        CheckmateNoHoldReuse<Action> CheckmateReuse = new CheckmateNoHoldReuse<>(minoFactory, validator);
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
-
-        Stopwatch stopwatchNoUse = Stopwatch.createStoppedStopwatch();
-        Stopwatch stopwatchReuse = Stopwatch.createStoppedStopwatch();
-
-        Random random = new Random();
-
-        for (int count = 0; count < 500; count++) {
-            int index = random.nextInt(blocks.size());
-            Block pop = blocks.remove(index);
-            blocks.add(pop);
-
-            stopwatchNoUse.start();
-            List<Result> result1 = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
-            stopwatchNoUse.stop();
-
-            stopwatchReuse.start();
-            List<Result> result2 = CheckmateReuse.search(field, blocks, candidate, maxClearLine, maxDepth);
-            stopwatchReuse.stop();
-
-            assertResult(ResultHelper.uniquify(result1), ResultHelper.uniquify(result2));
-        }
-
-        assertThat(stopwatchReuse.getNanoAverageTime(), is(lessThan(stopwatchNoUse.getNanoAverageTime())));
     }
 }

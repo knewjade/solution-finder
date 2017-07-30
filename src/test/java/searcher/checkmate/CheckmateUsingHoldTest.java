@@ -24,10 +24,7 @@ import searcher.common.validator.PerfectValidator;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -272,7 +269,7 @@ class CheckmateUsingHoldTest {
                     return new Pair<Pieces, Integer>(pieces, count);
                 })
                 .collect(Collectors.toList());
-//        Collections.shuffle(testCases);  // TODO: Remove commentout
+        Collections.shuffle(testCases);
 
         // Field
         int maxClearLine = 4;
@@ -284,16 +281,10 @@ class CheckmateUsingHoldTest {
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         // Assertion
-//        for (Pair<Pieces, Integer> testCase : testCases.subList(0, 10)) {  // TODO: Remove commentout
-        int startIndex = 0;
-        for (int index = startIndex; index < startIndex + 10; index++) {
-            System.out.println(index);
-            Pair<Pieces, Integer> testCase = testCases.get(index);
-
+        for (Pair<Pieces, Integer> testCase : testCases.subList(0, 10)) {  // TODO: Remove commentout
             // Set test case
             List<Block> blocks = testCase.getKey().getBlocks();
             int expectedCount = testCase.getValue();
-            System.out.println(blocks);
 
             // Execute
             List<Result> results = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
