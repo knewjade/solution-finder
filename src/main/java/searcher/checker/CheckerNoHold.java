@@ -41,7 +41,7 @@ public class CheckerNoHold<T extends Action> implements Checker<T> {
             int depth = order.getHistory().getNextIndex();
             boolean isLast = depth == maxDepth;
 
-            assert depth < pieces.length;
+            assert depth < pieces.length : depth;
             searcherCore.stepWithNextNoHold(candidate, pieces[depth], order, isLast);
         }
 

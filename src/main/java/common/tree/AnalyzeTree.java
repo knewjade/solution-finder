@@ -88,7 +88,7 @@ public class AnalyzeTree {
         return rootElement.isVisited(blocks, 0);
     }
 
-    boolean isSucceed(List<Block> blocks) {
+    public boolean isSucceed(List<Block> blocks) {
         return rootElement.isSuccess(blocks, 0);
     }
 
