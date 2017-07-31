@@ -1,24 +1,23 @@
 package entry.percent;
 
+import common.comparator.FieldComparator;
 import core.field.Field;
 import core.field.FieldFactory;
-import common.comparator.FieldComparator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class PercentSettingParserTest {
+class PercentSettingParserTest {
     private static void assertField(Field actual, Field expected) {
         FieldComparator comparator = new FieldComparator();
-        assertThat(comparator.compare(actual, expected), is(0));
+        assertThat(comparator.compare(actual, expected)).isEqualTo(0);
     }
 
     @Test
-    public void testDefault() throws Exception {
+    void testDefault() throws Exception {
         String fieldPath = ClassLoader.getSystemResource("field/2line.txt").getPath();
         String patternsPath = ClassLoader.getSystemResource("patterns/7mino.txt").getPath();
         String commands = String.format("--field-path %s --patterns-path %s", fieldPath, patternsPath);
@@ -29,20 +28,21 @@ public class PercentSettingParserTest {
                 "XX________" +
                 "XX________"
         );
-
-        assertThat(parse.isPresent(), is(true));
+        
+       assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
-            assertThat(settings.getLogFilePath(), is("output/last_output.txt"));
-            assertThat(settings.getMaxClearLine(), is(2));
-            assertThat(settings.getPatterns(), is(Collections.singletonList("*p7")));
-            assertThat(settings.isOutputToConsole(), is(true));
-            assertThat(settings.isUsingHold(), is(true));
+            assertThat(settings)
+                    .returns("output/last_output.txt", PercentSettings::getLogFilePath)
+                    .returns(2, PercentSettings::getMaxClearLine)
+                    .returns(Collections.singletonList("*p7"), PercentSettings::getPatterns)
+                    .returns(true, PercentSettings::isOutputToConsole)
+                    .returns(true, PercentSettings::isUsingHold);
             assertField(settings.getField(), expectedField);
         });
     }
 
     @Test
-    public void testDefault2() throws Exception {
+    void testDefault2() throws Exception {
         String fieldPath = ClassLoader.getSystemResource("field/template.txt").getPath();
         String patternsPath = ClassLoader.getSystemResource("patterns/3mino.txt").getPath();
         String commands = String.format("--field-path %s --patterns-path %s", fieldPath, patternsPath);
@@ -56,27 +56,28 @@ public class PercentSettingParserTest {
                 "XXXX___XXX"
         );
 
-        assertThat(parse.isPresent(), is(true));
+       assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
-            assertThat(settings.getLogFilePath(), is("output/last_output.txt"));
-            assertThat(settings.getMaxClearLine(), is(4));
-            assertThat(settings.getPatterns(), is(Collections.singletonList("*p3")));
-            assertThat(settings.isOutputToConsole(), is(true));
-            assertThat(settings.isUsingHold(), is(true));
+            assertThat(settings)
+                    .returns("output/last_output.txt", PercentSettings::getLogFilePath)
+                    .returns(4, PercentSettings::getMaxClearLine)
+                    .returns(Collections.singletonList("*p3"), PercentSettings::getPatterns)
+                    .returns(true, PercentSettings::isOutputToConsole)
+                    .returns(true, PercentSettings::isUsingHold);
             assertField(settings.getField(), expectedField);
         });
     }
 
     @Test
-    public void testHelp() throws Exception {
+    void testHelp() throws Exception {
         String commands = "-h";
         PercentSettingParser entryPoint = new PercentSettingParser(commands);
         Optional<PercentSettings> parse = entryPoint.parse();
-        assertThat(parse.isPresent(), is(false));
+        assertThat(parse.isPresent()).isFalse();
     }
 
     @Test
-    public void testTetfu1() throws Exception {
+    void testTetfu1() throws Exception {
         String fieldPath = ClassLoader.getSystemResource("field/4row.txt").getPath();
         String patternsPath = ClassLoader.getSystemResource("patterns/7mino.txt").getPath();
         String tetfu = "v115@9gB8DeG8CeH8BeG8CeD8JeAgWBAUAAAA";  // comment: 4
@@ -92,19 +93,20 @@ public class PercentSettingParserTest {
                 "XXX___XXXX"
         );
 
-        assertThat(parse.isPresent(), is(true));
+       assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
-            assertThat(settings.getLogFilePath(), is("output/last_output.txt"));
-            assertThat(settings.getMaxClearLine(), is(4));
-            assertThat(settings.getPatterns(), is(Collections.singletonList("*p7")));
-            assertThat(settings.isOutputToConsole(), is(true));
-            assertThat(settings.isUsingHold(), is(false));
+            assertThat(settings)
+                    .returns("output/last_output.txt", PercentSettings::getLogFilePath)
+                    .returns(4, PercentSettings::getMaxClearLine)
+                    .returns(Collections.singletonList("*p7"), PercentSettings::getPatterns)
+                    .returns(true, PercentSettings::isOutputToConsole)
+                    .returns(false, PercentSettings::isUsingHold);
             assertField(settings.getField(), expectedField);
         });
     }
 
     @Test
-    public void testTetfu2() throws Exception {
+    void testTetfu2() throws Exception {
         String fieldPath = ClassLoader.getSystemResource("field/4row.txt").getPath();
         String patternsPath = ClassLoader.getSystemResource("patterns/7mino.txt").getPath();
 
@@ -122,19 +124,20 @@ public class PercentSettingParserTest {
                 "XXX___XXXX"
         );
 
-        assertThat(parse.isPresent(), is(true));
+       assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
-            assertThat(settings.getLogFilePath(), is("output/dummy"));
-            assertThat(settings.getMaxClearLine(), is(4));
-            assertThat(settings.getPatterns(), is(Collections.singletonList("*p4")));
-            assertThat(settings.isOutputToConsole(), is(true));
-            assertThat(settings.isUsingHold(), is(false));
+            assertThat(settings)
+                    .returns("output/dummy", PercentSettings::getLogFilePath)
+                    .returns(4, PercentSettings::getMaxClearLine)
+                    .returns(Collections.singletonList("*p4"), PercentSettings::getPatterns)
+                    .returns(true, PercentSettings::isOutputToConsole)
+                    .returns(false, PercentSettings::isUsingHold);
             assertField(settings.getField(), expectedField);
         });
     }
 
     @Test
-    public void testTetfu3() throws Exception {
+    void testTetfu3() throws Exception {
         String fieldPath = ClassLoader.getSystemResource("field/4row.txt").getPath();
         String patternsPath = ClassLoader.getSystemResource("patterns/7mino.txt").getPath();
 
@@ -152,19 +155,20 @@ public class PercentSettingParserTest {
                 "____XXXXXX"
         );
 
-        assertThat(parse.isPresent(), is(true));
+       assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
-            assertThat(settings.getLogFilePath(), is("output/dummy"));
-            assertThat(settings.getMaxClearLine(), is(4));
-            assertThat(settings.getPatterns(), is(Collections.singletonList("*p5")));
-            assertThat(settings.isOutputToConsole(), is(true));
-            assertThat(settings.isUsingHold(), is(false));
+            assertThat(settings)
+                    .returns("output/dummy", PercentSettings::getLogFilePath)
+                    .returns(4, PercentSettings::getMaxClearLine)
+                    .returns(Collections.singletonList("*p5"), PercentSettings::getPatterns)
+                    .returns(true, PercentSettings::isOutputToConsole)
+                    .returns(false, PercentSettings::isUsingHold);
             assertField(settings.getField(), expectedField);
         });
     }
 
     @Test
-    public void testTetfu4() throws Exception {
+    void testTetfu4() throws Exception {
         String fieldPath = ClassLoader.getSystemResource("field/4row.txt").getPath();
         String patternsPath = ClassLoader.getSystemResource("patterns/7mino.txt").getPath();
 
@@ -181,21 +185,22 @@ public class PercentSettingParserTest {
                 "XXX___XXXX"
         );
 
-        assertThat(parse.isPresent(), is(true));
+       assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
-            assertThat(settings.getLogFilePath(), is("output/dummy"));
-            assertThat(settings.getMaxClearLine(), is(3));
-            assertThat(settings.getPatterns(), is(Collections.singletonList("T,S,L,O,L")));
-            assertThat(settings.isOutputToConsole(), is(true));
-            assertThat(settings.isUsingHold(), is(true));
-            assertThat(settings.getTreeDepth(), is(1));
-            assertThat(settings.getFailedCount(), is(10));
+            assertThat(settings)
+                    .returns("output/dummy", PercentSettings::getLogFilePath)
+                    .returns(3, PercentSettings::getMaxClearLine)
+                    .returns(Collections.singletonList("T,S,L,O,L"), PercentSettings::getPatterns)
+                    .returns(true, PercentSettings::isOutputToConsole)
+                    .returns(true, PercentSettings::isUsingHold)
+                    .returns(1, PercentSettings::getTreeDepth)
+                    .returns(10, PercentSettings::getFailedCount);
             assertField(settings.getField(), expectedField);
         });
     }
 
     @Test
-    public void testTetfu1InField() throws Exception {
+    void testTetfu1InField() throws Exception {
         String fieldPath = ClassLoader.getSystemResource("field/tetfu1.txt").getPath();
         String commands = String.format("-fp %s -P 46 -td 4", fieldPath);
 
@@ -208,20 +213,21 @@ public class PercentSettingParserTest {
                 "XXX___XXXX"
         );
 
-        assertThat(parse.isPresent(), is(true));
+       assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
-            assertThat(settings.getMaxClearLine(), is(3));
-            assertThat(settings.getPatterns(), is(Collections.singletonList("T,S,L,O,L")));
-            assertThat(settings.isOutputToConsole(), is(true));
-            assertThat(settings.isUsingHold(), is(true));
-            assertThat(settings.getTreeDepth(), is(4));
-            assertThat(settings.getFailedCount(), is(100));
+            assertThat(settings)
+                    .returns(3, PercentSettings::getMaxClearLine)
+                    .returns(Collections.singletonList("T,S,L,O,L"), PercentSettings::getPatterns)
+                    .returns(true, PercentSettings::isOutputToConsole)
+                    .returns(true, PercentSettings::isUsingHold)
+                    .returns(4, PercentSettings::getTreeDepth)
+                    .returns(100, PercentSettings::getFailedCount);
             assertField(settings.getField(), expectedField);
         });
     }
 
     @Test
-    public void testTetfu2InField() throws Exception {
+    void testTetfu2InField() throws Exception {
         String fieldPath = ClassLoader.getSystemResource("field/tetfu2.txt").getPath();
         String commands = String.format("-fp %s -P 6 -p *p4 -td 2 -fc 50", fieldPath);
 
@@ -236,20 +242,21 @@ public class PercentSettingParserTest {
                 ""
         );
 
-        assertThat(parse.isPresent(), is(true));
+       assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
-            assertThat(settings.getMaxClearLine(), is(4));
-            assertThat(settings.getPatterns(), is(Collections.singletonList("*p4")));
-            assertThat(settings.isOutputToConsole(), is(true));
-            assertThat(settings.isUsingHold(), is(true));
-            assertThat(settings.getTreeDepth(), is(2));
-            assertThat(settings.getFailedCount(), is(50));
+            assertThat(settings)
+                    .returns(4, PercentSettings::getMaxClearLine)
+                    .returns(Collections.singletonList("*p4"), PercentSettings::getPatterns)
+                    .returns(true, PercentSettings::isOutputToConsole)
+                    .returns(true, PercentSettings::isUsingHold)
+                    .returns(2, PercentSettings::getTreeDepth)
+                    .returns(50, PercentSettings::getFailedCount);
             assertField(settings.getField(), expectedField);
         });
     }
 
     @Test
-    public void testTetfu3InField() throws Exception {
+    void testTetfu3InField() throws Exception {
         String fieldPath = ClassLoader.getSystemResource("field/tetfu3.txt").getPath();
         String commands = String.format("-fp %s -P 36", fieldPath);
 
@@ -264,14 +271,15 @@ public class PercentSettingParserTest {
                 ""
         );
 
-        assertThat(parse.isPresent(), is(true));
+       assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
-            assertThat(settings.getMaxClearLine(), is(4));
-            assertThat(settings.getPatterns(), is(Collections.singletonList("*p4")));
-            assertThat(settings.isOutputToConsole(), is(true));
-            assertThat(settings.isUsingHold(), is(true));
-            assertThat(settings.getTreeDepth(), is(3));
-            assertThat(settings.getFailedCount(), is(100));
+            assertThat(settings)
+                    .returns(4, PercentSettings::getMaxClearLine)
+                    .returns(Collections.singletonList("*p4"), PercentSettings::getPatterns)
+                    .returns(true, PercentSettings::isOutputToConsole)
+                    .returns(true, PercentSettings::isUsingHold)
+                    .returns(3, PercentSettings::getTreeDepth)
+                    .returns(100, PercentSettings::getFailedCount);
             assertField(settings.getField(), expectedField);
         });
     }

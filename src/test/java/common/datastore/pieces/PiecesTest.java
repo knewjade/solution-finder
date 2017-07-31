@@ -2,16 +2,15 @@ package common.datastore.pieces;
 
 import core.mino.Block;
 import lib.Randoms;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class PiecesTest {
+class PiecesTest {
     @Test
-    public void testHashCode() throws Exception {
+    void testHashCode() throws Exception {
         Randoms randoms = new Randoms();
         for (int count = 0; count < 10000; count++) {
             int size = randoms.nextInt(4, 10);
@@ -19,7 +18,9 @@ public class PiecesTest {
 
             ReadOnlyListPieces readOnlyListPieces = new ReadOnlyListPieces(blocks);
             LongPieces longPieces = new LongPieces(blocks);
-            assertThat(blocks.toString(), readOnlyListPieces.hashCode(), is(longPieces.hashCode()));
+            assertThat(readOnlyListPieces.hashCode())
+                    .as(blocks.toString())
+                    .isEqualTo(longPieces.hashCode());
         }
     }
 }

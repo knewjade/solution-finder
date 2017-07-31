@@ -3,37 +3,37 @@ package common.comparator;
 import common.datastore.pieces.LongPieces;
 import core.mino.Block;
 import lib.Randoms;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.lessThan;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class PiecesNumberComparatorTest {
+class PiecesNumberComparatorTest {
     @Test
-    public void compare() throws Exception {
+    void compare() throws Exception {
         LongPieces pieces1 = new LongPieces(Arrays.asList(Block.T, Block.O, Block.I));
         LongPieces pieces2 = new LongPieces(Arrays.asList(Block.T, Block.O, Block.I));
         PiecesNumberComparator comparator = new PiecesNumberComparator();
-        assertThat(comparator.compare(pieces1, pieces2), is(0));
-        assertThat(comparator.compare(pieces2, pieces1), is(0));
+        assertThat(comparator.compare(pieces1, pieces2)).isEqualTo(0);
+        assertThat(comparator.compare(pieces2, pieces1)).isEqualTo(0);
     }
 
     @Test
-    public void compareDiffSize() throws Exception {
+    void compareDiffSize() throws Exception {
         LongPieces pieces1 = new LongPieces(Arrays.asList(Block.T, Block.O, Block.I));
         LongPieces pieces2 = new LongPieces(Arrays.asList(Block.T, Block.O, Block.I, Block.J));
 
         // assert is not 0 & sign reversed
         PiecesNumberComparator comparator = new PiecesNumberComparator();
-        assertThat(pieces2.toString(), comparator.compare(pieces1, pieces2) * comparator.compare(pieces2, pieces1), is(lessThan(0)));
+        assertThat(comparator.compare(pieces1, pieces2) * comparator.compare(pieces2, pieces1))
+                .as(pieces2.toString())
+                .isLessThan(0);
     }
 
     @Test
-    public void compareDiffRandom() throws Exception {
+    void compareDiffRandom() throws Exception {
         List<Block> allBlocks = Arrays.asList(Block.T, Block.I, Block.O, Block.S, Block.Z, Block.J, Block.L, Block.T, Block.I, Block.O, Block.S, Block.Z, Block.J, Block.L);
 
         Randoms randoms = new Randoms();
@@ -49,7 +49,9 @@ public class PiecesNumberComparatorTest {
 
             // assert is not 0 & sign reversed
             PiecesNumberComparator comparator = new PiecesNumberComparator();
-            assertThat(pieces2.toString(), comparator.compare(pieces1, pieces2) * comparator.compare(pieces2, pieces1), is(lessThan(0)));
+            assertThat(comparator.compare(pieces1, pieces2) * comparator.compare(pieces2, pieces1))
+                    .as(pieces2.toString())
+                    .isLessThan(0);
         }
     }
 }

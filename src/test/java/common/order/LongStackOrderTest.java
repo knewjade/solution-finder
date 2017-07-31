@@ -1,17 +1,16 @@
 package common.order;
 
 import core.mino.Block;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class LongStackOrderTest {
+class LongStackOrderTest {
     @Test
-    public void add() throws Exception {
+    void add() throws Exception {
         LongStackOrder stackOrder = new LongStackOrder();
         stackOrder.addLast(Block.S);
         stackOrder.addLast(Block.Z);
@@ -19,11 +18,11 @@ public class LongStackOrderTest {
         stackOrder.addLastTwo(Block.I);
 
         List<Block> blocks = stackOrder.toList();
-        assertThat(blocks, is(Arrays.asList(Block.S, Block.Z, Block.I, Block.O)));
+        assertThat(blocks).isEqualTo(Arrays.asList(Block.S, Block.Z, Block.I, Block.O));
     }
 
     @Test
-    public void stock() throws Exception {
+    void stock() throws Exception {
         LongStackOrder stackOrder = new LongStackOrder();
         stackOrder.addLast(Block.S);
         stackOrder.stock(Block.T);  // to head and memory TS*
@@ -33,6 +32,6 @@ public class LongStackOrderTest {
         stackOrder.stock(null);
 
         List<Block> blocks = stackOrder.toList();
-        assertThat(blocks, is(Arrays.asList(Block.T, Block.S, Block.I, Block.O, Block.Z, null)));
+        assertThat(blocks).isEqualTo(Arrays.asList(Block.T, Block.S, Block.I, Block.O, Block.Z, null));
     }
 }

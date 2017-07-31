@@ -5,7 +5,7 @@ import common.pattern.PiecesGenerator;
 import core.field.Field;
 import core.field.FieldFactory;
 import entry.searching_pieces.NormalEnumeratePieces;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,10 +14,9 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class PercentCoreTest {
+class PercentCoreTest {
     private static class Obj {
         private String marks;
         private int maxClearLine;
@@ -50,11 +49,11 @@ public class PercentCoreTest {
         Set<LongPieces> blocks = enumeratePieces.enumerate();
         percentCore.run(field, blocks, obj.maxClearLine, obj.maxDepth);
 
-        assertThat(percentCore.getResultTree().getSuccessPercent(), is(successPercent));
+        assertThat(percentCore.getResultTree().getSuccessPercent()).isEqualTo(successPercent);
     }
 
     @Test
-    public void invokeUsingHoldJust() throws Exception {
+    void invokeUsingHoldJust() throws Exception {
         // Field
         String marks = "" +
                 "XX________" +
@@ -75,7 +74,7 @@ public class PercentCoreTest {
     }
 
     @Test
-    public void invokeUsingHoldOver() throws Exception {
+    void invokeUsingHoldOver() throws Exception {
         // Field
         String marks = "" +
                 "XX_____XXX" +
@@ -103,7 +102,7 @@ public class PercentCoreTest {
     }
 
     @Test
-    public void invokeNoHoldJust() throws Exception {
+    void invokeNoHoldJust() throws Exception {
         // Field
         String marks = "" +
                 "X________X" +
@@ -122,7 +121,7 @@ public class PercentCoreTest {
     }
 
     @Test
-    public void invokeNoHoldOver() throws Exception {
+    void invokeNoHoldOver() throws Exception {
         // Field
         String marks = "" +
                 "X_________" +
@@ -141,7 +140,7 @@ public class PercentCoreTest {
     }
 
     @Test
-    public void invokeNoHoldInputMoreOver() throws Exception {
+    void invokeNoHoldInputMoreOver() throws Exception {
         // Field
         String marks = "" +
                 "X___XXXXXX" +

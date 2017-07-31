@@ -1,54 +1,52 @@
 package common.datastore.action;
 
 import core.srs.Rotate;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.lessThan;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class MinimalActionTest {
+class MinimalActionTest {
     @Test
-    public void testGetter() throws Exception {
+    void testGetter() throws Exception {
         MinimalAction action = MinimalAction.create(4, 5, Rotate.Spawn);
-        assertThat(action.getRotate(), is(Rotate.Spawn));
-        assertThat(action.getX(), is(4));
-        assertThat(action.getY(), is(5));
+        assertThat(action)
+                .returns(Rotate.Spawn, Action::getRotate)
+                .returns(4, Action::getX)
+                .returns(5, Action::getY);
     }
 
     @Test
-    public void testEqual() throws Exception {
+    void testEqual() throws Exception {
         MinimalAction action = MinimalAction.create(4, 5, Rotate.Spawn);
-        assertThat(action.equals(MinimalAction.create(4, 5, Rotate.Spawn)), is(true));
-        assertThat(action.equals(MinimalAction.create(7, 5, Rotate.Spawn)), is(false));
-        assertThat(action.equals(MinimalAction.create(4, 21, Rotate.Spawn)), is(false));
-        assertThat(action.equals(MinimalAction.create(4, 5, Rotate.Right)), is(false));
+        assertThat(action.equals(MinimalAction.create(4, 5, Rotate.Spawn))).isTrue();
+        assertThat(action.equals(MinimalAction.create(7, 5, Rotate.Spawn))).isFalse();
+        assertThat(action.equals(MinimalAction.create(4, 21, Rotate.Spawn))).isFalse();
+        assertThat(action.equals(MinimalAction.create(4, 5, Rotate.Right))).isFalse();
     }
 
     @Test
-    public void testHashCode() throws Exception {
+    void testHashCode() throws Exception {
         MinimalAction action = MinimalAction.create(4, 5, Rotate.Spawn);
-        assertThat(MinimalAction.create(4, 5, Rotate.Spawn).hashCode(), is(action.hashCode()));
-        assertThat(MinimalAction.create(2, 5, Rotate.Spawn).hashCode(), is(not(action.hashCode())));
-        assertThat(MinimalAction.create(4, 12, Rotate.Spawn).hashCode(), is(not(action.hashCode())));
-        assertThat(MinimalAction.create(4, 5, Rotate.Right).hashCode(), is(not(action.hashCode())));
+        assertThat(MinimalAction.create(4, 5, Rotate.Spawn).hashCode()).isEqualTo(action.hashCode());
+        assertThat(MinimalAction.create(2, 5, Rotate.Spawn).hashCode()).isNotEqualTo(action.hashCode());
+        assertThat(MinimalAction.create(4, 12, Rotate.Spawn).hashCode()).isNotEqualTo(action.hashCode());
+        assertThat(MinimalAction.create(4, 5, Rotate.Right).hashCode()).isNotEqualTo(action.hashCode());
     }
 
     @Test
-    public void testCompareTo() throws Exception {
+    void testCompareTo() throws Exception {
         MinimalAction action1 = MinimalAction.create(4, 5, Rotate.Spawn);
         MinimalAction action2 = MinimalAction.create(4, 5, Rotate.Spawn);
         MinimalAction action3 = MinimalAction.create(4, 13, Rotate.Spawn);
         MinimalAction action4 = MinimalAction.create(4, 13, Rotate.Reverse);
 
-        assertThat(action1.compareTo(action2), is(0));
+        assertThat(action1.compareTo(action2)).isEqualTo(0);
 
-        assertThat(action1.compareTo(action3), is(not(0)));
-        assertThat(action1.compareTo(action4), is(not(0)));
-        assertThat(action3.compareTo(action4), is(not(0)));
+        assertThat(action1.compareTo(action3)).isNotEqualTo(0);
+        assertThat(action1.compareTo(action4)).isNotEqualTo(0);
+        assertThat(action3.compareTo(action4)).isNotEqualTo(0);
 
         assert action1.compareTo(action3) < 0 && action3.compareTo(action4) < 0;
-        assertThat(action1.compareTo(action4), is(lessThan(0)));
+        assertThat(action1.compareTo(action4)).isLessThan(0);
     }
 }

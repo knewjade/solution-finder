@@ -18,6 +18,7 @@ import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
 import lib.Randoms;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
@@ -375,6 +376,7 @@ class TetfuTest {
     }
 
     @Test
+    @Tag("long")
     void random() throws Exception {
         // Initialize
         Randoms randoms = new Randoms();

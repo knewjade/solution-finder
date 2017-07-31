@@ -19,6 +19,7 @@ import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.common.validator.PerfectValidator;
 
@@ -255,6 +256,7 @@ class CheckmateUsingHoldTest {
     }
 
     @Test
+    @Tag("long")
     void testCaseList() throws Exception {
         String resultPath = ClassLoader.getSystemResource("perfects/checkmate_usinghold.txt").getPath();
         List<Pair<Pieces, Integer>> testCases = Files.lines(Paths.get(resultPath))

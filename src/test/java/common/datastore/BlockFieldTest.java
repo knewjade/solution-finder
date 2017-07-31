@@ -4,18 +4,15 @@ import core.field.Field;
 import core.field.FieldFactory;
 import core.field.SmallField;
 import core.mino.Block;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class BlockFieldTest {
+class BlockFieldTest {
     @Test
-    public void mergeAndGet() throws Exception {
+    void mergeAndGet() throws Exception {
         int height = 4;
         BlockField blockField = new BlockField(height);
 
@@ -37,16 +34,16 @@ public class BlockFieldTest {
                 "XXX_______" +
                 "XXXX______"
         );
-        assertThat(blockField.get(Block.T), is(expected));
+        assertThat(blockField.get(Block.T)).isEqualTo(expected);
 
         for (Block block : Arrays.asList(Block.I, Block.O, Block.S, Block.Z, Block.L, Block.J)) {
             Field field = new SmallField();
-            assertThat(blockField.get(block), is(field));
+            assertThat(blockField.get(block)).isEqualTo(field);
         }
     }
 
     @Test
-    public void compare1() throws Exception {
+    void compare1() throws Exception {
         int height = 4;
         BlockField blockField1 = new BlockField(height);
 
@@ -71,15 +68,15 @@ public class BlockFieldTest {
         );
         blockField2.merge(merged, Block.T);
 
-        assertThat(blockField1.equals(blockField2), is(true));
-        assertThat(blockField2.equals(blockField1), is(true));
+        assertThat(blockField1.equals(blockField2)).isEqualTo(true);
+        assertThat(blockField2.equals(blockField1)).isEqualTo(true);
 
-        assertThat(blockField1.compareTo(blockField2), is(0));
-        assertThat(blockField2.compareTo(blockField1), is(0));
+        assertThat(blockField1.compareTo(blockField2)).isEqualTo(0);
+        assertThat(blockField2.compareTo(blockField1)).isEqualTo(0);
     }
 
     @Test
-    public void compare2() throws Exception {
+    void compare2() throws Exception {
         int height = 4;
         BlockField blockField1 = new BlockField(height);
 
@@ -104,15 +101,15 @@ public class BlockFieldTest {
         );
         blockField2.merge(merged, Block.I);
 
-        assertThat(blockField1.equals(blockField2), is(false));
-        assertThat(blockField2.equals(blockField1), is(false));
+        assertThat(blockField1.equals(blockField2)).isEqualTo(false);
+        assertThat(blockField2.equals(blockField1)).isEqualTo(false);
 
         // assert is not 0 & sign reversed
-        assertThat(blockField1.compareTo(blockField2) * blockField2.compareTo(blockField1), is(lessThan(0)));
+        assertThat(blockField1.compareTo(blockField2) * blockField2.compareTo(blockField1)).isLessThan(0);
     }
 
     @Test
-    public void compare3() throws Exception {
+    void compare3() throws Exception {
         int height = 4;
         BlockField blockField1 = new BlockField(height);
 
@@ -138,10 +135,10 @@ public class BlockFieldTest {
         );
         blockField2.merge(merged, Block.T);
 
-        assertThat(blockField1.equals(blockField2), is(false));
-        assertThat(blockField2.equals(blockField1), is(false));
+        assertThat(blockField1.equals(blockField2)).isEqualTo(false);
+        assertThat(blockField2.equals(blockField1)).isEqualTo(false);
 
         // assert is not 0 & sign reversed
-        assertThat(blockField1.compareTo(blockField2) * blockField2.compareTo(blockField1), is(lessThan(0)));
+        assertThat(blockField1.compareTo(blockField2) * blockField2.compareTo(blockField1)).isLessThan(0);
     }
 }

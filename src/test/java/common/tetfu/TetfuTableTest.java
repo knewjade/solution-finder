@@ -1,18 +1,17 @@
 package common.tetfu;
 
 import common.datastore.Pair;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class TetfuTableTest {
+class TetfuTableTest {
     @Test
-    public void escapeChar() throws Exception {
+    void escapeChar() throws Exception {
         ArrayList<Pair<Character, String>> testCase = new ArrayList<Pair<Character, String>>() {
             {
                 add(new Pair<>('a', "a"));
@@ -40,11 +39,11 @@ public class TetfuTableTest {
         };
 
         for (Pair<Character, String> pair : testCase)
-            assertThat(TetfuTable.escape(pair.getKey()), is(pair.getValue()));
+            assertThat(TetfuTable.escape(pair.getKey())).isEqualTo(pair.getValue());
     }
 
     @Test
-    public void escapeString() throws Exception {
+    void escapeString() throws Exception {
         ArrayList<Pair<String, String>> testCase = new ArrayList<Pair<String, String>>() {
             {
                 add(new Pair<>("こんにちは", "%u3053%u3093%u306B%u3061%u306F"));
@@ -54,11 +53,11 @@ public class TetfuTableTest {
         };
 
         for (Pair<String, String> pair : testCase)
-            assertThat(TetfuTable.escape(pair.getKey()), is(pair.getValue()));
+            assertThat(TetfuTable.escape(pair.getKey())).isEqualTo(pair.getValue());
     }
 
     @Test
-    public void encodeInteger() throws Exception {
+    void encodeInteger() throws Exception {
         ArrayList<Pair<Integer, String>> testCase = new ArrayList<Pair<Integer, String>>() {
             {
                 add(new Pair<>(0, "A"));
@@ -73,16 +72,16 @@ public class TetfuTableTest {
         };
 
         for (Pair<Integer, String> pair : testCase)
-            assertThat(TetfuTable.encodeData(pair.getKey()), is(pair.getValue()));
+            assertThat(TetfuTable.encodeData(pair.getKey())).isEqualTo(pair.getValue());
     }
 
     @Test
-    public void encodeAndDecode() throws Exception {
+    void encodeAndDecode() throws Exception {
         List<String> testCase = Arrays.asList("a", "b", "c", "z", "A", "B", "Z", "0", "9", "+", "/");
 
         for (String str : testCase) {
             char c = str.toCharArray()[0];
-            assertThat(TetfuTable.encodeData(TetfuTable.decodeData(c)), is(str));
+            assertThat(TetfuTable.encodeData(TetfuTable.decodeData(c))).isEqualTo(str);
         }
     }
 }

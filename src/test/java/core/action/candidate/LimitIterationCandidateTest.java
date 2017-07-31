@@ -11,6 +11,7 @@ import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
 import lib.Randoms;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
@@ -159,6 +160,8 @@ class LimitIterationCandidateTest {
     }
 
     @Test
+    @Tag("long")
+    // TODO: mesure time
     void testRandomLocked() {
         Randoms randoms = new Randoms();
 
@@ -167,7 +170,7 @@ class LimitIterationCandidateTest {
         MinoRotation minoRotation = new MinoRotation();
         LimitIterationCandidate limitIterationCandidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 12);
 
-        for (int count = 0; count < 20; count++) {
+        for (int count = 0; count < 10; count++) {
             int randomHeight = randoms.nextIntClosed(10, 12);
             int numOfMinos = randoms.nextIntClosed(4, randomHeight * 10 / 4 - 1);
             Field field = randoms.field(randomHeight, numOfMinos);

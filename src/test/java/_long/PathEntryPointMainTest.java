@@ -5,19 +5,18 @@ import com.google.common.io.Files;
 import entry.EntryPointMain;
 import entry.path.OutputType;
 import entry.path.PathLayer;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class PathEntryPointMainTest {
+class PathEntryPointMainTest {
     private String getPathLog(List<String> fields, String pattern, boolean isUsingHold) throws Exception {
         File fieldTempFile = createTempTextFile("field", String.join(System.lineSeparator(), fields));
         String fieldTempFilePath = fieldTempFile.getPath();
@@ -65,7 +64,7 @@ public class PathEntryPointMainTest {
     }
 
     @Test
-    public void testLog1() throws Exception {
+    void testLog1() throws Exception {
         List<String> fields = Arrays.asList(
                 "4",
                 "XXXXX____X",
@@ -75,12 +74,12 @@ public class PathEntryPointMainTest {
         );
         String pattern = "*p4";
         String log = getPathLog(fields, pattern, true);
-        assertThat(log, containsString("Found path [unique] = 18"));
-        assertThat(log, containsString("Found path [minimal] = 16"));
+        assertThat(log).contains("Found path [unique] = 18");
+        assertThat(log).contains("Found path [minimal] = 16");
     }
 
     @Test
-    public void testLog1HeadT() throws Exception {
+    void testLog1HeadT() throws Exception {
         List<String> fields = Arrays.asList(
                 "4",
                 "XXXXX____X",
@@ -90,12 +89,12 @@ public class PathEntryPointMainTest {
         );
         String pattern = "T, *p3";
         String log = getPathLog(fields, pattern, false);
-        assertThat(log, containsString("Found path [unique] = 9"));
-        assertThat(log, containsString("Found path [minimal] = 8"));
+        assertThat(log).contains("Found path [unique] = 9");
+        assertThat(log).contains("Found path [minimal] = 8");
     }
 
     @Test
-    public void testUnique1() throws Exception {
+    void testUnique1() throws Exception {
         List<String> fields = Arrays.asList(
                 "4",
                 "XXXXX____X",
@@ -105,11 +104,11 @@ public class PathEntryPointMainTest {
         );
         String pattern = "*p4";
         String output = getPathOutput(fields, pattern, true, PathLayer.Unique, OutputType.Link);
-        assertThat(output, containsString("18パターン"));
+        assertThat(output).contains("18パターン");
     }
 
     @Test
-    public void testMinimal1() throws Exception {
+    void testMinimal1() throws Exception {
         List<String> fields = Arrays.asList(
                 "4",
                 "XXXXX____X",
@@ -119,11 +118,11 @@ public class PathEntryPointMainTest {
         );
         String pattern = "*p4";
         String output = getPathOutput(fields, pattern, true, PathLayer.Minimal, OutputType.Link);
-        assertThat(output, containsString("16パターン"));
+        assertThat(output).contains("16パターン");
     }
 
     @Test
-    public void testUnique2() throws Exception {
+    void testUnique2() throws Exception {
         List<String> fields = Arrays.asList(
                 "3",
                 "____XXX__X",
@@ -132,11 +131,11 @@ public class PathEntryPointMainTest {
         );
         String pattern = "[OSZ]p3";
         String output = getPathOutput(fields, pattern, true, PathLayer.Unique, OutputType.Link);
-        assertThat(output, containsString("2パターン"));
+        assertThat(output).contains("2パターン");
     }
 
     @Test
-    public void testMinimal2() throws Exception {
+    void testMinimal2() throws Exception {
         List<String> fields = Arrays.asList(
                 "3",
                 "____XXX__X",
@@ -145,11 +144,11 @@ public class PathEntryPointMainTest {
         );
         String pattern = "[OSZ]p3";
         String output = getPathOutput(fields, pattern, true, PathLayer.Minimal, OutputType.Link);
-        assertThat(output, containsString("2パターン"));
+        assertThat(output).contains("2パターン");
     }
 
     @Test
-    public void testUnique3() throws Exception {
+    void testUnique3() throws Exception {
         List<String> fields = Arrays.asList(
                 "4",
                 "XXXX______",
@@ -162,14 +161,14 @@ public class PathEntryPointMainTest {
 
         // Source: myself 20170617
         int count = 245;
-        assertThat(output, containsString(count + "パターン"));
-        assertThat(output.split("href='http://fumen.zui.jp").length, is(count + 1));
-        assertThat(output.split("ライン消去あり")[0].split("href='http://fumen.zui.jp").length, is(2 + 1));
-        assertThat(output.split("ライン消去あり")[1].split("href='http://fumen.zui.jp").length, is(count - 2 + 1));
+        assertThat(output).contains(count + "パターン");
+        assertThat(output.split("href='http://fumen.zui.jp")).hasSize(count + 1);
+        assertThat(output.split("ライン消去あり")[0].split("href='http://fumen.zui.jp")).hasSize(2 + 1);
+        assertThat(output.split("ライン消去あり")[1].split("href='http://fumen.zui.jp")).hasSize(count - 2 + 1);
     }
 
     @Test
-    public void testMinimal3() throws Exception {
+    void testMinimal3() throws Exception {
         List<String> fields = Arrays.asList(
                 "4",
                 "XXXX______",
@@ -182,14 +181,14 @@ public class PathEntryPointMainTest {
 
         // Source: myself 20170617
         int count = 199;
-        assertThat(output, containsString(count + "パターン"));
-        assertThat(output.split("href='http://fumen.zui.jp").length, is(count + 1));
-        assertThat(output.split("ライン消去あり")[0].split("href='http://fumen.zui.jp").length, is(2 + 1));
-        assertThat(output.split("ライン消去あり")[1].split("href='http://fumen.zui.jp").length, is(count - 2 + 1));
+        assertThat(output).contains(count + "パターン");
+        assertThat(output.split("href='http://fumen.zui.jp")).hasSize(count + 1);
+        assertThat(output.split("ライン消去あり")[0].split("href='http://fumen.zui.jp")).hasSize(2 + 1);
+        assertThat(output.split("ライン消去あり")[1].split("href='http://fumen.zui.jp")).hasSize(count - 2 + 1);
     }
 
     @Test
-    public void testUniqueCSV4() throws Exception {
+    void testUniqueCSV4() throws Exception {
         List<String> fields = Arrays.asList(
                 "4",
                 "XXX_______",
@@ -201,11 +200,11 @@ public class PathEntryPointMainTest {
         String output = getPathOutput(fields, pattern, true, PathLayer.Unique, OutputType.CSV);
 
         // Source: myself 20170617
-        assertThat(output.split(System.lineSeparator()).length, is(173));
+        assertThat(output.split(System.lineSeparator())).hasSize(173);
     }
 
     @Test
-    public void testMinimalCSV4() throws Exception {
+    void testMinimalCSV4() throws Exception {
         List<String> fields = Arrays.asList(
                 "4",
                 "XXX_______",
@@ -217,11 +216,11 @@ public class PathEntryPointMainTest {
         String output = getPathOutput(fields, pattern, true, PathLayer.Minimal, OutputType.CSV);
 
         // Source: myself 20170617
-        assertThat(output.split(System.lineSeparator()).length, is(130));
+        assertThat(output.split(System.lineSeparator())).hasSize(130);
     }
 
     @Test
-    public void testMinimalCSV5() throws Exception {
+    void testMinimalCSV5() throws Exception {
         List<String> fields = Arrays.asList(
                 "4",
                 "XXXXXXXXX_",
@@ -233,12 +232,12 @@ public class PathEntryPointMainTest {
         String output = getPathOutput(fields, pattern, true, PathLayer.Minimal, OutputType.CSV);
 
         // Source: myself 20170617
-        assertThat(output.split(System.lineSeparator()).length, is(1));
-        assertThat(output, containsString("I,L,9,1;O,0,0,0"));
+        assertThat(output.split(System.lineSeparator())).hasSize(1);
+        assertThat(output).contains("I,L,9,1;O,0,0,0");
     }
 
     @Test
-    public void testMinimal6() throws Exception {
+    void testMinimal6() throws Exception {
         List<String> fields = Arrays.asList(
                 "6",
                 "XXXXXX____",
@@ -252,12 +251,12 @@ public class PathEntryPointMainTest {
         String log = getPathLog(fields, pattern, true);
 
         // Source: myself 20170617
-        assertThat(log, containsString("Found path [unique] = 1002"));
-        assertThat(log, containsString("Found path [minimal] = 699"));
+        assertThat(log).contains("Found path [unique] = 1002");
+        assertThat(log).contains("Found path [minimal] = 699");
     }
 
     @Test
-    public void testMinimal7() throws Exception {
+    void testMinimal7() throws Exception {
         List<String> fields = Arrays.asList(
                 "4",
                 "XXXXXX____",
@@ -269,12 +268,13 @@ public class PathEntryPointMainTest {
         String log = getPathLog(fields, pattern, true);
 
         // Source: myself 20170701
-        assertThat(log, containsString("Found path [unique] = 135"));
-        assertThat(log, containsString("Found path [minimal] = 69"));
+        assertThat(log).contains("Found path [unique] = 135");
+        assertThat(log).contains("Found path [minimal] = 69");
     }
 
     @Test
-    public void testMinimal8() throws Exception {
+    @Tag("long")
+    void testMinimal8() throws Exception {
         List<String> fields = Arrays.asList(
                 "4",
                 "__________",
@@ -286,13 +286,13 @@ public class PathEntryPointMainTest {
         String log = getPathLog(fields, pattern, true);
 
         // Source: myself 20170701
-        assertThat(log, containsString("Found path [unique] = 71"));
-        assertThat(log, containsString("Found path [minimal] = 10"));
+        assertThat(log).contains("Found path [unique] = 71");
+        assertThat(log).contains("Found path [minimal] = 10");
     }
 
-    @Ignore
+    @Disabled
     @Test
-    public void testMinimal9() throws Exception {
+    void testMinimal9() throws Exception {
         List<String> fields = Arrays.asList(
                 "8",
                 "__XXXXXXXX",
@@ -308,12 +308,12 @@ public class PathEntryPointMainTest {
         String log = getPathLog(fields, pattern, true);
 
         // Source: myself 20170701
-        assertThat(log, containsString("Found path [unique] = 298"));
-        assertThat(log, containsString("Found path [minimal] = 239"));
+        assertThat(log).contains("Found path [unique] = 298");
+        assertThat(log).contains("Found path [minimal] = 239");
     }
 
     @Test
-    public void testMinimal10() throws Exception {
+    void testMinimal10() throws Exception {
         List<String> fields = Arrays.asList(
                 "4",
                 "X_________",
@@ -325,7 +325,7 @@ public class PathEntryPointMainTest {
         String log = getPathLog(fields, pattern, true);
 
         // Source: myself 20170701
-        assertThat(log, containsString("Found path [unique] = 3"));
-        assertThat(log, containsString("Found path [minimal] = 3"));
+        assertThat(log).contains("Found path [unique] = 3");
+        assertThat(log).contains("Found path [minimal] = 3");
     }
 }

@@ -11,6 +11,7 @@ import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import lib.Randoms;
 import lib.Stopwatch;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.common.validator.PerfectValidator;
 
@@ -18,6 +19,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+// TODO: CHECK time
 class CheckmateNoHoldReuseTest {
     private final MinoFactory minoFactory = new MinoFactory();
     private final MinoShifter minoShifter = new MinoShifter();
@@ -27,6 +29,7 @@ class CheckmateNoHoldReuseTest {
     private final CheckmateNoHoldReuse<Action> checkmateReuse = new CheckmateNoHoldReuse<>(minoFactory, validator);
 
     @Test
+    @Tag("long")
     void randomCheckmateWithJustBlock() {
         Randoms randoms = new Randoms();
 
@@ -115,6 +118,7 @@ class CheckmateNoHoldReuseTest {
     }
 
     @Test
+    @Tag("long")
     void randomCheckmateOverBlock() {
         Randoms randoms = new Randoms();
 
@@ -154,6 +158,7 @@ class CheckmateNoHoldReuseTest {
     }
 
     @Test
+    @Tag("long")
     void randomCheckmateOverMoreBlock() {
         Randoms randoms = new Randoms();
 

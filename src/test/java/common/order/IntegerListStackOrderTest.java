@@ -1,17 +1,15 @@
 package common.order;
 
-import core.mino.Block;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class IntegerListStackOrderTest {
+class IntegerListStackOrderTest {
     @Test
-    public void add() throws Exception {
+    void add() throws Exception {
         IntegerListStackOrder stackOrder = new IntegerListStackOrder();
         stackOrder.addLast(0);
         stackOrder.addLast(1);
@@ -19,11 +17,11 @@ public class IntegerListStackOrderTest {
         stackOrder.addLastTwo(-1);
 
         List<Integer> blocks = stackOrder.toList();
-        assertThat(blocks, is(Arrays.asList(0, 1, -1, 2)));
+        assertThat(blocks).isEqualTo(Arrays.asList(0, 1, -1, 2));
     }
 
     @Test
-    public void stock() throws Exception {
+    void stock() throws Exception {
         IntegerListStackOrder stackOrder = new IntegerListStackOrder();
         stackOrder.addLast(0);
         stackOrder.stock(1);  // to head and memory TS*
@@ -33,6 +31,6 @@ public class IntegerListStackOrderTest {
         stackOrder.stock(-1);
 
         List<Integer> blocks = stackOrder.toList();
-        assertThat(blocks, is(Arrays.asList(1, 0, 4, 3, 2, -1)));
+        assertThat(blocks).isEqualTo(Arrays.asList(1, 0, 4, 3, 2, -1));
     }
 }

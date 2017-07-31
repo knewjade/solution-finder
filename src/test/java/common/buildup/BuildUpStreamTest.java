@@ -17,6 +17,7 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import lib.Randoms;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
@@ -173,6 +174,7 @@ class BuildUpStreamTest {
     }
 
     @Test
+    @Tag("long")
     void randomLong() throws ExecutionException, InterruptedException {
         // Initialize
         Randoms randoms = new Randoms();

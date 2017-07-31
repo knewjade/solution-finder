@@ -17,6 +17,7 @@ import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.common.validator.PerfectValidator;
 
@@ -24,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -31,6 +33,7 @@ import java.util.stream.Stream;
 import static core.mino.Block.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
+// TODO: Check time
 class CheckmateNoHoldTest {
     private final MinoFactory minoFactory = new MinoFactory();
     private final MinoShifter minoShifter = new MinoShifter();
@@ -111,6 +114,7 @@ class CheckmateNoHoldTest {
     }
 
     @Test
+    @Tag("long")
     void testLong10() throws Exception {
         List<Pair<List<Block>, Integer>> testCases = new ArrayList<Pair<List<Block>, Integer>>() {
             {
@@ -257,6 +261,7 @@ class CheckmateNoHoldTest {
     }
 
     @Test
+    @Tag("long")
     void testCaseList() throws Exception {
         String resultPath = ClassLoader.getSystemResource("perfects/checkmate_nohold.txt").getPath();
         List<Pair<Pieces, Integer>> testCases = Files.lines(Paths.get(resultPath))
@@ -271,6 +276,7 @@ class CheckmateNoHoldTest {
                     return new Pair<Pieces, Integer>(pieces, count);
                 })
                 .collect(Collectors.toList());
+        Collections.shuffle(testCases);
 
         // Field
         int maxClearLine = 4;
@@ -282,7 +288,7 @@ class CheckmateNoHoldTest {
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         // Assertion
-        for (Pair<Pieces, Integer> testCase : testCases) {
+        for (Pair<Pieces, Integer> testCase : testCases.subList(0, 40)) {
             // Set test case
             List<Block> blocks = testCase.getKey().getBlocks();
             int expectedCount = testCase.getValue();

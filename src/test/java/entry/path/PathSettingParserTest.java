@@ -3,22 +3,21 @@ package entry.path;
 import common.comparator.FieldComparator;
 import core.field.Field;
 import core.field.FieldFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class PathSettingParserTest {
+class PathSettingParserTest {
     private static void assertField(Field actual, Field expected) {
         FieldComparator comparator = new FieldComparator();
-        assertThat(comparator.compare(actual, expected), is(0));
+        assertThat(comparator.compare(actual, expected)).isEqualTo(0);
     }
 
     @Test
-    public void testDefault() throws Exception {
+    void testDefault() throws Exception {
         String fieldPath = ClassLoader.getSystemResource("field/2line.txt").getPath();
         String patternsPath = ClassLoader.getSystemResource("patterns/7mino.txt").getPath();
         String commands = String.format("--field-path %s --patterns-path %s", fieldPath, patternsPath);
@@ -30,24 +29,25 @@ public class PathSettingParserTest {
                 "XX________"
         );
 
-        assertThat(parse.isPresent(), is(true));
+        assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
-            assertThat(settings.getLogFilePath(), is("output/last_output.txt"));
-            assertThat(settings.getMaxClearLine(), is(2));
-            assertThat(settings.getPatterns(), is(Collections.singletonList("*p7")));
-            assertThat(settings.isOutputToConsole(), is(true));
-            assertThat(settings.isUsingHold(), is(true));
+            assertThat(settings)
+                    .returns("output/last_output.txt", PathSettings::getLogFilePath)
+                    .returns(2, PathSettings::getMaxClearLine)
+                    .returns(Collections.singletonList("*p7"), PathSettings::getPatterns)
+                    .returns(true, PathSettings::isOutputToConsole)
+                    .returns(true, PathSettings::isUsingHold)
+                    .returns("output/path.txt", PathSettings::getOutputBaseFilePath)
+                    .returns(PathLayer.Minimal, PathSettings::getPathLayer)
+                    .returns(OutputType.Link, PathSettings::getOutputType)
+                    .returns(false, PathSettings::isTetfuSplit)
+                    .returns(0, PathSettings::getCachedMinBit);
             assertField(settings.getField(), expectedField);
-            assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
-            assertThat(settings.getPathLayer(), is(PathLayer.Minimal));
-            assertThat(settings.getOutputType(), is(OutputType.Link));
-            assertThat(settings.isTetfuSplit(), is(false));
-            assertThat(settings.getCachedMinBit(), is(0));
         });
     }
 
     @Test
-    public void testDefault2() throws Exception {
+    void testDefault2() throws Exception {
         String fieldPath = ClassLoader.getSystemResource("field/template.txt").getPath();
         String patternsPath = ClassLoader.getSystemResource("patterns/3mino.txt").getPath();
         String commands = String.format("--field-path %s --patterns-path %s", fieldPath, patternsPath);
@@ -61,31 +61,33 @@ public class PathSettingParserTest {
                 "XXXX___XXX"
         );
 
-        assertThat(parse.isPresent(), is(true));
+        assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
-            assertThat(settings.getLogFilePath(), is("output/last_output.txt"));
-            assertThat(settings.getMaxClearLine(), is(4));
-            assertThat(settings.getPatterns(), is(Collections.singletonList("*p3")));
-            assertThat(settings.isOutputToConsole(), is(true));
-            assertThat(settings.isUsingHold(), is(true));
+            assertThat(settings)
+                    .returns("output/last_output.txt", PathSettings::getLogFilePath)
+                    .returns(4, PathSettings::getMaxClearLine)
+                    .returns(Collections.singletonList("*p3"), PathSettings::getPatterns)
+                    .returns(true, PathSettings::isOutputToConsole)
+                    .returns(true, PathSettings::isUsingHold)
+                    .returns("output/path.txt", PathSettings::getOutputBaseFilePath)
+                    .returns(PathLayer.Minimal, PathSettings::getPathLayer)
+                    .returns(OutputType.Link, PathSettings::getOutputType)
+                    .returns(false, PathSettings::isTetfuSplit)
+                    .returns(0, PathSettings::getCachedMinBit);
             assertField(settings.getField(), expectedField);
-            assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
-            assertThat(settings.getPathLayer(), is(PathLayer.Minimal));
-            assertThat(settings.getOutputType(), is(OutputType.Link));
-            assertThat(settings.getCachedMinBit(), is(0));
         });
     }
 
     @Test
-    public void testHelp() throws Exception {
+    void testHelp() throws Exception {
         String commands = "-h";
         PathSettingParser entryPoint = new PathSettingParser(commands);
         Optional<PathSettings> parse = entryPoint.parse();
-        assertThat(parse.isPresent(), is(false));
+        assertThat(parse.isPresent()).isFalse();
     }
 
     @Test
-    public void testTetfu1() throws Exception {
+    void testTetfu1() throws Exception {
         String fieldPath = ClassLoader.getSystemResource("field/4row.txt").getPath();
         String patternsPath = ClassLoader.getSystemResource("patterns/7mino.txt").getPath();
         String tetfu = "v115@9gB8DeG8CeH8BeG8CeD8JeAgWBAUAAAA";  // comment: 4
@@ -101,24 +103,25 @@ public class PathSettingParserTest {
                 "XXX___XXXX"
         );
 
-        assertThat(parse.isPresent(), is(true));
+        assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
-            assertThat(settings.getLogFilePath(), is("output/last_output.txt"));
-            assertThat(settings.getMaxClearLine(), is(4));
-            assertThat(settings.getPatterns(), is(Collections.singletonList("*p7")));
-            assertThat(settings.isOutputToConsole(), is(true));
-            assertThat(settings.isUsingHold(), is(false));
+            assertThat(settings)
+                    .returns("output/last_output.txt", PathSettings::getLogFilePath)
+                    .returns(4, PathSettings::getMaxClearLine)
+                    .returns(Collections.singletonList("*p7"), PathSettings::getPatterns)
+                    .returns(true, PathSettings::isOutputToConsole)
+                    .returns(false, PathSettings::isUsingHold)
+                    .returns("output/path.txt", PathSettings::getOutputBaseFilePath)
+                    .returns(PathLayer.Unique, PathSettings::getPathLayer)
+                    .returns(OutputType.CSV, PathSettings::getOutputType)
+                    .returns(false, PathSettings::isTetfuSplit)
+                    .returns(1, PathSettings::getCachedMinBit);
             assertField(settings.getField(), expectedField);
-            assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
-            assertThat(settings.getPathLayer(), is(PathLayer.Unique));
-            assertThat(settings.getOutputType(), is(OutputType.CSV));
-            assertThat(settings.isTetfuSplit(), is(false));
-            assertThat(settings.getCachedMinBit(), is(1));
         });
     }
 
     @Test
-    public void testTetfu2() throws Exception {
+    void testTetfu2() throws Exception {
         String fieldPath = ClassLoader.getSystemResource("field/4row.txt").getPath();
         String patternsPath = ClassLoader.getSystemResource("patterns/7mino.txt").getPath();
 
@@ -136,24 +139,25 @@ public class PathSettingParserTest {
                 "XXX___XXXX"
         );
 
-        assertThat(parse.isPresent(), is(true));
+        assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
-            assertThat(settings.getLogFilePath(), is("output/dummy"));
-            assertThat(settings.getMaxClearLine(), is(4));
-            assertThat(settings.getPatterns(), is(Collections.singletonList("*p4")));
-            assertThat(settings.isOutputToConsole(), is(true));
-            assertThat(settings.isUsingHold(), is(false));
+            assertThat(settings)
+                    .returns("output/dummy", PathSettings::getLogFilePath)
+                    .returns(4, PathSettings::getMaxClearLine)
+                    .returns(Collections.singletonList("*p4"), PathSettings::getPatterns)
+                    .returns(true, PathSettings::isOutputToConsole)
+                    .returns(false, PathSettings::isUsingHold)
+                    .returns("output/path.txt", PathSettings::getOutputBaseFilePath)
+                    .returns(PathLayer.Minimal, PathSettings::getPathLayer)
+                    .returns(OutputType.Link, PathSettings::getOutputType)
+                    .returns(false, PathSettings::isTetfuSplit)
+                    .returns(0, PathSettings::getCachedMinBit);
             assertField(settings.getField(), expectedField);
-            assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
-            assertThat(settings.getPathLayer(), is(PathLayer.Minimal));
-            assertThat(settings.getOutputType(), is(OutputType.Link));
-            assertThat(settings.isTetfuSplit(), is(false));
-            assertThat(settings.getCachedMinBit(), is(0));
         });
     }
 
     @Test
-    public void testTetfu3() throws Exception {
+    void testTetfu3() throws Exception {
         String fieldPath = ClassLoader.getSystemResource("field/4row.txt").getPath();
         String patternsPath = ClassLoader.getSystemResource("patterns/7mino.txt").getPath();
 
@@ -171,24 +175,25 @@ public class PathSettingParserTest {
                 "____XXXXXX"
         );
 
-        assertThat(parse.isPresent(), is(true));
+        assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
-            assertThat(settings.getLogFilePath(), is("output/dummy"));
-            assertThat(settings.getMaxClearLine(), is(4));
-            assertThat(settings.getPatterns(), is(Collections.singletonList("*p5")));
-            assertThat(settings.isOutputToConsole(), is(true));
-            assertThat(settings.isUsingHold(), is(false));
+            assertThat(settings)
+                    .returns("output/dummy", PathSettings::getLogFilePath)
+                    .returns(4, PathSettings::getMaxClearLine)
+                    .returns(Collections.singletonList("*p5"), PathSettings::getPatterns)
+                    .returns(true, PathSettings::isOutputToConsole)
+                    .returns(false, PathSettings::isUsingHold)
+                    .returns("output/path.txt", PathSettings::getOutputBaseFilePath)
+                    .returns(PathLayer.Minimal, PathSettings::getPathLayer)
+                    .returns(OutputType.Link, PathSettings::getOutputType)
+                    .returns(false, PathSettings::isTetfuSplit)
+                    .returns(0, PathSettings::getCachedMinBit);
             assertField(settings.getField(), expectedField);
-            assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
-            assertThat(settings.getPathLayer(), is(PathLayer.Minimal));
-            assertThat(settings.getOutputType(), is(OutputType.Link));
-            assertThat(settings.isTetfuSplit(), is(false));
-            assertThat(settings.getCachedMinBit(), is(0));
         });
     }
 
     @Test
-    public void testTetfu4() throws Exception {
+    void testTetfu4() throws Exception {
         String fieldPath = ClassLoader.getSystemResource("field/4row.txt").getPath();
         String patternsPath = ClassLoader.getSystemResource("patterns/7mino.txt").getPath();
 
@@ -205,24 +210,25 @@ public class PathSettingParserTest {
                 "XXX___XXXX"
         );
 
-        assertThat(parse.isPresent(), is(true));
+        assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
-            assertThat(settings.getLogFilePath(), is("output/dummy"));
-            assertThat(settings.getMaxClearLine(), is(3));
-            assertThat(settings.getPatterns(), is(Collections.singletonList("T,S,L,O,L")));
-            assertThat(settings.isOutputToConsole(), is(true));
-            assertThat(settings.isUsingHold(), is(true));
+            assertThat(settings)
+                    .returns("output/dummy", PathSettings::getLogFilePath)
+                    .returns(3, PathSettings::getMaxClearLine)
+                    .returns(Collections.singletonList("T,S,L,O,L"), PathSettings::getPatterns)
+                    .returns(true, PathSettings::isOutputToConsole)
+                    .returns(true, PathSettings::isUsingHold)
+                    .returns("output/result_dummy.txt", PathSettings::getOutputBaseFilePath)
+                    .returns(PathLayer.Minimal, PathSettings::getPathLayer)
+                    .returns(OutputType.Link, PathSettings::getOutputType)
+                    .returns(true, PathSettings::isTetfuSplit)
+                    .returns(0, PathSettings::getCachedMinBit);
             assertField(settings.getField(), expectedField);
-            assertThat(settings.getOutputBaseFilePath(), is("output/result_dummy.txt"));
-            assertThat(settings.getPathLayer(), is(PathLayer.Minimal));
-            assertThat(settings.getOutputType(), is(OutputType.Link));
-            assertThat(settings.isTetfuSplit(), is(true));
-            assertThat(settings.getCachedMinBit(), is(0));
         });
     }
 
     @Test
-    public void testTetfu1InField() throws Exception {
+    void testTetfu1InField() throws Exception {
         String fieldPath = ClassLoader.getSystemResource("field/tetfu1.txt").getPath();
         String commands = String.format("-fp %s -P 46", fieldPath);
 
@@ -235,22 +241,24 @@ public class PathSettingParserTest {
                 "XXX___XXXX"
         );
 
-        assertThat(parse.isPresent(), is(true));
+        assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
-            assertThat(settings.getMaxClearLine(), is(3));
-            assertThat(settings.getPatterns(), is(Collections.singletonList("T,S,L,O,L")));
-            assertThat(settings.isOutputToConsole(), is(true));
-            assertThat(settings.isUsingHold(), is(true));
+            assertThat(settings)
+                    .returns(3, PathSettings::getMaxClearLine)
+                    .returns(Collections.singletonList("T,S,L,O,L"), PathSettings::getPatterns)
+                    .returns(true, PathSettings::isOutputToConsole)
+                    .returns(true, PathSettings::isUsingHold)
+                    .returns("output/path.txt", PathSettings::getOutputBaseFilePath)
+                    .returns(PathLayer.Minimal, PathSettings::getPathLayer)
+                    .returns(OutputType.Link, PathSettings::getOutputType)
+                    .returns(false, PathSettings::isTetfuSplit)
+                    .returns(0, PathSettings::getCachedMinBit);
             assertField(settings.getField(), expectedField);
-            assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
-            assertThat(settings.getPathLayer(), is(PathLayer.Minimal));
-            assertThat(settings.getOutputType(), is(OutputType.Link));
-            assertThat(settings.getCachedMinBit(), is(0));
         });
     }
 
     @Test
-    public void testTetfu2InField() throws Exception {
+    void testTetfu2InField() throws Exception {
         String fieldPath = ClassLoader.getSystemResource("field/tetfu2.txt").getPath();
         String commands = String.format("-fp %s -P 6 -p *p4", fieldPath);
 
@@ -265,17 +273,19 @@ public class PathSettingParserTest {
                 ""
         );
 
-        assertThat(parse.isPresent(), is(true));
+        assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
-            assertThat(settings.getMaxClearLine(), is(4));
-            assertThat(settings.getPatterns(), is(Collections.singletonList("*p4")));
-            assertThat(settings.isOutputToConsole(), is(true));
-            assertThat(settings.isUsingHold(), is(true));
+            assertThat(settings)
+                    .returns(4, PathSettings::getMaxClearLine)
+                    .returns(Collections.singletonList("*p4"), PathSettings::getPatterns)
+                    .returns(true, PathSettings::isOutputToConsole)
+                    .returns(true, PathSettings::isUsingHold)
+                    .returns("output/path.txt", PathSettings::getOutputBaseFilePath)
+                    .returns(PathLayer.Minimal, PathSettings::getPathLayer)
+                    .returns(OutputType.Link, PathSettings::getOutputType)
+                    .returns(false, PathSettings::isTetfuSplit)
+                    .returns(0, PathSettings::getCachedMinBit);
             assertField(settings.getField(), expectedField);
-            assertThat(settings.getOutputBaseFilePath(), is("output/path.txt"));
-            assertThat(settings.getPathLayer(), is(PathLayer.Minimal));
-            assertThat(settings.getOutputType(), is(OutputType.Link));
-            assertThat(settings.getCachedMinBit(), is(0));
         });
     }
 }

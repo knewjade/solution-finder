@@ -7,15 +7,13 @@ import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
 import lib.Randoms;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.lessThan;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class OperationWithKeyComparatorTest {
+class OperationWithKeyComparatorTest {
     @Test
-    public void compare() throws Exception {
+    void compare() throws Exception {
         Randoms randoms = new Randoms();
         MinoFactory minoFactory = new MinoFactory();
         int x = randoms.nextInt(10);
@@ -28,12 +26,16 @@ public class OperationWithKeyComparatorTest {
         OperationWithKey operationWithKey2 = createNewOperationWithKey(newMino, x, y, deleteKey, usingKey);
 
         OperationWithKeyComparator comparator = new OperationWithKeyComparator();
-        assertThat(operationWithKey1.toString(), comparator.compare(operationWithKey1, operationWithKey2), is(0));
-        assertThat(operationWithKey2.toString(), comparator.compare(operationWithKey2, operationWithKey1), is(0));
+        assertThat(comparator.compare(operationWithKey1, operationWithKey2))
+                .as(operationWithKey1.toString())
+                .isEqualTo(0);
+        assertThat(comparator.compare(operationWithKey2, operationWithKey1))
+                .as(operationWithKey2.toString())
+                .isEqualTo(0);
     }
 
     @Test
-    public void compareDiffX() throws Exception {
+    void compareDiffX() throws Exception {
         Randoms randoms = new Randoms();
         MinoFactory minoFactory = new MinoFactory();
         int x = randoms.nextInt(10);
@@ -50,11 +52,13 @@ public class OperationWithKeyComparatorTest {
 
         // assert is not 0 & sign reversed
         OperationWithKeyComparator comparator = new OperationWithKeyComparator();
-        assertThat(operationWithKey2.toString(), comparator.compare(operationWithKey1, operationWithKey2) * comparator.compare(operationWithKey2, operationWithKey1), is(lessThan(0)));
+        assertThat(comparator.compare(operationWithKey1, operationWithKey2) * comparator.compare(operationWithKey2, operationWithKey1))
+                .as(operationWithKey2.toString())
+                .isLessThan(0);
     }
 
     @Test
-    public void compareDiffY() throws Exception {
+    void compareDiffY() throws Exception {
         Randoms randoms = new Randoms();
         MinoFactory minoFactory = new MinoFactory();
         int x = randoms.nextInt(10);
@@ -71,11 +75,13 @@ public class OperationWithKeyComparatorTest {
 
         // assert is not 0 & sign reversed
         OperationWithKeyComparator comparator = new OperationWithKeyComparator();
-        assertThat(operationWithKey2.toString(), comparator.compare(operationWithKey1, operationWithKey2) * comparator.compare(operationWithKey2, operationWithKey1), is(lessThan(0)));
+        assertThat(comparator.compare(operationWithKey1, operationWithKey2) * comparator.compare(operationWithKey2, operationWithKey1))
+                .as(operationWithKey2.toString())
+                .isLessThan(0);
     }
 
     @Test
-    public void compareDiffDeleteKey() throws Exception {
+    void compareDiffDeleteKey() throws Exception {
         Randoms randoms = new Randoms();
         MinoFactory minoFactory = new MinoFactory();
         int x = randoms.nextInt(10);
@@ -93,11 +99,13 @@ public class OperationWithKeyComparatorTest {
 
         // assert is not 0 & sign reversed
         OperationWithKeyComparator comparator = new OperationWithKeyComparator();
-        assertThat(operationWithKey2.toString(), comparator.compare(operationWithKey1, operationWithKey2) * comparator.compare(operationWithKey2, operationWithKey1), is(lessThan(0)));
+        assertThat(comparator.compare(operationWithKey1, operationWithKey2) * comparator.compare(operationWithKey2, operationWithKey1))
+                .as(operationWithKey2.toString())
+                .isLessThan(0);
     }
 
     @Test
-    public void compareDiffUsingKey() throws Exception {
+    void compareDiffUsingKey() throws Exception {
         Randoms randoms = new Randoms();
         MinoFactory minoFactory = new MinoFactory();
         int x = randoms.nextInt(10);
@@ -112,8 +120,12 @@ public class OperationWithKeyComparatorTest {
 
         // assert is 0
         OperationWithKeyComparator comparator = new OperationWithKeyComparator();
-        assertThat(operationWithKey1.toString(), comparator.compare(operationWithKey1, operationWithKey2), is(0));
-        assertThat(operationWithKey2.toString(), comparator.compare(operationWithKey2, operationWithKey1), is(0));
+        assertThat(comparator.compare(operationWithKey1, operationWithKey2))
+                .as(operationWithKey1.toString())
+                .isEqualTo(0);
+        assertThat(comparator.compare(operationWithKey2, operationWithKey1))
+                .as(operationWithKey2.toString())
+                .isEqualTo(0);
     }
 
     private OperationWithKey createNewOperationWithKey(Mino mino, int x, int y, long deleteKey, long usingKey) {

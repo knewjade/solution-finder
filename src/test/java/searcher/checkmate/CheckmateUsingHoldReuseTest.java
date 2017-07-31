@@ -11,6 +11,7 @@ import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import lib.Randoms;
 import lib.Stopwatch;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.common.validator.PerfectValidator;
 
@@ -27,10 +28,11 @@ class CheckmateUsingHoldReuseTest {
     private final CheckmateUsingHoldReuse<Action> checkmateReuse = new CheckmateUsingHoldReuse<>(minoFactory, validator);
 
     @Test
+    @Tag("long")
     void randomCheckmateWithJustBlock() {
         Randoms randoms = new Randoms();
 
-        for (int count = 0; count < 50; count++) {
+        for (int count = 0; count < 25; count++) {
             int maxClearLine = randoms.nextInt(3, 8);
 
             int maxDepth = randoms.nextIntClosed(5, 7);
@@ -69,7 +71,7 @@ class CheckmateUsingHoldReuseTest {
     void randomCheckmateWithJustBlockTwice() {
         Randoms randoms = new Randoms();
 
-        for (int count = 0; count < 50; count++) {
+        for (int count = 0; count < 25; count++) {
             int maxClearLine = randoms.nextInt(3, 8);
 
             int maxDepth = randoms.nextIntClosed(5, 7);
@@ -115,10 +117,11 @@ class CheckmateUsingHoldReuseTest {
     }
 
     @Test
+    @Tag("long")
     void randomCheckmateOverBlock() {
         Randoms randoms = new Randoms();
 
-        for (int count = 0; count < 50; count++) {
+        for (int count = 0; count < 25; count++) {
             int maxClearLine = randoms.nextInt(3, 8);
 
             int maxDepth = randoms.nextIntClosed(5, 7);
@@ -154,10 +157,11 @@ class CheckmateUsingHoldReuseTest {
     }
 
     @Test
+    @Tag("long")
     void randomCheckmateOverMoreBlock() {
         Randoms randoms = new Randoms();
 
-        for (int count = 0; count < 50; count++) {
+        for (int count = 0; count < 25; count++) {
             int maxClearLine = randoms.nextInt(3, 8);
 
             int maxDepth = randoms.nextIntClosed(5, 7);

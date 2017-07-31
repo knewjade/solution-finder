@@ -3,15 +3,13 @@ package common.comparator;
 import core.column_field.ColumnFieldFactory;
 import core.column_field.ColumnSmallField;
 import lib.Randoms;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.lessThan;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class ColumnFieldComparatorTest {
+class ColumnFieldComparatorTest {
     @Test
-    public void compare() throws Exception {
+    void compare() throws Exception {
         Randoms randoms = new Randoms();
         ColumnFieldComparator comparator = new ColumnFieldComparator();
 
@@ -29,8 +27,8 @@ public class ColumnFieldComparatorTest {
                 field2.setBlock(x, y, height);
             }
 
-            assertThat(comparator.compare(field1, field2), is(0));
-            assertThat(comparator.compare(field2, field1), is(0));
+            assertThat(comparator.compare(field1, field2)).isEqualTo(0);
+            assertThat(comparator.compare(field2, field1)).isEqualTo(0);
 
             // 1block different field
             int x = randoms.nextInt(10);
@@ -41,7 +39,7 @@ public class ColumnFieldComparatorTest {
                 field1.removeBlock(x, y, height);
 
             // assert is not 0 & reversed sign
-            assertThat(comparator.compare(field1, field2) * comparator.compare(field2, field1), is(lessThan(0)));
+            assertThat(comparator.compare(field1, field2) * comparator.compare(field2, field1)).isLessThan(0);
         }
     }
 }

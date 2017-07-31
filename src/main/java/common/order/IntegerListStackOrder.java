@@ -74,6 +74,6 @@ public class IntegerListStackOrder implements StackOrder<Integer> {
 
     @Override
     public int hashCode() {
-        throw new UnsupportedOperationException("No mutable");
+        throw new UnsupportedOperationException("No immutable");
     }
 }

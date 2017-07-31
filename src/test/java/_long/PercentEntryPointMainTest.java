@@ -3,17 +3,17 @@ package _long;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import entry.EntryPointMain;
-import org.junit.Test;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class PercentEntryPointMainTest {
+class PercentEntryPointMainTest {
     private String getPercentLog(List<String> fields, String pattern, boolean isUsingHold) throws Exception {
         File fieldTempFile = createTempTextFile("field", String.join(System.lineSeparator(), fields));
         String fieldTempFilePath = fieldTempFile.getPath();
@@ -45,7 +45,7 @@ public class PercentEntryPointMainTest {
     }
 
     @Test
-    public void test1() throws Exception {
+    void test1() throws Exception {
         List<String> fields = Arrays.asList(
                 "4",
                 "__X_______",
@@ -56,11 +56,11 @@ public class PercentEntryPointMainTest {
         String pattern = "*p7";
         String expected = "success = 99.52% (5016/5040)";
         String join = getPercentLog(fields, pattern, true);
-        assertThat(join, containsString(expected));
+        assertThat(join).contains(expected);
     }
 
     @Test
-    public void test2() throws Exception {
+    void test2() throws Exception {
         List<String> fields = Arrays.asList(
                 "4",
                 "_______XXX",
@@ -71,11 +71,11 @@ public class PercentEntryPointMainTest {
         String pattern = "*p7";
         String expected = "success = 99.96% (5038/5040)";
         String join = getPercentLog(fields, pattern, true);
-        assertThat(join, containsString(expected));
+        assertThat(join).contains(expected);
     }
 
     @Test
-    public void test3() throws Exception {
+    void test3() throws Exception {
         List<String> fields = Arrays.asList(
                 "4",
                 "_______XXX",
@@ -86,13 +86,14 @@ public class PercentEntryPointMainTest {
         String pattern = "*p7";
         String expected = "success = 99.96% (5038/5040)";
         String join = getPercentLog(fields, pattern, true);
-        assertThat(join, containsString(expected));
-        assertThat(join, containsString("[L, S, J, T, Z, O, I]"));
-        assertThat(join, containsString("[S, L, J, T, Z, O, I]"));
+        assertThat(join)
+                .contains(expected)
+                .contains("[L, S, J, T, Z, O, I]")
+                .contains("[S, L, J, T, Z, O, I]");
     }
 
     @Test
-    public void test4() throws Exception {
+    void test4() throws Exception {
         List<String> fields = Arrays.asList(
                 "4",
                 "__________",
@@ -103,11 +104,12 @@ public class PercentEntryPointMainTest {
         String pattern = "T,*p7";
         String expected = "success = 100.00% (5040/5040)";
         String join = getPercentLog(fields, pattern, true);
-        assertThat(join, containsString(expected));
+        assertThat(join).contains(expected);
     }
 
     @Test
-    public void test5() throws Exception {
+    @Tag("long")
+    void test5() throws Exception {
         List<String> fields = Arrays.asList(
                 "4",
                 "__________",
@@ -118,11 +120,12 @@ public class PercentEntryPointMainTest {
         String pattern = "S,[TZ]p2,*p7";
         String expected = "success = 100.00% (10080/10080)";
         String join = getPercentLog(fields, pattern, true);
-        assertThat(join, containsString(expected));
+        assertThat(join).contains(expected);
     }
 
     @Test
-    public void test6() throws Exception {
+    @Tag("long")
+    void test6() throws Exception {
         List<String> fields = Arrays.asList(
                 "4",
                 "__________",
@@ -133,11 +136,11 @@ public class PercentEntryPointMainTest {
         String pattern = "[TZ]p2,*p7";
         String expected = "success = 100.00% (10080/10080)";
         String join = getPercentLog(fields, pattern, true);
-        assertThat(join, containsString(expected));
+        assertThat(join).contains(expected);
     }
 
     @Test
-    public void test7() throws Exception {
+    void test7() throws Exception {
         List<String> fields = Arrays.asList(
                 "4",
                 "XXX______X",
@@ -148,12 +151,13 @@ public class PercentEntryPointMainTest {
         String pattern = "*p7";
         String expected = "success = 84.96% (4282/5040)";
         String join = getPercentLog(fields, pattern, true);
-        assertThat(join, containsString(expected));
-        assertThat(join, containsString("T -> 99.9 %"));
+        assertThat(join)
+                .contains(expected)
+                .contains("T -> 99.9 %");
     }
 
     @Test
-    public void test8() throws Exception {
+    void test8() throws Exception {
         List<String> fields = Arrays.asList(
                 "4",
                 "XXX_______",
@@ -164,11 +168,11 @@ public class PercentEntryPointMainTest {
         String pattern = "*p7";
         String expected = "success = 89.76% (4524/5040)";
         String join = getPercentLog(fields, pattern, true);
-        assertThat(join, containsString(expected));
+        assertThat(join).contains(expected);
     }
 
     @Test
-    public void test9() throws Exception {
+    void test9() throws Exception {
         List<String> fields = Arrays.asList(
                 "4",
                 "X_________",
@@ -179,12 +183,13 @@ public class PercentEntryPointMainTest {
         String pattern = "*p7";
         String expected = "success = 91.98% (4636/5040)";
         String join = getPercentLog(fields, pattern, true);
-        assertThat(join, containsString(expected));
-        assertThat(join, containsString("T -> 100.0 %"));
+        assertThat(join)
+                .contains(expected)
+                .contains("T -> 100.0 %");
     }
 
     @Test
-    public void test10WithHold() throws Exception {
+    void test10WithHold() throws Exception {
         List<String> fields = Arrays.asList(
                 "4",
                 "XXXXXXXXX_",
@@ -195,11 +200,11 @@ public class PercentEntryPointMainTest {
         String pattern = "[IO]p2";
         String expected = "success = 100.00% (2/2)";
         String join = getPercentLog(fields, pattern, true);
-        assertThat(join, containsString(expected));
+        assertThat(join).contains(expected);
     }
 
     @Test
-    public void test10WithoutHold() throws Exception {
+    void test10WithoutHold() throws Exception {
         List<String> fields = Arrays.asList(
                 "4",
                 "XXXXXXXXX_",
@@ -210,12 +215,13 @@ public class PercentEntryPointMainTest {
         String pattern = "[IO]p2";
         String expected = "success = 50.00% (1/2)";
         String join = getPercentLog(fields, pattern, false);
-        assertThat(join, containsString(expected));
-        assertThat(join, containsString("[O, I]"));
+        assertThat(join)
+                .contains(expected)
+                .contains("[O, I]");
     }
 
     @Test
-    public void test11() throws Exception {
+    void test11() throws Exception {
         List<String> fields = Arrays.asList(
                 "4",
                 "XXXXXX____",
@@ -226,7 +232,8 @@ public class PercentEntryPointMainTest {
         String pattern = "T, *p3";
         String expected = "success = 90.48% (190/210)";
         String join = getPercentLog(fields, pattern, true);
-        assertThat(join, containsString(expected));
-        assertThat(join, containsString("Max clear lines: 4"));
+        assertThat(join)
+                .contains(expected)
+                .contains("Max clear lines: 4");
     }
 }

@@ -5,6 +5,7 @@ import common.datastore.pieces.Pieces;
 import common.pattern.PiecesGenerator;
 import core.mino.Block;
 import lib.Randoms;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -75,6 +76,7 @@ class ConcurrentVisitedTreeTest {
     }
 
     @Test
+    @Tag("long")
     void randomLong() {
         Randoms randoms = new Randoms();
         for (int size = 8; size <= 11; size++) {
