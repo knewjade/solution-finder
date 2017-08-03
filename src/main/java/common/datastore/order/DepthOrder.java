@@ -1,15 +1,11 @@
 package common.datastore.order;
 
+import common.OperationHistory;
+import common.comparator.OrderComparator;
 import core.field.Field;
 import core.mino.Block;
-import common.comparator.FieldComparator;
-import common.OperationHistory;
-
-import java.util.Comparator;
 
 public class DepthOrder implements Order {
-    private static final Comparator<Field> FIELD_COMPARATOR = new FieldComparator();
-
     private final Block hold;
     private final Field field;
     private final int maxClearLine;
@@ -45,9 +41,9 @@ public class DepthOrder implements Order {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || !(o instanceof Order)) return false;
         Order order = (Order) o;
-        return this.compareTo(order) == 0;
+        return OrderComparator.compareOrder(this, order) == 0;
     }
 
     @Override
@@ -60,20 +56,7 @@ public class DepthOrder implements Order {
 
     @Override
     public int compareTo(Order o) {
-        int compare = this.getHistory().getNextIndex() - o.getHistory().getNextIndex();
-        if (compare == 0)
-            return compareToFieldAndHold(o);
-        return compare;
-    }
-
-    private int compareToFieldAndHold(Order o) {
-        if (hold == o.getHold()) {
-            return FIELD_COMPARATOR.compare(field, o.getField());
-        } else {
-            int number = hold != null ? hold.getNumber() : 7;
-            int number1 = o.getHold() != null ? o.getHold().getNumber() : 7;
-            return number - number1;
-        }
+        return OrderComparator.compareOrder(this, o);
     }
 }
 

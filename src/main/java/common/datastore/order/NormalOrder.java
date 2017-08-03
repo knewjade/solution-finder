@@ -1,7 +1,7 @@
 package common.datastore.order;
 
 import common.OperationHistory;
-import common.comparator.FieldComparator;
+import common.comparator.OrderComparator;
 import core.field.Field;
 import core.mino.Block;
 
@@ -41,9 +41,9 @@ public class NormalOrder implements Order {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || !(o instanceof Order)) return false;
         Order order = (Order) o;
-        return this.compareTo(order) == 0;
+        return OrderComparator.compareOrder(this, order) == 0;
     }
 
     @Override
@@ -56,12 +56,6 @@ public class NormalOrder implements Order {
 
     @Override
     public int compareTo(Order o) {
-        if (hold == o.getHold()) {
-            return FieldComparator.compareField(field, o.getField());
-        } else {
-            int number = hold != null ? hold.getNumber() : 7;
-            int number1 = o.getHold() != null ? o.getHold().getNumber() : 7;
-            return number - number1;
-        }
+        return OrderComparator.compareOrder(this, o);
     }
 }
