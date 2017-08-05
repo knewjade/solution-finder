@@ -1,7 +1,7 @@
 package common.iterable;
 
 import com.google.common.collect.Iterables;
-import common.MyIterables;
+import lib.MyIterables;
 import common.datastore.BlockCounter;
 import core.mino.Block;
 import lib.Randoms;

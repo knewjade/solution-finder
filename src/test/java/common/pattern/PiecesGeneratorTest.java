@@ -1,6 +1,6 @@
 package common.pattern;
 
-import common.MyIterables;
+import lib.MyIterables;
 import common.SyntaxException;
 import common.datastore.pieces.Pieces;
 import org.junit.jupiter.api.Test;

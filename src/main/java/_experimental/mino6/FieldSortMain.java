@@ -1,6 +1,6 @@
 package _experimental.mino6;
 
-import common.MyIterables;
+import lib.MyIterables;
 import common.datastore.Pair;
 import common.datastore.action.Action;
 import common.datastore.pieces.Pieces;
