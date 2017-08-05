@@ -1,6 +1,7 @@
 package common.datastore.order;
 
 import common.OperationHistory;
+import common.comparator.DepthOrderComparator;
 import common.comparator.OrderComparator;
 import core.field.Field;
 import core.mino.Block;

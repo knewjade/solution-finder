@@ -1,9 +1,9 @@
 package common.pattern;
 
+import common.comparator.FieldComparator;
 import common.datastore.action.Action;
 import core.action.candidate.Candidate;
 import core.field.Field;
-import core.field.FieldView;
 import core.mino.Block;
 import core.mino.Mino;
 import core.mino.MinoFactory;
@@ -12,65 +12,12 @@ import searcher.common.validator.Validator;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class PatternTree {
-    private static int c(int maxClearLine, Field field) {
-        int depth = field.getNumOfAllBlocks() / 4;
-        int linesCleared = 4 - maxClearLine;
-        long matrix = field.getBoard(0);
-        return rowTransitions(matrix, linesCleared) << 2
-                + (columnTransitions(matrix, linesCleared))
-                - (depth >> 1)
-                - (linesCleared << 1);
-    }
-
-    private static int columnTransitions(long matrix, int linesCleared) {
-        int columnTransitions = 0;
-        int y = 10 * linesCleared;
-        int prevRow = (int) (matrix >> y & 0b1111111111);
-        y += 10;
-        while (y < CELLAMOUNT) {
-            int row = (int) (matrix >> y & 0b1111111111);
-            int transitions = row ^ prevRow;
-            prevRow = row;
-            int x = 0;
-            while (x < 10) {
-                if ((transitions >> x & 1) == 1)
-                    columnTransitions += 1;
-                x += 1;
-            }
-            y += 10;
-        }
-        return columnTransitions;
-    }
-
-    static long COLUMN = 1074791425L;
-    static int CELLAMOUNT = 40;
-
-    private static int rowTransitions(long matrix, int linesCleared) {
-        long totalDifferences = 0;
-        int smoothness = 0;
-        long prev = matrix & COLUMN;
-        int x = 1;
-        while (x < 10) {
-            long cur = matrix >> x & COLUMN;
-            totalDifferences += cur ^ prev;
-            prev = cur;
-            x += 1;
-        }
-        int yStart = 10 * linesCleared;
-        int y = yStart;
-        while (y < CELLAMOUNT) {
-            smoothness += (int) (totalDifferences >> y & 15);
-            y += 10;
-        }
-        return smoothness;
-    }
-
+    private static final ObjComparator COMPARATOR = new ObjComparator();
 
     private final EnumMap<Block, PatternTree> map = new EnumMap<>(Block.class);
-    private AtomicBoolean isPossible = new AtomicBoolean();
+    private final AtomicBoolean isPossible = new AtomicBoolean();
 
     public void build(List<Block> blocks, Function<List<Block>, PatternTree> terminate) {
         build(blocks, 0, terminate);
@@ -107,7 +54,21 @@ public class PatternTree {
     }
 
     public boolean run(Field field, int maxClearLine, CommonObj common) {
-        return run(field, null, maxClearLine, common);
+        long failedCount = map.entrySet().stream()
+                .filter(entry -> {
+                    Block block = entry.getKey();
+                    PatternTree tree = entry.getValue();
+                    boolean run = tree.run(field, block, maxClearLine, common);
+                    return !run;
+                })
+                .count();
+
+        boolean isAllSucceed = failedCount == 0;
+
+        if (isAllSucceed)
+            success();
+
+        return isAllSucceed;
     }
 
     private boolean isPossible() {
@@ -123,24 +84,33 @@ public class PatternTree {
 
     // 探索の必要がなくなったときtrueを返す
     private boolean run(Field field, Block hold, int maxClearLine, CommonObj common) {
+        if (isPossible())
+            return true;
 //        System.out.println(FieldView.toString(field));
 //        System.out.println();
 
-        List<Map.Entry<Block, PatternTree>> entries = map.entrySet().parallelStream()
+//        int depth = field.getNumOfAllBlocks() / 4;
+//        System.out.println(depth);
+
+        long failedCount = map.entrySet().stream()
                 .filter(entry -> {
-                    PatternTree tree = entry.getValue();
-//                    if (tree.isPossible())
-//                        return false;
-
-                    // ホールドなし
                     Block block = entry.getKey();
+                    PatternTree tree = entry.getValue();
 
+                    // If possible, skip
+                    if (tree.isPossible())
+                        return false;
+
+                    // Initialize
                     MinoFactory minoFactory = common.getMinoFactory();
                     Validator validator = common.getValidator();
-
                     Candidate<Action> candidate = common.getCandidate();
+
+                    // Enumerate next fields
+                    HashSet<Obj> nextFields = new HashSet<>();
+
+                    // Put next piece, without Hold
                     Set<Action> actions = candidate.search(field, block, maxClearLine);
-                    HashMap<Integer, ArrayList<Field>> nextFieldsMap = new HashMap<>();  // 0-4の配列でも代用可能
                     for (Action action : actions) {
                         Mino mino = minoFactory.create(block, action.getRotate());
                         int x = action.getX();
@@ -154,53 +124,17 @@ public class PatternTree {
 
                         if (validator.satisfies(nextField, nextMaxClearLine)) {
                             tree.success();
-                            return true;
+                            return false;
                         }
 
                         if (validator.validate(nextField, nextMaxClearLine)) {
-                            ArrayList<Field> nextFields = nextFieldsMap.computeIfAbsent(clearLine, integer -> new ArrayList<>());
-                            nextFields.add(nextField);
+                            nextFields.add(new Obj(nextField, nextMaxClearLine, hold));
                         }
                     }
 
-//                    System.out.println(nextFieldsMap.size());
-
-                    boolean allFailed = nextFieldsMap.entrySet().stream()
-                            .noneMatch(nextFieldsEntry -> {
-                                int clearLine = nextFieldsEntry.getKey();
-                                int nextMaxClearLine = maxClearLine - clearLine;
-                                ArrayList<Field> nextFields = nextFieldsEntry.getValue();
-
-                                Comparator<Field> comparator = Comparator.comparingInt(o -> c(nextMaxClearLine, o));
-                                nextFields.sort(comparator);
-
-                                return nextFields.stream()
-                                        .anyMatch(nextField -> tree.run(nextField, hold, nextMaxClearLine, common));
-                            });
-
-                    if (!allFailed)
-                        tree.success();
-
-                    return allFailed;
-                })
-                .filter(entry -> {
-                    PatternTree tree = entry.getValue();
-
-//                    if (tree.isPossible())
-//                        return false;
-
-                    Block block = entry.getKey();
-                    if (hold == null)
-                        return !tree.run(field, block, maxClearLine, common);
-
-                    // ホールドしたあと
-                    MinoFactory minoFactory = common.getMinoFactory();
-                    Validator validator = common.getValidator();
-
-                    Candidate<Action> candidate = common.getCandidate();
-                    Set<Action> actions = candidate.search(field, hold, maxClearLine);
-                    HashMap<Integer, ArrayList<Field>> nextFieldsMap = new HashMap<>();  // 0-4の配列でも代用可能
-                    for (Action action : actions) {
+                    // Put hold piece, Using hold
+                    Set<Action> actions2 = candidate.search(field, hold, maxClearLine);
+                    for (Action action : actions2) {
                         Mino mino = minoFactory.create(hold, action.getRotate());
                         int x = action.getX();
                         int y = action.getY();
@@ -213,45 +147,40 @@ public class PatternTree {
 
                         if (validator.satisfies(nextField, nextMaxClearLine)) {
                             tree.success();
-                            return true;
+                            return false;
                         }
 
                         if (validator.validate(nextField, nextMaxClearLine)) {
-                            ArrayList<Field> nextFields = nextFieldsMap.computeIfAbsent(clearLine, integer -> new ArrayList<>());
-                            nextFields.add(nextField);
+                            nextFields.add(new Obj(nextField, nextMaxClearLine, block));
                         }
                     }
 
-                    boolean allFailed = nextFieldsMap.entrySet().stream()
-                            .noneMatch(nextFieldsEntry -> {
-                                int clearLine = nextFieldsEntry.getKey();
-                                int nextMaxClearLine = maxClearLine - clearLine;
-                                ArrayList<Field> nextFields = nextFieldsEntry.getValue();
-                                Comparator<Field> comparator = (o1, o2) -> Integer.compare(c(nextMaxClearLine, o1), c(nextMaxClearLine, o1));
-                                nextFields.sort(comparator);
-                                return nextFields.stream()
-                                        .anyMatch(nextField -> tree.run(nextField, block, nextMaxClearLine, common));
-                            });
+                    // Decide priority
+                    PriorityQueue<Obj> nextFieldsQueue = new PriorityQueue<>(COMPARATOR);
+                    nextFieldsQueue.addAll(nextFields);
 
-                    if (!allFailed)
-                        tree.success();
+                    // Search next fields
+                    while (!nextFieldsQueue.isEmpty()) {
+                        Obj poll = nextFieldsQueue.poll();
+                        int nextMaxClearLine = poll.getMaxClearLine();
+                        Field nextField = poll.getField();
+                        Block nextHold = poll.getHold();
 
-                    return allFailed;
+                        boolean run = tree.run(nextField, nextHold, nextMaxClearLine, common);
+                        if (run)
+                            return false;
+                    }
+
+                    return true;
                 })
-                .collect(Collectors.toList());
+                .count();
 
-//        try {
-//            Thread.sleep(200L);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+        boolean isAllSucceed = failedCount == 0;
 
-        boolean empty = entries.isEmpty();
-
-        if (empty)
+        if (isAllSucceed)
             success();
 
-        return empty;
+        return isAllSucceed;
     }
 }
 
@@ -276,5 +205,67 @@ class CommonObj {
 
     public Validator getValidator() {
         return validator;
+    }
+}
+
+class Obj implements Comparable<Obj> {
+    private final Field field;
+    private final int maxClearLine;
+    private final Block hold;
+
+    public Obj(Field field, int maxClearLine, Block hold) {
+        this.field = field;
+        this.maxClearLine = maxClearLine;
+        this.hold = hold;
+    }
+
+    public int getPriority() {
+        return Heuristic.c(field, maxClearLine);
+    }
+
+    public int getMaxClearLine() {
+        return maxClearLine;
+    }
+
+    public Field getField() {
+        return field;
+    }
+
+    public Block getHold() {
+        return hold;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        assert o != null;
+        assert o instanceof Obj;
+        Obj obj = (Obj) o;
+        return hold == obj.hold && FieldComparator.compareField(this.field, obj.field) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        int number = hold != null ? hold.getNumber() : 7;
+        return number * 31 + field.hashCode();
+    }
+
+    @Override
+    public int compareTo(Obj o) {
+        Block hold1 = this.hold;
+        Block hold2 = o.hold;
+        if (hold1 == hold2) {
+            return FieldComparator.compareField(this.field, o.field);
+        } else {
+            int number1 = hold1 != null ? hold1.getNumber() : 7;
+            int number2 = hold2 != null ? hold2.getNumber() : 7;
+            return number1 - number2;
+        }
+    }
+}
+
+class ObjComparator implements Comparator<Obj> {
+    @Override
+    public int compare(Obj o1, Obj o2) {
+        return Integer.compare(o1.getPriority(), o2.getPriority());
     }
 }

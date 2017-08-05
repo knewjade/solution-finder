@@ -1,8 +1,9 @@
 package searcher.checkmate;
 
-import searcher.common.DataPool;
 import common.datastore.Result;
+import common.datastore.order.NormalOrder;
 import common.datastore.order.Order;
+import searcher.common.DataPool;
 
 import java.util.ArrayList;
 import java.util.TreeSet;
@@ -11,7 +12,14 @@ public class CheckmateDataPool implements DataPool {
     private TreeSet<Order> nexts;
     private ArrayList<Result> results;
 
-    public void initFirst() {
+    public void initFirst(NormalOrder order) {
+        this.results = new ArrayList<>();
+        TreeSet<Order> orders = new TreeSet<>();
+        orders.add(order);
+        this.nexts = orders;
+    }
+
+    void resetResults() {
         this.results = new ArrayList<>();
     }
 

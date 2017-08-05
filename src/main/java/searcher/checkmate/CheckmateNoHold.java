@@ -34,12 +34,11 @@ public class CheckmateNoHold<T extends Action> implements Checkmate<T> {
         Field freeze = initField.freeze(maxClearLine);
         int deleteLine = freeze.clearLine();
 
-        dataPool.initFirst();
-
-        TreeSet<Order> orders = new TreeSet<>();
-        orders.add(new NormalOrder(freeze, null, maxClearLine - deleteLine, maxDepth));
+        dataPool.initFirst(new NormalOrder(freeze, null, maxClearLine - deleteLine, maxDepth));
 
         for (int depth = 0; depth < maxDepth; depth++) {
+            TreeSet<Order> orders = dataPool.getNexts();
+
             dataPool.initEachDepth();
 
             assert depth < pieces.length;
@@ -49,8 +48,6 @@ public class CheckmateNoHold<T extends Action> implements Checkmate<T> {
                 Order order = orders.pollFirst();
                 searcherCore.stepWithNextNoHold(candidate, pieces[depth], order, isLast);
             }
-
-            orders = dataPool.getNexts();
         }
 
         return dataPool.getResults();
