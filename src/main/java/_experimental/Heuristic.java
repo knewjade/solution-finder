@@ -1,4 +1,4 @@
-package common.pattern;
+package _experimental;
 
 import core.field.Field;
 
@@ -6,6 +6,10 @@ public class Heuristic {
     public static int c(Field field, int maxClearLine) {
         int linesCleared = 4 - maxClearLine;
         int depth = (linesCleared * 10 + field.getNumOfAllBlocks()) / 4;
+        return c(field, maxClearLine, linesCleared, depth);
+    }
+
+    public static int c(Field field, int maxClearLine, int linesCleared, int depth) {
         long matrix = field.getBoard(0);
         return rowTransitions(matrix, maxClearLine)
                 + (columnTransitions(matrix, maxClearLine) >> 2)

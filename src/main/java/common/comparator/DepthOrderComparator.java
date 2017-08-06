@@ -1,8 +1,6 @@
 package common.comparator;
 
 import common.datastore.order.Order;
-import common.pattern.Heuristic;
-import core.mino.Block;
 
 import java.util.Comparator;
 
