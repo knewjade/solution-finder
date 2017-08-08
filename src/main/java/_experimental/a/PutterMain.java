@@ -5,6 +5,7 @@ import common.datastore.Pair;
 import common.datastore.action.Action;
 import common.datastore.order.Order;
 import common.datastore.pieces.Pieces;
+import common.iterable.PermutationIterable;
 import common.pattern.PiecesGenerator;
 import common.tree.AnalyzeTree;
 import concurrent.LockedCandidateThreadLocal;
@@ -13,7 +14,6 @@ import concurrent.checker.invoker.using_hold.ConcurrentCheckerUsingHoldInvoker;
 import core.action.candidate.LockedCandidate;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.field.FieldView;
 import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
@@ -22,6 +22,9 @@ import lib.MyFiles;
 import searcher.common.validator.PerfectValidator;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -59,17 +62,29 @@ public class PutterMain {
         HashMap<Field, Connect> map = new HashMap<>();
         Comparator<Connect> connectComparator = Comparator.<Connect>comparingDouble(o -> o.percent).reversed();
 
+        Path outputDirectoryPath = Paths.get("output/cycle2");
+        if (!Files.exists(outputDirectoryPath)) {
+            Files.createDirectories(outputDirectoryPath);
+        }
+
         for (BlockCounter counter : blockCounters) {
             List<Block> blocks = counter.getBlocks();
             System.out.println(blocks);
 
-            Field initField = FieldFactory.createField("");
-            TreeSet<Order> orders = putter.search(initField, blocks, candidate, maxClearLine, maxDepth);
+            TreeSet<Order> orders = new TreeSet<>();
+            PermutationIterable<Block> iterable = new PermutationIterable<>(blocks, blocks.size());
+            for (List<Block> permutation : iterable) {
+                Field initField = FieldFactory.createField("");
+                orders.addAll(putter.search(initField, permutation, candidate, maxClearLine, maxDepth));
+            }
+
             System.out.println(orders.size());
 
             ArrayList<Connect> results = new ArrayList<>();
 
+            int i = 0;
             for (Order order : orders) {
+                i++;
                 if (order.getMaxClearLine() < maxClearLine)
                     continue;
 
@@ -81,6 +96,8 @@ public class PutterMain {
                     results.add(connect);
                     continue;
                 }
+
+//                System.out.println(i);
 
                 List<Pair<List<Block>, Boolean>> search = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
                 AnalyzeTree tree = new AnalyzeTree();
