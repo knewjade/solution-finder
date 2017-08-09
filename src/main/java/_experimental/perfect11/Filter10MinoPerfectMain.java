@@ -2,7 +2,7 @@ package _experimental.perfect11;
 
 import common.buildup.BuildUp;
 import common.datastore.OperationWithKey;
-import common.datastore.pieces.LongPieces;
+import common.datastore.pieces.LongBlocks;
 import common.order.OrderLookup;
 import common.parser.BlockInterpreter;
 import common.parser.OperationWithKeyInterpreter;
@@ -54,9 +54,9 @@ public class Filter10MinoPerfectMain {
             }
 
             // ツモ順一覧
-            List<LongPieces> pieces = Files.lines(targetFile.toPath(), Charset.forName("UTF-8"))
+            List<LongBlocks> pieces = Files.lines(targetFile.toPath(), Charset.forName("UTF-8"))
                     .map(BlockInterpreter::parse10)
-                    .map(LongPieces::new)
+                    .map(LongBlocks::new)
                     .collect(Collectors.toList());
 
             // パフェ地形一覧
@@ -72,7 +72,7 @@ public class Filter10MinoPerfectMain {
             LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(height);
             Field field = FieldFactory.createField(height);
             boolean noPerfect = pieces.parallelStream()
-                    .map(LongPieces::getBlocks)
+                    .map(LongBlocks::getBlocks)
                     .filter(blocks -> {
                         return perfects.parallelStream()
                                 .noneMatch(operationWithKeys -> BuildUp.existsValidByOrder(field, operationWithKeys.stream(), blocks, 4, reachableThreadLocal.get()));

@@ -1,7 +1,7 @@
 package common.tree;
 
-import common.datastore.pieces.LongPieces;
-import common.datastore.pieces.Pieces;
+import common.datastore.pieces.Blocks;
+import common.datastore.pieces.LongBlocks;
 import common.pattern.PiecesGenerator;
 import core.mino.Block;
 import lib.Randoms;
@@ -42,16 +42,16 @@ class ConcurrentVisitedTreeTest {
 
             ConcurrentVisitedTree tree = new ConcurrentVisitedTree();
 
-            Set<LongPieces> success = Collections.synchronizedSet(new HashSet<>());
-            Set<LongPieces> failed = Collections.synchronizedSet(new HashSet<>());
-            List<Pieces> piecesList = generator.stream().collect(Collectors.toList());
-            piecesList.parallelStream()
+            Set<LongBlocks> success = Collections.synchronizedSet(new HashSet<>());
+            Set<LongBlocks> failed = Collections.synchronizedSet(new HashSet<>());
+            List<Blocks> blocksList = generator.stream().collect(Collectors.toList());
+            blocksList.parallelStream()
                     .forEach(pieces -> {
                         boolean flag = randoms.nextBoolean();
                         List<Block> blocks = pieces.getBlocks();
                         tree.set(flag, blocks);
 
-                        LongPieces longPieces = new LongPieces(blocks);
+                        LongBlocks longPieces = new LongBlocks(blocks);
                         if (flag) {
                             success.add(longPieces);
                         } else {
@@ -84,16 +84,16 @@ class ConcurrentVisitedTreeTest {
 
             ConcurrentVisitedTree tree = new ConcurrentVisitedTree();
 
-            Set<LongPieces> success = Collections.synchronizedSet(new HashSet<>());
-            Set<LongPieces> failed = Collections.synchronizedSet(new HashSet<>());
-            List<Pieces> piecesList = generator.stream().collect(Collectors.toList());
-            piecesList.parallelStream()
+            Set<LongBlocks> success = Collections.synchronizedSet(new HashSet<>());
+            Set<LongBlocks> failed = Collections.synchronizedSet(new HashSet<>());
+            List<Blocks> blocksList = generator.stream().collect(Collectors.toList());
+            blocksList.parallelStream()
                     .forEach(pieces -> {
                         boolean flag = randoms.nextBoolean();
                         List<Block> blocks = pieces.getBlocks();
                         tree.set(flag, blocks);
 
-                        LongPieces longPieces = new LongPieces(blocks);
+                        LongBlocks longPieces = new LongBlocks(blocks);
                         if (flag) {
                             success.add(longPieces);
                         } else {

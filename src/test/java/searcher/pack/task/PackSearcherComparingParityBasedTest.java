@@ -1,8 +1,8 @@
 package searcher.pack.task;
 
 import common.datastore.BlockCounter;
-import common.datastore.pieces.LongPieces;
-import common.datastore.pieces.Pieces;
+import common.datastore.pieces.Blocks;
+import common.datastore.pieces.LongBlocks;
 import common.iterable.CombinationIterable;
 import common.parser.BlockInterpreter;
 import concurrent.LockedReachableThreadLocal;
@@ -36,16 +36,16 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 class PackSearcherComparingParityBasedTest {
     private static class TestData {
-        private final Pieces pieces;
+        private final Blocks blocks;
         private final long count;
 
-        private TestData(Pieces pieces, long count) {
-            this.pieces = pieces;
+        private TestData(Blocks blocks, long count) {
+            this.blocks = blocks;
             this.count = count;
         }
 
         public List<Block> getBlocks() {
-            return pieces.getBlocks();
+            return blocks.getBlocks();
         }
 
         public long getCount() {
@@ -69,7 +69,7 @@ class PackSearcherComparingParityBasedTest {
                 .map(line -> line.split("="))
                 .map(split -> {
                     Stream<Block> blocks = BlockInterpreter.parse(split[0]);
-                    LongPieces pieces = new LongPieces(blocks);
+                    LongBlocks pieces = new LongBlocks(blocks);
                     int count = Integer.valueOf(split[1]);
                     return new TestData(pieces, count);
                 })
@@ -92,7 +92,7 @@ class PackSearcherComparingParityBasedTest {
                 .map(line -> line.split("="))
                 .map(split -> {
                     Stream<Block> blocks = BlockInterpreter.parse(split[0]);
-                    LongPieces pieces = new LongPieces(blocks);
+                    LongBlocks pieces = new LongBlocks(blocks);
                     int count = Integer.valueOf(split[1]);
                     return new TestData(pieces, count);
                 })
@@ -115,7 +115,7 @@ class PackSearcherComparingParityBasedTest {
                 .map(line -> line.split("="))
                 .map(split -> {
                     Stream<Block> blocks = BlockInterpreter.parse(split[0]);
-                    LongPieces pieces = new LongPieces(blocks);
+                    LongBlocks pieces = new LongBlocks(blocks);
                     int count = Integer.valueOf(split[1]);
                     return new TestData(pieces, count);
                 })

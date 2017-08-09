@@ -4,7 +4,7 @@ import common.ResultHelper;
 import common.buildup.BuildUp;
 import common.datastore.*;
 import common.datastore.action.Action;
-import common.datastore.pieces.LongPieces;
+import common.datastore.pieces.LongBlocks;
 import common.order.OrderLookup;
 import common.order.StackOrder;
 import common.parser.BlockInterpreter;
@@ -55,13 +55,13 @@ class CheckerUsingHoldTest {
         // Check blocks is same
         List<Block> resultBlocks = parseToBlocks(result);
         Block lastHoldBlock = result.getLastHold();
-        HashSet<LongPieces> pieces = OrderLookup.reverseBlocks(resultBlocks, blocks.size()).stream()
+        HashSet<LongBlocks> pieces = OrderLookup.reverseBlocks(resultBlocks, blocks.size()).stream()
                 .map(StackOrder::toStream)
                 .map(stream -> stream.map(block -> block != null ? block : lastHoldBlock))
-                .map(LongPieces::new)
+                .map(LongBlocks::new)
                 .collect(Collectors.toCollection(HashSet::new));
 
-        assertThat(pieces).contains(new LongPieces(blocks));
+        assertThat(pieces).contains(new LongBlocks(blocks));
 
         // Check can build result
         Operations operations = parseToOperations(result);
@@ -168,9 +168,9 @@ class CheckerUsingHoldTest {
 
         // Block
         URL noPerfect = ClassLoader.getSystemResource("orders/noperfect.txt");
-        List<LongPieces> testCases = Files.lines(Paths.get(noPerfect.toURI()))
+        List<LongBlocks> testCases = Files.lines(Paths.get(noPerfect.toURI()))
                 .map(BlockInterpreter::parse)
-                .map(LongPieces::new)
+                .map(LongBlocks::new)
                 .collect(Collectors.toList());
         Collections.shuffle(testCases);
 
@@ -179,7 +179,7 @@ class CheckerUsingHoldTest {
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         // Assertion
-        for (LongPieces pieces : testCases.subList(0, 10)) {
+        for (LongBlocks pieces : testCases.subList(0, 10)) {
             // Set test case
             List<Block> blocks = pieces.getBlocks();
 
@@ -203,9 +203,9 @@ class CheckerUsingHoldTest {
 
         // Set to check No Possible Perfect
         URL noPerfect = ClassLoader.getSystemResource("orders/noperfect.txt");
-        HashSet<LongPieces> noPerfectSet = Files.lines(Paths.get(noPerfect.toURI()))
+        HashSet<LongBlocks> noPerfectSet = Files.lines(Paths.get(noPerfect.toURI()))
                 .map(BlockInterpreter::parse)
-                .map(LongPieces::new)
+                .map(LongBlocks::new)
                 .collect(Collectors.toCollection(HashSet::new));
 
         // Initialize
@@ -221,7 +221,7 @@ class CheckerUsingHoldTest {
 
             // Execute
             boolean isSucceed = checker.check(field, blocks, candidate, maxClearLine, maxDepth);
-            boolean expectedFlag = !noPerfectSet.contains(new LongPieces(blocks));
+            boolean expectedFlag = !noPerfectSet.contains(new LongBlocks(blocks));
             assertThat(isSucceed).isEqualTo(expectedFlag);
 
             // Check result

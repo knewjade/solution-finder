@@ -1,13 +1,13 @@
 package common.comparator;
 
-import common.datastore.pieces.Pieces;
+import common.datastore.pieces.Blocks;
 import core.mino.Block;
 
 import java.util.Comparator;
 import java.util.List;
 
-public class PiecesNameComparator implements Comparator<Pieces> {
-    public static int comparePieces(Pieces o1, Pieces o2) {
+public class PiecesNameComparator implements Comparator<Blocks> {
+    public static int comparePieces(Blocks o1, Blocks o2) {
         List<Block> blocks1 = o1.getBlocks();
         List<Block> blocks2 = o2.getBlocks();
 
@@ -27,7 +27,7 @@ public class PiecesNameComparator implements Comparator<Pieces> {
     }
 
     @Override
-    public int compare(Pieces o1, Pieces o2) {
+    public int compare(Blocks o1, Blocks o2) {
         return comparePieces(o1, o2);
     }
 }

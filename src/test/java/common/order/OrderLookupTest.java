@@ -1,7 +1,7 @@
 package common.order;
 
 import common.comparator.PiecesNumberComparator;
-import common.datastore.pieces.LongPieces;
+import common.datastore.pieces.LongBlocks;
 import core.mino.Block;
 import lib.ListComparator;
 import lib.Randoms;
@@ -70,16 +70,16 @@ class OrderLookupTest {
             int toDepth = blockList.size();
 
             PiecesNumberComparator comparator = new PiecesNumberComparator();
-            List<LongPieces> forward1 = OrderLookup.forwardBlocks(blockList, toDepth).stream()
+            List<LongBlocks> forward1 = OrderLookup.forwardBlocks(blockList, toDepth).stream()
                     .map(StackOrder::toList)
-                    .map(LongPieces::new)
+                    .map(LongBlocks::new)
                     .sorted(comparator)
                     .collect(Collectors.toList());
 
             ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth, blockList.size());
-            List<LongPieces> forward2 = lookUp.parse(blockList)
+            List<LongBlocks> forward2 = lookUp.parse(blockList)
                     .map(blockStream -> blockStream.collect(Collectors.toList()))
-                    .map(LongPieces::new)
+                    .map(LongBlocks::new)
                     .sorted(comparator)
                     .collect(Collectors.toList());
 
@@ -95,16 +95,16 @@ class OrderLookupTest {
             int toDepth = blockList.size() - 1;
 
             PiecesNumberComparator comparator = new PiecesNumberComparator();
-            List<LongPieces> forward1 = OrderLookup.forwardBlocks(blockList, toDepth).stream()
+            List<LongBlocks> forward1 = OrderLookup.forwardBlocks(blockList, toDepth).stream()
                     .map(StackOrder::toList)
-                    .map(LongPieces::new)
+                    .map(LongBlocks::new)
                     .sorted(comparator)
                     .collect(Collectors.toList());
 
             ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth, blockList.size());
-            List<LongPieces> forward2 = lookUp.parse(blockList)
+            List<LongBlocks> forward2 = lookUp.parse(blockList)
                     .map(blockStream -> blockStream.collect(Collectors.toList()))
-                    .map(LongPieces::new)
+                    .map(LongBlocks::new)
                     .sorted(comparator)
                     .collect(Collectors.toList());
 
@@ -120,16 +120,16 @@ class OrderLookupTest {
             int toDepth = blockList.size() - 2;
 
             PiecesNumberComparator comparator = new PiecesNumberComparator();
-            List<LongPieces> forward1 = OrderLookup.forwardBlocks(blockList, toDepth).stream()
+            List<LongBlocks> forward1 = OrderLookup.forwardBlocks(blockList, toDepth).stream()
                     .map(StackOrder::toList)
-                    .map(LongPieces::new)
+                    .map(LongBlocks::new)
                     .sorted(comparator)
                     .collect(Collectors.toList());
 
             ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth, blockList.size());
-            List<LongPieces> forward2 = lookUp.parse(blockList)
+            List<LongBlocks> forward2 = lookUp.parse(blockList)
                     .map(blockStream -> blockStream.collect(Collectors.toList()))
-                    .map(LongPieces::new)
+                    .map(LongBlocks::new)
                     .sorted(comparator)
                     .collect(Collectors.toList());
 
@@ -145,16 +145,16 @@ class OrderLookupTest {
             int fromDepth = blockList.size();
 
             PiecesNumberComparator comparator = new PiecesNumberComparator();
-            List<LongPieces> forward1 = OrderLookup.reverseBlocks(blockList, fromDepth).stream()
+            List<LongBlocks> forward1 = OrderLookup.reverseBlocks(blockList, fromDepth).stream()
                     .map(StackOrder::toList)
-                    .map(LongPieces::new)
+                    .map(LongBlocks::new)
                     .sorted(comparator)
                     .collect(Collectors.toList());
 
             ReverseOrderLookUp lookUp = new ReverseOrderLookUp(blockList.size(), fromDepth);
-            List<LongPieces> forward2 = lookUp.parse(blockList)
+            List<LongBlocks> forward2 = lookUp.parse(blockList)
                     .map(blockStream -> blockStream.collect(Collectors.toList()))
-                    .map(LongPieces::new)
+                    .map(LongBlocks::new)
                     .sorted(comparator)
                     .collect(Collectors.toList());
 

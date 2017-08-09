@@ -1,7 +1,7 @@
 package _experimental.perfect11;
 
-import common.datastore.pieces.LongPieces;
-import common.datastore.pieces.Pieces;
+import common.datastore.pieces.Blocks;
+import common.datastore.pieces.LongBlocks;
 import common.parser.BlockInterpreter;
 import core.mino.Block;
 
@@ -28,7 +28,7 @@ public class Hold10OrderMergeMain {
         System.out.println(files.size());
 
         // すべての手順
-        HashSet<LongPieces> allOrders = new HashSet<>();
+        HashSet<LongBlocks> allOrders = new HashSet<>();
 
         // すべての手順を追加
         for (File file : files) {
@@ -36,7 +36,7 @@ public class Hold10OrderMergeMain {
             Files.lines(file.toPath())
                     .sequential()
                     .map(BlockInterpreter::parse10)
-                    .map(LongPieces::new)
+                    .map(LongBlocks::new)
                     .forEach(allOrders::add);
             System.out.println(allOrders.size());
         }
@@ -46,7 +46,7 @@ public class Hold10OrderMergeMain {
         File outputFile = new File(outputPath);
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), StandardCharsets.UTF_8))) {
             allOrders.stream()
-                    .map(Pieces::getBlocks)
+                    .map(Blocks::getBlocks)
                     .map(blocks -> blocks.stream().map(Block::getName).collect(Collectors.joining()))
                     .sorted()
                     .forEach(line -> {

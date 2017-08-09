@@ -4,8 +4,8 @@ import common.buildup.BuildUpStream;
 import common.datastore.OperationWithKey;
 import common.datastore.Pair;
 import common.datastore.action.Action;
-import common.datastore.pieces.LongPieces;
-import common.datastore.pieces.Pieces;
+import common.datastore.pieces.LongBlocks;
+import common.datastore.pieces.Blocks;
 import common.pattern.PiecesGenerator;
 import concurrent.LockedReachableThreadLocal;
 import core.action.candidate.Candidate;
@@ -266,13 +266,13 @@ class PackSearcherTest {
                 List<Result> results = searcher.toList();
 
                 // Possible
-                HashSet<Pieces> possiblePieces = new HashSet<>();
+                HashSet<Blocks> possiblePieces = new HashSet<>();
                 for (Result result : results) {
                     // result to possible pieces
                     List<OperationWithKey> operationWithKeys = result.getMemento().getOperationsStream(width).collect(Collectors.toList());
-                    Set<LongPieces> sets = new BuildUpStream(reachable, height).existsValidBuildPattern(initField, operationWithKeys)
+                    Set<LongBlocks> sets = new BuildUpStream(reachable, height).existsValidBuildPattern(initField, operationWithKeys)
                             .map(keys -> keys.stream().map(OperationWithKey::getMino).map(Mino::getBlock))
-                            .map(LongPieces::new)
+                            .map(LongBlocks::new)
                             .collect(Collectors.toSet());
                     possiblePieces.addAll(sets);
                 }
@@ -283,7 +283,7 @@ class PackSearcherTest {
 
                 // Assert generator
                 PiecesGenerator generator = createPiecesGenerator(maxDepth);
-                for (Pieces pieces : generator) {
+                for (Blocks pieces : generator) {
                     List<Block> blocks = pieces.getBlocks();
                     boolean check = checker.check(initField, blocks, candidate, height, maxDepth);
                     assertThat(possiblePieces.contains(pieces))
@@ -319,13 +319,13 @@ class PackSearcherTest {
                 List<Result> results = searcher.toList();
 
                 // Possible
-                HashSet<Pieces> possiblePieces = new HashSet<>();
+                HashSet<Blocks> possiblePieces = new HashSet<>();
                 for (Result result : results) {
                     // result to possible pieces
                     List<OperationWithKey> operationWithKeys = result.getMemento().getOperationsStream(width).collect(Collectors.toList());
-                    Set<LongPieces> sets = new BuildUpStream(reachable, height).existsValidBuildPattern(initField, operationWithKeys)
+                    Set<LongBlocks> sets = new BuildUpStream(reachable, height).existsValidBuildPattern(initField, operationWithKeys)
                             .map(keys -> keys.stream().map(OperationWithKey::getMino).map(Mino::getBlock))
-                            .map(LongPieces::new)
+                            .map(LongBlocks::new)
                             .collect(Collectors.toSet());
                     possiblePieces.addAll(sets);
                 }
@@ -336,7 +336,7 @@ class PackSearcherTest {
 
                 // Assert generator
                 PiecesGenerator generator = createPiecesGenerator(maxDepth);
-                for (Pieces pieces : generator) {
+                for (Blocks pieces : generator) {
                     List<Block> blocks = pieces.getBlocks();
                     boolean check = checker.check(initField, blocks, candidate, height, maxDepth);
                     assertThat(possiblePieces.contains(pieces))

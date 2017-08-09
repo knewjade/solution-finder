@@ -2,7 +2,7 @@ package common.pattern;
 
 import common.MyIterables;
 import common.SyntaxException;
-import common.datastore.pieces.Pieces;
+import common.datastore.pieces.Blocks;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -13,13 +13,13 @@ import static core.mino.Block.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class PiecesGeneratorTest {
+class BlocksGeneratorTest {
     @Test
     void toList1() {
         PiecesGenerator generator = new PiecesGenerator("I # comment");
         assertThat(generator.getDepth()).isEqualTo(1);
 
-        List<Pieces> pieces = MyIterables.toList(generator);
+        List<Blocks> pieces = MyIterables.toList(generator);
         assertThat(pieces.size()).isEqualTo(1);
         assertThat(pieces.get(0).getBlocks()).isEqualTo(Collections.singletonList(I));
     }
@@ -29,7 +29,7 @@ class PiecesGeneratorTest {
         PiecesGenerator generator = new PiecesGenerator("i");
         assertThat(generator.getDepth()).isEqualTo(1);
 
-        List<Pieces> pieces = MyIterables.toList(generator);
+        List<Blocks> pieces = MyIterables.toList(generator);
         assertThat(pieces.size()).isEqualTo(1);
         assertThat(pieces.get(0).getBlocks()).isEqualTo(Collections.singletonList(I));
     }
@@ -39,7 +39,7 @@ class PiecesGeneratorTest {
         PiecesGenerator generator = new PiecesGenerator("I,J");
         assertThat(generator.getDepth()).isEqualTo(2);
 
-        List<Pieces> pieces = MyIterables.toList(generator);
+        List<Blocks> pieces = MyIterables.toList(generator);
         assertThat(pieces.size()).isEqualTo(1);
         assertThat(pieces.get(0).getBlocks()).isEqualTo(Arrays.asList(I, J));
     }
@@ -49,7 +49,7 @@ class PiecesGeneratorTest {
         PiecesGenerator generator = new PiecesGenerator(" I , J ");
         assertThat(generator.getDepth()).isEqualTo(2);
 
-        List<Pieces> pieces = MyIterables.toList(generator);
+        List<Blocks> pieces = MyIterables.toList(generator);
         assertThat(pieces.size()).isEqualTo(1);
         assertThat(pieces.get(0).getBlocks()).isEqualTo(Arrays.asList(I, J));
     }
@@ -59,9 +59,9 @@ class PiecesGeneratorTest {
         PiecesGenerator generator = new PiecesGenerator(" * ");
         assertThat(generator.getDepth()).isEqualTo(1);
 
-        List<Pieces> pieces = MyIterables.toList(generator);
+        List<Blocks> pieces = MyIterables.toList(generator);
         assertThat(pieces.size()).isEqualTo(7);
-        for (Pieces piece : pieces)
+        for (Blocks piece : pieces)
             assertThat(piece.getBlocks().size()).isEqualTo(1);
     }
 
@@ -70,9 +70,9 @@ class PiecesGeneratorTest {
         PiecesGenerator generator = new PiecesGenerator(" *, * ");
         assertThat(generator.getDepth()).isEqualTo(2);
 
-        List<Pieces> pieces = MyIterables.toList(generator);
+        List<Blocks> pieces = MyIterables.toList(generator);
         assertThat(pieces.size()).isEqualTo(49);
-        for (Pieces piece : pieces)
+        for (Blocks piece : pieces)
             assertThat(piece.getBlocks().size()).isEqualTo(2);
     }
 
@@ -81,7 +81,7 @@ class PiecesGeneratorTest {
         PiecesGenerator generator = new PiecesGenerator(" [TSZ] ");
         assertThat(generator.getDepth()).isEqualTo(1);
 
-        List<Pieces> pieces = MyIterables.toList(generator);
+        List<Blocks> pieces = MyIterables.toList(generator);
         assertThat(pieces.size()).isEqualTo(3);
         assertThat(pieces.get(0).getBlocks()).isEqualTo(Collections.singletonList(T));
         assertThat(pieces.get(1).getBlocks()).isEqualTo(Collections.singletonList(S));
@@ -93,7 +93,7 @@ class PiecesGeneratorTest {
         PiecesGenerator generator = new PiecesGenerator(" [TsZ] , [IOjl]");
         assertThat(generator.getDepth()).isEqualTo(2);
 
-        List<Pieces> pieces = MyIterables.toList(generator);
+        List<Blocks> pieces = MyIterables.toList(generator);
         assertThat(pieces.size()).isEqualTo(12);
         assertThat(pieces.get(0).getBlocks()).isEqualTo(Arrays.asList(T, I));
         assertThat(pieces.get(1).getBlocks()).isEqualTo(Arrays.asList(T, O));
@@ -114,7 +114,7 @@ class PiecesGeneratorTest {
         PiecesGenerator generator = new PiecesGenerator(" [TSZ]p2 ");
         assertThat(generator.getDepth()).isEqualTo(2);
 
-        List<Pieces> pieces = MyIterables.toList(generator);
+        List<Blocks> pieces = MyIterables.toList(generator);
         assertThat(pieces.size()).isEqualTo(6);
         assertThat(pieces.get(0).getBlocks()).isEqualTo(Arrays.asList(S, Z));
         assertThat(pieces.get(1).getBlocks()).isEqualTo(Arrays.asList(Z, S));
@@ -129,7 +129,7 @@ class PiecesGeneratorTest {
         PiecesGenerator generator = new PiecesGenerator(" *p4 ");
         assertThat(generator.getDepth()).isEqualTo(4);
 
-        List<Pieces> pieces = MyIterables.toList(generator);
+        List<Blocks> pieces = MyIterables.toList(generator);
         assertThat(pieces.size()).isEqualTo(840);
     }
 
@@ -139,7 +139,7 @@ class PiecesGeneratorTest {
         PiecesGenerator generator = new PiecesGenerator(patterns);
         assertThat(generator.getDepth()).isEqualTo(1);
 
-        List<Pieces> pieces = MyIterables.toList(generator);
+        List<Blocks> pieces = MyIterables.toList(generator);
         assertThat(pieces.size()).isEqualTo(2);
     }
 
@@ -149,7 +149,7 @@ class PiecesGeneratorTest {
         PiecesGenerator generator = new PiecesGenerator(patterns);
         assertThat(generator.getDepth()).isEqualTo(5);
 
-        List<Pieces> pieces = MyIterables.toList(generator);
+        List<Blocks> pieces = MyIterables.toList(generator);
         assertThat(pieces.size()).isEqualTo(840 + 2520 + 120);
     }
 
@@ -166,7 +166,7 @@ class PiecesGeneratorTest {
         PiecesGenerator generator = new PiecesGenerator(patterns);
         assertThat(generator.getDepth()).isEqualTo(5);
 
-        List<Pieces> pieces = MyIterables.toList(generator);
+        List<Blocks> pieces = MyIterables.toList(generator);
         assertThat(pieces.size()).isEqualTo(210 + 210 + 210 + 840);
     }
 
@@ -176,7 +176,7 @@ class PiecesGeneratorTest {
         PiecesGenerator generator = new PiecesGenerator(patterns);
         assertThat(generator.getDepth()).isEqualTo(2);
 
-        List<Pieces> pieces = MyIterables.toList(generator);
+        List<Blocks> pieces = MyIterables.toList(generator);
         assertThat(pieces.size()).isEqualTo(8);
     }
 

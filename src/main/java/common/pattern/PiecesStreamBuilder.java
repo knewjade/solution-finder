@@ -1,7 +1,7 @@
 package common.pattern;
 
-import common.datastore.pieces.LongPieces;
-import common.datastore.pieces.Pieces;
+import common.datastore.pieces.Blocks;
+import common.datastore.pieces.LongBlocks;
 import common.iterable.PermutationIterable;
 import core.mino.Block;
 
@@ -14,7 +14,7 @@ class PiecesStreamBuilder {
     private final List<Integer> depths = new ArrayList<>();
     private final List<List<List<Block>>> combinations = new ArrayList<>();
     private final int lastIndex;
-    private Stream.Builder<Pieces> builder = null;
+    private Stream.Builder<Blocks> builder = null;
 
     PiecesStreamBuilder(String pattern) {
         String[] splits = pattern.split(",");
@@ -45,20 +45,20 @@ class PiecesStreamBuilder {
         return depths.stream().mapToInt(Integer::intValue).sum();
     }
 
-    Stream<Pieces> stream() {
+    Stream<Blocks> stream() {
         this.builder = Stream.builder();
         if (!combinations.isEmpty())
-            enumerate(new LongPieces(), 0);
+            enumerate(new LongBlocks(), 0);
         return builder.build();
     }
 
-    private void enumerate(Pieces pieces, int index) {
+    private void enumerate(Blocks blocks, int index) {
         for (List<Block> combination : combinations.get(index)) {
-            Pieces newPieces = pieces.addAndReturnNew(combination);
+            Blocks newBlocks = blocks.addAndReturnNew(combination);
             if (index == lastIndex) {
-                this.builder.accept(newPieces);
+                this.builder.accept(newBlocks);
             } else {
-                enumerate(newPieces, index + 1);
+                enumerate(newBlocks, index + 1);
             }
         }
     }

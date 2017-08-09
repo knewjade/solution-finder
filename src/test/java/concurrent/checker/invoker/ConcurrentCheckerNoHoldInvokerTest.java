@@ -2,7 +2,7 @@ package concurrent.checker.invoker;
 
 import common.datastore.Pair;
 import common.datastore.action.Action;
-import common.datastore.pieces.Pieces;
+import common.datastore.pieces.Blocks;
 import common.pattern.PiecesGenerator;
 import common.tree.AnalyzeTree;
 import concurrent.LockedCandidateThreadLocal;
@@ -62,8 +62,8 @@ class ConcurrentCheckerNoHoldInvokerTest {
 
     private List<List<Block>> toBlocksList(PiecesGenerator piecesGenerator) {
         List<List<Block>> searchingPieces = new ArrayList<>();
-        for (Pieces pieces : piecesGenerator)
-            searchingPieces.add(pieces.getBlocks());
+        for (Blocks blocks : piecesGenerator)
+            searchingPieces.add(blocks.getBlocks());
         return searchingPieces;
     }
 

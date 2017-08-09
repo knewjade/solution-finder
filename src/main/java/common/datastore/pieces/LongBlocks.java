@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 // max <= 22であること
-public class LongPieces implements Pieces, Comparable<LongPieces> {
+public class LongBlocks implements Blocks, Comparable<LongBlocks> {
     private static final long[] SCALE = new long[22];
 
     static {
@@ -47,18 +47,18 @@ public class LongPieces implements Pieces, Comparable<LongPieces> {
     private final long pieces;
     private final int max;
 
-    public LongPieces() {
+    public LongBlocks() {
         this.pieces = 0L;
         this.max = 0;
     }
 
-    public LongPieces(List<Block> blocks) {
+    public LongBlocks(List<Block> blocks) {
         assert blocks.size() <= 22;
         this.pieces = parse(0L, blocks, 0);
         this.max = blocks.size();
     }
 
-    public LongPieces(Stream<Block> blocks) {
+    public LongBlocks(Stream<Block> blocks) {
         TemporaryCount temporary = new TemporaryCount(0L, 0);
         blocks.sequential().forEach(temporary::add);
         this.pieces = temporary.value;
@@ -66,13 +66,13 @@ public class LongPieces implements Pieces, Comparable<LongPieces> {
         assert this.max <= 22;
     }
 
-    private LongPieces(LongPieces parent, List<Block> blocks) {
+    private LongBlocks(LongBlocks parent, List<Block> blocks) {
         this.pieces = parse(parent.pieces, blocks, parent.max);
         this.max = parent.max + blocks.size();
         assert this.max <= 22;
     }
 
-    private LongPieces(LongPieces parent, Block block) {
+    private LongBlocks(LongBlocks parent, Block block) {
         this.pieces = parent.pieces + SCALE[parent.max] * block.getNumber();
         this.max = parent.max + 1;
         assert this.max <= 22;
@@ -109,13 +109,13 @@ public class LongPieces implements Pieces, Comparable<LongPieces> {
     }
 
     @Override
-    public Pieces addAndReturnNew(List<Block> blocks) {
-        return new LongPieces(this, blocks);
+    public Blocks addAndReturnNew(List<Block> blocks) {
+        return new LongBlocks(this, blocks);
     }
 
     @Override
-    public Pieces addAndReturnNew(Block block) {
-        return new LongPieces(this, block);
+    public Blocks addAndReturnNew(Block block) {
+        return new LongBlocks(this, block);
     }
 
     @Override
@@ -123,11 +123,11 @@ public class LongPieces implements Pieces, Comparable<LongPieces> {
         if (this == o) return true;
         if (o == null) return false;
 
-        if (o instanceof LongPieces) {
-            LongPieces that = (LongPieces) o;
+        if (o instanceof LongBlocks) {
+            LongBlocks that = (LongBlocks) o;
             return pieces == that.pieces && max == that.max;
-        } else if (o instanceof Pieces) {
-            Pieces that = (Pieces) o;
+        } else if (o instanceof Blocks) {
+            Blocks that = (Blocks) o;
             return PiecesNumberComparator.comparePieces(this, that) == 0;
         }
 
@@ -139,7 +139,7 @@ public class LongPieces implements Pieces, Comparable<LongPieces> {
         return toHash(pieces);
     }
 
-    public int compareTo(LongPieces o) {
+    public int compareTo(LongBlocks o) {
         return Long.compare(this.pieces, o.pieces);
     }
 

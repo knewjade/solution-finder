@@ -9,19 +9,19 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ReadOnlyListPiecesTest {
+class ReadOnlyListBlocksTest {
     @Test
     void create() throws Exception {
-        Pieces pieces = new ReadOnlyListPieces(Arrays.asList(Block.I, Block.O, Block.J, Block.Z, Block.S, Block.T, Block.L));
-        assertThat(pieces.getBlocks()).containsExactly(
+        Blocks blocks = new ReadOnlyListBlocks(Arrays.asList(Block.I, Block.O, Block.J, Block.Z, Block.S, Block.T, Block.L));
+        assertThat(blocks.getBlocks()).containsExactly(
                 Block.I, Block.O, Block.J, Block.Z, Block.S, Block.T, Block.L
         );
     }
 
     @Test
     void checkStream() throws Exception {
-        Pieces pieces = new ReadOnlyListPieces(Arrays.asList(Block.S, Block.I, Block.J, Block.T, Block.L, Block.O, Block.Z));
-        assertThat(pieces.getBlockStream()).containsExactly(
+        Blocks blocks = new ReadOnlyListBlocks(Arrays.asList(Block.S, Block.I, Block.J, Block.T, Block.L, Block.O, Block.Z));
+        assertThat(blocks.getBlockStream()).containsExactly(
                 Block.S, Block.I, Block.J, Block.T, Block.L, Block.O, Block.Z
         );
     }
@@ -33,7 +33,7 @@ class ReadOnlyListPiecesTest {
         for (int count = 0; count < 10000; count++) {
             int size = randoms.nextInt(1, 22);
             List<Block> blocks = randoms.blocks(size);
-            Pieces pieces = new ReadOnlyListPieces(blocks);
+            Blocks pieces = new ReadOnlyListBlocks(blocks);
             assertThat(pieces.getBlocks()).isEqualTo(blocks);
         }
     }
@@ -45,7 +45,7 @@ class ReadOnlyListPiecesTest {
         for (int count = 0; count < 10000; count++) {
             int size = randoms.nextInt(1, 22);
             List<Block> blocks = randoms.blocks(size);
-            Pieces pieces = new ReadOnlyListPieces(blocks);
+            Blocks pieces = new ReadOnlyListBlocks(blocks);
             assertThat(pieces.getBlocks()).isEqualTo(blocks);
         }
     }
@@ -57,9 +57,9 @@ class ReadOnlyListPiecesTest {
         for (int count = 0; count < 10000; count++) {
             int size = randoms.nextInt(1, 22);
             List<Block> blocks = randoms.blocks(size);
-            Pieces readOnlyListPieces = new ReadOnlyListPieces(blocks);
-            LongPieces longPieces = new LongPieces(blocks);
-            assertThat(readOnlyListPieces.equals(longPieces))
+            Blocks readOnlyListBlocks = new ReadOnlyListBlocks(blocks);
+            LongBlocks longPieces = new LongBlocks(blocks);
+            assertThat(readOnlyListBlocks.equals(longPieces))
                     .as(longPieces.getBlocks().toString())
                     .isTrue();
         }

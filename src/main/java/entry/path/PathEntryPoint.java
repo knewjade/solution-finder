@@ -1,10 +1,10 @@
 package entry.path;
 
+import common.datastore.pieces.LongBlocks;
 import lib.Stopwatch;
 import common.SyntaxException;
 import common.buildup.BuildUpStream;
 import common.datastore.*;
-import common.datastore.pieces.LongPieces;
 import common.parser.OperationInterpreter;
 import common.parser.OperationTransform;
 import common.pattern.PiecesGenerator;
@@ -237,14 +237,14 @@ public class PathEntryPoint implements EntryPoint {
 
         // 同一ミノ配置を取り除いたパスの出力
         if (pathLayer.contains(PathLayer.Unique)) {
-            List<Pair<Result, HashSet<LongPieces>>> unique = pathCore.getUnique();
+            List<Pair<Result, HashSet<LongBlocks>>> unique = pathCore.getUnique();
             output("Found path [unique] = " + unique.size());
             outputOperations(field, outputUniqueFile, minoFactory, unique, sizedBit);
         }
 
         // 少ないパターンでカバーできるパスを出力
         if (pathLayer.contains(PathLayer.Minimal)) {
-            List<Pair<Result, HashSet<LongPieces>>> minimal = pathCore.getMinimal();
+            List<Pair<Result, HashSet<LongBlocks>>> minimal = pathCore.getMinimal();
             output("Found path [minimal] = " + minimal.size());
             outputOperations(field, outputMinimalFile, minoFactory, minimal, sizedBit);
         }
@@ -300,7 +300,7 @@ public class PathEntryPoint implements EntryPoint {
         }
     }
 
-    private void outputOperations(Field field, File file, MinoFactory minoFactory, List<Pair<Result, HashSet<LongPieces>>> operations, SizedBit sizedBit) {
+    private void outputOperations(Field field, File file, MinoFactory minoFactory, List<Pair<Result, HashSet<LongBlocks>>> operations, SizedBit sizedBit) {
         OutputType outputType = settings.getOutputType();
         switch (outputType) {
             case CSV:
@@ -315,7 +315,7 @@ public class PathEntryPoint implements EntryPoint {
         }
     }
 
-    private void outputOperationsToCSV(Field field, File file, List<Pair<Result, HashSet<LongPieces>>> resultPairs, SizedBit sizedBit) {
+    private void outputOperationsToCSV(Field field, File file, List<Pair<Result, HashSet<LongBlocks>>> resultPairs, SizedBit sizedBit) {
         LockedBuildUpListUpThreadLocal threadLocal = new LockedBuildUpListUpThreadLocal(sizedBit.getHeight());
         List<List<OperationWithKey>> samples = resultPairs.parallelStream()
                 .map(resultPair -> {
@@ -343,7 +343,7 @@ public class PathEntryPoint implements EntryPoint {
         }
     }
 
-    private void outputOperationsToSimpleHTML(Field field, File file, MinoFactory minoFactory, List<Pair<Result, HashSet<LongPieces>>> resultPairs, SizedBit sizedBit, boolean isTetfuSplit) {
+    private void outputOperationsToSimpleHTML(Field field, File file, MinoFactory minoFactory, List<Pair<Result, HashSet<LongBlocks>>> resultPairs, SizedBit sizedBit, boolean isTetfuSplit) {
         int maxClearLine = sizedBit.getHeight();
 
         // テト譜用のフィールド作成
@@ -475,9 +475,9 @@ public class PathEntryPoint implements EntryPoint {
         String encode = tetfu.encode(Collections.singletonList(tetfuElement));
 
         // 有効なミノ順をまとめる
-        HashSet<LongPieces> pieces = information.getPiecesSet();
+        HashSet<LongBlocks> pieces = information.getPiecesSet();
         String validOrders = pieces.stream()
-                .map(LongPieces::getBlocks)
+                .map(LongBlocks::getBlocks)
                 .map(blocks -> blocks.stream().map(Block::getName).collect(Collectors.joining()))
                 .collect(Collectors.joining(", "));
 
@@ -551,9 +551,9 @@ public class PathEntryPoint implements EntryPoint {
         String encode = tetfu.encode(tetfuElements);
 
         // 有効なミノ順をまとめる
-        HashSet<LongPieces> pieces = information.getPiecesSet();
+        HashSet<LongBlocks> pieces = information.getPiecesSet();
         String validOrders = pieces.stream()
-                .map(LongPieces::getBlocks)
+                .map(LongBlocks::getBlocks)
                 .map(blocks -> blocks.stream().map(Block::getName).collect(Collectors.joining()))
                 .collect(Collectors.joining(", "));
 

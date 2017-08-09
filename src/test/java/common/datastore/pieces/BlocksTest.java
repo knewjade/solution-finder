@@ -8,7 +8,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class PiecesTest {
+class BlocksTest {
     @Test
     void testHashCode() throws Exception {
         Randoms randoms = new Randoms();
@@ -16,8 +16,8 @@ class PiecesTest {
             int size = randoms.nextInt(4, 10);
             List<Block> blocks = randoms.blocks(size);
 
-            ReadOnlyListPieces readOnlyListPieces = new ReadOnlyListPieces(blocks);
-            LongPieces longPieces = new LongPieces(blocks);
+            ReadOnlyListBlocks readOnlyListPieces = new ReadOnlyListBlocks(blocks);
+            LongBlocks longPieces = new LongBlocks(blocks);
             assertThat(readOnlyListPieces.hashCode())
                     .as(blocks.toString())
                     .isEqualTo(longPieces.hashCode());

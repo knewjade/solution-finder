@@ -1,6 +1,6 @@
 package common.order;
 
-import common.datastore.pieces.LongPieces;
+import common.datastore.pieces.LongBlocks;
 import core.mino.Block;
 import lib.Randoms;
 import org.junit.jupiter.api.Tag;
@@ -81,15 +81,15 @@ class ReverseOrderLookUpTest {
             int fromDepth = blocks.size();
 
             ReverseOrderLookUp reverseOrderLookUp = new ReverseOrderLookUp(blocks.size(), fromDepth);
-            List<LongPieces> reverse = reverseOrderLookUp.parse(blocks)
-                    .map(LongPieces::new)
+            List<LongBlocks> reverse = reverseOrderLookUp.parse(blocks)
+                    .map(LongBlocks::new)
                     .collect(Collectors.toList());
 
-            LongPieces target = new LongPieces(blocks);
+            LongBlocks target = new LongBlocks(blocks);
             ForwardOrderLookUp forwardOrderLookUp = new ForwardOrderLookUp(blocks.size(), fromDepth);
-            for (LongPieces pieces : reverse) {
+            for (LongBlocks pieces : reverse) {
                 boolean isFound = forwardOrderLookUp.parse(pieces.getBlocks())
-                        .map(LongPieces::new)
+                        .map(LongBlocks::new)
                         .anyMatch(target::equals);
                 assertThat(isFound).isTrue();
             }
@@ -108,14 +108,14 @@ class ReverseOrderLookUpTest {
             List<Stream<Block>> reverse = reverseOrderLookUp.parse(blocks)
                     .collect(Collectors.toList());
 
-            LongPieces target = new LongPieces(blocks);
+            LongBlocks target = new LongBlocks(blocks);
             ForwardOrderLookUp forwardOrderLookUp = new ForwardOrderLookUp(blocks.size(), fromDepth);
             for (Stream<Block> stream : reverse) {
                 List<Block> sample = stream
                         .map(block -> block != null ? block : randoms.block())
                         .collect(Collectors.toList());
                 boolean isFound = forwardOrderLookUp.parse(sample)
-                        .map(LongPieces::new)
+                        .map(LongBlocks::new)
                         .anyMatch(target::equals);
                 assertThat(isFound).isTrue();
             }
@@ -133,14 +133,14 @@ class ReverseOrderLookUpTest {
             List<Stream<Block>> reverse = reverseOrderLookUp.parse(blocks)
                     .collect(Collectors.toList());
 
-            LongPieces target = new LongPieces(blocks);
+            LongBlocks target = new LongBlocks(blocks);
             ForwardOrderLookUp forwardOrderLookUp = new ForwardOrderLookUp(blocks.size(), fromDepth);
             for (Stream<Block> stream : reverse) {
                 List<Block> sample = stream
                         .map(block -> block != null ? block : randoms.block())
                         .collect(Collectors.toList());
                 boolean isFound = forwardOrderLookUp.parse(sample)
-                        .map(LongPieces::new)
+                        .map(LongBlocks::new)
                         .anyMatch(target::equals);
                 assertThat(isFound).isTrue();
             }

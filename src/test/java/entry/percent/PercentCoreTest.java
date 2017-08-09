@@ -1,6 +1,6 @@
 package entry.percent;
 
-import common.datastore.pieces.LongPieces;
+import common.datastore.pieces.LongBlocks;
 import common.pattern.PiecesGenerator;
 import core.field.Field;
 import core.field.FieldFactory;
@@ -46,7 +46,7 @@ class PercentCoreTest {
 
         PiecesGenerator generator = new PiecesGenerator(obj.patterns);
         NormalEnumeratePieces enumeratePieces = new NormalEnumeratePieces(generator, obj.maxDepth, obj.isUsingHold);
-        Set<LongPieces> blocks = enumeratePieces.enumerate();
+        Set<LongBlocks> blocks = enumeratePieces.enumerate();
         percentCore.run(field, blocks, obj.maxClearLine, obj.maxDepth);
 
         assertThat(percentCore.getResultTree().getSuccessPercent()).isEqualTo(successPercent);

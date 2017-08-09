@@ -1,6 +1,6 @@
 package common.comparator;
 
-import common.datastore.pieces.LongPieces;
+import common.datastore.pieces.LongBlocks;
 import core.mino.Block;
 import lib.Randoms;
 import org.junit.jupiter.api.Test;
@@ -10,11 +10,11 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class PiecesNameComparatorTest {
+class BlocksNameComparatorTest {
     @Test
     void compare() throws Exception {
-        LongPieces pieces1 = new LongPieces(Arrays.asList(Block.T, Block.O, Block.I));
-        LongPieces pieces2 = new LongPieces(Arrays.asList(Block.T, Block.O, Block.I));
+        LongBlocks pieces1 = new LongBlocks(Arrays.asList(Block.T, Block.O, Block.I));
+        LongBlocks pieces2 = new LongBlocks(Arrays.asList(Block.T, Block.O, Block.I));
         PiecesNameComparator comparator = new PiecesNameComparator();
         assertThat(comparator.compare(pieces1, pieces2)).isEqualTo(0);
         assertThat(comparator.compare(pieces2, pieces1)).isEqualTo(0);
@@ -22,8 +22,8 @@ class PiecesNameComparatorTest {
 
     @Test
     void compareDiffSize() throws Exception {
-        LongPieces pieces1 = new LongPieces(Arrays.asList(Block.T, Block.O, Block.I));
-        LongPieces pieces2 = new LongPieces(Arrays.asList(Block.T, Block.O, Block.I, Block.J));
+        LongBlocks pieces1 = new LongBlocks(Arrays.asList(Block.T, Block.O, Block.I));
+        LongBlocks pieces2 = new LongBlocks(Arrays.asList(Block.T, Block.O, Block.I, Block.J));
 
         // assert is not 0 & sign reversed
         PiecesNameComparator comparator = new PiecesNameComparator();
@@ -44,8 +44,8 @@ class PiecesNameComparatorTest {
             if (blocks1.equals(blocks2))
                 blocks1.add(Block.O);
 
-            LongPieces pieces1 = new LongPieces(blocks1);
-            LongPieces pieces2 = new LongPieces(blocks2);
+            LongBlocks pieces1 = new LongBlocks(blocks1);
+            LongBlocks pieces2 = new LongBlocks(blocks2);
 
             // assert is not 0 & sign reversed
             PiecesNameComparator comparator = new PiecesNameComparator();

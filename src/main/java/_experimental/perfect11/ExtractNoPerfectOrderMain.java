@@ -2,8 +2,8 @@ package _experimental.perfect11;
 
 import common.buildup.BuildUp;
 import common.datastore.OperationWithKey;
-import common.datastore.pieces.LongPieces;
-import common.datastore.pieces.Pieces;
+import common.datastore.pieces.Blocks;
+import common.datastore.pieces.LongBlocks;
 import common.order.OrderLookup;
 import common.parser.BlockInterpreter;
 import common.parser.OperationWithKeyInterpreter;
@@ -31,7 +31,7 @@ public class ExtractNoPerfectOrderMain {
         Field field = FieldFactory.createField(height);
         LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(height);
 
-        List<LongPieces> notPerfectOrders = Files.lines(includeNGPath, StandardCharsets.UTF_8)
+        List<LongBlocks> notPerfectOrders = Files.lines(includeNGPath, StandardCharsets.UTF_8)
                 .peek(System.out::println)
                 .flatMap(name -> {
                     Path perfectPath = Paths.get(String.format("output/perfect10each/%s.csv", name));
@@ -42,7 +42,7 @@ public class ExtractNoPerfectOrderMain {
                     try {
                         return Files.lines(orderPath, StandardCharsets.UTF_8)
                                 .map(BlockInterpreter::parse10)
-                                .map(LongPieces::new)
+                                .map(LongBlocks::new)
                                 .filter(longPieces -> {
                                     List<Block> blocks = longPieces.getBlocks();
                                     return perfects.parallelStream()
@@ -65,7 +65,7 @@ public class ExtractNoPerfectOrderMain {
         // output
         File outputFile = new File("output/order10noperfect.csv");
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), StandardCharsets.UTF_8))) {
-            for (Pieces pieces : notPerfectOrders) {
+            for (Blocks pieces : notPerfectOrders) {
                 String blocks = pieces.getBlockStream().map(Block::getName).collect(Collectors.joining());
                 try {
                     writer.write(blocks);

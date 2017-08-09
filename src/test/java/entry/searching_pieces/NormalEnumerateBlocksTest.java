@@ -1,6 +1,6 @@
 package entry.searching_pieces;
 
-import common.datastore.pieces.LongPieces;
+import common.datastore.pieces.LongBlocks;
 import common.pattern.PiecesGenerator;
 import core.mino.Block;
 import org.junit.jupiter.api.Test;
@@ -9,12 +9,12 @@ import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class NormalEnumeratePiecesTest {
+class NormalEnumerateBlocksTest {
     @Test
     void enumerateHoldOver1() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("*p7");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 3, true);
-        Set<LongPieces> pieces = core.enumerate();
+        Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(840);
         assertThat(core.getCounter()).isEqualTo(5040);
     }
@@ -23,7 +23,7 @@ class NormalEnumeratePiecesTest {
     void enumerateHoldOver2() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("*p7");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 4, true);
-        Set<LongPieces> pieces = core.enumerate();
+        Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(2520);
         assertThat(core.getCounter()).isEqualTo(5040);
     }
@@ -32,7 +32,7 @@ class NormalEnumeratePiecesTest {
     void enumerateHoldOver3() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("I, *p7");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 4, true);
-        Set<LongPieces> pieces = core.enumerate();
+        Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(840);
         assertThat(core.getCounter()).isEqualTo(5040);
     }
@@ -41,7 +41,7 @@ class NormalEnumeratePiecesTest {
     void enumerateHoldOverOne() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("I, S, Z, O, T, J, L");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 4, true);
-        Set<LongPieces> pieces = core.enumerate();
+        Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(1);
         assertThat(core.getCounter()).isEqualTo(1);
     }
@@ -55,7 +55,7 @@ class NormalEnumeratePiecesTest {
                 "T, J, O, Z, I"
         ));
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 3, true);
-        Set<LongPieces> pieces = core.enumerate();
+        Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(3);
         assertThat(core.getCounter()).isEqualTo(4);
     }
@@ -64,7 +64,7 @@ class NormalEnumeratePiecesTest {
     void enumerateNoHoldOver1() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("*p7");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 3, false);
-        Set<LongPieces> pieces = core.enumerate();
+        Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(210);
         assertThat(core.getCounter()).isEqualTo(5040);
     }
@@ -73,7 +73,7 @@ class NormalEnumeratePiecesTest {
     void enumerateNoHoldOver2() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("*p7");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 4, false);
-        Set<LongPieces> pieces = core.enumerate();
+        Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(840);
         assertThat(core.getCounter()).isEqualTo(5040);
     }
@@ -82,7 +82,7 @@ class NormalEnumeratePiecesTest {
     void enumerateNoHoldOver3() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("I, *p7");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 4, false);
-        Set<LongPieces> pieces = core.enumerate();
+        Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(210);
         assertThat(core.getCounter()).isEqualTo(5040);
     }
@@ -91,7 +91,7 @@ class NormalEnumeratePiecesTest {
     void enumerateNoHoldOverOne() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("I, S, Z, O");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 4, false);
-        Set<LongPieces> pieces = core.enumerate();
+        Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(1);
         assertThat(core.getCounter()).isEqualTo(1);
     }
@@ -104,7 +104,7 @@ class NormalEnumeratePiecesTest {
                 "T, J, O, I"
         ));
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 3, false);
-        Set<LongPieces> pieces = core.enumerate();
+        Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(2);
         assertThat(core.getCounter()).isEqualTo(3);
     }
@@ -113,7 +113,7 @@ class NormalEnumeratePiecesTest {
     void enumerateHoldJust() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("*p3");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 3, true);
-        Set<LongPieces> pieces = core.enumerate();
+        Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(210);
         assertThat(core.getCounter()).isEqualTo(210);
     }
@@ -122,7 +122,7 @@ class NormalEnumeratePiecesTest {
     void enumerateNoHoldJust() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("*p3");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 3, false);
-        Set<LongPieces> pieces = core.enumerate();
+        Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(210);
         assertThat(core.getCounter()).isEqualTo(210);
     }
@@ -136,7 +136,7 @@ class NormalEnumeratePiecesTest {
                 "T, J, O, Z, I"
         ));
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 5, true);
-        Set<LongPieces> pieces = core.enumerate();
+        Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(3);
         assertThat(core.getCounter()).isEqualTo(4);
     }
@@ -149,7 +149,7 @@ class NormalEnumeratePiecesTest {
                 "T, J, O, I"
         ));
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 4, false);
-        Set<LongPieces> pieces = core.enumerate();
+        Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(3);
         assertThat(core.getCounter()).isEqualTo(3);
     }
@@ -162,7 +162,7 @@ class NormalEnumeratePiecesTest {
         for (int size = 1; size <= 7; size++) {
             PiecesGenerator piecesGenerator = new PiecesGenerator("T, *p" + size);
             NormalEnumeratePieces core = new NormalEnumeratePieces(piecesGenerator, size + 1, false);
-            Set<LongPieces> pieces = core.enumerate();
+            Set<LongBlocks> pieces = core.enumerate();
 
             for (int count = 0; count < 1000; count++) {
                 List<Block> sample = new ArrayList<>();
@@ -171,11 +171,11 @@ class NormalEnumeratePiecesTest {
                 Collections.shuffle(allBlocks);
                 sample.addAll(allBlocks.subList(0, size));
 
-                assertThat(new LongPieces(sample)).isIn(pieces);
+                assertThat(new LongBlocks(sample)).isIn(pieces);
 
                 for (Block block : failedBlocks) {
                     sample.set(0, block);
-                    assertThat(new LongPieces(sample)).isNotIn(pieces);
+                    assertThat(new LongBlocks(sample)).isNotIn(pieces);
                 }
             }
         }
@@ -189,7 +189,7 @@ class NormalEnumeratePiecesTest {
         for (int size = 1; size <= 7; size++) {
             PiecesGenerator piecesGenerator = new PiecesGenerator("T, *p" + size);
             NormalEnumeratePieces core = new NormalEnumeratePieces(piecesGenerator, size, false);
-            Set<LongPieces> pieces = core.enumerate();
+            Set<LongBlocks> pieces = core.enumerate();
 
             for (int count = 0; count < 1000; count++) {
                 List<Block> sample = new ArrayList<>();
@@ -198,11 +198,11 @@ class NormalEnumeratePiecesTest {
                 Collections.shuffle(allBlocks);
                 sample.addAll(allBlocks.subList(0, size - 1));
 
-                assertThat(new LongPieces(sample)).isIn(pieces);
+                assertThat(new LongBlocks(sample)).isIn(pieces);
 
                 for (Block block : failedBlocks) {
                     sample.set(0, block);
-                    assertThat(new LongPieces(sample)).isNotIn(pieces);
+                    assertThat(new LongBlocks(sample)).isNotIn(pieces);
                 }
             }
         }

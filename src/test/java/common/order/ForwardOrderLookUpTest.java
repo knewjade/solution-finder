@@ -1,7 +1,7 @@
 package common.order;
 
 import common.comparator.PiecesNumberComparator;
-import common.datastore.pieces.LongPieces;
+import common.datastore.pieces.LongBlocks;
 import core.mino.Block;
 import lib.Randoms;
 import org.junit.jupiter.api.Test;
@@ -21,8 +21,8 @@ class ForwardOrderLookUpTest {
         int toDepth = blockList.size();
 
         ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth, blockList.size());
-        HashSet<LongPieces> forward = lookUp.parse(blockList)
-                .map(LongPieces::new)
+        HashSet<LongBlocks> forward = lookUp.parse(blockList)
+                .map(LongBlocks::new)
                 .collect(Collectors.toCollection(HashSet::new));
 
         assertThat(forward).hasSize(64);
@@ -34,8 +34,8 @@ class ForwardOrderLookUpTest {
         int toDepth = blockList.size() - 1;
 
         ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth, blockList.size());
-        HashSet<LongPieces> forward = lookUp.parse(blockList)
-                .map(LongPieces::new)
+        HashSet<LongBlocks> forward = lookUp.parse(blockList)
+                .map(LongBlocks::new)
                 .collect(Collectors.toCollection(HashSet::new));
 
         assertThat(forward).hasSize(64);
@@ -47,16 +47,16 @@ class ForwardOrderLookUpTest {
         int toDepth = blockList.size();
 
         PiecesNumberComparator comparator = new PiecesNumberComparator();
-        List<LongPieces> forward1 = OrderLookup.forwardBlocks(blockList, toDepth).stream()
+        List<LongBlocks> forward1 = OrderLookup.forwardBlocks(blockList, toDepth).stream()
                 .map(StackOrder::toList)
-                .map(LongPieces::new)
+                .map(LongBlocks::new)
                 .sorted(comparator)
                 .collect(Collectors.toList());
 
         ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth, blockList.size());
-        List<LongPieces> forward2 = lookUp.parse(blockList)
+        List<LongBlocks> forward2 = lookUp.parse(blockList)
                 .map(blockStream -> blockStream.collect(Collectors.toList()))
-                .map(LongPieces::new)
+                .map(LongBlocks::new)
                 .sorted(comparator)
                 .collect(Collectors.toList());
 
@@ -69,16 +69,16 @@ class ForwardOrderLookUpTest {
         int toDepth = blockList.size() - 1;
 
         PiecesNumberComparator comparator = new PiecesNumberComparator();
-        List<LongPieces> forward1 = OrderLookup.forwardBlocks(blockList, toDepth).stream()
+        List<LongBlocks> forward1 = OrderLookup.forwardBlocks(blockList, toDepth).stream()
                 .map(StackOrder::toList)
-                .map(LongPieces::new)
+                .map(LongBlocks::new)
                 .sorted(comparator)
                 .collect(Collectors.toList());
 
         ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth, blockList.size());
-        List<LongPieces> forward2 = lookUp.parse(blockList)
+        List<LongBlocks> forward2 = lookUp.parse(blockList)
                 .map(blockStream -> blockStream.collect(Collectors.toList()))
-                .map(LongPieces::new)
+                .map(LongBlocks::new)
                 .sorted(comparator)
                 .collect(Collectors.toList());
 
@@ -93,8 +93,8 @@ class ForwardOrderLookUpTest {
             int toDepth = blocks.size();
 
             ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth, blocks.size());
-            HashSet<LongPieces> forward = lookUp.parse(blocks)
-                    .map(LongPieces::new)
+            HashSet<LongBlocks> forward = lookUp.parse(blocks)
+                    .map(LongBlocks::new)
                     .collect(Collectors.toCollection(HashSet::new));
 
             for (int count = 0; count < 10000; count++) {
@@ -114,7 +114,7 @@ class ForwardOrderLookUpTest {
                 // ホールドを追加
                 sample.add(blocks.get(holdIndex));
 
-                assertThat(new LongPieces(sample)).isIn(forward);
+                assertThat(new LongBlocks(sample)).isIn(forward);
             }
         }
     }
@@ -127,8 +127,8 @@ class ForwardOrderLookUpTest {
             int toDepth = blocks.size();
 
             ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth - 1, blocks.size());
-            HashSet<LongPieces> forward = lookUp.parse(blocks)
-                    .map(LongPieces::new)
+            HashSet<LongBlocks> forward = lookUp.parse(blocks)
+                    .map(LongBlocks::new)
                     .collect(Collectors.toCollection(HashSet::new));
 
             for (int count = 0; count < 10000; count++) {
@@ -145,7 +145,7 @@ class ForwardOrderLookUpTest {
                     }
                 }
 
-                assertThat(new LongPieces(sample)).isIn(forward);
+                assertThat(new LongBlocks(sample)).isIn(forward);
             }
         }
     }
@@ -158,8 +158,8 @@ class ForwardOrderLookUpTest {
             int toDepth = blocks.size();
 
             ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth - 2, blocks.size());
-            HashSet<LongPieces> forward = lookUp.parse(blocks)
-                    .map(LongPieces::new)
+            HashSet<LongBlocks> forward = lookUp.parse(blocks)
+                    .map(LongBlocks::new)
                     .collect(Collectors.toCollection(HashSet::new));
 
             for (int count = 0; count < 10000; count++) {
@@ -176,7 +176,7 @@ class ForwardOrderLookUpTest {
                     }
                 }
 
-                assertThat(new LongPieces(sample)).isIn(forward);
+                assertThat(new LongBlocks(sample)).isIn(forward);
             }
         }
     }

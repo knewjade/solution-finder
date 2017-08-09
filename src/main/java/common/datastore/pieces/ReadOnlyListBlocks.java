@@ -6,10 +6,10 @@ import core.mino.Block;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class ReadOnlyListPieces implements Pieces, Comparable<Pieces> {
+public class ReadOnlyListBlocks implements Blocks, Comparable<Blocks> {
     private final List<Block> blocks;
 
-    public ReadOnlyListPieces(List<Block> blocks) {
+    public ReadOnlyListBlocks(List<Block> blocks) {
         assert blocks != null;
         this.blocks = blocks;
     }
@@ -25,12 +25,12 @@ public class ReadOnlyListPieces implements Pieces, Comparable<Pieces> {
     }
 
     @Override
-    public Pieces addAndReturnNew(List<Block> blocks) {
+    public Blocks addAndReturnNew(List<Block> blocks) {
         throw new UnsupportedOperationException("Unsafe operation");
     }
 
     @Override
-    public Pieces addAndReturnNew(Block block) {
+    public Blocks addAndReturnNew(Block block) {
         throw new UnsupportedOperationException("Unsafe operation");
     }
 
@@ -39,11 +39,11 @@ public class ReadOnlyListPieces implements Pieces, Comparable<Pieces> {
         if (this == o) return true;
         if (o == null) return false;
 
-        if (o instanceof ReadOnlyListPieces) {
-            ReadOnlyListPieces that = (ReadOnlyListPieces) o;
+        if (o instanceof ReadOnlyListBlocks) {
+            ReadOnlyListBlocks that = (ReadOnlyListBlocks) o;
             return blocks.equals(that.blocks);
-        } else if (o instanceof Pieces) {
-            Pieces that = (Pieces) o;
+        } else if (o instanceof Blocks) {
+            Blocks that = (Blocks) o;
             return PiecesNumberComparator.comparePieces(this, that) == 0;
         }
 
@@ -52,12 +52,12 @@ public class ReadOnlyListPieces implements Pieces, Comparable<Pieces> {
 
     @Override
     public int hashCode() {
-        long pieces = LongPieces.parse(blocks);
-        return LongPieces.toHash(pieces);
+        long pieces = LongBlocks.parse(blocks);
+        return LongBlocks.toHash(pieces);
     }
 
     @Override
-    public int compareTo(Pieces o) {
+    public int compareTo(Blocks o) {
         return PiecesNumberComparator.comparePieces(this, o);
     }
 }

@@ -1,6 +1,6 @@
 package _experimental.perfect11;
 
-import common.datastore.pieces.Pieces;
+import common.datastore.pieces.Blocks;
 import common.pattern.PiecesGenerator;
 import core.mino.Block;
 
@@ -97,7 +97,7 @@ public class AllPatternsMain {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), StandardCharsets.UTF_8))) {
             PiecesGenerator generator = new PiecesGenerator(pattern);
             generator.stream()
-                    .map(Pieces::getBlocks)
+                    .map(Blocks::getBlocks)
                     .map(blocks -> blocks.stream().map(Block::getName).collect(Collectors.joining()))
                     .sorted()
                     .forEach(line -> {

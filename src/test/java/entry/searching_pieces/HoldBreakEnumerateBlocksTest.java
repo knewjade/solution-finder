@@ -1,6 +1,6 @@
 package entry.searching_pieces;
 
-import common.datastore.pieces.LongPieces;
+import common.datastore.pieces.LongBlocks;
 import common.pattern.PiecesGenerator;
 import core.mino.Block;
 import lib.Randoms;
@@ -14,12 +14,12 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class HoldBreakEnumeratePiecesTest {
+class HoldBreakEnumerateBlocksTest {
     @Test
     void enumerate1() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("*p7");
         HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(generator, 3);
-        Set<LongPieces> pieces = core.enumerate();
+        Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(210);
         assertThat(core.getCounter()).isEqualTo(5040);
     }
@@ -28,7 +28,7 @@ class HoldBreakEnumeratePiecesTest {
     void enumerate2() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("*p7");
         HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(generator, 4);
-        Set<LongPieces> pieces = core.enumerate();
+        Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(840);
         assertThat(core.getCounter()).isEqualTo(5040);
     }
@@ -37,7 +37,7 @@ class HoldBreakEnumeratePiecesTest {
     void enumerateOverAny() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("T, J, O, Z");
         HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(generator, 3);
-        Set<LongPieces> pieces = core.enumerate();
+        Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(8);
         assertThat(core.getCounter()).isEqualTo(1);
     }
@@ -50,7 +50,7 @@ class HoldBreakEnumeratePiecesTest {
                 "T, J, O, Z"
         ));
         HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(generator, 3);
-        Set<LongPieces> pieces = core.enumerate();
+        Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(13);
         assertThat(core.getCounter()).isEqualTo(3);
     }
@@ -59,7 +59,7 @@ class HoldBreakEnumeratePiecesTest {
     void enumerateJust() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("*p3");
         HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(generator, 3);
-        Set<LongPieces> pieces = core.enumerate();
+        Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(210);
         assertThat(core.getCounter()).isEqualTo(210);
     }
@@ -68,7 +68,7 @@ class HoldBreakEnumeratePiecesTest {
     void enumerateJustAny() throws Exception {
         PiecesGenerator generator = new PiecesGenerator("T, O, S");
         HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(generator, 3);
-        Set<LongPieces> pieces = core.enumerate();
+        Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(4);
         assertThat(core.getCounter()).isEqualTo(1);
     }
@@ -83,7 +83,7 @@ class HoldBreakEnumeratePiecesTest {
                     .collect(Collectors.joining(","));
             PiecesGenerator piecesGenerator = new PiecesGenerator(pattern);
             HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(piecesGenerator, size);
-            Set<LongPieces> pieces = core.enumerate();
+            Set<LongBlocks> pieces = core.enumerate();
 
             for (int count = 0; count < 10000; count++) {
                 ArrayList<Block> sample = new ArrayList<>();
@@ -102,7 +102,7 @@ class HoldBreakEnumeratePiecesTest {
                 // ホールドを追加
                 sample.add(blocks.get(holdIndex));
 
-                assertThat(new LongPieces(sample)).isIn(pieces);
+                assertThat(new LongBlocks(sample)).isIn(pieces);
             }
         }
     }
@@ -117,7 +117,7 @@ class HoldBreakEnumeratePiecesTest {
                     .collect(Collectors.joining(","));
             PiecesGenerator piecesGenerator = new PiecesGenerator(pattern);
             HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(piecesGenerator, size - 1);
-            Set<LongPieces> pieces = core.enumerate();
+            Set<LongBlocks> pieces = core.enumerate();
 
             for (int count = 0; count < 10000; count++) {
                 ArrayList<Block> sample = new ArrayList<>();
@@ -133,7 +133,7 @@ class HoldBreakEnumeratePiecesTest {
                     }
                 }
 
-                assertThat(new LongPieces(sample)).isIn(pieces);
+                assertThat(new LongBlocks(sample)).isIn(pieces);
             }
         }
     }

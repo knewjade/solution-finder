@@ -3,8 +3,8 @@ package entry.path;
 import common.buildup.BuildUpStream;
 import common.datastore.OperationWithKey;
 import common.datastore.Pair;
-import common.datastore.pieces.LongPieces;
-import common.datastore.pieces.Pieces;
+import common.datastore.pieces.Blocks;
+import common.datastore.pieces.LongBlocks;
 import common.order.OrderLookup;
 import common.order.StackOrder;
 import common.pattern.PiecesGenerator;
@@ -25,10 +25,10 @@ import java.util.stream.Collectors;
 
 class PathCore {
     private final List<Result> candidates;
-    private final HashSet<LongPieces> validPieces;
+    private final HashSet<LongBlocks> validPieces;
 
-    private List<Pair<Result, HashSet<LongPieces>>> unique = null;
-    private LinkedList<Pair<Result, HashSet<LongPieces>>> minimal = null;
+    private List<Pair<Result, HashSet<LongBlocks>>> unique = null;
+    private LinkedList<Pair<Result, HashSet<LongBlocks>>> minimal = null;
 
     PathCore(List<String> patterns, PackSearcher searcher, int maxDepth, boolean isUsingHold) throws ExecutionException, InterruptedException {
         this.candidates = searcher.collect(Collectors.toList());
@@ -37,7 +37,7 @@ class PathCore {
         this.validPieces = getCollect(patterns, maxDepth, isUsingHold);
     }
 
-    private HashSet<LongPieces> getCollect(List<String> patterns, int maxDepth, boolean isUsingHold) {
+    private HashSet<LongBlocks> getCollect(List<String> patterns, int maxDepth, boolean isUsingHold) {
         PiecesGenerator piecesGenerator = new PiecesGenerator(patterns);
 
         // 必要以上にミノを使っている場合はリストを削減する
@@ -48,20 +48,20 @@ class PathCore {
         if (isUsingHold) {
             return piecesGenerator.stream()
                     .parallel()
-                    .map(Pieces::getBlocks)
+                    .map(Blocks::getBlocks)
                     .flatMap(blocks -> OrderLookup.forwardBlocks(blocks, maxDepth).stream())
                     .collect(Collectors.toCollection(HashSet::new))
                     .parallelStream()
                     .map(StackOrder::toList)
                     .map(reduceBlocks)
-                    .map(LongPieces::new)
+                    .map(LongBlocks::new)
                     .collect(Collectors.toCollection(HashSet::new));
         } else {
             return piecesGenerator.stream()
                     .parallel()
-                    .map(Pieces::getBlocks)
+                    .map(Blocks::getBlocks)
                     .map(reduceBlocks)
-                    .map(LongPieces::new)
+                    .map(LongBlocks::new)
                     .collect(Collectors.toCollection(HashSet::new));
         }
     }
@@ -74,13 +74,13 @@ class PathCore {
                     LinkedList<OperationWithKey> operations = result.getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toCollection(LinkedList::new));
 
                     BuildUpStream buildUpStream = threadLocal.get();
-                    HashSet<LongPieces> pieces = buildUpStream.existsValidBuildPatternDirectly(field, operations)
+                    HashSet<LongBlocks> pieces = buildUpStream.existsValidBuildPatternDirectly(field, operations)
                             .map(operationWithKeys -> operationWithKeys.stream()
                                     .map(OperationWithKey::getMino)
                                     .map(Mino::getBlock)
                                     .collect(Collectors.toList())
                             )
-                            .map(LongPieces::new)
+                            .map(LongBlocks::new)
                             .filter(validPieces::contains)
                             .collect(Collectors.toCollection(HashSet::new));
                     return new Pair<>(result, pieces);
@@ -91,20 +91,20 @@ class PathCore {
 
     void runMinimal() {
         // 他のパターンではカバーできないものだけを列挙する
-        LinkedList<Pair<Result, HashSet<LongPieces>>> minimal = new LinkedList<>();
-        for (Pair<Result, HashSet<LongPieces>> pair : unique) {
-            HashSet<LongPieces> canBuildBlocks = pair.getValue();
+        LinkedList<Pair<Result, HashSet<LongBlocks>>> minimal = new LinkedList<>();
+        for (Pair<Result, HashSet<LongBlocks>> pair : unique) {
+            HashSet<LongBlocks> canBuildBlocks = pair.getValue();
             boolean isSetNeed = true;
-            LinkedList<Pair<Result, HashSet<LongPieces>>> nextMasters = new LinkedList<>();
+            LinkedList<Pair<Result, HashSet<LongBlocks>>> nextMasters = new LinkedList<>();
 
             // すでに登録済みのパターンでカバーできるか確認
             while (!minimal.isEmpty()) {
-                Pair<Result, HashSet<LongPieces>> targetPair = minimal.pollFirst();
-                Set<LongPieces> registeredBlocks = targetPair.getValue();
+                Pair<Result, HashSet<LongBlocks>> targetPair = minimal.pollFirst();
+                Set<LongBlocks> registeredBlocks = targetPair.getValue();
 
                 if (registeredBlocks.size() < canBuildBlocks.size()) {
                     // 新しいパターンの方が多く対応できる  // 新パターンが残る
-                    HashSet<LongPieces> newTarget = new HashSet<>(registeredBlocks);
+                    HashSet<LongBlocks> newTarget = new HashSet<>(registeredBlocks);
                     newTarget.removeAll(canBuildBlocks);
 
                     // 新パターンでも対応できないパターンがあるときは残す
@@ -112,7 +112,7 @@ class PathCore {
                         nextMasters.add(targetPair);
                 } else if (canBuildBlocks.size() < registeredBlocks.size()) {
                     // 登録済みパターンの方が多く対応できる
-                    HashSet<LongPieces> newSet = new HashSet<>(canBuildBlocks);
+                    HashSet<LongBlocks> newSet = new HashSet<>(canBuildBlocks);
                     newSet.removeAll(registeredBlocks);
 
                     // 登録済みパターンを残す
@@ -127,7 +127,7 @@ class PathCore {
                     }
                 } else {
                     // 新パターンと登録済みパターンが対応できる数は同じ
-                    HashSet<LongPieces> newSet = new HashSet<>(canBuildBlocks);
+                    HashSet<LongBlocks> newSet = new HashSet<>(canBuildBlocks);
                     newSet.retainAll(registeredBlocks);
 
                     // 登録済みパターンを残す
@@ -153,11 +153,11 @@ class PathCore {
         this.minimal = minimal;
     }
 
-    List<Pair<Result, HashSet<LongPieces>>> getUnique() {
+    List<Pair<Result, HashSet<LongBlocks>>> getUnique() {
         return unique;
     }
 
-    List<Pair<Result, HashSet<LongPieces>>> getMinimal() {
+    List<Pair<Result, HashSet<LongBlocks>>> getMinimal() {
         return minimal;
     }
 }

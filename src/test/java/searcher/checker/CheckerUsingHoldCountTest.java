@@ -1,7 +1,7 @@
 package searcher.checker;
 
 import common.datastore.action.Action;
-import common.datastore.pieces.Pieces;
+import common.datastore.pieces.Blocks;
 import common.iterable.PermutationIterable;
 import common.pattern.PiecesGenerator;
 import common.tree.AnalyzeTree;
@@ -133,8 +133,8 @@ class CheckerUsingHoldCountTest {
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
         AnalyzeTree tree = new AnalyzeTree();
 
-        Iterable<Pieces> combinations = new PiecesGenerator(pattern);
-        for (Pieces pieces : combinations) {
+        Iterable<Blocks> combinations = new PiecesGenerator(pattern);
+        for (Blocks pieces : combinations) {
             List<Block> blocks = pieces.getBlocks();
             boolean result = checker.check(field, blocks, candidate, maxClearLine, maxDepth);
             tree.set(result, blocks);

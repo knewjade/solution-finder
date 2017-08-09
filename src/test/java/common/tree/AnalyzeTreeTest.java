@@ -1,7 +1,7 @@
 package common.tree;
 
-import common.datastore.pieces.LongPieces;
-import common.datastore.pieces.Pieces;
+import common.datastore.pieces.LongBlocks;
+import common.datastore.pieces.Blocks;
 import common.pattern.PiecesGenerator;
 import core.mino.Block;
 import lib.Randoms;
@@ -82,14 +82,14 @@ class AnalyzeTreeTest {
             PiecesGenerator generator = new PiecesGenerator("*p" + size);
 
             AnalyzeTree tree = new AnalyzeTree();
-            HashSet<LongPieces> success = new HashSet<>();
-            HashSet<LongPieces> failed = new HashSet<>();
-            for (Pieces pieces : generator) {
+            HashSet<LongBlocks> success = new HashSet<>();
+            HashSet<LongBlocks> failed = new HashSet<>();
+            for (Blocks pieces : generator) {
                 boolean flag = randoms.nextBoolean();
                 List<Block> blocks = pieces.getBlocks();
                 tree.set(flag, blocks);
 
-                LongPieces longPieces = new LongPieces(blocks);
+                LongBlocks longPieces = new LongBlocks(blocks);
                 if (flag) {
                     success.add(longPieces);
                 } else {
@@ -124,14 +124,14 @@ class AnalyzeTreeTest {
             PiecesGenerator generator = new PiecesGenerator("*p7, *p" + (size - 7));
 
             AnalyzeTree tree = new AnalyzeTree();
-            HashSet<LongPieces> success = new HashSet<>();
-            HashSet<LongPieces> failed = new HashSet<>();
-            for (Pieces pieces : generator) {
+            HashSet<LongBlocks> success = new HashSet<>();
+            HashSet<LongBlocks> failed = new HashSet<>();
+            for (Blocks pieces : generator) {
                 boolean flag = randoms.nextBoolean();
                 List<Block> blocks = pieces.getBlocks();
                 tree.set(flag, blocks);
 
-                LongPieces longPieces = new LongPieces(blocks);
+                LongBlocks longPieces = new LongBlocks(blocks);
                 if (flag) {
                     success.add(longPieces);
                 } else {

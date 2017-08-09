@@ -4,8 +4,8 @@ import common.ResultHelper;
 import common.buildup.BuildUp;
 import common.datastore.*;
 import common.datastore.action.Action;
-import common.datastore.pieces.LongPieces;
-import common.datastore.pieces.Pieces;
+import common.datastore.pieces.Blocks;
+import common.datastore.pieces.LongBlocks;
 import common.order.OrderLookup;
 import common.order.StackOrder;
 import common.parser.BlockInterpreter;
@@ -53,13 +53,13 @@ class CheckmateUsingHoldTest {
         // Check blocks is same
         List<Block> resultBlocks = parseToBlocks(result);
         Block lastHoldBlock = result.getLastHold();
-        HashSet<LongPieces> pieces = OrderLookup.reverseBlocks(resultBlocks, blocks.size()).stream()
+        HashSet<LongBlocks> pieces = OrderLookup.reverseBlocks(resultBlocks, blocks.size()).stream()
                 .map(StackOrder::toStream)
                 .map(stream -> stream.map(block -> block != null ? block : lastHoldBlock))
-                .map(LongPieces::new)
+                .map(LongBlocks::new)
                 .collect(Collectors.toCollection(HashSet::new));
 
-        assertThat(pieces).contains(new LongPieces(blocks));
+        assertThat(pieces).contains(new LongBlocks(blocks));
 
         // Check can build result
         Operations operations = parseToOperations(result);
@@ -259,16 +259,16 @@ class CheckmateUsingHoldTest {
     @Tag("long")
     void testCaseList() throws Exception {
         String resultPath = ClassLoader.getSystemResource("perfects/checkmate_usinghold.txt").getPath();
-        List<Pair<Pieces, Integer>> testCases = Files.lines(Paths.get(resultPath))
+        List<Pair<Blocks, Integer>> testCases = Files.lines(Paths.get(resultPath))
                 .map(line -> line.split("//")[0])
                 .map(String::trim)
                 .filter(line -> !line.isEmpty())
                 .map(line -> line.split("="))
                 .map(split -> {
                     Stream<Block> blocks = BlockInterpreter.parse(split[0]);
-                    LongPieces pieces = new LongPieces(blocks);
+                    LongBlocks pieces = new LongBlocks(blocks);
                     int count = Integer.valueOf(split[1]);
-                    return new Pair<Pieces, Integer>(pieces, count);
+                    return new Pair<Blocks, Integer>(pieces, count);
                 })
                 .collect(Collectors.toList());
         Collections.shuffle(testCases);
@@ -283,7 +283,7 @@ class CheckmateUsingHoldTest {
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         // Assertion
-        for (Pair<Pieces, Integer> testCase : testCases.subList(0, 10)) {  // TODO: Remove commentout
+        for (Pair<Blocks, Integer> testCase : testCases.subList(0, 10)) {  // TODO: Remove commentout
             // Set test case
             List<Block> blocks = testCase.getKey().getBlocks();
             int expectedCount = testCase.getValue();

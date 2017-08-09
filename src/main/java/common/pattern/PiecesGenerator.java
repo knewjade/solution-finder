@@ -2,7 +2,7 @@ package common.pattern;
 
 
 import common.SyntaxException;
-import common.datastore.pieces.Pieces;
+import common.datastore.pieces.Blocks;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class PiecesGenerator implements Iterable<Pieces> {
+public class PiecesGenerator implements Iterable<Blocks> {
     public static void verify(String pattern) throws SyntaxException {
         verify(Collections.singletonList(pattern));
     }
@@ -66,7 +66,7 @@ public class PiecesGenerator implements Iterable<Pieces> {
     }
 
     @Override
-    public Iterator<Pieces> iterator() {
+    public Iterator<Blocks> iterator() {
         return new PiecesIterator(patterns);
     }
 
@@ -74,8 +74,8 @@ public class PiecesGenerator implements Iterable<Pieces> {
         return new PiecesIterator(patterns).getDepths();
     }
 
-    public Stream<Pieces> stream() {
-        Stream<Pieces> stream = Stream.empty();
+    public Stream<Blocks> stream() {
+        Stream<Blocks> stream = Stream.empty();
         for (String pattern : patterns)
             stream = Stream.concat(stream, new PiecesStreamBuilder(pattern).stream());
         return stream;

@@ -1,7 +1,7 @@
 package _experimental.perfect11;
 
 import common.datastore.BlockCounter;
-import common.datastore.pieces.LongPieces;
+import common.datastore.pieces.LongBlocks;
 import common.order.ForwardOrderLookUp;
 import common.parser.BlockInterpreter;
 import core.mino.Block;
@@ -29,9 +29,9 @@ public class All11MinoCheckerMain {
 
         // パフェできない順序
         Path includeNGOrder = Paths.get("output/orderNG.csv");
-        Set<LongPieces> ngPieces = Files.lines(includeNGOrder)
+        Set<LongBlocks> ngPieces = Files.lines(includeNGOrder)
                 .map(BlockInterpreter::parse10)
-                .map(LongPieces::new)
+                .map(LongBlocks::new)
                 .collect(Collectors.toSet());
 
         //
@@ -53,7 +53,7 @@ public class All11MinoCheckerMain {
                         return true;
 
                     // パフェできない順序である
-                    LongPieces pieces = new LongPieces(BlockInterpreter.parse10(line));
+                    LongBlocks pieces = new LongBlocks(BlockInterpreter.parse10(line));
                     return ngPieces.contains(pieces);
                 })
                 .filter(line -> {
@@ -62,7 +62,7 @@ public class All11MinoCheckerMain {
 
                     // すべてのパターンでパフェできないものは true で次に送る
                     return orderLookUp.parse(blocks)
-                            .map(LongPieces::new)
+                            .map(LongBlocks::new)
                             .allMatch(pieces -> {
                                 // パフェできないものは true で次に送る
 

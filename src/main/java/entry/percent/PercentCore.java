@@ -2,7 +2,7 @@ package entry.percent;
 
 import common.datastore.Pair;
 import common.datastore.action.Action;
-import common.datastore.pieces.LongPieces;
+import common.datastore.pieces.LongBlocks;
 import common.tree.AnalyzeTree;
 import concurrent.LockedCandidateThreadLocal;
 import concurrent.checker.CheckerNoHoldThreadLocal;
@@ -41,9 +41,9 @@ class PercentCore {
         }
     }
 
-    void run(Field field, Set<LongPieces> searchingPiecesSet, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
+    void run(Field field, Set<LongBlocks> searchingPiecesSet, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
         List<List<Block>> searchingPieces = searchingPiecesSet.stream()
-                .map(LongPieces::getBlocks)
+                .map(LongBlocks::getBlocks)
                 .collect(Collectors.toList());
 
         this.resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);

@@ -5,12 +5,12 @@ import core.mino.Block;
 import java.util.List;
 import java.util.stream.Stream;
 
-public interface Pieces {
+public interface Blocks {
     List<Block> getBlocks();
 
     Stream<Block> getBlockStream();
 
-    Pieces addAndReturnNew(List<Block> blocks);
+    Blocks addAndReturnNew(List<Block> blocks);
 
-    Pieces addAndReturnNew(Block block);
+    Blocks addAndReturnNew(Block block);
 }

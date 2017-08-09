@@ -1,6 +1,6 @@
 package common.tree;
 
-import common.datastore.pieces.LongPieces;
+import common.datastore.pieces.LongBlocks;
 import common.pattern.PiecesGenerator;
 import core.mino.Block;
 import lib.Randoms;
@@ -45,15 +45,15 @@ class VisitedTreeTest {
 
             VisitedTree tree = new VisitedTree();
 
-            HashSet<LongPieces> success = new HashSet<>();
-            HashSet<LongPieces> failed = new HashSet<>();
+            HashSet<LongBlocks> success = new HashSet<>();
+            HashSet<LongBlocks> failed = new HashSet<>();
             generator.stream()
                     .forEach(pieces -> {
                         boolean flag = randoms.nextBoolean();
                         List<Block> blocks = pieces.getBlocks();
                         tree.set(flag, blocks);
 
-                        LongPieces longPieces = new LongPieces(blocks);
+                        LongBlocks longPieces = new LongBlocks(blocks);
                         if (flag) {
                             success.add(longPieces);
                         } else {
@@ -86,15 +86,15 @@ class VisitedTreeTest {
 
             VisitedTree tree = new VisitedTree();
 
-            HashSet<LongPieces> success = new HashSet<>();
-            HashSet<LongPieces> failed = new HashSet<>();
+            HashSet<LongBlocks> success = new HashSet<>();
+            HashSet<LongBlocks> failed = new HashSet<>();
             generator.stream()
                     .forEach(pieces -> {
                         boolean flag = randoms.nextBoolean();
                         List<Block> blocks = pieces.getBlocks();
                         tree.set(flag, blocks);
 
-                        LongPieces longPieces = new LongPieces(blocks);
+                        LongBlocks longPieces = new LongBlocks(blocks);
                         if (flag) {
                             success.add(longPieces);
                         } else {

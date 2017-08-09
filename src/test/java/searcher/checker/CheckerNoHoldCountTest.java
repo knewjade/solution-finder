@@ -1,7 +1,7 @@
 package searcher.checker;
 
 import common.datastore.action.Action;
-import common.datastore.pieces.Pieces;
+import common.datastore.pieces.Blocks;
 import common.pattern.PiecesGenerator;
 import common.tree.AnalyzeTree;
 import core.action.candidate.Candidate;
@@ -36,7 +36,7 @@ class CheckerNoHoldCountTest {
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
         AnalyzeTree tree = new AnalyzeTree();
 
-        for (Pieces pieces : piecesGenerator) {
+        for (Blocks pieces : piecesGenerator) {
             List<Block> blocks = pieces.getBlocks();
             boolean result = checker.check(field, blocks, candidate, maxClearLine, maxDepth);
             tree.set(result, blocks);

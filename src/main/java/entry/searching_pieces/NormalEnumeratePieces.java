@@ -1,7 +1,7 @@
 package entry.searching_pieces;
 
-import common.datastore.pieces.LongPieces;
-import common.datastore.pieces.Pieces;
+import common.datastore.pieces.LongBlocks;
+import common.datastore.pieces.Blocks;
 import common.pattern.PiecesGenerator;
 
 import java.io.IOException;
@@ -25,39 +25,39 @@ public class NormalEnumeratePieces implements EnumeratePiecesCore {
     }
 
     @Override
-    public Set<LongPieces> enumerate() throws IOException {
+    public Set<LongBlocks> enumerate() throws IOException {
         assert counter == -1;
 
         int depth = generator.getDepth();
 
         AtomicInteger counter = new AtomicInteger();
-        HashSet<LongPieces> searchingPieces = create(depth, counter);
+        HashSet<LongBlocks> searchingPieces = create(depth, counter);
 
         this.counter = counter.get();
         return searchingPieces;
     }
 
-    private HashSet<LongPieces> create(int depth, AtomicInteger counter) {
+    private HashSet<LongBlocks> create(int depth, AtomicInteger counter) {
         if (maxDepth < depth)
             return createOverMinos(counter);
         else
             return createJustMinos(counter);
     }
 
-    private HashSet<LongPieces> createJustMinos(AtomicInteger counter) {
+    private HashSet<LongBlocks> createJustMinos(AtomicInteger counter) {
         return generator.stream()
                 .peek(pieces -> counter.incrementAndGet())
-                .map(Pieces::getBlockStream)
-                .map(LongPieces::new)
+                .map(Blocks::getBlockStream)
+                .map(LongBlocks::new)
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
-    private HashSet<LongPieces> createOverMinos(AtomicInteger counter) {
+    private HashSet<LongBlocks> createOverMinos(AtomicInteger counter) {
         return generator.stream()
                 .peek(pieces -> counter.incrementAndGet())
-                .map(Pieces::getBlockStream)
+                .map(Blocks::getBlockStream)
                 .map(stream -> stream.limit(maxDepth))
-                .map(LongPieces::new)
+                .map(LongBlocks::new)
                 .collect(Collectors.toCollection(HashSet::new));
     }
 

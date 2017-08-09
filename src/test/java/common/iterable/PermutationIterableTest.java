@@ -1,7 +1,7 @@
 package common.iterable;
 
 import com.google.common.collect.Iterables;
-import common.datastore.pieces.LongPieces;
+import common.datastore.pieces.LongBlocks;
 import core.mino.Block;
 import lib.Randoms;
 import org.assertj.core.util.Lists;
@@ -73,15 +73,15 @@ class PermutationIterableTest {
         ArrayList<Block> allBlocks = Lists.newArrayList(Iterables.concat(Block.valueList(), Block.valueList()));
         for (int pop = 1; pop <= 7; pop++) {
             PermutationIterable<Block> iterable = new PermutationIterable<>(allBlocks, pop);
-            HashSet<LongPieces> sets = StreamSupport.stream(iterable.spliterator(), false)
+            HashSet<LongBlocks> sets = StreamSupport.stream(iterable.spliterator(), false)
                     .map(Collection::stream)
-                    .map(LongPieces::new)
+                    .map(LongBlocks::new)
                     .collect(Collectors.toCollection(HashSet::new));
 
             // ランダムにサンプルを選択し、必ず列挙したセットの中にあることを確認
             for (int count = 0; count < 1000; count++) {
                 List<Block> sample = randoms.sample(allBlocks, pop);
-                LongPieces pieces = new LongPieces(sample);
+                LongBlocks pieces = new LongBlocks(sample);
                 assertThat(pieces).isIn(sets);
             }
         }

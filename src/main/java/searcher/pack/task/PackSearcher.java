@@ -14,8 +14,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PackSearcher {
     private final List<InOutPairField> inOutPairFields;
@@ -142,6 +144,33 @@ public class PackSearcher {
 
         // 結果を取得するまで待つ
         Optional<Result> result = submitTask.get();
+        assert result != null;
+
+        // 終了処理
+        forkJoinPool.shutdown();
+
+        return result;
+    }
+
+    public <T> T stream(Function<Stream<Result>, T> callback) throws InterruptedException, ExecutionException {
+        // 探索準備
+        MinoFieldMemento emptyMemento = MinoFieldMementoFactory.create();
+        ColumnField innerField = inOutPairFields.get(0).getInnerField();
+        PackingTask task = createPackingTask(sizedBit, emptyMemento, innerField);
+
+        // 探索
+        ForkJoinPool forkJoinPool = new ForkJoinPool();
+
+        ForkJoinTask<T> submitTask = forkJoinPool.submit(() -> {
+            // Streamは終端操作を実行するまで実際には計算を行わない
+            // そのため、終端操作をPool内でしなければ、Pool外のスレッド場で動くため注意が必要
+            // (終端操作をしなかった場合、Pool内ではStream自体の作成をして終了する)
+
+            return callback.apply(task.compute().parallel());
+        });
+
+        // 結果を取得するまで待つ
+        T result = submitTask.get();
         assert result != null;
 
         // 終了処理

@@ -1,15 +1,15 @@
 package common.pattern;
 
-import common.datastore.pieces.Pieces;
+import common.datastore.pieces.Blocks;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-class PiecesIterator implements Iterator<Pieces> {
+class PiecesIterator implements Iterator<Blocks> {
     private final List<String> patterns;
     private PiecesStreamBuilder currentBuilder;
-    private Iterator<Pieces> currentIterator;
+    private Iterator<Blocks> currentIterator;
     private int index;
 
     PiecesIterator(List<String> patterns) {
@@ -25,7 +25,7 @@ class PiecesIterator implements Iterator<Pieces> {
     }
 
     @Override
-    public Pieces next() {
+    public Blocks next() {
         if (!hasNext())
             throw new NoSuchElementException();
 

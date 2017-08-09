@@ -3,7 +3,7 @@ package entry.path;
 import common.buildup.BuildUp;
 import common.datastore.BlockCounter;
 import common.datastore.OperationWithKey;
-import common.datastore.pieces.Pieces;
+import common.datastore.pieces.Blocks;
 import common.iterable.CombinationIterable;
 import common.pattern.PiecesGenerator;
 import core.mino.Block;
@@ -27,7 +27,7 @@ public class ForPathSolutionFilter implements SolutionFilter {
 
         PiecesGenerator pieces = new PiecesGenerator(patterns);
         HashSet<BlockCounter> counters = StreamSupport.stream(pieces.spliterator(), true)
-                .map(Pieces::getBlocks)
+                .map(Blocks::getBlocks)
                 .map(BlockCounter::new)
                 .collect(Collectors.toCollection(HashSet::new));
 

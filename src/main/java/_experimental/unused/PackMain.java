@@ -1,10 +1,10 @@
 package _experimental.unused;
 
+import common.datastore.pieces.Blocks;
 import lib.Stopwatch;
 import common.comparator.OperationWithKeyComparator;
 import common.datastore.BlockCounter;
 import common.datastore.OperationWithKey;
-import common.datastore.pieces.Pieces;
 import common.iterable.CombinationIterable;
 import common.parser.OperationWithKeyInterpreter;
 import common.pattern.PiecesGenerator;
@@ -59,7 +59,7 @@ public class PackMain {
 
         PiecesGenerator pieces = new PiecesGenerator(allOnHold);
         HashSet<BlockCounter> counters = StreamSupport.stream(pieces.spliterator(), true)
-                .map(Pieces::getBlocks)
+                .map(Blocks::getBlocks)
                 .map(BlockCounter::new)
                 .collect(Collectors.toCollection(HashSet::new));
 
