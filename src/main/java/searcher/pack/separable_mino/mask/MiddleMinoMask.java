@@ -13,7 +13,7 @@ public class MiddleMinoMask implements MinoMask {
     public MiddleMinoMask(Mino mino, int y, long deleteKey) {
         MiddleField field = new MiddleField();
         x = -mino.getMinX();
-        field.putMino(mino, x, y);
+        field.put(mino, x, y);
         field.insertWhiteLineWithKey(deleteKey);
         this.low = field.getBoard(0);
         this.high = field.getBoard(1);

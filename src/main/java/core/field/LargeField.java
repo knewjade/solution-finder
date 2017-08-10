@@ -2,6 +2,7 @@ package core.field;
 
 import common.comparator.FieldComparator;
 import core.mino.Mino;
+import core.mino.Piece;
 
 // TODO: 実装する
 public class LargeField implements Field {
@@ -21,12 +22,27 @@ public class LargeField implements Field {
     }
 
     @Override
-    public void putMino(Mino mino, int x, int y) {
+    public void put(Mino mino, int x, int y) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void removeMino(Mino mino, int x, int y) {
+    public void put(Piece piece) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean canPut(Piece piece) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void remove(Mino mino, int x, int y) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void remove(Piece piece) {
         throw new UnsupportedOperationException();
     }
 
@@ -37,6 +53,11 @@ public class LargeField implements Field {
 
     @Override
     public boolean canReachOnHarddrop(Mino mino, int x, int y) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean canReachOnHarddrop(Piece piece) {
         throw new UnsupportedOperationException();
     }
 
@@ -66,7 +87,7 @@ public class LargeField implements Field {
     }
 
     @Override
-    public boolean canPutMino(Mino mino, int x, int y) {
+    public boolean canPut(Mino mino, int x, int y) {
         throw new UnsupportedOperationException();
     }
 

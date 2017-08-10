@@ -2,6 +2,7 @@ package core.field;
 
 import common.comparator.FieldComparator;
 import core.mino.Mino;
+import core.mino.Piece;
 
 /**
  * フィールドの高さ height <= 6 であること
@@ -44,20 +45,35 @@ public class SmallField implements Field {
     }
 
     @Override
-    public void putMino(Mino mino, int x, int y) {
+    public void put(Mino mino, int x, int y) {
         xBoard |= mino.getMask(x, y);
     }
 
     @Override
-    public void removeMino(Mino mino, int x, int y) {
+    public void put(Piece piece) {
+        merge(piece.getMinoField());
+    }
+
+    @Override
+    public boolean canPut(Piece piece) {
+        return canMerge(piece.getMinoField());
+    }
+
+    @Override
+    public void remove(Mino mino, int x, int y) {
         xBoard &= ~mino.getMask(x, y);
+    }
+
+    @Override
+    public void remove(Piece piece) {
+        reduce(piece.getMinoField());
     }
 
     @Override
     public int getYOnHarddrop(Mino mino, int x, int startY) {
         int min = -mino.getMinY();
         for (int y = startY - 1; min <= y; y--)
-            if (!canPutMino(mino, x, y))
+            if (!canPut(mino, x, y))
                 return y + 1;
         return min;
     }
@@ -66,9 +82,14 @@ public class SmallField implements Field {
     public boolean canReachOnHarddrop(Mino mino, int x, int startY) {
         int max = MAX_FIELD_HEIGHT - mino.getMinY();
         for (int y = startY + 1; y < max; y++)
-            if (!canPutMino(mino, x, y))
+            if (!canPut(mino, x, y))
                 return false;
         return true;
+    }
+
+    @Override
+    public boolean canReachOnHarddrop(Piece piece) {
+        return false;
     }
 
     private long getXMask(int x, int y) {
@@ -111,13 +132,13 @@ public class SmallField implements Field {
     }
 
     @Override
-    public boolean canPutMino(Mino mino, int x, int y) {
+    public boolean canPut(Mino mino, int x, int y) {
         return MAX_FIELD_HEIGHT + 2 <= y || (xBoard & mino.getMask(x, y)) == 0L;
     }
 
     @Override
     public boolean isOnGround(Mino mino, int x, int y) {
-        return y <= -mino.getMinY() || !canPutMino(mino, x, y - 1);
+        return y <= -mino.getMinY() || !canPut(mino, x, y - 1);
     }
 
     @Override
@@ -168,7 +189,9 @@ public class SmallField implements Field {
 
     @Override
     public long getBoard(int index) {
-        return xBoard;
+        if (index == 0)
+            return xBoard;
+        return 0L;
     }
 
     @Override

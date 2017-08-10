@@ -17,14 +17,14 @@ class MinoRotationTest {
 
     private int[] kicksLeft(String marks, Mino mino, int x, int y) {
         Field field = FieldFactory.createField(marks);
-        assert field.canPutMino(mino, x, y);
+        assert field.canPut(mino, x, y);
         Mino after = new Mino(mino.getBlock(), mino.getRotate().getLeftRotate());
         return minoRotation.getKicksWithLeftRotation(field, mino, after, x, y);
     }
 
     private int[] kicksRight(String marks, Mino mino, int x, int y) {
         Field field = FieldFactory.createField(marks);
-        assert field.canPutMino(mino, x, y);
+        assert field.canPut(mino, x, y);
         Mino after = new Mino(mino.getBlock(), mino.getRotate().getRightRotate());
         return minoRotation.getKicksWithRightRotation(field, mino, after, x, y);
     }

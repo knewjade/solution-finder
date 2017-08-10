@@ -219,7 +219,7 @@ public class Squares6x4Main {
                             .forEach(key -> {
                                 Field test = FieldFactory.createField(height);
                                 Mino mino = key.getMino();
-                                test.putMino(mino, key.getX(), key.getY());
+                                test.put(mino, key.getX(), key.getY());
                                 test.insertWhiteLineWithKey(key.getNeedDeletedKey());
                                 blockField.merge(test, mino.getBlock());
                             });

@@ -30,7 +30,7 @@ public class DeepdropCandidate implements Candidate<Action> {
             Mino mino = minoFactory.create(block, rotate);
             for (int x = -mino.getMinX(); x < FIELD_WIDTH - mino.getMaxX(); x++) {
                 for (int y = appearY - mino.getMaxY() - 1; -mino.getMinY() <= y; y--) {
-                    if (field.canPutMino(mino, x, y) && field.isOnGround(mino, x, y)) {
+                    if (field.canPut(mino, x, y) && field.isOnGround(mino, x, y)) {
                         Action action = minoShifter.createTransformedAction(block, x, y, rotate);
                         actions.add(action);
                     }

@@ -74,7 +74,7 @@ public class Main3 {
                         for (OperationWithKey key : operationWithKeys) {
                             Field test = FieldFactory.createField(maxClearLine);
                             Mino mino = key.getMino();
-                            test.putMino(mino, key.getX(), key.getY());
+                            test.put(mino, key.getX(), key.getY());
                             test.insertWhiteLineWithKey(key.getNeedDeletedKey());
                             blockField.merge(test, mino.getBlock());
 

@@ -1,10 +1,12 @@
 package core.mino;
 
-import core.srs.Rotate;
 import common.datastore.action.Action;
+import core.srs.Rotate;
 
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MinoShifter {
     private final EnumMap<Block, MinoTransform> transformers = new EnumMap<>(Block.class);
@@ -50,5 +52,14 @@ public class MinoShifter {
 
     public List<Action> enumerateSameOtherActions(Block block, int x, int y, Rotate rotate) {
         return transformers.get(block).enumerateOthers(x, y, rotate);
+    }
+
+    public Set<Rotate> getUniqueRotates(Block block) {
+        HashSet<Rotate> uniques = new HashSet<>();
+        for (Rotate rotate : Rotate.values()) {
+            Rotate newRotate = transformers.get(block).transformRotate(rotate);
+            uniques.add(newRotate);
+        }
+        return uniques;
     }
 }

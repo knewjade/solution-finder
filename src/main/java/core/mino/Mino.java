@@ -151,4 +151,12 @@ public class Mino {
         int slide = x - MASK_CENTER_X + (y - MASK_CENTER_Y) * 10;
         return 0 < slide ? mask << slide : mask >>> -slide;
     }
+
+    @Override
+    public String toString() {
+        return "Mino{" +
+                "block=" + block +
+                ", rotate=" + rotate +
+                '}';
+    }
 }

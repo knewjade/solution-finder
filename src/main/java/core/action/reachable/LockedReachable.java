@@ -78,19 +78,19 @@ public class LockedReachable implements Reachable {
 
         // 上に移動
         int upY = y + 1;
-        if (upY < appearY && field.canPutMino(mino, x, upY))
+        if (upY < appearY && field.canPut(mino, x, upY))
             if (check(field, mino, x, upY, From.None))
                 return true;
 
         // 左に移動
         int leftX = x - 1;
-        if (from != From.Left && -mino.getMinX() <= leftX && field.canPutMino(mino, leftX, y))
+        if (from != From.Left && -mino.getMinX() <= leftX && field.canPut(mino, leftX, y))
             if (check(field, mino, leftX, y, From.Right))
                 return true;
 
         // 右に移動
         int rightX = x + 1;
-        if (from != From.Right && rightX < FIELD_WIDTH - mino.getMaxX() && field.canPutMino(mino, rightX, y))
+        if (from != From.Right && rightX < FIELD_WIDTH - mino.getMaxX() && field.canPut(mino, rightX, y))
             if (check(field, mino, rightX, y, From.Left))
                 return true;
 
@@ -142,6 +142,6 @@ public class LockedReachable implements Reachable {
     }
 
     private boolean canPutMinoInField(Field field, Mino mino, int x, int y) {
-        return -mino.getMinX() <= x && x < FIELD_WIDTH - mino.getMaxX() && -mino.getMinY() <= y && field.canPutMino(mino, x, y);
+        return -mino.getMinX() <= x && x < FIELD_WIDTH - mino.getMaxX() && -mino.getMinY() <= y && field.canPut(mino, x, y);
     }
 }

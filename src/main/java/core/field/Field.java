@@ -1,6 +1,7 @@
 package core.field;
 
 import core.mino.Mino;
+import core.mino.Piece;
 
 public interface Field extends Comparable<Field> {
     // フィールドの最大高さを返却
@@ -12,17 +13,29 @@ public interface Field extends Comparable<Field> {
     // 指定した位置からブロックを取り除く
     void removeBlock(int x, int y);
 
-    // 指定した位置にミノをおく
-    void putMino(Mino mino, int x, int y);
+    // 指定した位置にミノの形にブロックをおく
+    void put(Mino mino, int x, int y);
 
-    // 指定した位置のブロックを消す
-    void removeMino(Mino mino, int x, int y);
+    // 指定した位置にピースの形にブロックをおく
+    void put(Piece piece);
+
+    // 指定した位置にピースをおく
+    boolean canPut(Piece piece);
+
+    // 指定した位置のミノの形でブロックを消す
+    void remove(Mino mino, int x, int y);
+
+    // 指定した位置のピースの形でブロックを消す
+    void remove(Piece piece);
 
     // 指定した位置からミノをharddropしたとき、接着するyを返却
     int getYOnHarddrop(Mino mino, int x, int y);
 
     // 一番上からharddropで指定した位置を通過するとき true を返却
     boolean canReachOnHarddrop(Mino mino, int x, int y);
+
+    // 一番上からharddropで指定した位置を通過するとき true を返却
+    boolean canReachOnHarddrop(Piece piece);
 
     // 指定した位置にブロックがないとき true を返却
     boolean isEmpty(int x, int y);
@@ -40,7 +53,7 @@ public interface Field extends Comparable<Field> {
     boolean isWallBetweenLeft(int x, int maxY);
 
     // 指定した位置にミノを置くことができるとき true を返却
-    boolean canPutMino(Mino mino, int x, int y);
+    boolean canPut(Mino mino, int x, int y);
 
     // 指定した位置のミノが接着できるとき true を返却
     boolean isOnGround(Mino mino, int x, int y);

@@ -12,7 +12,7 @@ public class SmallMinoMask implements MinoMask {
     public SmallMinoMask(Mino mino, int y, long deleteKey) {
         SmallField field = new SmallField();
         this.x = -mino.getMinX();
-        field.putMino(mino, x, y);
+        field.put(mino, x, y);
         field.insertWhiteLineWithKey(deleteKey);
         this.low = field.getBoard(0);
     }

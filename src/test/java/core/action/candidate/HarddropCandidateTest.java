@@ -143,7 +143,7 @@ class HarddropCandidateTest {
 
                             boolean canPut = field.isOnGround(mino, x, y) &&
                                     IntStream.range(y, height - mino.getMinY())
-                                            .allMatch(up -> field.canPutMino(mino, x, up));
+                                            .allMatch(up -> field.canPut(mino, x, up));
                             assertThat(actions.contains(action)).isEqualTo(canPut);
                         });
             }

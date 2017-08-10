@@ -24,7 +24,7 @@ public class OperationTransform {
 
             // 一番上と一番下のy座標を抽出
             Field vanilla = FieldFactory.createField(height);
-            vanilla.putMino(mino, x, y);
+            vanilla.put(mino, x, y);
             vanilla.insertWhiteLineWithKey(deleteKey);
             int lowerY = vanilla.getLowerY();
             int upperY = vanilla.getUpperYWith4Blocks();
@@ -41,7 +41,7 @@ public class OperationTransform {
             keys.add(operationWithKey);
 
             // 次のフィールドを作成
-            field.putMino(mino, x, y);
+            field.put(mino, x, y);
             field.insertBlackLineWithKey(deleteKey);
         }
         return keys;
@@ -66,7 +66,7 @@ public class OperationTransform {
 
             operations.add(new SimpleOperation(mino.getBlock(), mino.getRotate(), x, y));
 
-            field.putMino(mino, x, y);
+            field.put(mino, x, y);
             field.insertBlackLineWithKey(deleteKey);
         }
 

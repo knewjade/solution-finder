@@ -109,11 +109,11 @@ class DeepdropCandidateTest {
 
                             if (actions.contains(action)) {
                                 // おける
-                                assertThat(field.canPutMino(mino, x, y)).isTrue();
+                                assertThat(field.canPut(mino, x, y)).isTrue();
                                 assertThat(field.isOnGround(mino, x, y)).isTrue();
                             } else {
                                 // おけない
-                                assertThat(field.canPutMino(mino, x, y) && field.isOnGround(mino, x, y)).isFalse();
+                                assertThat(field.canPut(mino, x, y) && field.isOnGround(mino, x, y)).isFalse();
                             }
                         });
             }

@@ -25,14 +25,14 @@ class LockedReachableTest {
     private void success(String marks, Block block, Rotate rotate, int x, int y) {
         Field field = FieldFactory.createField(marks);
         Mino mino = new Mino(block, rotate);
-        assert field.canPutMino(mino, x, y);
+        assert field.canPut(mino, x, y);
         assertThat(reachable.checks(field, mino, x, y, 8)).isTrue();
     }
 
     private void fail(String marks, Block block, Rotate rotate, int x, int y) {
         Field field = FieldFactory.createField(marks);
         Mino mino = new Mino(block, rotate);
-        assert field.canPutMino(mino, x, y);
+        assert field.canPut(mino, x, y);
         assertThat(reachable.checks(field, mino, x, y, 8)).isFalse();
     }
 

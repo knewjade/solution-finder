@@ -2,6 +2,7 @@ package core.field;
 
 import common.comparator.FieldComparator;
 import core.mino.Mino;
+import core.mino.Piece;
 
 /**
  * フィールドの高さ height <= 12 であること
@@ -62,7 +63,7 @@ public class MiddleField implements Field {
     }
 
     @Override
-    public void putMino(Mino mino, int x, int y) {
+    public void put(Mino mino, int x, int y) {
         // Lowの更新が必要
         if (y + mino.getMinY() < FIELD_ROW_BOARDER_Y)
             xBoardLow |= mino.getMask(x, y);
@@ -73,7 +74,17 @@ public class MiddleField implements Field {
     }
 
     @Override
-    public void removeMino(Mino mino, int x, int y) {
+    public void put(Piece piece) {
+        merge(piece.getMinoField());
+    }
+
+    @Override
+    public boolean canPut(Piece piece) {
+        return canMerge(piece.getMinoField());
+    }
+
+    @Override
+    public void remove(Mino mino, int x, int y) {
         // Lowの更新が必要
         if (y + mino.getMinY() < FIELD_ROW_BOARDER_Y)
             xBoardLow &= ~mino.getMask(x, y);
@@ -84,21 +95,32 @@ public class MiddleField implements Field {
     }
 
     @Override
+    public void remove(Piece piece) {
+        reduce(piece.getMinoField());
+    }
+
+    @Override
     public int getYOnHarddrop(Mino mino, int x, int startY) {
         int min = -mino.getMinY();
         for (int y = startY - 1; min <= y; y--)
-            if (!canPutMino(mino, x, y))
+            if (!canPut(mino, x, y))
                 return y + 1;
         return min;
     }
 
     @Override
-    public boolean canReachOnHarddrop(Mino mino, int x, int startY) {
+    public boolean canReachOnHarddrop(Mino mino, int x, int y) {
         int max = MAX_FIELD_HEIGHT - mino.getMinY();
-        for (int y = startY + 1; y < max; y++)
-            if (!canPutMino(mino, x, y))
+        for (int yIndex = y + 1; yIndex < max; yIndex++)
+            if (!canPut(mino, x, yIndex))
                 return false;
         return true;
+    }
+
+    @Override
+    public boolean canReachOnHarddrop(Piece piece) {
+        Field collider = piece.getHarddropCollider();
+        return canMerge(collider);
     }
 
     @Override
@@ -183,7 +205,7 @@ public class MiddleField implements Field {
     }
 
     @Override
-    public boolean canPutMino(Mino mino, int x, int y) {
+    public boolean canPut(Mino mino, int x, int y) {
         if (MAX_FIELD_HEIGHT + 2 <= y) {
             return true;
         } else if (y + mino.getMaxY() < FIELD_ROW_BOARDER_Y) {
@@ -200,7 +222,7 @@ public class MiddleField implements Field {
 
     @Override
     public boolean isOnGround(Mino mino, int x, int y) {
-        return y <= -mino.getMinY() || !canPutMino(mino, x, y - 1);
+        return y <= -mino.getMinY() || !canPut(mino, x, y - 1);
     }
 
     @Override
@@ -291,10 +313,14 @@ public class MiddleField implements Field {
 
     @Override
     public long getBoard(int index) {
-        assert 0 <= index && index < 2 : index;
-        if (index == 0)
-            return xBoardLow;
-        return xBoardHigh;
+        switch (index) {
+            case 0:
+                return xBoardLow;
+            case 1:
+                return xBoardHigh;
+            default:
+                return 0L;
+        }
     }
 
     @Override
@@ -331,7 +357,7 @@ public class MiddleField implements Field {
         assert 0 < otherBoardCount && otherBoardCount <= 2;
 
         if (otherBoardCount == 1) {
-            return (xBoardLow & other.getBoard(0)) == 0L && xBoardHigh == 0L;
+            return (xBoardLow & other.getBoard(0)) == 0L;
         } else {
             return (xBoardLow & other.getBoard(0)) == 0L && (xBoardHigh & other.getBoard(1)) == 0L;
         }

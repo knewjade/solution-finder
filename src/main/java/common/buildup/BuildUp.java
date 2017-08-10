@@ -32,8 +32,8 @@ public class BuildUp {
             int x = operationWithKey.getX();
             int y = originalY - deletedLines;
 
-            if (field.isOnGround(mino, x, y) && field.canPutMino(mino, x, y) && reachable.checks(field, mino, x, y, height)) {
-                field.putMino(mino, x, y);
+            if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height)) {
+                field.put(mino, x, y);
                 field.insertBlackLineWithKey(deleteKey);
             } else {
                 return false;
@@ -80,12 +80,12 @@ public class BuildUp {
             int x = key.getX();
             int y = originalY - deletedLines;
 
-            if (field.isOnGround(mino, x, y) && field.canPutMino(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY())) {
+            if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY())) {
                 if (operationWithKeys.isEmpty())
                     return true;
 
                 Field nextField = field.freeze(height);
-                nextField.putMino(mino, x, y);
+                nextField.put(mino, x, y);
                 nextField.insertBlackLineWithKey(deleteKey);
 
                 boolean exists = existsValidBuildPatternRecursive(nextField, operationWithKeys, height, reachable);
@@ -180,12 +180,12 @@ public class BuildUp {
             int x = key.getX();
             int y = originalY - deletedLines;
 
-            if (field.isOnGround(mino, x, y) && field.canPutMino(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY())) {
+            if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY())) {
                 if (blocks.size() == depth + 1)
                     return true;
 
                 Field nextField = field.freeze(height);
-                nextField.putMino(mino, x, y);
+                nextField.put(mino, x, y);
                 nextField.insertBlackLineWithKey(deleteKey);
 
                 boolean exists = existsValidByOrder(nextField, eachBlocks, blocks, height, reachable, depth + 1);

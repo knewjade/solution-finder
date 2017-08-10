@@ -42,7 +42,7 @@ public class LimitIterationCandidate implements Candidate<Action> {
             Mino mino = minoFactory.create(block, rotate);
             for (int x = -mino.getMinX(); x < FIELD_WIDTH - mino.getMaxX(); x++) {
                 for (int y = appearY - mino.getMaxY() - 1; -mino.getMinY() <= y; y--) {
-                    if (field.canPutMino(mino, x, y) && field.isOnGround(mino, x, y)) {
+                    if (field.canPut(mino, x, y) && field.isOnGround(mino, x, y)) {
                         if (check(field, mino, x, y, From.None, 0)) {
                             Action action = minoShifter.createTransformedAction(block, x, y, rotate);
                             actions.add(action);
@@ -70,19 +70,19 @@ public class LimitIterationCandidate implements Candidate<Action> {
 
         // 上に移動
         int upY = y + 1;
-        if (upY < appearY && field.canPutMino(mino, x, upY))
+        if (upY < appearY && field.canPut(mino, x, upY))
             if (check(field, mino, x, upY, From.None, iteration + 1))
                 return true;
 
         // 左に移動
         int leftX = x - 1;
-        if (from != From.Left && 0 <= leftX && field.canPutMino(mino, leftX, y))
+        if (from != From.Left && 0 <= leftX && field.canPut(mino, leftX, y))
             if (check(field, mino, leftX, y, From.Right, iteration + 1))
                 return true;
 
         // 右に移動
         int rightX = x + 1;
-        if (from != From.Right && rightX < FIELD_WIDTH && field.canPutMino(mino, rightX, y))
+        if (from != From.Right && rightX < FIELD_WIDTH && field.canPut(mino, rightX, y))
             if (check(field, mino, rightX, y, From.Left, iteration + 1))
                 return true;
 
@@ -127,6 +127,6 @@ public class LimitIterationCandidate implements Candidate<Action> {
     }
 
     private boolean canPutMinoInField(Field field, Mino mino, int x, int y) {
-        return -mino.getMinX() <= x && x < FIELD_WIDTH - mino.getMaxX() && -mino.getMinY() <= y && field.canPutMino(mino, x, y);
+        return -mino.getMinX() <= x && x < FIELD_WIDTH - mino.getMaxX() && -mino.getMinY() <= y && field.canPut(mino, x, y);
     }
 }

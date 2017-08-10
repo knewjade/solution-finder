@@ -67,7 +67,7 @@ public class MinoRotation {
         for (int[] offset : offsets) {
             int toX = x + offset[0];
             int toY = y + offset[1];
-            if (minX <= toX && toX < maxX && minY <= toY && field.canPutMino(after, toX, toY))
+            if (minX <= toX && toX < maxX && minY <= toY && field.canPut(after, toX, toY))
                 return offset;
         }
         return null;

@@ -142,12 +142,12 @@ class LockedCandidateTest {
 
                             if (actions.contains(action)) {
                                 // おける
-                                assertThat(field.canPutMino(mino, x, y)).isTrue();
+                                assertThat(field.canPut(mino, x, y)).isTrue();
                                 assertThat(field.isOnGround(mino, x, y)).isTrue();
                                 assertThat(reachable.checks(field, mino, x, y, height)).isTrue();
                             } else {
                                 // おけない
-                                boolean canPut = field.canPutMino(mino, x, y) &&
+                                boolean canPut = field.canPut(mino, x, y) &&
                                         field.isOnGround(mino, x, y) &&
                                         reachable.checks(field, mino, x, y, height);
                                 assertThat(canPut).isFalse();

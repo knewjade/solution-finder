@@ -2,6 +2,7 @@ package core.field;
 
 import core.mino.Block;
 import core.mino.Mino;
+import core.mino.Piece;
 import core.srs.Rotate;
 import lib.Randoms;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class SmallFieldTest {
     private static final int FIELD_WIDTH = 10;
+
+    private ArrayList<Piece> createAllPieces(int fieldHeight) {
+        ArrayList<Piece> pieces = new ArrayList<>();
+        for (Block block : Block.values()) {
+            for (Rotate rotate : Rotate.values()) {
+                Mino mino = new Mino(block, rotate);
+                for (int y = -mino.getMinY(); y < fieldHeight - mino.getMaxY(); y++) {
+                    for (int x = -mino.getMinX(); x < FIELD_WIDTH - mino.getMaxX(); x++) {
+                        pieces.add(new Piece(mino, x, y, fieldHeight));
+                    }
+                }
+            }
+        }
+        return pieces;
+    }
+
+    private SmallField createRandomSmallField(Randoms randoms) {
+        return new SmallField(randoms.field(6, 8).getBoard(0));
+    }
 
     @Test
     void testGetMaxFieldHeight() throws Exception {
@@ -32,14 +52,45 @@ class SmallFieldTest {
     @Test
     void testPutAndRemoveMino() throws Exception {
         Field field = FieldFactory.createSmallField();
-        field.putMino(new Mino(Block.T, Rotate.Spawn), 1, 0);
+        field.put(new Mino(Block.T, Rotate.Spawn), 1, 0);
         assertThat(field.isEmpty(0, 0)).isFalse();
         assertThat(field.isEmpty(1, 0)).isFalse();
         assertThat(field.isEmpty(2, 0)).isFalse();
         assertThat(field.isEmpty(1, 1)).isFalse();
 
-        field.removeMino(new Mino(Block.T, Rotate.Spawn), 1, 0);
+        field.remove(new Mino(Block.T, Rotate.Spawn), 1, 0);
         assertThat(field.isPerfect()).isTrue();
+    }
+
+    @Test
+    void testPutAndRemovePiece() throws Exception {
+        SmallField field = FieldFactory.createSmallField();
+        int maxFieldHeight = field.getMaxFieldHeight();
+
+        ArrayList<Piece> pieces = createAllPieces(maxFieldHeight);
+        for (Piece piece : pieces) {
+            // Initialize
+            Mino mino = piece.getMino();
+            int x = piece.getX();
+            int y = piece.getY();
+
+            // Expect
+            SmallField expected = FieldFactory.createSmallField();
+            expected.put(mino, x, y);
+
+            // Test
+            field.put(piece);
+
+            assertThat(field)
+                    .as("%s (%d, %d)", mino, x, y)
+                    .isEqualTo(expected);
+
+            field.remove(piece);
+
+            assertThat(field.isPerfect())
+                    .as("%s (%d, %d)", mino, x, y)
+                    .isTrue();
+        }
     }
 
     @Test
@@ -66,6 +117,25 @@ class SmallFieldTest {
         assertThat(field.canReachOnHarddrop(new Mino(Block.T, Rotate.Spawn), 1, 4)).isTrue();
         assertThat(field.canReachOnHarddrop(new Mino(Block.T, Rotate.Spawn), 1, 3)).isTrue();
         assertThat(field.canReachOnHarddrop(new Mino(Block.T, Rotate.Spawn), 1, 1)).isFalse();
+    }
+
+
+    @Test
+    void testCanReachOnHarddrop2() throws Exception {
+        Randoms randoms = new Randoms();
+        SmallField field = createRandomSmallField(randoms);
+        String string = FieldView.toString(field);
+
+        ArrayList<Piece> pieces = createAllPieces(field.getMaxFieldHeight());
+        for (Piece piece : pieces) {
+            Mino mino = piece.getMino();
+            int x = piece.getX();
+            int y = piece.getY();
+
+            assertThat(field.canReachOnHarddrop(piece))
+                    .as(string + piece.toString())
+                    .isEqualTo(field.canPut(mino, x, y) && field.canReachOnHarddrop(mino, x, y));
+        }
     }
 
     @Test
@@ -157,15 +227,15 @@ class SmallFieldTest {
                 "";
         Field field = FieldFactory.createSmallField(marks);
 
-        assertThat(field.canPutMino(new Mino(Block.T, Rotate.Spawn), 5, 4)).isTrue();
-        assertThat(field.canPutMino(new Mino(Block.T, Rotate.Right), 1, 1)).isTrue();
-        assertThat(field.canPutMino(new Mino(Block.T, Rotate.Reverse), 1, 3)).isTrue();
-        assertThat(field.canPutMino(new Mino(Block.T, Rotate.Left), 3, 1)).isTrue();
+        assertThat(field.canPut(new Mino(Block.T, Rotate.Spawn), 5, 4)).isTrue();
+        assertThat(field.canPut(new Mino(Block.T, Rotate.Right), 1, 1)).isTrue();
+        assertThat(field.canPut(new Mino(Block.T, Rotate.Reverse), 1, 3)).isTrue();
+        assertThat(field.canPut(new Mino(Block.T, Rotate.Left), 3, 1)).isTrue();
 
-        assertThat(field.canPutMino(new Mino(Block.T, Rotate.Spawn), 3, 0)).isFalse();
-        assertThat(field.canPutMino(new Mino(Block.T, Rotate.Right), 0, 1)).isFalse();
-        assertThat(field.canPutMino(new Mino(Block.T, Rotate.Reverse), 1, 1)).isFalse();
-        assertThat(field.canPutMino(new Mino(Block.T, Rotate.Left), 1, 1)).isFalse();
+        assertThat(field.canPut(new Mino(Block.T, Rotate.Spawn), 3, 0)).isFalse();
+        assertThat(field.canPut(new Mino(Block.T, Rotate.Right), 0, 1)).isFalse();
+        assertThat(field.canPut(new Mino(Block.T, Rotate.Reverse), 1, 1)).isFalse();
+        assertThat(field.canPut(new Mino(Block.T, Rotate.Left), 1, 1)).isFalse();
     }
 
     @Test
@@ -179,11 +249,29 @@ class SmallFieldTest {
                 "XXXXXXXX_X";
         Field field = FieldFactory.createSmallField(marks);
 
-        assertThat(field.canPutMino(new Mino(Block.I, Rotate.Left), 8, 1)).isTrue();
-        assertThat(field.canPutMino(new Mino(Block.I, Rotate.Left), 8, 6)).isTrue();
-        assertThat(field.canPutMino(new Mino(Block.I, Rotate.Left), 8, 7)).isTrue();
-        assertThat(field.canPutMino(new Mino(Block.I, Rotate.Left), 8, 8)).isTrue();
-        assertThat(field.canPutMino(new Mino(Block.I, Rotate.Left), 8, 9)).isTrue();
+        assertThat(field.canPut(new Mino(Block.I, Rotate.Left), 8, 1)).isTrue();
+        assertThat(field.canPut(new Mino(Block.I, Rotate.Left), 8, 6)).isTrue();
+        assertThat(field.canPut(new Mino(Block.I, Rotate.Left), 8, 7)).isTrue();
+        assertThat(field.canPut(new Mino(Block.I, Rotate.Left), 8, 8)).isTrue();
+        assertThat(field.canPut(new Mino(Block.I, Rotate.Left), 8, 9)).isTrue();
+    }
+
+    @Test
+    void testCanPutPiece() {
+        Randoms randoms = new Randoms();
+        SmallField field = createRandomSmallField(randoms);
+        int maxFieldHeight = field.getMaxFieldHeight();
+
+        ArrayList<Piece> pieces = createAllPieces(maxFieldHeight);
+        for (Piece piece : pieces) {
+            Mino mino = piece.getMino();
+            int x = piece.getX();
+            int y = piece.getY();
+
+            assertThat(field.canPut(piece))
+                    .as("%s (%d, %d)", mino, x, y)
+                    .isEqualTo(field.canPut(mino, x, y));
+        }
     }
 
     @Test
@@ -364,10 +452,15 @@ class SmallFieldTest {
                 "X_________" +
                 "X_________" +
                 "";
-        Field field = FieldFactory.createSmallField(marks);
+        SmallField field = FieldFactory.createSmallField(marks);
 
         assertThat(field.getBoardCount()).isEqualTo(1);
-        assertThat(field.getBoard(0)).isEqualTo(0x40100401L);
+        assertThat(field.getBoard(0))
+                .isEqualTo(0x40100401L)
+                .isEqualTo(field.getXBoard());
+
+        for (int index = 1; index < 100; index++)
+            assertThat(field.getBoard(index)).isEqualTo(0L);
     }
 
     @Test

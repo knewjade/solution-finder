@@ -75,7 +75,7 @@ public class MinoBuildingMain {
                         for (Operation operation : operations) {
                             Block block = operation.getBlock();
                             Rotate rotate = operation.getRotate();
-                            field1.putMino(minoFactory.create(block, rotate), operation.getX(), operation.getY());
+                            field1.put(minoFactory.create(block, rotate), operation.getX(), operation.getY());
                         }
                         return field1;
                     })

@@ -7,7 +7,8 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.stream.Stream;
 
-// 1blockにつき256コまで
+// 1blockにつき127コまで
+// 8bit中7bitをカウンターとして使わない（最上位bitは判定に使うため、個数の保持には使わない）
 public class BlockCounter {
     private static final long[] SLIDE_MASK = new long[]{1L, 1L << 8, 1L << 16, 1L << 24, 1L << 32, 1L << 40, 1L << 48};
 
@@ -94,5 +95,11 @@ public class BlockCounter {
     @Override
     public String toString() {
         return "BlockCounter" + getEnumMap();
+    }
+
+    public boolean containsAll(BlockCounter child) {
+        long difference = this.counter - child.counter;
+        // 各ブロックの最上位ビットが1のとき（繰り下がり）が発生していない時true
+        return (difference & 0x80808080808080L) == 0L;
     }
 }

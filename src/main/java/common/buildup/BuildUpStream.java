@@ -67,13 +67,13 @@ public class BuildUpStream {
             int x = key.getX();
             int y = originalY - deletedLines;
 
-            if (field.isOnGround(mino, x, y) && field.canPutMino(mino, x, y) && reachable.checks(field, mino, x, y, height)) {
+            if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height)) {
                 if (operationWithKeys.isEmpty()) {
                     // 解をみつけたとき
                     solutions.accept(new ArrayList<>(currentOperations));
                 } else {
                     Field nextField = field.freeze(height);
-                    nextField.putMino(mino, x, y);
+                    nextField.put(mino, x, y);
                     nextField.insertBlackLineWithKey(deleteKey);
 
                     existsValidBuildPatternRecursive(nextField, operationWithKeys);
