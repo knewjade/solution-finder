@@ -36,7 +36,9 @@ public class CheckerUsingHold<T extends Action> implements Checker<T> {
         dataPool.initFirst();
         dataPool.addOrder(new DepthOrder(freeze, pieces[0], maxClearLine - deleteLine, maxDepth));
 
+        int count = 0;
         while (!dataPool.getNexts().isEmpty() && dataPool.getResults().isEmpty()) {
+            count += 1;
             Order order = dataPool.getNexts().pollLast();
             int depth = order.getHistory().getNextIndex() + 1;
             boolean isLast = depth == maxDepth;
@@ -47,6 +49,7 @@ public class CheckerUsingHold<T extends Action> implements Checker<T> {
                 searcherCore.stepWhenNoNext(candidate, order, isLast);
             }
         }
+        System.out.println(count);
 
         return !dataPool.getResults().isEmpty();
     }

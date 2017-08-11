@@ -4,41 +4,48 @@ import common.datastore.pieces.Blocks;
 import common.datastore.pieces.LongBlocks;
 import common.iterable.PermutationIterable;
 import core.mino.Block;
+import lib.MyIterables;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 class PiecesStreamBuilder {
-    private final List<Integer> depths = new ArrayList<>();
-    private final List<List<List<Block>>> combinations = new ArrayList<>();
+    private final List<Integer> depths;
+    private final List<List<List<Block>>> combinations;
     private final int lastIndex;
     private Stream.Builder<Blocks> builder = null;
 
     PiecesStreamBuilder(String pattern) {
-        String[] splits = pattern.split(",");
+        int length = pattern.split(",").length;
 
-        for (String split : splits) {
-            Optional<PatternElement> optional = PatternElement.parseWithoutCheck(split);
+        // String -> PatternElement
+        List<PatternElement> elements = Arrays.stream(pattern.split(","))
+                .map(PatternElement::parseWithoutCheck)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+        assert elements.size() == length;
 
-            assert optional.isPresent();
+        this.depths = elements.stream()
+                .map(PatternElement::getPopCount)
+                .collect(Collectors.toList());
+        assert depths.size() == length;
 
-            PatternElement element = optional.get();
+        this.combinations = IntStream.range(0, length)
+                .mapToObj(index -> {
+                    PatternElement element = elements.get(index);
+                    Integer popCount = depths.get(index);
+                    List<Block> blocks = element.getBlocks();
+                    Iterable<List<Block>> iterable = new PermutationIterable<>(blocks, popCount);
+                    return MyIterables.toList(iterable);
+                })
+                .collect(Collectors.toList());
+        assert depths.size() == length;
 
-            int popCount = element.getPopCount();
-            depths.add(popCount);
-
-
-            List<Block> blocks = element.getBlocks();
-            ArrayList<List<Block>> combination = new ArrayList<>();
-            for (List<Block> blockList : new PermutationIterable<>(blocks, popCount))
-                combination.add(blockList);
-
-            combinations.add(combination);
-        }
-
-        this.lastIndex = combinations.size() - 1;
+        this.lastIndex = length - 1;
     }
 
     int getDepths() {

@@ -1,21 +1,24 @@
 package searcher.checker;
 
-import searcher.common.DataPool;
+import common.comparator.DepthOrderComparator;
 import common.datastore.Result;
 import common.datastore.order.Order;
+import searcher.common.DataPool;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.TreeSet;
 
 public class CheckerDataPool implements DataPool {
     private TreeSet<Order> nexts;
     private TreeSet<Order> existsCheck;
     private ArrayList<Result> results;
+    private final Comparator<Order> comparator = new DepthOrderComparator();
 
     void initFirst() {
         this.results = new ArrayList<>();
-        this.nexts = new TreeSet<>();
-        this.existsCheck = new TreeSet<>();
+        this.nexts = new TreeSet<>(comparator);
+        this.existsCheck = new TreeSet<>(comparator);
     }
 
     @Override

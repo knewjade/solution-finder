@@ -1,7 +1,6 @@
 package common.comparator;
 
 import common.datastore.order.Order;
-import core.column_field.ColumnField;
 import core.mino.Block;
 
 import java.util.Comparator;

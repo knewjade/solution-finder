@@ -80,7 +80,7 @@ public class CheckmateUsingHoldReuse<T extends Action> implements Checkmate<T> {
             }
         }
 
-        dataPool.initFirst();
+        dataPool.resetResults();
 
         for (int depth = startDepth; depth <= maxDepth; depth++) {
             dataPool.initEachDepth();
