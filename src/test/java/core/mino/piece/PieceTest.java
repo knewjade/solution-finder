@@ -1,5 +1,8 @@
-package core.mino;
+package core.mino.piece;
 
+import core.mino.Block;
+import core.mino.Mino;
+import core.mino.piece.Piece;
 import core.srs.Rotate;
 import org.junit.jupiter.api.Test;
 

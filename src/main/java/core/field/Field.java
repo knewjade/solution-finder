@@ -1,7 +1,7 @@
 package core.field;
 
 import core.mino.Mino;
-import core.mino.Piece;
+import core.mino.piece.Piece;
 
 public interface Field extends Comparable<Field> {
     // フィールドの最大高さを返却

@@ -1,12 +1,15 @@
-package core.mino;
+package core.mino.piece;
 
 import common.ActionParser;
 import core.field.Field;
 import core.field.FieldFactory;
+import core.mino.Block;
+import core.mino.Mino;
 import core.srs.Rotate;
 
+// TODO: write unittest
 public class Piece {
-    public static final Piece EMPTY_PIECE = new Piece();
+    static final Piece EMPTY_PIECE = new Piece();
 
     private final Mino mino;
     private final int x;

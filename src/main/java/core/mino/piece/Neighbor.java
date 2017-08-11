@@ -1,14 +1,11 @@
-package core.mino;
-
-import core.srs.Rotate;
+package core.mino.piece;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+// TODO: write unittest
 public class Neighbor {
     public static final Neighbor EMPTY_NEIGHBOR = new Neighbor(Piece.EMPTY_PIECE);
-    public static final List<Rotate> ROTATES_PRIORITY = Collections.unmodifiableList(Rotate.valueList());
 
     private boolean isValid(Neighbor neighbor) {
         return !EMPTY_NEIGHBOR.equals(neighbor);
@@ -32,9 +29,6 @@ public class Neighbor {
     void updateUp(Neighbor neighbor) {
         if (isValid(neighbor))
             nextMovesSources.add(neighbor);
-    }
-
-    void updateDown(Neighbor neighbor) {
     }
 
     void updateLeft(Neighbor neighbor) {

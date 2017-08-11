@@ -4,6 +4,10 @@ import common.datastore.action.Action;
 import core.action.candidate.Candidate;
 import core.field.Field;
 import core.mino.*;
+import core.mino.piece.Neighbor;
+import core.mino.piece.Neighbors;
+import core.mino.piece.Piece;
+import core.mino.piece.PieceFactory;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
 
@@ -30,7 +34,7 @@ public class LockedCandidate2 implements Candidate<Neighbor> {
     public LockedCandidate2(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, PieceFactory pieceFactory) {
         this.minoFactory = minoFactory;
         this.minoShifter = minoShifter;
-        this.neighbors = new Neighbors(minoFactory, minoShifter, minoRotation, pieceFactory);
+        this.neighbors = new Neighbors(minoFactory, minoRotation, pieceFactory);
     }
 
     @Override

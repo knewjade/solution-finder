@@ -8,6 +8,8 @@ import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
 import core.mino.*;
+import core.mino.piece.Neighbor;
+import core.mino.piece.PieceFactory;
 import core.srs.MinoRotation;
 import lib.Randoms;
 import lib.Stopwatch;

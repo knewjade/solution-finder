@@ -1,10 +1,17 @@
-package core.mino;
+package core.mino.piece;
 
 import common.datastore.Pair;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
 import core.field.MiddleField;
+import core.mino.Block;
+import core.mino.Mino;
+import core.mino.MinoFactory;
+import core.mino.MinoShifter;
+import core.mino.piece.Neighbor;
+import core.mino.piece.Neighbors;
+import core.mino.piece.PieceFactory;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
 import lib.BooleanWalker;
@@ -24,7 +31,7 @@ class PieceFactoryTest {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = new MinoRotation();
-        Neighbors neighbors = new Neighbors(minoFactory, minoShifter, minoRotation, pieceFactory);
+        Neighbors neighbors = new Neighbors(minoFactory, minoRotation, pieceFactory);
         Neighbor neighbor = neighbors.get(Block.I, Rotate.Spawn, 1, 0);
         System.out.println(neighbor);
     }

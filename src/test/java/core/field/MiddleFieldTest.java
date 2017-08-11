@@ -2,7 +2,7 @@ package core.field;
 
 import core.mino.Block;
 import core.mino.Mino;
-import core.mino.Piece;
+import core.mino.piece.Piece;
 import core.srs.Rotate;
 import lib.Randoms;
 import org.junit.jupiter.api.Test;

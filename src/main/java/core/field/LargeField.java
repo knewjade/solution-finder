@@ -1,8 +1,7 @@
 package core.field;
 
-import common.comparator.FieldComparator;
 import core.mino.Mino;
-import core.mino.Piece;
+import core.mino.piece.Piece;
 
 // TODO: 実装する
 public class LargeField implements Field {
