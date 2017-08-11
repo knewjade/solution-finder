@@ -43,14 +43,14 @@ public class MinoShifter {
     }
 
     public Action createTransformedAction(Block block, Action action) {
-        return createTransformedAction(block, action.getX(), action.getY(), action.getRotate());
+        return createTransformedAction(block, action.getRotate(), action.getX(), action.getY());
     }
 
-    public Action createTransformedAction(Block block, int x, int y, Rotate rotate) {
+    public Action createTransformedAction(Block block, Rotate rotate, int x, int y) {
         return transformers.get(block).transform(x, y, rotate);
     }
 
-    public List<Action> enumerateSameOtherActions(Block block, int x, int y, Rotate rotate) {
+    public List<Action> enumerateSameOtherActions(Block block, Rotate rotate, int x, int y) {
         return transformers.get(block).enumerateOthers(x, y, rotate);
     }
 

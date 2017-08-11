@@ -89,7 +89,8 @@ public class SmallField implements Field {
 
     @Override
     public boolean canReachOnHarddrop(Piece piece) {
-        return false;
+        Field collider = piece.getHarddropCollider();
+        return canMerge(collider);
     }
 
     private long getXMask(int x, int y) {

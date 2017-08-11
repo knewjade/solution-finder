@@ -48,22 +48,22 @@ class MinoShifterTest {
         @Test
         void enumerateSameOtherActions() throws Exception {
             MinoShifter shifter = new MinoShifter();
-            List<Action> fromSpawn = shifter.enumerateSameOtherActions(Block.I, 1, 0, Rotate.Spawn);
+            List<Action> fromSpawn = shifter.enumerateSameOtherActions(Block.I, Rotate.Spawn, 1, 0);
             assertThat(fromSpawn)
                     .hasSize(1)
                     .contains(MinimalAction.create(2, 0, Rotate.Reverse));
 
-            List<Action> fromReverse = shifter.enumerateSameOtherActions(Block.I, 2, 0, Rotate.Reverse);
+            List<Action> fromReverse = shifter.enumerateSameOtherActions(Block.I, Rotate.Reverse, 2, 0);
             assertThat(fromReverse)
                     .hasSize(1)
                     .contains(MinimalAction.create(1, 0, Rotate.Spawn));
 
-            List<Action> fromLeft = shifter.enumerateSameOtherActions(Block.I, 0, 1, Rotate.Left);
+            List<Action> fromLeft = shifter.enumerateSameOtherActions(Block.I, Rotate.Left, 0, 1);
             assertThat(fromLeft)
                     .hasSize(1)
                     .contains(MinimalAction.create(0, 2, Rotate.Right));
 
-            List<Action> fromRight = shifter.enumerateSameOtherActions(Block.I, 0, 2, Rotate.Right);
+            List<Action> fromRight = shifter.enumerateSameOtherActions(Block.I, Rotate.Right, 0, 2);
             assertThat(fromRight)
                     .hasSize(1)
                     .contains(MinimalAction.create(0, 1, Rotate.Left));
@@ -75,16 +75,16 @@ class MinoShifterTest {
         @Test
         void createTransformedAction() throws Exception {
             MinoShifter shifter = new MinoShifter();
-            Action fromSpawn = shifter.createTransformedAction(Block.S, 1, 0, Rotate.Spawn);
+            Action fromSpawn = shifter.createTransformedAction(Block.S, Rotate.Spawn, 1, 0);
             assertThat(fromSpawn).isEqualTo(MinimalAction.create(1, 0, Rotate.Spawn));
 
-            Action fromReverse = shifter.createTransformedAction(Block.S, 1, 1, Rotate.Reverse);
+            Action fromReverse = shifter.createTransformedAction(Block.S, Rotate.Reverse, 1, 1);
             assertThat(fromReverse).isEqualTo(MinimalAction.create(1, 0, Rotate.Spawn));
 
-            Action fromLeft = shifter.createTransformedAction(Block.S, 1, 1, Rotate.Left);
+            Action fromLeft = shifter.createTransformedAction(Block.S, Rotate.Left, 1, 1);
             assertThat(fromLeft).isEqualTo(MinimalAction.create(1, 1, Rotate.Left));
 
-            Action fromRight = shifter.createTransformedAction(Block.S, 0, 1, Rotate.Right);
+            Action fromRight = shifter.createTransformedAction(Block.S, Rotate.Right, 0, 1);
             assertThat(fromRight).isEqualTo(MinimalAction.create(1, 1, Rotate.Left));
         }
 
@@ -107,22 +107,22 @@ class MinoShifterTest {
         @Test
         void enumerateSameOtherActions() throws Exception {
             MinoShifter shifter = new MinoShifter();
-            List<Action> fromSpawn = shifter.enumerateSameOtherActions(Block.S, 1, 0, Rotate.Spawn);
+            List<Action> fromSpawn = shifter.enumerateSameOtherActions(Block.S, Rotate.Spawn, 1, 0);
             assertThat(fromSpawn)
                     .hasSize(1)
                     .contains(MinimalAction.create(1, 1, Rotate.Reverse));
 
-            List<Action> fromReverse = shifter.enumerateSameOtherActions(Block.S, 1, 1, Rotate.Reverse);
+            List<Action> fromReverse = shifter.enumerateSameOtherActions(Block.S, Rotate.Reverse, 1, 1);
             assertThat(fromReverse)
                     .hasSize(1)
                     .contains(MinimalAction.create(1, 0, Rotate.Spawn));
 
-            List<Action> fromLeft = shifter.enumerateSameOtherActions(Block.S, 1, 1, Rotate.Left);
+            List<Action> fromLeft = shifter.enumerateSameOtherActions(Block.S, Rotate.Left, 1, 1);
             assertThat(fromLeft)
                     .hasSize(1)
                     .contains(MinimalAction.create(0, 1, Rotate.Right));
 
-            List<Action> fromRight = shifter.enumerateSameOtherActions(Block.S, 0, 1, Rotate.Right);
+            List<Action> fromRight = shifter.enumerateSameOtherActions(Block.S, Rotate.Right, 0, 1);
             assertThat(fromRight)
                     .hasSize(1)
                     .contains(MinimalAction.create(1, 1, Rotate.Left));
@@ -134,16 +134,16 @@ class MinoShifterTest {
         @Test
         void createTransformedAction() throws Exception {
             MinoShifter shifter = new MinoShifter();
-            Action fromSpawn = shifter.createTransformedAction(Block.Z, 1, 0, Rotate.Spawn);
+            Action fromSpawn = shifter.createTransformedAction(Block.Z, Rotate.Spawn, 1, 0);
             assertThat(fromSpawn).isEqualTo(MinimalAction.create(1, 0, Rotate.Spawn));
 
-            Action fromReverse = shifter.createTransformedAction(Block.Z, 1, 1, Rotate.Reverse);
+            Action fromReverse = shifter.createTransformedAction(Block.Z, Rotate.Reverse, 1, 1);
             assertThat(fromReverse).isEqualTo(MinimalAction.create(1, 0, Rotate.Spawn));
 
-            Action fromLeft = shifter.createTransformedAction(Block.Z, 1, 1, Rotate.Left);
+            Action fromLeft = shifter.createTransformedAction(Block.Z, Rotate.Left, 1, 1);
             assertThat(fromLeft).isEqualTo(MinimalAction.create(0, 1, Rotate.Right));
 
-            Action fromRight = shifter.createTransformedAction(Block.Z, 0, 1, Rotate.Right);
+            Action fromRight = shifter.createTransformedAction(Block.Z, Rotate.Right, 0, 1);
             assertThat(fromRight).isEqualTo(MinimalAction.create(0, 1, Rotate.Right));
         }
 
@@ -166,22 +166,22 @@ class MinoShifterTest {
         @Test
         void enumerateSameOtherActions() throws Exception {
             MinoShifter shifter = new MinoShifter();
-            List<Action> fromSpawn = shifter.enumerateSameOtherActions(Block.Z, 1, 0, Rotate.Spawn);
+            List<Action> fromSpawn = shifter.enumerateSameOtherActions(Block.Z, Rotate.Spawn, 1, 0);
             assertThat(fromSpawn)
                     .hasSize(1)
                     .contains(MinimalAction.create(1, 1, Rotate.Reverse));
 
-            List<Action> fromReverse = shifter.enumerateSameOtherActions(Block.Z, 1, 1, Rotate.Reverse);
+            List<Action> fromReverse = shifter.enumerateSameOtherActions(Block.Z, Rotate.Reverse, 1, 1);
             assertThat(fromReverse)
                     .hasSize(1)
                     .contains(MinimalAction.create(1, 0, Rotate.Spawn));
 
-            List<Action> fromLeft = shifter.enumerateSameOtherActions(Block.Z, 1, 1, Rotate.Left);
+            List<Action> fromLeft = shifter.enumerateSameOtherActions(Block.Z, Rotate.Left, 1, 1);
             assertThat(fromLeft)
                     .hasSize(1)
                     .contains(MinimalAction.create(0, 1, Rotate.Right));
 
-            List<Action> fromRight = shifter.enumerateSameOtherActions(Block.Z, 0, 1, Rotate.Right);
+            List<Action> fromRight = shifter.enumerateSameOtherActions(Block.Z, Rotate.Right, 0, 1);
             assertThat(fromRight)
                     .hasSize(1)
                     .contains(MinimalAction.create(1, 1, Rotate.Left));
@@ -193,16 +193,16 @@ class MinoShifterTest {
         @Test
         void createTransformedAction() throws Exception {
             MinoShifter shifter = new MinoShifter();
-            Action fromSpawn = shifter.createTransformedAction(Block.O, 0, 0, Rotate.Spawn);
+            Action fromSpawn = shifter.createTransformedAction(Block.O, Rotate.Spawn, 0, 0);
             assertThat(fromSpawn).isEqualTo(MinimalAction.create(0, 0, Rotate.Spawn));
 
-            Action fromReverse = shifter.createTransformedAction(Block.O, 1, 1, Rotate.Reverse);
+            Action fromReverse = shifter.createTransformedAction(Block.O, Rotate.Reverse, 1, 1);
             assertThat(fromReverse).isEqualTo(MinimalAction.create(0, 0, Rotate.Spawn));
 
-            Action fromLeft = shifter.createTransformedAction(Block.O, 1, 0, Rotate.Left);
+            Action fromLeft = shifter.createTransformedAction(Block.O, Rotate.Left, 1, 0);
             assertThat(fromLeft).isEqualTo(MinimalAction.create(0, 0, Rotate.Spawn));
 
-            Action fromRight = shifter.createTransformedAction(Block.O, 0, 1, Rotate.Right);
+            Action fromRight = shifter.createTransformedAction(Block.O, Rotate.Right, 0, 1);
             assertThat(fromRight).isEqualTo(MinimalAction.create(0, 0, Rotate.Spawn));
         }
 
@@ -225,28 +225,28 @@ class MinoShifterTest {
         @Test
         void enumerateSameOtherActions() throws Exception {
             MinoShifter shifter = new MinoShifter();
-            List<Action> fromSpawn = shifter.enumerateSameOtherActions(Block.O, 0, 0, Rotate.Spawn);
+            List<Action> fromSpawn = shifter.enumerateSameOtherActions(Block.O, Rotate.Spawn, 0, 0);
             assertThat(fromSpawn)
                     .hasSize(3)
                     .contains(MinimalAction.create(1, 1, Rotate.Reverse))
                     .contains(MinimalAction.create(1, 0, Rotate.Left))
                     .contains(MinimalAction.create(0, 1, Rotate.Right));
 
-            List<Action> fromReverse = shifter.enumerateSameOtherActions(Block.O, 1, 1, Rotate.Reverse);
+            List<Action> fromReverse = shifter.enumerateSameOtherActions(Block.O, Rotate.Reverse, 1, 1);
             assertThat(fromReverse)
                     .hasSize(3)
                     .contains(MinimalAction.create(0, 0, Rotate.Spawn))
                     .contains(MinimalAction.create(1, 0, Rotate.Left))
                     .contains(MinimalAction.create(0, 1, Rotate.Right));
 
-            List<Action> fromLeft = shifter.enumerateSameOtherActions(Block.O, 1, 0, Rotate.Left);
+            List<Action> fromLeft = shifter.enumerateSameOtherActions(Block.O, Rotate.Left, 1, 0);
             assertThat(fromLeft)
                     .hasSize(3)
                     .contains(MinimalAction.create(0, 0, Rotate.Spawn))
                     .contains(MinimalAction.create(1, 1, Rotate.Reverse))
                     .contains(MinimalAction.create(0, 1, Rotate.Right));
 
-            List<Action> fromRight = shifter.enumerateSameOtherActions(Block.O, 0, 1, Rotate.Right);
+            List<Action> fromRight = shifter.enumerateSameOtherActions(Block.O, Rotate.Right, 0, 1);
             assertThat(fromRight)
                     .hasSize(3)
                     .contains(MinimalAction.create(0, 0, Rotate.Spawn))
@@ -260,16 +260,16 @@ class MinoShifterTest {
         @Test
         void createTransformedAction() throws Exception {
             MinoShifter shifter = new MinoShifter();
-            Action fromSpawn = shifter.createTransformedAction(Block.T, 1, 0, Rotate.Spawn);
+            Action fromSpawn = shifter.createTransformedAction(Block.T, Rotate.Spawn, 1, 0);
             assertThat(fromSpawn).isEqualTo(MinimalAction.create(1, 0, Rotate.Spawn));
 
-            Action fromReverse = shifter.createTransformedAction(Block.T, 1, 1, Rotate.Reverse);
+            Action fromReverse = shifter.createTransformedAction(Block.T, Rotate.Reverse, 1, 1);
             assertThat(fromReverse).isEqualTo(MinimalAction.create(1, 1, Rotate.Reverse));
 
-            Action fromLeft = shifter.createTransformedAction(Block.T, 1, 1, Rotate.Left);
+            Action fromLeft = shifter.createTransformedAction(Block.T, Rotate.Left, 1, 1);
             assertThat(fromLeft).isEqualTo(MinimalAction.create(1, 1, Rotate.Left));
 
-            Action fromRight = shifter.createTransformedAction(Block.T, 0, 1, Rotate.Right);
+            Action fromRight = shifter.createTransformedAction(Block.T, Rotate.Right, 0, 1);
             assertThat(fromRight).isEqualTo(MinimalAction.create(0, 1, Rotate.Right));
         }
 
@@ -292,16 +292,16 @@ class MinoShifterTest {
         @Test
         void enumerateSameOtherActions() throws Exception {
             MinoShifter shifter = new MinoShifter();
-            List<Action> fromSpawn = shifter.enumerateSameOtherActions(Block.T, 1, 0, Rotate.Spawn);
+            List<Action> fromSpawn = shifter.enumerateSameOtherActions(Block.T, Rotate.Spawn, 1, 0);
             assertThat(fromSpawn).isEmpty();
 
-            List<Action> fromReverse = shifter.enumerateSameOtherActions(Block.T, 1, 1, Rotate.Reverse);
+            List<Action> fromReverse = shifter.enumerateSameOtherActions(Block.T, Rotate.Reverse, 1, 1);
             assertThat(fromReverse).isEmpty();
 
-            List<Action> fromLeft = shifter.enumerateSameOtherActions(Block.T, 1, 1, Rotate.Left);
+            List<Action> fromLeft = shifter.enumerateSameOtherActions(Block.T, Rotate.Left, 1, 1);
             assertThat(fromLeft).isEmpty();
 
-            List<Action> fromRight = shifter.enumerateSameOtherActions(Block.T, 0, 1, Rotate.Right);
+            List<Action> fromRight = shifter.enumerateSameOtherActions(Block.T, Rotate.Right, 0, 1);
             assertThat(fromRight).isEmpty();
         }
     }
@@ -311,16 +311,16 @@ class MinoShifterTest {
         @Test
         void createTransformedAction() throws Exception {
             MinoShifter shifter = new MinoShifter();
-            Action fromSpawn = shifter.createTransformedAction(Block.L, 1, 0, Rotate.Spawn);
+            Action fromSpawn = shifter.createTransformedAction(Block.L, Rotate.Spawn, 1, 0);
             assertThat(fromSpawn).isEqualTo(MinimalAction.create(1, 0, Rotate.Spawn));
 
-            Action fromReverse = shifter.createTransformedAction(Block.L, 1, 1, Rotate.Reverse);
+            Action fromReverse = shifter.createTransformedAction(Block.L, Rotate.Reverse, 1, 1);
             assertThat(fromReverse).isEqualTo(MinimalAction.create(1, 1, Rotate.Reverse));
 
-            Action fromLeft = shifter.createTransformedAction(Block.L, 1, 1, Rotate.Left);
+            Action fromLeft = shifter.createTransformedAction(Block.L, Rotate.Left, 1, 1);
             assertThat(fromLeft).isEqualTo(MinimalAction.create(1, 1, Rotate.Left));
 
-            Action fromRight = shifter.createTransformedAction(Block.L, 0, 1, Rotate.Right);
+            Action fromRight = shifter.createTransformedAction(Block.L, Rotate.Right, 0, 1);
             assertThat(fromRight).isEqualTo(MinimalAction.create(0, 1, Rotate.Right));
         }
 
@@ -343,16 +343,16 @@ class MinoShifterTest {
         @Test
         void enumerateSameOtherActions() throws Exception {
             MinoShifter shifter = new MinoShifter();
-            List<Action> fromSpawn = shifter.enumerateSameOtherActions(Block.L, 1, 0, Rotate.Spawn);
+            List<Action> fromSpawn = shifter.enumerateSameOtherActions(Block.L, Rotate.Spawn, 1, 0);
             assertThat(fromSpawn).isEmpty();
 
-            List<Action> fromReverse = shifter.enumerateSameOtherActions(Block.L, 1, 1, Rotate.Reverse);
+            List<Action> fromReverse = shifter.enumerateSameOtherActions(Block.L, Rotate.Reverse, 1, 1);
             assertThat(fromReverse).isEmpty();
 
-            List<Action> fromLeft = shifter.enumerateSameOtherActions(Block.L, 1, 1, Rotate.Left);
+            List<Action> fromLeft = shifter.enumerateSameOtherActions(Block.L, Rotate.Left, 1, 1);
             assertThat(fromLeft).isEmpty();
 
-            List<Action> fromRight = shifter.enumerateSameOtherActions(Block.L, 0, 1, Rotate.Right);
+            List<Action> fromRight = shifter.enumerateSameOtherActions(Block.L, Rotate.Right, 0, 1);
             assertThat(fromRight).isEmpty();
         }
     }
@@ -362,16 +362,16 @@ class MinoShifterTest {
         @Test
         void createTransformedAction() throws Exception {
             MinoShifter shifter = new MinoShifter();
-            Action fromSpawn = shifter.createTransformedAction(Block.J, 1, 0, Rotate.Spawn);
+            Action fromSpawn = shifter.createTransformedAction(Block.J, Rotate.Spawn, 1, 0);
             assertThat(fromSpawn).isEqualTo(MinimalAction.create(1, 0, Rotate.Spawn));
 
-            Action fromReverse = shifter.createTransformedAction(Block.J, 1, 1, Rotate.Reverse);
+            Action fromReverse = shifter.createTransformedAction(Block.J, Rotate.Reverse, 1, 1);
             assertThat(fromReverse).isEqualTo(MinimalAction.create(1, 1, Rotate.Reverse));
 
-            Action fromLeft = shifter.createTransformedAction(Block.J, 1, 1, Rotate.Left);
+            Action fromLeft = shifter.createTransformedAction(Block.J, Rotate.Left, 1, 1);
             assertThat(fromLeft).isEqualTo(MinimalAction.create(1, 1, Rotate.Left));
 
-            Action fromRight = shifter.createTransformedAction(Block.J, 0, 1, Rotate.Right);
+            Action fromRight = shifter.createTransformedAction(Block.J, Rotate.Right, 0, 1);
             assertThat(fromRight).isEqualTo(MinimalAction.create(0, 1, Rotate.Right));
         }
 
@@ -394,16 +394,16 @@ class MinoShifterTest {
         @Test
         void enumerateSameOtherActions() throws Exception {
             MinoShifter shifter = new MinoShifter();
-            List<Action> fromSpawn = shifter.enumerateSameOtherActions(Block.J, 1, 0, Rotate.Spawn);
+            List<Action> fromSpawn = shifter.enumerateSameOtherActions(Block.J, Rotate.Spawn, 1, 0);
             assertThat(fromSpawn).isEmpty();
 
-            List<Action> fromReverse = shifter.enumerateSameOtherActions(Block.J, 1, 1, Rotate.Reverse);
+            List<Action> fromReverse = shifter.enumerateSameOtherActions(Block.J, Rotate.Reverse, 1, 1);
             assertThat(fromReverse).isEmpty();
 
-            List<Action> fromLeft = shifter.enumerateSameOtherActions(Block.J, 1, 1, Rotate.Left);
+            List<Action> fromLeft = shifter.enumerateSameOtherActions(Block.J, Rotate.Left, 1, 1);
             assertThat(fromLeft).isEmpty();
 
-            List<Action> fromRight = shifter.enumerateSameOtherActions(Block.J, 0, 1, Rotate.Right);
+            List<Action> fromRight = shifter.enumerateSameOtherActions(Block.J, Rotate.Right, 0, 1);
             assertThat(fromRight).isEmpty();
         }
     }

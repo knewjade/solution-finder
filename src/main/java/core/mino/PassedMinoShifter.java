@@ -12,11 +12,11 @@ public class PassedMinoShifter extends MinoShifter {
         return action;
     }
 
-    public Action createTransformedAction(Block block, int x, int y, Rotate rotate) {
+    public Action createTransformedAction(Block block, Rotate rotate, int x, int y) {
         return MinimalAction.create(x, y, rotate);
     }
 
-    public List<Action> enumerateSameOtherActions(Block block, int x, int y, Rotate rotate) {
+    public List<Action> enumerateSameOtherActions(Block block, Rotate rotate, int x, int y) {
         return Collections.emptyList();
     }
 

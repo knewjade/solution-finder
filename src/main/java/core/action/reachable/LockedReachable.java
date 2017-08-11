@@ -45,7 +45,7 @@ public class LockedReachable implements Reachable {
         if (check(field, block, x, y, rotate))
             return true;
 
-        List<Action> actions = minoShifter.enumerateSameOtherActions(block, x, y, rotate);
+        List<Action> actions = minoShifter.enumerateSameOtherActions(block, rotate, x, y);
         for (Action action : actions)
             if (check(field, block, action.getX(), action.getY(), action.getRotate()))
                 return true;

@@ -49,7 +49,7 @@ public class LockedCandidate implements Candidate<Action> {
                 for (int y = appearY - mino.getMaxY() - 1; -mino.getMinY() <= y; y--) {
                     if (field.canPut(mino, x, y) && field.isOnGround(mino, x, y)) {
                         if (check(field, mino, x, y, From.None)) {
-                            Action action = minoShifter.createTransformedAction(block, x, y, rotate);
+                            Action action = minoShifter.createTransformedAction(block, rotate, x, y);
                             actions.add(action);
                         } else {
                             lockedCache.visit(x, y, rotate);

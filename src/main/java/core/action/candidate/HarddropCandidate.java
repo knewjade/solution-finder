@@ -34,7 +34,7 @@ public class HarddropCandidate implements Candidate<Action> {
             for (int x = -mino.getMinX(); x < FIELD_WIDTH - mino.getMaxX(); x++) {
                 int harddropY = field.getYOnHarddrop(mino, x, y);
                 if (harddropY < maxY) {
-                    Action action = minoShifter.createTransformedAction(block, x, harddropY, rotate);
+                    Action action = minoShifter.createTransformedAction(block, rotate, x, harddropY);
                     actions.add(action);
                 }
             }

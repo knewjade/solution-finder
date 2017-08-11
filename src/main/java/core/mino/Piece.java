@@ -1,14 +1,19 @@
 package core.mino;
 
+import common.ActionParser;
 import core.field.Field;
 import core.field.FieldFactory;
+import core.srs.Rotate;
 
 public class Piece {
+    public static final Piece EMPTY_PIECE = new Piece();
+
     private final Mino mino;
     private final int x;
     private final int y;
     private final Field minoField;
     private final Field harddropCollider;
+    private final int hash;
 
     public Piece(Mino mino, int x, int y, int fieldHeight) {
         this.mino = mino;
@@ -16,6 +21,16 @@ public class Piece {
         this.y = y;
         this.minoField = createMinoField();
         this.harddropCollider = createHarddropCollider(mino, x, y, fieldHeight);
+        this.hash = ActionParser.parseToInt(mino.getBlock(), mino.getRotate(), x, y);
+    }
+
+    private Piece() {
+        this.mino = new Mino(Block.I, Rotate.Spawn);
+        this.x = -1;
+        this.y = -1;
+        this.minoField = FieldFactory.createField(1);
+        this.harddropCollider = FieldFactory.createField(1);
+        this.hash = -1;
     }
 
     private Field createMinoField() {
@@ -61,5 +76,18 @@ public class Piece {
 
     public Field getHarddropCollider() {
         return harddropCollider;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Piece piece = (Piece) o;
+        return x == piece.x & y == piece.y & mino.equals(piece.mino);
+    }
+
+    @Override
+    public int hashCode() {
+        return hash;
     }
 }

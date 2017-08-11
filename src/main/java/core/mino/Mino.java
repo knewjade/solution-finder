@@ -55,6 +55,7 @@ public class Mino {
     private final int[][] positions;
 
     private final long mask;
+
     public Mino(Block block, Rotate rotate) {
         this.block = block;
         this.rotate = rotate;
@@ -158,5 +159,18 @@ public class Mino {
                 "block=" + block +
                 ", rotate=" + rotate +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Mino mino = (Mino) o;
+        return block == mino.block && rotate == mino.rotate;
+    }
+
+    @Override
+    public int hashCode() {
+        return block.hashCode() ^ rotate.hashCode();
     }
 }

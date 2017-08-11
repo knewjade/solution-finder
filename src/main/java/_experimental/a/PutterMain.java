@@ -4,7 +4,7 @@ import common.datastore.BlockCounter;
 import common.datastore.Pair;
 import common.datastore.action.Action;
 import common.datastore.order.Order;
-import common.datastore.pieces.Pieces;
+import common.datastore.pieces.Blocks;
 import common.iterable.PermutationIterable;
 import common.pattern.PiecesGenerator;
 import common.tree.AnalyzeTree;
@@ -56,7 +56,7 @@ public class PutterMain {
 
         PiecesGenerator piecesGenerator = new PiecesGenerator("*p7");
         List<List<Block>> searchingPieces = piecesGenerator.stream()
-                .map(Pieces::getBlocks)
+                .map(Blocks::getBlocks)
                 .collect(Collectors.toList());
 
         HashMap<Field, Connect> map = new HashMap<>();

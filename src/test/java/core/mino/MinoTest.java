@@ -6,8 +6,6 @@ import core.srs.Rotate;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 class MinoTest {
@@ -686,5 +684,53 @@ class MinoTest {
             );
             assertThat(mino.getMask(0, 1)).isEqualTo(mask.getXBoard());
         }
+    }
+
+    @Test
+    void testEquals() {
+        Mino mino1 = new Mino(Block.I, Rotate.Spawn);
+        Mino mino2 = new Mino(Block.I, Rotate.Spawn);
+        assertThat(mino1.equals(mino2)).isTrue();
+    }
+
+    @Test
+    void testEqualsDiffRotate() {
+        Mino mino1 = new Mino(Block.I, Rotate.Spawn);
+        Mino mino2 = new Mino(Block.I, Rotate.Reverse);
+        assertThat(mino1.equals(mino2)).isFalse();
+    }
+
+    @Test
+    void testEqualsDiffBlock() {
+        Mino mino1 = new Mino(Block.I, Rotate.Spawn);
+        Mino mino2 = new Mino(Block.T, Rotate.Spawn);
+        assertThat(mino1.equals(mino2)).isFalse();
+    }
+
+    @Test
+    void testHashCode() {
+        Mino mino1 = new Mino(Block.I, Rotate.Spawn);
+        Mino mino2 = new Mino(Block.I, Rotate.Spawn);
+        assertThat(mino1.hashCode()).isEqualTo(mino2.hashCode());
+
+        Mino mino3 = new Mino(Block.I, Rotate.Reverse);
+        assertThat(mino1.hashCode()).isNotEqualTo(mino3.hashCode());
+
+        Mino mino4 = new Mino(Block.T, Rotate.Spawn);
+        assertThat(mino1.hashCode()).isNotEqualTo(mino4.hashCode());
+    }
+
+    @Test
+    void testHashCodeDiffBlock() {
+        Mino mino1 = new Mino(Block.I, Rotate.Spawn);
+        Mino mino2 = new Mino(Block.I, Rotate.Reverse);
+        assertThat(mino1.hashCode()).isNotEqualTo(mino2.hashCode());
+    }
+
+    @Test
+    void testHashCodeDiffRotate() {
+        Mino mino1 = new Mino(Block.I, Rotate.Spawn);
+        Mino mino2 = new Mino(Block.T, Rotate.Spawn);
+        assertThat(mino1.hashCode()).isNotEqualTo(mino2.hashCode());
     }
 }

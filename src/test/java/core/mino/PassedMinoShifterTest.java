@@ -55,7 +55,7 @@ class PassedMinoShifterTest {
             int x = randoms.nextInt(10);
             int y = randoms.nextInt(0, 12);
 
-            List<Action> actions = minoShifter.enumerateSameOtherActions(block, x, y, rotate);
+            List<Action> actions = minoShifter.enumerateSameOtherActions(block, rotate, x, y);
             assertThat(actions).isEmpty();
         }
     }
