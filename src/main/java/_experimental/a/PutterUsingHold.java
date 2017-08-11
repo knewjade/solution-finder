@@ -32,13 +32,12 @@ public class PutterUsingHold<T extends Action> {
         Field freeze = initField.freeze(maxClearLine);
         int deleteLine = freeze.clearLine();
 
-        dataPool.initFirst();
-
-        TreeSet<Order> orders = new TreeSet<>();
-        orders.add(new NormalOrder(freeze, pieces[0], maxClearLine - deleteLine, maxDepth));
+        dataPool.initFirst(new NormalOrder(freeze, pieces[0], maxClearLine - deleteLine, maxDepth));
 
         int max = pieces.length <= maxDepth ? pieces.length : maxDepth;
         for (int depth = 1; depth <= max; depth++) {
+            TreeSet<Order> orders = dataPool.getNexts();
+
             dataPool.initEachDepth();
 
             boolean isLast = depth == maxDepth;
@@ -56,10 +55,8 @@ public class PutterUsingHold<T extends Action> {
                     searcherCore.stepWhenNoNext(candidate, order, isLast);
                 }
             }
-
-            orders = dataPool.getNexts();
         }
 
-        return orders;
+        return dataPool.getNexts();
     }
 }

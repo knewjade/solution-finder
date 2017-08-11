@@ -54,7 +54,7 @@ public class SimpleSearcherCore2<T extends Action> {
         for (T action : candidateList) {
             Field field = currentField.freeze(max);
             Mino mino = minoFactory.create(drawn, action.getRotate());
-            field.putMino(mino, action.getX(), action.getY());
+            field.put(mino, action.getX(), action.getY());
             int clearLine = field.clearLine();
             int maxClearLine = max - clearLine;
 
