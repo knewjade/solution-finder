@@ -27,7 +27,7 @@ public class ForPathSolutionFilter implements SolutionFilter {
 
         PiecesGenerator pieces = new PiecesGenerator(patterns);
         HashSet<BlockCounter> counters = StreamSupport.stream(pieces.spliterator(), true)
-                .map(Blocks::getBlocks)
+                .map(Blocks::getBlockList)
                 .map(BlockCounter::new)
                 .collect(Collectors.toCollection(HashSet::new));
 

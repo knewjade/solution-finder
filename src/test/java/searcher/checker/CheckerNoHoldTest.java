@@ -302,7 +302,7 @@ class CheckerNoHoldTest {
         // Assertion
         for (Pair<Blocks, Boolean> testCase : testCases) {
             // Set test case
-            List<Block> blocks = testCase.getKey().getBlocks();
+            List<Block> blocks = testCase.getKey().getBlockList();
             Boolean expectedCount = testCase.getValue();
 
             // Execute

@@ -56,7 +56,7 @@ public class PutterMain {
 
         PiecesGenerator piecesGenerator = new PiecesGenerator("*p7");
         List<List<Block>> searchingPieces = piecesGenerator.stream()
-                .map(Blocks::getBlocks)
+                .map(Blocks::getBlockList)
                 .collect(Collectors.toList());
 
         HashMap<Field, Connect> map = new HashMap<>();

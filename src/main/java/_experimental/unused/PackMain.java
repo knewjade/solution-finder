@@ -59,7 +59,7 @@ public class PackMain {
 
         PiecesGenerator pieces = new PiecesGenerator(allOnHold);
         HashSet<BlockCounter> counters = StreamSupport.stream(pieces.spliterator(), true)
-                .map(Blocks::getBlocks)
+                .map(Blocks::getBlockList)
                 .map(BlockCounter::new)
                 .collect(Collectors.toCollection(HashSet::new));
 

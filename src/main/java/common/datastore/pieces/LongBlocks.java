@@ -83,7 +83,7 @@ public class LongBlocks implements Blocks, Comparable<LongBlocks> {
     }
 
     @Override
-    public List<Block> getBlocks() {
+    public List<Block> getBlockList() {
         ArrayList<Block> blocks = new ArrayList<>();
         long value = pieces;
         for (int count = 0; count < max; count++) {

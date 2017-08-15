@@ -15,7 +15,7 @@ public class ReadOnlyListBlocks implements Blocks, Comparable<Blocks> {
     }
 
     @Override
-    public List<Block> getBlocks() {
+    public List<Block> getBlockList() {
         return blocks;
     }
 

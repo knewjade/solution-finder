@@ -97,7 +97,7 @@ public class AllPatternsMain {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), StandardCharsets.UTF_8))) {
             PiecesGenerator generator = new PiecesGenerator(pattern);
             generator.stream()
-                    .map(Blocks::getBlocks)
+                    .map(Blocks::getBlockList)
                     .map(blocks -> blocks.stream().map(Block::getName).collect(Collectors.joining()))
                     .sorted()
                     .forEach(line -> {

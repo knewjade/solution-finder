@@ -37,7 +37,7 @@ class CheckerNoHoldCountTest {
         AnalyzeTree tree = new AnalyzeTree();
 
         for (Blocks pieces : piecesGenerator) {
-            List<Block> blocks = pieces.getBlocks();
+            List<Block> blocks = pieces.getBlockList();
             boolean result = checker.check(field, blocks, candidate, maxClearLine, maxDepth);
             tree.set(result, blocks);
         }

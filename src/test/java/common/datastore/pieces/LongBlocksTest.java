@@ -17,7 +17,7 @@ class LongBlocksTest {
         Blocks blocks = new LongBlocks(Arrays.asList(Block.I, Block.O, Block.J, Block.Z, Block.S, Block.T, Block.L));
         blocks = blocks.addAndReturnNew(Arrays.asList(Block.I, Block.J, Block.L));
         blocks = blocks.addAndReturnNew(Block.O);
-        assertThat(blocks.getBlocks()).containsExactly(
+        assertThat(blocks.getBlockList()).containsExactly(
                 Block.I, Block.O, Block.J, Block.Z, Block.S, Block.T, Block.L, Block.I, Block.J, Block.L, Block.O
         );
     }
@@ -27,7 +27,7 @@ class LongBlocksTest {
         Blocks blocks = new LongBlocks(Stream.of(Block.I, Block.O, Block.J, Block.Z, Block.S, Block.T, Block.L));
         blocks = blocks.addAndReturnNew(Arrays.asList(Block.I, Block.J, Block.L));
         blocks = blocks.addAndReturnNew(Block.O);
-        assertThat(blocks.getBlocks()).containsExactly(
+        assertThat(blocks.getBlockList()).containsExactly(
                 Block.I, Block.O, Block.J, Block.Z, Block.S, Block.T, Block.L, Block.I, Block.J, Block.L, Block.O
         );
     }
@@ -62,7 +62,7 @@ class LongBlocksTest {
                 pieces = pieces.addAndReturnNew(newBlocks);
             }
 
-            assertThat(pieces.getBlocks()).isEqualTo(blocks);
+            assertThat(pieces.getBlockList()).isEqualTo(blocks);
         }
     }
 
@@ -75,7 +75,7 @@ class LongBlocksTest {
             Blocks pieces = new LongBlocks(blocks);
             assertThat(pieces.getBlockStream()).containsExactlyElementsOf(blocks);
 
-            assertThat(pieces.getBlocks()).isEqualTo(blocks);
+            assertThat(pieces.getBlockList()).isEqualTo(blocks);
         }
     }
 
@@ -110,7 +110,7 @@ class LongBlocksTest {
             LongBlocks longPieces = new LongBlocks(blocks);
             Blocks readOnlyListBlocks = new ReadOnlyListBlocks(blocks);
             assertThat(longPieces.equals(readOnlyListBlocks))
-                    .as(longPieces.getBlocks().toString())
+                    .as(longPieces.getBlockList().toString())
                     .isTrue();
         }
     }

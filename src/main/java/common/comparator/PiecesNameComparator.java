@@ -8,8 +8,8 @@ import java.util.List;
 
 public class PiecesNameComparator implements Comparator<Blocks> {
     public static int comparePieces(Blocks o1, Blocks o2) {
-        List<Block> blocks1 = o1.getBlocks();
-        List<Block> blocks2 = o2.getBlocks();
+        List<Block> blocks1 = o1.getBlockList();
+        List<Block> blocks2 = o2.getBlockList();
 
         int size1 = blocks1.size();
         int size2 = blocks2.size();

@@ -181,7 +181,7 @@ class CheckerUsingHoldTest {
         // Assertion
         for (LongBlocks pieces : testCases.subList(0, 10)) {
             // Set test case
-            List<Block> blocks = pieces.getBlocks();
+            List<Block> blocks = pieces.getBlockList();
 
             // Execute
             boolean isSucceed = checker.check(field, blocks, candidate, maxClearLine, maxDepth);

@@ -34,7 +34,7 @@ public class Main {
 //        PiecesGenerator piecesGenerator = new PiecesGenerator("I,I,J,L,O,[SZT]p3,*p3");
         PiecesGenerator piecesGenerator = new PiecesGenerator("I,I,J,L,O,S,Z,T,*p3");
         List<Blocks> piecesList = MyIterables.toList(piecesGenerator);
-        piecesList.forEach(pieces -> tree.build(pieces.getBlocks(), blocks -> new TerminateChecker()));
+        piecesList.forEach(pieces -> tree.build(pieces.getBlockList(), blocks -> new TerminateChecker()));
 
         System.out.println(piecesList.size());
 
@@ -62,7 +62,7 @@ public class Main {
 
         piecesList.sort(new PiecesNameComparator());
         for (Blocks pieces : piecesList) {
-            List<Block> blocks = pieces.getBlocks();
+            List<Block> blocks = pieces.getBlockList();
             System.out.println(blocks + " " + tree.get(blocks));
         }
 

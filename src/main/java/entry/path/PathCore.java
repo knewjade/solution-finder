@@ -48,7 +48,7 @@ class PathCore {
         if (isUsingHold) {
             return piecesGenerator.stream()
                     .parallel()
-                    .map(Blocks::getBlocks)
+                    .map(Blocks::getBlockList)
                     .flatMap(blocks -> OrderLookup.forwardBlocks(blocks, maxDepth).stream())
                     .collect(Collectors.toCollection(HashSet::new))
                     .parallelStream()
@@ -59,7 +59,7 @@ class PathCore {
         } else {
             return piecesGenerator.stream()
                     .parallel()
-                    .map(Blocks::getBlocks)
+                    .map(Blocks::getBlockList)
                     .map(reduceBlocks)
                     .map(LongBlocks::new)
                     .collect(Collectors.toCollection(HashSet::new));

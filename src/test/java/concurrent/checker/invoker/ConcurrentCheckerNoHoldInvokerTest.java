@@ -63,7 +63,7 @@ class ConcurrentCheckerNoHoldInvokerTest {
     private List<List<Block>> toBlocksList(PiecesGenerator piecesGenerator) {
         List<List<Block>> searchingPieces = new ArrayList<>();
         for (Blocks blocks : piecesGenerator)
-            searchingPieces.add(blocks.getBlocks());
+            searchingPieces.add(blocks.getBlockList());
         return searchingPieces;
     }
 

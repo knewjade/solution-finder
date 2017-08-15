@@ -2,6 +2,7 @@ package common.tetfu.field;
 
 import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
+import core.field.Field;
 
 public class ColoredFieldFactory {
     private static final int MAX_HEIGHT = 24;
@@ -48,5 +49,15 @@ public class ColoredFieldFactory {
                 return ColorType.Gray;
         }
         throw new IllegalStateException("No reachable");
+    }
+
+    // TODO: write unittest
+    public static ColoredField createGrayField(Field field) {
+        ColoredField coloredField = new ArrayColoredField(MAX_HEIGHT);
+        for (int y = 0; y < field.getMaxFieldHeight(); y++)
+            for (int x = 0; x < 10; x++)
+                if (!field.isEmpty(x, y))
+                    coloredField.setColorType(ColorType.Gray, x, y);
+        return coloredField;
     }
 }

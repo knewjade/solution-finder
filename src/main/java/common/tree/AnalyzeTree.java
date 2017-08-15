@@ -1,5 +1,6 @@
 package common.tree;
 
+import common.datastore.pieces.Blocks;
 import core.mino.Block;
 
 import java.util.EnumMap;
@@ -65,8 +66,18 @@ public class AnalyzeTree {
         rootElement.success(blocks);
     }
 
+    // TODO: write unittest
+    public void success(Blocks blocks) {
+        rootElement.success(blocks.getBlockList());
+    }
+
     public void fail(List<Block> blocks) {
         rootElement.fail(blocks);
+    }
+
+    // TODO: write unittest
+    public void fail(Blocks blocks) {
+        rootElement.fail(blocks.getBlockList());
     }
 
     public String show() {
@@ -80,16 +91,35 @@ public class AnalyzeTree {
             fail(blocks);
     }
 
+    // TODO: write unittest
+    public void set(boolean result, Blocks blocks) {
+        if (result)
+            success(blocks);
+        else
+            fail(blocks);
+    }
+
     public double getSuccessPercent() {
         return rootElement.getSuccessPercent();
     }
 
-    boolean isVisited(List<Block> blocks) {
+    // TODO: write unittest
+    public boolean isVisited(List<Block> blocks) {
         return rootElement.isVisited(blocks, 0);
+    }
+
+    // TODO: write unittest
+    public boolean isVisited(Blocks blocks) {
+        return rootElement.isVisited(blocks.getBlockList(), 0);
     }
 
     public boolean isSucceed(List<Block> blocks) {
         return rootElement.isSuccess(blocks, 0);
+    }
+
+    // TODO: write unittest
+    public boolean isSucceed(Blocks blocks) {
+        return rootElement.isSuccess(blocks.getBlockList(), 0);
     }
 
     public String tree(int maxDepth) {

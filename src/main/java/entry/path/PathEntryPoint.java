@@ -477,7 +477,7 @@ public class PathEntryPoint implements EntryPoint {
         // 有効なミノ順をまとめる
         HashSet<LongBlocks> pieces = information.getPiecesSet();
         String validOrders = pieces.stream()
-                .map(LongBlocks::getBlocks)
+                .map(LongBlocks::getBlockList)
                 .map(blocks -> blocks.stream().map(Block::getName).collect(Collectors.joining()))
                 .collect(Collectors.joining(", "));
 
@@ -553,7 +553,7 @@ public class PathEntryPoint implements EntryPoint {
         // 有効なミノ順をまとめる
         HashSet<LongBlocks> pieces = information.getPiecesSet();
         String validOrders = pieces.stream()
-                .map(LongBlocks::getBlocks)
+                .map(LongBlocks::getBlockList)
                 .map(blocks -> blocks.stream().map(Block::getName).collect(Collectors.joining()))
                 .collect(Collectors.joining(", "));
 

@@ -284,7 +284,7 @@ class PackSearcherTest {
                 // Assert generator
                 PiecesGenerator generator = createPiecesGenerator(maxDepth);
                 for (Blocks pieces : generator) {
-                    List<Block> blocks = pieces.getBlocks();
+                    List<Block> blocks = pieces.getBlockList();
                     boolean check = checker.check(initField, blocks, candidate, height, maxDepth);
                     assertThat(possiblePieces.contains(pieces))
                             .as(blocks.toString())
@@ -337,7 +337,7 @@ class PackSearcherTest {
                 // Assert generator
                 PiecesGenerator generator = createPiecesGenerator(maxDepth);
                 for (Blocks pieces : generator) {
-                    List<Block> blocks = pieces.getBlocks();
+                    List<Block> blocks = pieces.getBlockList();
                     boolean check = checker.check(initField, blocks, candidate, height, maxDepth);
                     assertThat(possiblePieces.contains(pieces))
                             .as(blocks.toString())

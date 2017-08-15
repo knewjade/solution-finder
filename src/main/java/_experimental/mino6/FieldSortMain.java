@@ -65,7 +65,7 @@ public class FieldSortMain {
         String pattern = "L, *p4";
         PiecesGenerator generator = new PiecesGenerator(pattern);
         List<List<Block>> pieces = MyIterables.toList(generator).stream()
-                .map(Blocks::getBlocks)
+                .map(Blocks::getBlockList)
                 .collect(Collectors.toList());
 
         // 探索

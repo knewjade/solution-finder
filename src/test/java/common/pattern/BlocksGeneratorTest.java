@@ -21,7 +21,7 @@ class BlocksGeneratorTest {
 
         List<Blocks> pieces = MyIterables.toList(generator);
         assertThat(pieces.size()).isEqualTo(1);
-        assertThat(pieces.get(0).getBlocks()).isEqualTo(Collections.singletonList(I));
+        assertThat(pieces.get(0).getBlockList()).isEqualTo(Collections.singletonList(I));
     }
 
     @Test
@@ -31,7 +31,7 @@ class BlocksGeneratorTest {
 
         List<Blocks> pieces = MyIterables.toList(generator);
         assertThat(pieces.size()).isEqualTo(1);
-        assertThat(pieces.get(0).getBlocks()).isEqualTo(Collections.singletonList(I));
+        assertThat(pieces.get(0).getBlockList()).isEqualTo(Collections.singletonList(I));
     }
 
     @Test
@@ -41,7 +41,7 @@ class BlocksGeneratorTest {
 
         List<Blocks> pieces = MyIterables.toList(generator);
         assertThat(pieces.size()).isEqualTo(1);
-        assertThat(pieces.get(0).getBlocks()).isEqualTo(Arrays.asList(I, J));
+        assertThat(pieces.get(0).getBlockList()).isEqualTo(Arrays.asList(I, J));
     }
 
     @Test
@@ -51,7 +51,7 @@ class BlocksGeneratorTest {
 
         List<Blocks> pieces = MyIterables.toList(generator);
         assertThat(pieces.size()).isEqualTo(1);
-        assertThat(pieces.get(0).getBlocks()).isEqualTo(Arrays.asList(I, J));
+        assertThat(pieces.get(0).getBlockList()).isEqualTo(Arrays.asList(I, J));
     }
 
     @Test
@@ -62,7 +62,7 @@ class BlocksGeneratorTest {
         List<Blocks> pieces = MyIterables.toList(generator);
         assertThat(pieces.size()).isEqualTo(7);
         for (Blocks piece : pieces)
-            assertThat(piece.getBlocks().size()).isEqualTo(1);
+            assertThat(piece.getBlockList().size()).isEqualTo(1);
     }
 
     @Test
@@ -73,7 +73,7 @@ class BlocksGeneratorTest {
         List<Blocks> pieces = MyIterables.toList(generator);
         assertThat(pieces.size()).isEqualTo(49);
         for (Blocks piece : pieces)
-            assertThat(piece.getBlocks().size()).isEqualTo(2);
+            assertThat(piece.getBlockList().size()).isEqualTo(2);
     }
 
     @Test
@@ -83,9 +83,9 @@ class BlocksGeneratorTest {
 
         List<Blocks> pieces = MyIterables.toList(generator);
         assertThat(pieces.size()).isEqualTo(3);
-        assertThat(pieces.get(0).getBlocks()).isEqualTo(Collections.singletonList(T));
-        assertThat(pieces.get(1).getBlocks()).isEqualTo(Collections.singletonList(S));
-        assertThat(pieces.get(2).getBlocks()).isEqualTo(Collections.singletonList(Z));
+        assertThat(pieces.get(0).getBlockList()).isEqualTo(Collections.singletonList(T));
+        assertThat(pieces.get(1).getBlockList()).isEqualTo(Collections.singletonList(S));
+        assertThat(pieces.get(2).getBlockList()).isEqualTo(Collections.singletonList(Z));
     }
 
     @Test
@@ -95,18 +95,18 @@ class BlocksGeneratorTest {
 
         List<Blocks> pieces = MyIterables.toList(generator);
         assertThat(pieces.size()).isEqualTo(12);
-        assertThat(pieces.get(0).getBlocks()).isEqualTo(Arrays.asList(T, I));
-        assertThat(pieces.get(1).getBlocks()).isEqualTo(Arrays.asList(T, O));
-        assertThat(pieces.get(2).getBlocks()).isEqualTo(Arrays.asList(T, J));
-        assertThat(pieces.get(3).getBlocks()).isEqualTo(Arrays.asList(T, L));
-        assertThat(pieces.get(4).getBlocks()).isEqualTo(Arrays.asList(S, I));
-        assertThat(pieces.get(5).getBlocks()).isEqualTo(Arrays.asList(S, O));
-        assertThat(pieces.get(6).getBlocks()).isEqualTo(Arrays.asList(S, J));
-        assertThat(pieces.get(7).getBlocks()).isEqualTo(Arrays.asList(S, L));
-        assertThat(pieces.get(8).getBlocks()).isEqualTo(Arrays.asList(Z, I));
-        assertThat(pieces.get(9).getBlocks()).isEqualTo(Arrays.asList(Z, O));
-        assertThat(pieces.get(10).getBlocks()).isEqualTo(Arrays.asList(Z, J));
-        assertThat(pieces.get(11).getBlocks()).isEqualTo(Arrays.asList(Z, L));
+        assertThat(pieces.get(0).getBlockList()).isEqualTo(Arrays.asList(T, I));
+        assertThat(pieces.get(1).getBlockList()).isEqualTo(Arrays.asList(T, O));
+        assertThat(pieces.get(2).getBlockList()).isEqualTo(Arrays.asList(T, J));
+        assertThat(pieces.get(3).getBlockList()).isEqualTo(Arrays.asList(T, L));
+        assertThat(pieces.get(4).getBlockList()).isEqualTo(Arrays.asList(S, I));
+        assertThat(pieces.get(5).getBlockList()).isEqualTo(Arrays.asList(S, O));
+        assertThat(pieces.get(6).getBlockList()).isEqualTo(Arrays.asList(S, J));
+        assertThat(pieces.get(7).getBlockList()).isEqualTo(Arrays.asList(S, L));
+        assertThat(pieces.get(8).getBlockList()).isEqualTo(Arrays.asList(Z, I));
+        assertThat(pieces.get(9).getBlockList()).isEqualTo(Arrays.asList(Z, O));
+        assertThat(pieces.get(10).getBlockList()).isEqualTo(Arrays.asList(Z, J));
+        assertThat(pieces.get(11).getBlockList()).isEqualTo(Arrays.asList(Z, L));
     }
 
     @Test
@@ -116,12 +116,12 @@ class BlocksGeneratorTest {
 
         List<Blocks> pieces = MyIterables.toList(generator);
         assertThat(pieces.size()).isEqualTo(6);
-        assertThat(pieces.get(0).getBlocks()).isEqualTo(Arrays.asList(S, Z));
-        assertThat(pieces.get(1).getBlocks()).isEqualTo(Arrays.asList(Z, S));
-        assertThat(pieces.get(3).getBlocks()).isEqualTo(Arrays.asList(Z, T));
-        assertThat(pieces.get(2).getBlocks()).isEqualTo(Arrays.asList(T, Z));
-        assertThat(pieces.get(4).getBlocks()).isEqualTo(Arrays.asList(T, S));
-        assertThat(pieces.get(5).getBlocks()).isEqualTo(Arrays.asList(S, T));
+        assertThat(pieces.get(0).getBlockList()).isEqualTo(Arrays.asList(S, Z));
+        assertThat(pieces.get(1).getBlockList()).isEqualTo(Arrays.asList(Z, S));
+        assertThat(pieces.get(3).getBlockList()).isEqualTo(Arrays.asList(Z, T));
+        assertThat(pieces.get(2).getBlockList()).isEqualTo(Arrays.asList(T, Z));
+        assertThat(pieces.get(4).getBlockList()).isEqualTo(Arrays.asList(T, S));
+        assertThat(pieces.get(5).getBlockList()).isEqualTo(Arrays.asList(S, T));
     }
 
     @Test

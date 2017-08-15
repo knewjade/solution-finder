@@ -146,6 +146,7 @@ public class BuildUp {
     }
 
     // block順番で組み立てられる手順が存在するかチェックする
+    // operationsで使用するミノとblocksが一致していること
     public static boolean existsValidByOrder(Field field, Stream<OperationWithKey> operations, List<Block> blocks, int height, Reachable reachable) {
         EnumMap<Block, LinkedList<OperationWithKey>> eachBlocks = operations.sequential().collect(() -> new EnumMap<Block, LinkedList<OperationWithKey>>(Block.class), (blockLinkedListEnumMap, operationWithKey) -> {
             Mino mino = operationWithKey.getMino();

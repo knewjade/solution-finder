@@ -72,7 +72,7 @@ public class Filter10MinoPerfectMain {
             LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(height);
             Field field = FieldFactory.createField(height);
             boolean noPerfect = pieces.parallelStream()
-                    .map(LongBlocks::getBlocks)
+                    .map(LongBlocks::getBlockList)
                     .filter(blocks -> {
                         return perfects.parallelStream()
                                 .noneMatch(operationWithKeys -> BuildUp.existsValidByOrder(field, operationWithKeys.stream(), blocks, 4, reachableThreadLocal.get()));
