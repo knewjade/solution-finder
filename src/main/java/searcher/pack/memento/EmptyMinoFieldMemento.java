@@ -1,5 +1,6 @@
 package searcher.pack.memento;
 
+import common.datastore.BlockCounter;
 import common.datastore.OperationWithKey;
 import searcher.pack.mino_field.MinoField;
 
@@ -17,8 +18,8 @@ public class EmptyMinoFieldMemento implements MinoFieldMemento {
     }
 
     @Override
-    public long getSumBlockCounter() {
-        return 0L;
+    public BlockCounter getSumBlockCounter() {
+        return BlockCounter.EMPTY;
     }
 
     @Override

@@ -49,7 +49,6 @@ public class CheckerUsingHold<T extends Action> implements Checker<T> {
                 searcherCore.stepWhenNoNext(candidate, order, isLast);
             }
         }
-        System.out.println(count);
 
         return !dataPool.getResults().isEmpty();
     }

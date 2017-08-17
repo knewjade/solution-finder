@@ -1,6 +1,7 @@
 package searcher.pack.memento;
 
 import common.buildup.BuildUp;
+import common.datastore.BlockCounter;
 import common.datastore.OperationWithKey;
 import core.action.reachable.Reachable;
 import core.field.Field;
@@ -39,8 +40,8 @@ public class UsingBlockAndValidKeySolutionFilter implements SolutionFilter {
         return BuildUp.checksKeyDirectly(rawOperations, 0L, sizedBit.getHeight());
     }
 
-    private boolean checksValidCounter(long counter) {
-        return validBlockCounters.contains(counter);
+    private boolean checksValidCounter(BlockCounter counter) {
+        return validBlockCounters.contains(counter.getCounter());
     }
 
     @Override
@@ -55,6 +56,6 @@ public class UsingBlockAndValidKeySolutionFilter implements SolutionFilter {
 
     @Override
     public boolean testMinoField(MinoField minoField) {
-        return checksValidCounter(minoField.getBlockCounter().getCounter());
+        return checksValidCounter(minoField.getBlockCounter());
     }
 }

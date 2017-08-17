@@ -29,6 +29,15 @@ class BlockCounterTest {
     }
 
     @Test
+    void testRemove() throws Exception {
+        BlockCounter counter = new BlockCounter(Arrays.asList(Block.I, Block.J, Block.I, Block.L));
+        BlockCounter actual = counter.removeAndReturnNew(new BlockCounter(Arrays.asList(Block.I, Block.J)));
+
+        assertThat(counter.getCounter()).isEqualTo(new BlockCounter(Arrays.asList(Block.I, Block.J, Block.I, Block.L)).getCounter());
+        assertThat(actual.getCounter()).isEqualTo(new BlockCounter(Arrays.asList(Block.I, Block.L)).getCounter());
+    }
+
+    @Test
     void testGet() throws Exception {
         List<Block> blocks = Arrays.asList(Block.I, Block.J, Block.T, Block.S);
         BlockCounter counter = new BlockCounter(blocks);

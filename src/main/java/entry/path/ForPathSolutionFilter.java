@@ -60,8 +60,8 @@ public class ForPathSolutionFilter implements SolutionFilter {
         return BuildUp.checksKeyDirectly(rawOperations, 0L, height);
     }
 
-    private boolean checksValidCounter(long counter) {
-        return validBlockCounters.contains(counter);
+    private boolean checksValidCounter(BlockCounter counter) {
+        return validBlockCounters.contains(counter.getCounter());
     }
 
     // 回転入れで入るかどうかの確認は後で行うため、この段階ではしない
@@ -72,6 +72,6 @@ public class ForPathSolutionFilter implements SolutionFilter {
 
     @Override
     public boolean testMinoField(MinoField minoField) {
-        return checksValidCounter(minoField.getBlockCounter().getCounter());
+        return checksValidCounter(minoField.getBlockCounter());
     }
 }

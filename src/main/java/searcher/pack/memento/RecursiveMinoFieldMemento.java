@@ -1,5 +1,6 @@
 package searcher.pack.memento;
 
+import common.datastore.BlockCounter;
 import common.datastore.OperationWithKey;
 import searcher.pack.mino_field.MinoField;
 import searcher.pack.SlideXOperationWithKey;
@@ -37,7 +38,7 @@ public class RecursiveMinoFieldMemento implements MinoFieldMemento {
     }
 
     @Override
-    public long getSumBlockCounter() {
+    public BlockCounter getSumBlockCounter() {
         long sum = 0L;
         RecursiveMinoFieldMemento target = this;
         do {
@@ -45,7 +46,7 @@ public class RecursiveMinoFieldMemento implements MinoFieldMemento {
                 sum += target.current.getBlockCounter().getCounter();
             target = target.parent;
         } while (target != null);
-        return sum;
+        return new BlockCounter(sum);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package _experimental.a;
+package _experimental.putter;
 
 import common.datastore.BlockCounter;
 import concurrent.LockedReachableThreadLocal;
@@ -31,7 +31,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class Test {
+public class PathSpeedTestMain {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         // SRS: SizedBit=3x4, TaskResultHelper=4x10, BasicSolutions=Mapped
         int width = 3;
@@ -71,7 +71,7 @@ public class Test {
         List<MinoFieldMemento> results3 = searcher.stream(resultStream ->
                 resultStream
                         .map(Result::getMemento)
-                        .filter(memento -> memento.getSumBlockCounter() == allBlock.getCounter())
+                        .filter(memento -> allBlock.equals(memento.getSumBlockCounter()))
                         .filter(solutionFilterSRS::testLast)
                         .collect(Collectors.toList())
         );
