@@ -33,7 +33,7 @@ public class Tetfu {
     private static final int FILED_WIDTH = 10;
 
     // TODO: unittest: write
-    public static String extractEncodedData(String str) {
+    public static String removeDomainData(String str) {
         if (str.startsWith("http://fumen.zui.jp/?")) {
             return str.substring(21);
         } else if (str.startsWith("fumen.zui.jp/?")) {
@@ -44,6 +44,18 @@ public class Tetfu {
             return str.substring(20);
         }
         return str;
+    }
+
+    // TODO: unittest: write
+    public static boolean isDataLater115(String data) {
+        return removePrefixData(data) != null;
+    }
+
+    // TODO: unittest: write
+    public static String removePrefixData(String data) {
+        if (data.startsWith("v115@") || data.startsWith("d115@") || data.startsWith("m115@"))
+            return data.substring(5);
+        return null;
     }
 
     public static String encodeForQuiz(List<Block> orders) {
@@ -168,8 +180,6 @@ public class Tetfu {
             encodedValues.addAll(commentEncoder.getEncodedValues());
         }
     }
-
-    private int count = 0;
 
     public List<TetfuPage> decode(String str) {
         LinkedList<Integer> values = str.replace("?", "").chars().boxed()

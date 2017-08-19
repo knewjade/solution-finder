@@ -24,3 +24,5 @@ input/*
 !input/.gitkeep
 
 *.gif
+
+test_*/

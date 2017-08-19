@@ -31,4 +31,7 @@ public interface ColoredField {
     int getUsingHeight();
 
     boolean isFilledLine(int y);
+
+    // フィールド内に1つもブロックがないとき true を返却
+    boolean isPerfect();
 }

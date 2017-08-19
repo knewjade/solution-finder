@@ -31,7 +31,6 @@ public class PathSettingParser {
     private static final String DEFAULT_PATTERNS_TXT = "input/patterns.txt";
     private static final String DEFAULT_FIELD_TXT = "input/field.txt";
     private static final String PATTERN_DELIMITER = ";";
-    public static final String SUPPORTED_TETFU_PREFIX = "v115@";
 
     private final String[] commands;
 
@@ -71,7 +70,7 @@ public class PathSettingParser {
             // テト譜から
             Optional<String> tetfuData = wrapper.getStringOption("tetfu");
             assert tetfuData.isPresent();
-            String encoded = Tetfu.extractEncodedData(tetfuData.get());
+            String encoded = Tetfu.removeDomainData(tetfuData.get());
             wrapper = loadTetfu(encoded, parser, options, wrapper, settings);
         } else {
             // フィールドファイルから
@@ -94,10 +93,10 @@ public class PathSettingParser {
                 if (fieldLines.isEmpty())
                     throw new IllegalArgumentException("Empty field definition");
 
-                String encoded = Tetfu.extractEncodedData(fieldLines.get(0));
-                if (encoded.startsWith(SUPPORTED_TETFU_PREFIX)) {
+                String removeDomainData = Tetfu.removeDomainData(fieldLines.get(0));
+                if (Tetfu.isDataLater115(removeDomainData)) {
                     // テト譜から
-                    wrapper = loadTetfu(encoded, parser, options, wrapper, settings);
+                    wrapper = loadTetfu(removeDomainData, parser, options, wrapper, settings);
                 } else {
                     // 最大削除ラインの設定
                     int maxClearLine = Integer.valueOf(fieldLines.pollFirst());
@@ -312,9 +311,9 @@ public class PathSettingParser {
         return options;
     }
 
-    private CommandLineWrapper loadTetfu(String encoded, CommandLineParser parser, Options options, CommandLineWrapper wrapper, PathSettings settings) {
+    private CommandLineWrapper loadTetfu(String data, CommandLineParser parser, Options options, CommandLineWrapper wrapper, PathSettings settings) {
         // テト譜面のエンコード
-        List<TetfuPage> decoded = encodeTetfu(encoded);
+        List<TetfuPage> decoded = encodeTetfu(data);
 
         // 指定されたページを抽出
         int page = wrapper.getIntegerOption("page").orElse(1);
@@ -337,7 +336,7 @@ public class PathSettingParser {
         try {
             CommandLine commandLineTetfu = parser.parse(options, commentArgs);
             CommandLineWrapper newWrapper = new NormalCommandLineWrapper(commandLineTetfu);
-            wrapper = new PriorityCommandLineWrapper(Arrays.asList(newWrapper, wrapper));
+            wrapper = new PriorityCommandLineWrapper(Arrays.asList(wrapper, newWrapper));
         } catch (ParseException ignore) {
         }
 
@@ -371,11 +370,10 @@ public class PathSettingParser {
         MinoFactory minoFactory = new MinoFactory();
         ColorConverter colorConverter = new ColorConverter();
         Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
-        if (encoded.startsWith(SUPPORTED_TETFU_PREFIX)) {
-            return tetfu.decode(encoded.substring(5));
-        } else {
-            throw new UnsupportedOperationException("Unsupported tetfu older than v115");
-        }
+        String data = Tetfu.removePrefixData(encoded);
+        if (data == null)
+            throw new UnsupportedOperationException("Unexpected tetfu: " + encoded);
+        return tetfu.decode(data);
     }
 
     private TetfuPage extractTetfuPage(List<TetfuPage> tetfuPages, int page) {

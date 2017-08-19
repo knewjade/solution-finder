@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 public class FigUtilSettingParser {
     private static final String CHARSET_NAME = "utf-8";
     private static final String DEFAULT_FIELD_TXT = "input/field.txt";
-    private static final String SUPPORTED_TETFU_PREFIX = "v115@";
 
     private final String[] commands;
 
@@ -92,7 +91,7 @@ public class FigUtilSettingParser {
             // パラメータから
             Optional<String> tetfuData = wrapper.getStringOption("tetfu");
             assert tetfuData.isPresent();
-            String encoded = Tetfu.extractEncodedData(tetfuData.get());
+            String encoded = Tetfu.removeDomainData(tetfuData.get());
             wrapper = loadTetfu(encoded, parser, options, wrapper, settings);
         } else {
             // フィールドファイルから
@@ -115,10 +114,10 @@ public class FigUtilSettingParser {
                 if (fieldLines.isEmpty())
                     throw new IllegalArgumentException("Empty field definition");
 
-                String encoded = Tetfu.extractEncodedData(fieldLines.get(0));
-                if (encoded.startsWith(SUPPORTED_TETFU_PREFIX)) {
+                String removeDomainData = Tetfu.removeDomainData(fieldLines.get(0));
+                if (Tetfu.isDataLater115(removeDomainData)) {
                     // テト譜から
-                    wrapper = loadTetfu(encoded, parser, options, wrapper, settings);
+                    wrapper = loadTetfu(removeDomainData, parser, options, wrapper, settings);
                 } else {
                     throw new IllegalArgumentException("Cannot read tetfu from " + fieldPath);
                 }
@@ -295,9 +294,9 @@ public class FigUtilSettingParser {
         return options;
     }
 
-    private CommandLineWrapper loadTetfu(String encoded, CommandLineParser parser, Options options, CommandLineWrapper wrapper, FigUtilSettings settings) {
+    private CommandLineWrapper loadTetfu(String data, CommandLineParser parser, Options options, CommandLineWrapper wrapper, FigUtilSettings settings) {
         // テト譜面のエンコード
-        List<TetfuPage> tetfuPages = encodeTetfu(encoded);
+        List<TetfuPage> tetfuPages = encodeTetfu(data);
 
         // 指定されたページを抽出
         int startPage = wrapper.getIntegerOption("start").orElse(1);
@@ -317,10 +316,9 @@ public class FigUtilSettingParser {
         MinoFactory minoFactory = new MinoFactory();
         ColorConverter colorConverter = new ColorConverter();
         Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
-        if (encoded.startsWith(SUPPORTED_TETFU_PREFIX)) {
-            return tetfu.decode(encoded.substring(5));
-        } else {
-            throw new UnsupportedOperationException("Unsupported tetfu older than v115");
-        }
+        String data = Tetfu.removePrefixData(encoded);
+        if (data == null)
+            throw new UnsupportedOperationException("Unexpected tetfu: " + encoded);
+        return tetfu.decode(data);
     }
 }

@@ -118,4 +118,14 @@ public class ArrayColoredField implements ColoredField {
                 return false;
         return true;
     }
+
+    // TODO: write unittest
+    @Override
+    public boolean isPerfect() {
+        for (short[] line : field)
+            for (int x = 0; x < FIELD_WIDTH; x++)
+                if (line[x] != EMPTY_NUMBER)
+                    return false;
+        return true;
+    }
 }

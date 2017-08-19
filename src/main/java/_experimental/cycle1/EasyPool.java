@@ -1,5 +1,6 @@
 package _experimental.cycle1;
 
+import common.tetfu.Tetfu;
 import common.tetfu.common.ColorConverter;
 import core.action.candidate.LockedCandidate;
 import core.action.reachable.LockedReachable;
@@ -40,5 +41,7 @@ public class EasyPool {
         return new LockedCandidate(minoFactory, minoShifter, minoRotation, maxY);
     }
 
-
+    public Tetfu getTetfu() {
+        return new Tetfu(minoFactory, colorConverter);
+    }
 }

@@ -124,8 +124,10 @@ public class AnalyzeTree {
 
     public String tree(int maxDepth) {
         String str = "";
-        if (1 < rootElement.current.size())
-            str += String.format("%s -> %.1f %%%n", "*", getSuccessPercent() * 100);
+        if (1 < rootElement.current.size()) {
+            double successPercent = getSuccessPercent();
+            str += String.format("%s -> %.2f %%%n", "*", successPercent * 100);
+        }
         return str + tree(rootElement, new LinkedList<>(), maxDepth);
     }
 
@@ -139,7 +141,7 @@ public class AnalyzeTree {
         for (Map.Entry<Block, Element> entry : element.current.entrySet()) {
             stack.addLast(entry.getKey());
             Element value = entry.getValue();
-            str.append(String.format("%s∟ %s -> %.1f %%%n", repeat("  ", depth), toString(stack), value.getSuccessPercent() * 100));
+            str.append(String.format("%s∟ %s -> %.2f %%%n", repeat("  ", depth), toString(stack), value.getSuccessPercent() * 100));
             if (1 <= value.current.size()) {
                 str.append(tree(value, stack, maxDepth));
             }

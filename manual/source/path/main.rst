@@ -31,7 +31,7 @@
 
 例) ::
 
-    J,R,3,3,L,L,2,3,O,0,7,0
+    J,R,3,3;L,L,2,3;O,0,7,0
 
 このうち、4つごとに1つのミノを置く操作を表しています。そのため、この例では3つのミノを置く操作手順を表しています。
 
@@ -74,7 +74,7 @@ short    long                   default
 ``-c``   ``--clear-line``       4
 ``-f``   ``--format``           link
 ``-s``   ``--split``            no
-``-L``   ``--max-layer``        3
+``-L``   ``--max-layer``        2
 ``-cb``  ``--cached-bit``       0
 ``-o``   ``--output-base``      output/path.txt
 ``-l``   ``--log-path``         output/last_output.txt
