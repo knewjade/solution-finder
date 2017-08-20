@@ -1,5 +1,6 @@
 package common.pattern;
 
+import common.datastore.pieces.LongBlocks;
 import lib.MyIterables;
 import common.SyntaxException;
 import common.datastore.pieces.Blocks;
@@ -20,6 +21,11 @@ class BlocksGeneratorTest {
         assertThat(generator.getDepth()).isEqualTo(1);
 
         List<Blocks> pieces = MyIterables.toList(generator);
+
+        assertThat(pieces)
+                .hasSize(1)
+                .containsExactly(new LongBlocks(Collections.singletonList(I)));
+
         assertThat(pieces.size()).isEqualTo(1);
         assertThat(pieces.get(0).getBlockList()).isEqualTo(Collections.singletonList(I));
     }

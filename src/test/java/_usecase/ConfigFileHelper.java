@@ -34,17 +34,25 @@ class ConfigFileHelper {
 
     private static void deleteTextFile(String parentDirectoryPath, String fileName, String extension) throws IOException {
         File file = new File(concatPath(parentDirectoryPath, fileName + "." + extension));
-        if (file.exists())
+        deleteFile(file);
+    }
+
+    private static void deleteFile(File file) {
+        if (file.exists()) {
             file.delete();
+            try {
+                Thread.sleep(200L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private static void createNewTextFile(String parentDirectoryPath, String fileName, String text) throws IOException {
         File file = new File(concatPath(parentDirectoryPath, fileName + ".txt"));
-        if (file.exists())
-            file.delete();
+        deleteFile(file);
 
         file.createNewFile();
-        file.deleteOnExit();
         Files.append(text, file, Charsets.UTF_8);
     }
 

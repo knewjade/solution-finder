@@ -95,13 +95,32 @@ class OutputFileHelper {
 
     static void deletePathUniqueHTML() {
         File file = new File(UNIQUE_PATH);
-        if (file.exists())
-            file.delete();
+        deleteFile(file);
     }
 
     static void deletePathMinimalHTML() {
         File file = new File(MINIMAL_PATH);
-        if (file.exists())
+        deleteFile(file);
+    }
+
+    static void deletePathUniqueCSV() {
+        File file = new File(UNIQUE_PATH);
+        deleteFile(file);
+    }
+
+    static void deletePathMinimalCSV() {
+        File file = new File(MINIMAL_PATH);
+        deleteFile(file);
+    }
+
+    private static void deleteFile(File file) {
+        if (file.exists()) {
             file.delete();
+            try {
+                Thread.sleep(200L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

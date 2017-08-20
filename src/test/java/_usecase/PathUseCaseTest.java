@@ -15,7 +15,6 @@ import core.srs.Rotate;
 import entry.EntryPointMain;
 import org.junit.jupiter.api.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -99,6 +98,8 @@ class PathUseCaseTest {
         ConfigFileHelper.deletePatternFile();
         OutputFileHelper.deletePathUniqueHTML();
         OutputFileHelper.deletePathMinimalHTML();
+        OutputFileHelper.deletePathUniqueCSV();
+        OutputFileHelper.deletePathMinimalCSV();
     }
 
     @Nested
@@ -198,9 +199,6 @@ class PathUseCaseTest {
             Log log = RunnerHelper.runnerCatchingLog(() -> {
                 EntryPointMain.main(command.split(" "));
             });
-
-            new File("test_output/test_path_unique.html").deleteOnExit();
-            new File("test_output/test_path_minimal.html").deleteOnExit();
 
             String logFile = Files.lines(Paths.get("test_output_log/test_last_output.txt")).collect(Collectors.joining(LINE_SEPARATOR)) + LINE_SEPARATOR;
             assertThat(log.getOutput())
