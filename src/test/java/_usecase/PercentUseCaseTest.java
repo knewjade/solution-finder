@@ -2,6 +2,7 @@ package _usecase;
 
 import core.field.Field;
 import core.field.FieldFactory;
+import core.field.SmallField;
 import entry.EntryPointMain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -9,11 +10,16 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 // TODO: write irregular unittest
 class PercentUseCaseTest {
+    private static final String LINE_SEPARATOR = System.lineSeparator();
+
     private static class Messages {
         private static String success(int successCount, int allCount) {
             double percent = successCount * 100.0 / allCount;
@@ -54,6 +60,11 @@ class PercentUseCaseTest {
 
         private static String noUseHold() {
             return "Using hold: avoid";
+        }
+
+        private static String failPatternAllSize() {
+            return "Fail pattern (all)";
+
         }
     }
 
@@ -203,6 +214,48 @@ class PercentUseCaseTest {
                     .contains(Messages.tree("L", 85.14))
                     .contains(Messages.tree("SZ", 85.00))
                     .contains(Messages.tree("OLZ", 91.67))
+                    .contains(Messages.failPatternSize(100))
+                    .doesNotContain(Messages.failNothing());
+
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
+        void getLog() throws Exception {
+            // フィールドファイル, パターンファイル, ログファイル (場所を変更する)
+
+            Field field = FieldFactory.createField("" +
+                    "______XXXX" +
+                    "______XXXX" +
+                    "_____XXXXX" +
+                    "_______XXX"
+            );
+
+            int height = 4;
+
+            ConfigFileHelper.createFieldFile(field, "input", "test_field", height);
+            ConfigFileHelper.createPatternFile("*p7", "input", "test_patterns");
+
+            String command = "percent -fp input/test_field.txt -pp input/test_patterns.txt --log-path test_output_log/test_last_output.txt";
+            Log log = RunnerHelper.runnerCatchingLog(() -> {
+                EntryPointMain.main(command.split(" "));
+            });
+
+            String logFile = Files.lines(Paths.get("test_output_log/test_last_output.txt")).collect(Collectors.joining(LINE_SEPARATOR)) + LINE_SEPARATOR;
+            assertThat(log.getOutput())
+                    .isEqualTo(logFile);
+
+            assertThat(log.getOutput())
+                    .contains(Messages.useHold())
+                    .contains(Messages.success(4784, 5040))
+                    .contains("*p7")
+                    .contains(Messages.clearLine(4))
+                    .contains(Messages.patternSize(5040))
+                    .contains(Messages.treeHeadSize(3))
+                    .contains(Messages.tree("*", 94.92))
+                    .contains(Messages.tree("Z", 91.94))
+                    .contains(Messages.tree("TS", 97.50))
+                    .contains(Messages.tree("LIS", 83.33))
                     .contains(Messages.failPatternSize(100))
                     .doesNotContain(Messages.failNothing());
 
@@ -368,6 +421,84 @@ class PercentUseCaseTest {
         }
 
         @Test
+        void useTetfuAndCommand3() throws Exception {
+            // テト譜 (無関係なコメント付き) + パターンコマンド (パターンファイルを無視)
+
+            /*
+            comment: 1ページ目: 無関係なコメントです
+            XX________
+            XXX______X
+            XXX_____XX
+            XXXX_____X
+             */
+
+            String tetfu = "v115@9gB8HeC8FeD8EeF8EeA8JeAgWbBxXHDBQGDSA1d0AC?DYHDBQzuRA1Dq9BF4CwBFbcRA1zW9AxXXXB1RhRAV/d3ByX?HDBQxCSA1dUzBzXHDBwHfRA1d0ACzXHDBw0uRA1d0KB3XHD?Bwv4AA";
+
+            ConfigFileHelper.createFieldFile(new SmallField(), 4);
+            ConfigFileHelper.createPatternFile("*p7");
+
+            String command = String.format("percent -c 4 -p *p7 -t %s", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> {
+                EntryPointMain.main(command.split(" "));
+            });
+
+            assertThat(log.getOutput())
+                    .contains(Messages.useHold())
+                    .contains(Messages.success(5008, 5040))
+                    .contains("*p7")
+                    .contains(Messages.clearLine(4))
+                    .contains(Messages.patternSize(5040))
+                    .contains(Messages.treeHeadSize(3))
+                    .contains(Messages.tree("*", 99.37))
+                    .contains(Messages.tree("S", 98.33))
+                    .contains(Messages.tree("OS", 95.83))
+                    .contains(Messages.tree("ZOS", 83.33))
+                    .contains(Messages.failPatternSize(100))
+                    .doesNotContain(Messages.failNothing());
+
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
+        void useTetfuAndCommand4() throws Exception {
+            // テト譜 (無関係なコメント付き) + パターンコマンド (パターンファイルを無視)
+
+            /*
+            comment: 日本語開始のコメント
+            XXXXXX____
+            XXXXXX____
+            XXXXXX_X__
+            XXXXXXXXX_
+             */
+
+            String tetfu = "v115@9gF8DeF8DeF8AeA8BeI8KeAgW8AlfrHBFwDfE2Cx2B?l/PwB5HEfE5fmzBlPJVBjDEfET4p9Blvs2ACtDfETor6Alv?s2AGtDfETIPSB";
+
+            ConfigFileHelper.createFieldFile(new SmallField(), 4);
+            ConfigFileHelper.createPatternFile("*p7");
+
+            String command = String.format("percent -c 4 -p *p4 -t %s", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> {
+                EntryPointMain.main(command.split(" "));
+            });
+
+            assertThat(log.getOutput())
+                    .contains(Messages.useHold())
+                    .contains(Messages.success(312, 840))
+                    .contains("*p4")
+                    .contains(Messages.clearLine(4))
+                    .contains(Messages.patternSize(840))
+                    .contains(Messages.treeHeadSize(3))
+                    .contains(Messages.tree("*", 37.14))
+                    .contains(Messages.tree("I", 40.00))
+                    .contains(Messages.tree("OS", 5.0))
+                    .contains(Messages.tree("IOS", 0.0))
+                    .contains(Messages.failPatternSize(100))
+                    .doesNotContain(Messages.failNothing());
+
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
         void useTetfuOnly2() throws Exception {
             // テト譜 (ホールドnoにする) + パターンコマンド (フィールドファイル・パターンファイル無視)
 
@@ -516,6 +647,116 @@ class PercentUseCaseTest {
                     .contains(Messages.tree("O", 0.0))
                     .contains(Messages.failPatternSize(100))
                     .contains("[O, I]");
+
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
+        void page() throws Exception {
+            // ページの指定
+
+            /*
+            comment: 4 -p [JT]!,*p4
+            XXX_______
+            XXXXX_____
+            XXXXXX____
+            XXXXXX____
+             */
+            String tetfu = "v115@IhA8HeB8HeA8SeRPYMAkQnGE5VrGEtIReEJhRpHeRp?ZevrB9gi0Geg0meAAPaA0no2ANI98AwXfzBqeEHBEoA6AFL?/iAQfAAA";
+
+            String command = String.format("percent -t %s -P 3", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> {
+                EntryPointMain.main(command.split(" "));
+            });
+
+            assertThat(log.getOutput())
+                    .contains(Messages.useHold())
+                    .contains(Messages.success(1582, 1680))
+                    .contains("[JT]!,*p4")
+                    .contains(Messages.clearLine(4))
+                    .contains(Messages.patternSize(1680))
+                    .contains(Messages.treeHeadSize(3))
+                    .contains(Messages.tree("*", 94.17))
+                    .contains(Messages.failPatternSize(100))
+                    .contains("[T, J, O, S, T, Z]")
+                    .contains("[T, J, S, Z, O, T]");
+
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
+        void treeDepth() throws Exception {
+            // ツリーの深さを変更
+
+            /*
+            comment: 4 -p *!
+            XXX_______
+            XX_______X
+            XX_______X
+            XXXXX___XX
+             */
+            String tetfu = "v115@9gC8GeB8GeC8GeB8GeB8JeRPYNA0no2ANI98AQf78A?RAAAA";
+
+            String command = String.format("percent -t %s -td 4", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> {
+                EntryPointMain.main(command.split(" "));
+            });
+
+            assertThat(log.getOutput())
+                    .contains(Messages.useHold())
+                    .contains(Messages.success(4992, 5040))
+                    .contains("*!")
+                    .contains(Messages.clearLine(4))
+                    .contains(Messages.patternSize(5040))
+                    .contains(Messages.treeHeadSize(4))
+                    .contains(Messages.tree("*", 99.05))
+                    .contains(Messages.tree("S", 98.33))
+                    .contains(Messages.tree("ZT", 98.33))
+                    .contains(Messages.tree("TSJL", 66.67))
+                    .contains(Messages.failPatternSize(100))
+                    .contains("[Z, T, S, L, O, J, I]")
+                    .contains("[T, L, J, S, Z, I, O]");
+
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
+        void failedCount() throws Exception {
+            // ページの指定
+
+            /*
+            comment: 4 -p *!
+            XXX_______
+            XX________
+            XX______XX
+            XXXXX___XX
+             */
+            String tetfu = "v115@9gC8GeB8HeB8FeC8GeB8JeRPYNA0no2ANI98AQf78A?RAAAA";
+
+            String command = String.format("percent -t %s -fc -1", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> {
+                EntryPointMain.main(command.split(" "));
+            });
+
+            assertThat(log.getOutput())
+                    .contains(Messages.useHold())
+                    .contains(Messages.success(4716, 5040))
+                    .contains("*!")
+                    .contains(Messages.clearLine(4))
+                    .contains(Messages.patternSize(5040))
+                    .contains(Messages.treeHeadSize(3))
+                    .contains(Messages.tree("*", 93.57))
+                    .contains(Messages.failPatternAllSize())
+                    .contains("[J, L, S, Z, O, I, T]")
+                    .contains("[S, I, J, L, Z, T, O]")
+                    .contains("[L, S, O, Z, J, I, T]")
+                    .contains("[J, T, L, S, Z, I, O]")
+                    .contains("[S, L, I, O, Z, J, T]")
+                    .contains("[L, I, S, O, Z, J, T]")
+                    .contains("[S, T, Z, I, L, J, O]")
+                    .contains("[T, S, Z, I, L, J, O]")
+                    .contains("[J, I, S, Z, L, T, O]")
+                    .contains("[S, J, L, O, I, Z, T]");
 
             assertThat(log.getError()).isEmpty();
         }

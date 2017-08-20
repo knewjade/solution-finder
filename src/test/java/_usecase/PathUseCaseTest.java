@@ -744,6 +744,161 @@ class PathUseCaseTest {
         }
 
         @Test
+        void useTetfuAndPatternsCommand3() throws Exception {
+            // テト譜 (無関係なコメント付き) + パターンコマンド (パターンファイルを無視)
+
+            /*
+            comment: 1ページ目: 無関係なコメントです
+            XX________
+            XXX______X
+            XXX_____XX
+            XXXX_____X
+             */
+
+            int height = 4;
+            String tetfu = "v115@9gB8HeC8FeD8EeF8EeA8JeAgWbBxXHDBQGDSA1d0AC?DYHDBQzuRA1Dq9BF4CwBFbcRA1zW9AxXXXB1RhRAV/d3ByX?HDBQxCSA1dUzBzXHDBwHfRA1d0ACzXHDBw0uRA1d0KB3XHD?Bwv4AA";
+
+            ConfigFileHelper.createPatternFile("*p2");
+
+            String command = String.format("path -c 4 -t %s -p *p7", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> {
+                EntryPointMain.main(command.split(" "));
+            });
+
+            assertThat(log.getOutput())
+                    .contains("*p7")
+                    .contains(Messages.uniqueCount(118))
+                    .contains(Messages.minimalCount(104));
+
+            // unique
+            PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
+            assertThat(uniqueHTML)
+                    .returns(118, PathHTML::pattern);
+
+            // ライン消去あり
+            assertThat(uniqueHTML.noDeletedLineFumens())
+                    .hasSize(6)
+                    .contains("9gB8hlzhR4C8glh0AtR4D8glg0BtwwF8g0AtywA8Je?AgWGA03ntCM+AAA")
+                    .contains("9gB8zhQ4ywC8ilR4wwD8glRpg0Q4F8Rpi0A8JeAgWG?AK3TWCU+AAA")
+                    .contains("9gB8hlzhR4C8glywR4D8glg0wwBtF8i0BtA8JeAgWG?AaNWWCK+AAA");
+
+            // ライン消去なし
+            assertThat(uniqueHTML.deletedLineFumens())
+                    .hasSize(112)
+                    .contains("9gB8hlwhh0ywC8glwhg0BtwwD8glwhg0R4F8whR4Bt?A8JeAgWGATe/VC6OBAA")
+                    .contains("9gB8BtR4glywC8R4zhD8Bti0F8ilg0wwA8JeAgWGAK?ujFDsOBAA")
+                    .contains("9gB8hlzhR4C8glh0ywD8glg0RpwwF8g0RpR4A8JeAg?WGAv/VWCT+AAA");
+
+            // すべての譜面
+            assertThat(parseLastPageTetfu(uniqueHTML.allFumens()))
+                    .hasSize(118)
+                    .allMatch(coloredField -> isFilled(height, coloredField));
+
+            // minimal
+            PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
+            assertThat(minimalHTML)
+                    .returns(104, PathHTML::pattern);
+
+            // ライン消去あり
+            assertThat(minimalHTML.noDeletedLineFumens())
+                    .hasSize(6)
+                    .contains("9gB8zhQ4ywC8ilR4wwD8glRpg0Q4F8Rpi0A8JeAgWG?AK3TWCU+AAA")
+                    .contains("9gB8hlzhR4C8gli0R4D8glRpg0wwF8RpywA8JeAgWG?AU3jPCM+AAA")
+                    .contains("9gB8zhh0R4C8ilg0R4D8glRpg0wwF8RpywA8JeAgWG?AU3jPCM+AAA");
+
+            // ライン消去なし
+            assertThat(minimalHTML.deletedLineFumens())
+                    .hasSize(98)
+                    .contains("9gB8hlzhR4C8glh0ywD8glg0RpwwF8g0RpR4A8JeAg?WGAv/VWCT+AAA")
+                    .contains("9gB8i0ywR4C8RpglwwR4D8RpglBtF8g0hlBtA8JeAg?WGA6yytC0/AAA")
+                    .contains("9gB8BtRpwhywC8Btglwhh0D8ilwhg0F8Rpwhg0wwA8?JeAgWGAK+TFDvOBAA");
+
+            // すべての譜面
+            assertThat(parseLastPageTetfu(minimalHTML.allFumens()))
+                    .hasSize(104)
+                    .allMatch(coloredField -> isFilled(height, coloredField));
+        }
+
+        @Test
+        void useTetfuAndPatternsCommand4() throws Exception {
+            // テト譜 (無関係なコメント付き) + パターンコマンド (パターンファイルを無視)
+
+            /*
+            comment: 日本語開始のコメント
+            XXXXXX____
+            XXXXXX____
+            XXXXXX_X__
+            XXXXXXXXX_
+             */
+
+            int height = 4;
+            String tetfu = "v115@9gF8DeF8DeF8AeA8BeI8KeAgW8AlfrHBFwDfE2Cx2B?l/PwB5HEfE5fmzBlPJVBjDEfET4p9Blvs2ACtDfETor6Alv?s2AGtDfETIPSB";
+
+            ConfigFileHelper.createPatternFile("*p2");
+
+            String command = String.format("path -c 4 -t %s -p *p4", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> {
+                EntryPointMain.main(command.split(" "));
+            });
+
+            assertThat(log.getOutput())
+                    .contains("*p4")
+                    .contains(Messages.uniqueCount(11))
+                    .contains(Messages.minimalCount(9));
+
+            // unique
+            PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
+            assertThat(uniqueHTML)
+                    .returns(11, PathHTML::pattern);
+
+            // ライン消去あり
+            assertThat(uniqueHTML.noDeletedLineFumens())
+                    .hasSize(5)
+                    .contains("9gF8zhF8ilwwF8glA8xwI8wwJeAgWDA0SdBA")
+                    .contains("9gF8h0R4F8g0R4wwF8g0A8xwI8wwJeAgWDAUtfBA")
+                    .contains("9gF8wwi0F8xwQ4g0F8wwA8R4I8Q4JeAgWDAzufBA");
+
+            // ライン消去なし
+            assertThat(uniqueHTML.deletedLineFumens())
+                    .hasSize(6)
+                    .contains("9gF8ilwwF8zhF8glA8xwI8wwJeAgWDApOkBA")
+                    .contains("9gF8ilwhF8i0whF8glA8g0whI8whJeAgWDAp/jBA")
+                    .contains("9gF8h0hlF8g0BtglF8g0A8BtI8glJeAgWDA6/jBA");
+
+            // すべての譜面
+            assertThat(parseLastPageTetfu(uniqueHTML.allFumens()))
+                    .hasSize(11)
+                    .allMatch(coloredField -> isFilled(height, coloredField));
+
+            // minimal
+            PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
+            assertThat(minimalHTML)
+                    .returns(9, PathHTML::pattern);
+
+            // ライン消去あり
+            assertThat(minimalHTML.noDeletedLineFumens())
+                    .hasSize(4)
+                    .contains("9gF8h0R4F8g0R4wwF8g0A8xwI8wwJeAgWDAUtfBA")
+                    .contains("9gF8wwhlwhF8xwglwhF8wwA8glwhI8whJeAgWDApOk?BA")
+                    .contains("9gF8h0wwwhF8g0xwwhF8g0A8wwwhI8whJeAgWDApuf?BA")
+                    .contains("9gF8wwi0F8xwQ4g0F8wwA8R4I8Q4JeAgWDAzufBA");
+
+            // ライン消去なし
+            assertThat(minimalHTML.deletedLineFumens())
+                    .hasSize(5)
+                    .contains("9gF8i0whF8ilwhF8glA8g0whI8whJeAgWDApifBA")
+                    .contains("9gF8ilwhF8i0whF8glA8g0whI8whJeAgWDAp/jBA")
+                    .contains("9gF8h0hlF8g0ywF8g0A8wwglI8glJeAgWDAqOkBA")
+                    .contains("9gF8h0hlF8g0BtglF8g0A8BtI8glJeAgWDA6/jBA")
+                    .contains("9gF8wwi0F8xwRpF8wwA8RpI8g0JeAgWDAvufBA");
+
+            // すべての譜面
+            assertThat(parseLastPageTetfu(minimalHTML.allFumens()))
+                    .hasSize(9)
+                    .allMatch(coloredField -> isFilled(height, coloredField));
+        }
+
+        @Test
         void useTetfuAndPatternsFile1() throws Exception {
             // テト譜 + パターンファイル
 
