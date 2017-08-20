@@ -64,6 +64,7 @@ class PieceFactoryTest {
         System.out.println(lines.stream().mapToInt(value -> value).max());
     }
 
+    @Disabled
     @Test
     void name2() {
         Block block = Block.I;

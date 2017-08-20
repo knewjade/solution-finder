@@ -7,7 +7,9 @@ import core.action.candidate.LockedCandidate;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
-import core.mino.*;
+import core.mino.Block;
+import core.mino.MinoFactory;
+import core.mino.MinoShifter;
 import core.mino.piece.Neighbor;
 import core.mino.piece.PieceFactory;
 import core.srs.MinoRotation;
@@ -290,10 +292,10 @@ class LockedCandidate2Test {
         LockedCandidate2 candidate2 = new LockedCandidate2(minoFactory, minoShifter, minoRotation, pieceFactory);
 
         Field field = FieldFactory.createSmallField("" +
-                "_________X"+
-                "XX______XX"+
-                "XXXXX____X"+
-                "_________X"+
+                "_________X" +
+                "XX______XX" +
+                "XXXXX____X" +
+                "_________X" +
                 ""
         );
         Block block = Block.I;
