@@ -90,10 +90,10 @@ task copyRelease(type: Task) {
         }
 
         // copy README
-        def readmeName = distributionDir.canonicalPath + File.separator + "README.md"
+        def readmeName = "README.md"
         copy {
             from readmeName
-            into "."
+            into releaseDir
         }
     }
 }
