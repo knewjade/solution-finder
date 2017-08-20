@@ -1,5 +1,5 @@
 group 'com.knewjade'
-version '0.431'
+version '0.44'
 
 apply plugin: 'java'
 apply plugin: 'idea'
