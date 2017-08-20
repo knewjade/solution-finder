@@ -2,6 +2,7 @@
 .gradle/
 build/
 release/
+out/
 *.iml
 
 # Ignore Gradle GUI config
