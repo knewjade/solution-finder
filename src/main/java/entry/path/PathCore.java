@@ -7,7 +7,7 @@ import common.datastore.pieces.Blocks;
 import common.datastore.pieces.LongBlocks;
 import common.order.OrderLookup;
 import common.order.StackOrder;
-import common.pattern.PiecesGenerator;
+import common.pattern.BlocksGenerator;
 import core.field.Field;
 import core.mino.Block;
 import core.mino.Mino;
@@ -38,15 +38,15 @@ class PathCore {
     }
 
     private HashSet<LongBlocks> getCollect(List<String> patterns, int maxDepth, boolean isUsingHold) {
-        PiecesGenerator piecesGenerator = new PiecesGenerator(patterns);
+        BlocksGenerator blocksGenerator = new BlocksGenerator(patterns);
 
         // 必要以上にミノを使っている場合はリストを削減する
         Function<List<Block>, List<Block>> reduceBlocks = Function.identity();
-        if (maxDepth < piecesGenerator.getDepth())
+        if (maxDepth < blocksGenerator.getDepth())
             reduceBlocks = blocks -> blocks.subList(0, maxDepth);
 
         if (isUsingHold) {
-            return piecesGenerator.stream()
+            return blocksGenerator.stream()
                     .parallel()
                     .map(Blocks::getBlockList)
                     .flatMap(blocks -> OrderLookup.forwardBlocks(blocks, maxDepth).stream())
@@ -57,7 +57,7 @@ class PathCore {
                     .map(LongBlocks::new)
                     .collect(Collectors.toCollection(HashSet::new));
         } else {
-            return piecesGenerator.stream()
+            return blocksGenerator.stream()
                     .parallel()
                     .map(Blocks::getBlockList)
                     .map(reduceBlocks)

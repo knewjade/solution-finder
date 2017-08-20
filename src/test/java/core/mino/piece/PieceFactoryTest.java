@@ -15,6 +15,7 @@ import core.mino.piece.PieceFactory;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
 import lib.BooleanWalker;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -25,17 +26,18 @@ import java.util.stream.Collectors;
 
 class PieceFactoryTest {
     // TODO: write unittest
+    @Disabled
     @Test
     void create() {
         PieceFactory pieceFactory = new PieceFactory(4);
         MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = new MinoRotation();
         Neighbors neighbors = new Neighbors(minoFactory, minoRotation, pieceFactory);
         Neighbor neighbor = neighbors.get(Block.I, Rotate.Spawn, 1, 0);
         System.out.println(neighbor);
     }
 
+    @Disabled
     @Test
     void name() {
         MinoRotation minoRotation = new MinoRotation();

@@ -1,7 +1,7 @@
 package _experimental.perfect11;
 
 import common.datastore.pieces.Blocks;
-import common.pattern.PiecesGenerator;
+import common.pattern.BlocksGenerator;
 import core.mino.Block;
 
 import java.io.*;
@@ -95,7 +95,7 @@ public class AllPatternsMain {
     private static void output(String pattern, String path) throws IOException {
         File outputFile = new File(path);
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), StandardCharsets.UTF_8))) {
-            PiecesGenerator generator = new PiecesGenerator(pattern);
+            BlocksGenerator generator = new BlocksGenerator(pattern);
             generator.stream()
                     .map(Blocks::getBlockList)
                     .map(blocks -> blocks.stream().map(Block::getName).collect(Collectors.joining()))

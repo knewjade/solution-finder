@@ -6,7 +6,7 @@ import common.datastore.Pair;
 import common.datastore.action.Action;
 import common.datastore.pieces.LongBlocks;
 import common.datastore.pieces.Blocks;
-import common.pattern.PiecesGenerator;
+import common.pattern.BlocksGenerator;
 import concurrent.LockedReachableThreadLocal;
 import core.action.candidate.Candidate;
 import core.action.candidate.LockedCandidate;
@@ -282,7 +282,7 @@ class PackSearcherTest {
                 CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
 
                 // Assert generator
-                PiecesGenerator generator = createPiecesGenerator(maxDepth);
+                BlocksGenerator generator = createPiecesGenerator(maxDepth);
                 for (Blocks pieces : generator) {
                     List<Block> blocks = pieces.getBlockList();
                     boolean check = checker.check(initField, blocks, candidate, height, maxDepth);
@@ -335,7 +335,7 @@ class PackSearcherTest {
                 CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
 
                 // Assert generator
-                PiecesGenerator generator = createPiecesGenerator(maxDepth);
+                BlocksGenerator generator = createPiecesGenerator(maxDepth);
                 for (Blocks pieces : generator) {
                     List<Block> blocks = pieces.getBlockList();
                     boolean check = checker.check(initField, blocks, candidate, height, maxDepth);
@@ -346,16 +346,16 @@ class PackSearcherTest {
             }
         }
 
-        private PiecesGenerator createPiecesGenerator(int maxDepth) {
+        private BlocksGenerator createPiecesGenerator(int maxDepth) {
             switch (maxDepth) {
                 case 3:
-                    return new PiecesGenerator("*, *p2");
+                    return new BlocksGenerator("*, *p2");
                 case 4:
-                    return new PiecesGenerator("*, *p3");
+                    return new BlocksGenerator("*, *p3");
                 case 5:
-                    return new PiecesGenerator("*, *p4");
+                    return new BlocksGenerator("*, *p4");
                 case 6:
-                    return new PiecesGenerator("*, *p5");
+                    return new BlocksGenerator("*, *p5");
             }
             throw new UnsupportedOperationException();
         }

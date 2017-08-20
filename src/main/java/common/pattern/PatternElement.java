@@ -48,6 +48,8 @@ public class PatternElement {
 
         if (trim.equals("*")) {
             return new PatternElement(ALL_BLOCKS, 1);
+        } else if (trim.equals("*!")) {
+            return new PatternElement(ALL_BLOCKS, ALL_BLOCKS.size());
         } else if (trim.startsWith("*P")) {
             String number = trim.substring(trim.indexOf("P") + 1, trim.length());
             int popCount = getNumber(number);
@@ -68,12 +70,20 @@ public class PatternElement {
             if (blockNames.contains("]"))
                 throw new SyntaxException("Too much ']'");
 
-            if (blockNames.matches("[^TIOSZJL]"))
+            if (!blockNames.matches("[TIOSZJL]+"))
                 throw new SyntaxException("Unknown colorType in []");
 
             List<Block> blocks = Stream.of(blockNames.split(""))
                     .map(nameToBlock::get)
                     .collect(Collectors.toList());
+
+            // Duplicate validation
+            HashSet<Block> blockSet = new HashSet<>();
+            for (Block block : blocks) {
+                if (blockSet.contains(block))
+                    throw new SyntaxException(String.format("Duplicate '%s' blocks in []", block.getName()));
+                blockSet.add(block);
+            }
 
             if (trim.contains("P")) {
                 if (!trim.contains("]P"))
@@ -81,6 +91,10 @@ public class PatternElement {
                 String number = trim.substring(trim.indexOf("P") + 1, trim.length());
                 int popCount = getNumber(number);
                 return new PatternElement(blocks, popCount);
+            } else if (trim.contains("!")) {
+                if (!trim.contains("]!"))
+                    throw new SyntaxException("Should not exist character between [] and !");
+                return new PatternElement(blocks, blocks.size());
             } else if (trim.startsWith("[") && trim.endsWith("]")) {
                 return new PatternElement(blocks, 1);
             } else {

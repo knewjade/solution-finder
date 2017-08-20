@@ -7,7 +7,7 @@ import common.datastore.BlockCounter;
 import common.datastore.OperationWithKey;
 import common.iterable.CombinationIterable;
 import common.parser.OperationWithKeyInterpreter;
-import common.pattern.PiecesGenerator;
+import common.pattern.BlocksGenerator;
 import concurrent.LockedReachableThreadLocal;
 import core.column_field.ColumnField;
 import core.field.Field;
@@ -57,7 +57,7 @@ public class PackMain {
                 "*, *p6, *p4"
         );
 
-        PiecesGenerator pieces = new PiecesGenerator(allOnHold);
+        BlocksGenerator pieces = new BlocksGenerator(allOnHold);
         HashSet<BlockCounter> counters = StreamSupport.stream(pieces.spliterator(), true)
                 .map(Blocks::getBlockList)
                 .map(BlockCounter::new)

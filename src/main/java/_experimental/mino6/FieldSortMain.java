@@ -1,10 +1,10 @@
 package _experimental.mino6;
 
+import common.pattern.BlocksGenerator;
 import lib.MyIterables;
 import common.datastore.Pair;
 import common.datastore.action.Action;
 import common.datastore.pieces.Blocks;
-import common.pattern.PiecesGenerator;
 import common.tetfu.Tetfu;
 import common.tetfu.TetfuElement;
 import common.tetfu.common.ColorConverter;
@@ -63,7 +63,7 @@ public class FieldSortMain {
 
         // 使用する4ミノのリスト
         String pattern = "L, *p4";
-        PiecesGenerator generator = new PiecesGenerator(pattern);
+        BlocksGenerator generator = new BlocksGenerator(pattern);
         List<List<Block>> pieces = MyIterables.toList(generator).stream()
                 .map(Blocks::getBlockList)
                 .collect(Collectors.toList());

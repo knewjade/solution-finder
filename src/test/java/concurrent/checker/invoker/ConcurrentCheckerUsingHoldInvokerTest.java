@@ -3,7 +3,7 @@ package concurrent.checker.invoker;
 import common.datastore.Pair;
 import common.datastore.action.Action;
 import common.datastore.pieces.Blocks;
-import common.pattern.PiecesGenerator;
+import common.pattern.BlocksGenerator;
 import common.tree.AnalyzeTree;
 import concurrent.LockedCandidateThreadLocal;
 import concurrent.checker.CheckerUsingHoldThreadLocal;
@@ -31,9 +31,9 @@ import java.util.concurrent.Executors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ConcurrentCheckerUsingHoldInvokerTest {
-    private AnalyzeTree runTestCase(String marks, PiecesGenerator piecesGenerator, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
+    private AnalyzeTree runTestCase(String marks, BlocksGenerator blocksGenerator, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
         Field field = FieldFactory.createField(marks);
-        List<List<Block>> searchingPieces = toBlocksList(piecesGenerator);
+        List<List<Block>> searchingPieces = toBlocksList(blocksGenerator);
         return runTestCase(field, searchingPieces, maxClearLine, maxDepth);
     }
 
@@ -60,16 +60,16 @@ class ConcurrentCheckerUsingHoldInvokerTest {
         return tree;
     }
 
-    private List<List<Block>> toBlocksList(PiecesGenerator piecesGenerator) {
+    private List<List<Block>> toBlocksList(BlocksGenerator blocksGenerator) {
         List<List<Block>> searchingPieces = new ArrayList<>();
-        for (Blocks blocks : piecesGenerator)
+        for (Blocks blocks : blocksGenerator)
             searchingPieces.add(blocks.getBlockList());
         return searchingPieces;
     }
 
     @Test
     void testSearch1() throws Exception {
-        PiecesGenerator piecesGenerator = new PiecesGenerator("*p7");
+        BlocksGenerator blocksGenerator = new BlocksGenerator("*p7");
         int maxClearLine = 8;
         int maxDepth = 7;
 
@@ -84,7 +84,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
                 "XXXXXXXX__" +
                 "";
 
-        AnalyzeTree tree = runTestCase(marks, piecesGenerator, maxClearLine, maxDepth);
+        AnalyzeTree tree = runTestCase(marks, blocksGenerator, maxClearLine, maxDepth);
 
         // Source: myself 20170415
         assertThat(tree.getSuccessPercent()).isEqualTo(5032 / 5040.0);
@@ -92,7 +92,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
 
     @Test
     void testSearch2BT4_5() throws Exception {
-        PiecesGenerator piecesGenerator = new PiecesGenerator("*p7");
+        BlocksGenerator blocksGenerator = new BlocksGenerator("*p7");
         int maxClearLine = 6;
         int maxDepth = 7;
 
@@ -105,7 +105,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
                 "XXXXXXX_XX" +
                 "";
 
-        AnalyzeTree tree = runTestCase(marks, piecesGenerator, maxClearLine, maxDepth);
+        AnalyzeTree tree = runTestCase(marks, blocksGenerator, maxClearLine, maxDepth);
 
         // Source: myself 20170415
         assertThat(tree.getSuccessPercent()).isEqualTo(5038 / 5040.0);
@@ -113,7 +113,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
 
     @Test
     void testSearch3() throws Exception {
-        PiecesGenerator piecesGenerator = new PiecesGenerator("*p7");
+        BlocksGenerator blocksGenerator = new BlocksGenerator("*p7");
         int maxClearLine = 4;
         int maxDepth = 7;
 
@@ -124,7 +124,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
                 "XXXXXX____" +
                 "";
 
-        AnalyzeTree tree = runTestCase(marks, piecesGenerator, maxClearLine, maxDepth);
+        AnalyzeTree tree = runTestCase(marks, blocksGenerator, maxClearLine, maxDepth);
 
         // Source: myself 20170415
         assertThat(tree.getSuccessPercent()).isEqualTo(4736 / 5040.0);
@@ -132,7 +132,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
 
     @Test
     void testSearch4() throws Exception {
-        PiecesGenerator piecesGenerator = new PiecesGenerator("*p4");
+        BlocksGenerator blocksGenerator = new BlocksGenerator("*p4");
         int maxClearLine = 3;
         int maxDepth = 3;
 
@@ -142,7 +142,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
                 "XXXX___XXX" +
                 "";
 
-        AnalyzeTree tree = runTestCase(marks, piecesGenerator, maxClearLine, maxDepth);
+        AnalyzeTree tree = runTestCase(marks, blocksGenerator, maxClearLine, maxDepth);
 
         // Source: myself 20170415
         assertThat(tree.getSuccessPercent()).isEqualTo(434 / 840.0);
@@ -150,7 +150,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
 
     @Test
     void testSearch5() throws Exception {
-        PiecesGenerator piecesGenerator = new PiecesGenerator("J, I, Z, *p4");
+        BlocksGenerator blocksGenerator = new BlocksGenerator("J, I, Z, *p4");
         int maxClearLine = 4;
         int maxDepth = 6;
 
@@ -161,7 +161,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
                 "XXX______X" +
                 "";
 
-        AnalyzeTree tree = runTestCase(marks, piecesGenerator, maxClearLine, maxDepth);
+        AnalyzeTree tree = runTestCase(marks, blocksGenerator, maxClearLine, maxDepth);
 
         // Source: myself 20170415
         assertThat(tree.getSuccessPercent()).isEqualTo(771 / 840.0);
@@ -169,7 +169,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
 
     @Test
     void testSearch6() throws Exception {
-        PiecesGenerator piecesGenerator = new PiecesGenerator("*p5");
+        BlocksGenerator blocksGenerator = new BlocksGenerator("*p5");
         int maxClearLine = 4;
         int maxDepth = 4;
 
@@ -180,7 +180,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
                 "XXXXXX____" +
                 "";
 
-        AnalyzeTree tree = runTestCase(marks, piecesGenerator, maxClearLine, maxDepth);
+        AnalyzeTree tree = runTestCase(marks, blocksGenerator, maxClearLine, maxDepth);
 
         // Source: twitter by @???
         assertThat(tree.getSuccessPercent()).isEqualTo(1776 / 2520.0);
@@ -188,7 +188,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
 
     @Test
     void testSearch7() throws Exception {
-        PiecesGenerator piecesGenerator = new PiecesGenerator("*p5");
+        BlocksGenerator blocksGenerator = new BlocksGenerator("*p5");
         int maxClearLine = 4;
         int maxDepth = 4;
 
@@ -199,7 +199,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
                 "XXXXXX____" +
                 "";
 
-        AnalyzeTree tree = runTestCase(marks, piecesGenerator, maxClearLine, maxDepth);
+        AnalyzeTree tree = runTestCase(marks, blocksGenerator, maxClearLine, maxDepth);
 
         // Source: twitter by @???
         assertThat(tree.getSuccessPercent()).isEqualTo(1672 / 2520.0);
@@ -207,7 +207,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
 
     @Test
     void testSearch8() throws Exception {
-        PiecesGenerator piecesGenerator = new PiecesGenerator("*p5");
+        BlocksGenerator blocksGenerator = new BlocksGenerator("*p5");
         int maxClearLine = 4;
         int maxDepth = 4;
 
@@ -218,7 +218,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
                 "XXXXXXX___" +
                 "";
 
-        AnalyzeTree tree = runTestCase(marks, piecesGenerator, maxClearLine, maxDepth);
+        AnalyzeTree tree = runTestCase(marks, blocksGenerator, maxClearLine, maxDepth);
 
         // Source: twitter by @???
         assertThat(tree.getSuccessPercent()).isEqualTo(1928 / 2520.0);
@@ -226,7 +226,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
 
     @Test
     void testSearch9() throws Exception {
-        PiecesGenerator piecesGenerator = new PiecesGenerator("*p5");
+        BlocksGenerator blocksGenerator = new BlocksGenerator("*p5");
         int maxClearLine = 4;
         int maxDepth = 4;
 
@@ -237,7 +237,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
                 "XXXXXX____" +
                 "";
 
-        AnalyzeTree tree = runTestCase(marks, piecesGenerator, maxClearLine, maxDepth);
+        AnalyzeTree tree = runTestCase(marks, blocksGenerator, maxClearLine, maxDepth);
 
         // Source: twitter by @???
         assertThat(tree.getSuccessPercent()).isEqualTo(1700 / 2520.0);
@@ -245,7 +245,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
 
     @Test
     void testSearch10() throws Exception {
-        PiecesGenerator piecesGenerator = new PiecesGenerator("T, *p4");
+        BlocksGenerator blocksGenerator = new BlocksGenerator("T, *p4");
         int maxClearLine = 4;
         int maxDepth = 4;
 
@@ -256,7 +256,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
                 "XXXXXX____" +
                 "";
 
-        AnalyzeTree tree = runTestCase(marks, piecesGenerator, maxClearLine, maxDepth);
+        AnalyzeTree tree = runTestCase(marks, blocksGenerator, maxClearLine, maxDepth);
 
         // Source: Nilgiri: https://docs.google.com/spreadsheets/d/1bVY3t_X96xRmUL0qdgB9tViSIGenu6RMKX4RW7qWg8Y/edit#gid=0
         assertThat(tree.getSuccessPercent()).isEqualTo(744 / 840.0);
@@ -264,7 +264,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
 
     @Test
     void testSearch12() throws Exception {
-        PiecesGenerator piecesGenerator = new PiecesGenerator("*p5");
+        BlocksGenerator blocksGenerator = new BlocksGenerator("*p5");
         int maxClearLine = 4;
         int maxDepth = 4;
 
@@ -275,7 +275,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
                 "XXXX_____X" +
                 "";
 
-        AnalyzeTree tree = runTestCase(marks, piecesGenerator, maxClearLine, maxDepth);
+        AnalyzeTree tree = runTestCase(marks, blocksGenerator, maxClearLine, maxDepth);
 
         // Source: myself 20170707
         assertThat(tree.getSuccessPercent()).isEqualTo(1758 / 2520.0);
@@ -299,8 +299,8 @@ class ConcurrentCheckerUsingHoldInvokerTest {
             Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
             Field field = randoms.field(maxClearLine, maxDepth);
 
-            PiecesGenerator piecesGenerator = createPiecesGenerator(maxDepth);
-            List<List<Block>> searchingPieces = toBlocksList(piecesGenerator);
+            BlocksGenerator blocksGenerator = createPiecesGenerator(maxDepth);
+            List<List<Block>> searchingPieces = toBlocksList(blocksGenerator);
             AnalyzeTree tree = runTestCase(field, searchingPieces, maxClearLine, maxDepth);
 
             for (List<Block> pieces : searchingPieces) {
@@ -310,16 +310,16 @@ class ConcurrentCheckerUsingHoldInvokerTest {
         }
     }
 
-    private PiecesGenerator createPiecesGenerator(int maxDepth) {
+    private BlocksGenerator createPiecesGenerator(int maxDepth) {
         switch (maxDepth) {
             case 3:
-                return new PiecesGenerator("*, *p3");
+                return new BlocksGenerator("*, *p3");
             case 4:
-                return new PiecesGenerator("*, *p4");
+                return new BlocksGenerator("*, *p4");
             case 5:
-                return new PiecesGenerator("*, *p5");
+                return new BlocksGenerator("*, *p5");
             case 6:
-                return new PiecesGenerator("*, *p6");
+                return new BlocksGenerator("*, *p6");
         }
         throw new UnsupportedOperationException();
     }

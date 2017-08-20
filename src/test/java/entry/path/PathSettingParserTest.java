@@ -125,9 +125,9 @@ class PathSettingParserTest {
         String fieldPath = ClassLoader.getSystemResource("field/4row.txt").getPath();
         String patternsPath = ClassLoader.getSystemResource("patterns/7mino.txt").getPath();
 
-        // comment: 4 --hold avoid --patterns *p4
-        String tetfu = "v115@9gB8DeG8CeH8BeG8CeD8JeAgWlA0no2AtTKNEM388A?wBrNEJ388AwjdOEB/2rDSm0TAS4WOEUAAAA";
-        String commands = String.format("--hold use -fp %s -pp %s --tetfu %s --patterns 'T, Z' --log-path output/dummy -L 2", fieldPath, patternsPath, tetfu);
+        // comment: 4 --hold avoid --patterns T,Z
+        String tetfu = "v115@9gB8DeG8CeH8BeG8CeD8JeAgWnA0no2AtTKNEM388A?wBrNEJ388AwjdOEB/2rDSm0TASYtSAyUDCA";
+        String commands = String.format("--hold use -fp %s -pp %s --tetfu %s --patterns *p4 --log-path output/dummy -L 2", fieldPath, patternsPath, tetfu);
 
         PathSettingParser entryPoint = new PathSettingParser(commands);
         Optional<PathSettings> parse = entryPoint.parse();
@@ -146,7 +146,7 @@ class PathSettingParserTest {
                     .returns(4, PathSettings::getMaxClearLine)
                     .returns(Collections.singletonList("*p4"), PathSettings::getPatterns)
                     .returns(true, PathSettings::isOutputToConsole)
-                    .returns(false, PathSettings::isUsingHold)
+                    .returns(true, PathSettings::isUsingHold)
                     .returns("output/path.txt", PathSettings::getOutputBaseFilePath)
                     .returns(PathLayer.Minimal, PathSettings::getPathLayer)
                     .returns(OutputType.Link, PathSettings::getOutputType)
@@ -163,7 +163,7 @@ class PathSettingParserTest {
 
         // comment: 4 --hold avoid --patterns *p4
         String tetfu = "v115@vh2SSYRBFLDmClcJSAVDEHBEooRBMoAVBUujPCv3jx?CPNUPCJHWWCJtPFDs+bgC6P9VCp/dgCzn9VCzvaFDUePFDv?+TWCviLuCqe1LCqHLWCzAAAANpBXqBGjBznB0fB0rBdnBzq?BxvB/tBqsBGjBJnB1vBTmBxkB3pBikBGrByuB9tBXjB0sB0?rBTkBmfBplBxmBirBNpBWyBXqB0fBToBCjBRmBesBTmB0qB?NpBpoBXqB0fBmrBzsB3rB6qBzsBirB0sB/tBGjB1wBNmQSA?0no2AtTKNEM388AwBrNEJnBAA";
-        String commands = String.format("--hold use -fp %s -pp %s --tetfu %s --patterns *p5 --log-path output/dummy -P 55", fieldPath, patternsPath, tetfu);
+        String commands = String.format("--hold use -fp %s -pp %s --tetfu %s --patterns T,*p5 --log-path output/dummy -P 55", fieldPath, patternsPath, tetfu);
 
         PathSettingParser entryPoint = new PathSettingParser(commands);
         Optional<PathSettings> parse = entryPoint.parse();
@@ -180,9 +180,9 @@ class PathSettingParserTest {
             assertThat(settings)
                     .returns("output/dummy", PathSettings::getLogFilePath)
                     .returns(4, PathSettings::getMaxClearLine)
-                    .returns(Collections.singletonList("*p5"), PathSettings::getPatterns)
+                    .returns(Collections.singletonList("T,*p5"), PathSettings::getPatterns)
                     .returns(true, PathSettings::isOutputToConsole)
-                    .returns(false, PathSettings::isUsingHold)
+                    .returns(true, PathSettings::isUsingHold)
                     .returns("output/path.txt", PathSettings::getOutputBaseFilePath)
                     .returns(PathLayer.Minimal, PathSettings::getPathLayer)
                     .returns(OutputType.Link, PathSettings::getOutputType)
@@ -199,7 +199,7 @@ class PathSettingParserTest {
 
         // comment: 3 -p T,S,L,O,L
         String tetfu = "v115@vh2SSYRBFLDmClcJSAVDEHBEooRBMoAVBUujPCv3jx?CPNUPCJHWWCJtPFDs+bgC6P9VCp/dgCzn9VCzvaFDUePFDv?+TWCviLuCqe1LCqHLWCzAAAANpBXqBGjBznB0fB0rBdnBzq?BxvB/tBqsBGjBJnB1vBTmBxkB3pBikBGrByuB9tBXjB0sB0?rBTkBmfBplBxmBirBNpBWyBXqB0fBToBCjBRmBesBTmB0qB?NpBpoBXqB0fBmrBzsQaAzno2ANI98AQe88ADd88AjS88ADX?88AjCBAA3rQjAFLDmClcJSAVztSAVG88A4c88AZyKWCat/w?CJePFDvyzBA6qBzsBirB0sB/tBGjB1wBNmQSA0no2AtTKNE?M388AwBrNEJnBAA";
-        String commands = String.format("--hold use -fp %s -pp %s --tetfu %s --patterns *p5 --log-path output/dummy -P 46 -o output/result_dummy.txt -s yes", fieldPath, patternsPath, tetfu);
+        String commands = String.format("--hold avoid -fp %s -pp %s --tetfu %s --patterns *p5 --log-path output/dummy -P 46 -o output/result_dummy.txt -s yes", fieldPath, patternsPath, tetfu);
 
         PathSettingParser entryPoint = new PathSettingParser(commands);
         Optional<PathSettings> parse = entryPoint.parse();
@@ -215,9 +215,9 @@ class PathSettingParserTest {
             assertThat(settings)
                     .returns("output/dummy", PathSettings::getLogFilePath)
                     .returns(3, PathSettings::getMaxClearLine)
-                    .returns(Collections.singletonList("T,S,L,O,L"), PathSettings::getPatterns)
+                    .returns(Collections.singletonList("*p5"), PathSettings::getPatterns)
                     .returns(true, PathSettings::isOutputToConsole)
-                    .returns(true, PathSettings::isUsingHold)
+                    .returns(false, PathSettings::isUsingHold)
                     .returns("output/result_dummy.txt", PathSettings::getOutputBaseFilePath)
                     .returns(PathLayer.Minimal, PathSettings::getPathLayer)
                     .returns(OutputType.Link, PathSettings::getOutputType)

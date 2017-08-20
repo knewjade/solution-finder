@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class PiecesGenerator implements Iterable<Blocks> {
+public class BlocksGenerator implements Iterable<Blocks> {
     public static void verify(String pattern) throws SyntaxException {
         verify(Collections.singletonList(pattern));
     }
@@ -33,7 +33,7 @@ public class PiecesGenerator implements Iterable<Blocks> {
                 try {
                     currentDepth += PatternElement.verify(split);
                 } catch (SyntaxException e) {
-                    String message = String.format("'%s' # '%s' in %d line : cause = %s", split.trim(), pattern.trim(), index + 1, e.getMessage());
+                    String message = String.format("'%s' on %d line :: cause = %s", split.trim(), index + 1, e.getMessage());
                     throw new SyntaxException(message);
                 }
             }
@@ -41,7 +41,7 @@ public class PiecesGenerator implements Iterable<Blocks> {
             if (depth == -1) {
                 depth = currentDepth;  // First depth
             } else if (depth != currentDepth) {
-                String message = String.format("'%s' in %d line : cause = %s", pattern.trim(), index + 1, "Num of blocks is not equal to others");
+                String message = String.format("'%s' on %d line :: cause = %s", pattern.trim(), index + 1, "Num of blocks is not equal to others");
                 throw new SyntaxException(message);
             }
         }
@@ -49,12 +49,18 @@ public class PiecesGenerator implements Iterable<Blocks> {
 
     private final List<String> patterns;
 
-    public PiecesGenerator(String pattern) {
+    public BlocksGenerator(String pattern) {
         this(Collections.singletonList(pattern));
     }
 
-    public PiecesGenerator(List<String> patterns) {
+    public BlocksGenerator(List<String> patterns) {
         this.patterns = patterns.stream()
+                .map(String::trim)
+                .map(str -> {
+                    if (str.startsWith("'") && str.endsWith("'"))
+                        return str.substring(1, str.length() - 1);
+                    return str;
+                })
                 .map(str -> {
                     if (str.contains("#"))
                         return str.substring(0, str.indexOf('#'));

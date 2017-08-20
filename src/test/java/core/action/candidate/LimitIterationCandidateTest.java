@@ -11,6 +11,7 @@ import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
 import lib.Randoms;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -159,9 +160,10 @@ class LimitIterationCandidateTest {
         }
     }
 
+    @Disabled
     @Test
     @Tag("long")
-    // TODO: mesure time
+    // TODO: mesure time, 移動回数をチェックしていないためテストに失敗することがある
     void testRandomLocked() {
         Randoms randoms = new Randoms();
 

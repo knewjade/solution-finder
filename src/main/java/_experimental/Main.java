@@ -3,7 +3,7 @@ package _experimental;
 import common.comparator.PiecesNameComparator;
 import common.datastore.action.Action;
 import common.datastore.pieces.Blocks;
-import common.pattern.PiecesGenerator;
+import common.pattern.BlocksGenerator;
 import concurrent.LockedCandidateThreadLocal;
 import core.action.candidate.Candidate;
 import core.action.candidate.LockedCandidate;
@@ -31,9 +31,9 @@ public class Main {
 
     private static void start() {
         PatternTree tree = new PatternTree();
-//        PiecesGenerator piecesGenerator = new PiecesGenerator("I,I,J,L,O,[SZT]p3,*p3");
-        PiecesGenerator piecesGenerator = new PiecesGenerator("I,I,J,L,O,S,Z,T,*p3");
-        List<Blocks> piecesList = MyIterables.toList(piecesGenerator);
+//        PiecesGenerator blocksGenerator = new BlocksGenerator("I,I,J,L,O,[SZT]p3,*p3");
+        BlocksGenerator blocksGenerator = new BlocksGenerator("I,I,J,L,O,S,Z,T,*p3");
+        List<Blocks> piecesList = MyIterables.toList(blocksGenerator);
         piecesList.forEach(pieces -> tree.build(pieces.getBlockList(), blocks -> new TerminateChecker()));
 
         System.out.println(piecesList.size());

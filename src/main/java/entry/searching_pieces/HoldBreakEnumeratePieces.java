@@ -3,7 +3,7 @@ package entry.searching_pieces;
 import common.datastore.pieces.Blocks;
 import common.datastore.pieces.LongBlocks;
 import common.order.ForwardOrderLookUp;
-import common.pattern.PiecesGenerator;
+import common.pattern.BlocksGenerator;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -15,11 +15,11 @@ import java.util.stream.Collectors;
  * ホールドありの組み合わせから複数のホールドなしの組み合わせに分解し、重複を取り除く
  */
 public class HoldBreakEnumeratePieces implements EnumeratePiecesCore {
-    private final PiecesGenerator generator;
+    private final BlocksGenerator generator;
     private final int maxDepth;
     private int counter = -1;
 
-    HoldBreakEnumeratePieces(PiecesGenerator generator, int maxDepth) {
+    HoldBreakEnumeratePieces(BlocksGenerator generator, int maxDepth) {
         assert maxDepth <= generator.getDepth();
         this.generator = generator;
         this.maxDepth = maxDepth;

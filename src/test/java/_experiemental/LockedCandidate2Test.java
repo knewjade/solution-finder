@@ -13,6 +13,7 @@ import core.mino.piece.PieceFactory;
 import core.srs.MinoRotation;
 import lib.Randoms;
 import lib.Stopwatch;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class LockedCandidate2Test {
+    @Disabled
     @Test
     void random() {
         MinoFactory minoFactory = new MinoFactory();
@@ -105,6 +107,7 @@ class LockedCandidate2Test {
         System.out.println(stopwatch2.toMessage(TimeUnit.MICROSECONDS));
     }
 
+    @Disabled
     @Test
     void random2() {
         MinoFactory minoFactory = new MinoFactory();
@@ -146,6 +149,7 @@ class LockedCandidate2Test {
         assertThat(search2).isEqualTo(search1);
     }
 
+    @Disabled
     @Test
     void random3() {
         MinoFactory minoFactory = new MinoFactory();
@@ -188,6 +192,7 @@ class LockedCandidate2Test {
         assertThat(search2).isEqualTo(search1);
     }
 
+    @Disabled
     @Test
     void random4() {
         MinoFactory minoFactory = new MinoFactory();
@@ -230,6 +235,7 @@ class LockedCandidate2Test {
         assertThat(search2).isEqualTo(search1);
     }
 
+    @Disabled
     @Test
     void random5() {
         MinoFactory minoFactory = new MinoFactory();
@@ -271,6 +277,7 @@ class LockedCandidate2Test {
         assertThat(search2).isEqualTo(search1);
     }
 
+    @Disabled
     @Test
     void random6() {
         MinoFactory minoFactory = new MinoFactory();

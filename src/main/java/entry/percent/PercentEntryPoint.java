@@ -4,7 +4,7 @@ import common.datastore.pieces.LongBlocks;
 import lib.Stopwatch;
 import common.SyntaxException;
 import common.datastore.Pair;
-import common.pattern.PiecesGenerator;
+import common.pattern.BlocksGenerator;
 import common.tree.AnalyzeTree;
 import core.field.Field;
 import core.field.FieldView;
@@ -73,7 +73,7 @@ public class PercentEntryPoint implements EntryPoint {
             throw new IllegalArgumentException("Should specify patterns, not allow empty");
 
         try {
-            PiecesGenerator.verify(patterns);
+            BlocksGenerator.verify(patterns);
         } catch (SyntaxException e) {
             throw new IllegalArgumentException("Invalid patterns", e);
         }
@@ -86,7 +86,7 @@ public class PercentEntryPoint implements EntryPoint {
         output("# Initialize / System");
         int core = Runtime.getRuntime().availableProcessors();
         ExecutorService executorService = Executors.newFixedThreadPool(core);
-        PiecesGenerator generator = new PiecesGenerator(patterns);
+        BlocksGenerator generator = new BlocksGenerator(patterns);
 
         output("Available processors = " + core);
 

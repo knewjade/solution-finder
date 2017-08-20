@@ -5,7 +5,7 @@ import common.datastore.BlockCounter;
 import common.datastore.OperationWithKey;
 import common.datastore.pieces.Blocks;
 import common.iterable.CombinationIterable;
-import common.pattern.PiecesGenerator;
+import common.pattern.BlocksGenerator;
 import core.mino.Block;
 import searcher.pack.mino_field.MinoField;
 import searcher.pack.memento.MinoFieldMemento;
@@ -25,7 +25,7 @@ public class ForPathSolutionFilter implements SolutionFilter {
     public ForPathSolutionFilter(List<String> patterns,int height) {
         this.height = height;
 
-        PiecesGenerator pieces = new PiecesGenerator(patterns);
+        BlocksGenerator pieces = new BlocksGenerator(patterns);
         HashSet<BlockCounter> counters = StreamSupport.stream(pieces.spliterator(), true)
                 .map(Blocks::getBlockList)
                 .map(BlockCounter::new)

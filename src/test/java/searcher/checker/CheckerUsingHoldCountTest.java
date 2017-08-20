@@ -3,7 +3,7 @@ package searcher.checker;
 import common.datastore.action.Action;
 import common.datastore.pieces.Blocks;
 import common.iterable.PermutationIterable;
-import common.pattern.PiecesGenerator;
+import common.pattern.BlocksGenerator;
 import common.tree.AnalyzeTree;
 import core.action.candidate.Candidate;
 import core.action.candidate.LockedCandidate;
@@ -133,7 +133,7 @@ class CheckerUsingHoldCountTest {
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
         AnalyzeTree tree = new AnalyzeTree();
 
-        Iterable<Blocks> combinations = new PiecesGenerator(pattern);
+        Iterable<Blocks> combinations = new BlocksGenerator(pattern);
         for (Blocks pieces : combinations) {
             List<Block> blocks = pieces.getBlockList();
             boolean result = checker.check(field, blocks, candidate, maxClearLine, maxDepth);

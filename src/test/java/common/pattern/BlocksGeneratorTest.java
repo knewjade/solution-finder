@@ -1,9 +1,9 @@
 package common.pattern;
 
-import common.datastore.pieces.LongBlocks;
-import lib.MyIterables;
 import common.SyntaxException;
 import common.datastore.pieces.Blocks;
+import common.datastore.pieces.LongBlocks;
+import lib.MyIterables;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -17,146 +17,149 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class BlocksGeneratorTest {
     @Test
     void toList1() {
-        PiecesGenerator generator = new PiecesGenerator("I # comment");
+        BlocksGenerator generator = new BlocksGenerator("I # comment");
         assertThat(generator.getDepth()).isEqualTo(1);
 
-        List<Blocks> pieces = MyIterables.toList(generator);
+        List<Blocks> blocks = MyIterables.toList(generator);
 
-        assertThat(pieces)
+        assertThat(blocks)
                 .hasSize(1)
                 .containsExactly(new LongBlocks(Collections.singletonList(I)));
-
-        assertThat(pieces.size()).isEqualTo(1);
-        assertThat(pieces.get(0).getBlockList()).isEqualTo(Collections.singletonList(I));
     }
 
     @Test
     void toList1LowerCase() {
-        PiecesGenerator generator = new PiecesGenerator("i");
+        BlocksGenerator generator = new BlocksGenerator("i");
         assertThat(generator.getDepth()).isEqualTo(1);
 
-        List<Blocks> pieces = MyIterables.toList(generator);
-        assertThat(pieces.size()).isEqualTo(1);
-        assertThat(pieces.get(0).getBlockList()).isEqualTo(Collections.singletonList(I));
+        List<Blocks> blocks = MyIterables.toList(generator);
+        assertThat(blocks)
+                .hasSize(1)
+                .containsExactly(new LongBlocks(Collections.singletonList(I)));
     }
 
     @Test
     void toList2() {
-        PiecesGenerator generator = new PiecesGenerator("I,J");
+        BlocksGenerator generator = new BlocksGenerator("I,J");
         assertThat(generator.getDepth()).isEqualTo(2);
 
-        List<Blocks> pieces = MyIterables.toList(generator);
-        assertThat(pieces.size()).isEqualTo(1);
-        assertThat(pieces.get(0).getBlockList()).isEqualTo(Arrays.asList(I, J));
+        List<Blocks> blocks = MyIterables.toList(generator);
+        assertThat(blocks)
+                .hasSize(1)
+                .containsExactly(new LongBlocks(Arrays.asList(I, J)));
     }
 
     @Test
     void toList2WithSpace() {
-        PiecesGenerator generator = new PiecesGenerator(" I , J ");
+        BlocksGenerator generator = new BlocksGenerator(" I , J ");
         assertThat(generator.getDepth()).isEqualTo(2);
 
-        List<Blocks> pieces = MyIterables.toList(generator);
-        assertThat(pieces.size()).isEqualTo(1);
-        assertThat(pieces.get(0).getBlockList()).isEqualTo(Arrays.asList(I, J));
+        List<Blocks> blocks = MyIterables.toList(generator);
+        assertThat(blocks)
+                .hasSize(1)
+                .containsExactly(new LongBlocks(Arrays.asList(I, J)));
     }
 
     @Test
     void toListAsterisk() {
-        PiecesGenerator generator = new PiecesGenerator(" * ");
+        BlocksGenerator generator = new BlocksGenerator(" * ");
         assertThat(generator.getDepth()).isEqualTo(1);
 
-        List<Blocks> pieces = MyIterables.toList(generator);
-        assertThat(pieces.size()).isEqualTo(7);
-        for (Blocks piece : pieces)
-            assertThat(piece.getBlockList().size()).isEqualTo(1);
+        List<Blocks> blocks = MyIterables.toList(generator);
+        assertThat(blocks)
+                .hasSize(7)
+                .allMatch(element -> element.getBlockList().size() == 1);
     }
 
     @Test
     void toListAsterisk2() {
-        PiecesGenerator generator = new PiecesGenerator(" *, * ");
+        BlocksGenerator generator = new BlocksGenerator(" *, * ");
         assertThat(generator.getDepth()).isEqualTo(2);
 
-        List<Blocks> pieces = MyIterables.toList(generator);
-        assertThat(pieces.size()).isEqualTo(49);
-        for (Blocks piece : pieces)
-            assertThat(piece.getBlockList().size()).isEqualTo(2);
+        List<Blocks> blocks = MyIterables.toList(generator);
+        assertThat(blocks)
+                .hasSize(49)
+                .allMatch(element -> element.getBlockList().size() == 2);
     }
 
     @Test
     void toListSelector() {
-        PiecesGenerator generator = new PiecesGenerator(" [TSZ] ");
+        BlocksGenerator generator = new BlocksGenerator(" [TSZ] ");
         assertThat(generator.getDepth()).isEqualTo(1);
 
-        List<Blocks> pieces = MyIterables.toList(generator);
-        assertThat(pieces.size()).isEqualTo(3);
-        assertThat(pieces.get(0).getBlockList()).isEqualTo(Collections.singletonList(T));
-        assertThat(pieces.get(1).getBlockList()).isEqualTo(Collections.singletonList(S));
-        assertThat(pieces.get(2).getBlockList()).isEqualTo(Collections.singletonList(Z));
+        List<Blocks> blocks = MyIterables.toList(generator);
+        assertThat(blocks)
+                .hasSize(3)
+                .contains(new LongBlocks(Collections.singletonList(T)))
+                .contains(new LongBlocks(Collections.singletonList(S)))
+                .contains(new LongBlocks(Collections.singletonList(Z)));
     }
 
     @Test
     void toListSelector2() {
-        PiecesGenerator generator = new PiecesGenerator(" [TsZ] , [IOjl]");
+        BlocksGenerator generator = new BlocksGenerator(" [TsZ] , [IOjl]");
         assertThat(generator.getDepth()).isEqualTo(2);
 
-        List<Blocks> pieces = MyIterables.toList(generator);
-        assertThat(pieces.size()).isEqualTo(12);
-        assertThat(pieces.get(0).getBlockList()).isEqualTo(Arrays.asList(T, I));
-        assertThat(pieces.get(1).getBlockList()).isEqualTo(Arrays.asList(T, O));
-        assertThat(pieces.get(2).getBlockList()).isEqualTo(Arrays.asList(T, J));
-        assertThat(pieces.get(3).getBlockList()).isEqualTo(Arrays.asList(T, L));
-        assertThat(pieces.get(4).getBlockList()).isEqualTo(Arrays.asList(S, I));
-        assertThat(pieces.get(5).getBlockList()).isEqualTo(Arrays.asList(S, O));
-        assertThat(pieces.get(6).getBlockList()).isEqualTo(Arrays.asList(S, J));
-        assertThat(pieces.get(7).getBlockList()).isEqualTo(Arrays.asList(S, L));
-        assertThat(pieces.get(8).getBlockList()).isEqualTo(Arrays.asList(Z, I));
-        assertThat(pieces.get(9).getBlockList()).isEqualTo(Arrays.asList(Z, O));
-        assertThat(pieces.get(10).getBlockList()).isEqualTo(Arrays.asList(Z, J));
-        assertThat(pieces.get(11).getBlockList()).isEqualTo(Arrays.asList(Z, L));
+        List<Blocks> blocks = MyIterables.toList(generator);
+        assertThat(blocks)
+                .hasSize(12)
+                .contains(new LongBlocks(Arrays.asList(T, I)))
+                .contains(new LongBlocks(Arrays.asList(T, O)))
+                .contains(new LongBlocks(Arrays.asList(T, J)))
+                .contains(new LongBlocks(Arrays.asList(T, L)))
+                .contains(new LongBlocks(Arrays.asList(S, I)))
+                .contains(new LongBlocks(Arrays.asList(S, O)))
+                .contains(new LongBlocks(Arrays.asList(S, J)))
+                .contains(new LongBlocks(Arrays.asList(S, L)))
+                .contains(new LongBlocks(Arrays.asList(Z, I)))
+                .contains(new LongBlocks(Arrays.asList(Z, O)))
+                .contains(new LongBlocks(Arrays.asList(Z, J)))
+                .contains(new LongBlocks(Arrays.asList(Z, L)));
     }
 
     @Test
     void toListSelectorWithPermutation() {
-        PiecesGenerator generator = new PiecesGenerator(" [TSZ]p2 ");
+        BlocksGenerator generator = new BlocksGenerator(" [TSZ]p2 ");
         assertThat(generator.getDepth()).isEqualTo(2);
 
-        List<Blocks> pieces = MyIterables.toList(generator);
-        assertThat(pieces.size()).isEqualTo(6);
-        assertThat(pieces.get(0).getBlockList()).isEqualTo(Arrays.asList(S, Z));
-        assertThat(pieces.get(1).getBlockList()).isEqualTo(Arrays.asList(Z, S));
-        assertThat(pieces.get(3).getBlockList()).isEqualTo(Arrays.asList(Z, T));
-        assertThat(pieces.get(2).getBlockList()).isEqualTo(Arrays.asList(T, Z));
-        assertThat(pieces.get(4).getBlockList()).isEqualTo(Arrays.asList(T, S));
-        assertThat(pieces.get(5).getBlockList()).isEqualTo(Arrays.asList(S, T));
+        List<Blocks> blocks = MyIterables.toList(generator);
+        assertThat(blocks)
+                .hasSize(6)
+                .contains(new LongBlocks(Arrays.asList(S, Z)))
+                .contains(new LongBlocks(Arrays.asList(S, T)))
+                .contains(new LongBlocks(Arrays.asList(Z, S)))
+                .contains(new LongBlocks(Arrays.asList(Z, T)))
+                .contains(new LongBlocks(Arrays.asList(T, Z)))
+                .contains(new LongBlocks(Arrays.asList(T, S)));
     }
 
     @Test
     void toListAsteriskWithPermutation() {
-        PiecesGenerator generator = new PiecesGenerator(" *p4 ");
+        BlocksGenerator generator = new BlocksGenerator(" *p4 ");
         assertThat(generator.getDepth()).isEqualTo(4);
 
-        List<Blocks> pieces = MyIterables.toList(generator);
-        assertThat(pieces.size()).isEqualTo(840);
+        List<Blocks> blocks = MyIterables.toList(generator);
+        assertThat(blocks).hasSize(840);
     }
 
     @Test
     void toMultiList1() {
         List<String> patterns = Arrays.asList("I#comment", "T", "# comment");
-        PiecesGenerator generator = new PiecesGenerator(patterns);
+        BlocksGenerator generator = new BlocksGenerator(patterns);
         assertThat(generator.getDepth()).isEqualTo(1);
 
-        List<Blocks> pieces = MyIterables.toList(generator);
-        assertThat(pieces.size()).isEqualTo(2);
+        List<Blocks> blocks = MyIterables.toList(generator);
+        assertThat(blocks).hasSize(2);
     }
 
     @Test
     void toMultiList2() {
         List<String> patterns = Arrays.asList("I, *p4", "*p5", "[TISZL]p5");
-        PiecesGenerator generator = new PiecesGenerator(patterns);
+        BlocksGenerator generator = new BlocksGenerator(patterns);
         assertThat(generator.getDepth()).isEqualTo(5);
 
-        List<Blocks> pieces = MyIterables.toList(generator);
-        assertThat(pieces.size()).isEqualTo(840 + 2520 + 120);
+        List<Blocks> blocks = MyIterables.toList(generator);
+        assertThat(blocks).hasSize(840 + 2520 + 120);
     }
 
     @Test
@@ -169,28 +172,57 @@ class BlocksGeneratorTest {
                 "",
                 "I, [TOLJ], *p3"
         );
-        PiecesGenerator generator = new PiecesGenerator(patterns);
+        BlocksGenerator generator = new BlocksGenerator(patterns);
         assertThat(generator.getDepth()).isEqualTo(5);
 
-        List<Blocks> pieces = MyIterables.toList(generator);
-        assertThat(pieces.size()).isEqualTo(210 + 210 + 210 + 840);
+        List<Blocks> blocks = MyIterables.toList(generator);
+        assertThat(blocks).hasSize(210 + 210 + 210 + 840);
     }
 
     @Test
     void toMultiList4() {
         List<String> patterns = Arrays.asList("T,T", "Z,* # comment");
-        PiecesGenerator generator = new PiecesGenerator(patterns);
+        BlocksGenerator generator = new BlocksGenerator(patterns);
         assertThat(generator.getDepth()).isEqualTo(2);
 
-        List<Blocks> pieces = MyIterables.toList(generator);
-        assertThat(pieces.size()).isEqualTo(8);
+        List<Blocks> blocks = MyIterables.toList(generator);
+        assertThat(blocks).hasSize(8);
+    }
+
+    @Test
+    void factorial1() {
+        List<String> patterns = Collections.singletonList("[SZO]!");
+        BlocksGenerator generator = new BlocksGenerator(patterns);
+        assertThat(generator.getDepth()).isEqualTo(3);
+
+        List<Blocks> blocks = MyIterables.toList(generator);
+        assertThat(blocks).hasSize(6);
+    }
+
+    @Test
+    void factorial2() {
+        List<String> patterns = Collections.singletonList("*!");
+        BlocksGenerator generator = new BlocksGenerator(patterns);
+        assertThat(generator.getDepth()).isEqualTo(7);
+
+        List<Blocks> blocks = MyIterables.toList(generator);
+        assertThat(blocks).hasSize(5040);
+    }
+
+    @Test
+    void singleQuote() {
+        BlocksGenerator generator = new BlocksGenerator(" ' *p3, *p2 ' ");
+        assertThat(generator.getDepth()).isEqualTo(5);
+
+        List<Blocks> blocks = MyIterables.toList(generator);
+        assertThat(blocks).hasSize(7 * 6 * 5 * 7 * 6);
     }
 
     @Test
     void errorOverPopPermutation() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                PiecesGenerator.verify(" *p8 ");
+                BlocksGenerator.verify(" *p8 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -202,7 +234,7 @@ class BlocksGeneratorTest {
     void errorLessPopPermutation() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                PiecesGenerator.verify(" *p0 ");
+                BlocksGenerator.verify(" *p0 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -214,7 +246,7 @@ class BlocksGeneratorTest {
     void errorIllegalNumberPermutation() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                PiecesGenerator.verify(" *pf ");
+                BlocksGenerator.verify(" *pf ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -227,7 +259,7 @@ class BlocksGeneratorTest {
         assertThrows(SyntaxException.class, () -> {
 
             try {
-                PiecesGenerator.verify(" *7p4 ");
+                BlocksGenerator.verify(" *7p4 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -240,7 +272,7 @@ class BlocksGeneratorTest {
         assertThrows(SyntaxException.class, () -> {
 
             try {
-                PiecesGenerator.verify(" *6 ");
+                BlocksGenerator.verify(" *6 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -253,7 +285,7 @@ class BlocksGeneratorTest {
         assertThrows(SyntaxException.class, () -> {
 
             try {
-                PiecesGenerator.verify(" []p1 ");
+                BlocksGenerator.verify(" []p1 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -265,7 +297,7 @@ class BlocksGeneratorTest {
     void errorAsteriskAndBlocksPermutation() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                PiecesGenerator.verify(" [SZT]*p2 ");
+                BlocksGenerator.verify(" [SZT]*p2 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -277,7 +309,7 @@ class BlocksGeneratorTest {
     void errorUnknownAndBlocksPermutation() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                PiecesGenerator.verify(" [SZT]kp2 ");
+                BlocksGenerator.verify(" [SZT]kp2 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -289,7 +321,7 @@ class BlocksGeneratorTest {
     void errorAsteriskAndBlocksPermutation2() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                PiecesGenerator.verify(" *[SZT]p2 ");
+                BlocksGenerator.verify(" *[SZT]p2 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -301,7 +333,7 @@ class BlocksGeneratorTest {
     void errorUnknownAndBlocksPermutation2() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                PiecesGenerator.verify(" z[SZT]p2 ");
+                BlocksGenerator.verify(" z[SZT]p2 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -313,7 +345,7 @@ class BlocksGeneratorTest {
     void errorNoCloseBracketPermutation() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                PiecesGenerator.verify(" [TSZ  p1 ");
+                BlocksGenerator.verify(" [TSZ  p1 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -325,7 +357,7 @@ class BlocksGeneratorTest {
     void errorOverOpenBracketPermutation1() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                PiecesGenerator.verify(" [[TSZ]  p1 ");
+                BlocksGenerator.verify(" [[TSZ]  p1 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -337,7 +369,7 @@ class BlocksGeneratorTest {
     void errorOverOpenBracketPermutation2() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                PiecesGenerator.verify(" [TS[Z]  p1 ");
+                BlocksGenerator.verify(" [TS[Z]  p1 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -349,7 +381,7 @@ class BlocksGeneratorTest {
     void errorIllegalPositionOfBracketPermutation1() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                PiecesGenerator.verify(" T[SZ]  p1 ");
+                BlocksGenerator.verify(" T[SZ]  p1 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -361,7 +393,7 @@ class BlocksGeneratorTest {
     void errorIllegalPositionOfBracketPermutation2() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                PiecesGenerator.verify(" [TSZ  p1] ");
+                BlocksGenerator.verify(" [TSZ  p1] ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -373,7 +405,7 @@ class BlocksGeneratorTest {
     void errorNoOpenBracketPermutation() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                PiecesGenerator.verify(" TSZ]  p1 ");
+                BlocksGenerator.verify(" TSZ]  p1 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -385,7 +417,7 @@ class BlocksGeneratorTest {
     void errorOverCloseBracketPermutation1() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                PiecesGenerator.verify(" [TSZ]  p1 ]");
+                BlocksGenerator.verify(" [TSZ]  p1 ]");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -397,7 +429,7 @@ class BlocksGeneratorTest {
     void errorOverCloseBracketPermutation2() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                PiecesGenerator.verify(" [TSZ]]  p1 ");
+                BlocksGenerator.verify(" [TSZ]]  p1 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -409,7 +441,7 @@ class BlocksGeneratorTest {
     void errorIllegalNumberSelector() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                PiecesGenerator.verify(" [T SZ LJ I]pk ");
+                BlocksGenerator.verify(" [T SZ LJ I]pk ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -421,7 +453,7 @@ class BlocksGeneratorTest {
     void errorSelectorNoP() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                PiecesGenerator.verify(" [TIJ]2 ");
+                BlocksGenerator.verify(" [TIJ]2 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -433,7 +465,7 @@ class BlocksGeneratorTest {
     void errorEmptySelector() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                PiecesGenerator.verify(" [  ] ");
+                BlocksGenerator.verify(" [  ] ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -445,7 +477,7 @@ class BlocksGeneratorTest {
     void errorIllegalBlockSelector() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                PiecesGenerator.verify(" [X] ");
+                BlocksGenerator.verify(" [X] ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -457,7 +489,7 @@ class BlocksGeneratorTest {
     void errorIllegalBlock() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                PiecesGenerator.verify(" X ");
+                BlocksGenerator.verify(" X ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -469,7 +501,7 @@ class BlocksGeneratorTest {
     void errorOverBlock() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                PiecesGenerator.verify(" T S ");
+                BlocksGenerator.verify(" T S ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -481,7 +513,103 @@ class BlocksGeneratorTest {
     void errorDifferentDepthList() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                PiecesGenerator.verify(Arrays.asList(" T ,S ", "", "I"));
+                BlocksGenerator.verify(Arrays.asList(" T ,S ", "", "I"));
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw e;
+            }
+        });
+    }
+
+    @Test
+    void errorFactorial1() {
+        assertThrows(SyntaxException.class, () -> {
+            try {
+                BlocksGenerator.verify(" [SZ]p! ");
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw e;
+            }
+        });
+    }
+
+    @Test
+    void errorFactorial2() {
+        assertThrows(SyntaxException.class, () -> {
+            try {
+                BlocksGenerator.verify(" [SZ]!p ");
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw e;
+            }
+        });
+    }
+
+    @Test
+    void errorFactorial3() {
+        assertThrows(SyntaxException.class, () -> {
+            try {
+                BlocksGenerator.verify(" [SZ]x! ");
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw e;
+            }
+        });
+    }
+
+    @Test
+    void errorFactorial4() {
+        assertThrows(SyntaxException.class, () -> {
+            try {
+                BlocksGenerator.verify(" *p! ");
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw e;
+            }
+        });
+    }
+
+    @Test
+    void errorFactorial5() {
+        assertThrows(SyntaxException.class, () -> {
+            try {
+                BlocksGenerator.verify(" *!p ");
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw e;
+            }
+        });
+    }
+
+    @Test
+    void errorDuplicateBlock() {
+        assertThrows(SyntaxException.class, () -> {
+            try {
+                BlocksGenerator.verify(" [SS]p2 ");
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw e;
+            }
+        });
+    }
+
+    @Test
+    void errorSingleQuote1() {
+        assertThrows(SyntaxException.class, () -> {
+            try {
+                BlocksGenerator.verify(" '*p4' ");
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw e;
+            }
+        });
+    }
+
+    @Test
+    void errorSingleQuote2() {
+        assertThrows(SyntaxException.class, () -> {
+            try {
+                BlocksGenerator.verify(" '*p4 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;

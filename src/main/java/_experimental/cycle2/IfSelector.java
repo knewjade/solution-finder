@@ -10,7 +10,7 @@ import common.datastore.pieces.LongBlocks;
 import common.iterable.CombinationIterable;
 import common.iterable.PermutationIterable;
 import common.order.ForwardOrderLookUp;
-import common.pattern.PiecesGenerator;
+import common.pattern.BlocksGenerator;
 import common.tetfu.TetfuElement;
 import common.tetfu.common.ColorConverter;
 import common.tetfu.field.ColoredField;
@@ -78,8 +78,8 @@ public class IfSelector {
         EasyPath easyPath = new EasyPath(easyPool);
         EasyTetfu easyTetfu = new EasyTetfu(easyPool);
         ForwardOrderLookUp lookUp = new ForwardOrderLookUp(maxDepth, 7);
-        PiecesGenerator piecesGenerator = new PiecesGenerator("*p7");
-        List<List<Block>> allBlocks2 = piecesGenerator.stream()
+        BlocksGenerator blocksGenerator = new BlocksGenerator("*p7");
+        List<List<Block>> allBlocks2 = blocksGenerator.stream()
                 .map(Blocks::getBlockList)
                 .collect(Collectors.toList());
 

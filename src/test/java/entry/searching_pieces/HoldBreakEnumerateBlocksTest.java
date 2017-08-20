@@ -1,7 +1,7 @@
 package entry.searching_pieces;
 
 import common.datastore.pieces.LongBlocks;
-import common.pattern.PiecesGenerator;
+import common.pattern.BlocksGenerator;
 import core.mino.Block;
 import lib.Randoms;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class HoldBreakEnumerateBlocksTest {
     @Test
     void enumerate1() throws Exception {
-        PiecesGenerator generator = new PiecesGenerator("*p7");
+        BlocksGenerator generator = new BlocksGenerator("*p7");
         HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(generator, 3);
         Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(210);
@@ -26,7 +26,7 @@ class HoldBreakEnumerateBlocksTest {
 
     @Test
     void enumerate2() throws Exception {
-        PiecesGenerator generator = new PiecesGenerator("*p7");
+        BlocksGenerator generator = new BlocksGenerator("*p7");
         HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(generator, 4);
         Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(840);
@@ -35,7 +35,7 @@ class HoldBreakEnumerateBlocksTest {
 
     @Test
     void enumerateOverAny() throws Exception {
-        PiecesGenerator generator = new PiecesGenerator("T, J, O, Z");
+        BlocksGenerator generator = new BlocksGenerator("T, J, O, Z");
         HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(generator, 3);
         Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(8);
@@ -44,7 +44,7 @@ class HoldBreakEnumerateBlocksTest {
 
     @Test
     void enumerateMulti() throws Exception {
-        PiecesGenerator generator = new PiecesGenerator(Arrays.asList(
+        BlocksGenerator generator = new BlocksGenerator(Arrays.asList(
                 "T, J, O, Z",
                 "T, O, J, T",
                 "T, J, O, Z"
@@ -57,7 +57,7 @@ class HoldBreakEnumerateBlocksTest {
 
     @Test
     void enumerateJust() throws Exception {
-        PiecesGenerator generator = new PiecesGenerator("*p3");
+        BlocksGenerator generator = new BlocksGenerator("*p3");
         HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(generator, 3);
         Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(210);
@@ -66,7 +66,7 @@ class HoldBreakEnumerateBlocksTest {
 
     @Test
     void enumerateJustAny() throws Exception {
-        PiecesGenerator generator = new PiecesGenerator("T, O, S");
+        BlocksGenerator generator = new BlocksGenerator("T, O, S");
         HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(generator, 3);
         Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(4);
@@ -81,8 +81,8 @@ class HoldBreakEnumerateBlocksTest {
             String pattern = blocks.stream()
                     .map(Block::getName)
                     .collect(Collectors.joining(","));
-            PiecesGenerator piecesGenerator = new PiecesGenerator(pattern);
-            HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(piecesGenerator, size);
+            BlocksGenerator blocksGenerator = new BlocksGenerator(pattern);
+            HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(blocksGenerator, size);
             Set<LongBlocks> pieces = core.enumerate();
 
             for (int count = 0; count < 10000; count++) {
@@ -115,8 +115,8 @@ class HoldBreakEnumerateBlocksTest {
             String pattern = blocks.stream()
                     .map(Block::getName)
                     .collect(Collectors.joining(","));
-            PiecesGenerator piecesGenerator = new PiecesGenerator(pattern);
-            HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(piecesGenerator, size - 1);
+            BlocksGenerator blocksGenerator = new BlocksGenerator(pattern);
+            HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(blocksGenerator, size - 1);
             Set<LongBlocks> pieces = core.enumerate();
 
             for (int count = 0; count < 10000; count++) {

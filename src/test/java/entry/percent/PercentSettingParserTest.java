@@ -112,7 +112,7 @@ class PercentSettingParserTest {
 
         // comment: 4 --hold avoid --patterns *p4
         String tetfu = "v115@9gB8DeG8CeH8BeG8CeD8JeAgWlA0no2AtTKNEM388A?wBrNEJ388AwjdOEB/2rDSm0TAS4WOEUAAAA";
-        String commands = String.format("--hold use -fp %s -pp %s --tetfu %s --patterns 'T, Z' --log-path output/dummy", fieldPath, patternsPath, tetfu);
+        String commands = String.format("--hold use -fp %s -pp %s --tetfu %s --patterns T,Z --log-path output/dummy", fieldPath, patternsPath, tetfu);
 
         PercentSettingParser entryPoint = new PercentSettingParser(commands);
         Optional<PercentSettings> parse = entryPoint.parse();
@@ -129,9 +129,9 @@ class PercentSettingParserTest {
             assertThat(settings)
                     .returns("output/dummy", PercentSettings::getLogFilePath)
                     .returns(4, PercentSettings::getMaxClearLine)
-                    .returns(Collections.singletonList("*p4"), PercentSettings::getPatterns)
+                    .returns(Collections.singletonList("T,Z"), PercentSettings::getPatterns)
                     .returns(true, PercentSettings::isOutputToConsole)
-                    .returns(false, PercentSettings::isUsingHold);
+                    .returns(true, PercentSettings::isUsingHold);
             assertField(settings.getField(), expectedField);
         });
     }
@@ -143,7 +143,7 @@ class PercentSettingParserTest {
 
         // comment: 4 --hold avoid --patterns *p4
         String tetfu = "v115@vh2SSYRBFLDmClcJSAVDEHBEooRBMoAVBUujPCv3jx?CPNUPCJHWWCJtPFDs+bgC6P9VCp/dgCzn9VCzvaFDUePFDv?+TWCviLuCqe1LCqHLWCzAAAANpBXqBGjBznB0fB0rBdnBzq?BxvB/tBqsBGjBJnB1vBTmBxkB3pBikBGrByuB9tBXjB0sB0?rBTkBmfBplBxmBirBNpBWyBXqB0fBToBCjBRmBesBTmB0qB?NpBpoBXqB0fBmrBzsB3rB6qBzsBirB0sB/tBGjB1wBNmQSA?0no2AtTKNEM388AwBrNEJnBAA";
-        String commands = String.format("--hold use -fp %s -pp %s --tetfu %s --patterns *p5 --log-path output/dummy -P 55", fieldPath, patternsPath, tetfu);
+        String commands = String.format("--hold avoid -fp %s -pp %s --tetfu %s --patterns *p5 --log-path output/dummy -P 55", fieldPath, patternsPath, tetfu);
 
         PercentSettingParser entryPoint = new PercentSettingParser(commands);
         Optional<PercentSettings> parse = entryPoint.parse();
@@ -174,7 +174,7 @@ class PercentSettingParserTest {
 
         // comment: 3 -p T,S,L,O,L
         String tetfu = "v115@vh2SSYRBFLDmClcJSAVDEHBEooRBMoAVBUujPCv3jx?CPNUPCJHWWCJtPFDs+bgC6P9VCp/dgCzn9VCzvaFDUePFDv?+TWCviLuCqe1LCqHLWCzAAAANpBXqBGjBznB0fB0rBdnBzq?BxvB/tBqsBGjBJnB1vBTmBxkB3pBikBGrByuB9tBXjB0sB0?rBTkBmfBplBxmBirBNpBWyBXqB0fBToBCjBRmBesBTmB0qB?NpBpoBXqB0fBmrBzsQaAzno2ANI98AQe88ADd88AjS88ADX?88AjCBAA3rQjAFLDmClcJSAVztSAVG88A4c88AZyKWCat/w?CJePFDvyzBA6qBzsBirB0sB/tBGjB1wBNmQSA0no2AtTKNE?M388AwBrNEJnBAA";
-        String commands = String.format("--hold use -fp %s -pp %s --tetfu %s --patterns *p5 --log-path output/dummy -P 46 --tree-depth 1 --failed-count 10", fieldPath, patternsPath, tetfu);
+        String commands = String.format("--hold avoid -fp %s -pp %s --tetfu %s --patterns *p5 --log-path output/dummy -P 46 --tree-depth 1 --failed-count 10", fieldPath, patternsPath, tetfu);
 
         PercentSettingParser entryPoint = new PercentSettingParser(commands);
         Optional<PercentSettings> parse = entryPoint.parse();
@@ -190,9 +190,9 @@ class PercentSettingParserTest {
             assertThat(settings)
                     .returns("output/dummy", PercentSettings::getLogFilePath)
                     .returns(3, PercentSettings::getMaxClearLine)
-                    .returns(Collections.singletonList("T,S,L,O,L"), PercentSettings::getPatterns)
+                    .returns(Collections.singletonList("*p5"), PercentSettings::getPatterns)
                     .returns(true, PercentSettings::isOutputToConsole)
-                    .returns(true, PercentSettings::isUsingHold)
+                    .returns(false, PercentSettings::isUsingHold)
                     .returns(1, PercentSettings::getTreeDepth)
                     .returns(10, PercentSettings::getFailedCount);
             assertField(settings.getField(), expectedField);

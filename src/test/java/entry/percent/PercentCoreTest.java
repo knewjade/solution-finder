@@ -1,7 +1,7 @@
 package entry.percent;
 
 import common.datastore.pieces.LongBlocks;
-import common.pattern.PiecesGenerator;
+import common.pattern.BlocksGenerator;
 import core.field.Field;
 import core.field.FieldFactory;
 import entry.searching_pieces.NormalEnumeratePieces;
@@ -44,7 +44,7 @@ class PercentCoreTest {
 
         Field field = FieldFactory.createField(obj.marks);
 
-        PiecesGenerator generator = new PiecesGenerator(obj.patterns);
+        BlocksGenerator generator = new BlocksGenerator(obj.patterns);
         NormalEnumeratePieces enumeratePieces = new NormalEnumeratePieces(generator, obj.maxDepth, obj.isUsingHold);
         Set<LongBlocks> blocks = enumeratePieces.enumerate();
         percentCore.run(field, blocks, obj.maxClearLine, obj.maxDepth);

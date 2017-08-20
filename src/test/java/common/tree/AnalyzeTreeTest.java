@@ -2,7 +2,7 @@ package common.tree;
 
 import common.datastore.pieces.LongBlocks;
 import common.datastore.pieces.Blocks;
-import common.pattern.PiecesGenerator;
+import common.pattern.BlocksGenerator;
 import core.mino.Block;
 import lib.Randoms;
 import org.junit.jupiter.api.Tag;
@@ -79,7 +79,7 @@ class AnalyzeTreeTest {
     void random() {
         Randoms randoms = new Randoms();
         for (int size = 1; size <= 7; size++) {
-            PiecesGenerator generator = new PiecesGenerator("*p" + size);
+            BlocksGenerator generator = new BlocksGenerator("*p" + size);
 
             AnalyzeTree tree = new AnalyzeTree();
             HashSet<LongBlocks> success = new HashSet<>();
@@ -121,7 +121,7 @@ class AnalyzeTreeTest {
     void randomLong() {
         Randoms randoms = new Randoms();
         for (int size = 8; size <= 11; size++) {
-            PiecesGenerator generator = new PiecesGenerator("*p7, *p" + (size - 7));
+            BlocksGenerator generator = new BlocksGenerator("*p7, *p" + (size - 7));
 
             AnalyzeTree tree = new AnalyzeTree();
             HashSet<LongBlocks> success = new HashSet<>();
@@ -168,19 +168,19 @@ class AnalyzeTreeTest {
         tree.fail(Arrays.asList(Block.O, Block.O));
 
         assertThat(tree.tree(1))
-                .contains("60.0 %")
-                .contains("S -> 66.7 %")
-                .contains("Z -> 100.0 %")
-                .contains("O -> 0.0 %")
+                .contains("60.00 %")
+                .contains("S -> 66.67 %")
+                .contains("Z -> 100.00 %")
+                .contains("O -> 0.00 %")
                 .doesNotContain("L")
                 .doesNotContain("J");
 
         assertThat(tree.tree(2))
-                .contains("60.0 %")
-                .contains("SS -> 100.0 %")
-                .contains("ST -> 50.0 %")
-                .contains("ZZ -> 100.0 %")
-                .contains("OO -> 0.0 %")
+                .contains("60.00 %")
+                .contains("SS -> 100.00 %")
+                .contains("ST -> 50.00 %")
+                .contains("ZZ -> 100.00 %")
+                .contains("OO -> 0.00 %")
                 .doesNotContain("L")
                 .doesNotContain("J");
 

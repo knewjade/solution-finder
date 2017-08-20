@@ -1,13 +1,13 @@
 package entry.path;
 
 import common.datastore.pieces.LongBlocks;
+import common.pattern.BlocksGenerator;
 import lib.Stopwatch;
 import common.SyntaxException;
 import common.buildup.BuildUpStream;
 import common.datastore.*;
 import common.parser.OperationInterpreter;
 import common.parser.OperationTransform;
-import common.pattern.PiecesGenerator;
 import common.tetfu.Tetfu;
 import common.tetfu.TetfuElement;
 import common.tetfu.common.ColorConverter;
@@ -93,7 +93,7 @@ public class PathEntryPoint implements EntryPoint {
             throw new IllegalArgumentException("Should specify patterns, not allow empty");
 
         try {
-            PiecesGenerator.verify(patterns);
+            BlocksGenerator.verify(patterns);
         } catch (SyntaxException e) {
             throw new IllegalArgumentException("Invalid patterns", e);
         }
@@ -147,7 +147,7 @@ public class PathEntryPoint implements EntryPoint {
         output("# Initialize / System");
         int core = Runtime.getRuntime().availableProcessors();
 
-        PiecesGenerator generator = new PiecesGenerator(patterns);
+        BlocksGenerator generator = new BlocksGenerator(patterns);
 
         output("Available processors = " + core);
 
