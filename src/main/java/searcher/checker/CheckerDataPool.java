@@ -2,6 +2,8 @@ package searcher.checker;
 
 import common.comparator.DepthOrderComparator;
 import common.datastore.Result;
+import common.datastore.order.DepthOrder;
+import common.datastore.order.NormalOrder;
 import common.datastore.order.Order;
 import searcher.common.DataPool;
 
@@ -23,6 +25,7 @@ public class CheckerDataPool implements DataPool {
 
     @Override
     public void addOrder(Order order) {
+        assert order instanceof DepthOrder;
         boolean add = existsCheck.add(order);
         if (add)
             nexts.add(order);

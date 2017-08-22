@@ -1,6 +1,6 @@
-package _experiemental;
+package core.action.candidate;
 
-import _experimental.LockedCandidate2;
+import core.action.candidate.LockedNeighborCandidate;
 import common.datastore.action.Action;
 import common.datastore.action.MinimalAction;
 import core.action.candidate.LockedCandidate;
@@ -24,8 +24,7 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class LockedCandidate2Test {
-    @Disabled
+class LockedNeighborCandidateTest {
     @Test
     void random() {
         MinoFactory minoFactory = new MinoFactory();
@@ -35,7 +34,7 @@ class LockedCandidate2Test {
         LockedCandidate candidate1 = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
 
         PieceFactory pieceFactory = new PieceFactory(height + 3);
-        LockedCandidate2 candidate2 = new LockedCandidate2(minoFactory, minoShifter, minoRotation, pieceFactory);
+        LockedNeighborCandidate candidate2 = new LockedNeighborCandidate(minoFactory, minoShifter, minoRotation, pieceFactory);
 
         Randoms randoms = new Randoms();
 
@@ -105,8 +104,8 @@ class LockedCandidate2Test {
             }
         }
 
-        System.out.println(stopwatch1.toMessage(TimeUnit.MICROSECONDS));
-        System.out.println(stopwatch2.toMessage(TimeUnit.MICROSECONDS));
+        System.out.println(stopwatch1.toMessage(TimeUnit.NANOSECONDS));
+        System.out.println(stopwatch2.toMessage(TimeUnit.NANOSECONDS));
     }
 
     @Disabled
@@ -119,7 +118,7 @@ class LockedCandidate2Test {
         LockedCandidate candidate1 = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
 
         PieceFactory pieceFactory = new PieceFactory(height);
-        LockedCandidate2 candidate2 = new LockedCandidate2(minoFactory, minoShifter, minoRotation, pieceFactory);
+        LockedNeighborCandidate candidate2 = new LockedNeighborCandidate(minoFactory, minoShifter, minoRotation, pieceFactory);
 
         Field field = FieldFactory.createSmallField("" +
                 "X________X" +
@@ -161,7 +160,7 @@ class LockedCandidate2Test {
         LockedCandidate candidate1 = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
 
         PieceFactory pieceFactory = new PieceFactory(height);
-        LockedCandidate2 candidate2 = new LockedCandidate2(minoFactory, minoShifter, minoRotation, pieceFactory);
+        LockedNeighborCandidate candidate2 = new LockedNeighborCandidate(minoFactory, minoShifter, minoRotation, pieceFactory);
 
         Field field = FieldFactory.createSmallField("" +
                 "XXXXXX__XX" +
@@ -204,7 +203,7 @@ class LockedCandidate2Test {
         LockedCandidate candidate1 = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
 
         PieceFactory pieceFactory = new PieceFactory(height + 3);
-        LockedCandidate2 candidate2 = new LockedCandidate2(minoFactory, minoShifter, minoRotation, pieceFactory);
+        LockedNeighborCandidate candidate2 = new LockedNeighborCandidate(minoFactory, minoShifter, minoRotation, pieceFactory);
 
         Field field = FieldFactory.createSmallField("" +
                 "X________X" +
@@ -247,7 +246,7 @@ class LockedCandidate2Test {
         LockedCandidate candidate1 = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
 
         PieceFactory pieceFactory = new PieceFactory(height + 3);
-        LockedCandidate2 candidate2 = new LockedCandidate2(minoFactory, minoShifter, minoRotation, pieceFactory);
+        LockedNeighborCandidate candidate2 = new LockedNeighborCandidate(minoFactory, minoShifter, minoRotation, pieceFactory);
 
         Field field = FieldFactory.createSmallField("" +
                 "XXXXXX_XXX" +
@@ -289,7 +288,7 @@ class LockedCandidate2Test {
         LockedCandidate candidate1 = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
 
         PieceFactory pieceFactory = new PieceFactory(height + 3);
-        LockedCandidate2 candidate2 = new LockedCandidate2(minoFactory, minoShifter, minoRotation, pieceFactory);
+        LockedNeighborCandidate candidate2 = new LockedNeighborCandidate(minoFactory, minoShifter, minoRotation, pieceFactory);
 
         Field field = FieldFactory.createSmallField("" +
                 "_________X" +

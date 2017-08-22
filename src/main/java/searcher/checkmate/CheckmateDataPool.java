@@ -1,20 +1,23 @@
 package searcher.checkmate;
 
+import common.comparator.OrderComparator;
 import common.datastore.Result;
 import common.datastore.order.NormalOrder;
 import common.datastore.order.Order;
 import searcher.common.DataPool;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.TreeSet;
 
 public class CheckmateDataPool implements DataPool {
     private TreeSet<Order> nexts;
     private ArrayList<Result> results;
+    private final Comparator<Order> comparator = new OrderComparator();
 
     public void initFirst(NormalOrder order) {
         this.results = new ArrayList<>();
-        TreeSet<Order> orders = new TreeSet<>();
+        TreeSet<Order> orders = new TreeSet<>(comparator);
         orders.add(order);
         this.nexts = orders;
     }
@@ -24,11 +27,12 @@ public class CheckmateDataPool implements DataPool {
     }
 
     public void initEachDepth() {
-        this.nexts = new TreeSet<>();
+        this.nexts = new TreeSet<>(comparator);
     }
 
     @Override
     public void addOrder(Order order) {
+        assert order instanceof NormalOrder;
         nexts.add(order);
     }
 

@@ -1,9 +1,12 @@
-package _experimental;
+package core.action.candidate;
 
 import common.datastore.action.Action;
-import core.action.candidate.Candidate;
+import core.action.cache.LockedNeighborCache;
 import core.field.Field;
-import core.mino.*;
+import core.mino.Block;
+import core.mino.Mino;
+import core.mino.MinoFactory;
+import core.mino.MinoShifter;
 import core.mino.piece.Neighbor;
 import core.mino.piece.Neighbors;
 import core.mino.piece.Piece;
@@ -18,23 +21,23 @@ import java.util.Set;
 /**
  * マルチスレッド非対応
  */
-public class LockedCandidate2 implements Candidate<Neighbor> {
+public class LockedNeighborCandidate implements Candidate<Neighbor> {
     private static final int FIELD_WIDTH = 10;
 
     private final MinoFactory minoFactory;
 
-    private final HashSet<Neighbor> isVisited = new HashSet<>();
-    private final HashSet<Neighbor> isPassed = new HashSet<>();
     private final Neighbors neighbors;
     private final MinoShifter minoShifter;
 
     // temporary変数
     private Field field = null;
+    private final LockedNeighborCache cache;
 
-    public LockedCandidate2(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, PieceFactory pieceFactory) {
+    public LockedNeighborCandidate(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, PieceFactory pieceFactory) {
         this.minoFactory = minoFactory;
         this.minoShifter = minoShifter;
         this.neighbors = new Neighbors(minoFactory, minoRotation, pieceFactory);
+        this.cache = new LockedNeighborCache();
     }
 
     @Override
@@ -43,7 +46,7 @@ public class LockedCandidate2 implements Candidate<Neighbor> {
 
         HashSet<Neighbor> results = new HashSet<>();
 
-        isPassed.clear();
+        cache.clear();
 
         Set<Rotate> uniqueRotates = minoShifter.getUniqueRotates(block);
 
@@ -58,11 +61,13 @@ public class LockedCandidate2 implements Candidate<Neighbor> {
                 }
             }
         }
+
         return results;
     }
 
     private void loop(HashSet<Neighbor> results, Neighbor neighbor) {
-        isVisited.clear();
+        cache.resetTrail();
+
         if (check(neighbor)) {
             results.add(neighbor);
         } else {
@@ -85,22 +90,22 @@ public class LockedCandidate2 implements Candidate<Neighbor> {
         if (field.canReachOnHarddrop(piece))
             return true;
 
-        if (isPassed.contains(current))
+        if (cache.isFound(current))
             return true;
 
         // すでに訪問済みのとき
-        if (isVisited.contains(current))
+        if (cache.isVisited(current))
             return false;  // 訪問済みだが結果が出てないときは他の探索でカバーできるためfalseを返却
 
         // 訪問済みにする
-        isVisited.add(current);
+        cache.visit(current);
 
         // 上と左右に移動
         List<Neighbor> nextMovesSources = current.getNextMovesSources();
         for (Neighbor next : nextMovesSources) {
             Piece nextPiece = next.getPiece();
             if (field.canPut(nextPiece) && check(next)) {
-                isPassed.add(current);
+                cache.found(current);
                 return true;
             }
         }
@@ -115,7 +120,7 @@ public class LockedCandidate2 implements Candidate<Neighbor> {
             List<Neighbor> destinations = source.getNextLeftRotateDestinations();
             Neighbor destination = getDestination(destinations);
             if (current.equals(destination) && check(source)) {
-                isPassed.add(current);
+                cache.found(current);
                 return true;
             }
         }
@@ -130,7 +135,7 @@ public class LockedCandidate2 implements Candidate<Neighbor> {
             List<Neighbor> destinations = source.getNextRightRotateDestinations();
             Neighbor destination = getDestination(destinations);
             if (current.equals(destination) && check(source)) {
-                isPassed.add(current);
+                cache.found(current);
                 return true;
             }
         }
