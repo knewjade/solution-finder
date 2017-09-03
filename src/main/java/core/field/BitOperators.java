@@ -53,6 +53,37 @@ class BitOperators {
         throw new IllegalStateException("No reachable");
     }
 
+    // TODO: write unittest
+    // x列より左の列を選択するマスクを作成（x列を含む）
+    static long getColumnMaskLeftX(int minX) {
+        assert 0 <= minX && minX <= 10;
+        switch (minX) {
+            case 0:
+                return 0L;
+            case 1:
+                return 0x004010040100401L;
+            case 2:
+                return 0x00c0300c0300c03L;
+            case 3:
+                return 0x01c0701c0701c07L;
+            case 4:
+                return 0x03c0f03c0f03c0fL;
+            case 5:
+                return 0x07c1f07c1f07c1fL;
+            case 6:
+                return 0x0fc3f0fc3f0fc3fL;
+            case 7:
+                return 0x1fc7f1fc7f1fc7fL;
+            case 8:
+                return 0x3fcff3fcff3fcffL;
+            case 9:
+                return 0x7fdff7fdff7fdffL;
+            case 10:
+                return 0xfffffffffffffffL;
+        }
+        throw new IllegalStateException("No reachable");
+    }
+
     // yより下の行を選択するマスクを作成 (y行は含まない)
     static long getRowMaskBelowY(int y) {
         assert 0 <= y && y <= 6;

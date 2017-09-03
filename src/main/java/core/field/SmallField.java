@@ -235,8 +235,17 @@ public class SmallField implements Field {
 
     @Override
     public void slideLeft(int slide) {
+        assert 0 <= slide;
         long mask = BitOperators.getColumnMaskRightX(slide);
         xBoard = (xBoard & mask) >> slide;
+    }
+
+    // TODO: write unittest
+    @Override
+    public void slideRight(int slide) {
+        assert 0 <= slide;
+        long mask = BitOperators.getColumnMaskLeftX(FIELD_WIDTH - slide);
+        xBoard = (xBoard & mask) << slide;
     }
 
     @Override

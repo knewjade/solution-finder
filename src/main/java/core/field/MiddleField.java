@@ -410,9 +410,19 @@ public class MiddleField implements Field {
 
     @Override
     public void slideLeft(int slide) {
+        assert 0 <= slide;
         long mask = BitOperators.getColumnMaskRightX(slide);
         xBoardLow = (xBoardLow & mask) >> slide;
         xBoardHigh = (xBoardHigh & mask) >> slide;
+    }
+
+    // TODO: write unittest
+    @Override
+    public void slideRight(int slide) {
+        assert 0 <= slide;
+        long mask = BitOperators.getColumnMaskLeftX(FIELD_WIDTH - slide);
+        xBoardLow = (xBoardLow & mask) << slide;
+        xBoardHigh = (xBoardHigh & mask) << slide;
     }
 
     @Override

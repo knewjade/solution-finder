@@ -37,7 +37,7 @@ public class SeparableMinoFactory {
                 if (fieldHeight < minoHeight)
                     continue;
 
-                    // 行候補をリストにする
+                // 行候補をリストにする
                 ArrayList<Integer> lineIndexes = new ArrayList<>();
                 for (int index = 0; index < fieldHeight; index++)
                     lineIndexes.add(index);

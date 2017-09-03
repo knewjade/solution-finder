@@ -112,4 +112,7 @@ public interface Field extends Comparable<Field> {
 
     // フィールドを左に指定したブロック分スライドさせる
     void slideLeft(int slide);
+
+    // フィールドを右に指定したブロック分スライドさせる
+    void slideRight(int slide);
 }

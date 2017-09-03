@@ -176,6 +176,11 @@ public class LargeField implements Field {
     }
 
     @Override
+    public void slideRight(int slide) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public boolean equals(Object o) {
         throw new UnsupportedOperationException();
     }
