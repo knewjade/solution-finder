@@ -476,7 +476,14 @@ public class All4x10SquareFigureMain {
 
         for (int yIndex = 0; yIndex < fixSquare.square.height; yIndex++) {
             for (int xIndex = 0; xIndex < fixSquare.square.width; xIndex++) {
-                String path = String.format("output/img/%d_%03d_%03d.png", patternFile.index, fixSquare.y + yIndex + 1, fixSquare.x + xIndex + 1);
+                EnumMap<Block, Integer> map = fixSquare.square.blockCounter.getEnumMap();
+
+                // 名前を取得
+                String delimiter = "-";
+                String name = getName(map, delimiter);
+
+                int index = yIndex * fixSquare.square.width + xIndex + 1;
+                String path = String.format("output/img/%s_%d.png", name, index);
                 main3(path, fixSquare, lists, xIndex, yIndex, minoMap, patternFile.background);
             }
         }
@@ -630,28 +637,9 @@ public class All4x10SquareFigureMain {
 //                return o1.getKey().compareTo(o2.getKey());
 //            });
 
-            // 使用個数ごとのマップに代入
-            Map<Integer, List<Map.Entry<Block, Integer>>> eachCount = new ArrayList<>(map.entrySet()).stream()
-                    .collect(Collectors.groupingBy(Map.Entry::getValue));
-
-            // キーを多い順にソート
-            ArrayList<Integer> keys = new ArrayList<>(eachCount.keySet());
-            keys.sort(Comparator.reverseOrder());
-
-            // 文字列に変換
-            ArrayList<String> strings = new ArrayList<>();
-            for (int count : keys) {
-                List<Map.Entry<Block, Integer>> list = eachCount.get(count);
-                String blockNames = list.stream()
-                        .map(Map.Entry::getKey)
-                        .map(Block::getName)
-                        .collect(Collectors.joining());
-                strings.add(blockNames + "x" + count);
-            }
-
-            // 文字列を連結する
-            String name = strings.stream()
-                    .collect(Collectors.joining(" "));
+            // 名前を取得
+            String delimiter = " ";
+            String name = getName(map, delimiter);
 
             // アンチエイリアス
             Graphics2D g2 = (Graphics2D) graphics;
@@ -707,6 +695,31 @@ public class All4x10SquareFigureMain {
 
         // 書き出し
         ImageIO.write(image, "png", new File(path));
+    }
+
+    private static String getName(EnumMap<Block, Integer> map, String delimiter) {
+        // 使用個数ごとのマップに代入
+        Map<Integer, List<Map.Entry<Block, Integer>>> eachCount = new ArrayList<>(map.entrySet()).stream()
+                .collect(Collectors.groupingBy(Map.Entry::getValue));
+
+        // キーを多い順にソート
+        ArrayList<Integer> keys = new ArrayList<>(eachCount.keySet());
+        keys.sort(Comparator.reverseOrder());
+
+        // 文字列に変換
+        ArrayList<String> strings = new ArrayList<>();
+        for (int count : keys) {
+            List<Map.Entry<Block, Integer>> list = eachCount.get(count);
+            String blockNames = list.stream()
+                    .map(Map.Entry::getKey)
+                    .map(Block::getName)
+                    .collect(Collectors.joining());
+            strings.add(blockNames + "x" + count);
+        }
+
+        // 文字列を連結する
+        return strings.stream()
+                .collect(Collectors.joining(delimiter));
     }
 
     private static EnumMap<Block, EnumMap<Rotate, ArrayList<HashMap<Long, List<Delta>>>>> calcMinoMap(MinoFactory minoFactory, MinoShifter minoShifter, int height) {
