@@ -26,10 +26,8 @@ import searcher.pack.SizedBit;
 import searcher.pack.memento.SRSValidSolutionFilter;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.solutions.OnDemandBasicSolutions;
-import searcher.pack.task.Field4x10MinoPackingHelper;
-import searcher.pack.task.PackSearcher;
+import searcher.pack.task.*;
 import searcher.pack.task.Result;
-import searcher.pack.task.TaskResultHelper;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -38,33 +36,42 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class Squares6x4Main {
+public class SquaresMain {
+    private static Field createSquare(int width, int height) {
+        Field field = FieldFactory.createField(height);
+        for (int y = 0; y < height; y++)
+            for (int x = width; x < 10; x++)
+                field.setBlock(x, y);
+        return field;
+    }
+
     public static void main(String[] args) throws ExecutionException, InterruptedException, IOException {
-        Field field = FieldFactory.createField("" +
-                "_____XXXXX" +
-                "_____XXXXX" +
-                "_____XXXXX" +
-                "_____XXXXX"
-        );
+        // Specify square size
+        int squareHeight = 4;
+        int squareWidth = 9;
 
-        File file = new File("output/5x4sample.html");
+        // ============================
 
-        String title = "All squares: 5x4";
+        Field field = createSquare(squareWidth, squareHeight);
 
-        int width = 3;
-        int height = 4;
-        SizedBit sizedBit = new SizedBit(width, height);
+        int width = decideWidth(squareHeight);
+        SizedBit sizedBit = new SizedBit(width, squareHeight);
+
+        String squareName = String.format("%dx%d", squareWidth, squareHeight);
+        String title = String.format("All squares: %s", squareName);
+
+        File file = new File(String.format("output/allsquares%s.html", squareName));
 
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         SeparableMinos separableMinos = SeparableMinos.createSeparableMinos(minoFactory, minoShifter, sizedBit);
 
-        List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(width, height, field);
+        List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(width, squareHeight, field);
         Predicate<ColumnField> memorizedPredicate = (columnField) -> true;
         OnDemandBasicSolutions basicSolutions = new OnDemandBasicSolutions(separableMinos, sizedBit, memorizedPredicate);
 
-        TaskResultHelper taskResultHelper = new Field4x10MinoPackingHelper();
-        LockedReachableThreadLocal lockedReachableThreadLocal = new LockedReachableThreadLocal(height);
+        TaskResultHelper taskResultHelper = getMinoPackingHelper(squareHeight);
+        LockedReachableThreadLocal lockedReachableThreadLocal = new LockedReachableThreadLocal(squareHeight);
         SolutionFilter solutionFilter = new SRSValidSolutionFilter(field, lockedReachableThreadLocal, sizedBit);
         PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
         List<Result> results = searcher.toList();
@@ -98,7 +105,7 @@ public class Squares6x4Main {
 
         ColorConverter colorConverter = new ColorConverter();
         MinoRotation minoRotation = new MinoRotation();
-        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
+        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, squareHeight);
 
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false), StandardCharsets.UTF_8))) {
             // headerの出力
@@ -147,7 +154,7 @@ public class Squares6x4Main {
             // パターン数の出力
             int keySize = eachBlockCounter.keySet().size();
             int valuesSumSize = eachBlockCounter.values().stream().mapToInt(List::size).sum();
-            writer.write(String.format("<section>%d block combinations, total %d diagrams</section>", keySize, valuesSumSize));
+            writer.write(String.format("<section>%d piece combinations, total %d diagrams</section>", keySize, valuesSumSize));
             writer.newLine();
 
             writer.write("<section><font color='#999999'>Created by newjade (<a href='https://twitter.com/1millim' target='_blank'>twitter @1millim</a>)</font></section>");
@@ -214,10 +221,10 @@ public class Squares6x4Main {
 
                     // パターンを表す名前 を生成
                     // BlockField を生成
-                    BlockField blockField = new BlockField(height);
+                    BlockField blockField = new BlockField(squareHeight);
                     operationWithKeys
                             .forEach(key -> {
-                                Field test = FieldFactory.createField(height);
+                                Field test = FieldFactory.createField(squareHeight);
                                 Mino mino = key.getMino();
                                 test.put(mino, key.getX(), key.getY());
                                 test.insertWhiteLineWithKey(key.getNeedDeletedKey());
@@ -230,13 +237,13 @@ public class Squares6x4Main {
                     String encodeOnePage = tetfuOnePage.encode(Collections.singletonList(elementOnePage));
 
                     // テト譜の生成 (for operations)
-                    BuildUpStream buildUpStream = new BuildUpStream(reachable, height);
+                    BuildUpStream buildUpStream = new BuildUpStream(reachable, squareHeight);
                     Optional<List<OperationWithKey>> first = buildUpStream.existsValidBuildPattern(field, operationWithKeys).findFirst();
 
                     assert first.isPresent();
 
-                    Operations operations = OperationTransform.parseToOperations(field, first.get(), height);
-                    List<?extends Operation> operationsList = operations.getOperations();
+                    Operations operations = OperationTransform.parseToOperations(field, first.get(), squareHeight);
+                    List<? extends Operation> operationsList = operations.getOperations();
 
                     ArrayList<TetfuElement> tetfuElements = new ArrayList<>();
 
@@ -276,6 +283,18 @@ public class Squares6x4Main {
         } catch (Exception e) {
             throw new IllegalStateException("Failed to output file", e);
         }
+    }
+
+    private static TaskResultHelper getMinoPackingHelper(int squareHeight) {
+        if (squareHeight == 4)
+            return new Field4x10MinoPackingHelper();
+        return new BasicMinoPackingHelper();
+    }
+
+    private static int decideWidth(int height) {
+        if (height <= 4)
+            return 3;
+        return 2;
     }
 
     private static TetfuElement parseBlockFieldToTetfuElement(Field initField, ColorConverter colorConverter, BlockField blockField, String comment) {
