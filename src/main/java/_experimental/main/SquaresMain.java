@@ -47,8 +47,8 @@ public class SquaresMain {
 
     public static void main(String[] args) throws ExecutionException, InterruptedException, IOException {
         // Specify square size
-        int squareHeight = 4;
-        int squareWidth = 9;
+        int squareHeight = 6;
+        int squareWidth = 6;
 
         // ============================
 
@@ -82,22 +82,7 @@ public class SquaresMain {
                     BlockCounter blockCounter = new BlockCounter(result.getMemento().getRawOperationsStream()
                             .map(OperationWithKey::getMino)
                             .map(Mino::getBlock));
-
-                    // ミノの個数（最も多い・2番めに多い）を取得
-                    EnumMap<Block, Integer> map = blockCounter.getEnumMap();
-                    List<Integer> values = new ArrayList<>(map.values());
-                    values.add(0);  // ミノが2種類以下の場合はこの0を取得する
-                    values.add(0);
-                    values.sort(Comparator.reverseOrder());
-
-                    int first = values.get(0);
-                    int second = values.get(1);
-                    int third = values.get(2);
-
-                    return (first == 4 && second <= 2 && third <= 1) ||
-                            (first == 3 && second == 3 && third <= 1) ||
-                            (first == 3 && second <= 2) ||
-                            (first <= 2);
+                    return isWith7BagSystem(squareHeight, blockCounter);
                 })
                 .collect(Collectors.groupingBy(result -> new BlockCounter(result.getMemento().getRawOperationsStream()
                         .map(OperationWithKey::getMino)
@@ -283,6 +268,50 @@ public class SquaresMain {
         } catch (Exception e) {
             throw new IllegalStateException("Failed to output file", e);
         }
+    }
+
+    private static boolean isWith7BagSystem(int squareHeight, BlockCounter blockCounter) {
+        switch (squareHeight) {
+            case 4:
+                return isWith7BagSystemHeight4(blockCounter);
+            case 6:
+                return isWith7BagSystemHeight6(blockCounter);
+        }
+        throw new UnsupportedOperationException("No support square height: " + squareHeight);
+    }
+
+    private static boolean isWith7BagSystemHeight4(BlockCounter blockCounter) {
+        // ミノの個数（最も多い・2番めに多い）を取得
+        EnumMap<Block, Integer> map = blockCounter.getEnumMap();
+        List<Integer> values = new ArrayList<>(map.values());
+        values.add(0);  // ミノが2種類以下の場合はこの0を取得する
+        values.add(0);
+        values.sort(Comparator.reverseOrder());
+
+        int first = values.get(0);
+        int second = values.get(1);
+        int third = values.get(2);
+
+        return (first == 4 && second <= 2 && third <= 1) ||
+                (first == 3 && second == 3 && third <= 1) ||
+                (first == 3 && second <= 2) ||
+                (first <= 2);
+    }
+
+    private static boolean isWith7BagSystemHeight6(BlockCounter blockCounter) {
+        // ミノの個数（最も多い・5番めに多い）を取得
+        EnumMap<Block, Integer> map = blockCounter.getEnumMap();
+        List<Integer> values = new ArrayList<>(map.values());
+        values.add(0);  // ミノが2種類以下の場合はこの0を取得する
+        values.add(0);
+        values.add(0);
+        values.add(0);
+        values.sort(Comparator.reverseOrder());
+
+        int first = values.get(0);
+        int fifth = values.get(4);
+
+        return (first == 4 && fifth < 3) || (first <= 3 && fifth < 3);
     }
 
     private static TaskResultHelper getMinoPackingHelper(int squareHeight) {
