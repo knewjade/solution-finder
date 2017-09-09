@@ -13,6 +13,7 @@ import core.srs.Rotate;
 import entry.CommandLineWrapper;
 import entry.NormalCommandLineWrapper;
 import entry.PriorityCommandLineWrapper;
+import exceptions.FinderParseException;
 import org.apache.commons.cli.*;
 
 import java.io.IOException;
@@ -51,10 +52,10 @@ public class PercentSettingParser {
         this.commands = commands;
     }
 
-    public Optional<PercentSettings> parse() throws ParseException {
+    public Optional<PercentSettings> parse() throws FinderParseException {
         Options options = createOptions();
         CommandLineParser parser = new DefaultParser();
-        CommandLine commandLine = parser.parse(options, commands);
+        CommandLine commandLine = parseToCommandLine(options, parser, commands);
         CommandLineWrapper wrapper = new NormalCommandLineWrapper(commandLine);
         PercentSettings settings = new PercentSettings();
 
@@ -153,6 +154,14 @@ public class PercentSettingParser {
             }
         }
         return Optional.of(settings);
+    }
+
+    private CommandLine parseToCommandLine(Options options, CommandLineParser parser, String[] commands) throws FinderParseException {
+        try {
+            return parser.parse(options, commands);
+        } catch (ParseException e) {
+            throw new FinderParseException(e);
+        }
     }
 
     private Options createOptions() {
@@ -268,7 +277,7 @@ public class PercentSettingParser {
         return options;
     }
 
-    private CommandLineWrapper loadTetfu(String data, CommandLineParser parser, Options options, CommandLineWrapper wrapper, PercentSettings settings) {
+    private CommandLineWrapper loadTetfu(String data, CommandLineParser parser, Options options, CommandLineWrapper wrapper, PercentSettings settings) throws FinderParseException {
         // テト譜面のエンコード
         List<TetfuPage> decoded = encodeTetfu(data);
 
@@ -291,10 +300,10 @@ public class PercentSettingParser {
 
         // オプションとして読み込む
         try {
-            CommandLine commandLineTetfu = parser.parse(options, commentArgs);
+            CommandLine commandLineTetfu = parseToCommandLine(options, parser, commentArgs);
             CommandLineWrapper newWrapper = new NormalCommandLineWrapper(commandLineTetfu);
             wrapper = new PriorityCommandLineWrapper(Arrays.asList(wrapper, newWrapper));
-        } catch (ParseException ignore) {
+        } catch (FinderParseException ignore) {
         }
 
         // 最大削除ラインの設定
@@ -323,7 +332,7 @@ public class PercentSettingParser {
         return wrapper;
     }
 
-    private List<TetfuPage> encodeTetfu(String encoded) {
+    private List<TetfuPage> encodeTetfu(String encoded) throws FinderParseException {
         MinoFactory minoFactory = new MinoFactory();
         ColorConverter colorConverter = new ColorConverter();
         Tetfu tetfu = new Tetfu(minoFactory, colorConverter);

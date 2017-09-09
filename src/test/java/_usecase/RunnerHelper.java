@@ -14,11 +14,11 @@ class RunnerHelper {
         System.setOut(new PrintStream(out));
         System.setErr(new PrintStream(err));
 
-        runnable.run();
+        int returnCode = runnable.run();
 
         System.setOut(outBackup);
         System.setErr(errBackup);
 
-        return new Log(out.toString(), err.toString());
+        return new Log(returnCode, out.toString(), err.toString());
     }
 }

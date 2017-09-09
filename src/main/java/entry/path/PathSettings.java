@@ -5,6 +5,7 @@ import common.tetfu.field.ColoredField;
 import core.field.Field;
 import core.field.FieldFactory;
 
+import javax.activation.UnsupportedDataTypeException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -107,7 +108,7 @@ public class PathSettings {
         this.pathLayer = pathLayer;
     }
 
-    void setOutputType(String type) {
+    void setOutputType(String type) throws UnsupportedDataTypeException {
         switch (type.trim().toLowerCase()) {
             case "csv":
                 this.outputType = OutputType.CSV;
@@ -116,7 +117,7 @@ public class PathSettings {
                 this.outputType = OutputType.Link;
                 break;
             default:
-                throw new UnsupportedOperationException("Unsupported output type = '" + type + "'");
+                throw new UnsupportedDataTypeException("Unsupported format: format=" + type);
         }
     }
 

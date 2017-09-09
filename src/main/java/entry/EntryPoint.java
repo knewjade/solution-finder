@@ -1,7 +1,11 @@
 package entry;
 
-public interface EntryPoint {
-    void run() throws Exception;
+import exceptions.FinderException;
+import exceptions.FinderTerminateException;
+import exceptions.FinderExecuteException;
 
-    void close() throws Exception;
+public interface EntryPoint {
+    void run() throws FinderException;
+
+    void close() throws FinderTerminateException;
 }

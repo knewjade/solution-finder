@@ -1,9 +1,8 @@
 package entry.percent;
 
-import common.datastore.pieces.LongBlocks;
-import lib.Stopwatch;
 import common.SyntaxException;
 import common.datastore.Pair;
+import common.datastore.pieces.LongBlocks;
 import common.pattern.BlocksGenerator;
 import common.tree.AnalyzeTree;
 import core.field.Field;
@@ -11,10 +10,15 @@ import core.field.FieldView;
 import core.mino.Block;
 import entry.EntryPoint;
 import entry.searching_pieces.NormalEnumeratePieces;
+import exceptions.FinderTerminateException;
+import exceptions.FinderExecuteException;
+import exceptions.FinderInitializeException;
+import lib.Stopwatch;
 
 import java.io.*;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -27,7 +31,7 @@ public class PercentEntryPoint implements EntryPoint {
     private final PercentSettings settings;
     private final BufferedWriter logWriter;
 
-    public PercentEntryPoint(PercentSettings settings) throws IOException {
+    public PercentEntryPoint(PercentSettings settings) throws FinderInitializeException {
         this.settings = settings;
 
         String logFilePath = settings.getLogFilePath();
@@ -46,11 +50,27 @@ public class PercentEntryPoint implements EntryPoint {
         if (logFile.exists() && !logFile.canWrite())
             throw new IllegalArgumentException("Cannot write log file");
 
-        this.logWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile, false), CHARSET));
+        try {
+            this.logWriter = createBufferedWriter(logFile);
+        } catch (UnsupportedEncodingException | FileNotFoundException e) {
+            throw new FinderInitializeException(e);
+        }
+    }
+
+    private BufferedWriter createBufferedWriter(File logFile) throws UnsupportedEncodingException, FileNotFoundException {
+        return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile, false), CHARSET));
     }
 
     @Override
-    public void run() throws Exception {
+    public void run() throws FinderExecuteException {
+        try {
+            runMain();
+        } catch (IOException | ExecutionException | InterruptedException e) {
+            throw new FinderExecuteException(e);
+        }
+    }
+
+    private void runMain() throws IOException, ExecutionException, InterruptedException {
         output("# Setup Field");
         Field field = settings.getField();
         if (field == null)
@@ -208,7 +228,11 @@ public class PercentEntryPoint implements EntryPoint {
     }
 
     @Override
-    public void close() throws Exception {
-        logWriter.close();
+    public void close() throws FinderTerminateException {
+        try {
+            logWriter.close();
+        } catch (IOException e) {
+            throw new FinderTerminateException(e);
+        }
     }
 }

@@ -1,13 +1,12 @@
 package entry.path;
 
-import common.datastore.pieces.LongBlocks;
-import common.pattern.BlocksGenerator;
-import lib.Stopwatch;
 import common.SyntaxException;
 import common.buildup.BuildUpStream;
 import common.datastore.*;
+import common.datastore.pieces.LongBlocks;
 import common.parser.OperationInterpreter;
 import common.parser.OperationTransform;
+import common.pattern.BlocksGenerator;
 import common.tetfu.Tetfu;
 import common.tetfu.TetfuElement;
 import common.tetfu.common.ColorConverter;
@@ -24,6 +23,11 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.Rotate;
 import entry.EntryPoint;
+import exceptions.FinderException;
+import exceptions.FinderExecuteException;
+import exceptions.FinderInitializeException;
+import exceptions.FinderTerminateException;
+import lib.Stopwatch;
 import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
@@ -36,6 +40,7 @@ import searcher.pack.task.Result;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -47,7 +52,7 @@ public class PathEntryPoint implements EntryPoint {
     private final PathSettings settings;
     private final BufferedWriter logWriter;
 
-    public PathEntryPoint(PathSettings settings) throws IOException {
+    public PathEntryPoint(PathSettings settings) throws FinderInitializeException {
         this.settings = settings;
 
         String logFilePath = settings.getLogFilePath();
@@ -57,28 +62,40 @@ public class PathEntryPoint implements EntryPoint {
         if (!logFile.getParentFile().exists()) {
             boolean mairSuccess = logFile.getParentFile().mkdir();
             if (!mairSuccess) {
-                throw new IllegalStateException("Failed to make output directory");
+                throw new FinderInitializeException("Failed to make output directory");
             }
         }
 
         if (logFile.isDirectory())
-            throw new IllegalArgumentException("Cannot specify directory as log file path");
+            throw new FinderInitializeException("Cannot specify directory as log file path");
         if (logFile.exists() && !logFile.canWrite())
-            throw new IllegalArgumentException("Cannot write log file");
+            throw new FinderInitializeException("Cannot write log file");
 
-        this.logWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile, false), CHARSET));
+        try {
+            this.logWriter = createBufferedWriter(logFile);
+        } catch (UnsupportedEncodingException | FileNotFoundException e) {
+            throw new FinderInitializeException(e);
+        }
+    }
+
+    private BufferedWriter createBufferedWriter(File logFile) throws UnsupportedEncodingException, FileNotFoundException {
+        return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile, false), CHARSET));
     }
 
     @Override
-    public void run() throws Exception {
+    public void run() throws FinderException {
+        runMain();
+    }
+
+    private void runMain() throws FinderException {
         output("# Setup Field");
         Field field = settings.getField();
         if (field == null)
-            throw new IllegalArgumentException("Should specify field");
+            throw new FinderInitializeException("Should specify field");
 
         int maxClearLine = settings.getMaxClearLine();
         if (maxClearLine < 2 || 10 < maxClearLine)
-            throw new IllegalArgumentException("Field Height should be 2 <= height <= 10");
+            throw new FinderInitializeException("Clear-Line should be 2 <= line <= 10: line=" + maxClearLine);
 
         output(FieldView.toString(field, maxClearLine));
 
@@ -90,22 +107,23 @@ public class PathEntryPoint implements EntryPoint {
         output("Searching patterns:");
         List<String> patterns = settings.getPatterns();
         if (patterns.isEmpty())
-            throw new IllegalArgumentException("Should specify patterns, not allow empty");
+            throw new FinderInitializeException("Should specify patterns, not allow empty");
 
         try {
             BlocksGenerator.verify(patterns);
         } catch (SyntaxException e) {
-            throw new IllegalArgumentException("Invalid patterns", e);
+            output("Pattern syntax error");
+            output(e.getMessage());
+            throw new FinderInitializeException("Pattern syntax error", e);
         }
 
         for (String pattern : patterns)
             output("  " + pattern);
 
-
         // 出力ファイルが正しく出力できるか確認
         String extension = getExtension();
         String outputBaseFilePath = settings.getOutputBaseFilePath();
-        String outputBaseCanonicalPath = new File(outputBaseFilePath).getCanonicalPath();
+        String outputBaseCanonicalPath = getCanonicalPath(outputBaseFilePath);
         String namePath = getRemoveExtensionFromPath(outputBaseCanonicalPath);
         if (namePath.isEmpty() || namePath.endsWith(String.valueOf(File.separatorChar)))
             namePath += "path";
@@ -117,30 +135,26 @@ public class PathEntryPoint implements EntryPoint {
         if (!outputFile.getParentFile().exists()) {
             boolean mkdirsSuccess = outputFile.getParentFile().mkdirs();
             if (!mkdirsSuccess) {
-                throw new IllegalStateException("Failed to make output directory");
+                throw new FinderInitializeException("Failed to make output directory");
             }
         }
-
-        if (outputFile.isDirectory())
-            throw new IllegalArgumentException("Cannot specify directory as output base file path");
-        if (outputFile.exists() && !outputFile.canWrite())
-            throw new IllegalArgumentException("Cannot write output base file");
 
         // uniqueファイル
         String uniqueOutputFilePath = String.format("%s_unique%s", namePath, extension);
         File outputUniqueFile = new File(uniqueOutputFilePath);
+
         if (outputUniqueFile.isDirectory())
-            throw new IllegalArgumentException("Cannot specify directory as output unique file path");
+            throw new FinderInitializeException("Cannot specify directory as output unique file path: OutputBase=" + outputBaseFilePath);
         if (outputUniqueFile.exists() && !outputUniqueFile.canWrite())
-            throw new IllegalArgumentException("Cannot write output unique file");
+            throw new FinderInitializeException("Cannot write output unique file");
 
         // minimalファイル
         String minimalOutputFilePath = String.format("%s_minimal%s", namePath, extension);
         File outputMinimalFile = new File(minimalOutputFilePath);
         if (outputMinimalFile.isDirectory())
-            throw new IllegalArgumentException("Cannot specify directory as output minimal file path");
+            throw new FinderInitializeException("Cannot specify directory as output minimal file path: OutputBase=" + outputBaseFilePath);
         if (outputMinimalFile.exists() && !outputMinimalFile.canWrite())
-            throw new IllegalArgumentException("Cannot write output minimal file");
+            throw new FinderInitializeException("Cannot write output minimal file");
 
         output();
         // ========================================
@@ -154,13 +168,13 @@ public class PathEntryPoint implements EntryPoint {
         // 残りのスペースが4の倍数でないときはエラー
         int emptyCount = maxClearLine * 10 - field.getNumOfAllBlocks();
         if (emptyCount % 4 != 0)
-            throw new IllegalArgumentException("Error: EmptyCount should be mod 4: " + emptyCount);
+            throw new FinderInitializeException("Empty block in field should be multiples of 4: EmptyCount=" + emptyCount);
 
         // ブロック数が足りないときはエラー
         int maxDepth = emptyCount / 4;
         int piecesDepth = generator.getDepth();
         if (piecesDepth < maxDepth)
-            throw new IllegalArgumentException("Error: blocks size check short: " + piecesDepth + " < " + maxDepth);
+            throw new FinderInitializeException(String.format("Should specify equal to or more than %d pieces: CurrentPieces=%d", maxDepth, piecesDepth));
 
         output("Need Pieces = " + maxDepth);
 
@@ -211,7 +225,7 @@ public class PathEntryPoint implements EntryPoint {
         List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(sizedBit, field);
         TaskResultHelper taskResultHelper = createTaskResultHelper(maxClearLine);
         PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
-        PathCore pathCore = new PathCore(patterns, searcher, maxDepth, isUsingHold);
+        PathCore pathCore = createPathCore(patterns, maxDepth, isUsingHold, searcher);
 
         // 絞り込みを行う
         PathLayer pathLayer = settings.getPathLayer();
@@ -259,12 +273,28 @@ public class PathEntryPoint implements EntryPoint {
         flush();
     }
 
-    private Predicate<ColumnField> createPredicate(int cachedMinBit) {
+    private PathCore createPathCore(List<String> patterns, int maxDepth, boolean isUsingHold, PackSearcher searcher) throws FinderExecuteException {
+        try {
+            return new PathCore(patterns, searcher, maxDepth, isUsingHold);
+        } catch (ExecutionException | InterruptedException e) {
+            throw new FinderExecuteException(e);
+        }
+    }
+
+    private String getCanonicalPath(String outputBaseFilePath) throws FinderInitializeException {
+        try {
+            return new File(outputBaseFilePath).getCanonicalPath();
+        } catch (IOException e) {
+            throw new FinderInitializeException(e);
+        }
+    }
+
+    private Predicate<ColumnField> createPredicate(int cachedMinBit) throws FinderInitializeException {
         if (cachedMinBit == 0)
             return columnField -> true;
         else if (0 < cachedMinBit)
             return BasicSolutions.createBitCountPredicate(cachedMinBit);
-        throw new IllegalArgumentException("cached-min-bit should be 0 <=");
+        throw new FinderInitializeException("Cached-min-bit should be 0 <= bit: bit=" + cachedMinBit);
     }
 
     private TaskResultHelper createTaskResultHelper(int height) {
@@ -288,7 +318,7 @@ public class PathEntryPoint implements EntryPoint {
         return path;
     }
 
-    private String getExtension() {
+    private String getExtension() throws FinderInitializeException {
         OutputType outputType = settings.getOutputType();
         switch (outputType) {
             case CSV:
@@ -296,11 +326,11 @@ public class PathEntryPoint implements EntryPoint {
             case Link:
                 return ".html";
             default:
-                throw new UnsupportedOperationException("Unsupport output type: " + outputType);
+                throw new FinderInitializeException("Unsupported format: format=" + outputType);
         }
     }
 
-    private void outputOperations(Field field, File file, MinoFactory minoFactory, List<Pair<Result, HashSet<LongBlocks>>> operations, SizedBit sizedBit) {
+    private void outputOperations(Field field, File file, MinoFactory minoFactory, List<Pair<Result, HashSet<LongBlocks>>> operations, SizedBit sizedBit) throws FinderExecuteException {
         OutputType outputType = settings.getOutputType();
         switch (outputType) {
             case CSV:
@@ -311,11 +341,11 @@ public class PathEntryPoint implements EntryPoint {
                 outputOperationsToSimpleHTML(field, file, minoFactory, operations, sizedBit, isTetfuSplit);
                 break;
             default:
-                throw new UnsupportedOperationException("Unsupport output type: " + outputType);
+                throw new FinderExecuteException("Unsupported format: format=" + outputType);
         }
     }
 
-    private void outputOperationsToCSV(Field field, File file, List<Pair<Result, HashSet<LongBlocks>>> resultPairs, SizedBit sizedBit) {
+    private void outputOperationsToCSV(Field field, File file, List<Pair<Result, HashSet<LongBlocks>>> resultPairs, SizedBit sizedBit) throws FinderExecuteException {
         LockedBuildUpListUpThreadLocal threadLocal = new LockedBuildUpListUpThreadLocal(sizedBit.getHeight());
         List<List<OperationWithKey>> samples = resultPairs.parallelStream()
                 .map(resultPair -> {
@@ -330,7 +360,7 @@ public class PathEntryPoint implements EntryPoint {
                 })
                 .collect(Collectors.toList());
 
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false), CHARSET))) {
+        try (BufferedWriter writer = createBufferedWriter(file)) {
             for (List<OperationWithKey> operationWithKeys : samples) {
                 Operations operations = OperationTransform.parseToOperations(field, operationWithKeys, sizedBit.getHeight());
                 String operationLine = OperationInterpreter.parseToString(operations);
@@ -339,11 +369,11 @@ public class PathEntryPoint implements EntryPoint {
             }
             writer.flush();
         } catch (Exception e) {
-            throw new IllegalStateException("Failed to output file", e);
+            throw new FinderExecuteException("Failed to output file", e);
         }
     }
 
-    private void outputOperationsToSimpleHTML(Field field, File file, MinoFactory minoFactory, List<Pair<Result, HashSet<LongBlocks>>> resultPairs, SizedBit sizedBit, boolean isTetfuSplit) {
+    private void outputOperationsToSimpleHTML(Field field, File file, MinoFactory minoFactory, List<Pair<Result, HashSet<LongBlocks>>> resultPairs, SizedBit sizedBit, boolean isTetfuSplit) throws FinderExecuteException {
         int maxClearLine = sizedBit.getHeight();
 
         // テト譜用のフィールド作成
@@ -399,7 +429,7 @@ public class PathEntryPoint implements EntryPoint {
         // 出力
         ColorConverter colorConverter = new ColorConverter();
 
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false), CHARSET))) {
+        try (BufferedWriter writer = createBufferedWriter(file)) {
             // headerの出力
             writer.write("<!DOCTYPE html>");
             writer.newLine();
@@ -435,7 +465,7 @@ public class PathEntryPoint implements EntryPoint {
             writer.newLine();
             writer.flush();
         } catch (Exception e) {
-            throw new IllegalStateException("Failed to output file", e);
+            throw new FinderExecuteException("Failed to output file", e);
         }
     }
 
@@ -561,23 +591,35 @@ public class PathEntryPoint implements EntryPoint {
         return String.format("<a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a> [%s]", encode, linkText, validOrders);
     }
 
-    private void output() throws IOException {
+    private void output() throws FinderExecuteException {
         output("");
     }
 
-    private void output(String str) throws IOException {
-        logWriter.append(str).append(LINE_SEPARATOR);
+    private void output(String str) throws FinderExecuteException {
+        try {
+            logWriter.append(str).append(LINE_SEPARATOR);
+        } catch (IOException e) {
+            throw new FinderExecuteException(e);
+        }
 
         if (settings.isOutputToConsole())
             System.out.println(str);
     }
 
-    private void flush() throws IOException {
-        logWriter.flush();
+    private void flush() throws FinderExecuteException {
+        try {
+            logWriter.flush();
+        } catch (IOException e) {
+            throw new FinderExecuteException(e);
+        }
     }
 
     @Override
-    public void close() throws Exception {
-        logWriter.close();
+    public void close() throws FinderTerminateException {
+        try {
+            logWriter.close();
+        } catch (IOException e) {
+            throw new FinderTerminateException(e);
+        }
     }
 }

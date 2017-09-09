@@ -9,40 +9,143 @@ import entry.percent.PercentSettings;
 import entry.util.fig.FigUtilEntryPoint;
 import entry.util.fig.FigUtilSettingParser;
 import entry.util.fig.FigUtilSettings;
-import org.apache.commons.cli.ParseException;
+import exceptions.FinderException;
+import exceptions.FinderInitializeException;
+import exceptions.FinderParseException;
+import exceptions.FinderTerminateException;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class EntryPointMain {
-    public static void main(String[] args) throws Exception {
+    public static int main(String[] args) {
         if (args.length < 1)
             throw new IllegalArgumentException("No command: Use percent, path");
 
         if (args[0].equals("-h")) {
             System.out.println("Usage: <command> [options]");
             System.out.println("  command: percent, path, util fig");
-            System.exit(0);
+            return 0;
         }
 
         if (args[0].equals("-v")) {
             System.out.println("Version: 0.44");
-            System.exit(0);
+            return 0;
         }
 
         // 引数リストの作成
         List<String> argsList = new ArrayList<>(Arrays.asList(args).subList(1, args.length));
 
         // 実行を振り分け
-        EntryPoint entryPoint = createEntryPoint(args[0], argsList);
-        entryPoint.run();
-        entryPoint.close();
+        EntryPoint entryPoint;
+        try {
+            entryPoint = createEntryPoint(args[0], argsList);
+        } catch (FinderInitializeException | FinderParseException e) {
+            System.err.println("Error: Failed to execute pre-main. Output stack trace to output/error.txt");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace();
+            outputError(e, args);
+            return 1;
+        }
+
+        // メイン処理を実行する
+        try {
+            entryPoint.run();
+        } catch (FinderException e) {
+            System.err.println("Error: Failed to execute main. Output stack trace to output/error.txt");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace();
+
+            // 終了処理をする（メイン処理失敗後）
+            try {
+                entryPoint.close();
+                outputError(e, args);
+            } catch (FinderTerminateException e2) {
+                System.err.println("Error: Failed to execute post-main. Output stack trace to output/error.txt");
+                System.err.println("Message: " + e.getMessage());
+                e.printStackTrace();
+                outputError(Arrays.asList(e, e2), args);
+            }
+
+            return 1;
+        }
+
+        // 終了処理をする（メイン処理成功後）
+        try {
+            entryPoint.close();
+        } catch (FinderTerminateException e) {
+            System.err.println("Error: Failed to terminate. Output stack trace to output/error.txt");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace();
+            outputError(e, args);
+            return 1;
+        }
+
+        return 0;
     }
 
-    private static EntryPoint createEntryPoint(String type, List<String> commands) throws ParseException, IOException {
+    private static void outputError(FinderException exception, String[] commands) {
+        outputError(Collections.singletonList(exception), commands);
+    }
+
+    private static void outputError(List<FinderException> exceptions, String[] commands) {
+        // Make directory
+        makeOutputDirectory();
+
+        // Output error to file
+        File errorFile = new File("output/error.txt");
+        try {
+            try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(errorFile, false)))) {
+                // Output datetime
+                LocalDateTime now = LocalDateTime.now();
+                String dateTimeStr = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(now);
+                writer.printf("# DateTime: %s%n", dateTimeStr);
+
+                // Output command
+                writer.printf("# command: %s%n", Arrays.stream(commands).collect(Collectors.joining(" ")));
+
+                // Output error messages
+                writer.println("# Error message summary:");
+                for (FinderException exception : exceptions) {
+                    writer.printf("  * %s [%s]%n", exception.getMessage(), exception.getClass().getSimpleName());
+                    Throwable cause = exception.getCause();
+                    while (cause != null) {
+                        String message = cause.getMessage();
+                        writer.printf("    - %s [%s]%n", message != null ? message : "<no message>", cause.getClass().getSimpleName());
+                        cause = cause.getCause();
+                        System.out.println(cause);
+                    }
+                }
+                writer.println();
+                writer.println();
+
+                // Output stack traces
+                writer.println("------------------------------");
+                writer.println("# Stack trace:");
+                writer.println("------------------------------");
+                writer.println();
+
+                for (FinderException exception : exceptions) {
+                    exception.printStackTrace(writer);
+                    writer.println("==============================");
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error: Failed to output error to output/error.txt");
+            e.printStackTrace();
+        }
+    }
+
+    private static void makeOutputDirectory() {
+        File outputDirectory = new File("output");
+        if (!outputDirectory.exists())
+            outputDirectory.mkdirs();
+    }
+
+    private static EntryPoint createEntryPoint(String type, List<String> commands) throws FinderInitializeException, FinderParseException {
         // 実行を振り分け
         switch (type) {
             case "percent":
@@ -56,27 +159,27 @@ public class EntryPointMain {
         }
     }
 
-    private static EntryPoint getPercentEntryPoint(List<String> commands) throws ParseException, IOException {
+    private static EntryPoint getPercentEntryPoint(List<String> commands) throws FinderInitializeException, FinderParseException {
         PercentSettingParser settingParser = new PercentSettingParser(commands);
         Optional<PercentSettings> settings = settingParser.parse();
 
         if (!settings.isPresent())
-            System.exit(0);
+            throw new FinderParseException("Cannot parse setting for percent");
 
         return new PercentEntryPoint(settings.get());
     }
 
-    private static EntryPoint getPathEntryPoint(List<String> commands) throws ParseException, IOException {
+    private static EntryPoint getPathEntryPoint(List<String> commands) throws FinderInitializeException, FinderParseException {
         PathSettingParser settingParser = new PathSettingParser(commands);
         Optional<PathSettings> settings = settingParser.parse();
 
         if (!settings.isPresent())
-            System.exit(0);
+            throw new FinderParseException("Cannot parse setting for path");
 
         return new PathEntryPoint(settings.get());
     }
 
-    private static EntryPoint getUtilEntryPoint(List<String> commands) throws ParseException {
+    private static EntryPoint getUtilEntryPoint(List<String> commands) throws FinderParseException {
         if (!commands.get(0).equals("fig"))
             throw new IllegalArgumentException("util: Invalid type: Use fig");
 
@@ -85,7 +188,7 @@ public class EntryPointMain {
         Optional<FigUtilSettings> settings = settingParser.parse();
 
         if (!settings.isPresent())
-            System.exit(0);
+            throw new FinderParseException("Cannot parse setting for util fig");
 
         return new FigUtilEntryPoint(settings.get());
     }

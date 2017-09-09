@@ -18,6 +18,7 @@ class OutputFileHelper {
     private static final String MINIMAL_PATH = "output/path_minimal.html";
     private static final String UNIQUE_CSV = "output/path_unique.csv";
     private static final String MINIMAL_CSV = "output/path_minimal.csv";
+    private static final String ERROR_PATH = "output/error.txt";
 
     static PathHTML loadPathUniqueHTML() throws IOException {
         return loadPathUniqueHTML(UNIQUE_PATH);
@@ -93,6 +94,10 @@ class OutputFileHelper {
         return new File(MINIMAL_PATH).exists();
     }
 
+    static boolean existsErrorText() {
+        return new File(ERROR_PATH).exists();
+    }
+
     static void deletePathUniqueHTML() {
         File file = new File(UNIQUE_PATH);
         deleteFile(file);
@@ -113,6 +118,11 @@ class OutputFileHelper {
         deleteFile(file);
     }
 
+    static void deleteErrorText() {
+        File file = new File(ERROR_PATH);
+        deleteFile(file);
+    }
+
     private static void deleteFile(File file) {
         if (file.exists()) {
             file.delete();
@@ -122,5 +132,9 @@ class OutputFileHelper {
                 e.printStackTrace();
             }
         }
+    }
+
+    static String loadErrorText() throws IOException {
+        return Files.lines(Paths.get(ERROR_PATH)).collect(Collectors.joining(System.lineSeparator()));
     }
 }

@@ -15,6 +15,7 @@ import core.mino.Block;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
+import exceptions.FinderParseException;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -181,7 +182,15 @@ public class Tetfu {
         }
     }
 
-    public List<TetfuPage> decode(String str) {
+    public List<TetfuPage> decode(String str) throws FinderParseException {
+        try {
+            return decodeMain(str);
+        } catch (Exception e) {
+            throw new FinderParseException("Cannot parse tetfu: " + str, e);
+        }
+    }
+
+    private List<TetfuPage> decodeMain(String str) {
         LinkedList<Integer> values = str.replace("?", "").chars().boxed()
                 .map(c -> decodeData((char) c.intValue()))
                 .collect(Collectors.toCollection(LinkedList::new));

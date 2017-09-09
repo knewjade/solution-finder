@@ -91,9 +91,9 @@ class PercentUseCaseTest {
             ConfigFileHelper.createPatternFile("*p7");
 
             String command = "percent";
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
 
             assertThat(log.getOutput())
                     .contains(Messages.useHold())
@@ -127,9 +127,7 @@ class PercentUseCaseTest {
             ConfigFileHelper.createPatternFile("*p7");
 
             String command = "percent";
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())
                     .contains(Messages.useHold())
@@ -163,9 +161,7 @@ class PercentUseCaseTest {
             ConfigFileHelper.createFieldFile(field, 4);
 
             String command = "percent -p *p7";
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())
                     .contains(Messages.useHold())
@@ -199,9 +195,7 @@ class PercentUseCaseTest {
             ConfigFileHelper.createPatternFile("*p4");
 
             String command = "percent -p *p7";
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())
                     .contains(Messages.useHold())
@@ -233,13 +227,11 @@ class PercentUseCaseTest {
 
             int height = 4;
 
-            ConfigFileHelper.createFieldFile(field, "input", "test_field", height);
+            ConfigFileHelper.createFieldFile(field, height, "test_field", "input");
             ConfigFileHelper.createPatternFile("*p7", "input", "test_patterns");
 
             String command = "percent -fp input/test_field.txt -pp input/test_patterns.txt --log-path test_output_log/test_last_output.txt";
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             String logFile = Files.lines(Paths.get("test_output_log/test_last_output.txt")).collect(Collectors.joining(LINE_SEPARATOR)) + LINE_SEPARATOR;
             assertThat(log.getOutput())
@@ -279,9 +271,7 @@ class PercentUseCaseTest {
             String tetfu = "v115@KhA8FeF8DeE8OeAgWQA0no2ANI98AQe88AjPcQB";
 
             String command = String.format("percent -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())
                     .contains(Messages.useHold())
@@ -314,9 +304,7 @@ class PercentUseCaseTest {
             String tetfu = "v115@vhAAgWBAUAAAA";
 
             String command = String.format("percent -t %s -p %s", tetfu, "S,[TZ]p2,*p7");
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())
                     .contains(Messages.useHold())
@@ -354,9 +342,7 @@ class PercentUseCaseTest {
             ConfigFileHelper.createPatternFile("[TZ]p2,*p7");
 
             String command = String.format("percent -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())
                     .contains(Messages.useHold())
@@ -399,9 +385,7 @@ class PercentUseCaseTest {
             ConfigFileHelper.createPatternFile("*p4");
 
             String command = String.format("percent -p *p7 -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())
                     .contains(Messages.useHold())
@@ -438,9 +422,7 @@ class PercentUseCaseTest {
             ConfigFileHelper.createPatternFile("*p7");
 
             String command = String.format("percent -c 4 -p *p7 -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())
                     .contains(Messages.useHold())
@@ -477,9 +459,7 @@ class PercentUseCaseTest {
             ConfigFileHelper.createPatternFile("*p7");
 
             String command = String.format("percent -c 4 -p *p4 -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())
                     .contains(Messages.useHold())
@@ -515,10 +495,8 @@ class PercentUseCaseTest {
             ConfigFileHelper.createFieldFile(FieldFactory.createField(""), 4);
             ConfigFileHelper.createPatternFile("*p2");
 
-            String command = String.format("percent -p *p6 -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            String command = String.format("percent -p *p6 -t %s -fc 5", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())
                     .contains(Messages.noUseHold())
@@ -531,7 +509,7 @@ class PercentUseCaseTest {
                     .contains(Messages.tree("T", 16.25))
                     .contains(Messages.tree("IL", 13.33))
                     .contains(Messages.tree("JOZ", 0.0))
-                    .contains(Messages.failPatternSize(100))
+                    .contains(Messages.failPatternSize(5))
                     .doesNotContain(Messages.failNothing());
 
             assertThat(log.getError()).isEmpty();
@@ -552,9 +530,7 @@ class PercentUseCaseTest {
             String tetfu = "http://fumen.zui.jp/?d115@9gwhIewhIewhRpBeR4CewhRpAeR4NesKJ";
 
             String command = String.format("percent -p *p7 -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())
                     .contains(Messages.useHold())
@@ -591,9 +567,7 @@ class PercentUseCaseTest {
             ConfigFileHelper.createPatternFile("T, *p3");
 
             String command = "percent";
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())
                     .contains(Messages.useHold())
@@ -631,9 +605,7 @@ class PercentUseCaseTest {
             ConfigFileHelper.createFieldFile(field, 4);
 
             String command = "percent -p [IO]p2 --hold avoid";
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())
                     .contains(Messages.noUseHold())
@@ -665,9 +637,7 @@ class PercentUseCaseTest {
             String tetfu = "v115@IhA8HeB8HeA8SeRPYMAkQnGE5VrGEtIReEJhRpHeRp?ZevrB9gi0Geg0meAAPaA0no2ANI98AwXfzBqeEHBEoA6AFL?/iAQfAAA";
 
             String command = String.format("percent -t %s -P 3", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())
                     .contains(Messages.useHold())
@@ -698,9 +668,7 @@ class PercentUseCaseTest {
             String tetfu = "v115@9gC8GeB8GeC8GeB8GeB8JeRPYNA0no2ANI98AQf78A?RAAAA";
 
             String command = String.format("percent -t %s -td 4", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())
                     .contains(Messages.useHold())
@@ -734,9 +702,7 @@ class PercentUseCaseTest {
             String tetfu = "v115@9gC8GeB8HeB8FeC8GeB8JeRPYNA0no2ANI98AQf78A?RAAAA";
 
             String command = String.format("percent -t %s -fc -1", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())
                     .contains(Messages.useHold())
@@ -777,9 +743,7 @@ class PercentUseCaseTest {
             String tetfu = "m115@EhC8HeD8DeF8EeC8JeAgH";
 
             String command = String.format("percent -p *p7 -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())
                     .contains(Messages.useHold())
@@ -802,9 +766,7 @@ class PercentUseCaseTest {
             String tetfu = "http://harddrop.com/fumen/?v115@9gA8DeA8DeB8BeB8DeB8BeB8DeF8NeAgH";
 
             String command = String.format("percent -p T,I,O,*p4 -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())
                     .contains(Messages.useHold())
@@ -827,9 +789,7 @@ class PercentUseCaseTest {
             String tetfu = "http://harddrop.com/fumen/?d115@ahA8CeB8BeC8JeAgH";
 
             String command = String.format("percent -c 3 -p *p7 -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())
                     .contains(Messages.clearLine(3))
@@ -839,7 +799,7 @@ class PercentUseCaseTest {
 
             assertThat(log.getError()).isEmpty();
         }
-        
+
         @Test
         void pattern4() throws Exception {
             /*
@@ -853,9 +813,7 @@ class PercentUseCaseTest {
             String tetfu = "http://harddrop.com/fumen/?m115@RhA8HeB8FeC8JeAgH";
 
             String command = String.format("percent -c 3 -p *p7 -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())
                     .contains(Messages.clearLine(3))
@@ -879,9 +837,7 @@ class PercentUseCaseTest {
             String tetfu = "http://fumen.zui.jp/?m115@9gzhEewwRpFexwRpglDeBtwwilEeBtJeAgH";
 
             String command = String.format("percent -p [OSZTLJ]p6 -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())
                     .contains(Messages.clearLine(4))

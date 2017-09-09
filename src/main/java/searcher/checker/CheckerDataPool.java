@@ -25,7 +25,6 @@ public class CheckerDataPool implements DataPool {
 
     @Override
     public void addOrder(Order order) {
-        assert order instanceof DepthOrder;
         boolean add = existsCheck.add(order);
         if (add)
             nexts.add(order);

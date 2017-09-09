@@ -9,12 +9,15 @@ import common.tetfu.common.ColorConverter;
 import common.tetfu.field.ColoredField;
 import core.field.Field;
 import core.field.FieldFactory;
+import core.field.FieldView;
 import core.mino.Block;
 import core.mino.Mino;
 import core.srs.Rotate;
 import entry.EntryPointMain;
+import exceptions.FinderParseException;
 import org.junit.jupiter.api.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -24,7 +27,6 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-// TODO: write irregular unittest
 class PathUseCaseTest {
     private static final EasyPool easyPool = new EasyPool();
     private static final String LINE_SEPARATOR = System.lineSeparator();
@@ -55,11 +57,25 @@ class PathUseCaseTest {
         }
     }
 
+    private static class ErrorMessages {
+        private static String failPreMain() {
+            return "Error: Failed to execute pre-main. Output stack trace to output/error.txt";
+        }
+
+        private static String failMain() {
+            return "Error: Failed to execute main. Output stack trace to output/error.txt";
+        }
+    }
+
     private static List<ColoredField> parseLastPageTetfu(List<String> fumens) {
         return fumens.stream()
                 .map(fumen -> {
                     Tetfu tetfu = easyPool.getTetfu();
-                    return tetfu.decode(fumen);
+                    try {
+                        return tetfu.decode(fumen);
+                    } catch (FinderParseException e) {
+                        throw new RuntimeException(e);
+                    }
                 })
                 .map(tetfuPages -> {
                     assert 0 < tetfuPages.size();
@@ -100,6 +116,7 @@ class PathUseCaseTest {
         OutputFileHelper.deletePathMinimalHTML();
         OutputFileHelper.deletePathUniqueCSV();
         OutputFileHelper.deletePathMinimalCSV();
+        OutputFileHelper.deleteErrorText();
     }
 
     @Nested
@@ -120,9 +137,9 @@ class PathUseCaseTest {
             ConfigFileHelper.createPatternFile("*p4");
 
             String command = "path";
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
 
             assertThat(log.getOutput())
                     .contains("*p4")
@@ -180,6 +197,77 @@ class PathUseCaseTest {
         }
 
         @Test
+        void useFieldFileAndPatternsFile2() throws Exception {
+            // フィールドファイル + パターンファイル (デフォルト以外の場所)
+
+            Field field = FieldFactory.createField("" +
+                    "XX_____XXX" +
+                    "XX______XX" +
+                    "XX____XXXX" +
+                    "XX_____XXX"
+            );
+
+            int height = 4;
+            ConfigFileHelper.createFieldFile(field, height, "another_field");
+            ConfigFileHelper.createPatternFile("*p6", "another_pattern");
+
+            String command = "path -fp input/another_field.txt -pp input/another_pattern.txt";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
+
+            assertThat(log.getOutput())
+                    .contains("*p6")
+                    .contains(Messages.uniqueCount(47))
+                    .contains(Messages.minimalCount(37))
+                    .contains(Messages.useHold());
+
+            // unique
+            PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
+            assertThat(uniqueHTML)
+                    .returns(47, PathHTML::pattern);
+
+            // ライン消去あり
+            assertThat(uniqueHTML.noDeletedLineFumens())
+                    .hasSize(1)
+                    .contains("9gB8RpQ4BtE8RpR4BtD8ilQ4F8glzhC8JeAgWFApyj?FDvAAAA");
+
+            // ライン消去なし
+            assertThat(uniqueHTML.deletedLineFumens())
+                    .hasSize(46)
+                    .contains("9gB8Bti0E8wwBtilD8xwR4F8wwR4glg0C8JeAgWFAz?OUFDqAAAA")
+                    .contains("9gB8zhwwE8i0ywD8RpBtF8Rpg0BtC8JeAgWFAaHmPC?pAAAA")
+                    .contains("9gB8Bti0E8wwBtilD8xwR4F8wwR4glg0C8JeAgWFAz?OUFDqAAAA");
+
+            // すべての譜面
+            assertThat(parseLastPageTetfu(uniqueHTML.allFumens()))
+                    .hasSize(47)
+                    .allMatch(coloredField -> isFilled(height, coloredField));
+
+            // minimal
+            PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
+            assertThat(minimalHTML)
+                    .returns(37, PathHTML::pattern);
+
+            // ライン消去あり
+            assertThat(minimalHTML.noDeletedLineFumens())
+                    .hasSize(1)
+                    .contains("9gB8RpQ4BtE8RpR4BtD8ilQ4F8glzhC8JeAgWFApyj?FDvAAAA");
+
+            // ライン消去なし
+            assertThat(minimalHTML.deletedLineFumens())
+                    .hasSize(36)
+                    .contains("9gB8zhwwE8g0R4ywD8R4BtF8i0BtC8JeAgWFA6+jPC?pAAAA")
+                    .contains("9gB8h0Q4BtE8g0wwR4BtD8ywQ4F8g0zhC8JeAgWFAp?+jPC6AAAA")
+                    .contains("9gB8ilBtE8zhBtD8glR4wwF8R4ywC8JeAgWFAUtbMC?sAAAA");
+
+            // すべての譜面
+            assertThat(parseLastPageTetfu(minimalHTML.allFumens()))
+                    .hasSize(37)
+                    .allMatch(coloredField -> isFilled(height, coloredField));
+        }
+
+        @Test
         void getLog() throws Exception {
             // フィールドファイル, パターンファイル, ログファイル (場所を変更する)
 
@@ -192,13 +280,13 @@ class PathUseCaseTest {
 
             int height = 4;
 
-            ConfigFileHelper.createFieldFile(field, "input", "test_field", height);
+            ConfigFileHelper.createFieldFile(field, height, "test_field", "input");
             ConfigFileHelper.createPatternFile("*p7", "input", "test_patterns");
 
             String command = "path -fp input/test_field.txt -pp input/test_patterns.txt -o test_output/test_path.txt --log-path test_output_log/test_last_output.txt";
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
 
             String logFile = Files.lines(Paths.get("test_output_log/test_last_output.txt")).collect(Collectors.joining(LINE_SEPARATOR)) + LINE_SEPARATOR;
             assertThat(log.getOutput())
@@ -269,9 +357,9 @@ class PathUseCaseTest {
             ConfigFileHelper.createPatternFile("*p7");
 
             String command = "path";
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
 
             assertThat(log.getOutput())
                     .contains("*p7")
@@ -338,9 +426,9 @@ class PathUseCaseTest {
             ConfigFileHelper.createPatternFile("*p2");
 
             String command = String.format("path -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
 
             assertThat(log.getOutput())
                     .contains("*p7")
@@ -408,9 +496,9 @@ class PathUseCaseTest {
             ConfigFileHelper.createPatternFile("*p2");
 
             String command = String.format("path -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
 
             assertThat(log.getOutput())
                     .contains("[OSZ]p3")
@@ -475,9 +563,9 @@ class PathUseCaseTest {
             ConfigFileHelper.createPatternFile("*p2");
 
             String command = String.format("path -t %s -p *p7", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
 
             assertThat(log.getOutput())
                     .contains("*p7")
@@ -545,9 +633,9 @@ class PathUseCaseTest {
             ConfigFileHelper.createPatternFile("*p2");
 
             String command = String.format("path -c 4 -p *p7 -s yes -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
 
             assertThat(log.getOutput())
                     .contains("*p7")
@@ -619,9 +707,9 @@ class PathUseCaseTest {
             ConfigFileHelper.createPatternFile("*p2");
 
             String command = String.format("path -t %s -p *p7", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
 
             assertThat(log.getOutput())
                     .contains("*p7")
@@ -687,9 +775,9 @@ class PathUseCaseTest {
             String tetfu = "v115@9gD8FeD8FeD8FeD8PeAgWMA0no2ANI98AQPk/A";
 
             String command = String.format("path -t %s -p *p7", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
 
             assertThat(log.getOutput())
                     .contains("*p7")
@@ -761,9 +849,9 @@ class PathUseCaseTest {
             ConfigFileHelper.createPatternFile("*p2");
 
             String command = String.format("path -c 4 -t %s -p *p7", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
 
             assertThat(log.getOutput())
                     .contains("*p7")
@@ -837,9 +925,9 @@ class PathUseCaseTest {
             ConfigFileHelper.createPatternFile("*p2");
 
             String command = String.format("path -c 4 -t %s -p *p4", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
 
             assertThat(log.getOutput())
                     .contains("*p4")
@@ -916,9 +1004,9 @@ class PathUseCaseTest {
             ConfigFileHelper.createPatternFile("*p7");
 
             String command = String.format("path -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
 
             assertThat(log.getOutput())
                     .contains("*p7")
@@ -992,9 +1080,9 @@ class PathUseCaseTest {
             ConfigFileHelper.createPatternFile("S,Z,T");
 
             String command = String.format("path -t %s -p T,*p3", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
 
             assertThat(log.getOutput())
                     .contains("T,*p3")
@@ -1071,9 +1159,9 @@ class PathUseCaseTest {
             ConfigFileHelper.createPatternFile("*p4");
 
             String command = String.format("path -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
 
             assertThat(log.getOutput())
                     .contains("*p7")
@@ -1104,9 +1192,9 @@ class PathUseCaseTest {
             ConfigFileHelper.createPatternFile("*p2");
 
             String command = String.format("path --page 5 -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
 
             assertThat(log.getOutput())
                     .contains("S,[TIOJLZ]p6")
@@ -1135,9 +1223,9 @@ class PathUseCaseTest {
             ConfigFileHelper.createPatternFile("*p2");
 
             String command = String.format("path -t %s -f csv", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
 
             Field field = FieldFactory.createField("" +
                     "X_________" +
@@ -1201,9 +1289,9 @@ class PathUseCaseTest {
             ConfigFileHelper.createPatternFile("*p2");
 
             String command = String.format("path -t %s -f csv -L 1", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
 
             assertThat(log.getOutput())
                     .contains("*p2")
@@ -1225,29 +1313,30 @@ class PathUseCaseTest {
         }
 
         @Test
-        void colorTetfu() throws Exception {
-            // 色付きのテト譜を指定
+        void noClearLineOptionValue() throws Exception {
+            // オプションの指定値がない: クリアライン
+            //    -> デフォルト値が使用される
 
             /*
             comment: <Empty>
-            S________J
-            SS_______J
-            JS______JJ
-            JJJ___IIII
+            ZZ________
+            LZZ_T_____
+            LZZTT_____
+            LLZZT_____
              */
 
-            String tetfu = "v115@9gA8HeC8GeC8FeE8CeD8JeAgH";
+            String tetfu = "v115@vhDKJJUqB0fBdrB";
 
-            String command = String.format("path -p *p7 -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            String command = String.format("path -p *p7 -c -P 4 -t %s", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
 
             assertThat(log.getOutput())
                     .contains("*p7")
                     .contains(Messages.clearLine(4))
-                    .contains(Messages.uniqueCount(150))
-                    .contains(Messages.minimalCount(123))
+                    .contains(Messages.uniqueCount(68))
+                    .contains(Messages.minimalCount(53))
                     .contains(Messages.useHold());
         }
     }
@@ -1266,9 +1355,9 @@ class PathUseCaseTest {
             String tetfu = "v115@9gF8DeG8CeH8BeG8MeAgH";
 
             String command = String.format("path -c 4 -p T,*p3 -H no -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
 
             assertThat(log.getOutput())
                     .contains("T,*p3")
@@ -1289,9 +1378,9 @@ class PathUseCaseTest {
             String tetfu = "m115@9gD8FeD8FeD8FeD8PeAgH";
 
             String command = String.format("path -c 4 -p *p7 -H no -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
 
             assertThat(log.getOutput())
                     .contains("*p7")
@@ -1312,9 +1401,9 @@ class PathUseCaseTest {
             String tetfu = "d115@9gC8GeC8FeD8EeE8FeA8JeAgH";
 
             String command = String.format("path -c 4 -p *p7 -H no -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
 
             assertThat(log.getOutput())
                     .contains("*p7")
@@ -1337,9 +1426,9 @@ class PathUseCaseTest {
             String tetfu = "http://fumen.zui.jp/?v115@pgF8DeF8DeF8DeF8DeF8DeF8NeAgH";
 
             String command = String.format("path -c 6 -p *p7 -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
 
             assertThat(log.getOutput())
                     .contains("*p7")
@@ -1360,9 +1449,9 @@ class PathUseCaseTest {
             String tetfu = "v115@9gF8DeF8DeF8DeF8NeAgH";
 
             String command = String.format("path -p *p7 -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
 
             assertThat(log.getOutput())
                     .contains("*p7")
@@ -1384,9 +1473,9 @@ class PathUseCaseTest {
             String tetfu = "v115@vhAAgH";
 
             String command = String.format("path -p J,Z,O,S,L,I,I,J,S,O,Z -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
 
             assertThat(log.getOutput())
                     .contains("J,Z,O,S,L,I,I,J,S,O,Z")
@@ -1413,9 +1502,9 @@ class PathUseCaseTest {
             String tetfu = "v115@XgH8BeH8BeH8BeH8BeH8BeH8BeH8BeH8JeAgH";
 
             String command = String.format("path -c 8 -p *,*p4 -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
 
             assertThat(log.getOutput())
                     .contains("*,*p4")
@@ -1436,15 +1525,507 @@ class PathUseCaseTest {
             String tetfu = "http://harddrop.com/fumen/?v115@9gA8IeH8BeI8AeF8NeAgH";
 
             String command = String.format("path -p S,L,O,I,T -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> {
-                EntryPointMain.main(command.split(" "));
-            });
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
 
             assertThat(log.getOutput())
                     .contains("S,L,O,I,T")
                     .contains(Messages.uniqueCount(3))
                     .contains(Messages.minimalCount(3))
                     .contains(Messages.useHold());
+        }
+    }
+
+    @Nested
+    class IrregularCase {
+        @Test
+        void doesNotExistFieldFile() throws Exception {
+            // フィールドファイルがない
+
+            ConfigFileHelper.createPatternFile("*p2");
+
+            String command = "path -fp input/not_exist.txt";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(1);
+
+            assertThat(log.getError())
+                    .contains(ErrorMessages.failPreMain());
+
+            assertThat(OutputFileHelper.existsErrorText()).isTrue();
+
+            String errorFile = OutputFileHelper.loadErrorText();
+            assertThat(errorFile)
+                    .contains(command)
+                    .contains("Cannot open field file [FinderParseException]")
+                    .contains("input/not_exist.txt");
+        }
+
+        @Test
+        void doesNotExistPatternFile() throws Exception {
+            // パターンファイルがない
+
+            Field field = FieldFactory.createField("" +
+                    "XX_____XXX" +
+                    "XX______XX" +
+                    "XX____XXXX" +
+                    "XX_____XXX"
+            );
+
+            int height = 4;
+            ConfigFileHelper.createFieldFile(field, height);
+
+            String command = "path -pp input/not_exist.txt";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(1);
+
+            assertThat(log.getError())
+                    .contains(ErrorMessages.failPreMain());
+
+            assertThat(OutputFileHelper.existsErrorText()).isTrue();
+
+            String errorFile = OutputFileHelper.loadErrorText();
+            assertThat(errorFile)
+                    .contains(command)
+                    .contains("Cannot open patterns file [FinderParseException]")
+                    .contains("input/not_exist.txt");
+        }
+
+        @Test
+        void doesNotExistHeightInFieldFile() throws Exception {
+            // フィールドファイル内に高さがない
+
+            Field field = FieldFactory.createField("" +
+                    "XX_____XXX" +
+                    "XX______XX" +
+                    "XX____XXXX" +
+                    "XX_____XXX"
+            );
+
+            int height = 4;
+            String fieldFileText = FieldView.toString(field, height);
+            ConfigFileHelper.createFieldFile(fieldFileText);
+            ConfigFileHelper.createPatternFile("*p2");
+
+            String command = "path";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(1);
+
+            assertThat(log.getError())
+                    .contains(ErrorMessages.failPreMain());
+
+            assertThat(OutputFileHelper.existsErrorText()).isTrue();
+
+            String errorFile = OutputFileHelper.loadErrorText();
+            assertThat(errorFile)
+                    .contains(command)
+                    .contains("Cannot read clear-line from input/field.txt [FinderParseException]");
+        }
+
+        @Test
+        void invalidFieldDefinitionInFieldFile() throws Exception {
+            // フィールドファイルのフィールドの高さが低い
+            //    -> 定義がない部分は空白とみなすため、ブロック数のエラーとなる
+
+            Field field = FieldFactory.createField("" +
+                    "__XX______"
+            );
+
+            String fieldFileText = 4 + System.lineSeparator() + FieldView.toString(field, 1);
+            ConfigFileHelper.createFieldFile(fieldFileText);
+            ConfigFileHelper.createPatternFile("*p2");
+
+            String command = "path";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(1);
+
+            assertThat(log.getError())
+                    .contains(ErrorMessages.failMain());
+
+            assertThat(OutputFileHelper.existsErrorText()).isTrue();
+
+            String errorFile = OutputFileHelper.loadErrorText();
+            assertThat(errorFile)
+                    .contains(command)
+                    .contains("Empty block in field should be multiples of 4: EmptyCount=38 [FinderInitializeException]");
+        }
+
+        @Test
+        void noBodyInFieldFile() throws Exception {
+            // フィールドファイルの中身が空
+
+            ConfigFileHelper.createFieldFile("");
+            ConfigFileHelper.createPatternFile("*p2");
+
+            String command = "path";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(1);
+
+            assertThat(log.getError())
+                    .contains(ErrorMessages.failPreMain());
+
+            assertThat(OutputFileHelper.existsErrorText()).isTrue();
+
+            String errorFile = OutputFileHelper.loadErrorText();
+            assertThat(errorFile)
+                    .contains(command)
+                    .contains("Should specify clear-line & field-definition in field file [FinderParseException]");
+        }
+
+        @Test
+        void noBodyInPatternFile() throws Exception {
+            // パターンファイルの中身が空
+
+            Field field = FieldFactory.createField("" +
+                    "XX_____XXX" +
+                    "XX______XX" +
+                    "XX____XXXX" +
+                    "XX_____XXX"
+            );
+
+            int height = 4;
+            ConfigFileHelper.createFieldFile(field, height);
+            ConfigFileHelper.createPatternFile("");
+
+            String command = "path";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(1);
+
+            assertThat(log.getError())
+                    .contains(ErrorMessages.failMain());
+
+            assertThat(OutputFileHelper.existsErrorText()).isTrue();
+
+            String errorFile = OutputFileHelper.loadErrorText();
+            assertThat(errorFile)
+                    .contains(command)
+                    .contains("Should specify patterns, not allow empty [FinderInitializeException]");
+        }
+
+        @Test
+        void overFieldHeight() throws Exception {
+            // 高さの指定が大きすぎる
+
+            String tetfu = "v115@vhAAgH";
+            String command = String.format("path -c 11 -t %s -p *p2", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(1);
+
+            assertThat(log.getError())
+                    .contains(ErrorMessages.failMain());
+
+            assertThat(OutputFileHelper.existsErrorText()).isTrue();
+
+            String errorFile = OutputFileHelper.loadErrorText();
+            assertThat(errorFile)
+                    .contains(command)
+                    .contains("Clear-Line should be 2 <= line <= 10: line=11 [FinderInitializeException]");
+        }
+
+        @Test
+        void lessPieces() throws Exception {
+            // ミノの個数が少なすぎる
+
+            String tetfu = "v115@vhAAgH";
+            String command = String.format("path -c 4 -t %s -p *p2", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(1);
+
+            assertThat(log.getError())
+                    .contains(ErrorMessages.failMain());
+
+            assertThat(OutputFileHelper.existsErrorText()).isTrue();
+
+            String errorFile = OutputFileHelper.loadErrorText();
+            assertThat(errorFile)
+                    .contains(command)
+                    .contains("Should specify equal to or more than 10 pieces: CurrentPieces=2 [FinderInitializeException]");
+        }
+
+        @Test
+        void testAppendToError() throws Exception {
+            // エラーファイルが上書きされることを確認する
+            //    -> テスト2つを連続で実行して確認
+
+            overFieldHeight();
+            lessPieces();
+        }
+
+        @Test
+        void noTetfuOptionValue() throws Exception {
+            // オプションの指定値がない: テト譜
+
+            String command = "path -c 4 -t -p *p2";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(1);
+
+            assertThat(log.getError())
+                    .contains(ErrorMessages.failPreMain());
+
+            assertThat(OutputFileHelper.existsErrorText()).isTrue();
+
+            String errorFile = OutputFileHelper.loadErrorText();
+            assertThat(errorFile)
+                    .contains(command)
+                    .contains("Should specify option value: --tetfu [FinderParseException]");
+        }
+
+        @Test
+        void lowClearLineOptionValue() throws Exception {
+            // クリアラインの指定値が小さすぎる
+
+            String tetfu = "v115@vhAAgH";
+            String command = String.format("path -c 0 -t %s -p *p2", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(1);
+
+            assertThat(log.getError())
+                    .contains(ErrorMessages.failMain());
+
+            assertThat(OutputFileHelper.existsErrorText()).isTrue();
+
+            String errorFile = OutputFileHelper.loadErrorText();
+            assertThat(errorFile)
+                    .contains(command)
+                    .contains("Clear-Line should be 2 <= line <= 10: line=0 [FinderInitializeException]");
+        }
+
+        @Test
+        void oldTetfu() throws Exception {
+            // テト譜のバージョンが古い
+
+            String tetfu = "v114@vhAAgH";
+            String command = String.format("path -c 0 -t %s -p *p2", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(1);
+
+            assertThat(log.getError())
+                    .contains(ErrorMessages.failPreMain());
+
+            assertThat(OutputFileHelper.existsErrorText()).isTrue();
+
+            String errorFile = OutputFileHelper.loadErrorText();
+            assertThat(errorFile)
+                    .contains(command)
+                    .contains("Unsupported tetfu: data=v114@vhAAgH [FinderParseException]");
+        }
+
+        @Test
+        void invalidTetfu() throws Exception {
+            // テト譜のデータが不正
+
+            String tetfu = "v115@invalid";
+            String command = String.format("path -c 0 -t %s -p *p2", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(1);
+
+            assertThat(log.getError())
+                    .contains(ErrorMessages.failPreMain());
+
+            assertThat(OutputFileHelper.existsErrorText()).isTrue();
+
+            String errorFile = OutputFileHelper.loadErrorText();
+            assertThat(errorFile)
+                    .contains(command)
+                    .contains("Cannot parse tetfu: invalid [FinderParseException]");
+        }
+
+        @Test
+        void invalidPattern() throws Exception {
+            // パターンの指定値が不正
+
+            String tetfu = "v115@9gF8DeF8DeF8DeF8NeAgH";
+            String command = String.format("path -t %s -p *p8", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(1);
+
+            assertThat(log.getError())
+                    .contains(ErrorMessages.failMain());
+
+            assertThat(OutputFileHelper.existsErrorText()).isTrue();
+
+            String errorFile = OutputFileHelper.loadErrorText();
+            assertThat(errorFile)
+                    .contains(command)
+                    .contains("Pattern syntax error [FinderInitializeException]");
+        }
+
+        @Test
+        void lessTetfuPage() throws Exception {
+            // テト譜のページ指定が小さい
+
+            String tetfu = "v115@vhEKJJUqB0fBetBpoB";
+            String command = String.format("path -P 0 -t %s -p *p2", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(1);
+
+            assertThat(log.getError())
+                    .contains(ErrorMessages.failPreMain());
+
+            assertThat(OutputFileHelper.existsErrorText()).isTrue();
+
+            String errorFile = OutputFileHelper.loadErrorText();
+            assertThat(errorFile)
+                    .contains(command)
+                    .contains("Tetfu-page should be 1 <= page: page=0 [FinderParseException]");
+        }
+
+        @Test
+        void overTetfuPage() throws Exception {
+            // テト譜のページ指定が大きい
+
+            String tetfu = "v115@vhEKJJUqB0fBetBpoB";
+            String command = String.format("path -P 6 -t %s -p *p2", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(1);
+
+            assertThat(log.getError())
+                    .contains(ErrorMessages.failPreMain());
+
+            assertThat(OutputFileHelper.existsErrorText()).isTrue();
+
+            String errorFile = OutputFileHelper.loadErrorText();
+            assertThat(errorFile)
+                    .contains(command)
+                    .contains("Tetfu-page is over max page: page=6");
+        }
+
+        @Test
+        void existsDirectoryHavingSameMinimalOutputName() throws Exception {
+            // 出力ファイルと同名のディレクトリが存在している
+
+            File minimalDirectory = new File("output/path_minimal.html");
+            minimalDirectory.mkdir();
+            minimalDirectory.deleteOnExit();
+
+            String tetfu = "v115@vhEKJJUqB0fBetBpoB";
+            String command = String.format("path -t %s -P 5 -p *p5", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(1);
+
+            assertThat(log.getError())
+                    .contains(ErrorMessages.failMain());
+
+            assertThat(OutputFileHelper.existsErrorText()).isTrue();
+
+            String errorFile = OutputFileHelper.loadErrorText();
+            assertThat(errorFile)
+                    .contains(command)
+                    .contains("Cannot specify directory as output minimal file path: OutputBase=output/path.txt [FinderInitializeException]");
+
+            minimalDirectory.delete();
+        }
+
+        @Test
+        void existsDirectoryHavingSameUniqueOutputName() throws Exception {
+            // 出力ファイルと同名のディレクトリが存在している
+
+            File uniqueDirectory = new File("output/path_unique.html");
+            uniqueDirectory.mkdir();
+            uniqueDirectory.deleteOnExit();
+
+            String tetfu = "v115@vhEKJJUqB0fBetBpoB";
+            String command = String.format("path -t %s -P 5 -p *p5", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(1);
+
+            assertThat(log.getError())
+                    .contains(ErrorMessages.failMain());
+
+            assertThat(OutputFileHelper.existsErrorText()).isTrue();
+
+            String errorFile = OutputFileHelper.loadErrorText();
+            assertThat(errorFile)
+                    .contains(command)
+                    .contains("Cannot specify directory as output unique file path: OutputBase=output/path.txt [FinderInitializeException]");
+
+            uniqueDirectory.delete();
+        }
+
+        @Test
+        void existsDirectoryHavingLogFileName() throws Exception {
+            // 出力ファイルと同名のディレクトリが存在している
+
+            File logDirectory = new File("output/log_directory");
+            logDirectory.mkdir();
+            logDirectory.deleteOnExit();
+
+            String tetfu = "v115@vhEKJJUqB0fBetBpoB";
+            String command = String.format("path -t %s -P 5 -p *p5 -l output/log_directory", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(1);
+
+            assertThat(log.getError())
+                    .contains(ErrorMessages.failPreMain());
+
+            assertThat(OutputFileHelper.existsErrorText()).isTrue();
+
+            String errorFile = OutputFileHelper.loadErrorText();
+            assertThat(errorFile)
+                    .contains(command)
+                    .contains("Cannot specify directory as log file path [FinderInitializeException]");
+
+            logDirectory.delete();
+        }
+
+        @Test
+        void lessCachedMinBit() throws Exception {
+            // Cached-min-bitの指定値が不正
+
+            String tetfu = "v115@9gF8DeF8DeF8DeF8NeAgH";
+            String command = String.format("path -t %s -p *p5 -cb -1", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(1);
+
+            assertThat(log.getError())
+                    .contains(ErrorMessages.failMain());
+
+            assertThat(OutputFileHelper.existsErrorText()).isTrue();
+
+            String errorFile = OutputFileHelper.loadErrorText();
+            assertThat(errorFile)
+                    .contains(command)
+                    .contains("Cached-min-bit should be 0 <= bit: bit=-1 [FinderInitializeException]");
+        }
+
+        @Test
+        void invalidFormat() throws Exception {
+            // formatの指定値が不正
+
+            String tetfu = "v115@9gF8DeF8DeF8DeF8NeAgH";
+            String command = String.format("path -t %s -p *p5 -f INVALID", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(1);
+
+            assertThat(log.getError())
+                    .contains(ErrorMessages.failPreMain());
+
+            assertThat(OutputFileHelper.existsErrorText()).isTrue();
+
+            String errorFile = OutputFileHelper.loadErrorText();
+            assertThat(errorFile)
+                    .contains(command)
+                    .contains("Unsupported format: format=INVALID [FinderParseException]");
         }
     }
 }

@@ -13,12 +13,22 @@ import java.util.stream.Collectors;
 class ConfigFileHelper {
     private static final String LINE_SEPARATOR = System.lineSeparator();
 
-    static void createFieldFile(Field field, int height) throws IOException {
-        String path = concatPath("input");
-        createFieldFile(field, path, "field", height);
+    static void createFieldFile(String text) throws IOException {
+        String directoryPath = concatPath("input");
+        String fileName = "field";
+        createNewTextFile(directoryPath, fileName, text);
     }
 
-    static void createFieldFile(Field field, String directoryPath, String fileName, int height) throws IOException {
+    static void createFieldFile(Field field, int height) throws IOException {
+        createFieldFile(field, height, "field");
+    }
+
+    static void createFieldFile(Field field, int height, String fileName) throws IOException {
+        String path = concatPath("input");
+        createFieldFile(field, height, fileName, path);
+    }
+
+    static void createFieldFile(Field field, int height, String fileName, String directoryPath) throws IOException {
         String text = height + LINE_SEPARATOR + FieldView.toString(field, height);
         createNewTextFile(directoryPath, fileName, text);
     }
@@ -57,7 +67,11 @@ class ConfigFileHelper {
     }
 
     static void createPatternFile(String pattern) throws IOException {
-        createPatternFile(pattern, concatPath("input"), "patterns");
+        createPatternFile(pattern, "patterns");
+    }
+
+    static void createPatternFile(String pattern, String fileName) throws IOException {
+        createPatternFile(pattern, concatPath("input"), fileName);
     }
 
     static void createPatternFile(String pattern, String directoryPath, String fileName) throws IOException {

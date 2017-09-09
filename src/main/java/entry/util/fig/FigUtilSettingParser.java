@@ -6,6 +6,7 @@ import common.tetfu.common.ColorConverter;
 import core.mino.MinoFactory;
 import entry.CommandLineWrapper;
 import entry.NormalCommandLineWrapper;
+import exceptions.FinderParseException;
 import org.apache.commons.cli.*;
 import util.fig.FrameType;
 
@@ -42,10 +43,10 @@ public class FigUtilSettingParser {
         this.commands = commands;
     }
 
-    public Optional<FigUtilSettings> parse() throws ParseException {
+    public Optional<FigUtilSettings> parse() throws FinderParseException {
         Options options = createOptions();
         CommandLineParser parser = new DefaultParser();
-        CommandLine commandLine = parser.parse(options, commands);
+        CommandLine commandLine = parseToCommandLine(options, parser);
         CommandLineWrapper wrapper = new NormalCommandLineWrapper(commandLine);
         FigUtilSettings settings = new FigUtilSettings();
 
@@ -92,7 +93,7 @@ public class FigUtilSettingParser {
             Optional<String> tetfuData = wrapper.getStringOption("tetfu");
             assert tetfuData.isPresent();
             String encoded = Tetfu.removeDomainData(tetfuData.get());
-            wrapper = loadTetfu(encoded, parser, options, wrapper, settings);
+            wrapper = loadTetfu(encoded, wrapper, settings);
         } else {
             // フィールドファイルから
             Optional<String> fieldPathOption = wrapper.getStringOption("field-path");
@@ -117,7 +118,7 @@ public class FigUtilSettingParser {
                 String removeDomainData = Tetfu.removeDomainData(fieldLines.get(0));
                 if (Tetfu.isDataLater115(removeDomainData)) {
                     // テト譜から
-                    wrapper = loadTetfu(removeDomainData, parser, options, wrapper, settings);
+                    wrapper = loadTetfu(removeDomainData, wrapper, settings);
                 } else {
                     throw new IllegalArgumentException("Cannot read tetfu from " + fieldPath);
                 }
@@ -137,6 +138,14 @@ public class FigUtilSettingParser {
         next.ifPresent(settings::setNextBoxCount);
 
         return Optional.of(settings);
+    }
+
+    private CommandLine parseToCommandLine(Options options, CommandLineParser parser) throws FinderParseException {
+        try {
+            return parser.parse(options, commands);
+        } catch (ParseException e) {
+            throw new FinderParseException(e);
+        }
     }
 
     private FrameType parseFrameType(String frameTypeName) {
@@ -294,7 +303,7 @@ public class FigUtilSettingParser {
         return options;
     }
 
-    private CommandLineWrapper loadTetfu(String data, CommandLineParser parser, Options options, CommandLineWrapper wrapper, FigUtilSettings settings) {
+    private CommandLineWrapper loadTetfu(String data, CommandLineWrapper wrapper, FigUtilSettings settings) throws FinderParseException {
         // テト譜面のエンコード
         List<TetfuPage> tetfuPages = encodeTetfu(data);
 
@@ -312,7 +321,7 @@ public class FigUtilSettingParser {
         return wrapper;
     }
 
-    private List<TetfuPage> encodeTetfu(String encoded) {
+    private List<TetfuPage> encodeTetfu(String encoded) throws FinderParseException {
         MinoFactory minoFactory = new MinoFactory();
         ColorConverter colorConverter = new ColorConverter();
         Tetfu tetfu = new Tetfu(minoFactory, colorConverter);

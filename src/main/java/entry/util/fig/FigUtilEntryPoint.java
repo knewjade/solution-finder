@@ -1,6 +1,5 @@
 package entry.util.fig;
 
-import lib.Stopwatch;
 import common.tetfu.TetfuPage;
 import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
@@ -10,6 +9,9 @@ import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
 import entry.EntryPoint;
+import exceptions.FinderTerminateException;
+import exceptions.FinderExecuteException;
+import lib.Stopwatch;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -48,7 +50,7 @@ public class FigUtilEntryPoint implements EntryPoint {
     }
 
     @Override
-    public void run() throws Exception {
+    public void run() throws FinderExecuteException {
         output("# Setup");
         MinoFactory minoFactory = new MinoFactory();
         ColorConverter colorConverter = new ColorConverter();
@@ -63,6 +65,18 @@ public class FigUtilEntryPoint implements EntryPoint {
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
         FigFormat figFormat = settings.getFigFormat();
+
+        try {
+            generatorFigure(minoFactory, colorConverter, frameType, outputFile, figFormat);
+        } catch (IOException e) {
+            throw new FinderExecuteException(e);
+        }
+
+        stopwatch.stop();
+        output("  -> Stopwatch stop : " + stopwatch.toMessage(TimeUnit.MILLISECONDS));
+    }
+
+    private void generatorFigure(MinoFactory minoFactory, ColorConverter colorConverter, FrameType frameType, File outputFile, FigFormat figFormat) throws IOException {
         switch (figFormat) {
             case Gif:
                 createGif(minoFactory, colorConverter, frameType, outputFile);
@@ -71,9 +85,6 @@ public class FigUtilEntryPoint implements EntryPoint {
                 createPng(minoFactory, colorConverter, frameType, outputFile);
                 break;
         }
-
-        stopwatch.stop();
-        output("  -> Stopwatch stop : " + stopwatch.toMessage(TimeUnit.MILLISECONDS));
     }
 
     private void createGif(MinoFactory minoFactory, ColorConverter colorConverter, FrameType frameType, File originalOutputFile) throws IOException {
@@ -328,7 +339,7 @@ public class FigUtilEntryPoint implements EntryPoint {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws FinderTerminateException {
     }
 
     private FigGenerator createFigGenerator(FrameType frameType, boolean isUsingHold, MinoFactory minoFactory, ColorConverter colorConverter) {

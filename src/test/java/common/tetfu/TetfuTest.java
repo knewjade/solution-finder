@@ -17,6 +17,7 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
+import exceptions.FinderParseException;
 import lib.Randoms;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -430,7 +431,7 @@ class TetfuTest {
                             .collect(Collectors.toList());
 
                     String encode = new Tetfu(minoFactory, colorConverter).encode(elements);
-                    List<TetfuPage> decode = new Tetfu(minoFactory, colorConverter).decode(encode);
+                    List<TetfuPage> decode = decodeTetfu(minoFactory, colorConverter, encode);
 
                     assertThat(decode).hasSize(elements.size());
                     for (int index = 0; index < decode.size(); index++) {
@@ -444,6 +445,14 @@ class TetfuTest {
                     }
                 });
             });
+        }
+    }
+
+    private List<TetfuPage> decodeTetfu(MinoFactory minoFactory, ColorConverter colorConverter, String encode) {
+        try {
+            return new Tetfu(minoFactory, colorConverter).decode(encode);
+        } catch (FinderParseException e) {
+            throw new RuntimeException(e);
         }
     }
 }
