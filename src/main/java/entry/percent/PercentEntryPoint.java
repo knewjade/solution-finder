@@ -10,6 +10,7 @@ import core.field.FieldView;
 import core.mino.Block;
 import entry.EntryPoint;
 import entry.searching_pieces.NormalEnumeratePieces;
+import exceptions.FinderException;
 import exceptions.FinderTerminateException;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
@@ -41,14 +42,14 @@ public class PercentEntryPoint implements EntryPoint {
         if (!logFile.getParentFile().exists()) {
             boolean mairSuccess = logFile.getParentFile().mkdir();
             if (!mairSuccess) {
-                throw new IllegalStateException("Failed to make output directory");
+                throw new FinderInitializeException("Failed to make output directory");
             }
         }
 
         if (logFile.isDirectory())
-            throw new IllegalArgumentException("Cannot specify directory as log file path");
+            throw new FinderInitializeException("Cannot specify directory as log file path");
         if (logFile.exists() && !logFile.canWrite())
-            throw new IllegalArgumentException("Cannot write log file");
+            throw new FinderInitializeException("Cannot write log file");
 
         try {
             this.logWriter = createBufferedWriter(logFile);
@@ -62,7 +63,7 @@ public class PercentEntryPoint implements EntryPoint {
     }
 
     @Override
-    public void run() throws FinderExecuteException {
+    public void run() throws FinderException {
         try {
             runMain();
         } catch (IOException | ExecutionException | InterruptedException e) {
@@ -70,15 +71,15 @@ public class PercentEntryPoint implements EntryPoint {
         }
     }
 
-    private void runMain() throws IOException, ExecutionException, InterruptedException {
+    private void runMain() throws IOException, ExecutionException, InterruptedException, FinderException {
         output("# Setup Field");
         Field field = settings.getField();
         if (field == null)
-            throw new IllegalArgumentException("Should specify field");
+            throw new FinderInitializeException("Should specify field");
 
         int maxClearLine = settings.getMaxClearLine();
         if (maxClearLine < 2 || 12 < maxClearLine)
-            throw new IllegalArgumentException("Field Height should be 2 <= height <= 12");
+            throw new FinderInitializeException("Clear-Line should be 2 <= line <= 12: line=" + maxClearLine);
 
         output(FieldView.toString(field, maxClearLine));
 
@@ -90,12 +91,14 @@ public class PercentEntryPoint implements EntryPoint {
         output("Searching patterns:");
         List<String> patterns = settings.getPatterns();
         if (patterns.isEmpty())
-            throw new IllegalArgumentException("Should specify patterns, not allow empty");
+            throw new FinderInitializeException("Should specify patterns, not allow empty");
 
         try {
             BlocksGenerator.verify(patterns);
         } catch (SyntaxException e) {
-            throw new IllegalArgumentException("Invalid patterns", e);
+            output("Pattern syntax error");
+            output(e.getMessage());
+            throw new FinderInitializeException("Pattern syntax error", e);
         }
 
         for (String pattern : patterns)
@@ -113,13 +116,13 @@ public class PercentEntryPoint implements EntryPoint {
         // 残りのスペースが4の倍数でないときはエラー
         int emptyCount = maxClearLine * 10 - field.getNumOfAllBlocks();
         if (emptyCount % 4 != 0)
-            throw new IllegalArgumentException("Error: EmptyCount should be mod 4: " + emptyCount);
+            throw new FinderInitializeException("Empty block in field should be multiples of 4: EmptyCount=" + emptyCount);
 
         // ブロック数が足りないときはエラー
         int maxDepth = emptyCount / 4;
         int piecesDepth = generator.getDepth();
         if (piecesDepth < maxDepth)
-            throw new IllegalArgumentException("Error: pieces is too short: " + piecesDepth + " < " + maxDepth);
+            throw new FinderInitializeException(String.format("Should specify equal to or more than %d pieces: CurrentPieces=%d", maxDepth, piecesDepth));
 
         output("Necessary Pieces = " + maxDepth);
 
@@ -212,19 +215,27 @@ public class PercentEntryPoint implements EntryPoint {
         flush();
     }
 
-    private void output() throws IOException {
+    private void output() throws FinderExecuteException {
         output("");
     }
 
-    private void output(String str) throws IOException {
-        logWriter.append(str).append(LINE_SEPARATOR);
+    private void output(String str) throws FinderExecuteException {
+        try {
+            logWriter.append(str).append(LINE_SEPARATOR);
+        } catch (IOException e) {
+            throw new FinderExecuteException(e);
+        }
 
         if (settings.isOutputToConsole())
             System.out.println(str);
     }
 
-    private void flush() throws IOException {
-        logWriter.flush();
+    private void flush() throws FinderExecuteException {
+        try {
+            logWriter.flush();
+        } catch (IOException e) {
+            throw new FinderExecuteException(e);
+        }
     }
 
     @Override

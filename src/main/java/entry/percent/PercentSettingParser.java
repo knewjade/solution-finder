@@ -70,7 +70,9 @@ public class PercentSettingParser {
         if (wrapper.hasOption("tetfu")) {
             // テト譜から
             Optional<String> tetfuData = wrapper.getStringOption("tetfu");
-            assert tetfuData.isPresent();
+            if (!tetfuData.isPresent())
+                throw new FinderParseException("Should specify option value: --tetfu");
+
             String encoded = Tetfu.removeDomainData(tetfuData.get());
             wrapper = loadTetfu(encoded, parser, options, wrapper, settings);
         } else {
@@ -92,7 +94,7 @@ public class PercentSettingParser {
                         .collect(Collectors.toCollection(LinkedList::new));
 
                 if (fieldLines.isEmpty())
-                    throw new IllegalArgumentException("Empty field definition");
+                    throw new FinderParseException("Should specify clear-line & field-definition in field file");
 
                 String removeDomainData = Tetfu.removeDomainData(fieldLines.get(0));
                 if (Tetfu.isDataLater115(removeDomainData)) {
@@ -109,9 +111,9 @@ public class PercentSettingParser {
                     settings.setFieldFilePath(field);
                 }
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Cannot read Field Height from " + fieldPath);
+                throw new FinderParseException("Cannot read clear-line from " + fieldPath);
             } catch (IOException e) {
-                throw new IllegalArgumentException("Field file error", e);
+                throw new FinderParseException("Cannot open field file", e);
             }
         }
 
@@ -150,7 +152,7 @@ public class PercentSettingParser {
                 List<String> patterns = Files.lines(path, charset).collect(Collectors.toList());
                 settings.setPatterns(patterns);
             } catch (IOException e) {
-                throw new IllegalArgumentException("Patterns file error", e);
+                throw new FinderParseException("Cannot open patterns file", e);
             }
         }
         return Optional.of(settings);
@@ -308,11 +310,7 @@ public class PercentSettingParser {
 
         // 最大削除ラインの設定
         Optional<Integer> maxClearLineOption = wrapper.getIntegerOption("clear-line");
-        maxClearLineOption.ifPresent(maxClearLine -> {
-            if (maxClearLine < 1)
-                throw new IllegalArgumentException("Should be 1 <= max-clear-line in comment of tetfu");
-            settings.setMaxClearLine(maxClearLine);
-        });
+        maxClearLineOption.ifPresent(settings::setMaxClearLine);
 
         // フィールドを設定
         ColoredField coloredField = tetfuPage.getField();
@@ -338,17 +336,17 @@ public class PercentSettingParser {
         Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
         String data = Tetfu.removePrefixData(encoded);
         if (data == null)
-            throw new UnsupportedOperationException("Unexpected tetfu: " + encoded);
+            throw new FinderParseException("Unsupported tetfu: data=" + encoded);
         return tetfu.decode(data);
     }
 
-    private TetfuPage extractTetfuPage(List<TetfuPage> tetfuPages, int page) {
+    private TetfuPage extractTetfuPage(List<TetfuPage> tetfuPages, int page) throws FinderParseException {
         if (page < 1) {
-            throw new IllegalArgumentException(String.format("Option[page=%d]: Should 1 <= page of tetfu", page));
+            throw new FinderParseException(String.format("Tetfu-page should be 1 <= page: page=%d", page));
         } else if (page <= tetfuPages.size()) {
             return tetfuPages.get(page - 1);
         } else {
-            throw new IllegalArgumentException(String.format("Option[page=%d]: Over page", page));
+            throw new FinderParseException(String.format("Tetfu-page is over max page: page=%d", page));
         }
     }
 }
