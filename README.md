@@ -3,8 +3,9 @@
 テトリスのパーフェクトの成功確率を計算するためのツールです。  
 7種のミノ(ITSZJLO) の様々な組み合わせでの探索が可能です。
 
-現在の安定版は v0.44 となります。ダウンロードは以下のリンクからお願いします。
-https://github.com/knewjade/solution-finder/releases/tag/v0.44
+現在の安定版は v0.45 となります。ダウンロードは以下のリンクからお願いします。
+(GUIが入っているパッケージは、[@kitsune_fuchi](https://twitter.com/kitsune_fuchi) さん作成の補助GUIが入っています)
+https://github.com/knewjade/solution-finder/releases/tag/v0.45
 
 ※ プログラムの実行には、Java8が実行できる環境が必要です
 

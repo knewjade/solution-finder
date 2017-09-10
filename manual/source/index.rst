@@ -75,6 +75,7 @@ solution-finderを操作しやすくするGUIを `@kitsune_fuchi (twitter) <http
    path/main
    util/main
    caution
+   contact
 
 
 .. * :ref:`genindex`
