@@ -24,6 +24,9 @@ output/*
 input/*
 !input/.gitkeep
 
+binary/*
+!binary/.gitkeep
+
 *.gif
 
 test_*/

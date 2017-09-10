@@ -1,5 +1,5 @@
 group 'com.knewjade'
-version '0.44'
+version '0.45'
 
 apply plugin: 'java'
 apply plugin: 'idea'
@@ -58,6 +58,7 @@ jar {
 
 def releaseDir = file 'release'
 def distributionDir = file 'distribution'
+def binaryDir = file 'binary'
 
 task cleanReleaseDir(type: Task) {
     group = 'release'
@@ -98,6 +99,19 @@ task copyRelease(type: Task) {
     }
 }
 
+task copyBinary(type: Task) {
+    group = 'release'
+
+    doLast {
+        // copy distribution
+        copy {
+            from binaryDir
+            into releaseDir
+            exclude '**/.*'
+        }
+    }
+}
+
 task release(type: Zip) {
     group = 'release'
 
@@ -106,6 +120,18 @@ task release(type: Zip) {
     copyRelease.mustRunAfter jar, cleanReleaseDir
 
     from releaseDir
+}
+
+task releaseWithBianry(type: Zip) {
+    group = 'release'
+
+    // dependency
+    dependsOn jar, cleanReleaseDir, copyRelease, copyBinary
+    copyRelease.mustRunAfter jar, cleanReleaseDir
+    copyBinary.mustRunAfter copyRelease
+
+    from releaseDir
+    classifier = "GUI"
 }
 
 // gradle run -Pargs="arg1 args2 ..."

@@ -19,7 +19,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class EntryPointMain {
-    private static final String VERSION = "0.44";
+    private static final String VERSION = "0.45";
 
     public static int main(String[] args) {
         if (args.length < 1)
