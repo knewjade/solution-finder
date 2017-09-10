@@ -1,5 +1,5 @@
 package _usecase;
 
-interface RunnableWithException {
+public interface RunnableWithException {
     int run() throws Exception;
 }

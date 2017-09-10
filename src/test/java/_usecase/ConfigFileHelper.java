@@ -10,30 +10,30 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-class ConfigFileHelper {
+public class ConfigFileHelper {
     private static final String LINE_SEPARATOR = System.lineSeparator();
 
-    static void createFieldFile(String text) throws IOException {
+    public static void createFieldFile(String text) throws IOException {
         String directoryPath = concatPath("input");
         String fileName = "field";
         createNewTextFile(directoryPath, fileName, text);
     }
 
-    static void createFieldFile(Field field, int height) throws IOException {
+    public static void createFieldFile(Field field, int height) throws IOException {
         createFieldFile(field, height, "field");
     }
 
-    static void createFieldFile(Field field, int height, String fileName) throws IOException {
+    public static void createFieldFile(Field field, int height, String fileName) throws IOException {
         String path = concatPath("input");
         createFieldFile(field, height, fileName, path);
     }
 
-    static void createFieldFile(Field field, int height, String fileName, String directoryPath) throws IOException {
+    public static void createFieldFile(Field field, int height, String fileName, String directoryPath) throws IOException {
         String text = height + LINE_SEPARATOR + FieldView.toString(field, height);
         createNewTextFile(directoryPath, fileName, text);
     }
 
-    static void deleteFieldFile() throws IOException {
+    public static void deleteFieldFile() throws IOException {
         deleteTextFile(concatPath("input"), "field", "txt");
         deleteTextFile(concatPath("input"), "field", "csv");
     }
@@ -49,7 +49,9 @@ class ConfigFileHelper {
 
     private static void deleteFile(File file) {
         if (file.exists()) {
+            // noinspection ResultOfMethodCallIgnored
             file.delete();
+
             try {
                 Thread.sleep(200L);
             } catch (InterruptedException e) {
@@ -62,23 +64,24 @@ class ConfigFileHelper {
         File file = new File(concatPath(parentDirectoryPath, fileName + ".txt"));
         deleteFile(file);
 
+        // noinspection ResultOfMethodCallIgnored
         file.createNewFile();
         Files.append(text, file, Charsets.UTF_8);
     }
 
-    static void createPatternFile(String pattern) throws IOException {
+    public static void createPatternFile(String pattern) throws IOException {
         createPatternFile(pattern, "patterns");
     }
 
-    static void createPatternFile(String pattern, String fileName) throws IOException {
+    public static void createPatternFile(String pattern, String fileName) throws IOException {
         createPatternFile(pattern, concatPath("input"), fileName);
     }
 
-    static void createPatternFile(String pattern, String directoryPath, String fileName) throws IOException {
+    public static void createPatternFile(String pattern, String directoryPath, String fileName) throws IOException {
         createNewTextFile(directoryPath, fileName, pattern);
     }
 
-    static void deletePatternFile() throws IOException {
+    public static void deletePatternFile() throws IOException {
         deleteTextFile(concatPath("input"), "patterns", "txt");
         deleteTextFile(concatPath("input"), "patterns", "csv");
     }

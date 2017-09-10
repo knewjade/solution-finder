@@ -3,7 +3,7 @@ package _usecase;
 import java.util.ArrayList;
 import java.util.List;
 
-class PathHTML {
+public class PathHTML {
     private final int pattern;
     private final List<String> deletedLineFumens;
     private final List<String> noDeletedLineFumens;
@@ -14,21 +14,21 @@ class PathHTML {
         this.deletedLineFumens = deletedLineFumens;
     }
 
-    int pattern() {
+    public int pattern() {
         return pattern;
     }
 
-    List<String> allFumens() {
+    public List<String> allFumens() {
         ArrayList<String> fumens = new ArrayList<>(deletedLineFumens);
         fumens.addAll(noDeletedLineFumens);
         return fumens;
     }
 
-    List<String> deletedLineFumens() {
+    public List<String> deletedLineFumens() {
         return deletedLineFumens;
     }
 
-    List<String> noDeletedLineFumens() {
+    public List<String> noDeletedLineFumens() {
         return noDeletedLineFumens;
     }
 }

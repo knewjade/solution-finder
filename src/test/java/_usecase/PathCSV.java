@@ -4,14 +4,14 @@ import common.datastore.Operations;
 
 import java.util.List;
 
-class PathCSV {
+public class PathCSV {
     private final List<Operations> operations;
 
     PathCSV(List<Operations> operations) {
         this.operations = operations;
     }
 
-    List<Operations> operations() {
+    public List<Operations> operations() {
         return operations;
     }
 }

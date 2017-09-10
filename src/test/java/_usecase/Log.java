@@ -1,6 +1,6 @@
 package _usecase;
 
-class Log {
+public class Log {
     private final int returnCode;
     private final String output;
     private final String error;
@@ -11,11 +11,11 @@ class Log {
         this.error = error;
     }
 
-    String getOutput() {
+    public String getOutput() {
         return output;
     }
 
-    String getError() {
+    public String getError() {
         return error;
     }
 

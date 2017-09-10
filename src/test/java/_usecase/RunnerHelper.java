@@ -3,8 +3,8 @@ package _usecase;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-class RunnerHelper {
-    static Log runnerCatchingLog(RunnableWithException runnable) throws Exception {
+public class RunnerHelper {
+    public static Log runnerCatchingLog(RunnableWithException runnable) throws Exception {
         PrintStream outBackup = System.out;
         PrintStream errBackup = System.err;
 

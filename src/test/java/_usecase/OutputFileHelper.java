@@ -13,18 +13,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-class OutputFileHelper {
+public class OutputFileHelper {
     private static final String UNIQUE_PATH = "output/path_unique.html";
     private static final String MINIMAL_PATH = "output/path_minimal.html";
     private static final String UNIQUE_CSV = "output/path_unique.csv";
     private static final String MINIMAL_CSV = "output/path_minimal.csv";
     private static final String ERROR_PATH = "output/error.txt";
 
-    static PathHTML loadPathUniqueHTML() throws IOException {
+    public static PathHTML loadPathUniqueHTML() throws IOException {
         return loadPathUniqueHTML(UNIQUE_PATH);
     }
 
-    static PathHTML loadPathUniqueHTML(String path) throws IOException {
+    public static PathHTML loadPathUniqueHTML(String path) throws IOException {
         String html = Files.lines(Paths.get(path)).collect(Collectors.joining());
         int pattern = extractPattern(html);
 
@@ -36,18 +36,18 @@ class OutputFileHelper {
         return new PathHTML(pattern, noDeletedLineFumens, deletedLineFumens);
     }
 
-    static PathCSV loadPathUniqueCSV() throws IOException {
+    public static PathCSV loadPathUniqueCSV() throws IOException {
         List<Operations> operations = Files.lines(Paths.get(UNIQUE_CSV))
                 .map(OperationInterpreter::parseToOperations)
                 .collect(Collectors.toList());
         return new PathCSV(operations);
     }
 
-    static PathHTML loadPathMinimalHTML() throws IOException {
+    public static PathHTML loadPathMinimalHTML() throws IOException {
         return loadPathMinimalHTML(MINIMAL_PATH);
     }
 
-    static PathHTML loadPathMinimalHTML(String path) throws IOException {
+    public static PathHTML loadPathMinimalHTML(String path) throws IOException {
         String html = Files.lines(Paths.get(path)).collect(Collectors.joining());
         int pattern = extractPattern(html);
 
@@ -59,7 +59,7 @@ class OutputFileHelper {
         return new PathHTML(pattern, noDeletedLineFumens, deletedLineFumens);
     }
 
-    static PathCSV loadPathMinimalCSV() throws IOException {
+    public static PathCSV loadPathMinimalCSV() throws IOException {
         List<Operations> operations = Files.lines(Paths.get(MINIMAL_CSV))
                 .map(OperationInterpreter::parseToOperations)
                 .collect(Collectors.toList());
@@ -86,46 +86,48 @@ class OutputFileHelper {
         return fumens;
     }
 
-    static boolean existsPathUniqueHTML() {
+    public static boolean existsPathUniqueHTML() {
         return new File(UNIQUE_PATH).exists();
     }
 
-    static boolean existsPathMinimalHTML() {
+    public static boolean existsPathMinimalHTML() {
         return new File(MINIMAL_PATH).exists();
     }
 
-    static boolean existsErrorText() {
+    public static boolean existsErrorText() {
         return new File(ERROR_PATH).exists();
     }
 
-    static void deletePathUniqueHTML() {
+    public static void deletePathUniqueHTML() {
         File file = new File(UNIQUE_PATH);
         deleteFile(file);
     }
 
-    static void deletePathMinimalHTML() {
+    public static void deletePathMinimalHTML() {
         File file = new File(MINIMAL_PATH);
         deleteFile(file);
     }
 
-    static void deletePathUniqueCSV() {
+    public static void deletePathUniqueCSV() {
         File file = new File(UNIQUE_PATH);
         deleteFile(file);
     }
 
-    static void deletePathMinimalCSV() {
+    public static void deletePathMinimalCSV() {
         File file = new File(MINIMAL_PATH);
         deleteFile(file);
     }
 
-    static void deleteErrorText() {
+    public static void deleteErrorText() {
         File file = new File(ERROR_PATH);
         deleteFile(file);
     }
 
     private static void deleteFile(File file) {
         if (file.exists()) {
+            // noinspection ResultOfMethodCallIgnored
             file.delete();
+
             try {
                 Thread.sleep(200L);
             } catch (InterruptedException e) {
@@ -134,7 +136,7 @@ class OutputFileHelper {
         }
     }
 
-    static String loadErrorText() throws IOException {
+    public static String loadErrorText() throws IOException {
         return Files.lines(Paths.get(ERROR_PATH)).collect(Collectors.joining(System.lineSeparator()));
     }
 }
