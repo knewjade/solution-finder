@@ -97,6 +97,40 @@ class PercentFileCaseTest extends PercentUseCaseBaseTest {
     }
 
     @Test
+    void useFieldFileAndPatternsFile3() throws Exception {
+        // フィールドファイル + パターンファイル (デフォルト以外の場所)
+
+        Field field = FieldFactory.createField("" +
+                "XX_____XXX" +
+                "XX______XX" +
+                "XX____XXXX" +
+                "XX_____XXX"
+        );
+
+        int height = 4;
+        ConfigFileHelper.createFieldFile(field, height, "another_field");
+        ConfigFileHelper.createPatternFile("*p6", "another_pattern");
+
+        String command = "percent -fp input/another_field.txt -pp input/another_pattern.txt";
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getOutput())
+                .contains(Messages.useHold())
+                .contains(Messages.success(3462, 5040))
+                .contains("*p6")
+                .contains(Messages.clearLine(4))
+                .contains(Messages.patternSize(5040))
+                .contains(Messages.treeHeadSize(3))
+                .contains(Messages.tree("*", 68.69))
+                .contains(Messages.tree("I", 79.31))
+                .contains(Messages.tree("SI", 75.83))
+                .contains(Messages.tree("OZT", 100.00))
+                .contains(Messages.failPatternSize(100));
+
+        assertThat(log.getError()).isEmpty();
+    }
+
+    @Test
     void useFieldFileAndCommand1() throws Exception {
         // フィールドファイル + パターンコマンド
 
