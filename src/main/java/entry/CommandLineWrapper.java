@@ -1,13 +1,15 @@
 package entry;
 
+import exceptions.FinderParseException;
+
 import java.util.Optional;
 
 public interface CommandLineWrapper {
     boolean hasOption(String name);
 
-    Optional<Boolean> getBoolOption(String name);
+    Optional<Boolean> getBoolOption(String name) throws FinderParseException;
 
     Optional<String> getStringOption(String name);
 
-    Optional<Integer> getIntegerOption(String name);
+    Optional<Integer> getIntegerOption(String name) throws FinderParseException;
 }

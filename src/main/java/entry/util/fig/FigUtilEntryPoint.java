@@ -9,8 +9,10 @@ import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
 import entry.EntryPoint;
-import exceptions.FinderTerminateException;
+import exceptions.FinderException;
 import exceptions.FinderExecuteException;
+import exceptions.FinderInitializeException;
+import exceptions.FinderTerminateException;
 import lib.Stopwatch;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -50,7 +52,7 @@ public class FigUtilEntryPoint implements EntryPoint {
     }
 
     @Override
-    public void run() throws FinderExecuteException {
+    public void run() throws FinderException {
         output("# Setup");
         MinoFactory minoFactory = new MinoFactory();
         ColorConverter colorConverter = new ColorConverter();
@@ -66,34 +68,41 @@ public class FigUtilEntryPoint implements EntryPoint {
 
         FigFormat figFormat = settings.getFigFormat();
 
-        try {
-            generatorFigure(minoFactory, colorConverter, frameType, outputFile, figFormat);
-        } catch (IOException e) {
-            throw new FinderExecuteException(e);
-        }
+        generatorFigure(minoFactory, colorConverter, frameType, outputFile, figFormat);
+
 
         stopwatch.stop();
         output("  -> Stopwatch stop : " + stopwatch.toMessage(TimeUnit.MILLISECONDS));
     }
 
-    private void generatorFigure(MinoFactory minoFactory, ColorConverter colorConverter, FrameType frameType, File outputFile, FigFormat figFormat) throws IOException {
-        switch (figFormat) {
-            case Gif:
-                createGif(minoFactory, colorConverter, frameType, outputFile);
-                break;
-            case Png:
-                createPng(minoFactory, colorConverter, frameType, outputFile);
-                break;
+    private void generatorFigure(MinoFactory minoFactory, ColorConverter colorConverter, FrameType frameType, File outputFile, FigFormat figFormat) throws FinderException {
+        try {
+            switch (figFormat) {
+                case Gif:
+                    createGif(minoFactory, colorConverter, frameType, outputFile);
+                    break;
+                case Png:
+                    createPng(minoFactory, colorConverter, frameType);
+                    break;
+            }
+        } catch (IOException e) {
+            throw new FinderExecuteException(e);
         }
     }
 
-    private void createGif(MinoFactory minoFactory, ColorConverter colorConverter, FrameType frameType, File originalOutputFile) throws IOException {
-        String outputFilePath = getRemoveExtensionFromPath(originalOutputFile.getCanonicalPath());
+    private void createGif(MinoFactory minoFactory, ColorConverter colorConverter, FrameType frameType, File originalOutputFile) throws FinderException {
+        String outputFilePath = getRemoveExtensionFromPath(getCanonicalPath(originalOutputFile));
         if (outputFilePath.isEmpty())
             outputFilePath = "fig";
+        outputFilePath += ".gif";
 
-        File outputFile = new File(outputFilePath + ".gif");
-        output("  .... Output to " + outputFile.getCanonicalPath());
+        File outputFile = new File(outputFilePath);
+        if (outputFile.isDirectory())
+            throw new FinderInitializeException("Cannot specify directory as output file path: Output=" + settings.getOutputFilePath());
+        if (outputFile.exists() && !outputFile.canWrite())
+            throw new FinderInitializeException("Cannot write output file: Output=" + settings.getOutputFilePath());
+
+        output("  .... Output to " + getCanonicalPath(outputFile));
         try (ImageOutputStream imageOutputStream = ImageIO.createImageOutputStream(outputFile)) {
             // imageWriterの準備
             ImageWriter imageWriter = getGifImageWriter();
@@ -179,10 +188,20 @@ public class FigUtilEntryPoint implements EntryPoint {
 
             // imageWriterの終了処理
             imageWriter.endWriteSequence();
+        } catch (IOException e) {
+            throw new FinderExecuteException(e);
         }
     }
 
-    private void createPng(MinoFactory minoFactory, ColorConverter colorConverter, FrameType frameType, File outputFile) throws IOException {
+    private String getCanonicalPath(File file) throws FinderInitializeException {
+        try {
+            return file.getCanonicalPath();
+        } catch (IOException e) {
+            throw new FinderInitializeException(e);
+        }
+    }
+
+    private void createPng(MinoFactory minoFactory, ColorConverter colorConverter, FrameType frameType) throws IOException, FinderException {
         // 日付から新しいディレクトリ名を生成
         Date date = new Date();
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd_HHmmss");
@@ -208,7 +227,7 @@ public class FigUtilEntryPoint implements EntryPoint {
         if (!outputDirectoryFile.exists()) {
             boolean mkdirsSuccess = outputDirectoryFile.mkdirs();
             if (!mkdirsSuccess) {
-                throw new IllegalStateException("Failed to make output directory");
+                throw new FinderInitializeException("Failed to make output directory: OutputFilePath=" + originOutputFile.getName());
             }
         }
 
@@ -345,8 +364,7 @@ public class FigUtilEntryPoint implements EntryPoint {
     private FigGenerator createFigGenerator(FrameType frameType, boolean isUsingHold, MinoFactory minoFactory, ColorConverter colorConverter) {
         int height = settings.getHeight();
         int nextBoxCount = settings.getNextBoxCount();
-        if (nextBoxCount < 0)
-            throw new IllegalArgumentException("Next Box Count should be positive");
+        assert 0 <= nextBoxCount;
 
         FigSetting figSetting = new FigSetting(frameType, height, nextBoxCount);
         switch (frameType) {
@@ -365,18 +383,12 @@ public class FigUtilEntryPoint implements EntryPoint {
                 RightPositionDecider rightPositionDecider = new RightPositionDecider(figSetting);
                 return new AllFigGenerator(figSetting, rightPositionDecider, minoFactory, colorConverter);
         }
+
         throw new IllegalStateException("No reachable");
     }
 
     private static ImageWriter getGifImageWriter() {
         Iterator<ImageWriter> writerIterator = ImageIO.getImageWritersByFormatName("gif");
-        if (writerIterator.hasNext())
-            return writerIterator.next();
-        throw new IllegalStateException("No reachable");
-    }
-
-    private static ImageWriter getPngImageWriter() {
-        Iterator<ImageWriter> writerIterator = ImageIO.getImageWritersByFormatName("png");
         if (writerIterator.hasNext())
             return writerIterator.next();
         throw new IllegalStateException("No reachable");
@@ -413,7 +425,7 @@ public class FigUtilEntryPoint implements EntryPoint {
         return metadata;
     }
 
-    private static void addInfiniteLoopMetaData(Node root) throws IIOInvalidTreeException {
+    private static void addInfiniteLoopMetaData(Node root) {
         IIOMetadataNode aes = new IIOMetadataNode("ApplicationExtensions");
         IIOMetadataNode ae = new IIOMetadataNode("ApplicationExtension");
         ae.setAttribute("applicationID", "NETSCAPE");

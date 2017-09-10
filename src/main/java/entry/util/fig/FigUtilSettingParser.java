@@ -10,6 +10,7 @@ import exceptions.FinderParseException;
 import org.apache.commons.cli.*;
 import util.fig.FrameType;
 
+import javax.activation.UnsupportedDataTypeException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -71,27 +72,65 @@ public class FigUtilSettingParser {
 
         // ディレイタイムの設定
         Optional<Integer> delay = wrapper.getIntegerOption("delay");
-        delay.ifPresent(settings::setDelay);
+        try {
+            delay.ifPresent(value -> {
+                if (value <= 0)
+                    throw new RuntimeException("Delay should be positive: delay=" + value);
+                settings.setDelay(value);
+            });
+        } catch (RuntimeException e) {
+            throw new FinderParseException(e.getMessage());
+        }
 
         // フレームの設定
         Optional<String> frameTypeName = wrapper.getStringOption("frame");
-        Optional<FrameType> frameType = frameTypeName.map(this::parseFrameType);
-        frameType.ifPresent(settings::setFrameType);
+        try {
+            Optional<FrameType> frameType = frameTypeName.map(frame -> {
+                try {
+                    return parseFrameType(frame);
+                } catch (UnsupportedDataTypeException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            frameType.ifPresent(settings::setFrameType);
+        } catch (RuntimeException e) {
+            throw new FinderParseException("Unsupported frame: frame=" + frameTypeName.orElse("<empty>"));
+        }
 
         // フォーマットの設定
         Optional<String> formatName = wrapper.getStringOption("format");
-        Optional<FigFormat> figFormat = formatName.map(this::parseFigFormat);
-        figFormat.ifPresent(settings::setFigFormat);
+        try {
+            Optional<FigFormat> figFormat = formatName.map(format -> {
+                try {
+                    return parseFigFormat(format);
+                } catch (UnsupportedDataTypeException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            figFormat.ifPresent(settings::setFigFormat);
+        } catch (RuntimeException e) {
+            throw new FinderParseException("Unsupported format: format=" + formatName.orElse("<empty>"));
+        }
 
         // 高さの設定
         Optional<Integer> height = wrapper.getIntegerOption("line");
-        height.ifPresent(settings::setHeight);
+        try {
+            height.ifPresent(value -> {
+                if (value == 0)
+                    throw new RuntimeException("Line should be positive or -1: line=" + value);
+                settings.setHeight(value);
+            });
+        } catch (RuntimeException e) {
+            throw new FinderParseException(e.getMessage());
+        }
 
         // テト譜の設定
         if (wrapper.hasOption("tetfu")) {
             // パラメータから
             Optional<String> tetfuData = wrapper.getStringOption("tetfu");
-            assert tetfuData.isPresent();
+            if (!tetfuData.isPresent())
+                throw new FinderParseException("Should specify option value: --tetfu");
+
             String encoded = Tetfu.removeDomainData(tetfuData.get());
             wrapper = loadTetfu(encoded, wrapper, settings);
         } else {
@@ -113,29 +152,20 @@ public class FigUtilSettingParser {
                         .collect(Collectors.toCollection(LinkedList::new));
 
                 if (fieldLines.isEmpty())
-                    throw new IllegalArgumentException("Empty field definition");
+                    throw new FinderParseException("Should specify field-definition in field file");
 
-                String removeDomainData = Tetfu.removeDomainData(fieldLines.get(0));
-                if (Tetfu.isDataLater115(removeDomainData)) {
-                    // テト譜から
-                    wrapper = loadTetfu(removeDomainData, wrapper, settings);
-                } else {
-                    throw new IllegalArgumentException("Cannot read tetfu from " + fieldPath);
-                }
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Cannot read Field Height from " + fieldPath);
+                String encoded = fieldLines.get(0);
+                String removeDomainData = Tetfu.removeDomainData(encoded);
+                wrapper = loadTetfu(removeDomainData, wrapper, settings);
             } catch (IOException e) {
-                throw new IllegalArgumentException("Field file error", e);
+                throw new FinderParseException("Cannot open field file", e);
             }
         }
 
         // ネクストの設定
         Optional<Integer> next = wrapper.getIntegerOption("next");
-        next.ifPresent(n -> {
-            if (n < 0)
-                throw new IllegalArgumentException("Option[next=%d]: Next should be positive");
-        });
-        next.ifPresent(settings::setNextBoxCount);
+        Optional<Integer> positiveNext = next.map(integer -> 0 < integer ? integer : 0);
+        positiveNext.ifPresent(settings::setNextBoxCount);
 
         return Optional.of(settings);
     }
@@ -148,7 +178,7 @@ public class FigUtilSettingParser {
         }
     }
 
-    private FrameType parseFrameType(String frameTypeName) {
+    private FrameType parseFrameType(String frameTypeName) throws UnsupportedDataTypeException {
         switch (frameTypeName.toLowerCase()) {
             case "basic":
                 return FrameType.Basic;
@@ -157,17 +187,17 @@ public class FigUtilSettingParser {
             case "right":
                 return FrameType.Right;
         }
-        throw new IllegalArgumentException("Not found frame type: " + frameTypeName);
+        throw new UnsupportedDataTypeException("Not found frame type: " + frameTypeName);
     }
 
-    private FigFormat parseFigFormat(String formatName) {
+    private FigFormat parseFigFormat(String formatName) throws UnsupportedDataTypeException {
         switch (formatName.toLowerCase()) {
             case "png":
                 return FigFormat.Png;
             case "gif":
                 return FigFormat.Gif;
         }
-        throw new IllegalArgumentException("Not found format name: " + formatName);
+        throw new UnsupportedDataTypeException("Not found format name: " + formatName);
     }
 
     private Options createOptions() {
@@ -308,13 +338,25 @@ public class FigUtilSettingParser {
         List<TetfuPage> tetfuPages = encodeTetfu(data);
 
         // 指定されたページを抽出
+        //// 開始ページ
         int startPage = wrapper.getIntegerOption("start").orElse(1);
-        if (tetfuPages.size() < startPage)
-            throw new IllegalArgumentException(String.format("Option[start=%d]: Over page", startPage));
+        if (startPage <= 0)
+            throw new FinderParseException(String.format("Tetfu-start-page should be 1 <= page: StartPage=%d", startPage));
 
+        if (tetfuPages.size() < startPage)
+            throw new FinderParseException(String.format("Tetfu-start-page is over max page: StartPage=%d", startPage));
+
+        //// 終了ページ
         int endPage = wrapper.getIntegerOption("end").orElse(-1);
+
+        if (endPage == -1)
+            endPage = tetfuPages.size();
+
+        if (endPage < startPage)
+            throw new FinderParseException(String.format("Tetfu-end-page should be %d <= page: EndPage=%d", startPage, endPage));
+
         if (tetfuPages.size() < endPage)
-            throw new IllegalArgumentException(String.format("Option[end=%d]: Over page", endPage));
+            throw new FinderParseException(String.format("Tetfu-end-page is over max page: EndPage=%d", endPage));
 
         settings.setTetfuPages(tetfuPages, startPage, endPage);
 
@@ -327,7 +369,7 @@ public class FigUtilSettingParser {
         Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
         String data = Tetfu.removePrefixData(encoded);
         if (data == null)
-            throw new UnsupportedOperationException("Unexpected tetfu: " + encoded);
+            throw new FinderParseException("Unsupported tetfu: data=" + encoded);
         return tetfu.decode(data);
     }
 }

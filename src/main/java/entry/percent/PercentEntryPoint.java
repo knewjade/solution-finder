@@ -11,9 +11,9 @@ import core.mino.Block;
 import entry.EntryPoint;
 import entry.searching_pieces.NormalEnumeratePieces;
 import exceptions.FinderException;
-import exceptions.FinderTerminateException;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
+import exceptions.FinderTerminateException;
 import lib.Stopwatch;
 
 import java.io.*;
@@ -42,14 +42,14 @@ public class PercentEntryPoint implements EntryPoint {
         if (!logFile.getParentFile().exists()) {
             boolean mairSuccess = logFile.getParentFile().mkdir();
             if (!mairSuccess) {
-                throw new FinderInitializeException("Failed to make output directory");
+                throw new FinderInitializeException("Failed to make log directory: LogFilePath=" + logFilePath);
             }
         }
 
         if (logFile.isDirectory())
-            throw new FinderInitializeException("Cannot specify directory as log file path");
+            throw new FinderInitializeException("Cannot specify directory as log file path: LogFilePath=" + logFilePath);
         if (logFile.exists() && !logFile.canWrite())
-            throw new FinderInitializeException("Cannot write log file");
+            throw new FinderInitializeException("Cannot write log file: LogFilePath=" + logFilePath);
 
         try {
             this.logWriter = createBufferedWriter(logFile);
@@ -64,14 +64,6 @@ public class PercentEntryPoint implements EntryPoint {
 
     @Override
     public void run() throws FinderException {
-        try {
-            runMain();
-        } catch (IOException | ExecutionException | InterruptedException e) {
-            throw new FinderExecuteException(e);
-        }
-    }
-
-    private void runMain() throws IOException, ExecutionException, InterruptedException, FinderException {
         output("# Setup Field");
         Field field = settings.getField();
         if (field == null)
@@ -143,6 +135,7 @@ public class PercentEntryPoint implements EntryPoint {
 
         // 探索パターンの列挙
         NormalEnumeratePieces normalEnumeratePieces = new NormalEnumeratePieces(generator, maxDepth, settings.isUsingHold());
+
         Set<LongBlocks> searchingPieces = normalEnumeratePieces.enumerate();
 
         output("Searching pattern size (duplicate) = " + normalEnumeratePieces.getCounter());
@@ -156,7 +149,12 @@ public class PercentEntryPoint implements EntryPoint {
 
         // 探索を行う
         PercentCore percentCore = new PercentCore(maxClearLine, executorService, settings.isUsingHold());
-        percentCore.run(field, searchingPieces, maxClearLine, maxDepth);
+        try {
+            percentCore.run(field, searchingPieces, maxClearLine, maxDepth);
+        } catch (ExecutionException | InterruptedException e) {
+            throw new FinderExecuteException(e);
+        }
+
         AnalyzeTree tree = percentCore.getResultTree();
         List<Pair<List<Block>, Boolean>> resultPairs = percentCore.getResultPairs();
 

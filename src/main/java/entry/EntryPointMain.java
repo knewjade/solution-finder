@@ -9,10 +9,8 @@ import entry.percent.PercentSettings;
 import entry.util.fig.FigUtilEntryPoint;
 import entry.util.fig.FigUtilSettingParser;
 import entry.util.fig.FigUtilSettings;
-import exceptions.FinderException;
 import exceptions.FinderInitializeException;
 import exceptions.FinderParseException;
-import exceptions.FinderTerminateException;
 
 import java.io.*;
 import java.time.LocalDateTime;
@@ -43,7 +41,7 @@ public class EntryPointMain {
         EntryPoint entryPoint;
         try {
             entryPoint = createEntryPoint(args[0], argsList);
-        } catch (FinderInitializeException | FinderParseException e) {
+        } catch (Exception e) {
             System.err.println("Error: Failed to execute pre-main. Output stack trace to output/error.txt");
             System.err.println("Message: " + e.getMessage());
             e.printStackTrace();
@@ -54,7 +52,7 @@ public class EntryPointMain {
         // メイン処理を実行する
         try {
             entryPoint.run();
-        } catch (FinderException e) {
+        } catch (Exception e) {
             System.err.println("Error: Failed to execute main. Output stack trace to output/error.txt");
             System.err.println("Message: " + e.getMessage());
             e.printStackTrace();
@@ -63,7 +61,7 @@ public class EntryPointMain {
             try {
                 entryPoint.close();
                 outputError(e, args);
-            } catch (FinderTerminateException e2) {
+            } catch (Exception e2) {
                 System.err.println("Error: Failed to execute post-main. Output stack trace to output/error.txt");
                 System.err.println("Message: " + e.getMessage());
                 e.printStackTrace();
@@ -76,7 +74,7 @@ public class EntryPointMain {
         // 終了処理をする（メイン処理成功後）
         try {
             entryPoint.close();
-        } catch (FinderTerminateException e) {
+        } catch (Exception e) {
             System.err.println("Error: Failed to terminate. Output stack trace to output/error.txt");
             System.err.println("Message: " + e.getMessage());
             e.printStackTrace();
@@ -87,11 +85,11 @@ public class EntryPointMain {
         return 0;
     }
 
-    private static void outputError(FinderException exception, String[] commands) {
+    private static void outputError(Exception exception, String[] commands) {
         outputError(Collections.singletonList(exception), commands);
     }
 
-    private static void outputError(List<FinderException> exceptions, String[] commands) {
+    private static void outputError(List<Exception> exceptions, String[] commands) {
         // Make directory
         makeOutputDirectory();
 
@@ -109,14 +107,14 @@ public class EntryPointMain {
 
                 // Output error messages
                 writer.println("# Error message summary:");
-                for (FinderException exception : exceptions) {
+                for (Exception exception : exceptions) {
                     writer.printf("  * %s [%s]%n", exception.getMessage(), exception.getClass().getSimpleName());
                     Throwable cause = exception.getCause();
                     while (cause != null) {
                         String message = cause.getMessage();
                         writer.printf("    - %s [%s]%n", message != null ? message : "<no message>", cause.getClass().getSimpleName());
+                        System.out.printf("%s [%s]%n", message != null ? message : "<no message>", cause.getClass().getSimpleName());
                         cause = cause.getCause();
-                        System.out.println(cause);
                     }
                 }
                 writer.println();
@@ -128,7 +126,7 @@ public class EntryPointMain {
                 writer.println("------------------------------");
                 writer.println();
 
-                for (FinderException exception : exceptions) {
+                for (Exception exception : exceptions) {
                     exception.printStackTrace(writer);
                     writer.println("==============================");
                 }
@@ -141,8 +139,10 @@ public class EntryPointMain {
 
     private static void makeOutputDirectory() {
         File outputDirectory = new File("output");
-        if (!outputDirectory.exists())
+        if (!outputDirectory.exists()) {
+            // noinspection ResultOfMethodCallIgnored
             outputDirectory.mkdirs();
+        }
     }
 
     private static EntryPoint createEntryPoint(String type, List<String> commands) throws FinderInitializeException, FinderParseException {

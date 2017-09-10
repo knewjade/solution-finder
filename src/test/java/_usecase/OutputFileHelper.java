@@ -14,11 +14,15 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class OutputFileHelper {
-    private static final String UNIQUE_PATH = "output/path_unique.html";
-    private static final String MINIMAL_PATH = "output/path_minimal.html";
-    private static final String UNIQUE_CSV = "output/path_unique.csv";
-    private static final String MINIMAL_CSV = "output/path_minimal.csv";
-    private static final String ERROR_PATH = "output/error.txt";
+    private static final String UNIQUE_PATH = concatPath("output", "path_unique.html");
+    private static final String MINIMAL_PATH = concatPath("output", "path_minimal.html");
+    private static final String UNIQUE_CSV = concatPath("output", "path_unique.csv");
+    private static final String MINIMAL_CSV = concatPath("output", "path_minimal.csv");
+    private static final String ERROR_PATH = concatPath("output", "error.txt");
+
+    private static String concatPath(String... names) {
+        return FileHelper.concatPath(names);
+    }
 
     public static PathHTML loadPathUniqueHTML() throws IOException {
         return loadPathUniqueHTML(UNIQUE_PATH);
@@ -100,40 +104,27 @@ public class OutputFileHelper {
 
     public static void deletePathUniqueHTML() {
         File file = new File(UNIQUE_PATH);
-        deleteFile(file);
+        FileHelper.deleteFile(file);
     }
 
     public static void deletePathMinimalHTML() {
         File file = new File(MINIMAL_PATH);
-        deleteFile(file);
+        FileHelper.deleteFile(file);
     }
 
     public static void deletePathUniqueCSV() {
         File file = new File(UNIQUE_PATH);
-        deleteFile(file);
+        FileHelper.deleteFile(file);
     }
 
     public static void deletePathMinimalCSV() {
         File file = new File(MINIMAL_PATH);
-        deleteFile(file);
+        FileHelper.deleteFile(file);
     }
 
     public static void deleteErrorText() {
         File file = new File(ERROR_PATH);
-        deleteFile(file);
-    }
-
-    private static void deleteFile(File file) {
-        if (file.exists()) {
-            // noinspection ResultOfMethodCallIgnored
-            file.delete();
-
-            try {
-                Thread.sleep(200L);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        FileHelper.deleteFile(file);
     }
 
     public static String loadErrorText() throws IOException {

@@ -200,17 +200,14 @@ class PercentFileCaseTest extends PercentUseCaseBaseTest {
     @Test
     void getLog() throws Exception {
         // フィールドファイル, パターンファイル, ログファイル (場所を変更する)
+        /*
+        ______XXXX
+        ______XXXX
+        _____XXXXX
+        _______XXX
+         */
 
-        Field field = FieldFactory.createField("" +
-                "______XXXX" +
-                "______XXXX" +
-                "_____XXXXX" +
-                "_______XXX"
-        );
-
-        int height = 4;
-
-        ConfigFileHelper.createFieldFile(field, height, "test_field", "input");
+        ConfigFileHelper.createFieldFile("http://fumen.zui.jp/?v115@DhD8FeD8EeE8GeC8JeAgH", "test_field", "input");
         ConfigFileHelper.createPatternFile("*p7", "input", "test_patterns");
 
         String command = "percent -fp input/test_field.txt -pp input/test_patterns.txt --log-path test_output_log/test_last_output.txt";

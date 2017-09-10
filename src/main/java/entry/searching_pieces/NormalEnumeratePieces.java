@@ -25,7 +25,7 @@ public class NormalEnumeratePieces implements EnumeratePiecesCore {
     }
 
     @Override
-    public Set<LongBlocks> enumerate() throws IOException {
+    public Set<LongBlocks> enumerate() {
         assert counter == -1;
 
         int depth = generator.getDepth();

@@ -104,7 +104,7 @@ public class FigUtilSettings {
     void setTetfuPages(List<TetfuPage> tetfuPages, int startPage, int endPage) {
         this.tetfuPages = tetfuPages;
         this.startPage = startPage;
-        this.endPage = endPage < 1 ? tetfuPages.size() : endPage;
+        this.endPage = endPage;
     }
 
     void setHeight(int height) {

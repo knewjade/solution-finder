@@ -1,5 +1,7 @@
 package entry;
 
+import exceptions.FinderParseException;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +25,7 @@ public class PriorityCommandLineWrapper implements CommandLineWrapper {
     }
 
     @Override
-    public Optional<Boolean> getBoolOption(String name) {
+    public Optional<Boolean> getBoolOption(String name) throws FinderParseException {
         for (CommandLineWrapper commandLine : commandLines) {
             Optional<Boolean> option = commandLine.getBoolOption(name);
             if (option.isPresent())
@@ -43,7 +45,7 @@ public class PriorityCommandLineWrapper implements CommandLineWrapper {
     }
 
     @Override
-    public Optional<Integer> getIntegerOption(String name) {
+    public Optional<Integer> getIntegerOption(String name) throws FinderParseException {
         for (CommandLineWrapper commandLine : commandLines) {
             Optional<Integer> option = commandLine.getIntegerOption(name);
             if (option.isPresent())

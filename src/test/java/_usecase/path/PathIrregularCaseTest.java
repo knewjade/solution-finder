@@ -475,7 +475,7 @@ class PathIrregularCaseTest extends PathUseCaseBaseTest {
         String errorFile = OutputFileHelper.loadErrorText();
         assertThat(errorFile)
                 .contains(command)
-                .contains("Cannot specify directory as log file path [FinderInitializeException]");
+                .contains("Cannot specify directory as log file path: LogFilePath=output/log_directory [FinderInitializeException]");
 
         // noinspection ResultOfMethodCallIgnored
         logDirectory.delete();
@@ -521,5 +521,26 @@ class PathIrregularCaseTest extends PathUseCaseBaseTest {
         assertThat(errorFile)
                 .contains(command)
                 .contains("Unsupported format: format=INVALID [FinderParseException]");
+    }
+
+    @Test
+    void invalidHold() throws Exception {
+        // holdの指定値が不正
+
+        String tetfu = "v115@9gF8DeF8DeF8DeF8NeAgH";
+        String command = String.format("path -t %s -p *p5 -H INVALID", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getReturnCode()).isEqualTo(1);
+
+        assertThat(log.getError())
+                .contains(ErrorMessages.failPreMain());
+
+        assertThat(OutputFileHelper.existsErrorText()).isTrue();
+
+        String errorFile = OutputFileHelper.loadErrorText();
+        assertThat(errorFile)
+                .contains(command)
+                .contains("Cannot parse hold option: value=INVALID [FinderParseException]");
     }
 }

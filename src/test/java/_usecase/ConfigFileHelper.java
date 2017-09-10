@@ -7,16 +7,23 @@ import core.field.FieldView;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class ConfigFileHelper {
+    private static final String FIELD_PATH = concatPath("input", "field.txt");
+    private static final String PATTERN_PATH = concatPath("input", "patterns.txt");
+
     private static final String LINE_SEPARATOR = System.lineSeparator();
 
     public static void createFieldFile(String text) throws IOException {
-        String directoryPath = concatPath("input");
-        String fileName = "field";
-        createNewTextFile(directoryPath, fileName, text);
+        createFieldFile(text, "field", concatPath("input"));
+    }
+
+    public static void createFieldFile(String text, String fileName, String directoryPath) throws IOException {
+        createNewTextFile(text, fileName, directoryPath);
+    }
+
+    private static String concatPath(String... names) {
+        return FileHelper.concatPath(names);
     }
 
     public static void createFieldFile(Field field, int height) throws IOException {
@@ -30,39 +37,17 @@ public class ConfigFileHelper {
 
     public static void createFieldFile(Field field, int height, String fileName, String directoryPath) throws IOException {
         String text = height + LINE_SEPARATOR + FieldView.toString(field, height);
-        createNewTextFile(directoryPath, fileName, text);
+        createNewTextFile(text, fileName, directoryPath);
     }
 
     public static void deleteFieldFile() throws IOException {
-        deleteTextFile(concatPath("input"), "field", "txt");
-        deleteTextFile(concatPath("input"), "field", "csv");
+        File file = new File(FIELD_PATH);
+        FileHelper.deleteFile(file);
     }
 
-    private static String concatPath(String... names) {
-        return Arrays.stream(names).collect(Collectors.joining(File.separator));
-    }
-
-    private static void deleteTextFile(String parentDirectoryPath, String fileName, String extension) throws IOException {
-        File file = new File(concatPath(parentDirectoryPath, fileName + "." + extension));
-        deleteFile(file);
-    }
-
-    private static void deleteFile(File file) {
-        if (file.exists()) {
-            // noinspection ResultOfMethodCallIgnored
-            file.delete();
-
-            try {
-                Thread.sleep(200L);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private static void createNewTextFile(String parentDirectoryPath, String fileName, String text) throws IOException {
+    private static void createNewTextFile(String text, String fileName, String parentDirectoryPath) throws IOException {
         File file = new File(concatPath(parentDirectoryPath, fileName + ".txt"));
-        deleteFile(file);
+        FileHelper.deleteFile(file);
 
         // noinspection ResultOfMethodCallIgnored
         file.createNewFile();
@@ -78,11 +63,11 @@ public class ConfigFileHelper {
     }
 
     public static void createPatternFile(String pattern, String directoryPath, String fileName) throws IOException {
-        createNewTextFile(directoryPath, fileName, pattern);
+        createNewTextFile(pattern, fileName, directoryPath);
     }
 
     public static void deletePatternFile() throws IOException {
-        deleteTextFile(concatPath("input"), "patterns", "txt");
-        deleteTextFile(concatPath("input"), "patterns", "csv");
+        File file = new File(PATTERN_PATH);
+        FileHelper.deleteFile(file);
     }
 }

@@ -16,8 +16,6 @@ import java.io.IOException;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PercentTetfuCaseTest extends PercentUseCaseBaseTest {
-    private static final String LINE_SEPARATOR = System.lineSeparator();
-
     @Override
     @BeforeEach
     void setUp() throws IOException {

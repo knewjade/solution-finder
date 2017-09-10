@@ -1,5 +1,6 @@
 package entry;
 
+import exceptions.FinderParseException;
 import org.apache.commons.cli.CommandLine;
 
 import java.util.Optional;
@@ -17,13 +18,13 @@ public class NormalCommandLineWrapper implements CommandLineWrapper {
     }
 
     @Override
-    public Optional<Boolean> getBoolOption(String name) {
-        String value = commandLine.getOptionValue(name);
+    public Optional<Boolean> getBoolOption(String name) throws FinderParseException {
+        String optionValue = commandLine.getOptionValue(name);
 
-        if (value == null)
+        if (optionValue == null)
             return Optional.empty();
 
-        switch (value.toLowerCase()) {
+        switch (optionValue.toLowerCase()) {
             case "true":
                 return Optional.of(true);
             case "false":
@@ -61,7 +62,8 @@ public class NormalCommandLineWrapper implements CommandLineWrapper {
             case "hidden":
                 return Optional.of(false);
         }
-        throw new IllegalArgumentException(String.format("Option[%s=%s]: cannot understand", name, value));
+
+        throw new FinderParseException(String.format("Cannot parse %s option: value=%s", name, optionValue));
     }
 
     @Override
@@ -70,12 +72,16 @@ public class NormalCommandLineWrapper implements CommandLineWrapper {
     }
 
     @Override
-    public Optional<Integer> getIntegerOption(String name) {
-        String value = commandLine.getOptionValue(name);
+    public Optional<Integer> getIntegerOption(String name) throws FinderParseException {
+        String optionValue = commandLine.getOptionValue(name);
 
-        if (value == null)
+        if (optionValue == null)
             return Optional.empty();
-
-        return Optional.of(Integer.valueOf(value));
+        try {
+            Integer value = Integer.valueOf(optionValue);
+            return Optional.of(value);
+        } catch (NumberFormatException e) {
+            throw new FinderParseException(String.format("Cannot parse %s option: value=%s", name, optionValue));
+        }
     }
 }

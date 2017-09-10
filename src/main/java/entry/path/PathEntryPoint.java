@@ -62,14 +62,14 @@ public class PathEntryPoint implements EntryPoint {
         if (!logFile.getParentFile().exists()) {
             boolean mairSuccess = logFile.getParentFile().mkdir();
             if (!mairSuccess) {
-                throw new FinderInitializeException("Failed to make output directory");
+                throw new FinderInitializeException("Failed to make log directory: LogFilePath=" + logFilePath);
             }
         }
 
         if (logFile.isDirectory())
-            throw new FinderInitializeException("Cannot specify directory as log file path");
+            throw new FinderInitializeException("Cannot specify directory as log file path: LogFilePath=" + logFilePath);
         if (logFile.exists() && !logFile.canWrite())
-            throw new FinderInitializeException("Cannot write log file");
+            throw new FinderInitializeException("Cannot write log file: LogFilePath=" + logFilePath);
 
         try {
             this.logWriter = createBufferedWriter(logFile);
@@ -84,10 +84,6 @@ public class PathEntryPoint implements EntryPoint {
 
     @Override
     public void run() throws FinderException {
-        runMain();
-    }
-
-    private void runMain() throws FinderException {
         output("# Setup Field");
         Field field = settings.getField();
         if (field == null)
@@ -135,7 +131,7 @@ public class PathEntryPoint implements EntryPoint {
         if (!outputFile.getParentFile().exists()) {
             boolean mkdirsSuccess = outputFile.getParentFile().mkdirs();
             if (!mkdirsSuccess) {
-                throw new FinderInitializeException("Failed to make output directory");
+                throw new FinderInitializeException("Failed to make output directory: OutputBase=" + outputBaseFilePath);
             }
         }
 
@@ -146,7 +142,7 @@ public class PathEntryPoint implements EntryPoint {
         if (outputUniqueFile.isDirectory())
             throw new FinderInitializeException("Cannot specify directory as output unique file path: OutputBase=" + outputBaseFilePath);
         if (outputUniqueFile.exists() && !outputUniqueFile.canWrite())
-            throw new FinderInitializeException("Cannot write output unique file");
+            throw new FinderInitializeException("Cannot write output unique file: OutputBase=" + outputBaseFilePath);
 
         // minimalファイル
         String minimalOutputFilePath = String.format("%s_minimal%s", namePath, extension);
@@ -154,7 +150,7 @@ public class PathEntryPoint implements EntryPoint {
         if (outputMinimalFile.isDirectory())
             throw new FinderInitializeException("Cannot specify directory as output minimal file path: OutputBase=" + outputBaseFilePath);
         if (outputMinimalFile.exists() && !outputMinimalFile.canWrite())
-            throw new FinderInitializeException("Cannot write output minimal file");
+            throw new FinderInitializeException("Cannot write output minimal file: OutputBase=" + outputBaseFilePath);
 
         output();
         // ========================================
@@ -281,9 +277,9 @@ public class PathEntryPoint implements EntryPoint {
         }
     }
 
-    private String getCanonicalPath(String outputBaseFilePath) throws FinderInitializeException {
+    private String getCanonicalPath(String path) throws FinderInitializeException {
         try {
-            return new File(outputBaseFilePath).getCanonicalPath();
+            return new File(path).getCanonicalPath();
         } catch (IOException e) {
             throw new FinderInitializeException(e);
         }
