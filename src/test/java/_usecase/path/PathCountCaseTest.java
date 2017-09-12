@@ -195,8 +195,8 @@ class PathCountCaseTest extends PathUseCaseBaseTest {
     void pattern8() throws Exception {
             /*
             X_________
-            XXXXXXXXX_
             XXXXXXXX__
+            XXXXXXXXX_
             XXXXXX____
              */
 

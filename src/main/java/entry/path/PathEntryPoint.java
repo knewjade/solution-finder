@@ -14,6 +14,7 @@ import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
 import core.column_field.ColumnField;
+import core.column_field.ColumnSmallField;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
@@ -55,6 +56,7 @@ public class PathEntryPoint implements EntryPoint {
     public PathEntryPoint(PathSettings settings) throws FinderInitializeException {
         this.settings = settings;
 
+        // ログファイルの出力先を整備
         String logFilePath = settings.getLogFilePath();
         File logFile = new File(logFilePath);
 
@@ -183,8 +185,8 @@ public class PathEntryPoint implements EntryPoint {
         output("Piece pop count = " + (isUsingHold && maxDepth < generator.getDepth() ? maxDepth + 1 : maxDepth));
 
         // ミノのリストを作成する
-        int width = maxClearLine <= 4 ? 3 : 2;
-        SizedBit sizedBit = new SizedBit(width, maxClearLine);
+        int basicSolutionWidth = decideBasicSolutionWidth(maxClearLine);
+        SizedBit sizedBit = new SizedBit(basicSolutionWidth, maxClearLine);
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, sizedBit.getWidth(), sizedBit.getHeight());
@@ -203,7 +205,8 @@ public class PathEntryPoint implements EntryPoint {
         // 基本パターンを計算
         int cachedMinBit = settings.getCachedMinBit();
         Predicate<ColumnField> predicate = createPredicate(cachedMinBit);
-        BasicSolutions basicSolutions = new FilterOnDemandBasicSolutions(separableMinos, sizedBit, predicate, solutionFilter);
+        ColumnSmallField maxOuterBoard = InOutPairField.createMaxOuterBoard(sizedBit, field);
+        BasicSolutions basicSolutions = new FilterOnDemandBasicSolutions(separableMinos, sizedBit, maxOuterBoard, predicate, solutionFilter);
 
         output("     ... done");
 
@@ -267,6 +270,10 @@ public class PathEntryPoint implements EntryPoint {
         output("done");
 
         flush();
+    }
+
+    private int decideBasicSolutionWidth(int maxClearLine) {
+        return maxClearLine <= 4 ? 3 : 2;
     }
 
     private PathCore createPathCore(List<String> patterns, int maxDepth, boolean isUsingHold, PackSearcher searcher) throws FinderExecuteException {

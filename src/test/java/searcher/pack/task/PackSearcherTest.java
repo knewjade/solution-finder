@@ -239,7 +239,7 @@ class PackSearcherTest {
     }
 
     @Nested
-    class RandomChecker {
+    class RandomTestCase {
         @Test
         void height4() throws ExecutionException, InterruptedException {
             int width = 3;

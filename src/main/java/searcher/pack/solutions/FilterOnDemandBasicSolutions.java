@@ -29,8 +29,12 @@ public class FilterOnDemandBasicSolutions implements BasicSolutions, SolutionsCa
     private final ConcurrentHashMap<ColumnField, RecursiveMinoFields> resultsMap;
 
     public FilterOnDemandBasicSolutions(SeparableMinos separableMinos, SizedBit sizedBit, Predicate<ColumnField> memorizedPredicate, SolutionFilter solutionFilter) {
+        this(separableMinos, sizedBit, ColumnFieldFactory.createField(), memorizedPredicate, solutionFilter);
+    }
+
+    public FilterOnDemandBasicSolutions(SeparableMinos separableMinos, SizedBit sizedBit, ColumnSmallField initOuterField, Predicate<ColumnField> memorizedPredicate, SolutionFilter solutionFilter) {
         this.separableMinos = separableMinos;
-        this.initOuterField = ColumnFieldFactory.createField();
+        this.initOuterField = initOuterField;
         this.solutionFilter = solutionFilter;
         assert sizedBit.getHeight() <= 10;
         this.sizedBit = sizedBit;

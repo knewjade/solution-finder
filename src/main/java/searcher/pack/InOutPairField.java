@@ -25,7 +25,7 @@ public class InOutPairField {
         Field field = initField.freeze(height);
 
         long board = Long.MAX_VALUE;
-        for (int count = 0; count < max - 1; count++) {
+        for (int count = 0; count < max; count++) {
             InOutPairField pairField = parseLast(field, width, height);
             ColumnField outerField = pairField.getOuterField();
             board &= outerField.getBoard(0);
