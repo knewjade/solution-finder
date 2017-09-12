@@ -4,14 +4,15 @@ import common.buildup.BuildUpStream;
 import common.datastore.OperationWithKey;
 import common.datastore.Pair;
 import common.datastore.action.Action;
-import common.datastore.pieces.LongBlocks;
 import common.datastore.pieces.Blocks;
+import common.datastore.pieces.LongBlocks;
 import common.pattern.BlocksGenerator;
 import concurrent.LockedReachableThreadLocal;
 import core.action.candidate.Candidate;
 import core.action.candidate.LockedCandidate;
 import core.action.reachable.LockedReachable;
 import core.column_field.ColumnField;
+import core.column_field.ColumnSmallField;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
@@ -34,6 +35,7 @@ import searcher.pack.memento.SRSValidSolutionFilter;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.mino_fields.RecursiveMinoFields;
 import searcher.pack.solutions.BasicSolutionsCalculator;
+import searcher.pack.solutions.FilterOnDemandBasicSolutions;
 import searcher.pack.solutions.MappedBasicSolutions;
 import searcher.pack.solutions.OnDemandBasicSolutions;
 
@@ -42,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -67,9 +70,27 @@ class PackSearcherTest {
         return new OnDemandBasicSolutions(separableMinos, sizedBit, memorizedPredicate);
     }
 
+    private BasicSolutions createOnDemandBasicSolutions(SizedBit sizedBit, ColumnSmallField field) {
+        SeparableMinos separableMinos = SeparableMinos.createSeparableMinos(minoFactory, minoShifter, sizedBit);
+        Predicate<ColumnField> memorizedPredicate = BasicSolutions.createBitCountPredicate(1);
+        return new OnDemandBasicSolutions(separableMinos, sizedBit, field, memorizedPredicate);
+    }
+
     private SolutionFilter createSRSSolutionFilter(SizedBit sizedBit, Field initField) {
         LockedReachableThreadLocal lockedReachableThreadLocal = new LockedReachableThreadLocal(sizedBit.getHeight());
         return new SRSValidSolutionFilter(initField, lockedReachableThreadLocal, sizedBit);
+    }
+
+    private BasicSolutions createFilterOnDemandBasicSolutions(SizedBit sizedBit, SolutionFilter solutionFilter) {
+        SeparableMinos separableMinos = SeparableMinos.createSeparableMinos(minoFactory, minoShifter, sizedBit);
+        Predicate<ColumnField> memorizedPredicate = BasicSolutions.createBitCountPredicate(1);
+        return new FilterOnDemandBasicSolutions(separableMinos, sizedBit, memorizedPredicate, solutionFilter);
+    }
+
+    private BasicSolutions createFilterOnDemandBasicSolutions(SizedBit sizedBit, ColumnSmallField field, SolutionFilter solutionFilter) {
+        SeparableMinos separableMinos = SeparableMinos.createSeparableMinos(minoFactory, minoShifter, sizedBit);
+        Predicate<ColumnField> memorizedPredicate = BasicSolutions.createBitCountPredicate(1);
+        return new FilterOnDemandBasicSolutions(separableMinos, sizedBit, field, memorizedPredicate, solutionFilter);
     }
 
     @Nested
@@ -238,8 +259,258 @@ class PackSearcherTest {
         }
     }
 
+    private BlocksGenerator createPiecesGenerator(int maxDepth) {
+        switch (maxDepth) {
+            case 3:
+                return new BlocksGenerator("*, *p2");
+            case 4:
+                return new BlocksGenerator("*, *p3");
+            case 5:
+                return new BlocksGenerator("*, *p4");
+            case 6:
+                return new BlocksGenerator("*, *p5");
+        }
+        throw new UnsupportedOperationException();
+    }
+
+    private void assertHeight4(SizedBit sizedBit, int maxCount, BiFunction<Field, SolutionFilter, BasicSolutions> basicSolutionSupplier) throws ExecutionException, InterruptedException {
+        assert sizedBit.getWidth() == 3;
+        assert sizedBit.getHeight() == 4;
+
+        int width = sizedBit.getWidth();
+        int height = sizedBit.getHeight();
+        Randoms randoms = new Randoms();
+
+        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
+        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
+
+        TaskResultHelper taskResultHelper = new Field4x10MinoPackingHelper();
+
+        for (int count = 0; count < maxCount; count++) {
+            // Field
+            int maxDepth = randoms.nextIntClosed(3, 6);
+            Field initField = randoms.field(height, maxDepth);
+            List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(sizedBit, initField);
+            SolutionFilter solutionFilter = createSRSSolutionFilter(sizedBit, initField);
+
+            // Pack
+            BasicSolutions basicSolutions = basicSolutionSupplier.apply(initField, solutionFilter);
+            PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
+            List<Result> results = searcher.toList();
+
+            // Possible
+            HashSet<Blocks> possiblePieces = new HashSet<>();
+            for (Result result : results) {
+                // result to possible pieces
+                List<OperationWithKey> operationWithKeys = result.getMemento().getOperationsStream(width).collect(Collectors.toList());
+                Set<LongBlocks> sets = new BuildUpStream(reachable, height).existsValidBuildPattern(initField, operationWithKeys)
+                        .map(keys -> keys.stream().map(OperationWithKey::getMino).map(Mino::getBlock))
+                        .map(LongBlocks::new)
+                        .collect(Collectors.toSet());
+                possiblePieces.addAll(sets);
+            }
+
+            // Checker
+            PerfectValidator validator = new PerfectValidator();
+            CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
+
+            // Assert generator
+            BlocksGenerator generator = createPiecesGenerator(maxDepth);
+            for (Blocks pieces : generator) {
+                List<Block> blocks = pieces.getBlockList();
+                boolean check = checker.check(initField, blocks, candidate, height, maxDepth);
+                assertThat(possiblePieces.contains(pieces))
+                        .as(blocks.toString())
+                        .isEqualTo(check);
+            }
+        }
+    }
+
+    void assertHeight5(SizedBit sizedBit, int maxCount, BiFunction<Field, SolutionFilter, BasicSolutions> basicSolutionSupplier) throws ExecutionException, InterruptedException {
+        assert sizedBit.getWidth() == 2;
+        assert sizedBit.getHeight() == 5;
+
+        int width = sizedBit.getWidth();
+        int height = sizedBit.getHeight();
+        Randoms randoms = new Randoms();
+
+        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
+        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
+
+        TaskResultHelper taskResultHelper = new BasicMinoPackingHelper();
+
+        for (int count = 0; count < maxCount; count++) {
+            // Field
+            int maxDepth = randoms.nextIntClosed(3, 6);
+            Field initField = randoms.field(height, maxDepth);
+            List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(sizedBit, initField);
+            SolutionFilter solutionFilter = createSRSSolutionFilter(sizedBit, initField);
+
+            // Pack
+            BasicSolutions basicSolutions = basicSolutionSupplier.apply(initField, solutionFilter);
+            PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
+            List<Result> results = searcher.toList();
+
+            // Possible
+            HashSet<Blocks> possiblePieces = new HashSet<>();
+            for (Result result : results) {
+                // result to possible pieces
+                List<OperationWithKey> operationWithKeys = result.getMemento().getOperationsStream(width).collect(Collectors.toList());
+                Set<LongBlocks> sets = new BuildUpStream(reachable, height).existsValidBuildPattern(initField, operationWithKeys)
+                        .map(keys -> keys.stream().map(OperationWithKey::getMino).map(Mino::getBlock))
+                        .map(LongBlocks::new)
+                        .collect(Collectors.toSet());
+                possiblePieces.addAll(sets);
+            }
+
+            // Checker
+            PerfectValidator validator = new PerfectValidator();
+            CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
+
+            // Assert generator
+            BlocksGenerator generator = createPiecesGenerator(maxDepth);
+            for (Blocks pieces : generator) {
+                List<Block> blocks = pieces.getBlockList();
+                boolean check = checker.check(initField, blocks, candidate, height, maxDepth);
+                assertThat(possiblePieces.contains(pieces))
+                        .as(blocks.toString())
+                        .isEqualTo(check);
+            }
+        }
+    }
+
     @Nested
-    class RandomTestCase {
+    class MappedRandomTestCase {
+        @Test
+        void height4() throws ExecutionException, InterruptedException {
+            int width = 3;
+            int height = 4;
+            SizedBit sizedBit = new SizedBit(width, height);
+            BiFunction<Field, SolutionFilter, BasicSolutions> basicSolutionSupplier = (field, solutionFilter) -> createMappedBasicSolutions(sizedBit);
+            assertHeight4(sizedBit, 20, basicSolutionSupplier);
+        }
+
+        @Test
+        void height5() throws ExecutionException, InterruptedException {
+            int width = 2;
+            int height = 5;
+            SizedBit sizedBit = new SizedBit(width, height);
+            BiFunction<Field, SolutionFilter, BasicSolutions> basicSolutionSupplier = (field, solutionFilter) -> createMappedBasicSolutions(sizedBit);
+            assertHeight5(sizedBit, 20, basicSolutionSupplier);
+        }
+    }
+
+    @Nested
+    class OnDemandRandomTestCase {
+        @Test
+        void height4() throws ExecutionException, InterruptedException {
+            int width = 3;
+            int height = 4;
+            SizedBit sizedBit = new SizedBit(width, height);
+            BiFunction<Field, SolutionFilter, BasicSolutions> basicSolutionSupplier = (field, solutionFilter) -> createOnDemandBasicSolutions(sizedBit);
+            assertHeight4(sizedBit, 20, basicSolutionSupplier);
+        }
+
+        @Test
+        void height5() throws ExecutionException, InterruptedException {
+            int width = 2;
+            int height = 5;
+            SizedBit sizedBit = new SizedBit(width, height);
+            BiFunction<Field, SolutionFilter, BasicSolutions> basicSolutionSupplier = (field, solutionFilter) -> createOnDemandBasicSolutions(sizedBit);
+            assertHeight5(sizedBit, 20, basicSolutionSupplier);
+        }
+    }
+
+    @Nested
+    class LimitOnDemandRandomTestCase {
+        @Test
+        void height4() throws ExecutionException, InterruptedException {
+            int width = 3;
+            int height = 4;
+            SizedBit sizedBit = new SizedBit(width, height);
+            BiFunction<Field, SolutionFilter, BasicSolutions> basicSolutionSupplier = (field, solutionFilter) -> {
+                ColumnSmallField maxOuterBoard = InOutPairField.createMaxOuterBoard(sizedBit, field);
+                return createOnDemandBasicSolutions(sizedBit, maxOuterBoard);
+            };
+            assertHeight4(sizedBit, 20, basicSolutionSupplier);
+        }
+
+        @Test
+        void height5() throws ExecutionException, InterruptedException {
+            int width = 2;
+            int height = 5;
+            SizedBit sizedBit = new SizedBit(width, height);
+            BiFunction<Field, SolutionFilter, BasicSolutions> basicSolutionSupplier = (field, solutionFilter) -> {
+                ColumnSmallField maxOuterBoard = InOutPairField.createMaxOuterBoard(sizedBit, field);
+                return createOnDemandBasicSolutions(sizedBit, maxOuterBoard);
+            };
+            assertHeight5(sizedBit, 20, basicSolutionSupplier);
+        }
+    }
+
+    @Nested
+    class FilterOnDemandRandomTestCase {
+        @Test
+        void height4() throws ExecutionException, InterruptedException {
+            int width = 3;
+            int height = 4;
+            SizedBit sizedBit = new SizedBit(width, height);
+            BiFunction<Field, SolutionFilter, BasicSolutions> basicSolutionSupplier = (field, solutionFilter) -> createFilterOnDemandBasicSolutions(sizedBit, solutionFilter);
+            assertHeight4(sizedBit, 20, basicSolutionSupplier);
+        }
+
+        @Test
+        void height5() throws ExecutionException, InterruptedException {
+            int width = 2;
+            int height = 5;
+            SizedBit sizedBit = new SizedBit(width, height);
+            BiFunction<Field, SolutionFilter, BasicSolutions> basicSolutionSupplier = (field, solutionFilter) -> createFilterOnDemandBasicSolutions(sizedBit, solutionFilter);
+            assertHeight5(sizedBit, 20, basicSolutionSupplier);
+        }
+    }
+
+    @Nested
+    class LimitFilterOnDemandRandomTestCase {
+        @Test
+        void height4() throws ExecutionException, InterruptedException {
+            int width = 3;
+            int height = 4;
+            SizedBit sizedBit = new SizedBit(width, height);
+            BiFunction<Field, SolutionFilter, BasicSolutions> basicSolutionSupplier = (field, solutionFilter) -> {
+                ColumnSmallField maxOuterBoard = InOutPairField.createMaxOuterBoard(sizedBit, field);
+                return createFilterOnDemandBasicSolutions(sizedBit, maxOuterBoard, solutionFilter);
+            };
+            assertHeight4(sizedBit, 20, basicSolutionSupplier);
+        }
+
+        @Test
+        void height5() throws ExecutionException, InterruptedException {
+            int width = 2;
+            int height = 5;
+            SizedBit sizedBit = new SizedBit(width, height);
+            BiFunction<Field, SolutionFilter, BasicSolutions> basicSolutionSupplier = (field, solutionFilter) -> {
+                ColumnSmallField maxOuterBoard = InOutPairField.createMaxOuterBoard(sizedBit, field);
+                return createFilterOnDemandBasicSolutions(sizedBit, maxOuterBoard, solutionFilter);
+            };
+            assertHeight5(sizedBit, 20, basicSolutionSupplier);
+        }
+    }
+
+
+
+
+
+        /*
+
+
+
+
+
+
+
+
+    @Nested
+    class MappedRandomTestCase {
         @Test
         void height4() throws ExecutionException, InterruptedException {
             int width = 3;
@@ -253,8 +524,6 @@ class PackSearcherTest {
             TaskResultHelper taskResultHelper = new Field4x10MinoPackingHelper();
 
             for (int count = 0; count < 20; count++) {
-                BasicSolutions basicSolutions = createMappedBasicSolutions(sizedBit);
-
                 // Field
                 int maxDepth = randoms.nextIntClosed(3, 6);
                 Field initField = randoms.field(height, maxDepth);
@@ -262,6 +531,65 @@ class PackSearcherTest {
                 SolutionFilter solutionFilter = createSRSSolutionFilter(sizedBit, initField);
 
                 // Pack
+                BasicSolutions basicSolutions = createMappedBasicSolutions(sizedBit);
+                PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
+                List<Result> results = searcher.toList();
+
+                // Possible
+                HashSet<Blocks> possiblePieces = new HashSet<>();
+                for (Result result : results) {
+                    // result to possible pieces
+                    List<OperationWithKey> operationWithKeys = result.getMemento().getOperationsStream(width).collect(Collectors.toList());
+                    Set<LongBlocks> sets = new BuildUpStream(reachable, height).existsValidBuildPattern(initField, operationWithKeys)
+                            .map(keys -> keys.stream().map(OperationWithKey::getMino).map(Mino::getBlock))
+                            .map(LongBlocks::new)
+                            .collect(Collectors.toSet());
+                    possiblePieces.addAll(sets);
+                }
+
+                // Checker
+                PerfectValidator validator = new PerfectValidator();
+                CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
+
+                // Assert generator
+                BlocksGenerator generator = createPiecesGenerator(maxDepth);
+                for (Blocks pieces : generator) {
+                    List<Block> blocks = pieces.getBlockList();
+                    boolean check = checker.check(initField, blocks, candidate, height, maxDepth);
+                    assertThat(possiblePieces.contains(pieces))
+                            .as(blocks.toString())
+                            .isEqualTo(check);
+                }
+            }
+        }
+
+        @Test
+
+    }
+
+    @Nested
+    class OnDemandRandomTestCase {
+        @Test
+        void height4() throws ExecutionException, InterruptedException {
+            int width = 3;
+            int height = 4;
+            SizedBit sizedBit = new SizedBit(width, height);
+            Randoms randoms = new Randoms();
+
+            Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
+            LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
+
+            TaskResultHelper taskResultHelper = new Field4x10MinoPackingHelper();
+
+            for (int count = 0; count < 20; count++) {
+                // Field
+                int maxDepth = randoms.nextIntClosed(3, 6);
+                Field initField = randoms.field(height, maxDepth);
+                List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(sizedBit, initField);
+                SolutionFilter solutionFilter = createSRSSolutionFilter(sizedBit, initField);
+
+                // Pack
+                BasicSolutions basicSolutions = createOnDemandBasicSolutions(sizedBit);
                 PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
                 List<Result> results = searcher.toList();
 
@@ -306,8 +634,6 @@ class PackSearcherTest {
             TaskResultHelper taskResultHelper = new BasicMinoPackingHelper();
 
             for (int count = 0; count < 20; count++) {
-                BasicSolutions basicSolutions = createMappedBasicSolutions(sizedBit);
-
                 // Field
                 int maxDepth = randoms.nextIntClosed(3, 6);
                 Field initField = randoms.field(height, maxDepth);
@@ -315,6 +641,62 @@ class PackSearcherTest {
                 SolutionFilter solutionFilter = createSRSSolutionFilter(sizedBit, initField);
 
                 // Pack
+                BasicSolutions basicSolutions = createOnDemandBasicSolutions(sizedBit);
+                PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
+                List<Result> results = searcher.toList();
+
+                // Possible
+                HashSet<Blocks> possiblePieces = new HashSet<>();
+                for (Result result : results) {
+                    // result to possible pieces
+                    List<OperationWithKey> operationWithKeys = result.getMemento().getOperationsStream(width).collect(Collectors.toList());
+                    Set<LongBlocks> sets = new BuildUpStream(reachable, height).existsValidBuildPattern(initField, operationWithKeys)
+                            .map(keys -> keys.stream().map(OperationWithKey::getMino).map(Mino::getBlock))
+                            .map(LongBlocks::new)
+                            .collect(Collectors.toSet());
+                    possiblePieces.addAll(sets);
+                }
+
+                // Checker
+                PerfectValidator validator = new PerfectValidator();
+                CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
+
+                // Assert generator
+                BlocksGenerator generator = createPiecesGenerator(maxDepth);
+                for (Blocks pieces : generator) {
+                    List<Block> blocks = pieces.getBlockList();
+                    boolean check = checker.check(initField, blocks, candidate, height, maxDepth);
+                    assertThat(possiblePieces.contains(pieces))
+                            .as(blocks.toString())
+                            .isEqualTo(check);
+                }
+            }
+        }
+    }
+
+    @Nested
+    class OnDemandRandomTestCase {
+        @Test
+        void height4() throws ExecutionException, InterruptedException {
+            int width = 3;
+            int height = 4;
+            SizedBit sizedBit = new SizedBit(width, height);
+            Randoms randoms = new Randoms();
+
+            Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
+            LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
+
+            TaskResultHelper taskResultHelper = new Field4x10MinoPackingHelper();
+
+            for (int count = 0; count < 20; count++) {
+                // Field
+                int maxDepth = randoms.nextIntClosed(3, 6);
+                Field initField = randoms.field(height, maxDepth);
+                List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(sizedBit, initField);
+                SolutionFilter solutionFilter = createSRSSolutionFilter(sizedBit, initField);
+
+                // Pack
+                BasicSolutions basicSolutions = createOnDemandBasicSolutions(sizedBit);
                 PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
                 List<Result> results = searcher.toList();
 
@@ -346,18 +728,168 @@ class PackSearcherTest {
             }
         }
 
-        private BlocksGenerator createPiecesGenerator(int maxDepth) {
-            switch (maxDepth) {
-                case 3:
-                    return new BlocksGenerator("*, *p2");
-                case 4:
-                    return new BlocksGenerator("*, *p3");
-                case 5:
-                    return new BlocksGenerator("*, *p4");
-                case 6:
-                    return new BlocksGenerator("*, *p5");
+        @Test
+        void height5() throws ExecutionException, InterruptedException {
+            int width = 2;
+            int height = 5;
+            SizedBit sizedBit = new SizedBit(width, height);
+            Randoms randoms = new Randoms();
+
+            Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
+            LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
+
+            TaskResultHelper taskResultHelper = new BasicMinoPackingHelper();
+
+            for (int count = 0; count < 20; count++) {
+                // Field
+                int maxDepth = randoms.nextIntClosed(3, 6);
+                Field initField = randoms.field(height, maxDepth);
+                List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(sizedBit, initField);
+                SolutionFilter solutionFilter = createSRSSolutionFilter(sizedBit, initField);
+
+                // Pack
+                BasicSolutions basicSolutions = createOnDemandBasicSolutions(sizedBit);
+                PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
+                List<Result> results = searcher.toList();
+
+                // Possible
+                HashSet<Blocks> possiblePieces = new HashSet<>();
+                for (Result result : results) {
+                    // result to possible pieces
+                    List<OperationWithKey> operationWithKeys = result.getMemento().getOperationsStream(width).collect(Collectors.toList());
+                    Set<LongBlocks> sets = new BuildUpStream(reachable, height).existsValidBuildPattern(initField, operationWithKeys)
+                            .map(keys -> keys.stream().map(OperationWithKey::getMino).map(Mino::getBlock))
+                            .map(LongBlocks::new)
+                            .collect(Collectors.toSet());
+                    possiblePieces.addAll(sets);
+                }
+
+                // Checker
+                PerfectValidator validator = new PerfectValidator();
+                CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
+
+                // Assert generator
+                BlocksGenerator generator = createPiecesGenerator(maxDepth);
+                for (Blocks pieces : generator) {
+                    List<Block> blocks = pieces.getBlockList();
+                    boolean check = checker.check(initField, blocks, candidate, height, maxDepth);
+                    assertThat(possiblePieces.contains(pieces))
+                            .as(blocks.toString())
+                            .isEqualTo(check);
+                }
             }
-            throw new UnsupportedOperationException();
         }
     }
+
+    @Nested
+    class LimitOnDemandRandomTestCase {
+        @Test
+        void height4() throws ExecutionException, InterruptedException {
+            int width = 3;
+            int height = 4;
+            SizedBit sizedBit = new SizedBit(width, height);
+            Randoms randoms = new Randoms();
+
+            Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
+            LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
+
+            TaskResultHelper taskResultHelper = new Field4x10MinoPackingHelper();
+
+            for (int count = 0; count < 20; count++) {
+                // Field
+                int maxDepth = randoms.nextIntClosed(3, 6);
+                Field initField = randoms.field(height, maxDepth);
+                List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(sizedBit, initField);
+                SolutionFilter solutionFilter = createSRSSolutionFilter(sizedBit, initField);
+
+                // Pack
+                ColumnSmallField maxOuterBoard = InOutPairField.createMaxOuterBoard(sizedBit, initField);
+                BasicSolutions basicSolutions = createOnDemandBasicSolutions(sizedBit, maxOuterBoard);
+                PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
+                List<Result> results = searcher.toList();
+
+                // Possible
+                HashSet<Blocks> possiblePieces = new HashSet<>();
+                for (Result result : results) {
+                    // result to possible pieces
+                    List<OperationWithKey> operationWithKeys = result.getMemento().getOperationsStream(width).collect(Collectors.toList());
+                    Set<LongBlocks> sets = new BuildUpStream(reachable, height).existsValidBuildPattern(initField, operationWithKeys)
+                            .map(keys -> keys.stream().map(OperationWithKey::getMino).map(Mino::getBlock))
+                            .map(LongBlocks::new)
+                            .collect(Collectors.toSet());
+                    possiblePieces.addAll(sets);
+                }
+
+                // Checker
+                PerfectValidator validator = new PerfectValidator();
+                CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
+
+                // Assert generator
+                BlocksGenerator generator = createPiecesGenerator(maxDepth);
+                for (Blocks pieces : generator) {
+                    List<Block> blocks = pieces.getBlockList();
+                    boolean check = checker.check(initField, blocks, candidate, height, maxDepth);
+                    assertThat(possiblePieces.contains(pieces))
+                            .as(blocks.toString())
+                            .isEqualTo(check);
+                }
+            }
+        }
+
+        @Test
+        void height5() throws ExecutionException, InterruptedException {
+            int width = 2;
+            int height = 5;
+            SizedBit sizedBit = new SizedBit(width, height);
+            Randoms randoms = new Randoms();
+
+            Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
+            LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
+
+            TaskResultHelper taskResultHelper = new BasicMinoPackingHelper();
+
+            for (int count = 0; count < 20; count++) {
+                // Field
+                int maxDepth = randoms.nextIntClosed(3, 6);
+                Field initField = randoms.field(height, maxDepth);
+                List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(sizedBit, initField);
+                SolutionFilter solutionFilter = createSRSSolutionFilter(sizedBit, initField);
+
+                // Pack
+                ColumnSmallField maxOuterBoard = InOutPairField.createMaxOuterBoard(sizedBit, initField);
+                BasicSolutions basicSolutions = createOnDemandBasicSolutions(sizedBit, maxOuterBoard);
+                PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
+                List<Result> results = searcher.toList();
+
+                // Possible
+                HashSet<Blocks> possiblePieces = new HashSet<>();
+                for (Result result : results) {
+                    // result to possible pieces
+                    List<OperationWithKey> operationWithKeys = result.getMemento().getOperationsStream(width).collect(Collectors.toList());
+                    Set<LongBlocks> sets = new BuildUpStream(reachable, height).existsValidBuildPattern(initField, operationWithKeys)
+                            .map(keys -> keys.stream().map(OperationWithKey::getMino).map(Mino::getBlock))
+                            .map(LongBlocks::new)
+                            .collect(Collectors.toSet());
+                    possiblePieces.addAll(sets);
+                }
+
+                // Checker
+                PerfectValidator validator = new PerfectValidator();
+                CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
+
+                // Assert generator
+                BlocksGenerator generator = createPiecesGenerator(maxDepth);
+                for (Blocks pieces : generator) {
+                    List<Block> blocks = pieces.getBlockList();
+                    boolean check = checker.check(initField, blocks, candidate, height, maxDepth);
+                    assertThat(possiblePieces.contains(pieces))
+                            .as(blocks.toString())
+                            .isEqualTo(check);
+                }
+            }
+        }
+    }
+
+
+*/
 }

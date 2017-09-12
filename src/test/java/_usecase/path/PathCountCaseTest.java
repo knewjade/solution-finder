@@ -162,7 +162,6 @@ class PathCountCaseTest extends PathUseCaseBaseTest {
                 .contains(Messages.useHold());
     }
 
-    @Disabled
     @Test
     @Tag("long")
     void pattern7() throws Exception {
