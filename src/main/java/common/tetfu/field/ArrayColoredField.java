@@ -7,6 +7,7 @@ import common.tetfu.common.ColorType;
 
 import java.util.Arrays;
 
+// TODO: write unittest
 public class ArrayColoredField implements ColoredField {
     public static final int FIELD_WIDTH = 10;
     private static final ColorConverter converter = new ColorConverter();
@@ -119,7 +120,6 @@ public class ArrayColoredField implements ColoredField {
         return true;
     }
 
-    // TODO: write unittest
     @Override
     public boolean isPerfect() {
         for (short[] line : field)

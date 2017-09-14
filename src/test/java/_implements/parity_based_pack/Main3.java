@@ -6,6 +6,7 @@ import _implements.parity_based_pack.step1.EstimateBuilder;
 import _implements.parity_based_pack.step2.FullLimitedMino;
 import _implements.parity_based_pack.step2.PositionLimitParser;
 import _implements.parity_based_pack.step3.CrossBuilder;
+import common.datastore.BlockCounter;
 import common.parser.OperationWithKeyInterpreter;
 import lib.Stopwatch;
 import common.buildup.BuildUp;
@@ -270,7 +271,7 @@ public class Main3 {
         LockedReachableThreadLocal threadLocal = new LockedReachableThreadLocal(maxClearLine);
 
         ParityField parityField = new ParityField(field);
-        BlockCounterMap blockCounter = new BlockCounterMap(usedBlocks);
+        BlockCounter blockCounter = new BlockCounter(usedBlocks);
         ColumnParityLimitation limitation = new ColumnParityLimitation(blockCounter, parityField, maxClearLine);
 
 //        System.out.println(parityField);
@@ -355,10 +356,11 @@ public class Main3 {
             this.isDeleted = isDeleted;
             this.operations = operations;
 
-            BlockCounterMap blockCounter = new BlockCounterMap(blocks);
+            BlockCounter blockCounter = new BlockCounter(blocks);
+            EnumMap<Block, Integer> map = blockCounter.getEnumMap();
             boolean isDouble = false;
             for (Block block : Block.values()) {
-                if (2 <= blockCounter.getCount(block))
+                if (2 <= map.getOrDefault(block, 0))
                     isDouble = true;
             }
             this.isDouble = isDouble;

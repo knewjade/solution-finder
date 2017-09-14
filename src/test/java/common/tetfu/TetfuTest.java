@@ -44,6 +44,72 @@ import static core.mino.Block.L;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class TetfuTest {
+    @Test
+    void removeDomainData() {
+        // http://fumen.zui.jp/?
+        assertThat(Tetfu.removeDomainData("http://fumen.zui.jp/?v115@vhAAgH")).isEqualTo("v115@vhAAgH");
+        assertThat(Tetfu.removeDomainData("http://fumen.zui.jp/?m115@vhAAgH")).isEqualTo("m115@vhAAgH");
+        assertThat(Tetfu.removeDomainData("http://fumen.zui.jp/?d115@vhAAgH")).isEqualTo("d115@vhAAgH");
+
+        // fumen.zui.jp/?
+        assertThat(Tetfu.removeDomainData("fumen.zui.jp/?v114@vhAAgH")).isEqualTo("v114@vhAAgH");
+        assertThat(Tetfu.removeDomainData("fumen.zui.jp/?m114@vhAAgH")).isEqualTo("m114@vhAAgH");
+        assertThat(Tetfu.removeDomainData("fumen.zui.jp/?d114@vhAAgH")).isEqualTo("d114@vhAAgH");
+
+        // http://harddrop.com/fumen/?
+        assertThat(Tetfu.removeDomainData("http://harddrop.com/fumen/?v113@vhAAgH")).isEqualTo("v113@vhAAgH");
+        assertThat(Tetfu.removeDomainData("http://harddrop.com/fumen/?m113@vhAAgH")).isEqualTo("m113@vhAAgH");
+        assertThat(Tetfu.removeDomainData("http://harddrop.com/fumen/?d113@vhAAgH")).isEqualTo("d113@vhAAgH");
+
+        // harddrop.com/fumen/?
+        assertThat(Tetfu.removeDomainData("harddrop.com/fumen/?v115@vhAAgH")).isEqualTo("v115@vhAAgH");
+        assertThat(Tetfu.removeDomainData("harddrop.com/fumen/?m115@vhAAgH")).isEqualTo("m115@vhAAgH");
+        assertThat(Tetfu.removeDomainData("harddrop.com/fumen/?d115@vhAAgH")).isEqualTo("d115@vhAAgH");
+
+        // https://punsyuko.com/fumen/#
+        assertThat(Tetfu.removeDomainData("https://punsyuko.com/fumen/#v115@vhAAgH")).isEqualTo("v115@vhAAgH");
+        assertThat(Tetfu.removeDomainData("https://punsyuko.com/fumen/#m115@vhAAgH")).isEqualTo("m115@vhAAgH");
+        assertThat(Tetfu.removeDomainData("https://punsyuko.com/fumen/#d115@vhAAgH")).isEqualTo("d115@vhAAgH");
+
+        // punsyuko.com/fumen/#
+        assertThat(Tetfu.removeDomainData("punsyuko.com/fumen/#v115@vhAAgH")).isEqualTo("v115@vhAAgH");
+        assertThat(Tetfu.removeDomainData("punsyuko.com/fumen/#m115@vhAAgH")).isEqualTo("m115@vhAAgH");
+        assertThat(Tetfu.removeDomainData("punsyuko.com/fumen/#d115@vhAAgH")).isEqualTo("d115@vhAAgH");
+
+        // direct
+        assertThat(Tetfu.removeDomainData("v115@vhAAgH")).isEqualTo("v115@vhAAgH");
+        assertThat(Tetfu.removeDomainData("m115@vhAAgH")).isEqualTo("m115@vhAAgH");
+        assertThat(Tetfu.removeDomainData("d115@vhAAgH")).isEqualTo("d115@vhAAgH");
+    }
+
+    @Test
+    void removePrefixData() {
+        // v115
+        assertThat(Tetfu.removePrefixData("v115@vhAAgH")).isEqualTo("vhAAgH");
+        assertThat(Tetfu.removePrefixData("m115@vhAAgH")).isEqualTo("vhAAgH");
+        assertThat(Tetfu.removePrefixData("d115@vhAAgH")).isEqualTo("vhAAgH");
+
+        // v114
+        assertThat(Tetfu.removePrefixData("v114@vhAAgH")).isNull();
+        assertThat(Tetfu.removePrefixData("m114@vhAAgH")).isNull();
+        ;
+        assertThat(Tetfu.removePrefixData("d114@vhAAgH")).isNull();
+        ;
+    }
+
+    @Test
+    void isDataLater115() {
+        // v115
+        assertThat(Tetfu.isDataLater115("v115@vhAAgH")).isTrue();
+        assertThat(Tetfu.isDataLater115("m115@vhAAgH")).isTrue();
+        assertThat(Tetfu.isDataLater115("d115@vhAAgH")).isTrue();
+
+        // v114
+        assertThat(Tetfu.isDataLater115("v114@vhAAgH")).isFalse();
+        assertThat(Tetfu.isDataLater115("m114@vhAAgH")).isFalse();
+        assertThat(Tetfu.isDataLater115("d114@vhAAgH")).isFalse();
+    }
+
     private static void assertField(ColoredField actual, ColoredField expected) {
         for (int y = 0; y < 24; y++)
             for (int x = 0; x < 10; x++)

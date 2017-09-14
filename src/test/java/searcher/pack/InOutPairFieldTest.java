@@ -169,6 +169,28 @@ class InOutPairFieldTest {
     }
 
     @Test
+    void createMaxOuterBoard3x4_2() {
+        Field field = FieldFactory.createField("" +
+                "___X__X_X_" +
+                "__X__XXXX_" +
+                "_X__XX_XX_" +
+                "X___X__X_X"
+        );
+        int width = 3;
+        int height = 4;
+        SizedBit sizedBit = new SizedBit(width, height);
+
+        ColumnSmallField maxOuterBoard = InOutPairField.createMaxOuterBoard(sizedBit, field);
+        ColumnSmallField expects = ColumnFieldFactory.createField("" +
+                "______" +
+                "_____X" +
+                "____XX" +
+                "____X_", height);
+
+        assertThat(maxOuterBoard).isEqualTo(expects);
+    }
+
+    @Test
     void createMaxOuterBoard2x5() {
         Field field = FieldFactory.createField("" +
                 "____X___X_" +

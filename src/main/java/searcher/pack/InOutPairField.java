@@ -4,6 +4,9 @@ import core.column_field.ColumnField;
 import core.column_field.ColumnFieldFactory;
 import core.column_field.ColumnSmallField;
 import core.field.Field;
+import core.field.FieldFactory;
+import core.field.FieldView;
+import core.field.SmallField;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,27 +15,31 @@ public class InOutPairField {
     public static ColumnSmallField createMaxOuterBoard(SizedBit sizedBit, Field initField) {
         int width = sizedBit.getWidth();
         int height = sizedBit.getHeight();
-        long maxOuterBoard = createMaxOuterBoard(width, height, initField, 9 / width);
-        return ColumnFieldFactory.createField(maxOuterBoard);
+        return createMaxOuterBoard(width, height, initField);
     }
 
     public static ColumnSmallField createMaxOuterBoard(int width, int height, Field initField) {
-        long maxOuterBoard = createMaxOuterBoard(width, height, initField, 9 / width);
-        return ColumnFieldFactory.createField(maxOuterBoard);
-    }
+        ColumnSmallField maxOuterBoard = ColumnFieldFactory.createField();
 
-    private static long createMaxOuterBoard(int width, int height, Field initField, int max) {
-        Field field = initField.freeze(height);
-
-        long board = Long.MAX_VALUE;
-        for (int count = 0; count < max; count++) {
-            InOutPairField pairField = parseLast(field, width, height);
-            ColumnField outerField = pairField.getOuterField();
-            board &= outerField.getBoard(0);
-            field.slideLeft(width);
+        // Outerをブロックで埋める
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < 3; x++) {
+                maxOuterBoard.setBlock(width + x, y, height);
+            }
         }
 
-        return board;
+        // 対応部分にブロックがひとつでもないときは、Outerからブロックを削除
+        for (int startX = width; startX < 10; startX += width) {
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < 3; x++) {
+                    int x1 = startX + x;
+                    if (x1 < 10 && initField.isEmpty(x1, y))
+                        maxOuterBoard.removeBlock(width + x, y, height);
+                }
+            }
+        }
+
+        return maxOuterBoard;
     }
 
     public static List<InOutPairField> createInOutPairFields(SizedBit sizedBit, Field initField) {

@@ -140,6 +140,16 @@ class RandomsTest {
         }
     }
 
+    @Test
+    void keys() throws Exception {
+        Randoms randoms = new Randoms();
+        long mask = 0b111111111011111111101111111110111111111011111111101111111110L;
+        for (int count = 0; count < 10000; count++) {
+            long key = randoms.key();
+            assertThat(key & mask).isEqualTo(0L);
+        }
+    }
+
     @Nested
     class Blocks11 {
         boolean isUnique(List<Block> list) {

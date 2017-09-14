@@ -7,13 +7,16 @@ import _implements.parity_based_pack.step2.FullLimitedMino;
 import _implements.parity_based_pack.step2.PositionLimitParser;
 import _implements.parity_based_pack.step3.CrossBuilder;
 import common.buildup.BuildUp;
+import common.datastore.BlockCounter;
 import common.datastore.OperationWithKey;
 import concurrent.LockedReachableThreadLocal;
 import core.field.Field;
 import core.mino.Block;
 import core.mino.MinoFactory;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -39,7 +42,7 @@ public class ParityBasedPackSearcher {
         LockedReachableThreadLocal threadLocal = new LockedReachableThreadLocal(maxClearLine);
 
         ParityField parityField = new ParityField(field);
-        BlockCounterMap blockCounter = new BlockCounterMap(usingBlocks);
+        BlockCounter blockCounter = new BlockCounter(usingBlocks);
         ColumnParityLimitation limitation = new ColumnParityLimitation(blockCounter, parityField, maxClearLine);
 
         return limitation.enumerate().parallelStream()

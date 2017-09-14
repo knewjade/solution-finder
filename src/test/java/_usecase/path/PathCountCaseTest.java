@@ -3,12 +3,18 @@ package _usecase.path;
 import _usecase.Log;
 import _usecase.RunnerHelper;
 import entry.EntryPointMain;
+import lib.BooleanWalker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -105,7 +111,7 @@ class PathCountCaseTest extends PathUseCaseBaseTest {
 
         String command = String.format("path -c 6 -p *p7 -t %s", tetfu);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
-
+        System.out.println(log.getOutput());
         assertThat(log.getReturnCode()).isEqualTo(0);
 
         assertThat(log.getOutput())
@@ -163,7 +169,6 @@ class PathCountCaseTest extends PathUseCaseBaseTest {
     }
 
     @Test
-    @Tag("long")
     void pattern7() throws Exception {
             /*
             __XXXXXXXX
@@ -211,5 +216,29 @@ class PathCountCaseTest extends PathUseCaseBaseTest {
                 .contains(Messages.uniqueCount(3))
                 .contains(Messages.minimalCount(3))
                 .contains(Messages.useHold());
+    }
+
+    @Test
+    void name() {
+        long[] l = new long[6];
+        for (int index = 0; index < l.length; index++) {
+            l[index] = 1L << (index * 10);
+        }
+        String collect = BooleanWalker.walk(6)
+                .map(booleans -> {
+                    assert booleans.size() == 6;
+                    long key = 0L;
+                    for (int index = 0; index < booleans.size(); index++) {
+                        if (!booleans.get(index)) {
+                            key += l[index];
+                        }
+                    }
+                    return String.format("%dL", key);
+                })
+                .collect(Collectors.joining("," + System.lineSeparator()));
+        System.out.println("[");
+        System.out.println(collect);
+        System.out.println("]");
+
     }
 }

@@ -18,6 +18,7 @@ import core.srs.Rotate;
 import exceptions.FinderParseException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,26 +34,26 @@ public class Tetfu {
     public static final int TETFU_FIELD_BLOCKS = TETFU_MAX_HEIGHT * TETFU_FIELD_WIDTH;
     private static final int FILED_WIDTH = 10;
 
-    // TODO: unittest: write
+    private static final List<String> SUPPORTED_DOMAINS = Arrays.asList(
+            "http://fumen.zui.jp/?",
+            "fumen.zui.jp/?",
+            "http://harddrop.com/fumen/?",
+            "harddrop.com/fumen/?",
+            "https://punsyuko.com/fumen/#",
+            "punsyuko.com/fumen/#"
+    );
+
     public static String removeDomainData(String str) {
-        if (str.startsWith("http://fumen.zui.jp/?")) {
-            return str.substring(21);
-        } else if (str.startsWith("fumen.zui.jp/?")) {
-            return str.substring(14);
-        } else if (str.startsWith("http://harddrop.com/fumen/?")) {
-            return str.substring(27);
-        } else if (str.startsWith("harddrop.com/fumen/?")) {
-            return str.substring(20);
-        }
+        for (String domain : SUPPORTED_DOMAINS)
+            if (str.startsWith(domain))
+                return str.substring(domain.length());
         return str;
     }
 
-    // TODO: unittest: write
     public static boolean isDataLater115(String data) {
         return removePrefixData(data) != null;
     }
 
-    // TODO: unittest: write
     public static String removePrefixData(String data) {
         if (data.startsWith("v115@") || data.startsWith("d115@") || data.startsWith("m115@"))
             return data.substring(5);
