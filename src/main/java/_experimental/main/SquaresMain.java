@@ -47,8 +47,8 @@ public class SquaresMain {
 
     public static void main(String[] args) throws ExecutionException, InterruptedException, IOException {
         // Specify square size
-        int squareHeight = 6;
-        int squareWidth = 6;
+        int squareHeight = 4;
+        int squareWidth = 10;
 
         // ============================
 
@@ -70,11 +70,15 @@ public class SquaresMain {
         Predicate<ColumnField> memorizedPredicate = (columnField) -> true;
         OnDemandBasicSolutions basicSolutions = new OnDemandBasicSolutions(separableMinos, sizedBit, memorizedPredicate);
 
+        System.out.println("packing");
+
         TaskResultHelper taskResultHelper = getMinoPackingHelper(squareHeight);
         LockedReachableThreadLocal lockedReachableThreadLocal = new LockedReachableThreadLocal(squareHeight);
         SolutionFilter solutionFilter = new SRSValidSolutionFilter(field, lockedReachableThreadLocal, sizedBit);
         PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
         List<Result> results = searcher.toList();
+
+        System.out.println("generating html");
 
         Map<BlockCounter, List<Result>> eachBlockCounter = results.stream()
                 .filter(result -> {
