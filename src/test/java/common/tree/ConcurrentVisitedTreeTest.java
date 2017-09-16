@@ -44,11 +44,11 @@ class ConcurrentVisitedTreeTest {
 
             Set<LongBlocks> success = Collections.synchronizedSet(new HashSet<>());
             Set<LongBlocks> failed = Collections.synchronizedSet(new HashSet<>());
-            List<Blocks> blocksList = generator.stream().collect(Collectors.toList());
+            List<Blocks> blocksList = generator.blocksStream().collect(Collectors.toList());
             blocksList.parallelStream()
                     .forEach(pieces -> {
                         boolean flag = randoms.nextBoolean();
-                        List<Block> blocks = pieces.getBlockList();
+                        List<Block> blocks = pieces.getBlocks();
                         tree.set(flag, blocks);
 
                         LongBlocks longPieces = new LongBlocks(blocks);
@@ -61,14 +61,14 @@ class ConcurrentVisitedTreeTest {
 
             boolean isSucceed = success.stream()
                     .allMatch(pieces -> {
-                        List<Block> blocks = pieces.getBlockList();
+                        List<Block> blocks = pieces.getBlocks();
                         return tree.isSucceed(blocks) == ConcurrentVisitedTree.SUCCEED;
                     });
             assertThat(isSucceed).isTrue();
 
             boolean isFailed = failed.stream()
                     .allMatch(pieces -> {
-                        List<Block> blocks = pieces.getBlockList();
+                        List<Block> blocks = pieces.getBlocks();
                         return tree.isSucceed(blocks) == ConcurrentVisitedTree.FAILED;
                     });
             assertThat(isFailed).isTrue();
@@ -86,11 +86,11 @@ class ConcurrentVisitedTreeTest {
 
             Set<LongBlocks> success = Collections.synchronizedSet(new HashSet<>());
             Set<LongBlocks> failed = Collections.synchronizedSet(new HashSet<>());
-            List<Blocks> blocksList = generator.stream().collect(Collectors.toList());
+            List<Blocks> blocksList = generator.blocksStream().collect(Collectors.toList());
             blocksList.parallelStream()
                     .forEach(pieces -> {
                         boolean flag = randoms.nextBoolean();
-                        List<Block> blocks = pieces.getBlockList();
+                        List<Block> blocks = pieces.getBlocks();
                         tree.set(flag, blocks);
 
                         LongBlocks longPieces = new LongBlocks(blocks);
@@ -103,14 +103,14 @@ class ConcurrentVisitedTreeTest {
 
             boolean isSucceed = success.stream()
                     .allMatch(pieces -> {
-                        List<Block> blocks = pieces.getBlockList();
+                        List<Block> blocks = pieces.getBlocks();
                         return tree.isSucceed(blocks) == ConcurrentVisitedTree.SUCCEED;
                     });
             assertThat(isSucceed).isTrue();
 
             boolean isFailed = failed.stream()
                     .allMatch(pieces -> {
-                        List<Block> blocks = pieces.getBlockList();
+                        List<Block> blocks = pieces.getBlocks();
                         return tree.isSucceed(blocks) == ConcurrentVisitedTree.FAILED;
                     });
             assertThat(isFailed).isTrue();

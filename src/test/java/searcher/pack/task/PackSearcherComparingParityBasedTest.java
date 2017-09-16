@@ -45,7 +45,7 @@ class PackSearcherComparingParityBasedTest {
         }
 
         public List<Block> getBlocks() {
-            return blocks.getBlockList();
+            return blocks.getBlocks();
         }
 
         public long getCount() {

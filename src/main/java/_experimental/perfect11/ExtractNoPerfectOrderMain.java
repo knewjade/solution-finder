@@ -44,12 +44,12 @@ public class ExtractNoPerfectOrderMain {
                                 .map(BlockInterpreter::parse10)
                                 .map(LongBlocks::new)
                                 .filter(longPieces -> {
-                                    List<Block> blocks = longPieces.getBlockList();
+                                    List<Block> blocks = longPieces.getBlocks();
                                     return perfects.parallelStream()
                                             .noneMatch(operationWithKeys -> BuildUp.existsValidByOrder(field, operationWithKeys.stream(), blocks, 4, reachableThreadLocal.get()));
                                 })
                                 .filter(longPieces -> {
-                                    List<Block> blocks = longPieces.getBlockList();
+                                    List<Block> blocks = longPieces.getBlocks();
                                     return OrderLookup.forwardBlocks(blocks, 10).stream()
                                             .noneMatch(forward -> perfects.parallelStream()
                                                     .anyMatch(operationWithKeys -> BuildUp.existsValidByOrder(field, operationWithKeys.stream(), forward.toList(), 4, reachableThreadLocal.get())));
@@ -66,7 +66,7 @@ public class ExtractNoPerfectOrderMain {
         File outputFile = new File("output/order10noperfect.csv");
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), StandardCharsets.UTF_8))) {
             for (Blocks pieces : notPerfectOrders) {
-                String blocks = pieces.getBlockStream().map(Block::getName).collect(Collectors.joining());
+                String blocks = pieces.blockStream().map(Block::getName).collect(Collectors.joining());
                 try {
                     writer.write(blocks);
                     writer.newLine();

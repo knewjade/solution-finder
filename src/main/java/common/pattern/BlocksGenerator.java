@@ -2,15 +2,17 @@ package common.pattern;
 
 
 import common.SyntaxException;
+import common.datastore.BlockCounter;
 import common.datastore.pieces.Blocks;
 
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class BlocksGenerator implements Iterable<Blocks> {
+public class BlocksGenerator {
     public static void verify(String pattern) throws SyntaxException {
         verify(Collections.singletonList(pattern));
     }
@@ -47,14 +49,14 @@ public class BlocksGenerator implements Iterable<Blocks> {
         }
     }
 
-    private final List<String> patterns;
+    private final List<List<PatternElement>> elementsList;
 
     public BlocksGenerator(String pattern) {
         this(Collections.singletonList(pattern));
     }
 
     public BlocksGenerator(List<String> patterns) {
-        this.patterns = patterns.stream()
+        this.elementsList = patterns.stream()
                 .map(String::trim)
                 .map(str -> {
                     if (str.startsWith("'") && str.endsWith("'"))
@@ -67,24 +69,42 @@ public class BlocksGenerator implements Iterable<Blocks> {
                     return str;
                 })
                 .map(String::trim)
-                .filter(str -> !str.isEmpty())
+                .filter(pattern -> !pattern.isEmpty())
+                .map(pattern -> {
+                    return Arrays.stream(pattern.split(","))
+                            .map(PatternElement::parseWithoutCheck)
+                            .map(Optional::get)
+                            .collect(Collectors.toList());
+                })
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public Iterator<Blocks> iterator() {
-        return new PiecesIterator(patterns);
-    }
-
     public int getDepth() {
-        return new PiecesIterator(patterns).getDepths();
+        if (elementsList.isEmpty())
+            return 0;
+        return new PiecesStreamBuilder(elementsList.get(0)).getDepths();
     }
 
-    public Stream<Blocks> stream() {
+    public Stream<Blocks> blocksStream() {
         Stream<Blocks> stream = Stream.empty();
-        for (String pattern : patterns)
-            stream = Stream.concat(stream, new PiecesStreamBuilder(pattern).stream());
+        for (List<PatternElement> elements : elementsList)
+            stream = Stream.concat(stream, new PiecesStreamBuilder(elements).blocksStream());
         return stream;
+    }
+
+    public Stream<Blocks> blocksParallelStream() {
+        return blocksStream().parallel();
+    }
+
+    public Stream<BlockCounter> blockCountersStream() {
+        Stream<BlockCounter> stream = Stream.empty();
+        for (List<PatternElement> elements : elementsList)
+            stream = Stream.concat(stream, new PiecesStreamBuilder(elements).blockCountersStream());
+        return stream;
+    }
+
+    public Stream<BlockCounter> blockCountersParallelStream() {
+        return blockCountersStream().parallel();
     }
 }
 

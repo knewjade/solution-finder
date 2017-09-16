@@ -4,7 +4,6 @@ import common.datastore.pieces.LongBlocks;
 import common.datastore.pieces.Blocks;
 import common.pattern.BlocksGenerator;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -45,17 +44,17 @@ public class NormalEnumeratePieces implements EnumeratePiecesCore {
     }
 
     private HashSet<LongBlocks> createJustMinos(AtomicInteger counter) {
-        return generator.stream()
+        return generator.blocksStream()
                 .peek(pieces -> counter.incrementAndGet())
-                .map(Blocks::getBlockStream)
+                .map(Blocks::blockStream)
                 .map(LongBlocks::new)
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
     private HashSet<LongBlocks> createOverMinos(AtomicInteger counter) {
-        return generator.stream()
+        return generator.blocksStream()
                 .peek(pieces -> counter.incrementAndGet())
-                .map(Blocks::getBlockStream)
+                .map(Blocks::blockStream)
                 .map(stream -> stream.limit(maxDepth))
                 .map(LongBlocks::new)
                 .collect(Collectors.toCollection(HashSet::new));

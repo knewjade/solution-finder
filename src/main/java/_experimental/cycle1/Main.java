@@ -15,7 +15,6 @@ import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
-import lib.MyIterables;
 import searcher.pack.memento.MinoFieldMemento;
 import searcher.pack.task.Result;
 
@@ -69,11 +68,11 @@ public class Main {
         ForwardOrderLookUp lookUp = new ForwardOrderLookUp(4, 5);
 
         BlocksGenerator blocksGenerator = new BlocksGenerator("I, *p4");
-        List<Blocks> allBlocks = MyIterables.toList(blocksGenerator);
+        List<Blocks> allBlocks = blocksGenerator.blocksStream().collect(Collectors.toList());
         allBlocks.sort(new PiecesNameComparator());
 
         for (Blocks blocks : allBlocks) {
-            BlockCounter counter = new BlockCounter(blocks.getBlockStream());
+            BlockCounter counter = new BlockCounter(blocks.blockStream());
             Set<Block> holdBlocks = results.stream()
                     .map(Result::getMemento)
                     .filter(memento -> {
@@ -82,14 +81,14 @@ public class Main {
                     })
                     .filter(memento -> {
                         BlockCounter perfectUsingBlockCounter = memento.getSumBlockCounter();
-                        return lookUp.parse(blocks.getBlockList())
+                        return lookUp.parse(blocks.getBlocks())
                                 .map(stream -> stream.limit(4L))
                                 .map(LongBlocks::new)
                                 .filter(longBlocks -> {
-                                    BlockCounter blockCounter = new BlockCounter(longBlocks.getBlockStream());
+                                    BlockCounter blockCounter = new BlockCounter(longBlocks.blockStream());
                                     return perfectUsingBlockCounter.containsAll(blockCounter);
                                 })
-                                .anyMatch(longBlocks -> BuildUp.existsValidByOrder(initField, memento.getOperationsStream(width), longBlocks.getBlockList(), height, reachable));
+                                .anyMatch(longBlocks -> BuildUp.existsValidByOrder(initField, memento.getOperationsStream(width), longBlocks.getBlocks(), height, reachable));
                     })
                     .map(memento -> {
                         BlockCounter blockCounter = memento.getSumBlockCounter();
@@ -98,7 +97,7 @@ public class Main {
                     .map(blockCounter -> blockCounter.getBlocks().get(0))
                     .collect(Collectors.toSet());
 
-            System.out.println(parseToString(blocks.getBlockList(), holdBlocks));
+            System.out.println(parseToString(blocks.getBlocks(), holdBlocks));
 
             cnt++;
             if (!holdBlocks.isEmpty())

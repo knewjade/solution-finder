@@ -15,7 +15,7 @@ class PiecesIterator implements Iterator<Blocks> {
     PiecesIterator(List<String> patterns) {
         this.patterns = patterns;
         this.currentBuilder = new PiecesStreamBuilder(patterns.get(index));
-        this.currentIterator = currentBuilder.stream().iterator();
+        this.currentIterator = currentBuilder.blocksStream().iterator();
         this.index = 1;
     }
 
@@ -33,7 +33,7 @@ class PiecesIterator implements Iterator<Blocks> {
             return currentIterator.next();
 
         this.currentBuilder = new PiecesStreamBuilder(patterns.get(index));
-        this.currentIterator = currentBuilder.stream().iterator();
+        this.currentIterator = currentBuilder.blocksStream().iterator();
         this.index += 1;
 
         return currentIterator.next();

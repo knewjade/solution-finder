@@ -316,13 +316,14 @@ class PackSearcherTest {
 
             // Assert generator
             BlocksGenerator generator = createPiecesGenerator(maxDepth);
-            for (Blocks pieces : generator) {
-                List<Block> blocks = pieces.getBlockList();
-                boolean check = checker.check(initField, blocks, candidate, height, maxDepth);
-                assertThat(possiblePieces.contains(pieces))
-                        .as(blocks.toString())
-                        .isEqualTo(check);
-            }
+            generator.blocksStream()
+                    .forEach(blocks -> {
+                        List<Block> blockList = blocks.getBlocks();
+                        boolean check = checker.check(initField, blockList, candidate, height, maxDepth);
+                        assertThat(possiblePieces.contains(blocks))
+                                .as(blockList.toString())
+                                .isEqualTo(check);
+                    });
         }
     }
 
@@ -369,13 +370,14 @@ class PackSearcherTest {
 
             // Assert generator
             BlocksGenerator generator = createPiecesGenerator(maxDepth);
-            for (Blocks pieces : generator) {
-                List<Block> blocks = pieces.getBlockList();
-                boolean check = checker.check(initField, blocks, candidate, height, maxDepth);
-                assertThat(possiblePieces.contains(pieces))
-                        .as(blocks.toString())
-                        .isEqualTo(check);
-            }
+            generator.blocksStream()
+                    .forEach(blocks -> {
+                        List<Block> blockList = blocks.getBlocks();
+                        boolean check = checker.check(initField, blockList, candidate, height, maxDepth);
+                        assertThat(possiblePieces.contains(blocks))
+                                .as(blockList.toString())
+                                .isEqualTo(check);
+                    });
         }
     }
 

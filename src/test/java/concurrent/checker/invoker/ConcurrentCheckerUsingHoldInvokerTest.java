@@ -22,11 +22,11 @@ import org.junit.jupiter.api.Test;
 import searcher.checker.CheckerUsingHold;
 import searcher.common.validator.PerfectValidator;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -61,10 +61,9 @@ class ConcurrentCheckerUsingHoldInvokerTest {
     }
 
     private List<List<Block>> toBlocksList(BlocksGenerator blocksGenerator) {
-        List<List<Block>> searchingPieces = new ArrayList<>();
-        for (Blocks blocks : blocksGenerator)
-            searchingPieces.add(blocks.getBlockList());
-        return searchingPieces;
+        return blocksGenerator.blocksStream()
+                .map(Blocks::getBlocks)
+                .collect(Collectors.toList());
     }
 
     @Test

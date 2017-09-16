@@ -29,7 +29,7 @@ class Task implements Callable<List<Pair<List<Block>, List<Result>>>> {
         // 探索
         List<Pair<List<Block>, List<Result>>> allResults = new ArrayList<>();
         for (ReadOnlyListBlocks piece : targets) {
-            List<Block> blocks = piece.getBlockList();
+            List<Block> blocks = piece.getBlocks();
             List<Result> results = checkmate.search(obj.field, blocks, candidate, obj.maxClearLine, obj.maxDepth);
             allResults.add(new Pair<>(blocks, results));
         }

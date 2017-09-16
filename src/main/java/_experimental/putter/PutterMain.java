@@ -38,8 +38,8 @@ public class PutterMain {
         PutterUsingHold<Action> putter = new PutterUsingHold<>(minoFactory, validator);
 
         BlocksGenerator generator = new BlocksGenerator("*p4");
-        Set<BlockCounter> blockCounters = generator.stream()
-                .map(pieces -> new BlockCounter(pieces.getBlockStream()))
+        Set<BlockCounter> blockCounters = generator.blocksStream()
+                .map(pieces -> new BlockCounter(pieces.blockStream()))
                 .collect(Collectors.toSet());
 
         int maxClearLine = 4;
@@ -55,8 +55,8 @@ public class PutterMain {
         ConcurrentCheckerUsingHoldInvoker invoker = new ConcurrentCheckerUsingHoldInvoker(executorService, candidateThreadLocal, checkerThreadLocal);
 
         BlocksGenerator blocksGenerator = new BlocksGenerator("*p7");
-        List<List<Block>> searchingPieces = blocksGenerator.stream()
-                .map(Blocks::getBlockList)
+        List<List<Block>> searchingPieces = blocksGenerator.blocksStream()
+                .map(Blocks::getBlocks)
                 .collect(Collectors.toList());
 
         HashMap<Field, Connect> map = new HashMap<>();

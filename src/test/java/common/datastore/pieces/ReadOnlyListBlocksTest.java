@@ -13,7 +13,7 @@ class ReadOnlyListBlocksTest {
     @Test
     void create() throws Exception {
         Blocks blocks = new ReadOnlyListBlocks(Arrays.asList(Block.I, Block.O, Block.J, Block.Z, Block.S, Block.T, Block.L));
-        assertThat(blocks.getBlockList()).containsExactly(
+        assertThat(blocks.getBlocks()).containsExactly(
                 Block.I, Block.O, Block.J, Block.Z, Block.S, Block.T, Block.L
         );
     }
@@ -21,7 +21,7 @@ class ReadOnlyListBlocksTest {
     @Test
     void checkStream() throws Exception {
         Blocks blocks = new ReadOnlyListBlocks(Arrays.asList(Block.S, Block.I, Block.J, Block.T, Block.L, Block.O, Block.Z));
-        assertThat(blocks.getBlockStream()).containsExactly(
+        assertThat(blocks.blockStream()).containsExactly(
                 Block.S, Block.I, Block.J, Block.T, Block.L, Block.O, Block.Z
         );
     }
@@ -34,7 +34,7 @@ class ReadOnlyListBlocksTest {
             int size = randoms.nextInt(1, 22);
             List<Block> blocks = randoms.blocks(size);
             Blocks pieces = new ReadOnlyListBlocks(blocks);
-            assertThat(pieces.getBlockList()).isEqualTo(blocks);
+            assertThat(pieces.getBlocks()).isEqualTo(blocks);
         }
     }
 
@@ -46,7 +46,7 @@ class ReadOnlyListBlocksTest {
             int size = randoms.nextInt(1, 22);
             List<Block> blocks = randoms.blocks(size);
             Blocks pieces = new ReadOnlyListBlocks(blocks);
-            assertThat(pieces.getBlockList()).isEqualTo(blocks);
+            assertThat(pieces.getBlocks()).isEqualTo(blocks);
         }
     }
 
@@ -60,7 +60,7 @@ class ReadOnlyListBlocksTest {
             Blocks readOnlyListBlocks = new ReadOnlyListBlocks(blocks);
             LongBlocks longPieces = new LongBlocks(blocks);
             assertThat(readOnlyListBlocks.equals(longPieces))
-                    .as(longPieces.getBlockList().toString())
+                    .as(longPieces.getBlocks().toString())
                     .isTrue();
         }
     }

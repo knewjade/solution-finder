@@ -3,7 +3,6 @@ package common.datastore;
 import core.mino.Block;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.stream.Stream;
@@ -16,6 +15,10 @@ public class BlockCounter {
     private static final long[] SLIDE_MASK = new long[]{1L, 1L << 8, 1L << 16, 1L << 24, 1L << 32, 1L << 40, 1L << 48};
 
     private final long counter;
+
+    public BlockCounter() {
+        this(0L);
+    }
 
     public BlockCounter(long counter) {
         this.counter = counter;
@@ -44,6 +47,10 @@ public class BlockCounter {
 
     public BlockCounter addAndReturnNew(List<Block> blocks) {
         return new BlockCounter(counter, blocks);
+    }
+
+    public BlockCounter addAndReturnNew(BlockCounter blockCounter) {
+        return new BlockCounter(counter + blockCounter.counter);
     }
 
     // 引く側のブロックをすべて惹かれる側に含まれていること

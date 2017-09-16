@@ -285,7 +285,7 @@ class CheckmateUsingHoldTest {
         // Assertion
         for (Pair<Blocks, Integer> testCase : testCases.subList(0, 10)) {  // TODO: Remove commentout
             // Set test case
-            List<Block> blocks = testCase.getKey().getBlockList();
+            List<Block> blocks = testCase.getKey().getBlocks();
             int expectedCount = testCase.getValue();
 
             // Execute

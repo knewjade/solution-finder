@@ -1,7 +1,6 @@
 package _experimental.mino6;
 
 import common.pattern.BlocksGenerator;
-import lib.MyIterables;
 import common.datastore.Pair;
 import common.datastore.action.Action;
 import common.datastore.pieces.Blocks;
@@ -64,8 +63,8 @@ public class FieldSortMain {
         // 使用する4ミノのリスト
         String pattern = "L, *p4";
         BlocksGenerator generator = new BlocksGenerator(pattern);
-        List<List<Block>> pieces = MyIterables.toList(generator).stream()
-                .map(Blocks::getBlockList)
+        List<List<Block>> pieces = generator.blocksStream()
+                .map(Blocks::getBlocks)
                 .collect(Collectors.toList());
 
         // 探索

@@ -1,7 +1,6 @@
 package common.tree;
 
 import common.datastore.pieces.LongBlocks;
-import common.datastore.pieces.Blocks;
 import common.pattern.BlocksGenerator;
 import core.mino.Block;
 import lib.Randoms;
@@ -84,29 +83,31 @@ class AnalyzeTreeTest {
             AnalyzeTree tree = new AnalyzeTree();
             HashSet<LongBlocks> success = new HashSet<>();
             HashSet<LongBlocks> failed = new HashSet<>();
-            for (Blocks pieces : generator) {
-                boolean flag = randoms.nextBoolean();
-                List<Block> blocks = pieces.getBlockList();
-                tree.set(flag, blocks);
 
-                LongBlocks longPieces = new LongBlocks(blocks);
-                if (flag) {
-                    success.add(longPieces);
-                } else {
-                    failed.add(longPieces);
-                }
-            }
+            generator.blocksStream()
+                    .forEach(blocks -> {
+                        boolean flag = randoms.nextBoolean();
+                        List<Block> blockList = blocks.getBlocks();
+                        tree.set(flag, blockList);
+
+                        LongBlocks longPieces = new LongBlocks(blockList);
+                        if (flag) {
+                            success.add(longPieces);
+                        } else {
+                            failed.add(longPieces);
+                        }
+                    });
 
             boolean isSucceed = success.stream()
                     .allMatch(pieces -> {
-                        List<Block> blocks = pieces.getBlockList();
+                        List<Block> blocks = pieces.getBlocks();
                         return tree.isVisited(blocks) && tree.isSucceed(blocks);
                     });
             assertThat(isSucceed).isTrue();
 
             boolean isFailed = failed.stream()
                     .allMatch(pieces -> {
-                        List<Block> blocks = pieces.getBlockList();
+                        List<Block> blocks = pieces.getBlocks();
                         return tree.isVisited(blocks) && !tree.isSucceed(blocks);
                     });
             assertThat(isFailed).isTrue();
@@ -126,29 +127,30 @@ class AnalyzeTreeTest {
             AnalyzeTree tree = new AnalyzeTree();
             HashSet<LongBlocks> success = new HashSet<>();
             HashSet<LongBlocks> failed = new HashSet<>();
-            for (Blocks pieces : generator) {
-                boolean flag = randoms.nextBoolean();
-                List<Block> blocks = pieces.getBlockList();
-                tree.set(flag, blocks);
+            generator.blocksStream()
+                    .forEach(blocks -> {
+                        boolean flag = randoms.nextBoolean();
+                        List<Block> blockList = blocks.getBlocks();
+                        tree.set(flag, blockList);
 
-                LongBlocks longPieces = new LongBlocks(blocks);
-                if (flag) {
-                    success.add(longPieces);
-                } else {
-                    failed.add(longPieces);
-                }
-            }
+                        LongBlocks longPieces = new LongBlocks(blockList);
+                        if (flag) {
+                            success.add(longPieces);
+                        } else {
+                            failed.add(longPieces);
+                        }
+                    });
 
             boolean isSucceed = success.stream()
                     .allMatch(pieces -> {
-                        List<Block> blocks = pieces.getBlockList();
+                        List<Block> blocks = pieces.getBlocks();
                         return tree.isVisited(blocks) && tree.isSucceed(blocks);
                     });
             assertThat(isSucceed).isTrue();
 
             boolean isFailed = failed.stream()
                     .allMatch(pieces -> {
-                        List<Block> blocks = pieces.getBlockList();
+                        List<Block> blocks = pieces.getBlocks();
                         return tree.isVisited(blocks) && !tree.isSucceed(blocks);
                     });
             assertThat(isFailed).isTrue();

@@ -1,29 +1,17 @@
 package entry.path;
 
 import common.SyntaxException;
-import common.buildup.BuildUpStream;
-import common.datastore.*;
-import common.datastore.pieces.LongBlocks;
-import common.parser.OperationInterpreter;
-import common.parser.OperationTransform;
 import common.pattern.BlocksGenerator;
-import common.tetfu.Tetfu;
-import common.tetfu.TetfuElement;
-import common.tetfu.common.ColorConverter;
-import common.tetfu.common.ColorType;
-import common.tetfu.field.ColoredField;
-import common.tetfu.field.ColoredFieldFactory;
 import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
 import core.field.Field;
-import core.field.FieldFactory;
 import core.field.FieldView;
-import core.mino.Block;
-import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
-import core.srs.Rotate;
 import entry.EntryPoint;
+import entry.path.output.CSVPathOutput;
+import entry.path.output.LinkPathOutput;
+import entry.path.output.PathOutput;
 import exceptions.FinderException;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
@@ -36,19 +24,30 @@ import searcher.pack.calculator.BasicSolutions;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.separable_mino.SeparableMinoFactory;
 import searcher.pack.solutions.FilterOnDemandBasicSolutions;
-import searcher.pack.task.*;
-import searcher.pack.task.Result;
+import searcher.pack.task.BasicMinoPackingHelper;
+import searcher.pack.task.Field4x10MinoPackingHelper;
+import searcher.pack.task.PackSearcher;
+import searcher.pack.task.TaskResultHelper;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class PathEntryPoint implements EntryPoint {
     private static final String LINE_SEPARATOR = System.lineSeparator();
-    private static final String CHARSET = "utf-8";
+    private static final Charset CHARSET = StandardCharsets.UTF_8;
+    private static final StandardOpenOption[] FILE_OPEN_OPTIONS = new StandardOpenOption[]{
+            StandardOpenOption.TRUNCATE_EXISTING,
+            StandardOpenOption.CREATE
+    };
 
     private final PathSettings settings;
     private final BufferedWriter logWriter;
@@ -74,14 +73,10 @@ public class PathEntryPoint implements EntryPoint {
             throw new FinderInitializeException("Cannot write log file: LogFilePath=" + logFilePath);
 
         try {
-            this.logWriter = createBufferedWriter(logFile);
-        } catch (UnsupportedEncodingException | FileNotFoundException e) {
+            this.logWriter = Files.newBufferedWriter(logFile.toPath(), CHARSET, FILE_OPEN_OPTIONS);
+        } catch (IOException e) {
             throw new FinderInitializeException(e);
         }
-    }
-
-    private BufferedWriter createBufferedWriter(File logFile) throws UnsupportedEncodingException, FileNotFoundException {
-        return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile, false), CHARSET));
     }
 
     @Override
@@ -118,41 +113,11 @@ public class PathEntryPoint implements EntryPoint {
         for (String pattern : patterns)
             output("  " + pattern);
 
-        // 出力ファイルが正しく出力できるか確認
-        String extension = getExtension();
-        String outputBaseFilePath = settings.getOutputBaseFilePath();
-        String outputBaseCanonicalPath = getCanonicalPath(outputBaseFilePath);
-        String namePath = getRemoveExtensionFromPath(outputBaseCanonicalPath);
-        if (namePath.isEmpty() || namePath.endsWith(String.valueOf(File.separatorChar)))
-            namePath += "path";
-
-        String outputFilePath = String.format("%s%s", namePath, extension);
-        File outputFile = new File(outputFilePath);
-
-        // 親ディレクトリがない場合は作成
-        if (!outputFile.getParentFile().exists()) {
-            boolean mkdirsSuccess = outputFile.getParentFile().mkdirs();
-            if (!mkdirsSuccess) {
-                throw new FinderInitializeException("Failed to make output directory: OutputBase=" + outputBaseFilePath);
-            }
-        }
-
-        // uniqueファイル
-        String uniqueOutputFilePath = String.format("%s_unique%s", namePath, extension);
-        File outputUniqueFile = new File(uniqueOutputFilePath);
-
-        if (outputUniqueFile.isDirectory())
-            throw new FinderInitializeException("Cannot specify directory as output unique file path: OutputBase=" + outputBaseFilePath);
-        if (outputUniqueFile.exists() && !outputUniqueFile.canWrite())
-            throw new FinderInitializeException("Cannot write output unique file: OutputBase=" + outputBaseFilePath);
-
-        // minimalファイル
-        String minimalOutputFilePath = String.format("%s_minimal%s", namePath, extension);
-        File outputMinimalFile = new File(minimalOutputFilePath);
-        if (outputMinimalFile.isDirectory())
-            throw new FinderInitializeException("Cannot specify directory as output minimal file path: OutputBase=" + outputBaseFilePath);
-        if (outputMinimalFile.exists() && !outputMinimalFile.canWrite())
-            throw new FinderInitializeException("Cannot write output minimal file: OutputBase=" + outputBaseFilePath);
+        // フォーマットを決める
+        // 出力ファイルが正しく出力できるか確認も行う
+        MinoFactory minoFactory = new MinoFactory();
+        OutputType outputType = settings.getOutputType();
+        PathOutput pathOutput = createOutput(outputType, minoFactory);
 
         output();
         // ========================================
@@ -187,7 +152,6 @@ public class PathEntryPoint implements EntryPoint {
         // ミノのリストを作成する
         int basicSolutionWidth = decideBasicSolutionWidth(maxClearLine);
         SizedBit sizedBit = new SizedBit(basicSolutionWidth, maxClearLine);
-        MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, sizedBit.getWidth(), sizedBit.getHeight());
         SeparableMinos separableMinos = new SeparableMinos(factory.create());
@@ -217,7 +181,7 @@ public class PathEntryPoint implements EntryPoint {
         // ========================================
         output("# Search");
         output("  -> Stopwatch start");
-        Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
+        Stopwatch stopwatch2 = Stopwatch.createStartedStopwatch();
 
         // 探索して、列挙する準備を行う
         output("     ... packing");
@@ -225,46 +189,20 @@ public class PathEntryPoint implements EntryPoint {
         TaskResultHelper taskResultHelper = createTaskResultHelper(maxClearLine);
         PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
         PathCore pathCore = createPathCore(patterns, maxDepth, isUsingHold, searcher);
-
-        // 絞り込みを行う
-        PathLayer pathLayer = settings.getPathLayer();
-
-        if (pathLayer.contains(PathLayer.Unique)) {
-            output("     ... Layer: unique");
-            pathCore.runUnique(field, sizedBit);
-        }
-
-        if (pathLayer.contains(PathLayer.Minimal)) {
-            output("     ... Layer: minimal");
-            pathCore.runMinimal();
-        }
+        List<PathPair> pathPairs = pathCore.run(field, sizedBit);
 
         output("     ... done");
 
-        stopwatch.stop();
-        output("  -> Stopwatch stop : " + stopwatch.toMessage(TimeUnit.MILLISECONDS));
+        stopwatch2.stop();
+        output("  -> Stopwatch stop : " + stopwatch2.toMessage(TimeUnit.MILLISECONDS));
 
         output();
         // ========================================
         output("# Output file");
-
-        // 同一ミノ配置を取り除いたパスの出力
-        if (pathLayer.contains(PathLayer.Unique)) {
-            List<Pair<Result, HashSet<LongBlocks>>> unique = pathCore.getUnique();
-            output("Found path [unique] = " + unique.size());
-            outputOperations(field, outputUniqueFile, minoFactory, unique, sizedBit);
-        }
-
-        // 少ないパターンでカバーできるパスを出力
-        if (pathLayer.contains(PathLayer.Minimal)) {
-            List<Pair<Result, HashSet<LongBlocks>>> minimal = pathCore.getMinimal();
-            output("Found path [minimal] = " + minimal.size());
-            outputOperations(field, outputMinimalFile, minoFactory, minimal, sizedBit);
-        }
-
-        output("done");
-
         output();
+
+        pathOutput.output(pathPairs, field, sizedBit);
+
         // ========================================
         output("# Finalize");
         output("done");
@@ -284,14 +222,6 @@ public class PathEntryPoint implements EntryPoint {
         }
     }
 
-    private String getCanonicalPath(String path) throws FinderInitializeException {
-        try {
-            return new File(path).getCanonicalPath();
-        } catch (IOException e) {
-            throw new FinderInitializeException(e);
-        }
-    }
-
     private Predicate<ColumnField> createPredicate(int cachedMinBit) throws FinderInitializeException {
         if (cachedMinBit == 0)
             return columnField -> true;
@@ -306,299 +236,22 @@ public class PathEntryPoint implements EntryPoint {
         return new BasicMinoPackingHelper();
     }
 
-    private String getRemoveExtensionFromPath(String path) {
-        int pointIndex = path.lastIndexOf('.');
-        int separatorIndex = path.lastIndexOf(File.separatorChar);
-
-        // .がない or セパレータより前にあるとき
-        if (pointIndex <= separatorIndex)
-            return path;
-
-        // .があるとき
-        if (pointIndex != -1)
-            return path.substring(0, pointIndex);
-
-        return path;
-    }
-
-    private String getExtension() throws FinderInitializeException {
-        OutputType outputType = settings.getOutputType();
+    private PathOutput createOutput(OutputType outputType, MinoFactory minoFactory) throws FinderExecuteException, FinderInitializeException {
         switch (outputType) {
             case CSV:
-                return ".csv";
+                return new CSVPathOutput(this, settings);
             case Link:
-                return ".html";
-            default:
-                throw new FinderInitializeException("Unsupported format: format=" + outputType);
-        }
-    }
-
-    private void outputOperations(Field field, File file, MinoFactory minoFactory, List<Pair<Result, HashSet<LongBlocks>>> operations, SizedBit sizedBit) throws FinderExecuteException {
-        OutputType outputType = settings.getOutputType();
-        switch (outputType) {
-            case CSV:
-                outputOperationsToCSV(field, file, operations, sizedBit);
-                break;
-            case Link:
-                boolean isTetfuSplit = settings.isTetfuSplit();
-                outputOperationsToSimpleHTML(field, file, minoFactory, operations, sizedBit, isTetfuSplit);
-                break;
+                return new LinkPathOutput(this, settings, minoFactory);
             default:
                 throw new FinderExecuteException("Unsupported format: format=" + outputType);
         }
-    }
-
-    private void outputOperationsToCSV(Field field, File file, List<Pair<Result, HashSet<LongBlocks>>> resultPairs, SizedBit sizedBit) throws FinderExecuteException {
-        LockedBuildUpListUpThreadLocal threadLocal = new LockedBuildUpListUpThreadLocal(sizedBit.getHeight());
-        List<List<OperationWithKey>> samples = resultPairs.parallelStream()
-                .map(resultPair -> {
-                    Result result = resultPair.getKey();
-                    LinkedList<OperationWithKey> operations = result.getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toCollection(LinkedList::new));
-
-                    BuildUpStream buildUpStream = threadLocal.get();
-
-                    return buildUpStream.existsValidBuildPatternDirectly(field, operations)
-                            .findFirst()
-                            .orElse(Collections.emptyList());
-                })
-                .collect(Collectors.toList());
-
-        try (BufferedWriter writer = createBufferedWriter(file)) {
-            for (List<OperationWithKey> operationWithKeys : samples) {
-                Operations operations = OperationTransform.parseToOperations(field, operationWithKeys, sizedBit.getHeight());
-                String operationLine = OperationInterpreter.parseToString(operations);
-                writer.write(operationLine);
-                writer.newLine();
-            }
-            writer.flush();
-        } catch (Exception e) {
-            throw new FinderExecuteException("Failed to output file", e);
-        }
-    }
-
-    private void outputOperationsToSimpleHTML(Field field, File file, MinoFactory minoFactory, List<Pair<Result, HashSet<LongBlocks>>> resultPairs, SizedBit sizedBit, boolean isTetfuSplit) throws FinderExecuteException {
-        int maxClearLine = sizedBit.getHeight();
-
-        // テト譜用のフィールド作成
-        ColoredField initField = ColoredFieldFactory.createField(24);
-        for (int y = 0; y < maxClearLine; y++) {
-            for (int x = 0; x < 10; x++) {
-                if (!field.isEmpty(x, y))
-                    initField.setColorType(ColorType.Gray, x, y);
-            }
-        }
-
-        // ライン消去ありとなしに振り分ける // true: ライン消去あり, false: ライン消去なし
-        LockedBuildUpListUpThreadLocal threadLocal = new LockedBuildUpListUpThreadLocal(sizedBit.getHeight());
-        Map<Boolean, List<LinkInformation>> groupByDelete = resultPairs.stream()
-                .map(resultPair -> {
-                    Result result = resultPair.getKey();
-                    LinkedList<OperationWithKey> operations = result.getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toCollection(LinkedList::new));
-                    BuildUpStream buildUpStream = threadLocal.get();
-                    List<OperationWithKey> operationWithKeys = buildUpStream.existsValidBuildPatternDirectly(field, operations)
-                            .findFirst()
-                            .orElse(Collections.emptyList());
-                    return new LinkInformation(resultPair, operationWithKeys);
-                })
-                .collect(Collectors.groupingBy(LinkInformation::containsDeletedLine));
-
-        // それぞれで並び替える
-        Comparator<LinkInformation> comparator = (o1, o2) -> {
-            List<OperationWithKey> operations1 = o1.getSample();
-            List<OperationWithKey> operations2 = o2.getSample();
-
-            int compareSize = Integer.compare(operations1.size(), operations2.size());
-            if (compareSize != 0)
-                return compareSize;
-
-            for (int index = 0; index < operations1.size(); index++) {
-                Mino mino1 = operations1.get(index).getMino();
-                Mino mino2 = operations2.get(index).getMino();
-
-                int compareBlock = mino1.getBlock().compareTo(mino2.getBlock());
-                if (compareBlock != 0)
-                    return compareBlock;
-
-                int compareRotate = mino1.getRotate().compareTo(mino2.getRotate());
-                if (compareRotate != 0)
-                    return compareRotate;
-            }
-
-            return 0;
-        };
-        for (List<LinkInformation> objs : groupByDelete.values())
-            objs.sort(comparator);
-
-        // 出力
-        ColorConverter colorConverter = new ColorConverter();
-
-        try (BufferedWriter writer = createBufferedWriter(file)) {
-            // headerの出力
-            writer.write("<!DOCTYPE html>");
-            writer.newLine();
-            writer.write("<html lang=ja><head><meta charset=\"UTF-8\"></head><body>");
-            writer.newLine();
-
-            // パターン数の出力
-            writer.write(String.format("<div>%dパターン</div>", resultPairs.size()));
-            writer.newLine();
-
-            // 手順の出力 (ライン消去なし)
-            writer.write("<h2>ライン消去なし</h2>");
-            writer.newLine();
-
-            for (LinkInformation information : groupByDelete.getOrDefault(false, Collections.emptyList())) {
-                String link = createALink(information, field, minoFactory, colorConverter, maxClearLine, isTetfuSplit);
-                writer.write(String.format("<div>%s</div>", link));
-                writer.newLine();
-            }
-
-            // 手順の出力 (ライン消去あり)
-            writer.write("<h2>ライン消去あり</h2>");
-            writer.newLine();
-
-            for (LinkInformation information : groupByDelete.getOrDefault(true, Collections.emptyList())) {
-                String link = createALink(information, field, minoFactory, colorConverter, maxClearLine, isTetfuSplit);
-                writer.write(String.format("<div>%s</div>", link));
-                writer.newLine();
-            }
-
-            // footerの出力
-            writer.write("<html lang=ja><head><meta charset=\"UTF-8\"></head><body>");
-            writer.newLine();
-            writer.flush();
-        } catch (Exception e) {
-            throw new FinderExecuteException("Failed to output file", e);
-        }
-    }
-
-    private String createALink(LinkInformation information, Field field, MinoFactory minoFactory, ColorConverter colorConverter, int maxClearLine, boolean isTetfuSplit) {
-        if (isTetfuSplit)
-            return createALinkOrder(information, field, minoFactory, colorConverter, maxClearLine);
-        return createALinkOnePage(information, field, minoFactory, colorConverter, maxClearLine);
-    }
-
-    private String createALinkOnePage(LinkInformation information, Field field, MinoFactory minoFactory, ColorConverter colorConverter, int maxClearLine) {
-        List<OperationWithKey> operations = information.getSample();
-
-        // BlockField と そのパターンを表す名前 を生成
-        BlockField blockField = new BlockField(maxClearLine);
-        String linkText = operations.stream()
-                .peek(key -> {
-                    Field test = FieldFactory.createField(maxClearLine);
-                    Mino mino = key.getMino();
-                    test.put(mino, key.getX(), key.getY());
-                    test.insertWhiteLineWithKey(key.getNeedDeletedKey());
-                    blockField.merge(test, mino.getBlock());
-                })
-                .map(OperationWithKey::getMino)
-                .map(mino -> mino.getBlock().getName() + "-" + mino.getRotate().name())
-                .collect(Collectors.joining(" "));
-
-        String blocksName = operations.stream()
-                .map(OperationWithKey::getMino)
-                .map(Mino::getBlock)
-                .map(Block::getName)
-                .collect(Collectors.joining());
-
-        // テト譜1ページを作成
-        TetfuElement tetfuElement = parseBlockFieldToTetfuElement(field, colorConverter, blockField, blocksName);
-
-        Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
-        String encode = tetfu.encode(Collections.singletonList(tetfuElement));
-
-        // 有効なミノ順をまとめる
-        HashSet<LongBlocks> pieces = information.getPiecesSet();
-        String validOrders = pieces.stream()
-                .map(LongBlocks::getBlockList)
-                .map(blocks -> blocks.stream().map(Block::getName).collect(Collectors.joining()))
-                .collect(Collectors.joining(", "));
-
-        // 出力
-        return String.format("<a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a> [%s]", encode, linkText, validOrders);
-    }
-
-    private static TetfuElement parseBlockFieldToTetfuElement(Field initField, ColorConverter colorConverter, BlockField blockField, String comment) {
-        ColoredField coloredField = createInitColoredField(initField);
-
-        for (Block block : Block.values()) {
-            Field target = blockField.get(block);
-            ColorType colorType = colorConverter.parseToColorType(block);
-            fillInField(coloredField, colorType, target);
-        }
-
-        return new TetfuElement(coloredField, ColorType.Empty, Rotate.Reverse, 0, 0, comment);
-    }
-
-    private static ColoredField createInitColoredField(Field initField) {
-        ColoredField coloredField = ColoredFieldFactory.createField(24);
-        fillInField(coloredField, ColorType.Gray, initField);
-        return coloredField;
-    }
-
-    private static void fillInField(ColoredField coloredField, ColorType colorType, Field target) {
-        for (int y = 0; y < target.getMaxFieldHeight(); y++) {
-            for (int x = 0; x < 10; x++) {
-                if (!target.isEmpty(x, y))
-                    coloredField.setColorType(colorType, x, y);
-            }
-        }
-    }
-
-    private String createALinkOrder(LinkInformation information, Field field, MinoFactory minoFactory, ColorConverter colorConverter, int maxClearLine) {
-        Operations operations = OperationTransform.parseToOperations(field, information.getSample(), maxClearLine);
-        List<? extends Operation> operationsList = operations.getOperations();
-
-        // ブロック順に変換
-        List<Block> blockList = operationsList.stream()
-                .map(Operation::getBlock)
-                .collect(Collectors.toList());
-
-        // そのパターンを表す名前を生成
-        String linkText = operationsList.stream()
-                .map(operation -> operation.getBlock().getName() + "-" + operation.getRotate().name())
-                .collect(Collectors.joining(" "));
-
-        // テト譜を作成
-        String quiz = Tetfu.encodeForQuiz(blockList);
-        ArrayList<TetfuElement> tetfuElements = new ArrayList<>();
-
-        // 最初のelement
-        Operation firstKey = operationsList.get(0);
-        ColorType colorType1 = colorConverter.parseToColorType(firstKey.getBlock());
-        ColoredField coloredField = createInitColoredField(field);
-        TetfuElement firstElement = new TetfuElement(coloredField, colorType1, firstKey.getRotate(), firstKey.getX(), firstKey.getY(), quiz);
-        tetfuElements.add(firstElement);
-
-        // 2番目以降のelement
-        if (1 < operationsList.size()) {
-            operationsList.subList(1, operationsList.size()).stream()
-                    .map(operation -> {
-                        ColorType colorType = colorConverter.parseToColorType(operation.getBlock());
-                        return new TetfuElement(colorType, operation.getRotate(), operation.getX(), operation.getY(), quiz);
-                    })
-                    .forEach(tetfuElements::add);
-        }
-
-        Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
-        String encode = tetfu.encode(tetfuElements);
-
-        // 有効なミノ順をまとめる
-        HashSet<LongBlocks> pieces = information.getPiecesSet();
-        String validOrders = pieces.stream()
-                .map(LongBlocks::getBlockList)
-                .map(blocks -> blocks.stream().map(Block::getName).collect(Collectors.joining()))
-                .collect(Collectors.joining(", "));
-
-        // 出力
-        return String.format("<a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a> [%s]", encode, linkText, validOrders);
     }
 
     private void output() throws FinderExecuteException {
         output("");
     }
 
-    private void output(String str) throws FinderExecuteException {
+    public void output(String str) throws FinderExecuteException {
         try {
             logWriter.append(str).append(LINE_SEPARATOR);
         } catch (IOException e) {

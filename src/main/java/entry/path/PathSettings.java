@@ -50,11 +50,11 @@ public class PathSettings {
         return patterns;
     }
 
-    String getOutputBaseFilePath() {
+    public String getOutputBaseFilePath() {
         return outputBaseFilePath;
     }
 
-    PathLayer getPathLayer() {
+    public PathLayer getPathLayer() {
         return pathLayer;
     }
 
@@ -62,7 +62,7 @@ public class PathSettings {
         return outputType;
     }
 
-    boolean isTetfuSplit() {
+    public boolean isTetfuSplit() {
         return isSplit;
     }
 
@@ -71,7 +71,7 @@ public class PathSettings {
     }
 
     // ********* Setter ************
-    public void setMaxClearLine(int maxClearLine) {
+    void setMaxClearLine(int maxClearLine) {
         this.maxClearLine = maxClearLine;
     }
 

@@ -71,7 +71,7 @@ public class All11MinoCheckerMain {
                                     return true;
 
                                 // パフェできない組み合わせである
-                                BlockCounter blockCounter = new BlockCounter(pieces.getBlockStream());
+                                BlockCounter blockCounter = new BlockCounter(pieces.blockStream());
                                 return blockCounters.contains(blockCounter);
                             });
 

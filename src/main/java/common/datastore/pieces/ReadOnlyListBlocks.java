@@ -15,12 +15,12 @@ public class ReadOnlyListBlocks implements Blocks, Comparable<Blocks> {
     }
 
     @Override
-    public List<Block> getBlockList() {
+    public List<Block> getBlocks() {
         return blocks;
     }
 
     @Override
-    public Stream<Block> getBlockStream() {
+    public Stream<Block> blockStream() {
         return blocks.stream();
     }
 

@@ -1,14 +1,15 @@
 package common.pattern;
 
 import common.SyntaxException;
+import common.datastore.BlockCounter;
 import common.datastore.pieces.Blocks;
 import common.datastore.pieces.LongBlocks;
-import lib.MyIterables;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static core.mino.Block.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,11 +21,13 @@ class BlocksGeneratorTest {
         BlocksGenerator generator = new BlocksGenerator("I # comment");
         assertThat(generator.getDepth()).isEqualTo(1);
 
-        List<Blocks> blocks = MyIterables.toList(generator);
-
-        assertThat(blocks)
+        assertThat(generator.blocksStream())
                 .hasSize(1)
                 .containsExactly(new LongBlocks(Collections.singletonList(I)));
+
+        assertThat(generator.blockCountersStream())
+                .hasSize(1)
+                .containsExactly(new BlockCounter(Collections.singletonList(I)));
     }
 
     @Test
@@ -32,10 +35,13 @@ class BlocksGeneratorTest {
         BlocksGenerator generator = new BlocksGenerator("i");
         assertThat(generator.getDepth()).isEqualTo(1);
 
-        List<Blocks> blocks = MyIterables.toList(generator);
-        assertThat(blocks)
+        assertThat(generator.blocksStream())
                 .hasSize(1)
                 .containsExactly(new LongBlocks(Collections.singletonList(I)));
+
+        assertThat(generator.blockCountersStream())
+                .hasSize(1)
+                .containsExactly(new BlockCounter(Collections.singletonList(I)));
     }
 
     @Test
@@ -43,10 +49,13 @@ class BlocksGeneratorTest {
         BlocksGenerator generator = new BlocksGenerator("I,J");
         assertThat(generator.getDepth()).isEqualTo(2);
 
-        List<Blocks> blocks = MyIterables.toList(generator);
-        assertThat(blocks)
+        assertThat(generator.blocksStream())
                 .hasSize(1)
                 .containsExactly(new LongBlocks(Arrays.asList(I, J)));
+
+        assertThat(generator.blockCountersStream())
+                .hasSize(1)
+                .containsExactly(new BlockCounter(Arrays.asList(I, J)));
     }
 
     @Test
@@ -54,10 +63,13 @@ class BlocksGeneratorTest {
         BlocksGenerator generator = new BlocksGenerator(" I , J ");
         assertThat(generator.getDepth()).isEqualTo(2);
 
-        List<Blocks> blocks = MyIterables.toList(generator);
-        assertThat(blocks)
+        assertThat(generator.blocksStream())
                 .hasSize(1)
                 .containsExactly(new LongBlocks(Arrays.asList(I, J)));
+
+        assertThat(generator.blockCountersStream())
+                .hasSize(1)
+                .containsExactly(new BlockCounter(Arrays.asList(I, J)));
     }
 
     @Test
@@ -65,10 +77,13 @@ class BlocksGeneratorTest {
         BlocksGenerator generator = new BlocksGenerator(" * ");
         assertThat(generator.getDepth()).isEqualTo(1);
 
-        List<Blocks> blocks = MyIterables.toList(generator);
-        assertThat(blocks)
+        assertThat(generator.blocksStream())
                 .hasSize(7)
-                .allMatch(element -> element.getBlockList().size() == 1);
+                .allMatch(element -> element.getBlocks().size() == 1);
+
+        assertThat(generator.blockCountersStream())
+                .hasSize(7)
+                .allMatch(element -> element.getBlocks().size() == 1);
     }
 
     @Test
@@ -76,10 +91,13 @@ class BlocksGeneratorTest {
         BlocksGenerator generator = new BlocksGenerator(" *, * ");
         assertThat(generator.getDepth()).isEqualTo(2);
 
-        List<Blocks> blocks = MyIterables.toList(generator);
-        assertThat(blocks)
+        assertThat(generator.blockCountersStream())
                 .hasSize(49)
-                .allMatch(element -> element.getBlockList().size() == 2);
+                .allMatch(element -> element.getBlocks().size() == 2);
+
+        assertThat(generator.blockCountersStream())
+                .hasSize(49)
+                .allMatch(element -> element.getBlocks().size() == 2);
     }
 
     @Test
@@ -87,12 +105,17 @@ class BlocksGeneratorTest {
         BlocksGenerator generator = new BlocksGenerator(" [TSZ] ");
         assertThat(generator.getDepth()).isEqualTo(1);
 
-        List<Blocks> blocks = MyIterables.toList(generator);
-        assertThat(blocks)
+        assertThat(generator.blocksStream())
                 .hasSize(3)
                 .contains(new LongBlocks(Collections.singletonList(T)))
                 .contains(new LongBlocks(Collections.singletonList(S)))
                 .contains(new LongBlocks(Collections.singletonList(Z)));
+
+        assertThat(generator.blockCountersStream())
+                .hasSize(3)
+                .contains(new BlockCounter(Collections.singletonList(T)))
+                .contains(new BlockCounter(Collections.singletonList(S)))
+                .contains(new BlockCounter(Collections.singletonList(Z)));
     }
 
     @Test
@@ -100,8 +123,7 @@ class BlocksGeneratorTest {
         BlocksGenerator generator = new BlocksGenerator(" [TsZ] , [IOjl]");
         assertThat(generator.getDepth()).isEqualTo(2);
 
-        List<Blocks> blocks = MyIterables.toList(generator);
-        assertThat(blocks)
+        assertThat(generator.blocksStream())
                 .hasSize(12)
                 .contains(new LongBlocks(Arrays.asList(T, I)))
                 .contains(new LongBlocks(Arrays.asList(T, O)))
@@ -115,6 +137,21 @@ class BlocksGeneratorTest {
                 .contains(new LongBlocks(Arrays.asList(Z, O)))
                 .contains(new LongBlocks(Arrays.asList(Z, J)))
                 .contains(new LongBlocks(Arrays.asList(Z, L)));
+
+        assertThat(generator.blockCountersStream())
+                .hasSize(12)
+                .contains(new BlockCounter(Arrays.asList(T, I)))
+                .contains(new BlockCounter(Arrays.asList(T, O)))
+                .contains(new BlockCounter(Arrays.asList(T, J)))
+                .contains(new BlockCounter(Arrays.asList(T, L)))
+                .contains(new BlockCounter(Arrays.asList(S, I)))
+                .contains(new BlockCounter(Arrays.asList(S, O)))
+                .contains(new BlockCounter(Arrays.asList(S, J)))
+                .contains(new BlockCounter(Arrays.asList(S, L)))
+                .contains(new BlockCounter(Arrays.asList(Z, I)))
+                .contains(new BlockCounter(Arrays.asList(Z, O)))
+                .contains(new BlockCounter(Arrays.asList(Z, J)))
+                .contains(new BlockCounter(Arrays.asList(Z, L)));
     }
 
     @Test
@@ -122,8 +159,7 @@ class BlocksGeneratorTest {
         BlocksGenerator generator = new BlocksGenerator(" [TSZ]p2 ");
         assertThat(generator.getDepth()).isEqualTo(2);
 
-        List<Blocks> blocks = MyIterables.toList(generator);
-        assertThat(blocks)
+        assertThat(generator.blocksStream())
                 .hasSize(6)
                 .contains(new LongBlocks(Arrays.asList(S, Z)))
                 .contains(new LongBlocks(Arrays.asList(S, T)))
@@ -131,6 +167,12 @@ class BlocksGeneratorTest {
                 .contains(new LongBlocks(Arrays.asList(Z, T)))
                 .contains(new LongBlocks(Arrays.asList(T, Z)))
                 .contains(new LongBlocks(Arrays.asList(T, S)));
+
+        assertThat(generator.blockCountersStream())
+                .hasSize(3)
+                .contains(new BlockCounter(Arrays.asList(T, S)))
+                .contains(new BlockCounter(Arrays.asList(T, Z)))
+                .contains(new BlockCounter(Arrays.asList(S, Z)));
     }
 
     @Test
@@ -138,8 +180,8 @@ class BlocksGeneratorTest {
         BlocksGenerator generator = new BlocksGenerator(" *p4 ");
         assertThat(generator.getDepth()).isEqualTo(4);
 
-        List<Blocks> blocks = MyIterables.toList(generator);
-        assertThat(blocks).hasSize(840);
+        assertThat(generator.blocksStream()).hasSize(840);
+        assertThat(generator.blockCountersStream()).hasSize(35);
     }
 
     @Test
@@ -148,8 +190,8 @@ class BlocksGeneratorTest {
         BlocksGenerator generator = new BlocksGenerator(patterns);
         assertThat(generator.getDepth()).isEqualTo(1);
 
-        List<Blocks> blocks = MyIterables.toList(generator);
-        assertThat(blocks).hasSize(2);
+        assertThat(generator.blocksStream()).hasSize(2);
+        assertThat(generator.blockCountersStream()).hasSize(2);
     }
 
     @Test
@@ -158,8 +200,9 @@ class BlocksGeneratorTest {
         BlocksGenerator generator = new BlocksGenerator(patterns);
         assertThat(generator.getDepth()).isEqualTo(5);
 
-        List<Blocks> blocks = MyIterables.toList(generator);
-        assertThat(blocks).hasSize(840 + 2520 + 120);
+        assertThat(generator.blocksStream()).hasSize(840 + 2520 + 120);
+        assertThat(generator.blockCountersStream()).hasSize(35 + 21 + 1);
+
     }
 
     @Test
@@ -175,8 +218,9 @@ class BlocksGeneratorTest {
         BlocksGenerator generator = new BlocksGenerator(patterns);
         assertThat(generator.getDepth()).isEqualTo(5);
 
-        List<Blocks> blocks = MyIterables.toList(generator);
-        assertThat(blocks).hasSize(210 + 210 + 210 + 840);
+        assertThat(generator.blocksStream()).hasSize(210 + 210 + 210 + 840);
+        assertThat(generator.blockCountersStream()).hasSize(35 + 35 + 35 + 140);
+
     }
 
     @Test
@@ -185,8 +229,8 @@ class BlocksGeneratorTest {
         BlocksGenerator generator = new BlocksGenerator(patterns);
         assertThat(generator.getDepth()).isEqualTo(2);
 
-        List<Blocks> blocks = MyIterables.toList(generator);
-        assertThat(blocks).hasSize(8);
+        assertThat(generator.blocksStream()).hasSize(8);
+        assertThat(generator.blockCountersStream()).hasSize(8);
     }
 
     @Test
@@ -195,8 +239,8 @@ class BlocksGeneratorTest {
         BlocksGenerator generator = new BlocksGenerator(patterns);
         assertThat(generator.getDepth()).isEqualTo(3);
 
-        List<Blocks> blocks = MyIterables.toList(generator);
-        assertThat(blocks).hasSize(6);
+        assertThat(generator.blocksStream()).hasSize(6);
+        assertThat(generator.blockCountersStream()).hasSize(1);
     }
 
     @Test
@@ -205,8 +249,8 @@ class BlocksGeneratorTest {
         BlocksGenerator generator = new BlocksGenerator(patterns);
         assertThat(generator.getDepth()).isEqualTo(7);
 
-        List<Blocks> blocks = MyIterables.toList(generator);
-        assertThat(blocks).hasSize(5040);
+        assertThat(generator.blocksStream()).hasSize(5040);
+        assertThat(generator.blockCountersStream()).hasSize(1);
     }
 
     @Test
@@ -214,7 +258,7 @@ class BlocksGeneratorTest {
         BlocksGenerator generator = new BlocksGenerator(" ' *p3, *p2 ' ");
         assertThat(generator.getDepth()).isEqualTo(5);
 
-        List<Blocks> blocks = MyIterables.toList(generator);
+        List<Blocks> blocks = generator.blocksStream().collect(Collectors.toList());
         assertThat(blocks).hasSize(7 * 6 * 5 * 7 * 6);
     }
 

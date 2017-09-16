@@ -1,7 +1,6 @@
 package searcher.checker;
 
 import common.datastore.action.Action;
-import common.datastore.pieces.Blocks;
 import common.iterable.PermutationIterable;
 import common.pattern.BlocksGenerator;
 import common.tree.AnalyzeTree;
@@ -133,12 +132,13 @@ class CheckerUsingHoldCountTest {
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
         AnalyzeTree tree = new AnalyzeTree();
 
-        Iterable<Blocks> combinations = new BlocksGenerator(pattern);
-        for (Blocks pieces : combinations) {
-            List<Block> blocks = pieces.getBlockList();
-            boolean result = checker.check(field, blocks, candidate, maxClearLine, maxDepth);
-            tree.set(result, blocks);
-        }
+        BlocksGenerator generator = new BlocksGenerator(pattern);
+        generator.blocksStream()
+                .forEach(blocks -> {
+                    List<Block> blockList = blocks.getBlocks();
+                    boolean result = checker.check(field, blockList, candidate, maxClearLine, maxDepth);
+                    tree.set(result, blockList);
+                });
 
         // Source: Nilgiri: https://docs.google.com/spreadsheets/d/1bVY3t_X96xRmUL0qdgB9tViSIGenu6RMKX4RW7qWg8Y/edit#gid=0
         assertThat(tree.getSuccessPercent()).isEqualTo(711 / 840.0);

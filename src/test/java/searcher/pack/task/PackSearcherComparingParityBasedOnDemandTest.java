@@ -49,7 +49,7 @@ class PackSearcherComparingParityBasedOnDemandTest {
         }
 
         public List<Block> getBlocks() {
-            return blocks.getBlockList();
+            return blocks.getBlocks();
         }
 
         public long getCount() {

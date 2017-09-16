@@ -47,10 +47,10 @@ class VisitedTreeTest {
 
             HashSet<LongBlocks> success = new HashSet<>();
             HashSet<LongBlocks> failed = new HashSet<>();
-            generator.stream()
+            generator.blocksStream()
                     .forEach(pieces -> {
                         boolean flag = randoms.nextBoolean();
-                        List<Block> blocks = pieces.getBlockList();
+                        List<Block> blocks = pieces.getBlocks();
                         tree.set(flag, blocks);
 
                         LongBlocks longPieces = new LongBlocks(blocks);
@@ -63,14 +63,14 @@ class VisitedTreeTest {
 
             boolean isSucceed = success.stream()
                     .allMatch(pieces -> {
-                        List<Block> blocks = pieces.getBlockList();
+                        List<Block> blocks = pieces.getBlocks();
                         return tree.isSucceed(blocks) == ConcurrentVisitedTree.SUCCEED;
                     });
             assertThat(isSucceed).isTrue();
 
             boolean isFailed = failed.stream()
                     .allMatch(pieces -> {
-                        List<Block> blocks = pieces.getBlockList();
+                        List<Block> blocks = pieces.getBlocks();
                         return tree.isSucceed(blocks) == ConcurrentVisitedTree.FAILED;
                     });
             assertThat(isFailed).isTrue();
@@ -88,10 +88,10 @@ class VisitedTreeTest {
 
             HashSet<LongBlocks> success = new HashSet<>();
             HashSet<LongBlocks> failed = new HashSet<>();
-            generator.stream()
+            generator.blocksStream()
                     .forEach(pieces -> {
                         boolean flag = randoms.nextBoolean();
-                        List<Block> blocks = pieces.getBlockList();
+                        List<Block> blocks = pieces.getBlocks();
                         tree.set(flag, blocks);
 
                         LongBlocks longPieces = new LongBlocks(blocks);
@@ -104,14 +104,14 @@ class VisitedTreeTest {
 
             boolean isSucceed = success.stream()
                     .allMatch(pieces -> {
-                        List<Block> blocks = pieces.getBlockList();
+                        List<Block> blocks = pieces.getBlocks();
                         return tree.isSucceed(blocks) == ConcurrentVisitedTree.SUCCEED;
                     });
             assertThat(isSucceed).isTrue();
 
             boolean isFailed = failed.stream()
                     .allMatch(pieces -> {
-                        List<Block> blocks = pieces.getBlockList();
+                        List<Block> blocks = pieces.getBlocks();
                         return tree.isSucceed(blocks) == ConcurrentVisitedTree.FAILED;
                     });
             assertThat(isFailed).isTrue();

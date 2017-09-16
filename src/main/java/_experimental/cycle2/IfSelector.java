@@ -79,8 +79,8 @@ public class IfSelector {
         EasyTetfu easyTetfu = new EasyTetfu(easyPool);
         ForwardOrderLookUp lookUp = new ForwardOrderLookUp(maxDepth, 7);
         BlocksGenerator blocksGenerator = new BlocksGenerator("*p7");
-        List<List<Block>> allBlocks2 = blocksGenerator.stream()
-                .map(Blocks::getBlockList)
+        List<List<Block>> allBlocks2 = blocksGenerator.blocksStream()
+                .map(Blocks::getBlocks)
                 .collect(Collectors.toList());
 
         BlockCounter allIncluded = new BlockCounter(Block.valueList());
@@ -120,7 +120,7 @@ public class IfSelector {
 
                 Map<Boolean, List<Blocks>> conditional = targetBlocks.stream()
                         .collect(Collectors.groupingBy(o -> {
-                            List<Block> blockList = o.getBlockList();
+                            List<Block> blockList = o.getBlocks();
                             return blockList.indexOf(firstBlock) < blockList.indexOf(secondBlock);
                         }));
 
@@ -262,7 +262,7 @@ public class IfSelector {
         int count = 0;
         int no = 0;
         for (Blocks target : allBlocks) {
-            boolean anyMatch = lookUp.parse(target.getBlockList())
+            boolean anyMatch = lookUp.parse(target.getBlocks())
                     .map(LongBlocks::new)
                     .anyMatch(blocks -> possibleTree1.isVisited(blocks) || possibleTree2.isVisited(blocks));
             if (anyMatch) {
@@ -279,7 +279,7 @@ public class IfSelector {
 
     private static boolean checksAll(ForwardOrderLookUp lookUp, List<Blocks> allBlocks, AnalyzeTree possibleTree) {
         return allBlocks.parallelStream()
-                .map(Blocks::getBlockList)
+                .map(Blocks::getBlocks)
                 .map(lookUp::parse)
                 .map(stream -> stream.map(LongBlocks::new))
                 .allMatch(stream -> stream.anyMatch(possibleTree::isVisited));
@@ -287,7 +287,7 @@ public class IfSelector {
 
     private static boolean checksAllPercent(ForwardOrderLookUp lookUp, List<Blocks> allBlocks, AnalyzeTree possibleTree, double percent) {
         long succeedCount = allBlocks.parallelStream()
-                .map(Blocks::getBlockList)
+                .map(Blocks::getBlocks)
                 .map(lookUp::parse)
                 .map(stream -> stream.map(LongBlocks::new))
                 .filter(stream -> stream.anyMatch(possibleTree::isVisited))
@@ -297,7 +297,7 @@ public class IfSelector {
 
     private static boolean checksAll(ForwardOrderLookUp lookUp, List<Blocks> allBlocks, AnalyzeTree possibleTree1, AnalyzeTree possibleTree2) {
         for (Blocks target : allBlocks) {
-            boolean anyMatch = lookUp.parse(target.getBlockList())
+            boolean anyMatch = lookUp.parse(target.getBlocks())
                     .map(LongBlocks::new)
                     .anyMatch(blocks -> possibleTree1.isVisited(blocks) || possibleTree2.isVisited(blocks));
             if (!anyMatch)
@@ -323,7 +323,7 @@ public class IfSelector {
     private static Pair<AnalyzeTree, AnalyzeTree> calcPerfectPercent(ForwardOrderLookUp lookUp, Map<Boolean, List<Blocks>> conditional, AnalyzeTree possibleTree1) {
         AnalyzeTree resultTreeTrue = new AnalyzeTree();
         for (Blocks blocks : conditional.get(true)) {
-            boolean anyMatch = lookUp.parse(blocks.getBlockList())
+            boolean anyMatch = lookUp.parse(blocks.getBlocks())
                     .map(LongBlocks::new)
                     .anyMatch(possibleTree1::isVisited);
             resultTreeTrue.set(anyMatch, blocks);
@@ -331,7 +331,7 @@ public class IfSelector {
 
         AnalyzeTree resultTreeFalse = new AnalyzeTree();
         for (Blocks blocks : conditional.get(false)) {
-            boolean anyMatch = lookUp.parse(blocks.getBlockList())
+            boolean anyMatch = lookUp.parse(blocks.getBlocks())
                     .map(LongBlocks::new)
                     .anyMatch(possibleTree1::isVisited);
             resultTreeFalse.set(anyMatch, blocks);

@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public interface Blocks {
-    List<Block> getBlockList();
+    List<Block> getBlocks();
 
-    Stream<Block> getBlockStream();
+    Stream<Block> blockStream();
 
     Blocks addAndReturnNew(List<Block> blocks);
 

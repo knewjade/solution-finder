@@ -83,7 +83,7 @@ public class LongBlocks implements Blocks, Comparable<LongBlocks> {
     }
 
     @Override
-    public List<Block> getBlockList() {
+    public List<Block> getBlocks() {
         ArrayList<Block> blocks = new ArrayList<>();
         long value = pieces;
         for (int count = 0; count < max; count++) {
@@ -96,7 +96,7 @@ public class LongBlocks implements Blocks, Comparable<LongBlocks> {
     }
 
     @Override
-    public Stream<Block> getBlockStream() {
+    public Stream<Block> blockStream() {
         Stream.Builder<Block> builder = Stream.builder();
         long value = pieces;
         for (int count = 0; count < max; count++) {

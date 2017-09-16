@@ -1,6 +1,7 @@
 package common.pattern;
 
 import common.SyntaxException;
+import common.datastore.BlockCounter;
 import core.mino.Block;
 
 import java.util.*;
@@ -121,9 +122,8 @@ public class PatternElement {
         }
     }
 
-    private List<Block> blocks;
-
-    private int popCount;
+    private final List<Block> blocks;
+    private final int popCount;
 
     private PatternElement(List<Block> blocks, int popCount) {
         this.blocks = blocks;

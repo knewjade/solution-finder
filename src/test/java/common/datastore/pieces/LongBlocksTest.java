@@ -17,7 +17,7 @@ class LongBlocksTest {
         Blocks blocks = new LongBlocks(Arrays.asList(Block.I, Block.O, Block.J, Block.Z, Block.S, Block.T, Block.L));
         blocks = blocks.addAndReturnNew(Arrays.asList(Block.I, Block.J, Block.L));
         blocks = blocks.addAndReturnNew(Block.O);
-        assertThat(blocks.getBlockList()).containsExactly(
+        assertThat(blocks.getBlocks()).containsExactly(
                 Block.I, Block.O, Block.J, Block.Z, Block.S, Block.T, Block.L, Block.I, Block.J, Block.L, Block.O
         );
     }
@@ -27,7 +27,7 @@ class LongBlocksTest {
         Blocks blocks = new LongBlocks(Stream.of(Block.I, Block.O, Block.J, Block.Z, Block.S, Block.T, Block.L));
         blocks = blocks.addAndReturnNew(Arrays.asList(Block.I, Block.J, Block.L));
         blocks = blocks.addAndReturnNew(Block.O);
-        assertThat(blocks.getBlockList()).containsExactly(
+        assertThat(blocks.getBlocks()).containsExactly(
                 Block.I, Block.O, Block.J, Block.Z, Block.S, Block.T, Block.L, Block.I, Block.J, Block.L, Block.O
         );
     }
@@ -35,7 +35,7 @@ class LongBlocksTest {
     @Test
     void checkStream() throws Exception {
         Blocks blocks = new LongBlocks(Arrays.asList(Block.S, Block.I, Block.J, Block.T, Block.L, Block.O, Block.Z));
-        assertThat(blocks.getBlockStream()).containsExactly(
+        assertThat(blocks.blockStream()).containsExactly(
                 Block.S, Block.I, Block.J, Block.T, Block.L, Block.O, Block.Z
         );
     }
@@ -62,7 +62,7 @@ class LongBlocksTest {
                 pieces = pieces.addAndReturnNew(newBlocks);
             }
 
-            assertThat(pieces.getBlockList()).isEqualTo(blocks);
+            assertThat(pieces.getBlocks()).isEqualTo(blocks);
         }
     }
 
@@ -73,9 +73,9 @@ class LongBlocksTest {
         for (int count = 0; count < 10000; count++) {
             List<Block> blocks = randoms.blocks(22);
             Blocks pieces = new LongBlocks(blocks);
-            assertThat(pieces.getBlockStream()).containsExactlyElementsOf(blocks);
+            assertThat(pieces.blockStream()).containsExactlyElementsOf(blocks);
 
-            assertThat(pieces.getBlockList()).isEqualTo(blocks);
+            assertThat(pieces.getBlocks()).isEqualTo(blocks);
         }
     }
 
@@ -110,7 +110,7 @@ class LongBlocksTest {
             LongBlocks longPieces = new LongBlocks(blocks);
             Blocks readOnlyListBlocks = new ReadOnlyListBlocks(blocks);
             assertThat(longPieces.equals(readOnlyListBlocks))
-                    .as(longPieces.getBlockList().toString())
+                    .as(longPieces.getBlocks().toString())
                     .isTrue();
         }
     }

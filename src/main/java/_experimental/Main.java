@@ -13,7 +13,6 @@ import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
-import lib.MyIterables;
 import lib.Stopwatch;
 import searcher.checker.CheckerUsingHold;
 import searcher.common.validator.PerfectValidator;
@@ -21,6 +20,7 @@ import searcher.common.validator.PerfectValidator;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static core.mino.Block.*;
 
@@ -33,8 +33,8 @@ public class Main {
         PatternTree tree = new PatternTree();
 //        PiecesGenerator blocksGenerator = new BlocksGenerator("I,I,J,L,O,[SZT]p3,*p3");
         BlocksGenerator blocksGenerator = new BlocksGenerator("I,I,J,L,O,S,Z,T,*p3");
-        List<Blocks> piecesList = MyIterables.toList(blocksGenerator);
-        piecesList.forEach(pieces -> tree.build(pieces.getBlockList(), blocks -> new TerminateChecker()));
+        List<Blocks> piecesList = blocksGenerator.blocksStream().collect(Collectors.toList());
+        piecesList.forEach(pieces -> tree.build(pieces.getBlocks(), blocks -> new TerminateChecker()));
 
         System.out.println(piecesList.size());
 
@@ -62,7 +62,7 @@ public class Main {
 
         piecesList.sort(new PiecesNameComparator());
         for (Blocks pieces : piecesList) {
-            List<Block> blocks = pieces.getBlockList();
+            List<Block> blocks = pieces.getBlocks();
             System.out.println(blocks + " " + tree.get(blocks));
         }
 

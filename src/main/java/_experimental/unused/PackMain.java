@@ -1,10 +1,9 @@
 package _experimental.unused;
 
-import common.datastore.pieces.Blocks;
-import lib.Stopwatch;
 import common.comparator.OperationWithKeyComparator;
 import common.datastore.BlockCounter;
 import common.datastore.OperationWithKey;
+import common.datastore.pieces.Blocks;
 import common.iterable.CombinationIterable;
 import common.parser.OperationWithKeyInterpreter;
 import common.pattern.BlocksGenerator;
@@ -15,6 +14,7 @@ import core.field.FieldFactory;
 import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import lib.Stopwatch;
 import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
@@ -39,7 +39,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 public class PackMain {
     private static final int WIDTH = 3;
@@ -58,8 +57,8 @@ public class PackMain {
         );
 
         BlocksGenerator pieces = new BlocksGenerator(allOnHold);
-        HashSet<BlockCounter> counters = StreamSupport.stream(pieces.spliterator(), true)
-                .map(Blocks::getBlockList)
+        HashSet<BlockCounter> counters = pieces.blocksParallelStream()
+                .map(Blocks::getBlocks)
                 .map(BlockCounter::new)
                 .collect(Collectors.toCollection(HashSet::new));
 

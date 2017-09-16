@@ -88,7 +88,7 @@ class ReverseOrderLookUpTest {
             LongBlocks target = new LongBlocks(blocks);
             ForwardOrderLookUp forwardOrderLookUp = new ForwardOrderLookUp(blocks.size(), fromDepth);
             for (LongBlocks pieces : reverse) {
-                boolean isFound = forwardOrderLookUp.parse(pieces.getBlockList())
+                boolean isFound = forwardOrderLookUp.parse(pieces.getBlocks())
                         .map(LongBlocks::new)
                         .anyMatch(target::equals);
                 assertThat(isFound).isTrue();

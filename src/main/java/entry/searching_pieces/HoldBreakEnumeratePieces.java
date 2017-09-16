@@ -47,18 +47,18 @@ public class HoldBreakEnumeratePieces implements EnumeratePiecesCore {
     }
 
     private HashSet<LongBlocks> createJustMinos(ForwardOrderLookUp forwardOrderLookUp, AtomicInteger counter) {
-        return generator.stream()
+        return generator.blocksStream()
                 .peek(pieces -> counter.incrementAndGet())
-                .map(Blocks::getBlockList)
+                .map(Blocks::getBlocks)
                 .flatMap(forwardOrderLookUp::parse)
                 .map(LongBlocks::new)
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
     private HashSet<LongBlocks> createOverMinos(ForwardOrderLookUp forwardOrderLookUp, AtomicInteger counter) {
-        return generator.stream()
+        return generator.blocksStream()
                 .peek(pieces -> counter.incrementAndGet())
-                .map(Blocks::getBlockList)
+                .map(Blocks::getBlocks)
                 .map(blocks -> blocks.subList(0, maxDepth + 1))  // ホールドありなので+1ミノ分使用する
                 .flatMap(forwardOrderLookUp::parse)
                 .map(LongBlocks::new)

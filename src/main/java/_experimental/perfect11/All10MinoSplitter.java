@@ -32,7 +32,7 @@ public class All10MinoSplitter {
                     }
 
                     // BlockCounterに変換
-                    Stream<Block> stream = blocks.getBlockStream();
+                    Stream<Block> stream = blocks.blockStream();
                     BlockCounter counter = new BlockCounter(stream);
 
                     // 使用ミノ文字列に変換

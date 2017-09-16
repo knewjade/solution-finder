@@ -46,7 +46,7 @@ public class Hold10OrderMergeMain {
         File outputFile = new File(outputPath);
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), StandardCharsets.UTF_8))) {
             allOrders.stream()
-                    .map(Blocks::getBlockList)
+                    .map(Blocks::getBlocks)
                     .map(blocks -> blocks.stream().map(Block::getName).collect(Collectors.joining()))
                     .sorted()
                     .forEach(line -> {

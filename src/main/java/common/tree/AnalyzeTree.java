@@ -68,7 +68,7 @@ public class AnalyzeTree {
 
     // TODO: write unittest
     public void success(Blocks blocks) {
-        rootElement.success(blocks.getBlockList());
+        rootElement.success(blocks.getBlocks());
     }
 
     public void fail(List<Block> blocks) {
@@ -77,7 +77,7 @@ public class AnalyzeTree {
 
     // TODO: write unittest
     public void fail(Blocks blocks) {
-        rootElement.fail(blocks.getBlockList());
+        rootElement.fail(blocks.getBlocks());
     }
 
     public String show() {
@@ -110,7 +110,7 @@ public class AnalyzeTree {
 
     // TODO: write unittest
     public boolean isVisited(Blocks blocks) {
-        return rootElement.isVisited(blocks.getBlockList(), 0);
+        return rootElement.isVisited(blocks.getBlocks(), 0);
     }
 
     public boolean isSucceed(List<Block> blocks) {
@@ -119,7 +119,7 @@ public class AnalyzeTree {
 
     // TODO: write unittest
     public boolean isSucceed(Blocks blocks) {
-        return rootElement.isSuccess(blocks.getBlockList(), 0);
+        return rootElement.isSuccess(blocks.getBlocks(), 0);
     }
 
     public String tree(int maxDepth) {

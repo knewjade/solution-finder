@@ -43,7 +43,7 @@ class PercentCore {
 
     void run(Field field, Set<LongBlocks> searchingPiecesSet, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
         List<List<Block>> searchingPieces = searchingPiecesSet.stream()
-                .map(LongBlocks::getBlockList)
+                .map(LongBlocks::getBlocks)
                 .collect(Collectors.toList());
 
         this.resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
