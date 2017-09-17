@@ -50,11 +50,11 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(uniqueHTML)
                 .returns(35, PathHTML::pattern);
 
-        // ライン消去あり
+        // ライン消去なし
         assertThat(uniqueHTML.noDeletedLineFumens())
                 .isEmpty();
 
-        // ライン消去なし
+        // ライン消去あり
         assertThat(uniqueHTML.deletedLineFumens())
                 .hasSize(35)
                 .contains("9gB8Bthlwwi0C8BtglxwR4E8glwwR4g0F8zhJeAgWG?AJNWWC6/AAA")
@@ -71,10 +71,10 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(minimalHTML)
                 .returns(31, PathHTML::pattern);
 
-        // ライン消去あり
+        // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens()).isEmpty();
 
-        // ライン消去なし
+        // ライン消去あり
         assertThat(minimalHTML.deletedLineFumens())
                 .hasSize(31)
                 .contains("9gB8BtzhhlC8Btg0RpwwglE8i0xwF8RpwwglJeAgWG?A0vKWCa+AAA")
@@ -119,11 +119,11 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(uniqueHTML)
                 .returns(2, PathHTML::pattern);
 
-        // ライン消去あり
+        // ライン消去なし
         assertThat(uniqueHTML.noDeletedLineFumens())
                 .isEmpty();
 
-        // ライン消去なし
+        // ライン消去あり
         assertThat(uniqueHTML.deletedLineFumens())
                 .hasSize(2)
                 .contains("HhBtR4C8RpB8R4H8BtD8RpA8JeAgWDATnDCA")
@@ -139,10 +139,10 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(minimalHTML)
                 .returns(2, PathHTML::pattern);
 
-        // ライン消去あり
+        // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens()).isEmpty();
 
-        // ライン消去なし
+        // ライン消去あり
         assertThat(minimalHTML.deletedLineFumens())
                 .hasSize(2)
                 .contains("HhBtR4C8RpB8R4H8BtD8RpA8JeAgWDATnDCA")
@@ -186,11 +186,11 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(uniqueHTML)
                 .returns(54, PathHTML::pattern);
 
-        // ライン消去あり
+        // ライン消去なし
         assertThat(uniqueHTML.noDeletedLineFumens())
                 .isEmpty();
 
-        // ライン消去なし
+        // ライン消去あり
         assertThat(uniqueHTML.deletedLineFumens())
                 .hasSize(54)
                 .contains("9gB8i0hlwhRpC8Q4g0wwglwhRpC8R4xwwhF8Q4wwgl?whB8JeAgWGAJNWWCv/AAA")
@@ -207,11 +207,11 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(minimalHTML)
                 .returns(42, PathHTML::pattern);
 
-        // ライン消去あり
+        // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens())
                 .isEmpty();
 
-        // ライン消去なし
+        // ライン消去あり
         assertThat(minimalHTML.deletedLineFumens())
                 .hasSize(42)
                 .contains("9gB8hlwwR4AtRpC8glxwBtRpC8glwwi0F8R4Atg0B8?JeAgWGAKHWWCaNBAA")
@@ -257,11 +257,11 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(uniqueHTML)
                 .returns(83, PathHTML::pattern);
 
-        // ライン消去あり
+        // ライン消去なし
         assertThat(uniqueHTML.noDeletedLineFumens())
                 .isEmpty();
 
-        // ライン消去なし
+        // ライン消去あり
         assertThat(uniqueHTML.deletedLineFumens())
                 .hasSize(83)
                 .contains("DhD8GeC8EeE8FeD8JeVQYZAFLDmClcJSAVDEHBEooR?BUoAVBPtPFDpAAAAvhETpB3lBmpB0rBxuB")
@@ -280,10 +280,10 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(minimalHTML)
                 .returns(74, PathHTML::pattern);
 
-        // ライン消去あり
+        // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens()).isEmpty();
 
-        // ライン消去なし
+        // ライン消去あり
         assertThat(minimalHTML.deletedLineFumens())
                 .hasSize(74)
                 .contains("DhD8GeC8EeE8FeD8JeRPYZAFLDmClcJSAVDEHBEooR?BJoAVB6/dgCsAAAAvhEMpB2qBtrBzqBipB")
@@ -330,11 +330,11 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(uniqueHTML)
                 .returns(54, PathHTML::pattern);
 
-        // ライン消去あり
+        // ライン消去なし
         assertThat(uniqueHTML.noDeletedLineFumens())
                 .isEmpty();
 
-        // ライン消去なし
+        // ライン消去あり
         assertThat(uniqueHTML.deletedLineFumens())
                 .hasSize(54)
                 .contains("9gB8i0hlwhRpC8Q4g0wwglwhRpC8R4xwwhF8Q4wwgl?whB8JeAgWGAJNWWCv/AAA")
@@ -351,11 +351,11 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(minimalHTML)
                 .returns(42, PathHTML::pattern);
 
-        // ライン消去あり
+        // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens())
                 .isEmpty();
 
-        // ライン消去なし
+        // ライン消去あり
         assertThat(minimalHTML.deletedLineFumens())
                 .hasSize(42)
                 .contains("9gB8hlwwR4AtRpC8glxwBtRpC8glwwi0F8R4Atg0B8?JeAgWGAKHWWCaNBAA")
@@ -398,13 +398,13 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(uniqueHTML)
                 .returns(245, PathHTML::pattern);
 
-        // ライン消去あり
+        // ライン消去なし
         assertThat(uniqueHTML.noDeletedLineFumens())
                 .hasSize(2)
                 .contains("9gD8ili0D8glAtRpQ4g0D8BtRpR4D8AtzhQ4JeAgWG?AJ3jFDqCBAA")
                 .contains("9gD8Q4zhAtD8R4RpBtD8g0Q4RpAtglD8i0ilJeAgWG?AsvaFDT+AAA");
 
-        // ライン消去なし
+        // ライン消去あり
         assertThat(uniqueHTML.deletedLineFumens())
                 .hasSize(243)
                 .contains("9gD8h0R4RpD8g0R4ilD8g0wwzhD8ywglRpJeAgWGAU?ujPCMHBAA")
@@ -421,13 +421,13 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(minimalHTML)
                 .returns(199, PathHTML::pattern);
 
-        // ライン消去あり
+        // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens())
                 .hasSize(2)
                 .contains("9gD8ili0D8glAtRpQ4g0D8BtRpR4D8AtzhQ4JeAgWG?AJ3jFDqCBAA")
                 .contains("9gD8Q4zhAtD8R4RpBtD8g0Q4RpAtglD8i0ilJeAgWG?AsvaFDT+AAA");
 
-        // ライン消去なし
+        // ライン消去あり
         assertThat(minimalHTML.deletedLineFumens())
                 .hasSize(197)
                 .contains("9gD8ili0D8RpzhD8RpR4wwg0D8glR4ywJeAgWGAU9C?MCqCBAA")
@@ -472,14 +472,14 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(uniqueHTML)
                 .returns(118, PathHTML::pattern);
 
-        // ライン消去あり
+        // ライン消去なし
         assertThat(uniqueHTML.noDeletedLineFumens())
                 .hasSize(6)
                 .contains("9gB8hlzhR4C8glh0AtR4D8glg0BtwwF8g0AtywA8Je?AgWGA03ntCM+AAA")
                 .contains("9gB8zhQ4ywC8ilR4wwD8glRpg0Q4F8Rpi0A8JeAgWG?AK3TWCU+AAA")
                 .contains("9gB8hlzhR4C8glywR4D8glg0wwBtF8i0BtA8JeAgWG?AaNWWCK+AAA");
 
-        // ライン消去なし
+        // ライン消去あり
         assertThat(uniqueHTML.deletedLineFumens())
                 .hasSize(112)
                 .contains("9gB8hlwhh0ywC8glwhg0BtwwD8glwhg0R4F8whR4Bt?A8JeAgWGATe/VC6OBAA")
@@ -496,14 +496,14 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(minimalHTML)
                 .returns(104, PathHTML::pattern);
 
-        // ライン消去あり
+        // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens())
                 .hasSize(6)
                 .contains("9gB8zhQ4ywC8ilR4wwD8glRpg0Q4F8Rpi0A8JeAgWG?AK3TWCU+AAA")
                 .contains("9gB8hlzhR4C8gli0R4D8glRpg0wwF8RpywA8JeAgWG?AU3jPCM+AAA")
                 .contains("9gB8zhh0R4C8ilg0R4D8glRpg0wwF8RpywA8JeAgWG?AU3jPCM+AAA");
 
-        // ライン消去なし
+        // ライン消去あり
         assertThat(minimalHTML.deletedLineFumens())
                 .hasSize(98)
                 .contains("9gB8hlzhR4C8glh0ywD8glg0RpwwF8g0RpR4A8JeAg?WGAv/VWCT+AAA")
@@ -548,14 +548,14 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(uniqueHTML)
                 .returns(11, PathHTML::pattern);
 
-        // ライン消去あり
+        // ライン消去なし
         assertThat(uniqueHTML.noDeletedLineFumens())
                 .hasSize(5)
                 .contains("9gF8zhF8ilwwF8glA8xwI8wwJeAgWDA0SdBA")
                 .contains("9gF8h0R4F8g0R4wwF8g0A8xwI8wwJeAgWDAUtfBA")
                 .contains("9gF8wwi0F8xwQ4g0F8wwA8R4I8Q4JeAgWDAzufBA");
 
-        // ライン消去なし
+        // ライン消去あり
         assertThat(uniqueHTML.deletedLineFumens())
                 .hasSize(6)
                 .contains("9gF8ilwwF8zhF8glA8xwI8wwJeAgWDApOkBA")
@@ -572,7 +572,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(minimalHTML)
                 .returns(9, PathHTML::pattern);
 
-        // ライン消去あり
+        // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens())
                 .hasSize(4)
                 .contains("9gF8h0R4F8g0R4wwF8g0A8xwI8wwJeAgWDAUtfBA")
@@ -580,7 +580,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
                 .contains("9gF8h0wwwhF8g0xwwhF8g0A8wwwhI8whJeAgWDApuf?BA")
                 .contains("9gF8wwi0F8xwQ4g0F8wwA8R4I8Q4JeAgWDAzufBA");
 
-        // ライン消去なし
+        // ライン消去あり
         assertThat(minimalHTML.deletedLineFumens())
                 .hasSize(5)
                 .contains("9gF8i0whF8ilwhF8glA8g0whI8whJeAgWDApifBA")
@@ -628,14 +628,14 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(uniqueHTML)
                 .returns(10, PathHTML::pattern);
 
-        // ライン消去あり
+        // ライン消去なし
         assertThat(uniqueHTML.noDeletedLineFumens())
                 .hasSize(5)
                 .contains("9gilywzhglAtB8wwi0RpBtE8g0RpAtI8JeAgWGAv33?LC0CBAA")
                 .contains("9gilywR4RpglAtB8wwR4g0RpBtE8i0AtI8JeAgWGAq?HztC0CBAA")
                 .contains("9gwhh0ywR4hlwhg0B8wwR4Rpglwhg0E8RpglwhI8Je?AgWGAP+rtCqOBAA");
 
-        // ライン消去なし
+        // ライン消去あり
         assertThat(uniqueHTML.deletedLineFumens())
                 .hasSize(5)
                 .contains("9gwhh0ywR4Rpwhg0B8wwR4ilwhg0E8glRpwhI8JeAg?WGApyjPCUHBAA")
@@ -652,14 +652,14 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(minimalHTML)
                 .returns(7, PathHTML::pattern);
 
-        // ライン消去あり
+        // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens())
                 .hasSize(5)
                 .contains("9gilywR4RpglAtB8wwR4g0RpBtE8i0AtI8JeAgWGAq?HztC0CBAA")
                 .contains("9gwhh0ywR4hlwhg0B8wwR4Rpglwhg0E8RpglwhI8Je?AgWGAP+rtCqOBAA")
                 .contains("9gwhh0Btywhlwhg0B8BtwwRpglwhg0E8RpglwhI8Je?AgWGAP+TFDqOBAA");
 
-        // ライン消去なし
+        // ライン消去あり
         assertThat(minimalHTML.deletedLineFumens())
                 .hasSize(2)
                 .contains("9gilBtywR4RpB8Btwwi0RpE8R4g0glI8JeAgWGAvfj?xCzCBAA")
@@ -704,14 +704,14 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(uniqueHTML)
                 .returns(9, PathHTML::pattern);
 
-        // ライン消去あり
+        // ライン消去なし
         assertThat(uniqueHTML.noDeletedLineFumens())
                 .hasSize(3)
                 .contains("9gF8zhG8i0H8wwg0G8ywJeAgWDA0PdBA")
                 .contains("9gF8BthlG8BtglH8wwglG8ywJeAgWDA0XkBA")
                 .contains("9gF8zhG8ywH8wwglG8ilJeAgWDAsedBA");
 
-        // ライン消去なし
+        // ライン消去あり
         assertThat(uniqueHTML.deletedLineFumens())
                 .hasSize(6)
                 .contains("9gF8BtR4G8R4wwH8xwG8BtwwJeAgWDAUtDCA")
@@ -727,14 +727,14 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(minimalHTML)
                 .returns(8, PathHTML::pattern);
 
-        // ライン消去あり
+        // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens())
                 .hasSize(3)
                 .contains("9gF8zhG8i0H8wwg0G8ywJeAgWDA0PdBA")
                 .contains("9gF8BthlG8BtglH8wwglG8ywJeAgWDA0XkBA")
                 .contains("9gF8zhG8ywH8wwglG8ilJeAgWDAsedBA");
 
-        // ライン消去なし
+        // ライン消去あり
         assertThat(minimalHTML.deletedLineFumens())
                 .hasSize(5)
                 .contains("9gF8hlh0G8glg0wwH8xwG8glg0wwJeAgWDA0/jBA")
@@ -743,6 +743,131 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // すべての譜面
         assertThat(parseLastPageTetfu(minimalHTML.allFumens()))
                 .hasSize(8)
+                .allMatch(coloredField -> isFilled(height, coloredField));
+    }
+
+    @Test
+    void validSequences() throws Exception {
+        // 有効な組み合わせのチェック
+            /*
+            comment: <Empty>
+            _____XXX__
+            ___X__X__X
+            _XXXXXXXXX
+            _XXXXXXXXX
+             */
+
+        int height = 4;
+        String tetfu = "v115@ChC8EeA8BeA8BeA8AeI8AeI8JeAgH";
+
+        String command = String.format("path -c 4 -t %s -p I,O,S,Z --hold avoid", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getReturnCode()).isEqualTo(0);
+
+        assertThat(log.getOutput())
+                .contains("I,O,S,Z")
+                .contains(Messages.uniqueCount(1))
+                .contains(Messages.minimalCount(1))
+                .contains(Messages.noUseHold());
+
+        // unique
+        PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
+        assertThat(uniqueHTML.getHtml())
+                .contains("I-Left S-Spawn Z-Spawn O-Spawn")
+                .contains("IOSZ", "OISZ", "ISOZ", "OSIZ", "ISZO", "IOZS", "OIZS", "OSZI");
+
+        // ライン消去なし
+        assertThat(uniqueHTML.noDeletedLineFumens())
+                .hasSize(1)
+                .contains("9gwhRpBtC8R4whRpA8BtA8R4A8whI8whI8JeAgWEAJ?trgC");
+
+        // ライン消去なし
+        assertThat(uniqueHTML.deletedLineFumens()).isEmpty();
+
+        // すべての譜面
+        assertThat(parseLastPageTetfu(uniqueHTML.allFumens()))
+                .hasSize(1)
+                .allMatch(coloredField -> isFilled(height, coloredField));
+
+        // minimal
+        PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
+        assertThat(minimalHTML.getHtml())
+                .contains("I-Left S-Spawn Z-Spawn O-Spawn")
+                .contains("IOSZ", "OISZ", "ISOZ", "OSIZ", "ISZO", "IOZS", "OIZS", "OSZI");
+
+        // ライン消去なし
+        assertThat(minimalHTML.noDeletedLineFumens())
+                .hasSize(1)
+                .contains("9gwhRpBtC8R4whRpA8BtA8R4A8whI8whI8JeAgWEAJ?trgC");
+
+        // ライン消去あり
+        assertThat(minimalHTML.deletedLineFumens()).isEmpty();
+
+        // すべての譜面
+        assertThat(parseLastPageTetfu(minimalHTML.allFumens()))
+                .hasSize(1)
+                .allMatch(coloredField -> isFilled(height, coloredField));
+    }
+
+    @Test
+    void validSequences2() throws Exception {
+        // 有効な組み合わせのチェック
+            /*
+            comment: <Empty>
+            __X_______
+            __X_X___X_
+             */
+
+        int height = 2;
+        String tetfu = "v115@ThA8IeA8AeA8CeA8KeAgH";
+
+        String command = String.format("path -c 2 -t %s -p T,O,L,J", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+        assertThat(log.getReturnCode()).isEqualTo(0);
+
+        assertThat(log.getOutput())
+                .contains("T,O,L,J")
+                .contains(Messages.uniqueCount(1))
+                .contains(Messages.minimalCount(1))
+                .contains(Messages.useHold());
+
+        // unique
+        PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
+        assertThat(uniqueHTML.getHtml())
+                .contains("T-Spawn O-Spawn J-Reverse L-Reverse")
+                .contains("TOLJ", "OTJL", "TLOJ", "TOJL", "TLJO", "OTLJ");
+
+        // ライン消去なし
+        assertThat(uniqueHTML.noDeletedLineFumens())
+                .hasSize(1)
+                .contains("RhRpA8ilwwi0RpA8glA8ywA8g0JeAgWEAUn/VC");
+
+        // ライン消去なし
+        assertThat(uniqueHTML.deletedLineFumens()).isEmpty();
+
+        // すべての譜面
+        assertThat(parseLastPageTetfu(uniqueHTML.allFumens()))
+                .hasSize(1)
+                .allMatch(coloredField -> isFilled(height, coloredField));
+
+        // minimal
+        PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
+        assertThat(minimalHTML.getHtml())
+                .contains("T-Spawn O-Spawn J-Reverse L-Reverse")
+                .contains("TOLJ", "OTJL", "TLOJ", "TOJL", "TLJO", "OTLJ");
+
+        // ライン消去なし
+        assertThat(minimalHTML.noDeletedLineFumens())
+                .hasSize(1)
+                .contains("RhRpA8ilwwi0RpA8glA8ywA8g0JeAgWEAUn/VC");
+
+        // ライン消去あり
+        assertThat(minimalHTML.deletedLineFumens()).isEmpty();
+
+        // すべての譜面
+        assertThat(parseLastPageTetfu(minimalHTML.allFumens()))
+                .hasSize(1)
                 .allMatch(coloredField -> isFilled(height, coloredField));
     }
 }

@@ -37,7 +37,7 @@ public class OutputFileHelper {
         String deletedLine = split[1];
         List<String> noDeletedLineFumens = extractTetfu(noDeletedLine);
         List<String> deletedLineFumens = extractTetfu(deletedLine);
-        return new PathHTML(pattern, noDeletedLineFumens, deletedLineFumens);
+        return new PathHTML(html, pattern, noDeletedLineFumens, deletedLineFumens);
     }
 
     public static PathCSV loadPathUniqueCSV() throws IOException {
@@ -60,7 +60,7 @@ public class OutputFileHelper {
         String deletedLine = split[1];
         List<String> noDeletedLineFumens = extractTetfu(noDeletedLine);
         List<String> deletedLineFumens = extractTetfu(deletedLine);
-        return new PathHTML(pattern, noDeletedLineFumens, deletedLineFumens);
+        return new PathHTML(html, pattern, noDeletedLineFumens, deletedLineFumens);
     }
 
     public static PathCSV loadPathMinimalCSV() throws IOException {

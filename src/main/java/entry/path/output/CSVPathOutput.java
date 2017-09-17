@@ -16,10 +16,6 @@ import searcher.pack.task.Result;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,24 +23,16 @@ import java.util.stream.Collectors;
 
 public class CSVPathOutput implements PathOutput {
     private static final String FILE_EXTENSION = ".csv";
-    private static final Charset CHARSET = StandardCharsets.UTF_8;
-    private static final StandardOpenOption[] FILE_OPEN_OPTIONS = new StandardOpenOption[]{
-            StandardOpenOption.TRUNCATE_EXISTING,
-            StandardOpenOption.CREATE
-    };
 
     private final PathEntryPoint pathEntryPoint;
     private final PathSettings settings;
 
-    private final File outputMinimalFile;
-    private final File outputUniqueFile;
+    private final MyFile outputMinimalFile;
+    private final MyFile outputUniqueFile;
 
     public CSVPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings) throws FinderInitializeException {
-        this.pathEntryPoint = pathEntryPoint;
-        this.settings = pathSettings;
-
         // 出力ファイルが正しく出力できるか確認
-        String outputBaseFilePath = settings.getOutputBaseFilePath();
+        String outputBaseFilePath = pathSettings.getOutputBaseFilePath();
         String namePath = getRemoveExtensionFromPath(outputBaseFilePath);
 
         // pathが空 または ディレクトリであるとき、pathを追加して、ファイルにする
@@ -53,58 +41,35 @@ public class CSVPathOutput implements PathOutput {
 
         // baseファイル
         String outputFilePath = String.format("%s%s", namePath, FILE_EXTENSION);
-        File outputFile = new File(outputFilePath);
-
-        // 親ディレクトリがない場合は作成
-        if (!outputFile.getParentFile().exists()) {
-            boolean mkdirsSuccess = outputFile.getParentFile().mkdirs();
-            if (!mkdirsSuccess) {
-                throw new FinderInitializeException("Failed to make output directory: OutputBase=" + outputBaseFilePath);
-            }
-        }
+        MyFile.mkdirs(outputFilePath);
 
         // uniqueファイル
         String uniqueOutputFilePath = String.format("%s_unique%s", namePath, FILE_EXTENSION);
-        this.outputUniqueFile = new File(uniqueOutputFilePath);
-
-        if (outputUniqueFile.isDirectory())
-            throw new FinderInitializeException("Cannot specify directory as output unique file path: OutputBase=" + outputBaseFilePath);
-        if (outputUniqueFile.exists() && !outputUniqueFile.canWrite())
-            throw new FinderInitializeException("Cannot write output unique file: OutputBase=" + outputBaseFilePath);
+        MyFile unique = new MyFile(uniqueOutputFilePath);
+        unique.verify();
 
         // minimalファイル
         String minimalOutputFilePath = String.format("%s_minimal%s", namePath, FILE_EXTENSION);
-        this.outputMinimalFile = new File(minimalOutputFilePath);
+        MyFile minimal = new MyFile(minimalOutputFilePath);
+        minimal.verify();
 
-        if (outputMinimalFile.isDirectory())
-            throw new FinderInitializeException("Cannot specify directory as output minimal file path: OutputBase=" + outputBaseFilePath);
-        if (outputMinimalFile.exists() && !outputMinimalFile.canWrite())
-            throw new FinderInitializeException("Cannot write output minimal file: OutputBase=" + outputBaseFilePath);
+        // 保存
+        this.pathEntryPoint = pathEntryPoint;
+        this.settings = pathSettings;
+        this.outputUniqueFile = unique;
+        this.outputMinimalFile = minimal;
     }
 
-    private String getCanonicalPath(String path) throws FinderInitializeException {
-        try {
-            return new File(path).getCanonicalPath();
-        } catch (IOException e) {
-            throw new FinderInitializeException(e);
-        }
-    }
-
-    private String getRemoveExtensionFromPath(String filePath) throws FinderInitializeException {
-        String canonicalPath = getCanonicalPath(filePath);
-
-        int pointIndex = canonicalPath.lastIndexOf('.');
-        int separatorIndex = canonicalPath.lastIndexOf(File.separatorChar);
+    private String getRemoveExtensionFromPath(String path) throws FinderInitializeException {
+        int pointIndex = path.lastIndexOf('.');
+        int separatorIndex = path.lastIndexOf(File.separatorChar);
 
         // .がない or セパレータより前にあるとき
         if (pointIndex <= separatorIndex)
-            return canonicalPath;
+            return path;
 
         // .があるとき
-        if (pointIndex != -1)
-            return canonicalPath.substring(0, pointIndex);
-
-        return canonicalPath;
+        return path.substring(0, pointIndex);
     }
 
     @Override
@@ -130,7 +95,7 @@ public class CSVPathOutput implements PathOutput {
         pathEntryPoint.output(str);
     }
 
-    private void outputOperationsToCSV(Field field, File file, List<PathPair> pathPairs, SizedBit sizedBit) throws FinderExecuteException {
+    private void outputOperationsToCSV(Field field, MyFile file, List<PathPair> pathPairs, SizedBit sizedBit) throws FinderExecuteException {
         LockedBuildUpListUpThreadLocal threadLocal = new LockedBuildUpListUpThreadLocal(sizedBit.getHeight());
         List<List<OperationWithKey>> samples = pathPairs.parallelStream()
                 .map(resultPair -> {
@@ -145,7 +110,7 @@ public class CSVPathOutput implements PathOutput {
                 })
                 .collect(Collectors.toList());
 
-        try (BufferedWriter writer = Files.newBufferedWriter(file.toPath(), CHARSET, FILE_OPEN_OPTIONS)) {
+        try (BufferedWriter writer = file.newBufferedWriter()) {
             for (List<OperationWithKey> operationWithKeys : samples) {
                 Operations operations = OperationTransform.parseToOperations(field, operationWithKeys, sizedBit.getHeight());
                 String operationLine = OperationInterpreter.parseToString(operations);

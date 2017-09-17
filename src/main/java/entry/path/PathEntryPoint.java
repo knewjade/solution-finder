@@ -2,16 +2,19 @@ package entry.path;
 
 import common.SyntaxException;
 import common.pattern.BlocksGenerator;
+import core.action.reachable.LockedReachable;
 import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
 import core.field.Field;
 import core.field.FieldView;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import core.srs.MinoRotation;
 import entry.EntryPoint;
 import entry.path.output.CSVPathOutput;
 import entry.path.output.LinkPathOutput;
 import entry.path.output.PathOutput;
+import entry.path.output.TetfuCSVPathOutput;
 import exceptions.FinderException;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
@@ -116,8 +119,9 @@ public class PathEntryPoint implements EntryPoint {
         // フォーマットを決める
         // 出力ファイルが正しく出力できるか確認も行う
         MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
         OutputType outputType = settings.getOutputType();
-        PathOutput pathOutput = createOutput(outputType, minoFactory);
+        PathOutput pathOutput = createOutput(outputType, minoFactory, minoShifter, maxClearLine);
 
         output();
         // ========================================
@@ -152,7 +156,6 @@ public class PathEntryPoint implements EntryPoint {
         // ミノのリストを作成する
         int basicSolutionWidth = decideBasicSolutionWidth(maxClearLine);
         SizedBit sizedBit = new SizedBit(basicSolutionWidth, maxClearLine);
-        MinoShifter minoShifter = new MinoShifter();
         SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, sizedBit.getWidth(), sizedBit.getHeight());
         SeparableMinos separableMinos = new SeparableMinos(factory.create());
 
@@ -199,10 +202,9 @@ public class PathEntryPoint implements EntryPoint {
         output();
         // ========================================
         output("# Output file");
-        output();
-
         pathOutput.output(pathPairs, field, sizedBit);
 
+        output();
         // ========================================
         output("# Finalize");
         output("done");
@@ -236,12 +238,14 @@ public class PathEntryPoint implements EntryPoint {
         return new BasicMinoPackingHelper();
     }
 
-    private PathOutput createOutput(OutputType outputType, MinoFactory minoFactory) throws FinderExecuteException, FinderInitializeException {
+    private PathOutput createOutput(OutputType outputType, MinoFactory minoFactory, MinoShifter minoShifter, int maxClearLine) throws FinderExecuteException, FinderInitializeException {
         switch (outputType) {
             case CSV:
                 return new CSVPathOutput(this, settings);
             case Link:
-                return new LinkPathOutput(this, settings, minoFactory);
+                return new LinkPathOutput(this, settings, minoFactory, new LockedReachable(minoFactory, minoShifter, new MinoRotation(), maxClearLine));
+            case TetfuCSV:
+                return new TetfuCSVPathOutput(this, settings, minoFactory, new LockedReachable(minoFactory, minoShifter, new MinoRotation(), maxClearLine));
             default:
                 throw new FinderExecuteException("Unsupported format: format=" + outputType);
         }

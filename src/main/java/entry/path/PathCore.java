@@ -78,7 +78,6 @@ public class PathCore {
                             .filter(validPieces::contains)
                             .collect(Collectors.toCollection(HashSet::new));
 
-
                     if (pieces.isEmpty())
                         return PathPair.EMPTY_PAIR;
 

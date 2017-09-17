@@ -392,7 +392,7 @@ class PathIrregularCaseTest extends PathUseCaseBaseTest {
     }
 
     @Test
-    void existsDirectoryHavingSameMinimalOutputName() throws Exception {
+    void existsDirectoryHavingSameMinimalOutputNameLink() throws Exception {
         // 出力ファイルと同名のディレクトリが存在している
 
         File minimalDirectory = new File("output/path_minimal.html");
@@ -402,7 +402,7 @@ class PathIrregularCaseTest extends PathUseCaseBaseTest {
         minimalDirectory.deleteOnExit();
 
         String tetfu = "v115@vhEKJJUqB0fBetBpoB";
-        String command = String.format("path -t %s -P 5 -p *p5", tetfu);
+        String command = String.format("path -t %s -P 5 -p *p5 -f link", tetfu);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
         assertThat(log.getReturnCode()).isEqualTo(1);
@@ -415,14 +415,46 @@ class PathIrregularCaseTest extends PathUseCaseBaseTest {
         String errorFile = OutputFileHelper.loadErrorText();
         assertThat(errorFile)
                 .contains(command)
-                .contains("Cannot specify directory as output minimal file path: OutputBase=output/path.txt [FinderInitializeException]");
+                .contains("Cannot specify directory as output file path: Path=output/path_minimal.html [FinderInitializeException]");
 
         // noinspection ResultOfMethodCallIgnored
         minimalDirectory.delete();
     }
 
     @Test
-    void existsDirectoryHavingSameUniqueOutputName() throws Exception {
+    void existsDirectoryHavingSameMinimalOutputNameCSV() throws Exception {
+        // 出力ファイルと同名のディレクトリが存在している
+
+        File minimalDirectory = new File("output/path_minimal.csv");
+
+        // noinspection ResultOfMethodCallIgnored
+        minimalDirectory.mkdir();
+        minimalDirectory.deleteOnExit();
+
+        String tetfu = "v115@vhEKJJUqB0fBetBpoB";
+        String command = String.format("path -t %s -P 5 -p *p5 -f csv", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getReturnCode())
+                .as(log.getOutput())
+                .isEqualTo(1);
+
+        assertThat(log.getError())
+                .contains(ErrorMessages.failMain());
+
+        assertThat(OutputFileHelper.existsErrorText()).isTrue();
+
+        String errorFile = OutputFileHelper.loadErrorText();
+        assertThat(errorFile)
+                .contains(command)
+                .contains("Cannot specify directory as output file path: Path=output/path_minimal.csv [FinderInitializeException]");
+
+        // noinspection ResultOfMethodCallIgnored
+        minimalDirectory.delete();
+    }
+
+    @Test
+    void existsDirectoryHavingSameUniqueOutputNameLink() throws Exception {
         // 出力ファイルと同名のディレクトリが存在している
 
         File uniqueDirectory = new File("output/path_unique.html");
@@ -432,7 +464,7 @@ class PathIrregularCaseTest extends PathUseCaseBaseTest {
         uniqueDirectory.deleteOnExit();
 
         String tetfu = "v115@vhEKJJUqB0fBetBpoB";
-        String command = String.format("path -t %s -P 5 -p *p5", tetfu);
+        String command = String.format("path -t %s -P 5 -p *p5 -f link", tetfu);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
         assertThat(log.getReturnCode()).isEqualTo(1);
@@ -445,14 +477,44 @@ class PathIrregularCaseTest extends PathUseCaseBaseTest {
         String errorFile = OutputFileHelper.loadErrorText();
         assertThat(errorFile)
                 .contains(command)
-                .contains("Cannot specify directory as output unique file path: OutputBase=output/path.txt [FinderInitializeException]");
+                .contains("Cannot specify directory as output file path: Path=output/path_unique.html [FinderInitializeException]");
 
         // noinspection ResultOfMethodCallIgnored
         uniqueDirectory.delete();
     }
 
     @Test
-    void existsDirectoryHavingLogFileName() throws Exception {
+    void existsDirectoryHavingSameUniqueOutputNameCSV() throws Exception {
+        // 出力ファイルと同名のディレクトリが存在している
+
+        File uniqueDirectory = new File("output/path_unique.csv");
+
+        // noinspection ResultOfMethodCallIgnored
+        uniqueDirectory.mkdir();
+        uniqueDirectory.deleteOnExit();
+
+        String tetfu = "v115@vhEKJJUqB0fBetBpoB";
+        String command = String.format("path -t %s -P 5 -p *p5 -f csv", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getReturnCode()).isEqualTo(1);
+
+        assertThat(log.getError())
+                .contains(ErrorMessages.failMain());
+
+        assertThat(OutputFileHelper.existsErrorText()).isTrue();
+
+        String errorFile = OutputFileHelper.loadErrorText();
+        assertThat(errorFile)
+                .contains(command)
+                .contains("Cannot specify directory as output file path: Path=output/path_unique.csv [FinderInitializeException]");
+
+        // noinspection ResultOfMethodCallIgnored
+        uniqueDirectory.delete();
+    }
+
+    @Test
+    void existsDirectoryHavingLogFileNameLink() throws Exception {
         // 出力ファイルと同名のディレクトリが存在している
 
         File logDirectory = new File("output/log_directory");
@@ -462,7 +524,37 @@ class PathIrregularCaseTest extends PathUseCaseBaseTest {
         logDirectory.deleteOnExit();
 
         String tetfu = "v115@vhEKJJUqB0fBetBpoB";
-        String command = String.format("path -t %s -P 5 -p *p5 -l output/log_directory", tetfu);
+        String command = String.format("path -t %s -P 5 -p *p5 -f link -l output/log_directory", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getReturnCode()).isEqualTo(1);
+
+        assertThat(log.getError())
+                .contains(ErrorMessages.failPreMain());
+
+        assertThat(OutputFileHelper.existsErrorText()).isTrue();
+
+        String errorFile = OutputFileHelper.loadErrorText();
+        assertThat(errorFile)
+                .contains(command)
+                .contains("Cannot specify directory as log file path: LogFilePath=output/log_directory [FinderInitializeException]");
+
+        // noinspection ResultOfMethodCallIgnored
+        logDirectory.delete();
+    }
+
+    @Test
+    void existsDirectoryHavingLogFileNameCSV() throws Exception {
+        // 出力ファイルと同名のディレクトリが存在している
+
+        File logDirectory = new File("output/log_directory");
+
+        // noinspection ResultOfMethodCallIgnored
+        logDirectory.mkdir();
+        logDirectory.deleteOnExit();
+
+        String tetfu = "v115@vhEKJJUqB0fBetBpoB";
+        String command = String.format("path -t %s -P 5 -p *p5 -f csv -l output/log_directory", tetfu);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
         assertThat(log.getReturnCode()).isEqualTo(1);

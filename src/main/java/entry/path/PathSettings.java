@@ -116,6 +116,9 @@ public class PathSettings {
             case "link":
                 this.outputType = OutputType.Link;
                 break;
+            case "tetfucsv":
+                this.outputType = OutputType.TetfuCSV;
+                break;
             default:
                 throw new UnsupportedDataTypeException("Unsupported format: format=" + type);
         }
