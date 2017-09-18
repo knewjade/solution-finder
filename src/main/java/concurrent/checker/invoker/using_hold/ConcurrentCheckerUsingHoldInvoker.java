@@ -1,14 +1,14 @@
 package concurrent.checker.invoker.using_hold;
 
-import core.action.candidate.Candidate;
+import common.datastore.Pair;
+import common.datastore.action.Action;
+import common.datastore.pieces.Blocks;
+import common.tree.ConcurrentVisitedTree;
 import concurrent.checker.CheckerUsingHoldThreadLocal;
 import concurrent.checker.invoker.ConcurrentCheckerInvoker;
-import common.datastore.Pair;
+import core.action.candidate.Candidate;
 import core.field.Field;
-import core.mino.Block;
 import searcher.checker.Checker;
-import common.datastore.action.Action;
-import common.tree.ConcurrentVisitedTree;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,19 +28,19 @@ public class ConcurrentCheckerUsingHoldInvoker implements ConcurrentCheckerInvok
     }
 
     @Override
-    public List<Pair<List<Block>, Boolean>> search(Field field, List<List<Block>> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
+    public List<Pair<Blocks, Boolean>> search(Field field, List<Blocks> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
         ConcurrentVisitedTree visitedTree = new ConcurrentVisitedTree();
 
         Obj obj = new Obj(field, maxClearLine, maxDepth, visitedTree, candidateThreadLocal, checkerThreadLocal);
         ArrayList<Task> tasks = new ArrayList<>();
-        for (List<Block> target : searchingPieces)
+        for (Blocks target : searchingPieces)
             tasks.add(new Task(obj, target));
 
-        List<Future<Pair<List<Block>, Boolean>>> futureResults = executorService.invokeAll(tasks);
+        List<Future<Pair<Blocks, Boolean>>> futureResults = executorService.invokeAll(tasks);
 
         // 結果をリストに追加する
-        ArrayList<Pair<List<Block>, Boolean>> pairs = new ArrayList<>();
-        for (Future<Pair<List<Block>, Boolean>> future : futureResults)
+        ArrayList<Pair<Blocks, Boolean>> pairs = new ArrayList<>();
+        for (Future<Pair<Blocks, Boolean>> future : futureResults)
             pairs.add(future.get());
 
         return pairs;

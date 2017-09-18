@@ -2,13 +2,12 @@ package entry.path.output;
 
 import common.datastore.pieces.Blocks;
 import common.pattern.BlocksGenerator;
-import common.tetfu.common.ColorConverter;
 import core.field.Field;
 import core.mino.Block;
-import core.mino.MinoFactory;
 import entry.path.PathEntryPoint;
 import entry.path.PathPair;
 import entry.path.PathSettings;
+import entry.path.ReduceBlocksGenerator;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
 import searcher.pack.SizedBit;
@@ -26,10 +25,10 @@ public class PatternCSVPathOutput implements PathOutput {
     private final PathEntryPoint pathEntryPoint;
 
     private final MyFile outputBaseFile;
-    private final BlocksGenerator generator;
+    private final ReduceBlocksGenerator generator;
     private Exception lastException = null;
 
-    public PatternCSVPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings, BlocksGenerator generator) throws FinderInitializeException {
+    public PatternCSVPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings, BlocksGenerator generator, int maxDepth) throws FinderInitializeException {
         // 出力ファイルが正しく出力できるか確認
         String outputBaseFilePath = pathSettings.getOutputBaseFilePath();
         String namePath = getRemoveExtensionFromPath(outputBaseFilePath);
@@ -47,7 +46,7 @@ public class PatternCSVPathOutput implements PathOutput {
         // 保存
         this.pathEntryPoint = pathEntryPoint;
         this.outputBaseFile = base;
-        this.generator = generator;
+        this.generator = new ReduceBlocksGenerator(generator, maxDepth);
     }
 
     private String getRemoveExtensionFromPath(String path) throws FinderInitializeException {
@@ -82,7 +81,7 @@ public class PatternCSVPathOutput implements PathOutput {
                         // パフェ可能な地形を抽出
                         List<PathPair> valid = pathPairs.stream()
                                 .filter(pathPair -> {
-                                    HashSet<? extends Blocks> buildBlocks = pathPair.getBuildBlocks();
+                                    HashSet<? extends Blocks> buildBlocks = pathPair.blocksHashSetForPattern();
                                     return buildBlocks.contains(blocks);
                                 })
                                 .collect(Collectors.toList());

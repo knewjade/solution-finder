@@ -2,12 +2,12 @@ package entry.percent;
 
 import common.SyntaxException;
 import common.datastore.Pair;
+import common.datastore.pieces.Blocks;
 import common.datastore.pieces.LongBlocks;
 import common.pattern.BlocksGenerator;
 import common.tree.AnalyzeTree;
 import core.field.Field;
 import core.field.FieldView;
-import core.mino.Block;
 import entry.EntryPoint;
 import entry.searching_pieces.NormalEnumeratePieces;
 import exceptions.FinderException;
@@ -156,7 +156,7 @@ public class PercentEntryPoint implements EntryPoint {
         }
 
         AnalyzeTree tree = percentCore.getResultTree();
-        List<Pair<List<Block>, Boolean>> resultPairs = percentCore.getResultPairs();
+        List<Pair<Blocks, Boolean>> resultPairs = percentCore.getResultPairs();
 
         stopwatch.stop();
         output("  -> Stopwatch stop : " + stopwatch.toMessage(TimeUnit.MILLISECONDS));
@@ -180,28 +180,20 @@ public class PercentEntryPoint implements EntryPoint {
         if (0 < failedMaxCount) {
             output(String.format("Fail pattern (max. %d)", failedMaxCount));
 
-            List<Pair<List<Block>, Boolean>> failedPairs = resultPairs.stream()
+            List<Pair<Blocks, Boolean>> failedPairs = resultPairs.stream()
                     .filter(pair -> !pair.getValue())
                     .limit(failedMaxCount)
                     .collect(Collectors.toList());
 
-            for (Pair<List<Block>, Boolean> resultPair : failedPairs)
-                output(resultPair.getKey().toString());
-
-            if (failedPairs.isEmpty())
-                output("nothing");
+            outputFailedPatterns(failedPairs);
         } else if (failedMaxCount < 0) {
             output("Fail pattern (all)");
 
-            List<Pair<List<Block>, Boolean>> failedPairs = resultPairs.stream()
+            List<Pair<Blocks, Boolean>> failedPairs = resultPairs.stream()
                     .filter(pair -> !pair.getValue())
                     .collect(Collectors.toList());
 
-            for (Pair<List<Block>, Boolean> resultPair : failedPairs)
-                output(resultPair.getKey().toString());
-
-            if (failedPairs.isEmpty())
-                output("nothing");
+            outputFailedPatterns(failedPairs);
         }
 
         output();
@@ -211,6 +203,14 @@ public class PercentEntryPoint implements EntryPoint {
         output("done");
 
         flush();
+    }
+
+    private void outputFailedPatterns(List<Pair<Blocks, Boolean>> failedPairs) throws FinderExecuteException {
+        for (Pair<Blocks, Boolean> resultPair : failedPairs)
+            output(resultPair.getKey().getBlocks().toString());
+
+        if (failedPairs.isEmpty())
+            output("nothing");
     }
 
     private void output() throws FinderExecuteException {

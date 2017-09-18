@@ -55,8 +55,7 @@ public class PutterMain {
         ConcurrentCheckerUsingHoldInvoker invoker = new ConcurrentCheckerUsingHoldInvoker(executorService, candidateThreadLocal, checkerThreadLocal);
 
         BlocksGenerator blocksGenerator = new BlocksGenerator("*p7");
-        List<List<Block>> searchingPieces = blocksGenerator.blocksStream()
-                .map(Blocks::getBlocks)
+        List<Blocks> searchingPieces = blocksGenerator.blocksStream()
                 .collect(Collectors.toList());
 
         HashMap<Field, Connect> map = new HashMap<>();
@@ -99,9 +98,9 @@ public class PutterMain {
 
 //                System.out.println(i);
 
-                List<Pair<List<Block>, Boolean>> search = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
+                List<Pair<Blocks, Boolean>> search = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
                 AnalyzeTree tree = new AnalyzeTree();
-                for (Pair<List<Block>, Boolean> pair : search) {
+                for (Pair<Blocks, Boolean> pair : search) {
                     tree.set(pair.getValue(), pair.getKey());
                 }
 

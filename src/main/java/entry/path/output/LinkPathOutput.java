@@ -1,16 +1,12 @@
 package entry.path.output;
 
-import common.buildup.BuildUpStream;
 import common.datastore.OperationWithKey;
 import common.datastore.pieces.LongBlocks;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
-import core.action.reachable.Reachable;
 import core.field.Field;
 import core.mino.Block;
-import core.mino.Mino;
-import core.mino.MinoFactory;
 import entry.path.*;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
@@ -27,12 +23,11 @@ public class LinkPathOutput implements PathOutput {
 
     private final PathEntryPoint pathEntryPoint;
     private final PathSettings settings;
-    private final Reachable reachable;
 
     private final MyFile outputMinimalFile;
     private final MyFile outputUniqueFile;
 
-    public LinkPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings, Reachable reachable) throws FinderInitializeException {
+    public LinkPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings) throws FinderInitializeException {
         // 出力ファイルが正しく出力できるか確認
         String outputBaseFilePath = pathSettings.getOutputBaseFilePath();
         String namePath = getRemoveExtensionFromPath(outputBaseFilePath);
@@ -58,7 +53,6 @@ public class LinkPathOutput implements PathOutput {
         // 保存
         this.pathEntryPoint = pathEntryPoint;
         this.settings = pathSettings;
-        this.reachable = reachable;
         this.outputUniqueFile = unique;
         this.outputMinimalFile = minimal;
     }
@@ -98,7 +92,7 @@ public class LinkPathOutput implements PathOutput {
         pathEntryPoint.output(str);
     }
 
-    private void outputOperationsToSimpleHTML(Field field, MyFile file, List<PathPair> resultPairs, SizedBit sizedBit) throws FinderExecuteException {
+    private void outputOperationsToSimpleHTML(Field field, MyFile file, List<PathPair> pathPairs, SizedBit sizedBit) throws FinderExecuteException {
         // Get height
         int maxClearLine = sizedBit.getHeight();
 
@@ -110,22 +104,16 @@ public class LinkPathOutput implements PathOutput {
                     initField.setColorType(ColorType.Gray, x, y);
 
         // ライン消去ありとなしに振り分ける // true: ライン消去あり, false: ライン消去なし
-        LockedBuildUpListUpThreadLocal threadLocal = new LockedBuildUpListUpThreadLocal(sizedBit.getHeight());
-        Map<Boolean, List<LinkInformation>> groupByDelete = resultPairs.stream()
-                .map(resultPair -> {
-                    Result result = resultPair.getResult();
-                    LinkedList<OperationWithKey> operations = result.getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toCollection(LinkedList::new));
-                    BuildUpStream buildUpStream = threadLocal.get();
-                    List<OperationWithKey> operationWithKeys = buildUpStream.existsValidBuildPatternDirectly(field, operations)
-                            .findFirst()
-                            .orElse(Collections.emptyList());
-                    return new LinkInformation(resultPair, operationWithKeys);
-                })
-                .collect(Collectors.groupingBy(LinkInformation::containsDeletedLine));
+        Map<Boolean, List<PathPair>> groupByDelete = pathPairs.stream()
+                .collect(Collectors.groupingBy(pathPair -> {
+                    Result result = pathPair.getResult();
+                    return result.getMemento().getRawOperationsStream()
+                            .anyMatch(operationWithKey -> operationWithKey.getNeedDeletedKey() != 0L);
+                }));
 
         // それぞれで並び替える
-        Comparator<LinkInformation> comparator = new LinkInformationComparator();
-        for (List<LinkInformation> objs : groupByDelete.values())
+        Comparator<PathPair> comparator = new PathPairComparator();
+        for (List<PathPair> objs : groupByDelete.values())
             objs.sort(comparator);
 
         // 出力
@@ -137,15 +125,15 @@ public class LinkPathOutput implements PathOutput {
             writer.newLine();
 
             // パターン数の出力
-            writer.write(String.format("<div>%dパターン</div>", resultPairs.size()));
+            writer.write(String.format("<div>%dパターン</div>", pathPairs.size()));
             writer.newLine();
 
             // 手順の出力 (ライン消去なし)
             writer.write("<h2>ライン消去なし</h2>");
             writer.newLine();
 
-            for (LinkInformation information : groupByDelete.getOrDefault(false, Collections.emptyList())) {
-                String link = createALink(information, field, maxClearLine);
+            for (PathPair pathPair : groupByDelete.getOrDefault(false, Collections.emptyList())) {
+                String link = createALink(pathPair);
                 writer.write(String.format("<div>%s</div>", link));
                 writer.newLine();
             }
@@ -154,8 +142,8 @@ public class LinkPathOutput implements PathOutput {
             writer.write("<h2>ライン消去あり</h2>");
             writer.newLine();
 
-            for (LinkInformation information : groupByDelete.getOrDefault(true, Collections.emptyList())) {
-                String link = createALink(information, field, maxClearLine);
+            for (PathPair pathPair : groupByDelete.getOrDefault(true, Collections.emptyList())) {
+                String link = createALink(pathPair);
                 writer.write(String.format("<div>%s</div>", link));
                 writer.newLine();
             }
@@ -169,22 +157,19 @@ public class LinkPathOutput implements PathOutput {
         }
     }
 
-    private String createALink(LinkInformation information, Field field, int maxClearLine) {
-        LinkedList<OperationWithKey> operations = new LinkedList<>(information.getSample());
-
+    private String createALink(PathPair pathPair) {
         // パターンを表す名前 を生成
-        String linkText = operations.stream()
+        String linkText = pathPair.getSampleOperations().stream()
                 .map(OperationWithKey::getMino)
                 .map(mino -> mino.getBlock().getName() + "-" + mino.getRotate().name())
                 .collect(Collectors.joining(" "));
 
         // テト譜に変換
-        String encode = information.getPair().getFumen();
+        String encode = pathPair.getFumen();
 
         // 有効なミノ順をまとめる
-        BuildUpStream buildUpStream = new BuildUpStream(reachable, maxClearLine);
-        String validOrders = buildUpStream.existsValidBuildPatternDirectly(field, operations)
-                .map(operationWithKeys -> operationWithKeys.stream().map(OperationWithKey::getMino).map(Mino::getBlock).map(Block::getName).collect(Collectors.joining()))
+        String validOrders = pathPair.blocksStreamForSolution()
+                .map(longBlocks -> longBlocks.blockStream().map(Block::getName).collect(Collectors.joining()))
                 .collect(Collectors.joining(", "));
 
         // 出力

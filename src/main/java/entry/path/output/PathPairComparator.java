@@ -2,15 +2,16 @@ package entry.path.output;
 
 import common.datastore.OperationWithKey;
 import core.mino.Mino;
+import entry.path.PathPair;
 
 import java.util.Comparator;
 import java.util.List;
 
-public class LinkInformationComparator implements Comparator<LinkInformation> {
+public class PathPairComparator implements Comparator<PathPair> {
     @Override
-    public int compare(LinkInformation o1, LinkInformation o2) {
-        List<OperationWithKey> operations1 = o1.getSample();
-        List<OperationWithKey> operations2 = o2.getSample();
+    public int compare(PathPair o1, PathPair o2) {
+        List<OperationWithKey> operations1 = o1.getSampleOperations();
+        List<OperationWithKey> operations2 = o2.getSampleOperations();
 
         int compareSize = Integer.compare(operations1.size(), operations2.size());
         if (compareSize != 0)

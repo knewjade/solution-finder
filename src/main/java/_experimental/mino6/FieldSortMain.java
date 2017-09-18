@@ -1,9 +1,9 @@
 package _experimental.mino6;
 
-import common.pattern.BlocksGenerator;
 import common.datastore.Pair;
 import common.datastore.action.Action;
 import common.datastore.pieces.Blocks;
+import common.pattern.BlocksGenerator;
 import common.tetfu.Tetfu;
 import common.tetfu.TetfuElement;
 import common.tetfu.common.ColorConverter;
@@ -16,7 +16,6 @@ import concurrent.checker.CheckerUsingHoldThreadLocal;
 import concurrent.checker.invoker.using_hold.ConcurrentCheckerUsingHoldInvoker;
 import core.field.Field;
 import core.field.SmallField;
-import core.mino.Block;
 import core.mino.MinoFactory;
 
 import java.io.*;
@@ -63,9 +62,7 @@ public class FieldSortMain {
         // 使用する4ミノのリスト
         String pattern = "L, *p4";
         BlocksGenerator generator = new BlocksGenerator(pattern);
-        List<List<Block>> pieces = generator.blocksStream()
-                .map(Blocks::getBlocks)
-                .collect(Collectors.toList());
+        List<Blocks> pieces = generator.blocksStream().collect(Collectors.toList());
 
         // 探索
         AtomicInteger counter = new AtomicInteger(0);
@@ -77,11 +74,11 @@ public class FieldSortMain {
 
                     try {
                         // 探索
-                        List<Pair<List<Block>, Boolean>> search = invoker.search(field, pieces, maxClearLine, 10 - maxDepth);
+                        List<Pair<Blocks, Boolean>> search = invoker.search(field, pieces, maxClearLine, 10 - maxDepth);
 
                         // 結果の保存
                         AnalyzeTree tree = new AnalyzeTree();
-                        for (Pair<List<Block>, Boolean> pair : search)
+                        for (Pair<Blocks, Boolean> pair : search)
                             tree.set(pair.getValue(), pair.getKey());
 
                         // 確率の取得

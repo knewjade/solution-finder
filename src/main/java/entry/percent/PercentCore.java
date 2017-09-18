@@ -2,6 +2,7 @@ package entry.percent;
 
 import common.datastore.Pair;
 import common.datastore.action.Action;
+import common.datastore.pieces.Blocks;
 import common.datastore.pieces.LongBlocks;
 import common.tree.AnalyzeTree;
 import concurrent.LockedCandidateThreadLocal;
@@ -11,19 +12,18 @@ import concurrent.checker.invoker.ConcurrentCheckerInvoker;
 import concurrent.checker.invoker.no_hold.ConcurrentCheckerNoHoldInvoker;
 import concurrent.checker.invoker.using_hold.ConcurrentCheckerUsingHoldInvoker;
 import core.field.Field;
-import core.mino.Block;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.stream.Collectors;
 
 class PercentCore {
     private final ConcurrentCheckerInvoker invoker;
 
     private AnalyzeTree resultTree;
-    private List<Pair<List<Block>, Boolean>> resultPairs;
+    private List<Pair<Blocks, Boolean>> resultPairs;
 
     PercentCore(int maxClearLine, ExecutorService executorService, boolean isUsingHold) {
         this.invoker = createConcurrentCheckerInvoker(maxClearLine, executorService, isUsingHold);
@@ -42,16 +42,14 @@ class PercentCore {
     }
 
     void run(Field field, Set<LongBlocks> searchingPiecesSet, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
-        List<List<Block>> searchingPieces = searchingPiecesSet.stream()
-                .map(LongBlocks::getBlocks)
-                .collect(Collectors.toList());
+        List<Blocks> searchingPieces = new ArrayList<>(searchingPiecesSet);
 
         this.resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
 
         // 最低限の探索結果を集計する
         this.resultTree = new AnalyzeTree();
-        for (Pair<List<Block>, Boolean> resultPair : resultPairs) {
-            List<Block> pieces = resultPair.getKey();
+        for (Pair<Blocks, Boolean> resultPair : resultPairs) {
+            Blocks pieces = resultPair.getKey();
             Boolean result = resultPair.getValue();
             resultTree.set(result, pieces);
         }
@@ -61,7 +59,7 @@ class PercentCore {
         return resultTree;
     }
 
-    List<Pair<List<Block>, Boolean>> getResultPairs() {
+    List<Pair<Blocks, Boolean>> getResultPairs() {
         return resultPairs;
     }
 }

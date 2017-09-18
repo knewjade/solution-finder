@@ -57,7 +57,7 @@ public class PackMain {
         );
 
         BlocksGenerator pieces = new BlocksGenerator(allOnHold);
-        HashSet<BlockCounter> counters = pieces.blocksParallelStream()
+        HashSet<BlockCounter> counters = pieces.blocksStream().parallel()
                 .map(Blocks::getBlocks)
                 .map(BlockCounter::new)
                 .collect(Collectors.toCollection(HashSet::new));

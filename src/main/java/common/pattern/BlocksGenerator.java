@@ -92,19 +92,11 @@ public class BlocksGenerator {
         return stream;
     }
 
-    public Stream<Blocks> blocksParallelStream() {
-        return blocksStream().parallel();
-    }
-
     public Stream<BlockCounter> blockCountersStream() {
         Stream<BlockCounter> stream = Stream.empty();
         for (List<PatternElement> elements : elementsList)
             stream = Stream.concat(stream, new PiecesStreamBuilder(elements).blockCountersStream());
         return stream;
-    }
-
-    public Stream<BlockCounter> blockCountersParallelStream() {
-        return blockCountersStream().parallel();
     }
 }
 

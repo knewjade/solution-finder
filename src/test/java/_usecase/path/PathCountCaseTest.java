@@ -35,7 +35,6 @@ class PathCountCaseTest extends PathUseCaseBaseTest {
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
         assertThat(log.getReturnCode())
-                .as(log.getOutput())
                 .isEqualTo(0);
 
         assertThat(log.getOutput())
@@ -59,7 +58,9 @@ class PathCountCaseTest extends PathUseCaseBaseTest {
         String command = String.format("path -c 4 -p *p7 -H no -t %s", tetfu);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
-        assertThat(log.getReturnCode()).isEqualTo(0);
+        assertThat(log.getReturnCode())
+                .as(log.getOutput())
+                .isEqualTo(0);
 
         assertThat(log.getOutput())
                 .contains("*p7")

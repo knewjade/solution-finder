@@ -74,7 +74,7 @@ public class OutputFileHelper {
         Pattern pattern = Pattern.compile("<div>(\\d+)パターン</div>");
         Matcher matcher = pattern.matcher(html);
         assert matcher.find() : html;
-        assert matcher.groupCount() == 1;
+        assert matcher.groupCount() == 1 : html;
         return Integer.valueOf(matcher.group(1));
     }
 

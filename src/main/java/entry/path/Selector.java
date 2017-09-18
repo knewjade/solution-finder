@@ -13,7 +13,6 @@ public class Selector<K extends HaveSet<V>, V> {
         // 他のパターンではカバーできないものだけを列挙する
         LinkedList<K> selected = new LinkedList<>();
 
-
         for (K pair : candidates) {
             Set<V> canBuildBlocks = pair.getSet();
             boolean isSetNeed = true;

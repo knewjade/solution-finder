@@ -3,14 +3,12 @@ package entry.path;
 import common.SyntaxException;
 import common.pattern.BlocksGenerator;
 import common.tetfu.common.ColorConverter;
-import core.action.reachable.LockedReachable;
 import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
 import core.field.Field;
 import core.field.FieldView;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
-import core.srs.MinoRotation;
 import entry.EntryPoint;
 import entry.path.output.*;
 import exceptions.FinderException;
@@ -114,13 +112,6 @@ public class PathEntryPoint implements EntryPoint {
         for (String pattern : patterns)
             output("  " + pattern);
 
-        // フォーマットを決める
-        // 出力ファイルが正しく出力できるか確認も行う
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new MinoShifter();
-        OutputType outputType = settings.getOutputType();
-        BlocksGenerator generator = new BlocksGenerator(patterns);
-        PathOutput pathOutput = createOutput(outputType, minoFactory, minoShifter, maxClearLine, generator);
 
         output();
         // ========================================
@@ -136,6 +127,7 @@ public class PathEntryPoint implements EntryPoint {
 
         // ブロック数が足りないときはエラー
         int maxDepth = emptyCount / 4;
+        BlocksGenerator generator = new BlocksGenerator(patterns);
         int piecesDepth = generator.getDepth();
         if (piecesDepth < maxDepth)
             throw new FinderInitializeException(String.format("Should specify equal to or more than %d pieces: CurrentPieces=%d", maxDepth, piecesDepth));
@@ -149,6 +141,13 @@ public class PathEntryPoint implements EntryPoint {
         // Holdができるときは必要なミノ分（maxDepth + 1）だけを取り出す。maxDepth + 1だけないときはブロックの個数をそのまま指定
         boolean isUsingHold = settings.isUsingHold();
         output("Piece pop count = " + (isUsingHold && maxDepth < generator.getDepth() ? maxDepth + 1 : maxDepth));
+
+        // フォーマットを決める
+        // 出力ファイルが正しく出力できるか確認も行う
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        OutputType outputType = settings.getOutputType();
+        PathOutput pathOutput = createOutput(outputType, generator, maxDepth);
 
         // ミノのリストを作成する
         int basicSolutionWidth = decideBasicSolutionWidth(maxClearLine);
@@ -243,18 +242,18 @@ public class PathEntryPoint implements EntryPoint {
         return new BasicMinoPackingHelper();
     }
 
-    private PathOutput createOutput(OutputType outputType, MinoFactory minoFactory, MinoShifter minoShifter, int maxClearLine, BlocksGenerator generator) throws FinderExecuteException, FinderInitializeException {
+    private PathOutput createOutput(OutputType outputType, BlocksGenerator generator, int maxDepth) throws FinderExecuteException, FinderInitializeException {
         switch (outputType) {
             case CSV:
                 return new CSVPathOutput(this, settings);
             case Link:
-                return new LinkPathOutput(this, settings, new LockedReachable(minoFactory, minoShifter, new MinoRotation(), maxClearLine));
+                return new LinkPathOutput(this, settings);
             case TetfuCSV:
-                return new TetfuCSVPathOutput(this, settings, new LockedReachable(minoFactory, minoShifter, new MinoRotation(), maxClearLine));
+                return new FumenCSVPathOutput(this, settings);
             case PatternCSV:
-                return new PatternCSVPathOutput(this, settings, generator);
+                return new PatternCSVPathOutput(this, settings, generator, maxDepth);
             case UseCSV:
-                throw new FinderExecuteException("Unsupported format: format=" + outputType);
+                return new UseCSVPathOutput(this, settings, generator, maxDepth);
             default:
                 throw new FinderExecuteException("Unsupported format: format=" + outputType);
         }

@@ -12,7 +12,6 @@ import core.action.candidate.Candidate;
 import core.action.candidate.LockedCandidate;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
@@ -33,23 +32,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ConcurrentCheckerUsingHoldInvokerTest {
     private AnalyzeTree runTestCase(String marks, BlocksGenerator blocksGenerator, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
         Field field = FieldFactory.createField(marks);
-        List<List<Block>> searchingPieces = toBlocksList(blocksGenerator);
+        List<Blocks> searchingPieces = blocksGenerator.blocksStream().collect(Collectors.toList());
         return runTestCase(field, searchingPieces, maxClearLine, maxDepth);
     }
 
-    private AnalyzeTree runTestCase(Field field, List<List<Block>> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
+    private AnalyzeTree runTestCase(Field field, List<Blocks> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
         int core = Runtime.getRuntime().availableProcessors();
         ExecutorService executorService = Executors.newFixedThreadPool(core);
         CheckerUsingHoldThreadLocal<Action> checkerThreadLocal = new CheckerUsingHoldThreadLocal<>();
         LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
         ConcurrentCheckerUsingHoldInvoker invoker = new ConcurrentCheckerUsingHoldInvoker(executorService, candidateThreadLocal, checkerThreadLocal);
 
-        List<Pair<List<Block>, Boolean>> resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
+        List<Pair<Blocks, Boolean>> resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
 
         // 結果を集計する
         AnalyzeTree tree = new AnalyzeTree();
-        for (Pair<List<Block>, Boolean> resultPair : resultPairs) {
-            List<Block> pieces = resultPair.getKey();
+        for (Pair<Blocks, Boolean> resultPair : resultPairs) {
+            Blocks pieces = resultPair.getKey();
             Boolean result = resultPair.getValue();
             tree.set(result, pieces);
         }
@@ -58,12 +57,6 @@ class ConcurrentCheckerUsingHoldInvokerTest {
         executorService.shutdown();
 
         return tree;
-    }
-
-    private List<List<Block>> toBlocksList(BlocksGenerator blocksGenerator) {
-        return blocksGenerator.blocksStream()
-                .map(Blocks::getBlocks)
-                .collect(Collectors.toList());
     }
 
     @Test
@@ -299,11 +292,11 @@ class ConcurrentCheckerUsingHoldInvokerTest {
             Field field = randoms.field(maxClearLine, maxDepth);
 
             BlocksGenerator blocksGenerator = createPiecesGenerator(maxDepth);
-            List<List<Block>> searchingPieces = toBlocksList(blocksGenerator);
+            List<Blocks> searchingPieces = blocksGenerator.blocksStream().collect(Collectors.toList());
             AnalyzeTree tree = runTestCase(field, searchingPieces, maxClearLine, maxDepth);
 
-            for (List<Block> pieces : searchingPieces) {
-                boolean check = checker.check(field, pieces, candidate, maxClearLine, maxDepth);
+            for (Blocks pieces : searchingPieces) {
+                boolean check = checker.check(field, pieces.getBlocks(), candidate, maxClearLine, maxDepth);
                 assertThat(tree.isSucceed(pieces)).isEqualTo(check);
             }
         }

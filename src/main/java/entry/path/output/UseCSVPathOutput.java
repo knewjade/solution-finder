@@ -1,14 +1,16 @@
 package entry.path.output;
 
-import common.datastore.pieces.Blocks;
+import common.datastore.BlockCounter;
+import common.datastore.OperationWithKey;
+import common.datastore.pieces.LongBlocks;
 import common.pattern.BlocksGenerator;
-import common.tetfu.common.ColorConverter;
 import core.field.Field;
 import core.mino.Block;
-import core.mino.MinoFactory;
+import core.mino.Mino;
 import entry.path.PathEntryPoint;
 import entry.path.PathPair;
 import entry.path.PathSettings;
+import entry.path.ReduceBlocksGenerator;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
 import searcher.pack.SizedBit;
@@ -16,8 +18,9 @@ import searcher.pack.SizedBit;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class UseCSVPathOutput implements PathOutput {
@@ -26,10 +29,10 @@ public class UseCSVPathOutput implements PathOutput {
     private final PathEntryPoint pathEntryPoint;
 
     private final MyFile outputBaseFile;
-    private final BlocksGenerator generator;
+    private final ReduceBlocksGenerator generator;
     private Exception lastException = null;
 
-    public UseCSVPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings, BlocksGenerator generator) throws FinderInitializeException {
+    public UseCSVPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings, BlocksGenerator generator, int maxDepth) throws FinderInitializeException {
         // 出力ファイルが正しく出力できるか確認
         String outputBaseFilePath = pathSettings.getOutputBaseFilePath();
         String namePath = getRemoveExtensionFromPath(outputBaseFilePath);
@@ -47,7 +50,7 @@ public class UseCSVPathOutput implements PathOutput {
         // 保存
         this.pathEntryPoint = pathEntryPoint;
         this.outputBaseFile = base;
-        this.generator = generator;
+        this.generator = new ReduceBlocksGenerator(generator, maxDepth);
     }
 
     private String getRemoveExtensionFromPath(String path) throws FinderInitializeException {
@@ -68,26 +71,22 @@ public class UseCSVPathOutput implements PathOutput {
 
         outputLog("Found path = " + pathPairs.size());
 
+        Map<BlockCounter, List<PathPair>> groupingByClockCounter = pathPairs.parallelStream()
+                .collect(Collectors.groupingBy(pathPair -> {
+                    List<OperationWithKey> operations = pathPair.getSampleOperations();
+                    return new BlockCounter(operations.stream().map(OperationWithKey::getMino).map(Mino::getBlock));
+                }));
+
         try (BufferedWriter writer = outputBaseFile.newBufferedWriter()) {
-
-
-            writer.write("tetfu,pattern,using,valid(pattern),valid(solution)");
-            writer.newLine();
-
-            generator.blocksParallelStream()
-                    .map(blocks -> {
-                        // シーケンス名を取得
-                        String sequenceName = blocks.blockStream()
+            generator.blockCountersParallelStream()
+                    .map(blockCounter -> {
+                        // 組み合わせ名を取得
+                        String blockCounterName = blockCounter.getBlockStream()
                                 .map(Block::getName)
                                 .collect(Collectors.joining());
 
                         // パフェ可能な地形を抽出
-                        List<PathPair> valid = pathPairs.stream()
-                                .filter(pathPair -> {
-                                    HashSet<? extends Blocks> buildBlocks = pathPair.getBuildBlocks();
-                                    return buildBlocks.contains(blocks);
-                                })
-                                .collect(Collectors.toList());
+                        List<PathPair> valid = groupingByClockCounter.get(blockCounter);
 
                         // パフェ可能な地形数
                         int possibleSize = valid.size();
@@ -98,7 +97,21 @@ public class UseCSVPathOutput implements PathOutput {
                                 .map(code -> "http://fumen.zui.jp/?v115@" + code)
                                 .collect(Collectors.joining(";"));
 
-                        return String.format("%s,%d,%s%n", sequenceName, possibleSize, fumens);
+                        // 対応できるパターンを重複なく抽出
+                        Set<LongBlocks> possiblePatternSet = valid.stream()
+                                .flatMap(PathPair::blocksStreamForPattern)
+                                .collect(Collectors.toSet());
+
+                        // 対応できるパターン数
+                        int possiblePatternSize = possiblePatternSet.size();
+
+                        // パターンを連結
+                        String patterns = possiblePatternSet.stream()
+                                .map(LongBlocks::getBlocks)
+                                .map(blocks -> blocks.stream().map(Block::getName).collect(Collectors.joining("")))
+                                .collect(Collectors.joining(";"));
+
+                        return String.format("%s,%d,%s,%d,%s%n", blockCounterName, possiblePatternSize, patterns, possibleSize, fumens);
                     })
                     .forEach(line -> {
                         try {

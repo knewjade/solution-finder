@@ -79,9 +79,7 @@ public class IfSelector {
         EasyTetfu easyTetfu = new EasyTetfu(easyPool);
         ForwardOrderLookUp lookUp = new ForwardOrderLookUp(maxDepth, 7);
         BlocksGenerator blocksGenerator = new BlocksGenerator("*p7");
-        List<List<Block>> allBlocks2 = blocksGenerator.blocksStream()
-                .map(Blocks::getBlocks)
-                .collect(Collectors.toList());
+        List<Blocks> allBlocks2 = blocksGenerator.blocksStream().collect(Collectors.toList());
 
         BlockCounter allIncluded = new BlockCounter(Block.valueList());
 
@@ -101,11 +99,10 @@ public class IfSelector {
             // すべての検索するBlocks
             // パフェできる手順が対象
             ConcurrentCheckerUsingHoldInvoker invoker = new ConcurrentCheckerUsingHoldInvoker(executorService, new LockedCandidateThreadLocal(height), new CheckerUsingHoldThreadLocal<>());
-            List<Pair<List<Block>, Boolean>> search = invoker.search(initField, allBlocks2, height, maxDepth);
+            List<Pair<Blocks, Boolean>> search = invoker.search(initField, allBlocks2, height, maxDepth);
             List<Blocks> targetBlocks = search.stream()
                     .filter(Pair::getValue)
                     .map(Pair::getKey)
-                    .map(LongBlocks::new)
                     .collect(Collectors.toList());
             System.out.println("target block size: " + targetBlocks.size());
 

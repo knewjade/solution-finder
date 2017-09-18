@@ -1,13 +1,10 @@
 package entry.path.output;
 
-import common.buildup.BuildUpStream;
 import common.datastore.OperationWithKey;
-import common.tetfu.common.ColorConverter;
-import core.action.reachable.Reachable;
+import common.datastore.pieces.LongBlocks;
 import core.field.Field;
 import core.mino.Block;
 import core.mino.Mino;
-import core.mino.MinoFactory;
 import entry.path.PathEntryPoint;
 import entry.path.PathPair;
 import entry.path.PathSettings;
@@ -23,16 +20,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TetfuCSVPathOutput implements PathOutput {
+public class FumenCSVPathOutput implements PathOutput {
     private static final String FILE_EXTENSION = ".csv";
 
     private final PathEntryPoint pathEntryPoint;
-    private final Reachable reachable;
 
     private final MyFile outputBaseFile;
     private Exception lastException = null;
 
-    public TetfuCSVPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings, Reachable reachable) throws FinderInitializeException {
+    public FumenCSVPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings) throws FinderInitializeException {
         // 出力ファイルが正しく出力できるか確認
         String outputBaseFilePath = pathSettings.getOutputBaseFilePath();
         String namePath = getRemoveExtensionFromPath(outputBaseFilePath);
@@ -49,8 +45,6 @@ public class TetfuCSVPathOutput implements PathOutput {
 
         // 保存
         this.pathEntryPoint = pathEntryPoint;
-        this.reachable = reachable;
-        ColorConverter colorConverter = new ColorConverter();
         this.outputBaseFile = base;
     }
 
@@ -72,7 +66,6 @@ public class TetfuCSVPathOutput implements PathOutput {
 
         outputLog("Found path = " + pathPairs.size());
 
-        int maxClearLine = sizedBit.getHeight();
         try (BufferedWriter writer = outputBaseFile.newBufferedWriter()) {
             writer.write("tetfu,pattern,using,valid(pattern),valid(solution)");
             writer.newLine();
@@ -82,33 +75,26 @@ public class TetfuCSVPathOutput implements PathOutput {
                         // テト譜
                         String encode = pathPair.getFumen();
 
-                        // 対応パターン数
-                        int pattern = pathPair.getBuildBlocks().size();
+                        // パターンに対する有効なミノ順をまとめる
+                        List<LongBlocks> patternBuildBlocks = pathPair.blocksStreamForPattern().collect(Collectors.toList());
 
-                        // operationsの作成
-                        Result result = pathPair.getResult();
-                        LinkedList<OperationWithKey> operations = result.getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toCollection(LinkedList::new));
+                        // 対応パターン数
+                        int pattern = patternBuildBlocks.size();
 
                         // 使用ミノをまとめる
-                        String usingPieces = operations.stream()
-                                .map(OperationWithKey::getMino)
-                                .map(Mino::getBlock)
-                                .sorted()
-                                .map(Block::getName)
-                                .collect(Collectors.joining());
+                        String usingPieces = pathPair.getUsingBlockName();
 
                         // パターンに対する有効なミノ順をまとめる
-                        String validOrders1 = pathPair.getBuildBlocks().stream()
+                        String validOrdersPattern = patternBuildBlocks.stream()
                                 .map(longBlocks -> longBlocks.blockStream().map(Block::getName).collect(Collectors.joining()))
                                 .collect(Collectors.joining(";"));
 
                         // 地形に対する有効なミノ順をまとめる
-                        BuildUpStream buildUpStream = new BuildUpStream(reachable, maxClearLine);
-                        String validOrders2 = buildUpStream.existsValidBuildPatternDirectly(field, operations)
-                                .map(operationWithKeys -> operationWithKeys.stream().map(OperationWithKey::getMino).map(Mino::getBlock).map(Block::getName).collect(Collectors.joining()))
+                        String validOrdersSolution = pathPair.blocksStreamForSolution()
+                                .map(longBlocks -> longBlocks.blockStream().map(Block::getName).collect(Collectors.joining()))
                                 .collect(Collectors.joining(";"));
 
-                        return String.format("http://fumen.zui.jp/?v115@%s,%d,%s,%s,%s%n", encode, pattern, usingPieces, validOrders1, validOrders2);
+                        return String.format("http://fumen.zui.jp/?v115@%s,%d,%s,%s,%s%n", encode, pattern, usingPieces, validOrdersPattern, validOrdersSolution);
                     })
                     .forEach(line -> {
                         try {

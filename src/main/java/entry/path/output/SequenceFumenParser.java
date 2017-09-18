@@ -37,11 +37,6 @@ public class SequenceFumenParser implements FumenParser {
                 .map(Operation::getBlock)
                 .collect(Collectors.toList());
 
-        // そのパターンを表す名前を生成
-        String linkText = operationsList.stream()
-                .map(operation -> operation.getBlock().getName() + "-" + operation.getRotate().name())
-                .collect(Collectors.joining(" "));
-
         // テト譜を作成
         String quiz = Tetfu.encodeForQuiz(blockList);
         ArrayList<TetfuElement> tetfuElements = new ArrayList<>();
