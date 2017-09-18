@@ -1,12 +1,10 @@
 package entry.path.output;
 
-import common.buildup.BuildUpStream;
-import common.datastore.OperationWithKey;
+import common.datastore.pieces.Blocks;
+import common.pattern.BlocksGenerator;
 import common.tetfu.common.ColorConverter;
-import core.action.reachable.Reachable;
 import core.field.Field;
 import core.mino.Block;
-import core.mino.Mino;
 import core.mino.MinoFactory;
 import entry.path.PathEntryPoint;
 import entry.path.PathPair;
@@ -14,25 +12,24 @@ import entry.path.PathSettings;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
 import searcher.pack.SizedBit;
-import searcher.pack.task.Result;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TetfuCSVPathOutput implements PathOutput {
+public class PatternCSVPathOutput implements PathOutput {
     private static final String FILE_EXTENSION = ".csv";
 
     private final PathEntryPoint pathEntryPoint;
-    private final Reachable reachable;
 
     private final MyFile outputBaseFile;
+    private final BlocksGenerator generator;
     private Exception lastException = null;
 
-    public TetfuCSVPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings, Reachable reachable) throws FinderInitializeException {
+    public PatternCSVPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings, BlocksGenerator generator) throws FinderInitializeException {
         // 出力ファイルが正しく出力できるか確認
         String outputBaseFilePath = pathSettings.getOutputBaseFilePath();
         String namePath = getRemoveExtensionFromPath(outputBaseFilePath);
@@ -49,9 +46,8 @@ public class TetfuCSVPathOutput implements PathOutput {
 
         // 保存
         this.pathEntryPoint = pathEntryPoint;
-        this.reachable = reachable;
-        ColorConverter colorConverter = new ColorConverter();
         this.outputBaseFile = base;
+        this.generator = generator;
     }
 
     private String getRemoveExtensionFromPath(String path) throws FinderInitializeException {
@@ -72,43 +68,35 @@ public class TetfuCSVPathOutput implements PathOutput {
 
         outputLog("Found path = " + pathPairs.size());
 
-        int maxClearLine = sizedBit.getHeight();
         try (BufferedWriter writer = outputBaseFile.newBufferedWriter()) {
             writer.write("tetfu,pattern,using,valid(pattern),valid(solution)");
             writer.newLine();
 
-            pathPairs.parallelStream()
-                    .map(pathPair -> {
-                        // テト譜
-                        String encode = pathPair.getFumen();
-
-                        // 対応パターン数
-                        int pattern = pathPair.getBuildBlocks().size();
-
-                        // operationsの作成
-                        Result result = pathPair.getResult();
-                        LinkedList<OperationWithKey> operations = result.getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toCollection(LinkedList::new));
-
-                        // 使用ミノをまとめる
-                        String usingPieces = operations.stream()
-                                .map(OperationWithKey::getMino)
-                                .map(Mino::getBlock)
-                                .sorted()
+            generator.blocksParallelStream()
+                    .map(blocks -> {
+                        // シーケンス名を取得
+                        String sequenceName = blocks.blockStream()
                                 .map(Block::getName)
                                 .collect(Collectors.joining());
 
-                        // パターンに対する有効なミノ順をまとめる
-                        String validOrders1 = pathPair.getBuildBlocks().stream()
-                                .map(longBlocks -> longBlocks.blockStream().map(Block::getName).collect(Collectors.joining()))
+                        // パフェ可能な地形を抽出
+                        List<PathPair> valid = pathPairs.stream()
+                                .filter(pathPair -> {
+                                    HashSet<? extends Blocks> buildBlocks = pathPair.getBuildBlocks();
+                                    return buildBlocks.contains(blocks);
+                                })
+                                .collect(Collectors.toList());
+
+                        // パフェ可能な地形数
+                        int possibleSize = valid.size();
+
+                        // パフェ可能な地形のテト譜を連結
+                        String fumens = valid.stream()
+                                .map(PathPair::getFumen)
+                                .map(code -> "http://fumen.zui.jp/?v115@" + code)
                                 .collect(Collectors.joining(";"));
 
-                        // 地形に対する有効なミノ順をまとめる
-                        BuildUpStream buildUpStream = new BuildUpStream(reachable, maxClearLine);
-                        String validOrders2 = buildUpStream.existsValidBuildPatternDirectly(field, operations)
-                                .map(operationWithKeys -> operationWithKeys.stream().map(OperationWithKey::getMino).map(Mino::getBlock).map(Block::getName).collect(Collectors.joining()))
-                                .collect(Collectors.joining(";"));
-
-                        return String.format("http://fumen.zui.jp/?v115@%s,%d,%s,%s,%s%n", encode, pattern, usingPieces, validOrders1, validOrders2);
+                        return String.format("%s,%d,%s%n", sequenceName, possibleSize, fumens);
                     })
                     .forEach(line -> {
                         try {

@@ -10,6 +10,7 @@ import common.pattern.BlocksGenerator;
 import core.field.Field;
 import core.mino.Block;
 import core.mino.Mino;
+import entry.path.output.FumenParser;
 import searcher.pack.SizedBit;
 import searcher.pack.task.PackSearcher;
 import searcher.pack.task.Result;
@@ -23,10 +24,12 @@ import java.util.stream.Collectors;
 
 public class PathCore {
     private final List<Result> candidates;
+    private final FumenParser fumenParser;
     private final HashSet<LongBlocks> validPieces;
 
-    PathCore(List<String> patterns, PackSearcher searcher, int maxDepth, boolean isUsingHold) throws ExecutionException, InterruptedException {
+    PathCore(List<String> patterns, PackSearcher searcher, int maxDepth, boolean isUsingHold, FumenParser fumenParser) throws ExecutionException, InterruptedException {
         this.candidates = searcher.toList();
+        this.fumenParser = fumenParser;
 
         // ホールド込みで有効な手順を列挙する
         this.validPieces = getValidPieces(patterns, maxDepth, isUsingHold);
@@ -81,7 +84,7 @@ public class PathCore {
                     if (pieces.isEmpty())
                         return PathPair.EMPTY_PAIR;
 
-                    return new PathPair(result, pieces);
+                    return PathPair.createPathPair(result, pieces, fumenParser, field, sizedBit);
                 })
                 .filter(pathPair -> pathPair != PathPair.EMPTY_PAIR)
                 .collect(Collectors.toList());

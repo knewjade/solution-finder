@@ -24,7 +24,7 @@ class LinkInformation {
         return sample.stream().anyMatch(operationWithKey -> operationWithKey.getNeedDeletedKey() != 0L);
     }
 
-    HashSet<LongBlocks> getPiecesSet() {
-        return pair.getBuildBlocks();
+    public PathPair getPair() {
+        return pair;
     }
 }

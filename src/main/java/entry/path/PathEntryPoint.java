@@ -2,6 +2,7 @@ package entry.path;
 
 import common.SyntaxException;
 import common.pattern.BlocksGenerator;
+import common.tetfu.common.ColorConverter;
 import core.action.reachable.LockedReachable;
 import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
@@ -11,10 +12,7 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import entry.EntryPoint;
-import entry.path.output.CSVPathOutput;
-import entry.path.output.LinkPathOutput;
-import entry.path.output.PathOutput;
-import entry.path.output.TetfuCSVPathOutput;
+import entry.path.output.*;
 import exceptions.FinderException;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
@@ -121,14 +119,13 @@ public class PathEntryPoint implements EntryPoint {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         OutputType outputType = settings.getOutputType();
-        PathOutput pathOutput = createOutput(outputType, minoFactory, minoShifter, maxClearLine);
+        BlocksGenerator generator = new BlocksGenerator(patterns);
+        PathOutput pathOutput = createOutput(outputType, minoFactory, minoShifter, maxClearLine, generator);
 
         output();
         // ========================================
         output("# Initialize / System");
         int core = Runtime.getRuntime().availableProcessors();
-
-        BlocksGenerator generator = new BlocksGenerator(patterns);
 
         output("Available processors = " + core);
 
@@ -160,7 +157,7 @@ public class PathEntryPoint implements EntryPoint {
         SeparableMinos separableMinos = new SeparableMinos(factory.create());
 
         // 検索条件を決める
-        SolutionFilter solutionFilter = new ForPathSolutionFilter(patterns, maxClearLine);
+        SolutionFilter solutionFilter = new ForPathSolutionFilter(generator, maxClearLine);
 
         output();
         // ========================================
@@ -191,7 +188,9 @@ public class PathEntryPoint implements EntryPoint {
         List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(sizedBit, field);
         TaskResultHelper taskResultHelper = createTaskResultHelper(maxClearLine);
         PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
-        PathCore pathCore = createPathCore(patterns, maxDepth, isUsingHold, searcher);
+        ColorConverter colorConverter = new ColorConverter();
+        FumenParser fumenParser = createFumenParser(settings.isTetfuSplit(), minoFactory, colorConverter);
+        PathCore pathCore = createPathCore(patterns, maxDepth, isUsingHold, searcher, fumenParser);
         List<PathPair> pathPairs = pathCore.run(field, sizedBit);
 
         output("     ... done");
@@ -216,9 +215,15 @@ public class PathEntryPoint implements EntryPoint {
         return maxClearLine <= 4 ? 3 : 2;
     }
 
-    private PathCore createPathCore(List<String> patterns, int maxDepth, boolean isUsingHold, PackSearcher searcher) throws FinderExecuteException {
+    private FumenParser createFumenParser(boolean isTetfuSplit, MinoFactory minoFactory, ColorConverter colorConverter) {
+        if (isTetfuSplit)
+            return new SequenceFumenParser(minoFactory, colorConverter);
+        return new OneFumenParser(minoFactory, colorConverter);
+    }
+
+    private PathCore createPathCore(List<String> patterns, int maxDepth, boolean isUsingHold, PackSearcher searcher, FumenParser fumenParser) throws FinderExecuteException {
         try {
-            return new PathCore(patterns, searcher, maxDepth, isUsingHold);
+            return new PathCore(patterns, searcher, maxDepth, isUsingHold, fumenParser);
         } catch (ExecutionException | InterruptedException e) {
             throw new FinderExecuteException(e);
         }
@@ -238,14 +243,18 @@ public class PathEntryPoint implements EntryPoint {
         return new BasicMinoPackingHelper();
     }
 
-    private PathOutput createOutput(OutputType outputType, MinoFactory minoFactory, MinoShifter minoShifter, int maxClearLine) throws FinderExecuteException, FinderInitializeException {
+    private PathOutput createOutput(OutputType outputType, MinoFactory minoFactory, MinoShifter minoShifter, int maxClearLine, BlocksGenerator generator) throws FinderExecuteException, FinderInitializeException {
         switch (outputType) {
             case CSV:
                 return new CSVPathOutput(this, settings);
             case Link:
-                return new LinkPathOutput(this, settings, minoFactory, new LockedReachable(minoFactory, minoShifter, new MinoRotation(), maxClearLine));
+                return new LinkPathOutput(this, settings, new LockedReachable(minoFactory, minoShifter, new MinoRotation(), maxClearLine));
             case TetfuCSV:
-                return new TetfuCSVPathOutput(this, settings, minoFactory, new LockedReachable(minoFactory, minoShifter, new MinoRotation(), maxClearLine));
+                return new TetfuCSVPathOutput(this, settings, new LockedReachable(minoFactory, minoShifter, new MinoRotation(), maxClearLine));
+            case PatternCSV:
+                return new PatternCSVPathOutput(this, settings, generator);
+            case UseCSV:
+                throw new FinderExecuteException("Unsupported format: format=" + outputType);
             default:
                 throw new FinderExecuteException("Unsupported format: format=" + outputType);
         }

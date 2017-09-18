@@ -3,7 +3,6 @@ package entry.path.output;
 import common.buildup.BuildUpStream;
 import common.datastore.OperationWithKey;
 import common.datastore.pieces.LongBlocks;
-import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
@@ -32,9 +31,8 @@ public class LinkPathOutput implements PathOutput {
 
     private final MyFile outputMinimalFile;
     private final MyFile outputUniqueFile;
-    private final TetfuParser tetfuParser;
 
-    public LinkPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings, MinoFactory minoFactory, Reachable reachable) throws FinderInitializeException {
+    public LinkPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings, Reachable reachable) throws FinderInitializeException {
         // 出力ファイルが正しく出力できるか確認
         String outputBaseFilePath = pathSettings.getOutputBaseFilePath();
         String namePath = getRemoveExtensionFromPath(outputBaseFilePath);
@@ -61,8 +59,6 @@ public class LinkPathOutput implements PathOutput {
         this.pathEntryPoint = pathEntryPoint;
         this.settings = pathSettings;
         this.reachable = reachable;
-        ColorConverter colorConverter = new ColorConverter();
-        this.tetfuParser = createTetfuParser(settings.isTetfuSplit(), minoFactory, colorConverter);
         this.outputUniqueFile = unique;
         this.outputMinimalFile = minimal;
     }
@@ -77,12 +73,6 @@ public class LinkPathOutput implements PathOutput {
 
         // .があるとき
         return path.substring(0, pointIndex);
-    }
-
-    private TetfuParser createTetfuParser(boolean isTetfuSplit, MinoFactory minoFactory, ColorConverter colorConverter) {
-        if (isTetfuSplit)
-            return new SequenceTetfuParser(minoFactory, colorConverter);
-        return new OneTetfuParser(minoFactory, colorConverter);
     }
 
     @Override
@@ -189,7 +179,7 @@ public class LinkPathOutput implements PathOutput {
                 .collect(Collectors.joining(" "));
 
         // テト譜に変換
-        String encode = tetfuParser.parse(operations, field, maxClearLine);
+        String encode = information.getPair().getFumen();
 
         // 有効なミノ順をまとめる
         BuildUpStream buildUpStream = new BuildUpStream(reachable, maxClearLine);

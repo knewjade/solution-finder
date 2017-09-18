@@ -18,11 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SequenceTetfuParser implements TetfuParser {
+public class SequenceFumenParser implements FumenParser {
     private final MinoFactory minoFactory;
     private final ColorConverter colorConverter;
 
-    public SequenceTetfuParser(MinoFactory minoFactory, ColorConverter colorConverter) {
+    public SequenceFumenParser(MinoFactory minoFactory, ColorConverter colorConverter) {
         this.minoFactory = minoFactory;
         this.colorConverter = colorConverter;
     }

@@ -19,11 +19,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-class OneTetfuParser implements TetfuParser {
+public class OneFumenParser implements FumenParser {
     private final MinoFactory minoFactory;
     private final ColorConverter colorConverter;
 
-    OneTetfuParser(MinoFactory minoFactory, ColorConverter colorConverter) {
+    public OneFumenParser(MinoFactory minoFactory, ColorConverter colorConverter) {
         this.minoFactory = minoFactory;
         this.colorConverter = colorConverter;
     }

@@ -16,11 +16,9 @@ public class ForPathSolutionFilter implements SolutionFilter {
     private final List<BlockCounter> validBlockCounters;
     private final int height;
 
-    public ForPathSolutionFilter(List<String> patterns, int height) {
+    public ForPathSolutionFilter(BlocksGenerator generator, int height) {
         this.height = height;
-
-        BlocksGenerator pieces = new BlocksGenerator(patterns);
-        this.validBlockCounters = pieces.blockCountersStream()
+        this.validBlockCounters = generator.blockCountersStream()
                 .distinct()
                 .collect(Collectors.toList());
     }
