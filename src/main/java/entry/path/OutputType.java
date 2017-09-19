@@ -5,5 +5,6 @@ public enum OutputType {
     Link,
     TetfuCSV,
     PatternCSV,
+    NoUseCSV,
     UseCSV
 }

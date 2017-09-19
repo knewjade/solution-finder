@@ -1,5 +1,6 @@
 package entry.path;
 
+import common.datastore.BlockCounter;
 import common.datastore.OperationWithKey;
 import common.datastore.pieces.LongBlocks;
 import core.mino.Block;
@@ -21,6 +22,7 @@ public class PathPair implements HaveSet<LongBlocks> {
     private final HashSet<LongBlocks> piecesPattern;
     private final String fumen;
     private final List<OperationWithKey> sampleOperations;
+    private final BlockCounter usingBlockCounter;
 
     public PathPair(Result result, HashSet<LongBlocks> piecesSolution, HashSet<LongBlocks> piecesPattern, String fumen, List<OperationWithKey> sampleOperations) {
         this.result = result;
@@ -28,6 +30,7 @@ public class PathPair implements HaveSet<LongBlocks> {
         this.piecesPattern = piecesPattern;
         this.fumen = fumen;
         this.sampleOperations = sampleOperations;
+        this.usingBlockCounter = new BlockCounter(sampleOperations.stream().map(OperationWithKey::getMino).map(Mino::getBlock));
     }
 
     @Override
@@ -78,5 +81,9 @@ public class PathPair implements HaveSet<LongBlocks> {
                 .sorted()
                 .map(Block::getName)
                 .collect(Collectors.joining());
+    }
+
+    public BlockCounter getUsingBlockCounter() {
+        return usingBlockCounter;
     }
 }

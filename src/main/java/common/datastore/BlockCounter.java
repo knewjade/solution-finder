@@ -53,7 +53,7 @@ public class BlockCounter {
         return new BlockCounter(counter + blockCounter.counter);
     }
 
-    // 引く側のブロックをすべて惹かれる側に含まれていること
+    // 引く側のブロックをすべて引かれる側に含まれていること
     // この関数を呼ぶ前にそのことを確認して置くこと
     public BlockCounter removeAndReturnNew(BlockCounter blockCounter) {
         assert this.containsAll(blockCounter);

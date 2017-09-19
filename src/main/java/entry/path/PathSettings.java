@@ -125,6 +125,9 @@ public class PathSettings {
             case "usecsv":
                 this.outputType = OutputType.UseCSV;
                 break;
+            case "nousecsv":
+                this.outputType = OutputType.NoUseCSV;
+                break;
             default:
                 throw new UnsupportedDataTypeException("Unsupported format: format=" + type);
         }

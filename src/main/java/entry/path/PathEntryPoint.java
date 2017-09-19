@@ -254,6 +254,8 @@ public class PathEntryPoint implements EntryPoint {
                 return new PatternCSVPathOutput(this, settings, generator, maxDepth);
             case UseCSV:
                 return new UseCSVPathOutput(this, settings, generator, maxDepth);
+            case NoUseCSV:
+                return new NoUseCSVPathOutput(this, settings);
             default:
                 throw new FinderExecuteException("Unsupported format: format=" + outputType);
         }
