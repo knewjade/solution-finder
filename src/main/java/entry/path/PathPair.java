@@ -79,4 +79,8 @@ public class PathPair implements HaveSet<LongBlocks> {
                 .map(Block::getName)
                 .collect(Collectors.joining());
     }
+
+    public int getPatternSize() {
+        return blocksHashSetForPattern().size();
+    }
 }

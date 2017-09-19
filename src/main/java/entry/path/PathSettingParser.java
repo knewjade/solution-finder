@@ -141,10 +141,12 @@ public class PathSettingParser {
 
         // 出力タイプの設定
         Optional<String> outputType = wrapper.getStringOption("format");
+        Optional<String> keyType = wrapper.getStringOption("key");
         try {
             outputType.ifPresent(type -> {
+                String key = keyType.orElse("none");
                 try {
-                    settings.setOutputType(type);
+                    settings.setOutputType(type, key);
                 } catch (UnsupportedDataTypeException e) {
                     throw new RuntimeException(e);
                 }
@@ -310,6 +312,16 @@ public class PathSettingParser {
                 .desc("Format type for output")
                 .build();
         options.addOption(outputTypeOption);
+
+        Option outputKeyOption = Option.builder("k")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("format-key")
+                .longOpt("key")
+                .desc("Format key for output")
+                .build();
+        options.addOption(outputKeyOption);
 
         Option splitOption = Option.builder("s")
                 .optionalArg(true)

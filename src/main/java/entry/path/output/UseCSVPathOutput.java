@@ -18,9 +18,7 @@ import searcher.pack.SizedBit;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class UseCSVPathOutput implements PathOutput {
@@ -77,6 +75,7 @@ public class UseCSVPathOutput implements PathOutput {
                     return new BlockCounter(operations.stream().map(OperationWithKey::getMino).map(Mino::getBlock));
                 }));
 
+        List<PathPair> emptyValidList = Collections.emptyList();
         try (BufferedWriter writer = outputBaseFile.newBufferedWriter()) {
             generator.blockCountersParallelStream()
                     .map(blockCounter -> {
@@ -86,13 +85,14 @@ public class UseCSVPathOutput implements PathOutput {
                                 .collect(Collectors.joining());
 
                         // パフェ可能な地形を抽出
-                        List<PathPair> valid = groupingByClockCounter.get(blockCounter);
+                        List<PathPair> valid = groupingByClockCounter.getOrDefault(blockCounter, emptyValidList);
 
                         // パフェ可能な地形数
                         int possibleSize = valid.size();
 
                         // パフェ可能な地形のテト譜を連結
                         String fumens = valid.stream()
+                                .sorted(Comparator.comparing(PathPair::getPatternSize).reversed())
                                 .map(PathPair::getFumen)
                                 .map(code -> "http://fumen.zui.jp/?v115@" + code)
                                 .collect(Collectors.joining(";"));
@@ -111,7 +111,7 @@ public class UseCSVPathOutput implements PathOutput {
                                 .map(blocks -> blocks.stream().map(Block::getName).collect(Collectors.joining("")))
                                 .collect(Collectors.joining(";"));
 
-                        return String.format("%s,%d,%s,%d,%s%n", blockCounterName, possiblePatternSize, patterns, possibleSize, fumens);
+                        return String.format("%s,%d,%d,%s,%s%n", blockCounterName, possibleSize, possiblePatternSize, fumens, patterns);
                     })
                     .forEach(line -> {
                         try {

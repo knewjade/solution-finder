@@ -108,23 +108,28 @@ public class PathSettings {
         this.pathLayer = pathLayer;
     }
 
-    void setOutputType(String type) throws UnsupportedDataTypeException {
+    void setOutputType(String type, String key) throws UnsupportedDataTypeException {
         switch (type.trim().toLowerCase()) {
             case "csv":
-                this.outputType = OutputType.CSV;
-                break;
+                switch (key.trim().toLowerCase()) {
+                    case "none":
+                        this.outputType = OutputType.CSV;
+                        return;
+                    case "solution":
+                        this.outputType = OutputType.TetfuCSV;
+                        return;
+                    case "pattern":
+                        this.outputType = OutputType.PatternCSV;
+                        return;
+                    case "use":
+                        this.outputType = OutputType.UseCSV;
+                        return;
+                    default:
+                        throw new UnsupportedDataTypeException("Unsupported CSV key: key=" + key);
+                }
             case "link":
                 this.outputType = OutputType.Link;
-                break;
-            case "tetfucsv":
-                this.outputType = OutputType.TetfuCSV;
-                break;
-            case "patterncsv":
-                this.outputType = OutputType.PatternCSV;
-                break;
-            case "usecsv":
-                this.outputType = OutputType.UseCSV;
-                break;
+                return;
             default:
                 throw new UnsupportedDataTypeException("Unsupported format: format=" + type);
         }

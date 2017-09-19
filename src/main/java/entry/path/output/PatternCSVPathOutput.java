@@ -15,6 +15,7 @@ import searcher.pack.SizedBit;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,7 +47,7 @@ public class PatternCSVPathOutput implements PathOutput {
         // 保存
         this.pathEntryPoint = pathEntryPoint;
         this.outputBaseFile = base;
-        this.generator = new ReduceBlocksGenerator(generator, maxDepth);
+        this.generator = new ReduceBlocksGenerator(generator, maxDepth + 1);
     }
 
     private String getRemoveExtensionFromPath(String path) throws FinderInitializeException {
@@ -68,7 +69,7 @@ public class PatternCSVPathOutput implements PathOutput {
         outputLog("Found path = " + pathPairs.size());
 
         try (BufferedWriter writer = outputBaseFile.newBufferedWriter()) {
-            writer.write("tetfu,pattern,using,valid(pattern),valid(solution)");
+            writer.write("sequence,pattern,fumen");
             writer.newLine();
 
             generator.blocksParallelStream()
@@ -91,6 +92,7 @@ public class PatternCSVPathOutput implements PathOutput {
 
                         // パフェ可能な地形のテト譜を連結
                         String fumens = valid.stream()
+                                .sorted(Comparator.comparing(PathPair::getPatternSize).reversed())
                                 .map(PathPair::getFumen)
                                 .map(code -> "http://fumen.zui.jp/?v115@" + code)
                                 .collect(Collectors.joining(";"));

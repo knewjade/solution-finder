@@ -3,9 +3,12 @@ package entry.path;
 import common.datastore.BlockCounter;
 import common.datastore.pieces.Blocks;
 import common.datastore.pieces.LongBlocks;
+import common.iterable.CombinationIterable;
 import common.pattern.BlocksGenerator;
+import core.mino.Block;
 
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class ReduceBlocksGenerator {
     private final BlocksGenerator blocksGenerator;
@@ -36,7 +39,10 @@ public class ReduceBlocksGenerator {
         else
             return blocksGenerator.blockCountersStream()
                     .map(BlockCounter::getBlocks)
-                    .map(blocks -> blocks.subList(0, maxDepth))
+                    .flatMap(blocks -> {
+                        CombinationIterable<Block> lists = new CombinationIterable<>(blocks, maxDepth);
+                        return StreamSupport.stream(lists.spliterator(), false);
+                    })
                     .map(BlockCounter::new);
     }
 
