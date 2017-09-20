@@ -77,6 +77,9 @@ public class UseCSVPathOutput implements PathOutput {
 
         List<PathPair> emptyValidList = Collections.emptyList();
         try (BufferedWriter writer = outputBaseFile.newBufferedWriter()) {
+            writer.write("使用ミノ,対応地形数,対応ツモ数 (対パターン),テト譜,ツモ (対パターン)");
+            writer.newLine();
+
             generator.blockCountersParallelStream()
                     .map(blockCounter -> {
                         // 組み合わせ名を取得
@@ -94,7 +97,6 @@ public class UseCSVPathOutput implements PathOutput {
                         String fumens = valid.stream()
                                 .sorted(Comparator.comparing(PathPair::getPatternSize).reversed())
                                 .map(PathPair::getFumen)
-                                .map(code -> "http://fumen.zui.jp/?v115@" + code)
                                 .collect(Collectors.joining(";"));
 
                         // 対応できるパターンを重複なく抽出

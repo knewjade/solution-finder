@@ -1,22 +1,19 @@
 package entry.path.output;
 
-import common.datastore.OperationWithKey;
 import common.datastore.pieces.LongBlocks;
 import core.field.Field;
 import core.mino.Block;
-import core.mino.Mino;
 import entry.path.PathEntryPoint;
 import entry.path.PathPair;
 import entry.path.PathSettings;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
 import searcher.pack.SizedBit;
-import searcher.pack.task.Result;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,7 +64,7 @@ public class FumenCSVPathOutput implements PathOutput {
         outputLog("Found path = " + pathPairs.size());
 
         try (BufferedWriter writer = outputBaseFile.newBufferedWriter()) {
-            writer.write("tetfu,pattern,using,valid(pattern),valid(solution)");
+            writer.write("テト譜,使用ミノ,対応ツモ数 (対地形),対応ツモ数 (対パターン),ツモ (対地形),ツモ (対パターン)");
             writer.newLine();
 
             pathPairs.parallelStream()
@@ -78,7 +75,7 @@ public class FumenCSVPathOutput implements PathOutput {
                         // パターンに対する有効なミノ順をまとめる
                         List<LongBlocks> patternBuildBlocks = pathPair.blocksStreamForPattern().collect(Collectors.toList());
 
-                        // 対応パターン数
+                        // 対応ツモ数 (対パターン)
                         int pattern = patternBuildBlocks.size();
 
                         // 使用ミノをまとめる
@@ -90,11 +87,15 @@ public class FumenCSVPathOutput implements PathOutput {
                                 .collect(Collectors.joining(";"));
 
                         // 地形に対する有効なミノ順をまとめる
-                        String validOrdersSolution = pathPair.blocksStreamForSolution()
+                        HashSet<LongBlocks> solutionBuildBlocks = pathPair.blocksHashSetForSolution();
+                        String validOrdersSolution = solutionBuildBlocks.stream()
                                 .map(longBlocks -> longBlocks.blockStream().map(Block::getName).collect(Collectors.joining()))
                                 .collect(Collectors.joining(";"));
 
-                        return String.format("http://fumen.zui.jp/?v115@%s,%d,%s,%s,%s%n", encode, pattern, usingPieces, validOrdersPattern, validOrdersSolution);
+                        // 対応ツモ数 (対地形)
+                        int solution = solutionBuildBlocks.size();
+
+                        return String.format("http://fumen.zui.jp/?v115@%s,%s,%d,%d,%s,%s%n", encode, usingPieces, solution, pattern, validOrdersSolution, validOrdersPattern);
                     })
                     .forEach(line -> {
                         try {

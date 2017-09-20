@@ -62,7 +62,7 @@ public class PathSettings {
         return outputType;
     }
 
-    public boolean isTetfuSplit() {
+    boolean isTetfuSplit() {
         return isSplit;
     }
 
@@ -122,6 +122,18 @@ public class PathSettings {
                         this.outputType = OutputType.PatternCSV;
                         return;
                     case "use":
+                        this.outputType = OutputType.UseCSV;
+                        return;
+                    case "n":
+                        this.outputType = OutputType.CSV;
+                        return;
+                    case "s":
+                        this.outputType = OutputType.TetfuCSV;
+                        return;
+                    case "p":
+                        this.outputType = OutputType.PatternCSV;
+                        return;
+                    case "u":
                         this.outputType = OutputType.UseCSV;
                         return;
                     default:

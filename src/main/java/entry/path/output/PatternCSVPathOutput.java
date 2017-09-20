@@ -69,7 +69,7 @@ public class PatternCSVPathOutput implements PathOutput {
         outputLog("Found path = " + pathPairs.size());
 
         try (BufferedWriter writer = outputBaseFile.newBufferedWriter()) {
-            writer.write("sequence,pattern,fumen");
+            writer.write("ツモ,対応地形数,テト譜");
             writer.newLine();
 
             generator.blocksParallelStream()
@@ -94,7 +94,6 @@ public class PatternCSVPathOutput implements PathOutput {
                         String fumens = valid.stream()
                                 .sorted(Comparator.comparing(PathPair::getPatternSize).reversed())
                                 .map(PathPair::getFumen)
-                                .map(code -> "http://fumen.zui.jp/?v115@" + code)
                                 .collect(Collectors.joining(";"));
 
                         return String.format("%s,%d,%s%n", sequenceName, possibleSize, fumens);

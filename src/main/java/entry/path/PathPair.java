@@ -55,7 +55,7 @@ public class PathPair implements HaveSet<LongBlocks> {
         return piecesPattern;
     }
 
-    private HashSet<LongBlocks> blocksHashSetForSolution() {
+    public HashSet<LongBlocks> blocksHashSetForSolution() {
         return piecesSolution;
     }
 
