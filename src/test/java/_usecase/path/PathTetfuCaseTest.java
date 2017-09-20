@@ -42,7 +42,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(log.getOutput())
                 .contains("*p7")
                 .contains(Messages.uniqueCount(35))
-                .contains(Messages.minimalCount(31))
+                .contains(Messages.minimalCount(29))
                 .contains(Messages.useHold());
 
         // unique
@@ -69,21 +69,21 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // minimal
         PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
         assertThat(minimalHTML)
-                .returns(31, PathHTML::pattern);
+                .returns(29, PathHTML::pattern);
 
         // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens()).isEmpty();
 
         // ライン消去あり
         assertThat(minimalHTML.deletedLineFumens())
-                .hasSize(31)
+                .hasSize(29)
                 .contains("9gB8BtzhhlC8Btg0RpwwglE8i0xwF8RpwwglJeAgWG?A0vKWCa+AAA")
                 .contains("9gB8Bti0glR4C8BtzhwwE8ilxwF8g0R4wwJeAgWGAU?ejWCz/AAA")
                 .contains("9gB8Bti0hlwhC8BtQ4g0wwglwhE8R4xwwhF8Q4wwgl?whJeAgWGAp+TWC6/AAA");
 
         // すべての譜面
         assertThat(parseLastPageTetfu(minimalHTML.allFumens()))
-                .hasSize(31)
+                .hasSize(29)
                 .allMatch(coloredField -> isFilled(height, coloredField));
     }
 
@@ -179,7 +179,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(log.getOutput())
                 .contains("*p7")
                 .contains(Messages.uniqueCount(54))
-                .contains(Messages.minimalCount(42));
+                .contains(Messages.minimalCount(35));
 
         // unique
         PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
@@ -205,7 +205,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // minimal
         PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
         assertThat(minimalHTML)
-                .returns(42, PathHTML::pattern);
+                .returns(35, PathHTML::pattern);
 
         // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens())
@@ -213,14 +213,14 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
 
         // ライン消去あり
         assertThat(minimalHTML.deletedLineFumens())
-                .hasSize(42)
+                .hasSize(35)
                 .contains("9gB8hlwwR4AtRpC8glxwBtRpC8glwwi0F8R4Atg0B8?JeAgWGAKHWWCaNBAA")
                 .contains("9gB8hlwwi0RpC8glxwQ4g0RpC8glBtR4F8wwBtQ4B8?JeAgWGAa9KWC0/AAA")
                 .contains("9gB8BtwwR4i0C8Btzhg0C8ywRpF8R4RpB8JeAgWGAP?ezPCUNBAA");
 
         // すべての譜面
         assertThat(parseLastPageTetfu(minimalHTML.allFumens()))
-                .hasSize(42)
+                .hasSize(35)
                 .allMatch(coloredField -> isFilled(height, coloredField));
     }
 
@@ -249,7 +249,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(log.getOutput())
                 .contains("*p7")
                 .contains(Messages.uniqueCount(83))
-                .contains(Messages.minimalCount(74))
+                .contains(Messages.minimalCount(68))
                 .contains(Messages.useHold());
 
         // unique
@@ -278,14 +278,14 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // minimal
         PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
         assertThat(minimalHTML)
-                .returns(74, PathHTML::pattern);
+                .returns(68, PathHTML::pattern);
 
         // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens()).isEmpty();
 
         // ライン消去あり
         assertThat(minimalHTML.deletedLineFumens())
-                .hasSize(74)
+                .hasSize(68)
                 .contains("DhD8GeC8EeE8FeD8JeRPYZAFLDmClcJSAVDEHBEooR?BJoAVB6/dgCsAAAAvhEMpB2qBtrBzqBipB")
                 .contains("DhD8GeC8EeE8FeD8Je/JYZAFLDmClcJSAVDEHBEooR?BToAVBqXegCsAAAAvhEmqBUqBtrBzlBipB")
                 .contains("DhD8GeC8EeE8FeD8JeTKYZAFLDmClcJSAVDEHBEooR?BPoAVB0vTWCpAAAAvhENpBmlB3rB6pBxvB")
@@ -294,7 +294,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
 
         // すべての譜面
         assertThat(parseLastPageTetfu(minimalHTML.allFumens()))
-                .hasSize(74)
+                .hasSize(68)
                 .allMatch(coloredField -> isEmpty(height, coloredField));
     }
 
@@ -323,7 +323,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(log.getOutput())
                 .contains("*p7")
                 .contains(Messages.uniqueCount(54))
-                .contains(Messages.minimalCount(42));
+                .contains(Messages.minimalCount(35));
 
         // unique
         PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
@@ -349,7 +349,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // minimal
         PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
         assertThat(minimalHTML)
-                .returns(42, PathHTML::pattern);
+                .returns(35, PathHTML::pattern);
 
         // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens())
@@ -357,14 +357,14 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
 
         // ライン消去あり
         assertThat(minimalHTML.deletedLineFumens())
-                .hasSize(42)
+                .hasSize(35)
                 .contains("9gB8hlwwR4AtRpC8glxwBtRpC8glwwi0F8R4Atg0B8?JeAgWGAKHWWCaNBAA")
                 .contains("9gB8hlwwi0RpC8glxwQ4g0RpC8glBtR4F8wwBtQ4B8?JeAgWGAa9KWC0/AAA")
                 .contains("9gB8BtwwR4i0C8Btzhg0C8ywRpF8R4RpB8JeAgWGAP?ezPCUNBAA");
 
         // すべての譜面
         assertThat(parseLastPageTetfu(minimalHTML.allFumens()))
-                .hasSize(42)
+                .hasSize(35)
                 .allMatch(coloredField -> isFilled(height, coloredField));
     }
 
@@ -391,7 +391,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(log.getOutput())
                 .contains("*p7")
                 .contains(Messages.uniqueCount(245))
-                .contains(Messages.minimalCount(199));
+                .contains(Messages.minimalCount(157));
 
         // unique
         PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
@@ -419,7 +419,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // minimal
         PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
         assertThat(minimalHTML)
-                .returns(199, PathHTML::pattern);
+                .returns(157, PathHTML::pattern);
 
         // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens())
@@ -429,14 +429,14 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
 
         // ライン消去あり
         assertThat(minimalHTML.deletedLineFumens())
-                .hasSize(197)
+                .hasSize(155)
                 .contains("9gD8ili0D8RpzhD8RpR4wwg0D8glR4ywJeAgWGAU9C?MCqCBAA")
                 .contains("9gD8ili0D8glywR4D8RpwwR4g0D8RpzhJeAgWGAJ3T?xCs/AAA")
                 .contains("9gD8zhRpD8glQ4BtRpD8glR4i0D8hlQ4Btg0JeAgWG?AqyjFDP+AAA");
 
         // すべての譜面
         assertThat(parseLastPageTetfu(minimalHTML.allFumens()))
-                .hasSize(199)
+                .hasSize(157)
                 .allMatch(coloredField -> isFilled(height, coloredField));
     }
 
@@ -465,7 +465,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(log.getOutput())
                 .contains("*p7")
                 .contains(Messages.uniqueCount(118))
-                .contains(Messages.minimalCount(104));
+                .contains(Messages.minimalCount(96));
 
         // unique
         PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
@@ -494,7 +494,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // minimal
         PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
         assertThat(minimalHTML)
-                .returns(104, PathHTML::pattern);
+                .returns(96, PathHTML::pattern);
 
         // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens())
@@ -505,14 +505,14 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
 
         // ライン消去あり
         assertThat(minimalHTML.deletedLineFumens())
-                .hasSize(98)
+                .hasSize(90)
                 .contains("9gB8hlzhR4C8glh0ywD8glg0RpwwF8g0RpR4A8JeAg?WGAv/VWCT+AAA")
                 .contains("9gB8i0ywR4C8RpglwwR4D8RpglBtF8g0hlBtA8JeAg?WGA6yytC0/AAA")
                 .contains("9gB8BtRpwhywC8Btglwhh0D8ilwhg0F8Rpwhg0wwA8?JeAgWGAK+TFDvOBAA");
 
         // すべての譜面
         assertThat(parseLastPageTetfu(minimalHTML.allFumens()))
-                .hasSize(104)
+                .hasSize(96)
                 .allMatch(coloredField -> isFilled(height, coloredField));
     }
 
@@ -620,7 +620,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(log.getOutput())
                 .contains("*p7")
                 .contains(Messages.uniqueCount(10))
-                .contains(Messages.minimalCount(7))
+                .contains(Messages.minimalCount(6))
                 .contains(Messages.useHold());
 
         // unique
@@ -650,7 +650,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // minimal
         PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
         assertThat(minimalHTML)
-                .returns(7, PathHTML::pattern);
+                .returns(6, PathHTML::pattern);
 
         // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens())
@@ -661,13 +661,12 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
 
         // ライン消去あり
         assertThat(minimalHTML.deletedLineFumens())
-                .hasSize(2)
-                .contains("9gilBtywR4RpB8Btwwi0RpE8R4g0glI8JeAgWGAvfj?xCzCBAA")
-                .contains("9gilywR4Atg0RpB8wwR4Btg0RpE8Ath0glI8JeAgWG?AvfLuC0CBAA");
+                .hasSize(1)
+                .contains("9gilBtywR4RpB8Btwwi0RpE8R4g0glI8JeAgWGAvfj?xCzCBAA");
 
         // すべての譜面
         assertThat(parseLastPageTetfu(minimalHTML.allFumens()))
-                .hasSize(7)
+                .hasSize(6)
                 .allMatch(coloredField -> isFilled(height, coloredField));
     }
 

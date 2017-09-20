@@ -122,7 +122,7 @@ class PathOptionCaseTest extends PathUseCaseBaseTest {
                 .contains("I,*p6")
                 .contains(Messages.clearLine(4))
                 .contains(Messages.uniqueCount(186))
-                .contains(Messages.minimalCount(142))
+                .contains(Messages.minimalCount(127))
                 .contains(Messages.useHold());
 
         // unique
@@ -150,7 +150,7 @@ class PathOptionCaseTest extends PathUseCaseBaseTest {
                     }
                     return freeze;
                 }))
-                .hasSize(142)
+                .hasSize(127)
                 .allMatch(Field::isPerfect);
     }
 
@@ -220,7 +220,7 @@ class PathOptionCaseTest extends PathUseCaseBaseTest {
                 .contains("*p7")
                 .contains(Messages.clearLine(4))
                 .contains(Messages.uniqueCount(68))
-                .contains(Messages.minimalCount(53))
+                .contains(Messages.minimalCount(45))
                 .contains(Messages.useHold());
     }
 }

@@ -197,7 +197,7 @@ class PathFileCaseTest extends PathUseCaseBaseTest {
         assertThat(log.getOutput())
                 .contains("*p7")
                 .contains(Messages.uniqueCount(82))
-                .contains(Messages.minimalCount(71))
+                .contains(Messages.minimalCount(66))
                 .contains(Messages.useHold());
 
         // unique
@@ -224,7 +224,7 @@ class PathFileCaseTest extends PathUseCaseBaseTest {
         // minimal
         PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML("test_output/test_path_minimal.html");
         assertThat(minimalHTML)
-                .returns(71, PathHTML::pattern);
+                .returns(66, PathHTML::pattern);
 
         // ライン消去あり
         assertThat(minimalHTML.noDeletedLineFumens())
@@ -232,14 +232,14 @@ class PathFileCaseTest extends PathUseCaseBaseTest {
 
         // ライン消去なし
         assertThat(minimalHTML.deletedLineFumens())
-                .hasSize(71)
+                .hasSize(66)
                 .contains("9gBthlRpD8wwBtglRpD8xwR4g0E8wwR4gli0C8JeAg?WGAKNWWCvXBAA")
                 .contains("9gwhhlg0BtD8whwwgli0D8whxwRpE8whwwglRpBtC8?JeAgWGAP+VWCqXBAA")
                 .contains("9gh0wwilD8g0xwglBtD8g0R4RpE8R4wwRpBtC8JeAg?WGAPt/wCsXBAA");
 
         // すべての譜面
         assertThat(parseLastPageTetfu(minimalHTML.allFumens()))
-                .hasSize(71)
+                .hasSize(66)
                 .allMatch(coloredField -> isFilled(height, coloredField));
     }
 
