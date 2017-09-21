@@ -25,18 +25,20 @@ class PathCore {
     private final List<Result> candidates;
     private final FumenParser fumenParser;
     private final boolean isReduced;
+    private final boolean isUsingHold;
+    private final int maxDepth;
     private final HashSet<LongBlocks> validPieces;
     private final HashSet<LongBlocks> allPieces;
-    private final ReverseOrderLookUp reverseOrderLookUp;
 
     PathCore(List<String> patterns, PackSearcher searcher, int maxDepth, boolean isUsingHold, FumenParser fumenParser) throws ExecutionException, InterruptedException {
         this.candidates = searcher.toList();
         this.fumenParser = fumenParser;
         BlocksGenerator blocksGenerator = new BlocksGenerator(patterns);
         this.isReduced = isReducedPieces(blocksGenerator, maxDepth, isUsingHold);
+        this.isUsingHold = isUsingHold;
+        this.maxDepth = maxDepth;
         this.allPieces = getAllPieces(blocksGenerator, maxDepth, isReduced);
         this.validPieces = getValidPieces(blocksGenerator, allPieces, maxDepth, isReduced);
-        this.reverseOrderLookUp = new ReverseOrderLookUp(maxDepth, maxDepth + 1);
     }
 
     private boolean isReducedPieces(BlocksGenerator blocksGenerator, int maxDepth, boolean isUsingHold) {
@@ -134,6 +136,8 @@ class PathCore {
     private HashSet<LongBlocks> getPiecesPattern(HashSet<LongBlocks> piecesSolution) {
         if (isReduced) {
             // allとvalidが異なる
+            ReverseOrderLookUp reverseOrderLookUp = new ReverseOrderLookUp(maxDepth, maxDepth + 1);
+
             return piecesSolution.stream()
                     .filter(validPieces::contains)
                     .flatMap(blocks -> {
@@ -154,8 +158,34 @@ class PathCore {
                     })
                     .filter(allPieces::contains)
                     .collect(Collectors.toCollection(HashSet::new));
+        } else if (isUsingHold) {
+            // allとvalidが同じだが、ホールドが使える
+            ReverseOrderLookUp reverseOrderLookUp = new ReverseOrderLookUp(maxDepth, maxDepth);
+
+            return piecesSolution.stream()
+                    .filter(validPieces::contains)
+                    .flatMap(blocks -> {
+                        return reverseOrderLookUp.parse(blocks.getBlocks())
+                                .map(stream -> stream.collect(Collectors.toCollection(ArrayList::new)))
+                                .flatMap(blocksWithHold -> {
+                                    int nullIndex = blocksWithHold.indexOf(null);
+                                    if (nullIndex < 0)
+                                        return Stream.of(new LongBlocks(blocksWithHold));
+
+                                    Stream.Builder<LongBlocks> builder = Stream.builder();
+                                    for (Block block : Block.values()) {
+                                        blocksWithHold.set(nullIndex, block);
+                                        builder.accept(new LongBlocks(blocksWithHold));
+                                    }
+                                    return builder.build();
+                                });
+                    })
+                    .filter(allPieces::contains)
+                    .collect(Collectors.toCollection(HashSet::new));
+
         } else {
-            // allとvalidが同じ
+            // allとvalidが同じで、ホールドも使えない
+            // そのまま絞り込みだけ実施
             return piecesSolution.stream()
                     .filter(validPieces::contains)
                     .collect(Collectors.toCollection(HashSet::new));
