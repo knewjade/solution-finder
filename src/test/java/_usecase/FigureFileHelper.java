@@ -22,7 +22,7 @@ public class FigureFileHelper {
 
     public static void deleteGifFile() throws IOException {
         File file = new File(GIF_PATH);
-        FileHelper.deleteFile(file);
+        FileHelper.deleteFileAndClose(file);
     }
 
     public static ByteSource loadGifByteSource() {

@@ -73,9 +73,12 @@ public class OutputFileHelper {
     private static int extractPattern(String html) {
         Pattern pattern = Pattern.compile("<div>(\\d+)パターン</div>");
         Matcher matcher = pattern.matcher(html);
-        assert matcher.find() : html;
-        assert matcher.groupCount() == 1 : html;
-        return Integer.valueOf(matcher.group(1));
+        if (matcher.find()) {
+            assert matcher.groupCount() == 1 : html;
+            return Integer.valueOf(matcher.group(1));
+        } else {
+            throw new IllegalStateException("Not found pattern: " + html);
+        }
     }
 
     private static List<String> extractTetfu(String html) {
@@ -104,27 +107,27 @@ public class OutputFileHelper {
 
     public static void deletePathUniqueHTML() {
         File file = new File(UNIQUE_PATH);
-        FileHelper.deleteFile(file);
+        FileHelper.deleteFileAndClose(file);
     }
 
     public static void deletePathMinimalHTML() {
         File file = new File(MINIMAL_PATH);
-        FileHelper.deleteFile(file);
+        FileHelper.deleteFileAndClose(file);
     }
 
     public static void deletePathUniqueCSV() {
         File file = new File(UNIQUE_PATH);
-        FileHelper.deleteFile(file);
+        FileHelper.deleteFileAndClose(file);
     }
 
     public static void deletePathMinimalCSV() {
         File file = new File(MINIMAL_PATH);
-        FileHelper.deleteFile(file);
+        FileHelper.deleteFileAndClose(file);
     }
 
     public static void deleteErrorText() {
         File file = new File(ERROR_PATH);
-        FileHelper.deleteFile(file);
+        FileHelper.deleteFileAndClose(file);
     }
 
     public static String loadErrorText() throws IOException {

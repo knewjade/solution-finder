@@ -11,6 +11,7 @@ import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import lib.Randoms;
 import lib.Stopwatch;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.common.validator.PerfectValidator;
@@ -67,6 +68,7 @@ class CheckmateUsingHoldReuseTest {
         }
     }
 
+    @Disabled
     @Test
     void randomCheckmateWithJustBlockTwice() {
         Randoms randoms = new Randoms();

@@ -662,7 +662,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // ライン消去あり
         assertThat(minimalHTML.deletedLineFumens())
                 .hasSize(1)
-                .contains("9gilBtywR4RpB8Btwwi0RpE8R4g0glI8JeAgWGAvfj?xCzCBAA");
+                .contains("9gilywR4Atg0RpB8wwR4Btg0RpE8Ath0glI8JeAgWG?AvfLuC0CBAA");
 
         // すべての譜面
         assertThat(parseLastPageTetfu(minimalHTML.allFumens()))

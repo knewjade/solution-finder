@@ -42,12 +42,12 @@ public class ConfigFileHelper {
 
     public static void deleteFieldFile() throws IOException {
         File file = new File(FIELD_PATH);
-        FileHelper.deleteFile(file);
+        FileHelper.deleteFileAndClose(file);
     }
 
     private static void createNewTextFile(String text, String fileName, String parentDirectoryPath) throws IOException {
         File file = new File(concatPath(parentDirectoryPath, fileName + ".txt"));
-        FileHelper.deleteFile(file);
+        FileHelper.deleteFileAndClose(file);
 
         // noinspection ResultOfMethodCallIgnored
         file.createNewFile();
@@ -68,6 +68,6 @@ public class ConfigFileHelper {
 
     public static void deletePatternFile() throws IOException {
         File file = new File(PATTERN_PATH);
-        FileHelper.deleteFile(file);
+        FileHelper.deleteFileAndClose(file);
     }
 }

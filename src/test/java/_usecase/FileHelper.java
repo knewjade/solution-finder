@@ -5,15 +5,17 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 class FileHelper {
-    static void deleteFile(File file) {
+    static void deleteFileAndClose(File file) {
         if (file.exists()) {
             // noinspection ResultOfMethodCallIgnored
             file.delete();
 
             try {
-                Thread.sleep(200L);
+                while (file.exists())
+                    Thread.sleep(200L);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
     }

@@ -430,6 +430,8 @@ class PathIrregularCaseTest extends PathUseCaseBaseTest {
         // noinspection ResultOfMethodCallIgnored
         minimalDirectory.mkdir();
         minimalDirectory.deleteOnExit();
+        while (!minimalDirectory.exists())
+            Thread.sleep(200L);
 
         String tetfu = "v115@vhEKJJUqB0fBetBpoB";
         String command = String.format("path -t %s -P 5 -p *p5 -f csv", tetfu);
@@ -492,6 +494,8 @@ class PathIrregularCaseTest extends PathUseCaseBaseTest {
         // noinspection ResultOfMethodCallIgnored
         uniqueDirectory.mkdir();
         uniqueDirectory.deleteOnExit();
+        while (!uniqueDirectory.exists())
+            Thread.sleep(200L);
 
         String tetfu = "v115@vhEKJJUqB0fBetBpoB";
         String command = String.format("path -t %s -P 5 -p *p5 -f csv", tetfu);
