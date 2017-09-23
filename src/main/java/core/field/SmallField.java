@@ -248,6 +248,13 @@ public class SmallField implements Field {
         xBoard = (xBoard & mask) << slide;
     }
 
+    // TODO: write unittest
+    @Override
+    public boolean contains(Field child) {
+        long childBoard = child.getBoard(0);
+        return (xBoard & childBoard) == childBoard;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

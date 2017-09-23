@@ -1,6 +1,7 @@
 package entry.path;
 
 import common.SyntaxException;
+import common.datastore.BlockField;
 import common.pattern.BlocksGenerator;
 import common.tetfu.common.ColorConverter;
 import core.column_field.ColumnField;
@@ -36,6 +37,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
@@ -190,7 +192,9 @@ public class PathEntryPoint implements EntryPoint {
         ColorConverter colorConverter = new ColorConverter();
         FumenParser fumenParser = createFumenParser(settings.isTetfuSplit(), minoFactory, colorConverter);
         PathCore pathCore = createPathCore(patterns, maxDepth, isUsingHold, searcher, fumenParser);
-        List<PathPair> pathPairs = pathCore.run(field, sizedBit);
+
+        Optional<BlockField> fixedPieces = settings.getReservedBlock();
+        List<PathPair> pathPairs = run(pathCore, field, sizedBit, fixedPieces.orElse(null));
 
         output("     ... done");
 
@@ -210,6 +214,17 @@ public class PathEntryPoint implements EntryPoint {
         flush();
     }
 
+    private List<PathPair> run(PathCore pathCore, Field field, SizedBit sizedBit, BlockField blockField) throws FinderExecuteException {
+        try {
+            if (blockField == null)
+                return pathCore.run(field, sizedBit);
+            else
+                return pathCore.run(field, sizedBit, blockField);
+        } catch (InterruptedException | ExecutionException e) {
+            throw new FinderExecuteException(e);
+        }
+    }
+
     private int decideBasicSolutionWidth(int maxClearLine) {
         return maxClearLine <= 4 ? 3 : 2;
     }
@@ -220,12 +235,8 @@ public class PathEntryPoint implements EntryPoint {
         return new OneFumenParser(minoFactory, colorConverter);
     }
 
-    private PathCore createPathCore(List<String> patterns, int maxDepth, boolean isUsingHold, PackSearcher searcher, FumenParser fumenParser) throws FinderExecuteException {
-        try {
-            return new PathCore(patterns, searcher, maxDepth, isUsingHold, fumenParser);
-        } catch (ExecutionException | InterruptedException e) {
-            throw new FinderExecuteException(e);
-        }
+    private PathCore createPathCore(List<String> patterns, int maxDepth, boolean isUsingHold, PackSearcher searcher, FumenParser fumenParser) {
+        return new PathCore(patterns, searcher, maxDepth, isUsingHold, fumenParser);
     }
 
     private Predicate<ColumnField> createPredicate(int cachedMinBit) throws FinderInitializeException {

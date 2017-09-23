@@ -425,6 +425,14 @@ public class MiddleField implements Field {
         xBoardHigh = (xBoardHigh & mask) << slide;
     }
 
+    // TODO: write unittest
+    @Override
+    public boolean contains(Field child) {
+        long childBoardLow = child.getBoard(0);
+        long childBoardHigh = child.getBoard(1);
+        return (xBoardLow & childBoardLow) == childBoardLow && (xBoardHigh & childBoardHigh) == childBoardHigh;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -181,6 +181,11 @@ public class LargeField implements Field {
     }
 
     @Override
+    public boolean contains(Field child) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public boolean equals(Object o) {
         throw new UnsupportedOperationException();
     }

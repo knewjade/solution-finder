@@ -29,26 +29,32 @@ public class ColoredFieldFactory {
         return field;
     }
 
+    // TODO: write unittest
     private static ColorType get(char mark) {
-        switch (mark) {
-            case 'I':
+        switch (Character.toLowerCase(mark)) {
+            case 'i':
                 return ColorType.I;
-            case 'T':
+            case 't':
                 return ColorType.T;
-            case 'S':
+            case 's':
                 return ColorType.S;
-            case 'Z':
+            case 'z':
                 return ColorType.Z;
-            case 'J':
+            case 'j':
                 return ColorType.J;
-            case 'L':
+            case 'l':
                 return ColorType.L;
-            case 'O':
+            case 'o':
                 return ColorType.O;
-            case 'X':
+            case 'x':
+                return ColorType.Gray;
+            case ' ':
+                return ColorType.Empty;
+            case '_':
+                return ColorType.Empty;
+            default:
                 return ColorType.Gray;
         }
-        throw new IllegalStateException("No reachable");
     }
 
     public static ColoredField createGrayField(Field field) {

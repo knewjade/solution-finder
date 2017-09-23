@@ -1,6 +1,7 @@
 package entry.path;
 
 import common.buildup.BuildUpStream;
+import common.datastore.BlockField;
 import common.datastore.OperationWithKey;
 import common.datastore.pieces.Blocks;
 import common.datastore.pieces.LongBlocks;
@@ -9,6 +10,7 @@ import common.order.ReverseOrderLookUp;
 import common.order.StackOrder;
 import common.pattern.BlocksGenerator;
 import core.field.Field;
+import core.field.FieldFactory;
 import core.mino.Block;
 import core.mino.Mino;
 import entry.path.output.FumenParser;
@@ -22,7 +24,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 class PathCore {
-    private final List<Result> candidates;
+    private final PackSearcher searcher;
     private final FumenParser fumenParser;
     private final boolean isReduced;
     private final boolean isUsingHold;
@@ -30,8 +32,8 @@ class PathCore {
     private final HashSet<LongBlocks> validPieces;
     private final HashSet<LongBlocks> allPieces;
 
-    PathCore(List<String> patterns, PackSearcher searcher, int maxDepth, boolean isUsingHold, FumenParser fumenParser) throws ExecutionException, InterruptedException {
-        this.candidates = searcher.toList();
+    PathCore(List<String> patterns, PackSearcher searcher, int maxDepth, boolean isUsingHold, FumenParser fumenParser) {
+        this.searcher = searcher;
         this.fumenParser = fumenParser;
         BlocksGenerator blocksGenerator = new BlocksGenerator(patterns);
         this.isReduced = isReducedPieces(blocksGenerator, maxDepth, isUsingHold);
@@ -90,7 +92,8 @@ class PathCore {
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
-    List<PathPair> run(Field field, SizedBit sizedBit) {
+    List<PathPair> run(Field field, SizedBit sizedBit) throws ExecutionException, InterruptedException {
+        List<Result> candidates = searcher.toList();
         int maxClearLine = sizedBit.getHeight();
         LockedBuildUpListUpThreadLocal threadLocal = new LockedBuildUpListUpThreadLocal(sizedBit.getHeight());
         return candidates.parallelStream()
@@ -131,6 +134,76 @@ class PathCore {
                 })
                 .filter(pathPair -> pathPair != PathPair.EMPTY_PAIR)
                 .collect(Collectors.toList());
+    }
+
+    List<PathPair> run(Field field, SizedBit sizedBit, BlockField blockField) throws ExecutionException, InterruptedException {
+        int maxClearLine = sizedBit.getHeight();
+
+        List<Result> candidates = searcher.stream(resultStream -> {
+            return resultStream
+                    .filter(result -> {
+                        LinkedList<OperationWithKey> operations = result.getMemento()
+                                .getOperationsStream(sizedBit.getWidth())
+                                .collect(Collectors.toCollection(LinkedList::new));
+
+                        BlockField blockField2 = new BlockField(maxClearLine);
+                        operations.forEach(operation -> {
+                            Field field1 = createField(operation, maxClearLine);
+                            blockField2.merge(field1, operation.getMino().getBlock());
+                        });
+
+                        return blockField2.containsAll(blockField);
+                    })
+                    .collect(Collectors.toList());
+        });
+
+        LockedBuildUpListUpThreadLocal threadLocal = new LockedBuildUpListUpThreadLocal(sizedBit.getHeight());
+        return candidates.parallelStream()
+                .map(result -> {
+                    LinkedList<OperationWithKey> operations = result.getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toCollection(LinkedList::new));
+
+                    // 地形の中で組むことができるoperationsを一つ作成
+                    BuildUpStream buildUpStream = threadLocal.get();
+                    List<OperationWithKey> sampleOperations = buildUpStream.existsValidBuildPatternDirectly(field, operations)
+                            .findFirst()
+                            .orElse(Collections.emptyList());
+
+                    // 地形の中で組むことができるものがないときはスキップ
+                    if (sampleOperations.isEmpty())
+                        return PathPair.EMPTY_PAIR;
+
+                    // 地形の中で組むことができるSetを作成
+                    HashSet<LongBlocks> piecesSolution = buildUpStream.existsValidBuildPatternDirectly(field, operations)
+                            .map(operationWithKeys -> operationWithKeys.stream()
+                                    .map(OperationWithKey::getMino)
+                                    .map(Mino::getBlock)
+                                    .collect(Collectors.toList())
+                            )
+                            .map(LongBlocks::new)
+                            .collect(Collectors.toCollection(HashSet::new));
+
+                    // 探索シーケンスの中で組むことができるSetを作成
+                    HashSet<LongBlocks> piecesPattern = getPiecesPattern(piecesSolution);
+
+                    // 探索シーケンスの中で組むことができるものがないときはスキップ
+                    if (piecesPattern.isEmpty())
+                        return PathPair.EMPTY_PAIR;
+
+                    // 譜面の作成
+                    String fumen = fumenParser.parse(sampleOperations, field, maxClearLine);
+
+                    return new PathPair(result, piecesSolution, piecesPattern, fumen, new ArrayList<>(sampleOperations));
+                })
+                .filter(pathPair -> pathPair != PathPair.EMPTY_PAIR)
+                .collect(Collectors.toList());
+    }
+
+    private Field createField(OperationWithKey key, int maxClearLine) {
+        Mino mino = key.getMino();
+        Field test = FieldFactory.createField(maxClearLine);
+        test.put(mino, key.getX(), key.getY());
+        test.insertWhiteLineWithKey(key.getNeedDeletedKey());
+        return test;
     }
 
     private HashSet<LongBlocks> getPiecesPattern(HashSet<LongBlocks> piecesSolution) {

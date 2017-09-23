@@ -16,6 +16,7 @@ import entry.PriorityCommandLineWrapper;
 import exceptions.FinderParseException;
 import org.apache.commons.cli.*;
 
+import javax.activation.UnsupportedDataTypeException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -115,6 +116,21 @@ public class PercentSettingParser {
             } catch (IOException e) {
                 throw new FinderParseException("Cannot open field file", e);
             }
+        }
+
+        // ドロップの設定
+        Optional<String> dropType = wrapper.getStringOption("drop");
+        try {
+            dropType.ifPresent(type -> {
+                String key = dropType.orElse("softdrop");
+                try {
+                    settings.setDropType(key);
+                } catch (UnsupportedDataTypeException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            throw new FinderParseException("Unsupported format: format=" + dropType.orElse("<empty>"));
         }
 
         // パフェ成功確率ツリーの深さの設定
@@ -275,6 +291,16 @@ public class PercentSettingParser {
                 .desc("Max count of failed patterns when output")
                 .build();
         options.addOption(failedCountOption);
+
+        Option dropOption = Option.builder("d")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("drop")
+                .longOpt("drop")
+                .desc("Specify drop")
+                .build();
+        options.addOption(dropOption);
 
         return options;
     }

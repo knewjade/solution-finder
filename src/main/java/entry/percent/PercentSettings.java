@@ -4,7 +4,9 @@ import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import core.field.Field;
 import core.field.FieldFactory;
+import entry.DropType;
 
+import javax.activation.UnsupportedDataTypeException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +21,7 @@ public class PercentSettings {
     private List<String> patterns = new ArrayList<>();
     private int treeDepth = 3;
     private int failedCount = 100;
+    private DropType dropType = DropType.Softdrop;
 
     // ********* Getter ************
     public boolean isUsingHold() {
@@ -51,6 +54,10 @@ public class PercentSettings {
 
     int getFailedCount() {
         return failedCount;
+    }
+
+    DropType getDropType() {
+        return dropType;
     }
 
     // ********* Setter ************
@@ -89,5 +96,24 @@ public class PercentSettings {
 
     void setFailedCount(int maxCount) {
         this.failedCount = maxCount;
+    }
+
+    void setDropType(DropType dropType) {
+        this.dropType = dropType;
+    }
+
+    void setDropType(String type) throws UnsupportedDataTypeException {
+        switch (type.trim().toLowerCase()) {
+            case "soft":
+            case "softdrop":
+                this.dropType = DropType.Softdrop;
+                return;
+            case "hard":
+            case "harddrop":
+                this.dropType = DropType.Softdrop;
+                return;
+            default:
+                throw new UnsupportedDataTypeException("Unsupported droptype: type=" + type);
+        }
     }
 }

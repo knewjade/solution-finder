@@ -5,8 +5,7 @@ import common.tetfu.TetfuPage;
 import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
-import core.field.Field;
-import core.field.FieldFactory;
+import common.tetfu.field.ColoredFieldFactory;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
@@ -108,14 +107,33 @@ public class PathSettingParser {
 
                     // フィールドの設定
                     String fieldMarks = String.join("", fieldLines);
-                    Field field = FieldFactory.createField(fieldMarks);
-                    settings.setFieldFilePath(field);
+                    ColoredField coloredField = ColoredFieldFactory.createColoredField(fieldMarks);
+                    if (settings.isRevered()) {
+                        settings.setFixedField(coloredField, maxClearLine);
+                    } else {
+                        settings.setNoFixedField(coloredField, maxClearLine);
+                    }
                 }
             } catch (NumberFormatException e) {
                 throw new FinderParseException("Cannot read clear-line from " + fieldPath);
             } catch (IOException e) {
                 throw new FinderParseException("Cannot open field file", e);
             }
+        }
+
+        // ドロップの設定
+        Optional<String> dropType = wrapper.getStringOption("drop");
+        try {
+            dropType.ifPresent(type -> {
+                String key = dropType.orElse("softdrop");
+                try {
+                    settings.setDropType(key);
+                } catch (UnsupportedDataTypeException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            throw new FinderParseException("Unsupported format: format=" + dropType.orElse("<empty>"));
         }
 
         // ホールドの設定
@@ -343,6 +361,26 @@ public class PathSettingParser {
                 .build();
         options.addOption(cachedMinBitOption);
 
+        Option reservedOption = Option.builder("r")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("reversed")
+                .longOpt("reversed-block")
+                .desc("Specify reversed block")
+                .build();
+        options.addOption(reservedOption);
+
+        Option dropOption = Option.builder("d")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("drop")
+                .longOpt("drop")
+                .desc("Specify drop")
+                .build();
+        options.addOption(dropOption);
+
         return options;
     }
 
@@ -375,6 +413,10 @@ public class PathSettingParser {
         } catch (FinderParseException ignore) {
         }
 
+        // 固定ピースの指定があるか
+        Optional<Boolean> reservedOption = wrapper.getBoolOption("reversed");
+        reservedOption.ifPresent(settings::setRevered);
+
         // 最大削除ラインの設定
         Optional<Integer> maxClearLineOption = wrapper.getIntegerOption("clear-line");
         maxClearLineOption.ifPresent(settings::setMaxClearLine);
@@ -392,7 +434,11 @@ public class PathSettingParser {
             coloredField.putMino(mino, x, y);
             coloredField.clearLine();
         }
-        settings.setField(coloredField, settings.getMaxClearLine());
+
+        if (settings.isRevered())
+            settings.setNoFixedField(coloredField, settings.getMaxClearLine());
+        else
+            settings.setFixedField(coloredField, settings.getMaxClearLine());
 
         return wrapper;
     }

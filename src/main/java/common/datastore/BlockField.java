@@ -7,6 +7,7 @@ import core.mino.Block;
 
 import java.util.Comparator;
 import java.util.EnumMap;
+import java.util.Map;
 
 public class BlockField implements Comparable<BlockField> {
     private static final Comparator<Field> FIELD_COMPARATOR = new FieldComparator();
@@ -22,6 +23,12 @@ public class BlockField implements Comparable<BlockField> {
     private BlockField(int height, EnumMap<Block, Field> map) {
         this.height = height;
         this.map = map;
+    }
+
+    // TODO: write unittest
+    public void setBlock(Block block, int x, int y) {
+        assert block != null;
+        map.computeIfAbsent(block, b -> FieldFactory.createField(height)).setBlock(x, y);
     }
 
     public void merge(Field field, Block block) {
@@ -55,5 +62,17 @@ public class BlockField implements Comparable<BlockField> {
                 return compare;
         }
         return 0;
+    }
+
+    public boolean containsAll(BlockField target) {
+        for (Map.Entry<Block, Field> targetEntry : target.map.entrySet()) {
+            Block key = targetEntry.getKey();
+            Field targetField = targetEntry.getValue();
+            Field myField = this.map.get(key);
+            if (!myField.contains(targetField)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
