@@ -95,11 +95,20 @@ public class PathEntryPoint implements EntryPoint {
 
         output(FieldView.toString(field, maxClearLine));
 
+        BlockField reservedBlocks = settings.getReservedBlock();
+        if (settings.isRevered()) {
+            assert reservedBlocks != null;
+            output("");
+            System.out.println("# Setup Reserved blocks");
+            output(BlockFieldView.toString(reservedBlocks));
+        }
+
         output();
         // ========================================
         output("# Initialize / User-defined");
         output("Max clear lines: " + maxClearLine);
         output("Using hold: " + (settings.isUsingHold() ? "use" : "avoid"));
+        output("Drop: " + settings.getDropType().name().toLowerCase());
         output("Searching patterns:");
         List<String> patterns = settings.getPatterns();
         if (patterns.isEmpty())
@@ -194,8 +203,7 @@ public class PathEntryPoint implements EntryPoint {
         FumenParser fumenParser = createFumenParser(settings.isTetfuSplit(), minoFactory, colorConverter);
         PathCore pathCore = createPathCore(patterns, maxDepth, isUsingHold, searcher, fumenParser, maxClearLine);
 
-        Optional<BlockField> fixedPieces = settings.getReservedBlock();
-        List<PathPair> pathPairs = run(pathCore, field, sizedBit, fixedPieces.orElse(null));
+        List<PathPair> pathPairs = run(pathCore, field, sizedBit, reservedBlocks);
 
         output("     ... done");
 

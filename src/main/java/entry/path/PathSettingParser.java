@@ -101,6 +101,10 @@ public class PathSettingParser {
                     // テト譜から
                     wrapper = loadTetfu(removeDomainData, parser, options, wrapper, settings);
                 } else {
+                    // 固定ピースの指定があるか
+                    Optional<Boolean> reservedOption = wrapper.getBoolOption("reserved");
+                    reservedOption.ifPresent(settings::setRevered);
+
                     // 最大削除ラインの設定
                     int maxClearLine = Integer.valueOf(fieldLines.pollFirst());
                     settings.setMaxClearLine(maxClearLine);
@@ -109,9 +113,9 @@ public class PathSettingParser {
                     String fieldMarks = String.join("", fieldLines);
                     ColoredField coloredField = ColoredFieldFactory.createColoredField(fieldMarks);
                     if (settings.isRevered()) {
-                        settings.setFixedField(coloredField, maxClearLine);
+                        settings.setFieldWithReserved(coloredField, maxClearLine);
                     } else {
-                        settings.setNoFixedField(coloredField, maxClearLine);
+                        settings.setField(coloredField, maxClearLine);
                     }
                 }
             } catch (NumberFormatException e) {
@@ -365,9 +369,9 @@ public class PathSettingParser {
                 .optionalArg(true)
                 .hasArg()
                 .numberOfArgs(1)
-                .argName("reversed")
-                .longOpt("reversed-block")
-                .desc("Specify reversed block")
+                .argName("reserved-block")
+                .longOpt("reserved")
+                .desc("Specify reserved block")
                 .build();
         options.addOption(reservedOption);
 
@@ -414,7 +418,7 @@ public class PathSettingParser {
         }
 
         // 固定ピースの指定があるか
-        Optional<Boolean> reservedOption = wrapper.getBoolOption("reversed");
+        Optional<Boolean> reservedOption = wrapper.getBoolOption("reserved");
         reservedOption.ifPresent(settings::setRevered);
 
         // 最大削除ラインの設定
@@ -436,9 +440,9 @@ public class PathSettingParser {
         }
 
         if (settings.isRevered())
-            settings.setNoFixedField(coloredField, settings.getMaxClearLine());
+            settings.setFieldWithReserved(coloredField, settings.getMaxClearLine());
         else
-            settings.setFixedField(coloredField, settings.getMaxClearLine());
+            settings.setField(coloredField, settings.getMaxClearLine());
 
         return wrapper;
     }

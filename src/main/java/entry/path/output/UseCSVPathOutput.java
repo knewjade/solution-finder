@@ -19,6 +19,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class UseCSVPathOutput implements PathOutput {
@@ -69,6 +70,8 @@ public class UseCSVPathOutput implements PathOutput {
 
         outputLog("Found path = " + pathPairs.size());
 
+        AtomicInteger allCounter = new AtomicInteger();
+
         Map<BlockCounter, List<PathPair>> groupingByClockCounter = pathPairs.parallelStream()
                 .collect(Collectors.groupingBy(pathPair -> {
                     List<OperationWithKey> operations = pathPair.getSampleOperations();
@@ -82,6 +85,9 @@ public class UseCSVPathOutput implements PathOutput {
 
             generator.blockCountersParallelStream()
                     .map(blockCounter -> {
+                        // カウンターをインクリメント
+                        allCounter.incrementAndGet();
+
                         // 組み合わせ名を取得
                         String blockCounterName = blockCounter.getBlockStream()
                                 .map(Block::getName)
@@ -126,6 +132,8 @@ public class UseCSVPathOutput implements PathOutput {
         } catch (IOException e) {
             throw new FinderExecuteException("Failed to output file", e);
         }
+
+        outputLog("Found piece combinations = " + allCounter.get());
 
         if (lastException != null)
             throw new FinderExecuteException("Error to output file", lastException);

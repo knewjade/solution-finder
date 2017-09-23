@@ -75,4 +75,18 @@ public class BlockField implements Comparable<BlockField> {
         }
         return true;
     }
+
+    // TODO: write unittest
+    public Block getBlock(int x, int y) {
+        for (Map.Entry<Block, Field> entry : map.entrySet()) {
+            Field field = entry.getValue();
+            if (!field.isEmpty(x, y))
+                return entry.getKey();
+        }
+        return null;
+    }
+
+    public int getHeight() {
+        return height;
+    }
 }

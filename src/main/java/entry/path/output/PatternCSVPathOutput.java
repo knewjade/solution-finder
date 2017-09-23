@@ -148,7 +148,9 @@ public class PatternCSVPathOutput implements PathOutput {
             throw new FinderExecuteException("Failed to output file", e);
         }
 
-        outputLog(String.format("success = %.2f%% (%d/%d)", (double) validCounter.get() / allCounter.get(), validCounter.get(), allCounter.get()));
+        outputLog("");
+        outputLog("perfect clear percent");
+        outputLog(String.format("  -> success = %.2f%% (%d/%d)", 100.0 * validCounter.get() / allCounter.get(), validCounter.get(), allCounter.get()));
 
         if (lastException != null)
             throw new FinderExecuteException("Error to output file", lastException);

@@ -12,7 +12,6 @@ import entry.DropType;
 import javax.activation.UnsupportedDataTypeException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class PathSettings {
     private static final int EMPTY_BLOCK_NUMBER = ColorType.Empty.getNumber();
@@ -78,8 +77,8 @@ public class PathSettings {
         return cachedMinBit;
     }
 
-    Optional<BlockField> getReservedBlock() {
-        return Optional.of(reservedBlock);
+    BlockField getReservedBlock() {
+        return reservedBlock;
     }
 
     boolean isRevered() {
@@ -99,7 +98,7 @@ public class PathSettings {
         this.isUsingHold = isUsingHold;
     }
 
-    void setNoFixedField(ColoredField coloredField, int height) {
+    void setField(ColoredField coloredField, int height) {
         Field field = FieldFactory.createField(height);
         for (int y = 0; y < height; y++)
             for (int x = 0; x < 10; x++)
@@ -109,7 +108,7 @@ public class PathSettings {
         setReservedBlock(null);
     }
 
-    void setFixedField(ColoredField coloredField, int height) {
+    void setFieldWithReserved(ColoredField coloredField, int height) {
         Field field = FieldFactory.createField(height);
         BlockField blockField = new BlockField(height);
         for (int y = 0; y < height; y++) {
@@ -210,7 +209,7 @@ public class PathSettings {
                 return;
             case "hard":
             case "harddrop":
-                this.dropType = DropType.Softdrop;
+                this.dropType = DropType.Harddrop;
                 return;
             default:
                 throw new UnsupportedDataTypeException("Unsupported droptype: type=" + type);

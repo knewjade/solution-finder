@@ -54,8 +54,8 @@ public class HarddropReachable implements Reachable {
     }
 
     private boolean check(Field field, Mino mino, int x, int y) {
-        int harddropY = field.getYOnHarddrop(mino, x, y);
         int maxY = appearY - mino.getMaxY();
-        return harddropY < maxY;
+        int harddropY = field.getYOnHarddrop(mino, x, maxY);
+        return harddropY == y;
     }
 }
