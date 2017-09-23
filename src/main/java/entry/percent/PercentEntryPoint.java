@@ -2,12 +2,17 @@ package entry.percent;
 
 import common.SyntaxException;
 import common.datastore.Pair;
+import common.datastore.action.Action;
 import common.datastore.pieces.Blocks;
 import common.datastore.pieces.LongBlocks;
 import common.pattern.BlocksGenerator;
 import common.tree.AnalyzeTree;
+import concurrent.HarddropCandidateThreadLocal;
+import concurrent.LockedCandidateThreadLocal;
+import core.action.candidate.Candidate;
 import core.field.Field;
 import core.field.FieldView;
+import entry.DropType;
 import entry.EntryPoint;
 import entry.searching_pieces.NormalEnumeratePieces;
 import exceptions.FinderException;
@@ -148,7 +153,8 @@ public class PercentEntryPoint implements EntryPoint {
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
         // 探索を行う
-        PercentCore percentCore = new PercentCore(maxClearLine, executorService, settings.isUsingHold());
+        ThreadLocal<Candidate<Action>> candidateThreadLocal = createCandidateThreadLocal(settings.getDropType(), maxClearLine);
+        PercentCore percentCore = new PercentCore(executorService, candidateThreadLocal, settings.isUsingHold());
         try {
             percentCore.run(field, searchingPieces, maxClearLine, maxDepth);
         } catch (ExecutionException | InterruptedException e) {
@@ -203,6 +209,16 @@ public class PercentEntryPoint implements EntryPoint {
         output("done");
 
         flush();
+    }
+
+    ThreadLocal<Candidate<Action>> createCandidateThreadLocal(DropType dropType, int maxClearLine) throws FinderInitializeException {
+        switch (dropType) {
+            case Softdrop:
+                return new LockedCandidateThreadLocal(maxClearLine);
+            case Harddrop:
+                return new HarddropCandidateThreadLocal();
+        }
+        throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
     }
 
     private void outputFailedPatterns(List<Pair<Blocks, Boolean>> failedPairs) throws FinderExecuteException {

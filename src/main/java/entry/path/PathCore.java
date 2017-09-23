@@ -26,15 +26,17 @@ import java.util.stream.Stream;
 class PathCore {
     private final PackSearcher searcher;
     private final FumenParser fumenParser;
+    private final ThreadLocal<BuildUpStream> buildUpStreamTh1readLocal;
     private final boolean isReduced;
     private final boolean isUsingHold;
     private final int maxDepth;
     private final HashSet<LongBlocks> validPieces;
     private final HashSet<LongBlocks> allPieces;
 
-    PathCore(List<String> patterns, PackSearcher searcher, int maxDepth, boolean isUsingHold, FumenParser fumenParser) {
+    PathCore(List<String> patterns, PackSearcher searcher, int maxDepth, boolean isUsingHold, FumenParser fumenParser, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal) {
         this.searcher = searcher;
         this.fumenParser = fumenParser;
+        this.buildUpStreamTh1readLocal = buildUpStreamThreadLocal;
         BlocksGenerator blocksGenerator = new BlocksGenerator(patterns);
         this.isReduced = isReducedPieces(blocksGenerator, maxDepth, isUsingHold);
         this.isUsingHold = isUsingHold;
@@ -95,13 +97,12 @@ class PathCore {
     List<PathPair> run(Field field, SizedBit sizedBit) throws ExecutionException, InterruptedException {
         List<Result> candidates = searcher.toList();
         int maxClearLine = sizedBit.getHeight();
-        LockedBuildUpListUpThreadLocal threadLocal = new LockedBuildUpListUpThreadLocal(sizedBit.getHeight());
         return candidates.parallelStream()
                 .map(result -> {
                     LinkedList<OperationWithKey> operations = result.getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toCollection(LinkedList::new));
 
                     // 地形の中で組むことができるoperationsを一つ作成
-                    BuildUpStream buildUpStream = threadLocal.get();
+                    BuildUpStream buildUpStream = buildUpStreamTh1readLocal.get();
                     List<OperationWithKey> sampleOperations = buildUpStream.existsValidBuildPatternDirectly(field, operations)
                             .findFirst()
                             .orElse(Collections.emptyList());
@@ -157,13 +158,12 @@ class PathCore {
                     .collect(Collectors.toList());
         });
 
-        LockedBuildUpListUpThreadLocal threadLocal = new LockedBuildUpListUpThreadLocal(sizedBit.getHeight());
         return candidates.parallelStream()
                 .map(result -> {
                     LinkedList<OperationWithKey> operations = result.getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toCollection(LinkedList::new));
 
                     // 地形の中で組むことができるoperationsを一つ作成
-                    BuildUpStream buildUpStream = threadLocal.get();
+                    BuildUpStream buildUpStream = buildUpStreamTh1readLocal.get();
                     List<OperationWithKey> sampleOperations = buildUpStream.existsValidBuildPatternDirectly(field, operations)
                             .findFirst()
                             .orElse(Collections.emptyList());

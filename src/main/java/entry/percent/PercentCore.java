@@ -5,12 +5,12 @@ import common.datastore.action.Action;
 import common.datastore.pieces.Blocks;
 import common.datastore.pieces.LongBlocks;
 import common.tree.AnalyzeTree;
-import concurrent.LockedCandidateThreadLocal;
 import concurrent.checker.CheckerNoHoldThreadLocal;
 import concurrent.checker.CheckerUsingHoldThreadLocal;
 import concurrent.checker.invoker.ConcurrentCheckerInvoker;
 import concurrent.checker.invoker.no_hold.ConcurrentCheckerNoHoldInvoker;
 import concurrent.checker.invoker.using_hold.ConcurrentCheckerUsingHoldInvoker;
+import core.action.candidate.Candidate;
 import core.field.Field;
 
 import java.util.ArrayList;
@@ -25,18 +25,16 @@ class PercentCore {
     private AnalyzeTree resultTree;
     private List<Pair<Blocks, Boolean>> resultPairs;
 
-    PercentCore(int maxClearLine, ExecutorService executorService, boolean isUsingHold) {
-        this.invoker = createConcurrentCheckerInvoker(maxClearLine, executorService, isUsingHold);
+    PercentCore(ExecutorService executorService, ThreadLocal<Candidate<Action>> candidateThreadLocal, boolean isUsingHold) {
+        this.invoker = createConcurrentCheckerInvoker(executorService, candidateThreadLocal, isUsingHold);
     }
 
-    private ConcurrentCheckerInvoker createConcurrentCheckerInvoker(int maxClearLine, ExecutorService executorService, boolean isUsingHold) {
+    private ConcurrentCheckerInvoker createConcurrentCheckerInvoker(ExecutorService executorService, ThreadLocal<Candidate<Action>> candidateThreadLocal, boolean isUsingHold) {
         if (isUsingHold) {
             CheckerUsingHoldThreadLocal<Action> checkerThreadLocal = new CheckerUsingHoldThreadLocal<>();
-            LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
             return new ConcurrentCheckerUsingHoldInvoker(executorService, candidateThreadLocal, checkerThreadLocal);
         } else {
             CheckerNoHoldThreadLocal<Action> checkerThreadLocal = new CheckerNoHoldThreadLocal<>();
-            LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
             return new ConcurrentCheckerNoHoldInvoker(executorService, candidateThreadLocal, checkerThreadLocal);
         }
     }

@@ -1,6 +1,7 @@
 package entry.path;
 
 import common.SyntaxException;
+import common.buildup.BuildUpStream;
 import common.datastore.BlockField;
 import common.pattern.BlocksGenerator;
 import common.tetfu.common.ColorConverter;
@@ -10,6 +11,7 @@ import core.field.Field;
 import core.field.FieldView;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import entry.DropType;
 import entry.EntryPoint;
 import entry.path.output.*;
 import exceptions.FinderException;
@@ -114,7 +116,6 @@ public class PathEntryPoint implements EntryPoint {
         for (String pattern : patterns)
             output("  " + pattern);
 
-
         output();
         // ========================================
         output("# Initialize / System");
@@ -191,7 +192,7 @@ public class PathEntryPoint implements EntryPoint {
         PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
         ColorConverter colorConverter = new ColorConverter();
         FumenParser fumenParser = createFumenParser(settings.isTetfuSplit(), minoFactory, colorConverter);
-        PathCore pathCore = createPathCore(patterns, maxDepth, isUsingHold, searcher, fumenParser);
+        PathCore pathCore = createPathCore(patterns, maxDepth, isUsingHold, searcher, fumenParser, maxClearLine);
 
         Optional<BlockField> fixedPieces = settings.getReservedBlock();
         List<PathPair> pathPairs = run(pathCore, field, sizedBit, fixedPieces.orElse(null));
@@ -235,8 +236,19 @@ public class PathEntryPoint implements EntryPoint {
         return new OneFumenParser(minoFactory, colorConverter);
     }
 
-    private PathCore createPathCore(List<String> patterns, int maxDepth, boolean isUsingHold, PackSearcher searcher, FumenParser fumenParser) {
-        return new PathCore(patterns, searcher, maxDepth, isUsingHold, fumenParser);
+    private PathCore createPathCore(List<String> patterns, int maxDepth, boolean isUsingHold, PackSearcher searcher, FumenParser fumenParser, int maxClearLine) throws FinderInitializeException {
+        ThreadLocal<BuildUpStream> threadLocalBuildUpStream = createBuildUpStreamThreadLocal(settings.getDropType(), maxClearLine);
+        return new PathCore(patterns, searcher, maxDepth, isUsingHold, fumenParser, threadLocalBuildUpStream);
+    }
+
+    private ThreadLocal<BuildUpStream> createBuildUpStreamThreadLocal(DropType dropType, int maxClearLine) throws FinderInitializeException {
+        switch (dropType) {
+            case Softdrop:
+                return new LockedBuildUpListUpThreadLocal(maxClearLine);
+            case Harddrop:
+                return new HarddropBuildUpListUpThreadLocal(maxClearLine);
+        }
+        throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
     }
 
     private Predicate<ColumnField> createPredicate(int cachedMinBit) throws FinderInitializeException {

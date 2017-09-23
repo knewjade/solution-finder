@@ -2,6 +2,7 @@ package entry.percent;
 
 import common.datastore.pieces.LongBlocks;
 import common.pattern.BlocksGenerator;
+import concurrent.LockedCandidateThreadLocal;
 import core.field.Field;
 import core.field.FieldFactory;
 import entry.searching_pieces.NormalEnumeratePieces;
@@ -40,7 +41,8 @@ class PercentCoreTest {
     private void assertPercentCore(Obj obj, double successPercent) throws Exception {
         int core = Runtime.getRuntime().availableProcessors();
         ExecutorService executorService = Executors.newFixedThreadPool(core);
-        PercentCore percentCore = new PercentCore(obj.maxClearLine, executorService, obj.isUsingHold);
+        LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(obj.maxClearLine);
+        PercentCore percentCore = new PercentCore(executorService, candidateThreadLocal, obj.isUsingHold);
 
         Field field = FieldFactory.createField(obj.marks);
 
