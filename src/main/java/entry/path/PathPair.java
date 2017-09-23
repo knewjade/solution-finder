@@ -1,5 +1,6 @@
 package entry.path;
 
+import common.datastore.BlockCounter;
 import common.datastore.OperationWithKey;
 import common.datastore.pieces.LongBlocks;
 import core.mino.Block;
@@ -63,14 +64,6 @@ public class PathPair implements HaveSet<LongBlocks> {
         return sampleOperations;
     }
 
-    public String getPathName() {
-        return sampleOperations.stream()
-                .map(OperationWithKey::getMino)
-                .map(Mino::getBlock)
-                .map(Block::getName)
-                .collect(Collectors.joining());
-    }
-
     public String getUsingBlockName() {
         return sampleOperations.stream()
                 .map(OperationWithKey::getMino)
@@ -82,5 +75,9 @@ public class PathPair implements HaveSet<LongBlocks> {
 
     public int getPatternSize() {
         return blocksHashSetForPattern().size();
+    }
+
+    public BlockCounter getBlockCounter() {
+        return new BlockCounter(sampleOperations.stream().map(OperationWithKey::getMino).map(Mino::getBlock));
     }
 }

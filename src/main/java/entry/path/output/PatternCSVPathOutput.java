@@ -1,5 +1,6 @@
 package entry.path.output;
 
+import common.datastore.BlockCounter;
 import common.datastore.pieces.Blocks;
 import common.pattern.BlocksGenerator;
 import core.field.Field;
@@ -18,6 +19,8 @@ import java.io.IOException;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class PatternCSVPathOutput implements PathOutput {
@@ -68,8 +71,11 @@ public class PatternCSVPathOutput implements PathOutput {
 
         outputLog("Found path = " + pathPairs.size());
 
+        AtomicInteger validCounter = new AtomicInteger();
+        AtomicInteger allCounter = new AtomicInteger();
+
         try (BufferedWriter writer = outputBaseFile.newBufferedWriter()) {
-            writer.write("ツモ,対応地形数,テト譜");
+            writer.write("ツモ,対応地形数,使用ミノ,未使用ミノ,テト譜");
             writer.newLine();
 
             generator.blocksParallelStream()
@@ -90,13 +96,45 @@ public class PatternCSVPathOutput implements PathOutput {
                         // パフェ可能な地形数
                         int possibleSize = valid.size();
 
+                        // パフェ可能ならカウンターをインクリメント
+                        allCounter.incrementAndGet();
+                        if (0 < possibleSize)
+                            validCounter.incrementAndGet();
+
                         // パフェ可能な地形のテト譜を連結
                         String fumens = valid.stream()
                                 .sorted(Comparator.comparing(PathPair::getPatternSize).reversed())
                                 .map(PathPair::getFumen)
                                 .collect(Collectors.joining(";"));
 
-                        return String.format("%s,%d,%s%n", sequenceName, possibleSize, fumens);
+                        // 使うミノ一覧を抽出
+                        Set<BlockCounter> usesSet = valid.stream()
+                                .map(PathPair::getBlockCounter)
+                                .collect(Collectors.toSet());
+
+                        String uses = usesSet.stream()
+                                .map(blockCounter -> {
+                                    return blockCounter.getBlockStream()
+                                            .sorted()
+                                            .map(Block::getName)
+                                            .collect(Collectors.joining());
+                                })
+                                .collect(Collectors.joining(";"));
+
+                        // 残せるミノ一覧を抽出
+                        BlockCounter orderBlockCounter = new BlockCounter(blocks.blockStream());
+                        String noUses = usesSet.stream()
+                                .map(orderBlockCounter::removeAndReturnNew)
+                                .distinct()
+                                .map(blockCounter -> {
+                                    return blockCounter.getBlockStream()
+                                            .sorted()
+                                            .map(Block::getName)
+                                            .collect(Collectors.joining());
+                                })
+                                .collect(Collectors.joining(";"));
+
+                        return String.format("%s,%d,%s,%s,%s%n", sequenceName, possibleSize, uses, noUses, fumens);
                     })
                     .forEach(line -> {
                         try {
@@ -109,6 +147,8 @@ public class PatternCSVPathOutput implements PathOutput {
         } catch (IOException e) {
             throw new FinderExecuteException("Failed to output file", e);
         }
+
+        outputLog(String.format("success = %.2f%% (%d/%d)", (double) validCounter.get() / allCounter.get(), validCounter.get(), allCounter.get()));
 
         if (lastException != null)
             throw new FinderExecuteException("Error to output file", lastException);
