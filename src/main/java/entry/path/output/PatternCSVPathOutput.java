@@ -104,7 +104,7 @@ public class PatternCSVPathOutput implements PathOutput {
                         // パフェ可能な地形のテト譜を連結
                         String fumens = valid.stream()
                                 .sorted(Comparator.comparing(PathPair::getPatternSize).reversed())
-                                .map(PathPair::getFumen)
+                                .map(pathPair -> "v115@" + pathPair.getFumen())
                                 .collect(Collectors.joining(";"));
 
                         // 使うミノ一覧を抽出

@@ -47,6 +47,8 @@ short    long                   default
 ``-k``   ``--key``              none
 ``-s``   ``--split``            no
 ``-L``   ``--max-layer``        2
+``-r``   ``--reserved``         false
+``-d``   ``--drop``             softdrop
 ``-cb``  ``--cached-bit``       0
 ``-o``   ``--output-base``      output/path.txt
 ``-l``   ``--log-path``         output/last_output.txt
@@ -140,6 +142,33 @@ formatオプションに csv を選択したとき、さらに出力する項目
 
 * 1: unique
 * 2: unique, minimal の両方
+
+
+``-r``, ``--reserved`` [default: false]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+ミノの接着場所を予約します。
+
+たとえば `テンプレ+縦I <http://fumen.zui.jp/?v115@9gwhDeE8whCeF8whBeG8whCeF8JeAgH>`_ を入力したとします。
+
+このとき探索開始には `クレーの地形 <http://fumen.zui.jp/?v115@9gh0R4F8g0R4G8BtH8g0BtG8JeAgWDA6vzBA>`_ が適用され、
+最終的に色のあるブロック通りに配置されるパフェが探索対象となります。
+
+なおこのとき、色のついたブロックは4個単位である必要はありません（1ブロックでも可）。
+
+この機能を有効にする場合は、``true``を指定してください。
+
+
+``-d``, ``--drop`` [default: softdrop]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+ミノの操作に制限を加える。
+
+以下から操作方法をひとつ選択する。
+
+* softdrop: ソフトドロップ＋回転入れ（制限なし）
+* harddrop: ハードドロップのみ
+
 
 ``-cb``, ``--cached-bit`` [default: 0]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

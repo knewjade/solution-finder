@@ -413,6 +413,7 @@ public class PathSettingParser {
         try {
             CommandLine commandLineTetfu = parseToCommandLine(options, parser, commentArgs);
             CommandLineWrapper newWrapper = new NormalCommandLineWrapper(commandLineTetfu);
+            newWrapper.getIntegerOption("clear-line");  // 削除ラインが読み取れればOK
             wrapper = new PriorityCommandLineWrapper(Arrays.asList(wrapper, newWrapper));
         } catch (FinderParseException ignore) {
         }
