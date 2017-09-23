@@ -25,7 +25,7 @@
 
   java -jar sinder.jar percent --tetfu v115@9gwhi0DeR4whg0RpCeR4wwwhglRpBeBtxwwhilCeBt?wwJeAgWUA0no2AtTMeDUPNXEuN98AQPUGB
 
-* TIPS
+.. note::
 
   - ``--tetfu`` は ``-t`` に省略できます
   - テト譜は、後述のフィールドファイル内にライン数・地形の代わりに記述できます
@@ -47,6 +47,12 @@ field.txt に「パーフェクトまでに削除するライン数」と「フ�
 * X : ブロックのある位置
 * _ : ブロックのない位置
 
+.. note::
+
+  ブロックの位置は X（グレー） の他に TIJLSZO でも指定することができます。
+  一部オプションでブロックの種類情報を使うときはこのように指定してください。
+
+
 例) 左側4列が埋まっていて、右側6列が空いているフィールド (4ラインパーフェクト) ::
 
   4
@@ -62,10 +68,10 @@ field.txt に「パーフェクトまでに削除するライン数」と「フ�
 
   # パフェテンプレ (コメントは無視されます)
   4
-  XX____XXXX
-  XXX___XXXX
-  XXXX__XXXX
-  XXX___XXXX
+  ZZ____LLLI
+  TZZ___LOOI
+  TTSS__JOOI
+  TSS___JJJI
 
 
 また、 ライン数・地形の代わりに、テト譜データを記載することもできます
@@ -79,7 +85,6 @@ field.txt に「パーフェクトまでに削除するライン数」と「フ�
   # v115@9gQ4zhAtDeR4RpBtDeglQ4RpAtg0Deili0NeAgWYA0?no2AtTMeDUPNXEuN98AQe88AjPUGB
 
 
-制限事項
-============================================================
+.. warning::
 
-現在、フィールドの高さは最大12までとなっています。
+    現在、フィールドの高さは最大12までとなっています。ご注意ください。
