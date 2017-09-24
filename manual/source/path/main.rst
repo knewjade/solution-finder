@@ -48,7 +48,7 @@ short    long                   default
 ``-s``   ``--split``            no
 ``-L``   ``--max-layer``        2
 ``-r``   ``--reserved``         false
-``-d``   ``--drop``             softdrop
+``-d``   ``--drop``             soft
 ``-cb``  ``--cached-bit``       0
 ``-o``   ``--output-base``      output/path.txt
 ``-l``   ``--log-path``         output/last_output.txt
@@ -156,18 +156,18 @@ formatオプションに csv を選択したとき、さらに出力する項目
 
 なおこのとき、色のついたブロックは4個単位である必要はありません（1ブロックでも可）。
 
-この機能を有効にする場合は、``true``を指定してください。
+この機能を有効にする場合は ``true`` を指定してください。
 
 
-``-d``, ``--drop`` [default: softdrop]
+``-d``, ``--drop`` [default: soft]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ミノの操作に制限を加える。
 
 以下から操作方法をひとつ選択する。
 
-* softdrop: ソフトドロップ＋回転入れ（制限なし）
-* harddrop: ハードドロップのみ
+* soft: ソフトドロップ＋回転入れ（制限なし）
+* hard: ハードドロップのみ
 
 
 ``-cb``, ``--cached-bit`` [default: 0]
