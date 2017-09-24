@@ -2,7 +2,7 @@ package entry.path.output;
 
 import common.datastore.BlockCounter;
 import common.datastore.pieces.Blocks;
-import common.pattern.BlocksGenerator;
+import common.pattern.IBlocksGenerator;
 import core.field.Field;
 import core.mino.Block;
 import entry.path.PathEntryPoint;
@@ -32,7 +32,7 @@ public class PatternCSVPathOutput implements PathOutput {
     private final ReduceBlocksGenerator generator;
     private Exception lastException = null;
 
-    public PatternCSVPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings, BlocksGenerator generator, int maxDepth) throws FinderInitializeException {
+    public PatternCSVPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings, IBlocksGenerator generator, int maxDepth) throws FinderInitializeException {
         // 出力ファイルが正しく出力できるか確認
         String outputBaseFilePath = pathSettings.getOutputBaseFilePath();
         String namePath = getRemoveExtensionFromPath(outputBaseFilePath);
@@ -50,7 +50,14 @@ public class PatternCSVPathOutput implements PathOutput {
         // 保存
         this.pathEntryPoint = pathEntryPoint;
         this.outputBaseFile = base;
-        this.generator = new ReduceBlocksGenerator(generator, maxDepth + 1);
+        this.generator = createReduceBlocksGenerator(generator, pathSettings, maxDepth);
+    }
+
+    private ReduceBlocksGenerator createReduceBlocksGenerator(IBlocksGenerator generator, PathSettings pathSettings, int maxDepth) {
+        if (pathSettings.isUsingHold())
+            return new ReduceBlocksGenerator(generator, maxDepth + 1);
+        else
+            return new ReduceBlocksGenerator(generator, maxDepth);
     }
 
     private String getRemoveExtensionFromPath(String path) throws FinderInitializeException {
@@ -78,7 +85,7 @@ public class PatternCSVPathOutput implements PathOutput {
             writer.write("ツモ,対応地形数,使用ミノ,未使用ミノ,テト譜");
             writer.newLine();
 
-            generator.blocksParallelStream()
+            generator.blocksStream()
                     .map(blocks -> {
                         // シーケンス名を取得
                         String sequenceName = blocks.blockStream()

@@ -4,6 +4,7 @@ import common.comparator.PiecesNameComparator;
 import common.datastore.action.Action;
 import common.datastore.pieces.Blocks;
 import common.pattern.BlocksGenerator;
+import common.pattern.IBlocksGenerator;
 import concurrent.LockedCandidateThreadLocal;
 import core.action.candidate.Candidate;
 import core.action.candidate.LockedCandidate;
@@ -32,7 +33,7 @@ public class Main {
     private static void start() {
         PatternTree tree = new PatternTree();
 //        PiecesGenerator blocksGenerator = new BlocksGenerator("I,I,J,L,O,[SZT]p3,*p3");
-        BlocksGenerator blocksGenerator = new BlocksGenerator("I,I,J,L,O,S,Z,T,*p3");
+        IBlocksGenerator blocksGenerator = new BlocksGenerator("I,I,J,L,O,S,Z,T,*p3");
         List<Blocks> piecesList = blocksGenerator.blocksStream().collect(Collectors.toList());
         piecesList.forEach(pieces -> tree.build(pieces.getBlocks(), blocks -> new TerminateChecker()));
 

@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class BlocksGeneratorTest {
     @Test
     void toList1() {
-        BlocksGenerator generator = new BlocksGenerator("I # comment");
+        IBlocksGenerator generator = new BlocksGenerator("I # comment");
         assertThat(generator.getDepth()).isEqualTo(1);
 
         assertThat(generator.blocksStream())
@@ -32,7 +32,7 @@ class BlocksGeneratorTest {
 
     @Test
     void toList1LowerCase() {
-        BlocksGenerator generator = new BlocksGenerator("i");
+        IBlocksGenerator generator = new BlocksGenerator("i");
         assertThat(generator.getDepth()).isEqualTo(1);
 
         assertThat(generator.blocksStream())
@@ -46,7 +46,7 @@ class BlocksGeneratorTest {
 
     @Test
     void toList2() {
-        BlocksGenerator generator = new BlocksGenerator("I,J");
+        IBlocksGenerator generator = new BlocksGenerator("I,J");
         assertThat(generator.getDepth()).isEqualTo(2);
 
         assertThat(generator.blocksStream())
@@ -60,7 +60,7 @@ class BlocksGeneratorTest {
 
     @Test
     void toList2WithSpace() {
-        BlocksGenerator generator = new BlocksGenerator(" I , J ");
+        IBlocksGenerator generator = new BlocksGenerator(" I , J ");
         assertThat(generator.getDepth()).isEqualTo(2);
 
         assertThat(generator.blocksStream())
@@ -74,7 +74,7 @@ class BlocksGeneratorTest {
 
     @Test
     void toListAsterisk() {
-        BlocksGenerator generator = new BlocksGenerator(" * ");
+        IBlocksGenerator generator = new BlocksGenerator(" * ");
         assertThat(generator.getDepth()).isEqualTo(1);
 
         assertThat(generator.blocksStream())
@@ -88,7 +88,7 @@ class BlocksGeneratorTest {
 
     @Test
     void toListAsterisk2() {
-        BlocksGenerator generator = new BlocksGenerator(" *, * ");
+        IBlocksGenerator generator = new BlocksGenerator(" *, * ");
         assertThat(generator.getDepth()).isEqualTo(2);
 
         assertThat(generator.blockCountersStream())
@@ -102,7 +102,7 @@ class BlocksGeneratorTest {
 
     @Test
     void toListSelector() {
-        BlocksGenerator generator = new BlocksGenerator(" [TSZ] ");
+        IBlocksGenerator generator = new BlocksGenerator(" [TSZ] ");
         assertThat(generator.getDepth()).isEqualTo(1);
 
         assertThat(generator.blocksStream())
@@ -120,7 +120,7 @@ class BlocksGeneratorTest {
 
     @Test
     void toListSelector2() {
-        BlocksGenerator generator = new BlocksGenerator(" [TsZ] , [IOjl]");
+        IBlocksGenerator generator = new BlocksGenerator(" [TsZ] , [IOjl]");
         assertThat(generator.getDepth()).isEqualTo(2);
 
         assertThat(generator.blocksStream())
@@ -156,7 +156,7 @@ class BlocksGeneratorTest {
 
     @Test
     void toListSelectorWithPermutation() {
-        BlocksGenerator generator = new BlocksGenerator(" [TSZ]p2 ");
+        IBlocksGenerator generator = new BlocksGenerator(" [TSZ]p2 ");
         assertThat(generator.getDepth()).isEqualTo(2);
 
         assertThat(generator.blocksStream())
@@ -177,7 +177,7 @@ class BlocksGeneratorTest {
 
     @Test
     void toListAsteriskWithPermutation() {
-        BlocksGenerator generator = new BlocksGenerator(" *p4 ");
+        IBlocksGenerator generator = new BlocksGenerator(" *p4 ");
         assertThat(generator.getDepth()).isEqualTo(4);
 
         assertThat(generator.blocksStream()).hasSize(840);
@@ -187,7 +187,7 @@ class BlocksGeneratorTest {
     @Test
     void toMultiList1() {
         List<String> patterns = Arrays.asList("I#comment", "T", "# comment");
-        BlocksGenerator generator = new BlocksGenerator(patterns);
+        IBlocksGenerator generator = new BlocksGenerator(patterns);
         assertThat(generator.getDepth()).isEqualTo(1);
 
         assertThat(generator.blocksStream()).hasSize(2);
@@ -197,7 +197,7 @@ class BlocksGeneratorTest {
     @Test
     void toMultiList2() {
         List<String> patterns = Arrays.asList("I, *p4", "*p5", "[TISZL]p5");
-        BlocksGenerator generator = new BlocksGenerator(patterns);
+        IBlocksGenerator generator = new BlocksGenerator(patterns);
         assertThat(generator.getDepth()).isEqualTo(5);
 
         assertThat(generator.blocksStream()).hasSize(840 + 2520 + 120);
@@ -215,7 +215,7 @@ class BlocksGeneratorTest {
                 "",
                 "I, [TOLJ], *p3"
         );
-        BlocksGenerator generator = new BlocksGenerator(patterns);
+        IBlocksGenerator generator = new BlocksGenerator(patterns);
         assertThat(generator.getDepth()).isEqualTo(5);
 
         assertThat(generator.blocksStream()).hasSize(210 + 210 + 210 + 840);
@@ -226,7 +226,7 @@ class BlocksGeneratorTest {
     @Test
     void toMultiList4() {
         List<String> patterns = Arrays.asList("T,T", "Z,* # comment");
-        BlocksGenerator generator = new BlocksGenerator(patterns);
+        IBlocksGenerator generator = new BlocksGenerator(patterns);
         assertThat(generator.getDepth()).isEqualTo(2);
 
         assertThat(generator.blocksStream()).hasSize(8);
@@ -236,7 +236,7 @@ class BlocksGeneratorTest {
     @Test
     void factorial1() {
         List<String> patterns = Collections.singletonList("[SZO]!");
-        BlocksGenerator generator = new BlocksGenerator(patterns);
+        IBlocksGenerator generator = new BlocksGenerator(patterns);
         assertThat(generator.getDepth()).isEqualTo(3);
 
         assertThat(generator.blocksStream()).hasSize(6);
@@ -246,7 +246,7 @@ class BlocksGeneratorTest {
     @Test
     void factorial2() {
         List<String> patterns = Collections.singletonList("*!");
-        BlocksGenerator generator = new BlocksGenerator(patterns);
+        IBlocksGenerator generator = new BlocksGenerator(patterns);
         assertThat(generator.getDepth()).isEqualTo(7);
 
         assertThat(generator.blocksStream()).hasSize(5040);
@@ -255,7 +255,7 @@ class BlocksGeneratorTest {
 
     @Test
     void singleQuote() {
-        BlocksGenerator generator = new BlocksGenerator(" ' *p3, *p2 ' ");
+        IBlocksGenerator generator = new BlocksGenerator(" ' *p3, *p2 ' ");
         assertThat(generator.getDepth()).isEqualTo(5);
 
         List<Blocks> blocks = generator.blocksStream().collect(Collectors.toList());

@@ -7,6 +7,7 @@ import common.datastore.action.Action;
 import common.datastore.pieces.Blocks;
 import common.datastore.pieces.LongBlocks;
 import common.pattern.BlocksGenerator;
+import common.pattern.IBlocksGenerator;
 import concurrent.LockedReachableThreadLocal;
 import core.action.candidate.Candidate;
 import core.action.candidate.LockedCandidate;
@@ -259,7 +260,7 @@ class PackSearcherTest {
         }
     }
 
-    private BlocksGenerator createPiecesGenerator(int maxDepth) {
+    private IBlocksGenerator createPiecesGenerator(int maxDepth) {
         switch (maxDepth) {
             case 3:
                 return new BlocksGenerator("*, *p2");
@@ -315,7 +316,7 @@ class PackSearcherTest {
             CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
 
             // Assert generator
-            BlocksGenerator generator = createPiecesGenerator(maxDepth);
+            IBlocksGenerator generator = createPiecesGenerator(maxDepth);
             generator.blocksStream()
                     .forEach(blocks -> {
                         List<Block> blockList = blocks.getBlocks();
@@ -369,7 +370,7 @@ class PackSearcherTest {
             CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
 
             // Assert generator
-            BlocksGenerator generator = createPiecesGenerator(maxDepth);
+            IBlocksGenerator generator = createPiecesGenerator(maxDepth);
             generator.blocksStream()
                     .forEach(blocks -> {
                         List<Block> blockList = blocks.getBlocks();

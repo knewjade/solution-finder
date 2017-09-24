@@ -4,6 +4,7 @@ import common.SyntaxException;
 import common.buildup.BuildUpStream;
 import common.datastore.BlockField;
 import common.pattern.BlocksGenerator;
+import common.pattern.IBlocksGenerator;
 import common.tetfu.common.ColorConverter;
 import core.FinderConstant;
 import core.column_field.ColumnField;
@@ -140,7 +141,7 @@ public class PathEntryPoint implements EntryPoint {
 
         // ブロック数が足りないときはエラー
         int maxDepth = emptyCount / 4;
-        BlocksGenerator generator = new BlocksGenerator(patterns);
+        IBlocksGenerator generator = new BlocksGenerator(patterns);
         int piecesDepth = generator.getDepth();
         if (piecesDepth < maxDepth)
             throw new FinderInitializeException(String.format("Should specify equal to or more than %d pieces: CurrentPieces=%d", maxDepth, piecesDepth));
@@ -274,7 +275,7 @@ public class PathEntryPoint implements EntryPoint {
         return new BasicMinoPackingHelper();
     }
 
-    private PathOutput createOutput(OutputType outputType, BlocksGenerator generator, int maxDepth) throws FinderExecuteException, FinderInitializeException {
+    private PathOutput createOutput(OutputType outputType, IBlocksGenerator generator, int maxDepth) throws FinderExecuteException, FinderInitializeException {
         switch (outputType) {
             case CSV:
                 return new CSVPathOutput(this, settings);

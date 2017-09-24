@@ -4,6 +4,7 @@ import common.datastore.Pair;
 import common.datastore.action.Action;
 import common.datastore.pieces.Blocks;
 import common.pattern.BlocksGenerator;
+import common.pattern.IBlocksGenerator;
 import common.tetfu.Tetfu;
 import common.tetfu.TetfuElement;
 import common.tetfu.common.ColorConverter;
@@ -61,7 +62,7 @@ public class FieldSortMain {
 
         // 使用する4ミノのリスト
         String pattern = "L, *p4";
-        BlocksGenerator generator = new BlocksGenerator(pattern);
+        IBlocksGenerator generator = new BlocksGenerator(pattern);
         List<Blocks> pieces = generator.blocksStream().collect(Collectors.toList());
 
         // 探索

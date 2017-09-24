@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class BlocksGenerator {
+public class BlocksGenerator implements IBlocksGenerator {
     public static void verify(String pattern) throws SyntaxException {
         verify(Collections.singletonList(pattern));
     }
@@ -79,12 +79,14 @@ public class BlocksGenerator {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public int getDepth() {
         if (elementsList.isEmpty())
             return 0;
         return new PiecesStreamBuilder(elementsList.get(0)).getDepths();
     }
 
+    @Override
     public Stream<Blocks> blocksStream() {
         Stream<Blocks> stream = Stream.empty();
         for (List<PatternElement> elements : elementsList)
@@ -92,6 +94,7 @@ public class BlocksGenerator {
         return stream;
     }
 
+    @Override
     public Stream<BlockCounter> blockCountersStream() {
         Stream<BlockCounter> stream = Stream.empty();
         for (List<PatternElement> elements : elementsList)

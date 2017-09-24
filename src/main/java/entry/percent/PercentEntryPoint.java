@@ -6,6 +6,7 @@ import common.datastore.action.Action;
 import common.datastore.pieces.Blocks;
 import common.datastore.pieces.LongBlocks;
 import common.pattern.BlocksGenerator;
+import common.pattern.IBlocksGenerator;
 import common.tree.AnalyzeTree;
 import concurrent.HarddropCandidateThreadLocal;
 import concurrent.LockedCandidateThreadLocal;
@@ -108,7 +109,7 @@ public class PercentEntryPoint implements EntryPoint {
         output("# Initialize / System");
         int core = Runtime.getRuntime().availableProcessors();
         ExecutorService executorService = Executors.newFixedThreadPool(core);
-        BlocksGenerator generator = new BlocksGenerator(patterns);
+        IBlocksGenerator generator = new BlocksGenerator(patterns);
 
         output("Version = " + FinderConstant.VERSION);
         output("Available processors = " + core);

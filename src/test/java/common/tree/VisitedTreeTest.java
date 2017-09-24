@@ -2,6 +2,7 @@ package common.tree;
 
 import common.datastore.pieces.LongBlocks;
 import common.pattern.BlocksGenerator;
+import common.pattern.IBlocksGenerator;
 import core.mino.Block;
 import lib.Randoms;
 import org.junit.jupiter.api.Tag;
@@ -41,7 +42,7 @@ class VisitedTreeTest {
     void random() {
         Randoms randoms = new Randoms();
         for (int size = 1; size <= 7; size++) {
-            BlocksGenerator generator = new BlocksGenerator("*p" + size);
+            IBlocksGenerator generator = new BlocksGenerator("*p" + size);
 
             VisitedTree tree = new VisitedTree();
 
@@ -82,7 +83,7 @@ class VisitedTreeTest {
     void randomLong() {
         Randoms randoms = new Randoms();
         for (int size = 8; size <= 11; size++) {
-            BlocksGenerator generator = new BlocksGenerator("*p7, *p" + (size - 7));
+            IBlocksGenerator generator = new BlocksGenerator("*p7, *p" + (size - 7));
 
             VisitedTree tree = new VisitedTree();
 

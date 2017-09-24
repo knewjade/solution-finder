@@ -9,6 +9,7 @@ import common.order.OrderLookup;
 import common.order.ReverseOrderLookUp;
 import common.order.StackOrder;
 import common.pattern.BlocksGenerator;
+import common.pattern.IBlocksGenerator;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
@@ -37,7 +38,7 @@ class PathCore {
         this.searcher = searcher;
         this.fumenParser = fumenParser;
         this.buildUpStreamTh1readLocal = buildUpStreamThreadLocal;
-        BlocksGenerator blocksGenerator = new BlocksGenerator(patterns);
+        IBlocksGenerator blocksGenerator = new BlocksGenerator(patterns);
         this.isReduced = isReducedPieces(blocksGenerator, maxDepth, isUsingHold);
         this.isUsingHold = isUsingHold;
         this.maxDepth = maxDepth;
@@ -45,11 +46,11 @@ class PathCore {
         this.validPieces = getValidPieces(blocksGenerator, allPieces, maxDepth, isReduced);
     }
 
-    private boolean isReducedPieces(BlocksGenerator blocksGenerator, int maxDepth, boolean isUsingHold) {
+    private boolean isReducedPieces(IBlocksGenerator blocksGenerator, int maxDepth, boolean isUsingHold) {
         return isUsingHold && maxDepth < blocksGenerator.getDepth();
     }
 
-    private HashSet<LongBlocks> getAllPieces(BlocksGenerator blocksGenerator, int maxDepth, boolean isUsingHold) {
+    private HashSet<LongBlocks> getAllPieces(IBlocksGenerator blocksGenerator, int maxDepth, boolean isUsingHold) {
         if (isUsingHold && maxDepth + 1 < blocksGenerator.getDepth()) {
             return toReducedHashSetWithHold(blocksGenerator.blocksStream(), maxDepth + 1);
         } else if (!isUsingHold && maxDepth < blocksGenerator.getDepth()) {
@@ -59,7 +60,7 @@ class PathCore {
         }
     }
 
-    private HashSet<LongBlocks> getValidPieces(BlocksGenerator blocksGenerator, HashSet<LongBlocks> allPieces, int maxDepth, boolean isUsingHold) {
+    private HashSet<LongBlocks> getValidPieces(IBlocksGenerator blocksGenerator, HashSet<LongBlocks> allPieces, int maxDepth, boolean isUsingHold) {
         if (isReducedPieces(blocksGenerator, maxDepth, isUsingHold)) {
             return toReducedHashSetWithHold(blocksGenerator.blocksStream(), maxDepth);
         } else {
@@ -147,13 +148,13 @@ class PathCore {
                                 .getOperationsStream(sizedBit.getWidth())
                                 .collect(Collectors.toCollection(LinkedList::new));
 
-                        BlockField blockField2 = new BlockField(maxClearLine);
+                        BlockField mergedField = new BlockField(maxClearLine);
                         operations.forEach(operation -> {
-                            Field field1 = createField(operation, maxClearLine);
-                            blockField2.merge(field1, operation.getMino().getBlock());
+                            Field operationField = createField(operation, maxClearLine);
+                            mergedField.merge(operationField, operation.getMino().getBlock());
                         });
 
-                        return blockField2.containsAll(blockField);
+                        return mergedField.containsAll(blockField);
                     })
                     .collect(Collectors.toList());
         });

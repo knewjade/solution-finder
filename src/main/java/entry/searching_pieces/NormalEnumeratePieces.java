@@ -2,7 +2,7 @@ package entry.searching_pieces;
 
 import common.datastore.pieces.LongBlocks;
 import common.datastore.pieces.Blocks;
-import common.pattern.BlocksGenerator;
+import common.pattern.IBlocksGenerator;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
  * PiecesGeneratorから重複を取り除く
  */
 public class NormalEnumeratePieces implements EnumeratePiecesCore {
-    private final BlocksGenerator generator;
+    private final IBlocksGenerator generator;
     private final int maxDepth;
     private int counter = -1;
 
-    public NormalEnumeratePieces(BlocksGenerator generator, int maxDepth, boolean isUsingHold) {
+    public NormalEnumeratePieces(IBlocksGenerator generator, int maxDepth, boolean isUsingHold) {
         this.generator = generator;
         this.maxDepth = isUsingHold ? maxDepth + 1 : maxDepth;
     }

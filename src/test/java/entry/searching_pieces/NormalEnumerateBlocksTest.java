@@ -2,6 +2,7 @@ package entry.searching_pieces;
 
 import common.datastore.pieces.LongBlocks;
 import common.pattern.BlocksGenerator;
+import common.pattern.IBlocksGenerator;
 import core.mino.Block;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class NormalEnumerateBlocksTest {
     @Test
     void enumerateHoldOver1() throws Exception {
-        BlocksGenerator generator = new BlocksGenerator("*p7");
+        IBlocksGenerator generator = new BlocksGenerator("*p7");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 3, true);
         Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(840);
@@ -21,7 +22,7 @@ class NormalEnumerateBlocksTest {
 
     @Test
     void enumerateHoldOver2() throws Exception {
-        BlocksGenerator generator = new BlocksGenerator("*p7");
+        IBlocksGenerator generator = new BlocksGenerator("*p7");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 4, true);
         Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(2520);
@@ -30,7 +31,7 @@ class NormalEnumerateBlocksTest {
 
     @Test
     void enumerateHoldOver3() throws Exception {
-        BlocksGenerator generator = new BlocksGenerator("I, *p7");
+        IBlocksGenerator generator = new BlocksGenerator("I, *p7");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 4, true);
         Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(840);
@@ -39,7 +40,7 @@ class NormalEnumerateBlocksTest {
 
     @Test
     void enumerateHoldOverOne() throws Exception {
-        BlocksGenerator generator = new BlocksGenerator("I, S, Z, O, T, J, L");
+        IBlocksGenerator generator = new BlocksGenerator("I, S, Z, O, T, J, L");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 4, true);
         Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(1);
@@ -48,7 +49,7 @@ class NormalEnumerateBlocksTest {
 
     @Test
     void enumerateHoldMulti() throws Exception {
-        BlocksGenerator generator = new BlocksGenerator(Arrays.asList(
+        IBlocksGenerator generator = new BlocksGenerator(Arrays.asList(
                 "T, J, O, Z, I",
                 "J, O, S, T, Z",
                 "T, J, O, I, S",
@@ -62,7 +63,7 @@ class NormalEnumerateBlocksTest {
 
     @Test
     void enumerateNoHoldOver1() throws Exception {
-        BlocksGenerator generator = new BlocksGenerator("*p7");
+        IBlocksGenerator generator = new BlocksGenerator("*p7");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 3, false);
         Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(210);
@@ -71,7 +72,7 @@ class NormalEnumerateBlocksTest {
 
     @Test
     void enumerateNoHoldOver2() throws Exception {
-        BlocksGenerator generator = new BlocksGenerator("*p7");
+        IBlocksGenerator generator = new BlocksGenerator("*p7");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 4, false);
         Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(840);
@@ -80,7 +81,7 @@ class NormalEnumerateBlocksTest {
 
     @Test
     void enumerateNoHoldOver3() throws Exception {
-        BlocksGenerator generator = new BlocksGenerator("I, *p7");
+        IBlocksGenerator generator = new BlocksGenerator("I, *p7");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 4, false);
         Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(210);
@@ -89,7 +90,7 @@ class NormalEnumerateBlocksTest {
 
     @Test
     void enumerateNoHoldOverOne() throws Exception {
-        BlocksGenerator generator = new BlocksGenerator("I, S, Z, O");
+        IBlocksGenerator generator = new BlocksGenerator("I, S, Z, O");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 4, false);
         Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(1);
@@ -98,7 +99,7 @@ class NormalEnumerateBlocksTest {
 
     @Test
     void enumerateNoHoldMulti() throws Exception {
-        BlocksGenerator generator = new BlocksGenerator(Arrays.asList(
+        IBlocksGenerator generator = new BlocksGenerator(Arrays.asList(
                 "T, J, O, Z",
                 "J, O, S, T",
                 "T, J, O, I"
@@ -111,7 +112,7 @@ class NormalEnumerateBlocksTest {
 
     @Test
     void enumerateHoldJust() throws Exception {
-        BlocksGenerator generator = new BlocksGenerator("*p3");
+        IBlocksGenerator generator = new BlocksGenerator("*p3");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 3, true);
         Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(210);
@@ -120,7 +121,7 @@ class NormalEnumerateBlocksTest {
 
     @Test
     void enumerateNoHoldJust() throws Exception {
-        BlocksGenerator generator = new BlocksGenerator("*p3");
+        IBlocksGenerator generator = new BlocksGenerator("*p3");
         NormalEnumeratePieces core = new NormalEnumeratePieces(generator, 3, false);
         Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(210);
@@ -129,7 +130,7 @@ class NormalEnumerateBlocksTest {
 
     @Test
     void enumerateHoldJustMulti() throws Exception {
-        BlocksGenerator generator = new BlocksGenerator(Arrays.asList(
+        IBlocksGenerator generator = new BlocksGenerator(Arrays.asList(
                 "T, J, O, Z, I",
                 "J, O, S, T, Z",
                 "T, J, O, I, S",
@@ -143,7 +144,7 @@ class NormalEnumerateBlocksTest {
 
     @Test
     void enumerateNoHoldJustMulti() throws Exception {
-        BlocksGenerator generator = new BlocksGenerator(Arrays.asList(
+        IBlocksGenerator generator = new BlocksGenerator(Arrays.asList(
                 "T, J, O, Z",
                 "J, O, S, T",
                 "T, J, O, I"
@@ -160,7 +161,7 @@ class NormalEnumerateBlocksTest {
         List<Block> allBlocks = new ArrayList<>(Block.valueList());
 
         for (int size = 1; size <= 7; size++) {
-            BlocksGenerator blocksGenerator = new BlocksGenerator("T, *p" + size);
+            IBlocksGenerator blocksGenerator = new BlocksGenerator("T, *p" + size);
             NormalEnumeratePieces core = new NormalEnumeratePieces(blocksGenerator, size + 1, false);
             Set<LongBlocks> pieces = core.enumerate();
 
@@ -187,7 +188,7 @@ class NormalEnumerateBlocksTest {
         List<Block> allBlocks = new ArrayList<>(Block.valueList());
 
         for (int size = 1; size <= 7; size++) {
-            BlocksGenerator blocksGenerator = new BlocksGenerator("T, *p" + size);
+            IBlocksGenerator blocksGenerator = new BlocksGenerator("T, *p" + size);
             NormalEnumeratePieces core = new NormalEnumeratePieces(blocksGenerator, size, false);
             Set<LongBlocks> pieces = core.enumerate();
 

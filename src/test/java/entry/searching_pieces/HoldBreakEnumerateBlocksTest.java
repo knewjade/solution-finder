@@ -2,6 +2,7 @@ package entry.searching_pieces;
 
 import common.datastore.pieces.LongBlocks;
 import common.pattern.BlocksGenerator;
+import common.pattern.IBlocksGenerator;
 import core.mino.Block;
 import lib.Randoms;
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class HoldBreakEnumerateBlocksTest {
     @Test
     void enumerate1() throws Exception {
-        BlocksGenerator generator = new BlocksGenerator("*p7");
+        IBlocksGenerator generator = new BlocksGenerator("*p7");
         HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(generator, 3);
         Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(210);
@@ -26,7 +27,7 @@ class HoldBreakEnumerateBlocksTest {
 
     @Test
     void enumerate2() throws Exception {
-        BlocksGenerator generator = new BlocksGenerator("*p7");
+        IBlocksGenerator generator = new BlocksGenerator("*p7");
         HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(generator, 4);
         Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(840);
@@ -35,7 +36,7 @@ class HoldBreakEnumerateBlocksTest {
 
     @Test
     void enumerateOverAny() throws Exception {
-        BlocksGenerator generator = new BlocksGenerator("T, J, O, Z");
+        IBlocksGenerator generator = new BlocksGenerator("T, J, O, Z");
         HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(generator, 3);
         Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(8);
@@ -44,7 +45,7 @@ class HoldBreakEnumerateBlocksTest {
 
     @Test
     void enumerateMulti() throws Exception {
-        BlocksGenerator generator = new BlocksGenerator(Arrays.asList(
+        IBlocksGenerator generator = new BlocksGenerator(Arrays.asList(
                 "T, J, O, Z",
                 "T, O, J, T",
                 "T, J, O, Z"
@@ -57,7 +58,7 @@ class HoldBreakEnumerateBlocksTest {
 
     @Test
     void enumerateJust() throws Exception {
-        BlocksGenerator generator = new BlocksGenerator("*p3");
+        IBlocksGenerator generator = new BlocksGenerator("*p3");
         HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(generator, 3);
         Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(210);
@@ -66,7 +67,7 @@ class HoldBreakEnumerateBlocksTest {
 
     @Test
     void enumerateJustAny() throws Exception {
-        BlocksGenerator generator = new BlocksGenerator("T, O, S");
+        IBlocksGenerator generator = new BlocksGenerator("T, O, S");
         HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(generator, 3);
         Set<LongBlocks> pieces = core.enumerate();
         assertThat(pieces).hasSize(4);
@@ -81,7 +82,7 @@ class HoldBreakEnumerateBlocksTest {
             String pattern = blocks.stream()
                     .map(Block::getName)
                     .collect(Collectors.joining(","));
-            BlocksGenerator blocksGenerator = new BlocksGenerator(pattern);
+            IBlocksGenerator blocksGenerator = new BlocksGenerator(pattern);
             HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(blocksGenerator, size);
             Set<LongBlocks> pieces = core.enumerate();
 
@@ -115,7 +116,7 @@ class HoldBreakEnumerateBlocksTest {
             String pattern = blocks.stream()
                     .map(Block::getName)
                     .collect(Collectors.joining(","));
-            BlocksGenerator blocksGenerator = new BlocksGenerator(pattern);
+            IBlocksGenerator blocksGenerator = new BlocksGenerator(pattern);
             HoldBreakEnumeratePieces core = new HoldBreakEnumeratePieces(blocksGenerator, size - 1);
             Set<LongBlocks> pieces = core.enumerate();
 

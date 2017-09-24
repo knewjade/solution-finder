@@ -8,6 +8,7 @@ import common.datastore.pieces.Blocks;
 import common.datastore.pieces.LongBlocks;
 import common.order.ForwardOrderLookUp;
 import common.pattern.BlocksGenerator;
+import common.pattern.IBlocksGenerator;
 import core.action.reachable.LockedReachable;
 import core.field.Field;
 import core.field.FieldFactory;
@@ -67,7 +68,7 @@ public class Main {
         LockedReachable reachable = new LockedReachable(new MinoFactory(), new MinoShifter(), new MinoRotation(), height);
         ForwardOrderLookUp lookUp = new ForwardOrderLookUp(4, 5);
 
-        BlocksGenerator blocksGenerator = new BlocksGenerator("I, *p4");
+        IBlocksGenerator blocksGenerator = new BlocksGenerator("I, *p4");
         List<Blocks> allBlocks = blocksGenerator.blocksStream().collect(Collectors.toList());
         allBlocks.sort(new PiecesNameComparator());
 

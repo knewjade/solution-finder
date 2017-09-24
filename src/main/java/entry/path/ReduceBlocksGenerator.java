@@ -4,19 +4,27 @@ import common.datastore.BlockCounter;
 import common.datastore.pieces.Blocks;
 import common.datastore.pieces.LongBlocks;
 import common.iterable.CombinationIterable;
-import common.pattern.BlocksGenerator;
+import common.pattern.IBlocksGenerator;
 import core.mino.Block;
 
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class ReduceBlocksGenerator {
-    private final BlocksGenerator blocksGenerator;
+public class ReduceBlocksGenerator implements IBlocksGenerator {
+    private final IBlocksGenerator blocksGenerator;
     private final int maxDepth;
 
-    public ReduceBlocksGenerator(BlocksGenerator blocksGenerator, int maxDepth) {
+    public ReduceBlocksGenerator(IBlocksGenerator blocksGenerator, int maxDepth) {
         this.blocksGenerator = blocksGenerator;
         this.maxDepth = maxDepth;
+    }
+
+    @Override
+    public int getDepth() {
+        int depth = blocksGenerator.getDepth();
+        if (maxDepth < depth)
+            return maxDepth;
+        return depth;
     }
 
     public Stream<Blocks> blocksStream() {

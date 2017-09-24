@@ -2,6 +2,7 @@ package searcher.checker;
 
 import common.datastore.action.Action;
 import common.pattern.BlocksGenerator;
+import common.pattern.IBlocksGenerator;
 import common.tree.AnalyzeTree;
 import core.action.candidate.Candidate;
 import core.action.candidate.LockedCandidate;
@@ -21,7 +22,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CheckerNoHoldCountTest {
-    private AnalyzeTree runTestCase(BlocksGenerator blocksGenerator, int maxClearLine, int maxDepth, String marks) {
+    private AnalyzeTree runTestCase(IBlocksGenerator blocksGenerator, int maxClearLine, int maxDepth, String marks) {
         Field field = FieldFactory.createField(marks);
 
         // Initialize
@@ -48,7 +49,7 @@ class CheckerNoHoldCountTest {
     @Test
     void testCase1() throws Exception {
         // Invoker
-        BlocksGenerator blocksGenerator = new BlocksGenerator("*p7");
+        IBlocksGenerator blocksGenerator = new BlocksGenerator("*p7");
         int maxClearLine = 4;
         int maxDepth = 6;
 
@@ -69,7 +70,7 @@ class CheckerNoHoldCountTest {
     @Test
     void testCase2() throws Exception {
         // Invoker
-        BlocksGenerator blocksGenerator = new BlocksGenerator("*p4");
+        IBlocksGenerator blocksGenerator = new BlocksGenerator("*p4");
         int maxClearLine = 5;
         int maxDepth = 4;
 
@@ -90,7 +91,7 @@ class CheckerNoHoldCountTest {
     @Test
     void testCase3() throws Exception {
         // Invoker
-        BlocksGenerator blocksGenerator = new BlocksGenerator("*p7");
+        IBlocksGenerator blocksGenerator = new BlocksGenerator("*p7");
         int maxClearLine = 4;
         int maxDepth = 6;
 
@@ -110,7 +111,7 @@ class CheckerNoHoldCountTest {
     @Test
     void testCase4() throws Exception {
         // Invoker
-        BlocksGenerator blocksGenerator = new BlocksGenerator("*p7");
+        IBlocksGenerator blocksGenerator = new BlocksGenerator("*p7");
         int maxClearLine = 4;
         int maxDepth = 6;
 
@@ -132,7 +133,7 @@ class CheckerNoHoldCountTest {
         private final int maxClearLine = 4;
         private final int maxDepth = 6;
         private final String pattern = "*p7";
-        private BlocksGenerator blocksGenerator;
+        private IBlocksGenerator blocksGenerator;
 
         @BeforeEach
         void setUp() {

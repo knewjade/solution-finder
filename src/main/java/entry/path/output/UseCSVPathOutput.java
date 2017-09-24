@@ -3,7 +3,7 @@ package entry.path.output;
 import common.datastore.BlockCounter;
 import common.datastore.OperationWithKey;
 import common.datastore.pieces.LongBlocks;
-import common.pattern.BlocksGenerator;
+import common.pattern.IBlocksGenerator;
 import core.field.Field;
 import core.mino.Block;
 import core.mino.Mino;
@@ -31,7 +31,7 @@ public class UseCSVPathOutput implements PathOutput {
     private final ReduceBlocksGenerator generator;
     private Exception lastException = null;
 
-    public UseCSVPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings, BlocksGenerator generator, int maxDepth) throws FinderInitializeException {
+    public UseCSVPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings, IBlocksGenerator generator, int maxDepth) throws FinderInitializeException {
         // 出力ファイルが正しく出力できるか確認
         String outputBaseFilePath = pathSettings.getOutputBaseFilePath();
         String namePath = getRemoveExtensionFromPath(outputBaseFilePath);

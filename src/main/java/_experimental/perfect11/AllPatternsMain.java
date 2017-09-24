@@ -2,6 +2,7 @@ package _experimental.perfect11;
 
 import common.datastore.pieces.Blocks;
 import common.pattern.BlocksGenerator;
+import common.pattern.IBlocksGenerator;
 import core.mino.Block;
 
 import java.io.*;
@@ -95,7 +96,7 @@ public class AllPatternsMain {
     private static void output(String pattern, String path) throws IOException {
         File outputFile = new File(path);
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), StandardCharsets.UTF_8))) {
-            BlocksGenerator generator = new BlocksGenerator(pattern);
+            IBlocksGenerator generator = new BlocksGenerator(pattern);
             generator.blocksStream()
                     .map(Blocks::getBlocks)
                     .map(blocks -> blocks.stream().map(Block::getName).collect(Collectors.joining()))

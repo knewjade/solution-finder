@@ -7,6 +7,7 @@ import common.datastore.order.Order;
 import common.datastore.pieces.Blocks;
 import common.iterable.PermutationIterable;
 import common.pattern.BlocksGenerator;
+import common.pattern.IBlocksGenerator;
 import common.tree.AnalyzeTree;
 import concurrent.LockedCandidateThreadLocal;
 import concurrent.checker.CheckerUsingHoldThreadLocal;
@@ -37,7 +38,7 @@ public class PutterMain {
         PerfectValidator validator = new PerfectValidator();
         PutterUsingHold<Action> putter = new PutterUsingHold<>(minoFactory, validator);
 
-        BlocksGenerator generator = new BlocksGenerator("*p4");
+        IBlocksGenerator generator = new BlocksGenerator("*p4");
         Set<BlockCounter> blockCounters = generator.blocksStream()
                 .map(pieces -> new BlockCounter(pieces.blockStream()))
                 .collect(Collectors.toSet());
@@ -54,7 +55,7 @@ public class PutterMain {
         LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
         ConcurrentCheckerUsingHoldInvoker invoker = new ConcurrentCheckerUsingHoldInvoker(executorService, candidateThreadLocal, checkerThreadLocal);
 
-        BlocksGenerator blocksGenerator = new BlocksGenerator("*p7");
+        IBlocksGenerator blocksGenerator = new BlocksGenerator("*p7");
         List<Blocks> searchingPieces = blocksGenerator.blocksStream()
                 .collect(Collectors.toList());
 

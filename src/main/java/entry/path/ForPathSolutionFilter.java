@@ -3,7 +3,7 @@ package entry.path;
 import common.buildup.BuildUp;
 import common.datastore.BlockCounter;
 import common.datastore.OperationWithKey;
-import common.pattern.BlocksGenerator;
+import common.pattern.IBlocksGenerator;
 import searcher.pack.memento.MinoFieldMemento;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.mino_field.MinoField;
@@ -16,7 +16,7 @@ public class ForPathSolutionFilter implements SolutionFilter {
     private final List<BlockCounter> validBlockCounters;
     private final int height;
 
-    public ForPathSolutionFilter(BlocksGenerator generator, int height) {
+    public ForPathSolutionFilter(IBlocksGenerator generator, int height) {
         this.height = height;
         this.validBlockCounters = generator.blockCountersStream()
                 .distinct()
