@@ -4,6 +4,7 @@ import common.tetfu.TetfuPage;
 import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
+import core.FinderConstant;
 import core.mino.Block;
 import core.mino.Mino;
 import core.mino.MinoFactory;
@@ -54,6 +55,8 @@ public class FigUtilEntryPoint implements EntryPoint {
     @Override
     public void run() throws FinderException {
         output("# Setup");
+        output("Version = " + FinderConstant.VERSION);
+
         MinoFactory minoFactory = new MinoFactory();
         ColorConverter colorConverter = new ColorConverter();
 

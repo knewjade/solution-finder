@@ -1,5 +1,6 @@
 package entry;
 
+import core.FinderConstant;
 import entry.path.PathEntryPoint;
 import entry.path.PathSettingParser;
 import entry.path.PathSettings;
@@ -19,8 +20,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class EntryPointMain {
-    private static final String VERSION = "0.47";
-
     public static int main(String[] args) {
         if (args.length < 1)
             throw new IllegalArgumentException("No command: Use percent, path");
@@ -32,7 +31,7 @@ public class EntryPointMain {
         }
 
         if (args[0].equals("-v")) {
-            System.out.println("Version: " + VERSION);
+            System.out.println("Version: " + FinderConstant.VERSION);
             return 0;
         }
 
@@ -105,7 +104,7 @@ public class EntryPointMain {
                 writer.printf("# DateTime: %s%n", dateTimeStr);
 
                 // Output version
-                writer.printf("# Version: %s%n", VERSION);
+                writer.printf("# Version: %s%n", FinderConstant.VERSION);
 
                 // Output command
                 writer.printf("# command: %s%n", Arrays.stream(commands).collect(Collectors.joining(" ")));

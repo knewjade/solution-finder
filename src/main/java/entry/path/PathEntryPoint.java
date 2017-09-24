@@ -5,6 +5,7 @@ import common.buildup.BuildUpStream;
 import common.datastore.BlockField;
 import common.pattern.BlocksGenerator;
 import common.tetfu.common.ColorConverter;
+import core.FinderConstant;
 import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
 import core.field.Field;
@@ -39,7 +40,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
@@ -130,6 +130,7 @@ public class PathEntryPoint implements EntryPoint {
         output("# Initialize / System");
         int core = Runtime.getRuntime().availableProcessors();
 
+        output("Version = " + FinderConstant.VERSION);
         output("Available processors = " + core);
 
         // 残りのスペースが4の倍数でないときはエラー

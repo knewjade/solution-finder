@@ -9,6 +9,7 @@ import common.pattern.BlocksGenerator;
 import common.tree.AnalyzeTree;
 import concurrent.HarddropCandidateThreadLocal;
 import concurrent.LockedCandidateThreadLocal;
+import core.FinderConstant;
 import core.action.candidate.Candidate;
 import core.field.Field;
 import core.field.FieldView;
@@ -108,6 +109,7 @@ public class PercentEntryPoint implements EntryPoint {
         ExecutorService executorService = Executors.newFixedThreadPool(core);
         BlocksGenerator generator = new BlocksGenerator(patterns);
 
+        output("Version = " + FinderConstant.VERSION);
         output("Available processors = " + core);
 
         // 残りのスペースが4の倍数でないときはエラー
