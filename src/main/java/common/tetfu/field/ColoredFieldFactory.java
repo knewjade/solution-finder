@@ -21,7 +21,8 @@ public class ColoredFieldFactory {
             for (int x = 0; x < 10; x++) {
                 char mark = marks.charAt((maxY - y - 1) * 10 + x);
                 if (mark != ' ' && mark != '_') {
-                    field.setColorType(get(mark), x, y);
+                    ColorType colorType = get(mark);
+                    field.setColorType(colorType, x, y);
                 }
             }
         }

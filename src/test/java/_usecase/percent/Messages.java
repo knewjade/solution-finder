@@ -45,4 +45,12 @@ class Messages {
     static String failPatternAllSize() {
         return "Fail pattern (all)";
     }
+
+    static String  harddrop() {
+        return "Drop: harddrop";
+    }
+
+    static String  softdrop() {
+        return "Drop: softdrop";
+    }
 }

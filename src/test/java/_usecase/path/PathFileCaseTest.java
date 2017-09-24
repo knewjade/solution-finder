@@ -10,7 +10,9 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -167,6 +169,80 @@ class PathFileCaseTest extends PathUseCaseBaseTest {
         assertThat(parseLastPageTetfu(minimalHTML.allFumens()))
                 .hasSize(37)
                 .allMatch(coloredField -> isFilled(height, coloredField));
+    }
+
+    @Test
+    void useFieldFileAndPatternsFile3() throws Exception {
+        // フィールドファイル + パターンファイル (デフォルト以外の場所)
+
+        Field field = FieldFactory.createField("" +
+                "XX_____XXX" +
+                "XX____XXXX" +
+                "XX___XXXXX" +
+                "XXIIIIXXXX"
+        );
+
+        int height = 4;
+        ConfigFileHelper.createFieldFile(field, height);
+        ConfigFileHelper.createPatternFile("*p3");
+
+        String command = "path";
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getReturnCode()).isEqualTo(0);
+
+        assertThat(log.getOutput())
+                .contains("*p3")
+                .contains(Messages.uniqueCount(14))
+                .contains(Messages.minimalCount(12))
+                .contains(Messages.useHold());
+
+        // unique
+        PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
+        assertThat(uniqueHTML)
+                .returns(14, PathHTML::pattern);
+
+        // minimal
+        PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
+        assertThat(minimalHTML)
+                .returns(12, PathHTML::pattern);
+    }
+
+    @Test
+    void useFieldFileAndPatternsFile4() throws Exception {
+        // フィールドファイル + パターンファイル (デフォルト以外の場所)
+
+        ConfigFileHelper.createFieldFile(Stream.of(
+                "4",
+                "XX_____XXX",
+                "XX____XXXX",
+                "XX___XXXXX",
+                "XXIIIIXXXX"
+        ).collect(Collectors.joining(LINE_SEPARATOR)));
+        ConfigFileHelper.createPatternFile("I,*p3");
+
+        String command = "path -r true";
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getReturnCode())
+                .as(log.getError())
+                .isEqualTo(0);
+
+        assertThat(log.getOutput())
+                .contains("I,*p3")
+                .contains(Messages.uniqueCount(14))
+                .contains(Messages.minimalCount(12))
+                .contains(Messages.useHold());
+
+        // unique
+        PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
+        assertThat(uniqueHTML)
+                .returns(14, PathHTML::pattern);
+
+        // minimal
+        PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
+        assertThat(minimalHTML)
+                .returns(12, PathHTML::pattern);
     }
 
     @Test

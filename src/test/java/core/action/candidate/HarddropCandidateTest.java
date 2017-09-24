@@ -133,7 +133,7 @@ class HarddropCandidateTest {
 
             Set<Action> actions = candidate.search(field, block, height);
 
-            for (Rotate rotate : Rotate.values()) {
+            for (Rotate rotate : minoShifter.getUniqueRotates(block)) {
                 Coordinates.walk(minoFactory.create(block, rotate), height)
                         .map(coordinate -> MinimalAction.create(coordinate.x, coordinate.y, rotate))
                         .forEach(action -> {

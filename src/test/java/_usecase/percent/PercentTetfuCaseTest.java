@@ -228,6 +228,7 @@ class PercentTetfuCaseTest extends PercentUseCaseBaseTest {
 
         assertThat(log.getOutput())
                 .contains(Messages.useHold())
+                .contains(Messages.softdrop())
                 .contains(Messages.success(312, 840))
                 .contains("*p4")
                 .contains(Messages.clearLine(4))
@@ -239,6 +240,37 @@ class PercentTetfuCaseTest extends PercentUseCaseBaseTest {
                 .contains(Messages.tree("IOS", 0.0))
                 .contains(Messages.failPatternSize(100))
                 .doesNotContain(Messages.failNothing());
+
+        assertThat(log.getError()).isEmpty();
+    }
+
+    @Test
+    void useTetfuAndCommand5() throws Exception {
+        // テト譜 + パターンコマンド
+
+           /*
+            comment:<Empty>
+            XXXXXX____
+            XXXXXX____
+            XXXXXX____
+            XXXXXX____
+             */
+
+        String tetfu = "v115@9gF8DeF8DeF8DeF8NeAgH";
+
+        String command = String.format("percent -c 4 -p *p4 -d hard -t %s", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getOutput())
+                .contains(Messages.useHold())
+                .contains(Messages.harddrop())
+                .contains(Messages.success(314, 840))
+                .contains("*p4")
+                .contains(Messages.clearLine(4))
+                .contains(Messages.tree("*", 37.38))
+                .contains(Messages.tree("L", 47.50))
+                .contains(Messages.tree("ST", 45.00))
+                .contains(Messages.tree("IOL", 50.00));
 
         assertThat(log.getError()).isEmpty();
     }

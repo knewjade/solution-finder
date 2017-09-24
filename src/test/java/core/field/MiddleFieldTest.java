@@ -952,4 +952,64 @@ class MiddleFieldTest {
             assertThat(field).isEqualTo(expect);
         }
     }
+
+    @Test
+    void contains() {
+        Field parent = FieldFactory.createField("" +
+                "XXXXX_____" +
+                "XXXXX_____" +
+                "XXXXX_____" +
+                "XXXXX_____" +
+                "XXXXX_____" +
+                "XXXXX_____" +
+                "XXXXX_____" +
+                "XXXXX_____"
+        );
+
+        Field child1 = FieldFactory.createField("" +
+                "XXXXX_____" +
+                "XXXXX_____" +
+                "XXXXX_____" +
+                "XXXXX_____" +
+                "XXXXX_____" +
+                "XXXXX_____" +
+                "XXXXX_____" +
+                "XXXXX_____"
+        );
+        Field child2 = FieldFactory.createField("" +
+                "XXX_______" +
+                "XXX_______" +
+                "XXX_______" +
+                "XXX_______" +
+                "XXX_______" +
+                "XXX_______"
+        );
+        Field child3 = FieldFactory.createField("" +
+                "XXXXX_____" +
+                "XXXXX_____" +
+                "XXXXX_____" +
+                "XXXXX_____" +
+                "XXXXX_____" +
+                "XXXXX__X__"
+        );
+        Field child4 = FieldFactory.createField("" +
+                "__________" +
+                "__________" +
+                "__________" +
+                "__________"
+        );
+        Field child5 = FieldFactory.createField("" +
+                "XXXXXXXXXX" +
+                "XXXXXXXXXX" +
+                "XXXXXXXXXX" +
+                "XXXXXXXXXX"
+        );
+
+        assertThat(parent)
+                .returns(true, p -> p.contains(child1))
+                .returns(true, p -> p.contains(child2))
+                .returns(false, p -> p.contains(child3))
+                .returns(true, p -> p.contains(child4))
+                .returns(false, p -> p.contains(child5));
+    }
 }

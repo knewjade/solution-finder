@@ -110,7 +110,7 @@ public class PercentSettings {
                 return;
             case "hard":
             case "harddrop":
-                this.dropType = DropType.Softdrop;
+                this.dropType = DropType.Harddrop;
                 return;
             default:
                 throw new UnsupportedDataTypeException("Unsupported droptype: type=" + type);

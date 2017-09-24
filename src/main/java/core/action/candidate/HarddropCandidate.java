@@ -9,6 +9,7 @@ import core.srs.Rotate;
 import common.datastore.action.Action;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class HarddropCandidate implements Candidate<Action> {
@@ -27,7 +28,7 @@ public class HarddropCandidate implements Candidate<Action> {
     public Set<Action> search(Field field, Block block, int appearY) {
         HashSet<Action> actions = new HashSet<>();
 
-        for (Rotate rotate : Rotate.values()) {
+        for (Rotate rotate : minoShifter.getUniqueRotates(block)) {
             Mino mino = minoFactory.create(block, rotate);
             int y = appearY - mino.getMinY();
             int maxY = appearY - mino.getMaxY();

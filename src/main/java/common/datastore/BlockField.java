@@ -68,7 +68,7 @@ public class BlockField implements Comparable<BlockField> {
         for (Map.Entry<Block, Field> targetEntry : target.map.entrySet()) {
             Block key = targetEntry.getKey();
             Field targetField = targetEntry.getValue();
-            Field myField = this.map.get(key);
+            Field myField = this.get(key);
             if (!myField.contains(targetField)) {
                 return false;
             }
