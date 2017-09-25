@@ -1,6 +1,7 @@
 package entry;
 
 import core.FinderConstant;
+import entry.dev.DevRandomEntryPoint;
 import entry.path.PathEntryPoint;
 import entry.path.PathSettingParser;
 import entry.path.PathSettings;
@@ -158,6 +159,8 @@ public class EntryPointMain {
                 return getPathEntryPoint(commands);
             case "util":
                 return getUtilEntryPoint(commands);
+            case "dev":
+                return getDevEntryPoint(commands);
             default:
                 throw new IllegalArgumentException("Invalid type: Use percent, path, util");
         }
@@ -196,4 +199,11 @@ public class EntryPointMain {
 
         return new FigUtilEntryPoint(settings.get());
     }
+
+    private static EntryPoint getDevEntryPoint(List<String> commands) throws FinderInitializeException, FinderParseException {
+        if (commands.get(0).equals("random"))
+            return new DevRandomEntryPoint(commands.subList(1, commands.size()));
+        throw new IllegalArgumentException("util: Invalid type: Use fig");
+    }
+
 }

@@ -25,6 +25,10 @@ public class TetfuElement {
     private final boolean isMirror;
     private final boolean isBlockUp;
 
+    public TetfuElement(String comment) {
+        this(ColorType.Empty, Rotate.Reverse, 0, 0, comment);
+    }
+
     public TetfuElement(ColorType colorType, Rotate rotate, int x, int y) {
         this(colorType, rotate, x, y, "");
     }
