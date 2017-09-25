@@ -201,9 +201,9 @@ public class EntryPointMain {
     }
 
     private static EntryPoint getDevEntryPoint(List<String> commands) throws FinderInitializeException, FinderParseException {
-        if (commands.get(0).equals("random"))
+        if (commands.get(0).equals("quiz"))
             return new DevRandomEntryPoint(commands.subList(1, commands.size()));
-        throw new IllegalArgumentException("util: Invalid type: Use fig");
+        throw new IllegalArgumentException("util: Invalid type: Use quiz");
     }
 
 }
