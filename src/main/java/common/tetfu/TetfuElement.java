@@ -37,6 +37,10 @@ public class TetfuElement {
         this(null, colorType, rotate, x, y, comment);
     }
 
+    public TetfuElement(ColoredField field, String quiz) {
+        this(field, ColorType.Empty, Rotate.Reverse, 0, 0, quiz);
+    }
+
     public TetfuElement(ColoredField field, ColorType colorType, Rotate rotate, int x, int y) {
         this(field, colorType, rotate, x, y, "");
     }
