@@ -2,6 +2,7 @@ package entry.path.output;
 
 import common.datastore.BlockCounter;
 import common.datastore.pieces.Blocks;
+import common.pattern.BlocksGenerator;
 import common.pattern.IBlocksGenerator;
 import core.field.Field;
 import core.mino.Block;
@@ -16,12 +17,10 @@ import searcher.pack.SizedBit;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PatternCSVPathOutput implements PathOutput {
     private static final String FILE_EXTENSION = ".csv";
@@ -81,8 +80,24 @@ public class PatternCSVPathOutput implements PathOutput {
         AtomicInteger validCounter = new AtomicInteger();
         AtomicInteger allCounter = new AtomicInteger();
 
+        List<BlockCounter> nouseList = new BlocksGenerator("*p4")
+                .blockCountersStream()
+                .sorted(Comparator.comparingLong(BlockCounter::getCounter))
+                .collect(Collectors.toList());
+        BlockCounter allowBlocks = new BlockCounter(Stream.concat(Stream.of(Block.T), Block.valueList().stream()));
+
+        String line2 = nouseList.stream()
+                .map(blockCounter -> blockCounter.getBlockStream()
+                        .map(Block::getName)
+                        .collect(Collectors.joining()))
+                .collect(Collectors.joining(","));
+
         try (BufferedWriter writer = outputBaseFile.newBufferedWriter()) {
-            writer.write("ツモ,対応地形数,使用ミノ,未使用ミノ,テト譜");
+            try {
+                writer.write("sequence," + line2 + ",overI,overT");
+            } catch (IOException e) {
+                this.lastException = e;
+            }
             writer.newLine();
 
             generator.blocksStream().parallel()
@@ -100,51 +115,41 @@ public class PatternCSVPathOutput implements PathOutput {
                                 })
                                 .collect(Collectors.toList());
 
-                        // パフェ可能な地形数
-                        int possibleSize = valid.size();
-
-                        // パフェ可能ならカウンターをインクリメント
-                        allCounter.incrementAndGet();
-                        if (0 < possibleSize)
-                            validCounter.incrementAndGet();
-
-                        // パフェ可能な地形のテト譜を連結
-                        String fumens = valid.stream()
-                                .sorted(Comparator.comparing(PathPair::getPatternSize).reversed())
-                                .map(pathPair -> "v115@" + pathPair.getFumen())
-                                .collect(Collectors.joining(";"));
-
                         // 使うミノ一覧を抽出
                         Set<BlockCounter> usesSet = valid.stream()
                                 .map(PathPair::getBlockCounter)
                                 .collect(Collectors.toSet());
 
-                        String uses = usesSet.stream()
-                                .map(blockCounter -> {
-                                    return blockCounter.getBlockStream()
-                                            .sorted()
-                                            .map(Block::getName)
-                                            .collect(Collectors.joining());
+                        Set<BlockCounter> noUseSet = usesSet.stream()
+                                .map(allowBlocks::removeAndReturnNew)
+                                .peek(blockCounter -> {
+                                    EnumMap<Block, Integer> enumMap = blockCounter.getEnumMap();
+                                    Integer count = enumMap.getOrDefault(Block.T, 0);
+                                    if (count == 2)
+                                        System.out.println("error");
                                 })
-                                .collect(Collectors.joining(";"));
+                                .collect(Collectors.toSet());
+                        System.out.println(noUseSet);
 
-                        // 残せるミノ一覧を抽出
-                        BlockCounter orderBlockCounter = new BlockCounter(blocks.blockStream());
-                        String noUses = usesSet.stream()
-                                .map(orderBlockCounter::removeAndReturnNew)
-                                .distinct()
-                                .map(blockCounter -> {
-                                    return blockCounter.getBlockStream()
-                                            .sorted()
-                                            .map(Block::getName)
-                                            .collect(Collectors.joining());
-                                })
-                                .collect(Collectors.joining(";"));
+                        boolean isOver = usesSet.stream()
+                                .map(allowBlocks::removeAndReturnNew)
+                                .anyMatch(blockCounter -> {
+                                    EnumMap<Block, Integer> enumMap = blockCounter.getEnumMap();
+                                    Integer count = enumMap.getOrDefault(Block.T, 0);
+                                    return 2 <= count;
+                                });
 
-                        return String.format("%s,%d,%s,%s,%s%n", sequenceName, possibleSize, uses, noUses, fumens);
+                        String line = nouseList.stream()
+                                .peek(blockCounter -> System.out.println(blockCounter.getBlocks()))
+                                .map(noUseSet::contains)
+                                .map(bool -> bool ? "O" : "")
+                                .collect(Collectors.joining(","));
+
+                        return String.format("%s,%s,%s,%s%n", sequenceName, line, "", isOver ? "O" : "");
                     })
                     .forEach(line -> {
                         synchronized (this) {
+                            System.out.println(line);
                             try {
                                 writer.write(line);
                             } catch (IOException e) {
