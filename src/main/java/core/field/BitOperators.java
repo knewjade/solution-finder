@@ -3,7 +3,7 @@ package core.field;
 class BitOperators {
     // y行より下の1列ブロックマスクを取得する（y行を含まない）
     static long getColumnOneLineBelowY(int maxY) {
-        assert 0 <= maxY && maxY <= 6;
+        assert 0 <= maxY && maxY <= 6 : maxY;
         switch (maxY) {
             case 0:
                 return 0;

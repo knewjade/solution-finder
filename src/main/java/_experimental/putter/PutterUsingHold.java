@@ -18,7 +18,7 @@ public class PutterUsingHold<T extends Action> {
     private final CheckmateDataPool dataPool;
     private final SimpleSearcherCore<T> searcherCore;
 
-    public PutterUsingHold(MinoFactory minoFactory, Validator validator) {
+    PutterUsingHold(MinoFactory minoFactory, Validator validator) {
         this.dataPool = new CheckmateDataPool();
         this.searcherCore = new SimpleSearcherCore<T>(minoFactory, validator, dataPool);
     }

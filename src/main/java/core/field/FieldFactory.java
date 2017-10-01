@@ -18,7 +18,7 @@ public class FieldFactory {
         int maxY = marks.length() / 10;
 
         if (maxY <= 6)
-            return createSmallField(marks);
+            return createSmallField(marks, true);
         else if (maxY <= 12)
             return FieldFactory.createMiddleField(marks);
 
@@ -30,6 +30,10 @@ public class FieldFactory {
     }
 
     public static SmallField createSmallField(String marks) {
+        return createSmallField(marks, true);
+    }
+
+    private static SmallField createSmallField(String marks, boolean isBlock) {
         if (60 < marks.length())
             throw new IllegalArgumentException("length of marks should be <= 60");
 
@@ -41,8 +45,13 @@ public class FieldFactory {
         for (int y = 0; y < maxY; y++) {
             for (int x = 0; x < 10; x++) {
                 char mark = marks.charAt((maxY - y - 1) * 10 + x);
-                if (mark != ' ' && mark != '_')
-                    field.setBlock(x, y);
+                if (mark != ' ' && mark != '_') {
+                    if (isBlock)
+                        field.setBlock(x, y);
+                } else {
+                    if (!isBlock)
+                        field.setBlock(x, y);
+                }
             }
         }
 
@@ -54,6 +63,10 @@ public class FieldFactory {
     }
 
     public static MiddleField createMiddleField(String marks) {
+        return createMiddleField(marks, true);
+    }
+
+    private static MiddleField createMiddleField(String marks, boolean isBlock) {
         if (120 < marks.length())
             throw new IllegalArgumentException("length of marks should be <= 120");
 
@@ -66,11 +79,30 @@ public class FieldFactory {
         for (int y = 0; y < maxY; y++) {
             for (int x = 0; x < 10; x++) {
                 char mark = marks.charAt((maxY - y - 1) * 10 + x);
-                if (mark != ' ' && mark != '_')
-                    field.setBlock(x, y);
+                if (mark != ' ' && mark != '_') {
+                    if (isBlock)
+                        field.setBlock(x, y);
+                } else {
+                    if (!isBlock)
+                        field.setBlock(x, y);
+                }
             }
         }
 
         return field;
+    }
+
+    public static Field createInverseField(String marks) {
+        if (marks.length() % 10 != 0)
+            throw new IllegalArgumentException("length of marks should be 'mod 10'");
+
+        int maxY = marks.length() / 10;
+
+        if (maxY <= 6)
+            return createSmallField(marks, false);
+        else if (maxY <= 12)
+            return createMiddleField(marks, false);
+
+        throw new UnsupportedOperationException("Too large field height: " + maxY);
     }
 }
