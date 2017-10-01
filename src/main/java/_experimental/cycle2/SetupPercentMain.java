@@ -28,17 +28,16 @@ public class SetupPercentMain {
         Field emptyField = FieldFactory.createField(height);
 
         HashSet<LongBlocks> allBlocksSet = new HashSet<>();
-        BlockCounter allBlockCounter = new BlockCounter(Stream.of(Block.T, Block.O, Block.S, Block.Z, Block.L, Block.J));
+        BlockCounter allBlockCounter = new BlockCounter(Stream.of(Block.I, Block.O, Block.S, Block.Z, Block.L, Block.J));
 
-        // 右回転T
         String marksRight = "" +
-                "XXXXX_____" +
                 "XXXXXX____" +
-                "XXXXXXX___" +
+                "XXXXXX____" +
+                "XXXXXX____" +
                 "XXXXXX____";
         Field rightField = FieldFactory.createField(marksRight);
 
-        for (int x = 0; x <= 5; x++) {
+        for (int x = 0; x <= 6; x++) {
             String slidedField = FieldView.toString(rightField, 4, "");
             System.out.println(FieldView.toString(FieldFactory.createField(slidedField)));
 
@@ -55,42 +54,18 @@ public class SetupPercentMain {
             }
         }
 
-        // 左回転T
-        String marksLeft = "" +
-                "_____XXXXX" +
-                "____XXXXXX" +
-                "___XXXXXXX" +
-                "____XXXXXX";
-        Field leftField = FieldFactory.createField(marksLeft);
-
-        for (int x = 0; x <= 5; x++) {
-            String slidedField = FieldView.toString(leftField, 4, "");
-            System.out.println(FieldView.toString(FieldFactory.createField(slidedField)));
-
-            Set<LongBlocks> results = easyPath.buildUp(slidedField, emptyField, width, height).stream()
-                    .filter(longBlocks -> new BlockCounter(longBlocks.blockStream()).equals(allBlockCounter))
-                    .collect(Collectors.toSet());
-            System.out.println(results.size());
-
-            allBlocksSet.addAll(results);
-
-            leftField.slideRight(1);
-            for (int y = 0; y < height; y++) {
-                leftField.setBlock(0, y);
-            }
-        }
-
         AnalyzeTree tree = new AnalyzeTree();
         ForwardOrderLookUp lookUp = new ForwardOrderLookUp(7, 7);
         new BlocksGenerator("*!").blocksStream()
                 .forEach(blocks -> {
                     boolean canBuildUp = lookUp.parse(blocks.getBlocks())
                             .map(LongBlocks::new)
-                            .filter(longBlocks -> longBlocks.getLastBlock() == Block.I)
+                            .filter(longBlocks -> longBlocks.getLastBlock() == Block.T)
                             .anyMatch(longBlocks -> allBlocksSet.contains(new LongBlocks(longBlocks.blockStream().limit(6))));
                     tree.set(canBuildUp, blocks);
+                    System.out.println(blocks.blockStream().map(Block::getName).collect(Collectors.joining()) + "," + (canBuildUp ? "O" : "X"));
                 });
-        System.out.println(tree.show());
-        System.out.println(tree.tree(2));
+//        System.out.println(tree.show());
+//        System.out.println(tree.tree(2));
     }
 }
