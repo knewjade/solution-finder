@@ -83,7 +83,7 @@ public class UseCSVPathOutput implements PathOutput {
             writer.write("使用ミノ,対応地形数,対応ツモ数 (対パターン),テト譜,ツモ (対パターン)");
             writer.newLine();
 
-            generator.blockCountersParallelStream()
+            generator.blockCountersStream().parallel()
                     .map(blockCounter -> {
                         // カウンターをインクリメント
                         allCounter.incrementAndGet();

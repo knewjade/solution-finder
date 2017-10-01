@@ -85,7 +85,7 @@ public class PatternCSVPathOutput implements PathOutput {
             writer.write("ツモ,対応地形数,使用ミノ,未使用ミノ,テト譜");
             writer.newLine();
 
-            generator.blocksStream()
+            generator.blocksStream().parallel()
                     .map(blocks -> {
                         // シーケンス名を取得
                         String sequenceName = blocks.blockStream()
