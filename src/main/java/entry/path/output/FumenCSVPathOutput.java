@@ -98,10 +98,12 @@ public class FumenCSVPathOutput implements PathOutput {
                         return String.format("http://fumen.zui.jp/?v115@%s,%s,%d,%d,%s,%s%n", encode, usingPieces, solution, pattern, validOrdersSolution, validOrdersPattern);
                     })
                     .forEach(line -> {
-                        try {
-                            writer.write(line);
-                        } catch (IOException e) {
-                            this.lastException = e;
+                        synchronized (this) {
+                            try {
+                                writer.write(line);
+                            } catch (IOException e) {
+                                this.lastException = e;
+                            }
                         }
                     });
             writer.flush();

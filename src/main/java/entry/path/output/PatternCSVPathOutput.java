@@ -144,10 +144,12 @@ public class PatternCSVPathOutput implements PathOutput {
                         return String.format("%s,%d,%s,%s,%s%n", sequenceName, possibleSize, uses, noUses, fumens);
                     })
                     .forEach(line -> {
-                        try {
-                            writer.write(line);
-                        } catch (IOException e) {
-                            this.lastException = e;
+                        synchronized (this) {
+                            try {
+                                writer.write(line);
+                            } catch (IOException e) {
+                                this.lastException = e;
+                            }
                         }
                     });
             writer.flush();

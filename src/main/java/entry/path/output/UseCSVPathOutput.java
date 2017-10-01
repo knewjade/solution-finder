@@ -122,10 +122,12 @@ public class UseCSVPathOutput implements PathOutput {
                         return String.format("%s,%d,%d,%s,%s%n", blockCounterName, possibleSize, possiblePatternSize, fumens, patterns);
                     })
                     .forEach(line -> {
-                        try {
-                            writer.write(line);
-                        } catch (IOException e) {
-                            this.lastException = e;
+                        synchronized (this) {
+                            try {
+                                writer.write(line);
+                            } catch (IOException e) {
+                                this.lastException = e;
+                            }
                         }
                     });
             writer.flush();
