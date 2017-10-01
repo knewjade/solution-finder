@@ -150,7 +150,6 @@ public class LongBlocks implements Blocks, Comparable<LongBlocks> {
     // TODO: write unittest
     public Block getLastBlock() {
         assert 1 <= max : max;
-        System.out.println(max);
         long value = pieces / SCALE[max - 1];
         return Block.getBlock((int) (value % 7));
     }
