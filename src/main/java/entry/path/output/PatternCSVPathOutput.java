@@ -84,7 +84,7 @@ public class PatternCSVPathOutput implements PathOutput {
                 .blockCountersStream()
                 .sorted(Comparator.comparingLong(BlockCounter::getCounter))
                 .collect(Collectors.toList());
-        BlockCounter allowBlocks = new BlockCounter(Stream.concat(Stream.of(Block.T), Block.valueList().stream()));
+        BlockCounter allowBlocks = new BlockCounter(Stream.concat(Stream.of(Block.I), Block.valueList().stream()));
 
         String line2 = nouseList.stream()
                 .map(blockCounter -> blockCounter.getBlockStream()
@@ -122,12 +122,6 @@ public class PatternCSVPathOutput implements PathOutput {
 
                         Set<BlockCounter> noUseSet = usesSet.stream()
                                 .map(allowBlocks::removeAndReturnNew)
-                                .peek(blockCounter -> {
-                                    EnumMap<Block, Integer> enumMap = blockCounter.getEnumMap();
-                                    Integer count = enumMap.getOrDefault(Block.T, 0);
-                                    if (count == 2)
-                                        System.out.println("error");
-                                })
                                 .collect(Collectors.toSet());
                         System.out.println(noUseSet);
 
@@ -135,7 +129,7 @@ public class PatternCSVPathOutput implements PathOutput {
                                 .map(allowBlocks::removeAndReturnNew)
                                 .anyMatch(blockCounter -> {
                                     EnumMap<Block, Integer> enumMap = blockCounter.getEnumMap();
-                                    Integer count = enumMap.getOrDefault(Block.T, 0);
+                                    Integer count = enumMap.getOrDefault(Block.I, 0);
                                     return 2 <= count;
                                 });
 
@@ -145,7 +139,7 @@ public class PatternCSVPathOutput implements PathOutput {
                                 .map(bool -> bool ? "O" : "")
                                 .collect(Collectors.joining(","));
 
-                        return String.format("%s,%s,%s,%s%n", sequenceName, line, "", isOver ? "O" : "");
+                        return String.format("%s,%s,%s,%s%n", sequenceName, line, isOver ? "O" : "", "");
                     })
                     .forEach(line -> {
                         synchronized (this) {
