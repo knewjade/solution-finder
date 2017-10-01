@@ -2,6 +2,7 @@ package _experimental.cycle1;
 
 import common.tetfu.Tetfu;
 import common.tetfu.common.ColorConverter;
+import concurrent.LockedReachableThreadLocal;
 import core.action.candidate.LockedCandidate;
 import core.action.reachable.LockedReachable;
 import core.mino.MinoFactory;
@@ -12,7 +13,7 @@ public class EasyPool {
     private final MinoFactory minoFactory;
     private final MinoShifter minoShifter;
     private final MinoRotation minoRotation;
-    private ColorConverter colorConverter;
+    private final ColorConverter colorConverter;
 
     public EasyPool() {
         this.minoFactory = new MinoFactory();
@@ -41,7 +42,15 @@ public class EasyPool {
         return new LockedCandidate(minoFactory, minoShifter, minoRotation, maxY);
     }
 
+    public LockedReachableThreadLocal getLockedReachableThreadLocal(int maxY) {
+        return new LockedReachableThreadLocal(minoFactory, minoShifter, minoRotation, maxY);
+    }
+
     public Tetfu getTetfu() {
         return new Tetfu(minoFactory, colorConverter);
+    }
+
+    public MinoRotation getMinoRotation() {
+        return new MinoRotation();
     }
 }

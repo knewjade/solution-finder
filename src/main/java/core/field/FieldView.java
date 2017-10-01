@@ -15,7 +15,11 @@ public class FieldView {
     }
 
     public static String toString(Field field, int maxHeight) {
-        return toStrings(field, maxHeight).stream().collect(Collectors.joining(LINE_SEPARATOR));
+        return toString(field, maxHeight, LINE_SEPARATOR);
+    }
+
+    public static String toString(Field field, int maxHeight, String separator) {
+        return toStrings(field, maxHeight).stream().collect(Collectors.joining(separator));
     }
 
     // TODO: write unittest

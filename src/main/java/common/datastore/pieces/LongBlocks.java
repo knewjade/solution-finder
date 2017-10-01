@@ -16,6 +16,10 @@ public class LongBlocks implements Blocks, Comparable<LongBlocks> {
             SCALE[index] = pow(index);
     }
 
+    public LongBlocks(Blocks blocks) {
+        this(blocks.blockStream());
+    }
+
     private static long pow(int number) {
         long value = 1L;
         for (int count = 0; count < number; count++)
@@ -141,6 +145,14 @@ public class LongBlocks implements Blocks, Comparable<LongBlocks> {
 
     public int compareTo(LongBlocks o) {
         return Long.compare(this.pieces, o.pieces);
+    }
+
+    // TODO: write unittest
+    public Block getLastBlock() {
+        assert 1 <= max : max;
+        System.out.println(max);
+        long value = pieces / SCALE[max - 1];
+        return Block.getBlock((int) (value % 7));
     }
 
     private static class TemporaryCount {
