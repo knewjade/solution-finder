@@ -27,10 +27,10 @@ public class PutterMain3 {
         EasyTetfu easyTetfu = new EasyTetfu();
 
         String goalFieldMarks = "" +
-                "XXXXXX____" +
+                "X_________" +
+                "X___X_____" +
                 "XXXXXXX___" +
-                "XXXXXXXX__" +
-                "XXXXXXX___";
+                "XXXXXX____";
         Field emptyField = FieldFactory.createField(height);
         List<Result> results = easyPath.setUp(goalFieldMarks, emptyField, width, height);
 

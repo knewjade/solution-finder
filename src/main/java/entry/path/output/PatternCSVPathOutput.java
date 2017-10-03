@@ -84,7 +84,7 @@ public class PatternCSVPathOutput implements PathOutput {
                 .blockCountersStream()
                 .sorted(Comparator.comparingLong(BlockCounter::getCounter))
                 .collect(Collectors.toList());
-        BlockCounter allowBlocks = new BlockCounter(Stream.concat(Stream.of(Block.I), Block.valueList().stream()));
+        BlockCounter allowBlocks = new BlockCounter(Block.valueList());
 
         String line2 = nouseList.stream()
                 .map(blockCounter -> blockCounter.getBlockStream()
@@ -123,27 +123,17 @@ public class PatternCSVPathOutput implements PathOutput {
                         Set<BlockCounter> noUseSet = usesSet.stream()
                                 .map(allowBlocks::removeAndReturnNew)
                                 .collect(Collectors.toSet());
-                        System.out.println(noUseSet);
-
-                        boolean isOver = usesSet.stream()
-                                .map(allowBlocks::removeAndReturnNew)
-                                .anyMatch(blockCounter -> {
-                                    EnumMap<Block, Integer> enumMap = blockCounter.getEnumMap();
-                                    Integer count = enumMap.getOrDefault(Block.I, 0);
-                                    return 2 <= count;
-                                });
 
                         String line = nouseList.stream()
-                                .peek(blockCounter -> System.out.println(blockCounter.getBlocks()))
+//                                .peek(blockCounter -> System.out.println(blockCounter.getBlocks()))
                                 .map(noUseSet::contains)
                                 .map(bool -> bool ? "O" : "")
                                 .collect(Collectors.joining(","));
 
-                        return String.format("%s,%s,%s,%s%n", sequenceName, line, isOver ? "O" : "", "");
+                        return String.format("%s,%s,%s,%s%n", sequenceName, line,"", "");
                     })
                     .forEach(line -> {
                         synchronized (this) {
-                            System.out.println(line);
                             try {
                                 writer.write(line);
                             } catch (IOException e) {

@@ -35,7 +35,7 @@ public class PutterMain2 {
 //                "I,O,L,J",
 //                "I,O,S,Z",
 //                "I,O,L,S",
-//                "I,O,J,Z",
+//                "I,O,J,Z"
 //                "I,O,J,S",
 //                "I,O,L,Z",
 
@@ -55,10 +55,10 @@ public class PutterMain2 {
 //                "I,O,S,Z",
 //                "L,J,S,Z",
                 "T,I,O,S",
-                "T,I,O,Z",
-                "I,T,S,Z",
-                "O,T,L,J",
-                "O,T,S,Z"
+//                "T,I,O,Z",
+                "I,T,S,Z"
+//                "O,T,LR,J",
+//                "O,T,S,Z"
         );
         int maxClearLine = 4;
 
@@ -140,7 +140,7 @@ public class PutterMain2 {
             }
             double successPercent = tree.getSuccessPercent() * 100;
 
-            if (85.0 < successPercent) {
+            if (80.0 <= successPercent) {
                 System.out.println(FieldView.toString(field));
                 System.out.println(pair.getValue());
                 System.out.println(successPercent);
