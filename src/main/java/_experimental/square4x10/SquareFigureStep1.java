@@ -8,6 +8,7 @@ import core.field.FieldFactory;
 import core.field.FieldView;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import lib.Stopwatch;
 import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
@@ -42,7 +43,9 @@ public class SquareFigureStep1 {
 
     public static void main(String[] args) throws IOException, InterruptedException {
         SizedBit sizedBit = new SizedBit(3, 4);
-        int emptyWidth = 10;
+        int emptyWidth = 7;
+
+        Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
         // フィールドの定義
         Field initField = createSquareEmptyField(emptyWidth, sizedBit.getHeight());
@@ -75,8 +78,12 @@ public class SquareFigureStep1 {
         } finally {
             executorService.shutdown();
             executorService.awaitTermination(10L, TimeUnit.DAYS);
+            bufferedWriter.flush();
             bufferedWriter.close();
         }
+
+        stopwatch.stop();
+        System.out.println(stopwatch.toMessage(TimeUnit.SECONDS));
     }
 
     private static Field createSquareEmptyField(int emptyWidth, int emptyHeight) {
@@ -116,6 +123,7 @@ public class SquareFigureStep1 {
         try {
             bufferedWriter.write(str);
             bufferedWriter.newLine();
+            bufferedWriter.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
