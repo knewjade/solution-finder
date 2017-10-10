@@ -1,7 +1,5 @@
 package _experimental.square4x10;
 
-import common.datastore.OperationWithKey;
-import common.parser.OperationWithKeyInterpreter;
 import core.column_field.ColumnField;
 import core.field.Field;
 import core.field.FieldFactory;
@@ -35,11 +33,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SquareFigureStep1 {
     private static final int FIELD_WIDTH = 10;
+    private static final AtomicInteger COUNTER = new AtomicInteger();
 
     public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
         SizedBit sizedBit = new SizedBit(3, 4);
@@ -61,30 +59,31 @@ public class SquareFigureStep1 {
         SolutionFilter solutionFilter = new AllPassedSolutionFilter();
         TaskResultHelper taskResultHelper = new Field4x10MinoPackingHelper();
         PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
-        Long count = searcher.count();
-        System.out.println(count);
-//        // 初期化: ExecutorService
-//        ExecutorService executorService = Executors.newSingleThreadExecutor();
-//
-//        // 出力ファイルの準備
-//        String name = String.format("output/result_%dx%d.csv", emptyWidth, sizedBit.getHeight());
-//        BufferedWriter bufferedWriter = Files.newBufferedWriter(Paths.get(name), Charset.defaultCharset(), StandardOpenOption.CREATE_NEW);
-//
-//        try {
-//            // 実行
-//            SquareFigureStep1 step = new SquareFigureStep1(searcher, bufferedWriter, executorService);
-//            step.run();
-//        } catch (InterruptedException | ExecutionException e) {
-//            e.printStackTrace();
-//        } finally {
-//            executorService.shutdown();
-//            executorService.awaitTermination(10L, TimeUnit.DAYS);
-//            bufferedWriter.flush();
-//            bufferedWriter.close();
-//        }
+
+        // 初期化: ExecutorService
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+        // 出力ファイルの準備
+        String name = String.format("output/result_%dx%d.csv", emptyWidth, sizedBit.getHeight());
+        BufferedWriter bufferedWriter = Files.newBufferedWriter(Paths.get(name), Charset.defaultCharset(), StandardOpenOption.CREATE_NEW);
+
+        try {
+            // 実行
+            SquareFigureStep1 step = new SquareFigureStep1(searcher, bufferedWriter, executorService);
+            step.run();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        } finally {
+            executorService.shutdown();
+            executorService.awaitTermination(10L, TimeUnit.DAYS);
+            bufferedWriter.flush();
+            bufferedWriter.close();
+        }
 
         stopwatch.stop();
         System.out.println(stopwatch.toMessage(TimeUnit.SECONDS));
+
+        System.out.println(COUNTER.get());
     }
 
     private static Field createSquareEmptyField(int emptyWidth, int emptyHeight) {
@@ -117,16 +116,17 @@ public class SquareFigureStep1 {
     }
 
     private void outputResult(Result result) {
-        SizedBit sizedBit = searcher.getSizedBit();
-        Stream<OperationWithKey> operationsStream = result.getMemento().getOperationsStream(sizedBit.getWidth());
-        String str = OperationWithKeyInterpreter.parseToString(operationsStream.collect(Collectors.toList()));
-
-        try {
-            bufferedWriter.write(str);
-            bufferedWriter.newLine();
-            bufferedWriter.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        COUNTER.incrementAndGet();
+//        SizedBit sizedBit = searcher.getSizedBit();
+//        Stream<OperationWithKey> operationsStream = result.getMemento().getOperationsStream(sizedBit.getWidth());
+//        String str = OperationWithKeyInterpreter.parseToString(operationsStream.collect(Collectors.toList()));
+//
+//        try {
+//            bufferedWriter.write(str);
+//            bufferedWriter.newLine();
+//            bufferedWriter.flush();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 }
