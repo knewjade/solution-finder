@@ -21,280 +21,71 @@ import searcher.pack.separable_mino.SeparableMino;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
-public class All4x10SquareFigureMain {
+// 各ブロックに分割したcsvから画像に変換
+public class SquareFigureStep4 {
     private static final int BLOCK_SIZE = 8;
-    private static final int BLOCK_WIDTH_COUNT = 10;
+    private static final int BLOCK_WIDTH_COUNT = 4;  // フィールドの横ブロック数
     private static final int BLOCK_HEIGHT_COUNT = 4;
     private static final int BLOCK_BOARDER = 1;
     private static final int FIELD_WIDTH_SIZE = BLOCK_SIZE * BLOCK_WIDTH_COUNT + BLOCK_BOARDER * (BLOCK_WIDTH_COUNT - 1);
     private static final int FIELD_HEIGHT_SIZE = BLOCK_SIZE * BLOCK_HEIGHT_COUNT + BLOCK_BOARDER * (BLOCK_HEIGHT_COUNT - 1);
 
-    private static final int FIELD_ROW_COUNT = 15;
-    private static final int FIELD_COLUMN_COUNT = 8;
+    private static final int FIELD_ROW_COUNT = 4;  // 縦のフィールド数
+    private static final int FIELD_COLUMN_COUNT = 12;  // 横のフィールド数
     private static final int FIELD_WIDTH_MARGIN = 8;
     private static final int FIELD_HEIGHT_MARGIN = 8;
 
-    public static final ListComparator<OperationWithKey> OPERATION_WITH_KEY_LIST_COMPARATOR = new ListComparator<>(new OperationWithKeyComparator());
+    private static final int MAX_IMG_COLUMN = 15;  // 許可する画像の最大横数
+    private static final int MAX_IMG_ROW = 100;  // 許可する画像の最大縦数
 
-    public static void main(String[] args) throws IOException {
-//        System.out.println(size(200,1));
-//        main1();
-//        main2();
-        main3();
-//        main4();
-//        main5();
-    }
+    private static final boolean IS_INDEX_NAME = true;  // 出力ファイル名をインデックスにする
 
-    // 空白のページを作成
-    private static void main4() throws IOException {
-        // fileIndex -> y -> x
-        HashMap<Integer, Map<Integer, Set<Integer>>> map = new HashMap<>();
+    private static final ListComparator<OperationWithKey> OPERATION_WITH_KEY_LIST_COMPARATOR = new ListComparator<>(new OperationWithKeyComparator());
 
-        // 最大幅を取得
-        OptionalInt maxXOptional = Files.walk(Paths.get("output/img"))
-                .map(Path::toFile)
-                .filter(File::isFile)
-                .map(File::getName)
-                .mapToInt(name -> {
-                    String[] split = name.substring(0, name.length() - 4).split("_");
-                    return Integer.valueOf(split[2]);
-                })
-                .max();
-        assert maxXOptional.isPresent();
-        int maxX = maxXOptional.getAsInt();
-        System.out.println(maxX);
-
-        // mapの作成
-        Files.walk(Paths.get("output/img"))
-                .map(Path::toFile)
-                .filter(File::isFile)
-                .map(File::getName)
-                .forEach(name -> {
-                    String[] split = name.substring(0, name.length() - 4).split("_");
-                    int fileIndex = Integer.valueOf(split[0]);
-                    int y = Integer.valueOf(split[1]);
-                    int x = Integer.valueOf(split[2]);
-
-                    Map<Integer, Set<Integer>> eachHeight = map.computeIfAbsent(fileIndex, v -> new HashMap<>());
-                    Set<Integer> eachWidth = eachHeight.computeIfAbsent(y, v -> new HashSet<>());
-                    eachWidth.add(x);
-                });
-
-        //　白紙のページを作成
-        int widthSize = (FIELD_WIDTH_SIZE + FIELD_WIDTH_MARGIN) * FIELD_COLUMN_COUNT;
-        int heightSize = (FIELD_HEIGHT_SIZE + FIELD_HEIGHT_MARGIN) * FIELD_ROW_COUNT;
-
-        BufferedImage image = new BufferedImage(widthSize, heightSize, BufferedImage.TYPE_INT_RGB);
-        Graphics graphics = image.getGraphics();
-        graphics.setColor(Color.WHITE);
-        graphics.fillRect(0, 0, widthSize, heightSize);
-
-        // 白紙のページを書き出す
-        int emptyCounter = 0;
-        for (Map.Entry<Integer, Map<Integer, Set<Integer>>> entry : map.entrySet()) {
-            System.out.println(entry);
-            int fileIndex = entry.getKey();
-            Map<Integer, Set<Integer>> eachHeight = entry.getValue();
-
-            OptionalInt maxOptional = eachHeight.keySet().stream()
-                    .mapToInt(v -> v)
-                    .max();
-
-            assert maxOptional.isPresent();
-            int maxY = maxOptional.getAsInt();
-
-            int startY = fileIndex == 0 ? 0 : 1;
-            for (int y = startY; y <= maxY + 1; y++) {
-                for (int x = 0; x <= maxX + 1; x++) {
-                    String filePath = String.format("output/img/%d_%03d_%03d.png", fileIndex, y, x);
-                    Path path = Paths.get(filePath);
-                    File file = path.toFile();
-                    if (!file.exists()) {
-                        //　書き出し
-                        ImageIO.write(image, "png", file);
-                        emptyCounter++;
-                    }
-                }
-            }
-        }
-        System.out.println(emptyCounter);
-    }
-
-    // 連結コマンドを作成
-    // 横方向の連結
-    private static void main5() throws IOException {
-        // 結合するファイルごとに分類
-        Set<String> eachIndexY = Files.walk(Paths.get("output/img"))
-                .map(Path::toFile)
-                .filter(File::isFile)
-                .map(File::getName)
-                .map(name -> {
-                    String[] split = name.substring(0, name.length() - 4).split("_");
-                    int fileIndex = Integer.valueOf(split[0]);
-                    int y = Integer.valueOf(split[1]);
-                    return String.format("%d_%03d", fileIndex, y);
-                })
-                .collect(Collectors.toSet());
-
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("output/montage.sh"))) {
-            for (String prefix : eachIndexY) {
-                String files = IntStream.range(0, 301)
-                        .mapToObj(index -> String.format("img/%s_%03d.png", prefix, index))
-                        .collect(Collectors.joining(" "));
-
-                bufferedWriter.write(String.format("montage %s -tile 301x1 -quality 5 -geometry 100%% montagey/%s.png", files, prefix));
-                bufferedWriter.newLine();
-            }
-
-            // 縦方向の連結
-            String files = eachIndexY.stream()
-                    .sorted()
-                    .map(prefix -> String.format("montagey/%s.png", prefix))
-                    .collect(Collectors.joining(" "));
-
-            bufferedWriter.write(String.format("montage %s -tile 1x%d -quality 5 -geometry 100%% montage.png", files, eachIndexY.size()));
-
-            bufferedWriter.flush();
-        }
-    }
-
-    public static int size(int w, int h) {
-        int count = FIELD_COLUMN_COUNT * w * FIELD_ROW_COUNT * h;
-        count -= (FIELD_COLUMN_COUNT * w) * 2;
-        count -= (FIELD_ROW_COUNT * h) * 2;
-        count += 4;
-        return count;
-    }
-
-    // SRSで使えそうなものだけを
-    private static void main1() throws IOException {
-        MinoFactory minoFactory = new MinoFactory();
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File("output/10minoSRS.csv")))) {
-            Files.lines(Paths.get("input/10mino.csv"))
-                    .filter(s -> {
-                        Stream<OperationWithKey> operationWithKeyStream = OperationWithKeyInterpreter.parseToStream(s, minoFactory);
-
-                        // BlockCounterに変換
-                        BlockCounter blockCounter = new BlockCounter(operationWithKeyStream
-                                .map(OperationWithKey::getMino)
-                                .map(Mino::getBlock));
-
-                        // ミノの個数（最も多い・2番めに多い）を取得
-                        EnumMap<Block, Integer> map = blockCounter.getEnumMap();
-                        List<Integer> values = new ArrayList<>(map.values());
-                        values.add(0);  // ミノが2種類以下の場合はこの0を取得する
-                        values.add(0);
-                        values.sort(Comparator.reverseOrder());
-
-                        int first = values.get(0);
-                        int second = values.get(1);
-                        int third = values.get(2);
-
-//                    System.out.println(String.format("%d %d %d", first, second, third));
-
-                        return isIn7Bag(first, second, third);
-                    })
-                    .forEach(s -> {
-                        executorService.submit(() -> {
-                            try {
-                                bufferedWriter.write(s);
-                                bufferedWriter.newLine();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        });
-                    });
-
-            bufferedWriter.flush();
-        }
-
-        executorService.shutdown();
-    }
-
-    // 使用ミノ順で分割
-    private static void main2() throws IOException {
-        MinoFactory minoFactory = new MinoFactory();
-
-        HashMap<String, BufferedWriter> writers = new HashMap<>();
-
-        Files.lines(Paths.get("output/test"))
-                .forEach(line -> {
-                    Stream<OperationWithKey> operationWithKeyStream = OperationWithKeyInterpreter.parseToStream(line, minoFactory);
-
-                    // BlockCounterに変換
-                    BlockCounter blockCounter = new BlockCounter(operationWithKeyStream
-                            .map(OperationWithKey::getMino)
-                            .map(Mino::getBlock));
-
-                    // ミノの個数（最も多い・2番めに多い）を取得
-                    EnumMap<Block, Integer> map = blockCounter.getEnumMap();
-                    List<Integer> values = new ArrayList<>(map.values());
-                    values.sort(Comparator.reverseOrder());
-
-                    StringBuilder builder = new StringBuilder();
-                    for (Integer value : values)
-                        builder.append(value);
-
-                    int size = blockCounter.getEnumMap().keySet().size();
-
-                    String key = String.format("a/%d_%s", size, builder.toString());
-
-                    BufferedWriter writer = writers.computeIfAbsent(key, k -> {
-                        try {
-                            return new BufferedWriter(new FileWriter(new File(k)));
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        return null;
-                    });
-                    assert writer != null;
-
-                    try {
-                        writer.write(String.valueOf(line));
-                        writer.newLine();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
-
-        for (BufferedWriter writer : writers.values()) {
-            writer.flush();
-            writer.close();
-        }
-    }
+    private static final List<Color> COLORS = Arrays.asList(
+            new Color(0xEDFBFF),
+            new Color(0xFFF8E6),
+            new Color(0xEDF0FF),
+            new Color(0xFFF2F6),
+            new Color(0xFFF2E6),
+            new Color(0xE6EEFF),
+            new Color(0xF6FFE3),
+            new Color(0xFFEBEF),
+            new Color(0xFFF5FE)
+    );
 
     // 画像化
-    private static void main3() throws IOException {
-        // ファイル一覧
-        List<PatternFile> patterns = Arrays.asList(
-                new PatternFile("output/a/5_22222", 0, new Color(0xEDFBFF), 5),
-                new PatternFile("output/a/5_32221", 1, new Color(0xFFF8E6), 70),
-                new PatternFile("output/a/6_222211", 2, new Color(0xEDF0FF), 30),
-                new PatternFile("output/a/6_322111", 3, new Color(0xFFF2F6), 98),
-                new PatternFile("output/a/6_331111", 4, new Color(0xFFF2E6), 27),
-                new PatternFile("output/a/6_421111", 5, new Color(0xE6EEFF), 43),
-                new PatternFile("output/a/7_2221111", 6, new Color(0xF6FFE3), 14),
-                new PatternFile("output/a/7_3211111", 7, new Color(0xFFEBEF), 14),
-                new PatternFile("output/a/7_4111111", 8, new Color(0xFFF5FE), 3)
-        );
+    public static void main(String[] args) throws IOException {
+        new File("output/img/").mkdirs();
 
+        String inputDirectory = "input/4x4";
+        List<PatternFile> patterns = premain(inputDirectory);
+        main(patterns);
+    }
+
+    private static List<PatternFile> premain(String inputDirectory) throws IOException {
+        List<Path> paths = Files.walk(Paths.get(inputDirectory))
+                .filter(path -> path.toFile().isFile())
+                .sorted(Comparator.comparing(Path::getFileName))
+                .collect(Collectors.toList());
+
+        return IntStream.range(0, paths.size())
+                .boxed()
+                .map(index -> new PatternFile(paths.get(index), index, COLORS.get(index)))
+                .collect(Collectors.toList());
+    }
+
+    private static void main(List<PatternFile> patterns) throws IOException {
         // ファイル別パターン数
         /*
         for (PatternFile pattern : patterns) {
@@ -318,7 +109,7 @@ public class All4x10SquareFigureMain {
         MinoFactory minoFactory = new MinoFactory();
 
         // パターンを使用ミノ別に分類する
-        Map<BlockCounter, List<List<OperationWithKey>>> eachBlockCounter = Files.lines(Paths.get(patternFile.path))
+        Map<BlockCounter, List<List<OperationWithKey>>> eachBlockCounter = Files.lines(patternFile.path)
                 .map(s -> OperationWithKeyInterpreter.parseToStream(s, minoFactory))
                 .map(stream -> stream.collect(Collectors.toList()))
                 .collect(Collectors.groupingBy(o -> new BlockCounter(o.stream().map(OperationWithKey::getMino).map(Mino::getBlock))));
@@ -370,7 +161,7 @@ public class All4x10SquareFigureMain {
 
         // 四角形の位置を決める
         System.out.println("decide position");
-        boolean[][] flags = new boolean[patternFile.maxHeight][300];
+        boolean[][] flags = new boolean[MAX_IMG_ROW][MAX_IMG_COLUMN];
         ArrayList<FixSquare> fixSquares = new ArrayList<>();
         int maxHeight = 0;
         LOOP2:
@@ -389,7 +180,7 @@ public class All4x10SquareFigureMain {
                 }
 
                 // 残りの幅から長方形を決める
-                int leastWidth = 300 - currentX;
+                int leastWidth = MAX_IMG_COLUMN - currentX;
                 Square current = null;
                 LOOP:
                 for (int index = 0; index < squares.size(); index++) {
@@ -455,6 +246,14 @@ public class All4x10SquareFigureMain {
         }
     }
 
+    public static int size(int w, int h) {
+        int count = FIELD_COLUMN_COUNT * w * FIELD_ROW_COUNT * h;
+        count -= (FIELD_COLUMN_COUNT * w) * 2;
+        count -= (FIELD_ROW_COUNT * h) * 2;
+        count += 4;
+        return count;
+    }
+
     private static void main3(PatternFile patternFile, FixSquare fixSquare, List<List<OperationWithKey>> lists, EnumMap<Block, EnumMap<Rotate, ArrayList<HashMap<Long, List<Delta>>>>> minoMap) throws IOException {
         // 全ての操作を並び替える
         for (List<OperationWithKey> list : lists) {
@@ -476,16 +275,23 @@ public class All4x10SquareFigureMain {
 
         for (int yIndex = 0; yIndex < fixSquare.square.height; yIndex++) {
             for (int xIndex = 0; xIndex < fixSquare.square.width; xIndex++) {
-                EnumMap<Block, Integer> map = fixSquare.square.blockCounter.getEnumMap();
-
-                // 名前を取得
-                String delimiter = "-";
-                String name = getName(map, delimiter);
-
-                int index = yIndex * fixSquare.square.width + xIndex + 1;
-                String path = String.format("output/img/%s_%d.png", name, index);
+                String path = toName(patternFile, fixSquare, yIndex, xIndex);
                 main3(path, fixSquare, lists, xIndex, yIndex, minoMap, patternFile.background);
             }
+        }
+    }
+
+    private static String toName(PatternFile patternFile, FixSquare fixSquare, int yIndex, int xIndex) {
+        // 名前を取得 (インデックス)
+        if (IS_INDEX_NAME) {
+            return String.format("output/img/%d_%03d_%03d.png", patternFile.index, fixSquare.y + yIndex + 1, fixSquare.x + xIndex + 1);
+        } else {
+            // 名前を取得 (ブロック名)
+            EnumMap<Block, Integer> map = fixSquare.square.blockCounter.getEnumMap();
+            String delimiter = "-";
+            String name = getName(map, delimiter);
+            int index = yIndex * fixSquare.square.width + xIndex + 1;
+            return String.format("output/img/%s_%d.png", name, index);
         }
     }
 
@@ -786,6 +592,7 @@ public class All4x10SquareFigureMain {
         }
     }
 
+
     private static Color getStrongColor(Block key) {
         switch (key) {
             case I:
@@ -807,31 +614,19 @@ public class All4x10SquareFigureMain {
         }
     }
 
-    /*
-    判定の条件は以下の通り (A,B,C は使用されているのが多い順のミノの個数)
-        AAAA BB C ****
-        AAA BBB C ****
-        AAA BB ******
-        AA *********
-         */
-    private static boolean isIn7Bag(int first, int second, int third) {
-        return (first == 4 && second <= 2 && third <= 1) ||
-                (first == 3 && second == 3 && third <= 1) ||
-                (first == 3 && second <= 2) ||
-                (first <= 2);
-    }
-
     private static class PatternFile {
-        private final String path;
+        private final Path path;
         private final int index;
         private final Color background;
-        private final int maxHeight;
 
-        private PatternFile(String path, int index, Color background, int maxHeight) {
+        private PatternFile(String path, int index, Color background) {
+            this(Paths.get(path), index, background);
+        }
+
+        private PatternFile(Path path, int index, Color background) {
             this.path = path;
             this.index = index;
             this.background = background;
-            this.maxHeight = maxHeight;
         }
 
         @Override

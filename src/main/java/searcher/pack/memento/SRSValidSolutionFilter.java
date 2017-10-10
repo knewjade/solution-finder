@@ -4,8 +4,8 @@ import common.buildup.BuildUp;
 import common.datastore.OperationWithKey;
 import core.action.reachable.Reachable;
 import core.field.Field;
-import searcher.pack.mino_field.MinoField;
 import searcher.pack.SizedBit;
+import searcher.pack.mino_field.MinoField;
 
 import java.util.LinkedList;
 import java.util.stream.Collectors;

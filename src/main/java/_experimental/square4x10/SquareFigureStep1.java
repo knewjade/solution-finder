@@ -23,13 +23,9 @@ import searcher.pack.task.Field4x10MinoPackingHelper;
 import searcher.pack.task.PackSearcher;
 import searcher.pack.task.TaskResultHelper;
 
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -39,6 +35,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+// すべてのパフェパターンをcsvに書き出す
+// SRSで置くことができるパターンのみ出力
 public class SquareFigureStep1 {
     private static final int FIELD_WIDTH = 10;
 
@@ -70,19 +68,15 @@ public class SquareFigureStep1 {
         // 出力ファイルの準備
         String name = String.format("output/result_%dx%d.csv", emptyWidth, sizedBit.getHeight());
         Charset cs = StandardCharsets.UTF_8;
-        BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(Paths.get(name).toFile(), false), cs));
 
-        try {
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(name), false), cs))) {
             // 実行
             SquareFigureStep1 step = new SquareFigureStep1(searcher, bufferedWriter, executorService);
             step.run();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        } finally {
+
             executorService.shutdown();
             executorService.awaitTermination(10L, TimeUnit.DAYS);
             bufferedWriter.flush();
-            bufferedWriter.close();
         }
 
         stopwatch.stop();
@@ -136,7 +130,7 @@ public class SquareFigureStep1 {
             bufferedWriter.write(line);
             bufferedWriter.newLine();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 }
