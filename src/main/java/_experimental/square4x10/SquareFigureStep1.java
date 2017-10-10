@@ -2,6 +2,7 @@ package _experimental.square4x10;
 
 import common.datastore.OperationWithKey;
 import common.parser.OperationWithKeyInterpreter;
+import concurrent.LockedReachableThreadLocal;
 import core.column_field.ColumnField;
 import core.field.Field;
 import core.field.FieldFactory;
@@ -14,6 +15,7 @@ import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.calculator.BasicSolutions;
 import searcher.pack.memento.AllPassedSolutionFilter;
+import searcher.pack.memento.SRSValidSolutionFilter;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.mino_fields.RecursiveMinoFields;
 import searcher.pack.solutions.BasicSolutionsCalculator;
@@ -44,7 +46,7 @@ public class SquareFigureStep1 {
 
     public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
         SizedBit sizedBit = new SizedBit(3, 4);
-        int emptyWidth = 8;
+        int emptyWidth = 9;
 
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
@@ -59,10 +61,12 @@ public class SquareFigureStep1 {
         BasicSolutions basicSolutions = createMappedBasicSolutions(minoFactory, minoShifter, sizedBit);
 
         // 初期化: PackSearcher
-        SolutionFilter solutionFilter = new AllPassedSolutionFilter();
+        SolutionFilter solutionFilter = createSRSSolutionFilter(sizedBit, initField);
         TaskResultHelper taskResultHelper = new Field4x10MinoPackingHelper();
         PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
+        System.out.println(searcher.count());
 
+        /*
         // 初期化: ExecutorService
         ExecutorService executorService = Executors.newSingleThreadExecutor();
 
@@ -87,6 +91,7 @@ public class SquareFigureStep1 {
         System.out.println(stopwatch.toMessage(TimeUnit.SECONDS));
 
         System.out.println(COUNTER.get());
+        */
     }
 
     private static Field createSquareEmptyField(int emptyWidth, int emptyHeight) {
@@ -102,6 +107,11 @@ public class SquareFigureStep1 {
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
         Map<ColumnField, RecursiveMinoFields> calculate = calculator.calculate();
         return new MappedBasicSolutions(calculate);
+    }
+
+    private static SolutionFilter createSRSSolutionFilter(SizedBit sizedBit, Field initField) {
+        LockedReachableThreadLocal lockedReachableThreadLocal = new LockedReachableThreadLocal(sizedBit.getHeight());
+        return new SRSValidSolutionFilter(initField, lockedReachableThreadLocal, sizedBit);
     }
 
     private final PackSearcher searcher;
