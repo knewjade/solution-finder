@@ -14,7 +14,6 @@ import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.calculator.BasicSolutions;
-import searcher.pack.memento.AllPassedSolutionFilter;
 import searcher.pack.memento.SRSValidSolutionFilter;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.mino_fields.RecursiveMinoFields;
@@ -25,28 +24,27 @@ import searcher.pack.task.PackSearcher;
 import searcher.pack.task.TaskResultHelper;
 
 import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SquareFigureStep1 {
     private static final int FIELD_WIDTH = 10;
-    private static final AtomicInteger COUNTER = new AtomicInteger();
 
     public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
         SizedBit sizedBit = new SizedBit(3, 4);
-        int emptyWidth = 9;
+        int emptyWidth = Integer.parseInt(args[0]);
 
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
@@ -66,13 +64,13 @@ public class SquareFigureStep1 {
         PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
         System.out.println(searcher.count());
 
-        /*
         // 初期化: ExecutorService
         ExecutorService executorService = Executors.newSingleThreadExecutor();
 
         // 出力ファイルの準備
         String name = String.format("output/result_%dx%d.csv", emptyWidth, sizedBit.getHeight());
-        BufferedWriter bufferedWriter = Files.newBufferedWriter(Paths.get(name), Charset.defaultCharset(), StandardOpenOption.CREATE_NEW);
+        Charset cs = StandardCharsets.UTF_8;
+        BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(Paths.get(name).toFile(), false), cs));
 
         try {
             // 実行
@@ -89,9 +87,6 @@ public class SquareFigureStep1 {
 
         stopwatch.stop();
         System.out.println(stopwatch.toMessage(TimeUnit.SECONDS));
-
-        System.out.println(COUNTER.get());
-        */
     }
 
     private static Field createSquareEmptyField(int emptyWidth, int emptyHeight) {
@@ -137,8 +132,6 @@ public class SquareFigureStep1 {
     }
 
     private void outputResult(String line) {
-        COUNTER.incrementAndGet();
-
         try {
             bufferedWriter.write(line);
             bufferedWriter.newLine();
