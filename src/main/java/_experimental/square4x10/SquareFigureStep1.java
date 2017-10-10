@@ -41,9 +41,9 @@ import java.util.stream.Stream;
 public class SquareFigureStep1 {
     private static final int FIELD_WIDTH = 10;
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
         SizedBit sizedBit = new SizedBit(3, 4);
-        int emptyWidth = 7;
+        int emptyWidth = 8;
 
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
@@ -61,26 +61,27 @@ public class SquareFigureStep1 {
         SolutionFilter solutionFilter = new AllPassedSolutionFilter();
         TaskResultHelper taskResultHelper = new Field4x10MinoPackingHelper();
         PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
-
-        // 初期化: ExecutorService
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-
-        // 出力ファイルの準備
-        String name = String.format("output/result_%dx%d.csv", emptyWidth, sizedBit.getHeight());
-        BufferedWriter bufferedWriter = Files.newBufferedWriter(Paths.get(name), Charset.defaultCharset(), StandardOpenOption.CREATE_NEW);
-
-        try {
-            // 実行
-            SquareFigureStep1 step = new SquareFigureStep1(searcher, bufferedWriter, executorService);
-            step.run();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        } finally {
-            executorService.shutdown();
-            executorService.awaitTermination(10L, TimeUnit.DAYS);
-            bufferedWriter.flush();
-            bufferedWriter.close();
-        }
+        Long count = searcher.count();
+        System.out.println(count);
+//        // 初期化: ExecutorService
+//        ExecutorService executorService = Executors.newSingleThreadExecutor();
+//
+//        // 出力ファイルの準備
+//        String name = String.format("output/result_%dx%d.csv", emptyWidth, sizedBit.getHeight());
+//        BufferedWriter bufferedWriter = Files.newBufferedWriter(Paths.get(name), Charset.defaultCharset(), StandardOpenOption.CREATE_NEW);
+//
+//        try {
+//            // 実行
+//            SquareFigureStep1 step = new SquareFigureStep1(searcher, bufferedWriter, executorService);
+//            step.run();
+//        } catch (InterruptedException | ExecutionException e) {
+//            e.printStackTrace();
+//        } finally {
+//            executorService.shutdown();
+//            executorService.awaitTermination(10L, TimeUnit.DAYS);
+//            bufferedWriter.flush();
+//            bufferedWriter.close();
+//        }
 
         stopwatch.stop();
         System.out.println(stopwatch.toMessage(TimeUnit.SECONDS));
