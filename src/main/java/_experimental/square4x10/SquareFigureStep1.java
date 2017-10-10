@@ -1,5 +1,7 @@
 package _experimental.square4x10;
 
+import common.datastore.OperationWithKey;
+import common.parser.OperationWithKeyInterpreter;
 import core.column_field.ColumnField;
 import core.field.Field;
 import core.field.FieldFactory;
@@ -18,7 +20,6 @@ import searcher.pack.solutions.BasicSolutionsCalculator;
 import searcher.pack.solutions.MappedBasicSolutions;
 import searcher.pack.task.Field4x10MinoPackingHelper;
 import searcher.pack.task.PackSearcher;
-import searcher.pack.task.Result;
 import searcher.pack.task.TaskResultHelper;
 
 import java.io.BufferedWriter;
@@ -34,6 +35,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SquareFigureStep1 {
     private static final int FIELD_WIDTH = 10;
@@ -112,21 +115,25 @@ public class SquareFigureStep1 {
     }
 
     private void run() throws ExecutionException, InterruptedException {
-        searcher.forEach(result -> executorService.submit(() -> outputResult(result)));
+        SizedBit sizedBit = searcher.getSizedBit();
+        searcher
+                .stream(resultStream -> {
+                    return resultStream.map(result -> {
+                        Stream<OperationWithKey> operationsStream = result.getMemento().getOperationsStream(sizedBit.getWidth());
+                        return OperationWithKeyInterpreter.parseToString(operationsStream.collect(Collectors.toList()));
+                    });
+                })
+                .forEach(result -> executorService.submit(() -> outputResult(result)));
     }
 
-    private void outputResult(Result result) {
+    private void outputResult(String line) {
         COUNTER.incrementAndGet();
-//        SizedBit sizedBit = searcher.getSizedBit();
-//        Stream<OperationWithKey> operationsStream = result.getMemento().getOperationsStream(sizedBit.getWidth());
-//        String str = OperationWithKeyInterpreter.parseToString(operationsStream.collect(Collectors.toList()));
-//
-//        try {
-//            bufferedWriter.write(str);
-//            bufferedWriter.newLine();
-//            bufferedWriter.flush();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+
+        try {
+            bufferedWriter.write(line);
+            bufferedWriter.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
