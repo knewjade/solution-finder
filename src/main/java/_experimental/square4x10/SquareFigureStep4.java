@@ -34,22 +34,22 @@ import java.util.stream.IntStream;
 // 各ブロックに分割したcsvから画像に変換
 public class SquareFigureStep4 {
     private static final int BLOCK_SIZE = 8;
-    private static final int BLOCK_WIDTH_COUNT = 8;  // フィールドの横ブロック数
+    private static final int BLOCK_WIDTH_COUNT = 9;  // フィールドの横ブロック数
     private static final int BLOCK_HEIGHT_COUNT = 4;
     private static final int BLOCK_BOARDER = 1;
     private static final int FIELD_WIDTH_SIZE = BLOCK_SIZE * BLOCK_WIDTH_COUNT + BLOCK_BOARDER * (BLOCK_WIDTH_COUNT - 1);
     private static final int FIELD_HEIGHT_SIZE = BLOCK_SIZE * BLOCK_HEIGHT_COUNT + BLOCK_BOARDER * (BLOCK_HEIGHT_COUNT - 1);
 
-    private static final int FIELD_ROW_COUNT = 6;  // 縦のフィールド数
+    private static final int FIELD_ROW_COUNT = 8;  // 縦のフィールド数
     private static final int FIELD_COLUMN_COUNT = 12;  // 横のフィールド数
     private static final int FIELD_WIDTH_MARGIN = 8;
     private static final int FIELD_HEIGHT_MARGIN = 8;
 
-    private static final int MAX_IMG_COLUMN = 60;  // 許可する画像の最大横数
-    private static final int MAX_IMG_ROW = 200;  // 許可する画像の最大縦数
+    private static final int MAX_IMG_COLUMN = 104;  // 許可する画像の最大横数
+    private static final int MAX_IMG_ROW = 400;  // 許可する画像の最大縦数
 
     private static final boolean IS_INDEX_NAME = true;  // 出力ファイル名をインデックスにする
-    private static final boolean IS_EMPTY_RUN = true;  // 出力ファイル名をインデックスにする
+    private static final boolean IS_EMPTY_RUN = false;  // 出力ファイルを空にする
 
     private static final ListComparator<OperationWithKey> OPERATION_WITH_KEY_LIST_COMPARATOR = new ListComparator<>(new OperationWithKeyComparator());
 
@@ -72,7 +72,7 @@ public class SquareFigureStep4 {
         assert !file.exists();
         file.mkdirs();
 
-        String inputDirectory = "input/8x4";
+        String inputDirectory = "input/9x4";
         List<PatternFile> patterns = premain(inputDirectory);
         main(patterns);
 
@@ -188,6 +188,13 @@ public class SquareFigureStep4 {
 
                 // 残りの幅から長方形を決める
                 int leastWidth = MAX_IMG_COLUMN - currentX;
+                for (int x = 0; x < leastWidth; x++) {
+                    if (flags[currentY][currentX + x]) {
+                        leastWidth = x;
+                        break;
+                    }
+                }
+
                 Square current = null;
                 LOOP:
                 for (int index = 0; index < squares.size(); index++) {
@@ -209,7 +216,7 @@ public class SquareFigureStep4 {
                     fixSquares.add(new FixSquare(current, currentX, currentY));
                     for (int yIndex = 0; yIndex < current.height; yIndex++) {
                         for (int xIndex = 0; xIndex < current.width; xIndex++) {
-                            assert !flags[currentY + yIndex][currentX + xIndex];
+                            assert !flags[currentY + yIndex][currentX + xIndex] : (currentY + yIndex) + " " + (currentX + xIndex);
                             flags[currentY + yIndex][currentX + xIndex] = true;
                         }
                     }
@@ -318,7 +325,6 @@ public class SquareFigureStep4 {
         ArrayList<TaskData> blackColorTasks = new ArrayList<>();
 
         if (!IS_EMPTY_RUN) {
-
             int leftXIndex = xIndex * FIELD_COLUMN_COUNT - 1;
             int topYIndex = yIndex * FIELD_ROW_COUNT - 1;
             int maxColumnFieldCount = (FIELD_COLUMN_COUNT * fixSquare.square.width) - 2;
