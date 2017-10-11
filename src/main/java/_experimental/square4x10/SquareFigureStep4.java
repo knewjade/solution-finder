@@ -34,7 +34,7 @@ import java.util.stream.IntStream;
 // 各ブロックに分割したcsvから画像に変換
 public class SquareFigureStep4 {
     private static final int BLOCK_SIZE = 8;
-    private static final int BLOCK_WIDTH_COUNT = 5;  // フィールドの横ブロック数
+    private static final int BLOCK_WIDTH_COUNT = 6;  // フィールドの横ブロック数
     private static final int BLOCK_HEIGHT_COUNT = 4;
     private static final int BLOCK_BOARDER = 1;
     private static final int FIELD_WIDTH_SIZE = BLOCK_SIZE * BLOCK_WIDTH_COUNT + BLOCK_BOARDER * (BLOCK_WIDTH_COUNT - 1);
@@ -45,7 +45,7 @@ public class SquareFigureStep4 {
     private static final int FIELD_WIDTH_MARGIN = 8;
     private static final int FIELD_HEIGHT_MARGIN = 8;
 
-    private static final int MAX_IMG_COLUMN = 10;  // 許可する画像の最大横数
+    private static final int MAX_IMG_COLUMN = 20;  // 許可する画像の最大横数
     private static final int MAX_IMG_ROW = 100;  // 許可する画像の最大縦数
 
     private static final boolean IS_INDEX_NAME = true;  // 出力ファイル名をインデックスにする
@@ -70,7 +70,7 @@ public class SquareFigureStep4 {
         assert !file.exists();
         file.mkdirs();
 
-        String inputDirectory = "input/5x4";
+        String inputDirectory = "input/6x4";
         List<PatternFile> patterns = premain(inputDirectory);
         main(patterns);
 
@@ -133,18 +133,19 @@ public class SquareFigureStep4 {
             int w;
             int h;
             Integer value = pair.getValue();
-            if (value <= 20774) {
-                w = 200;
+
+            int fieldOnPage = size(1, 1);
+            double quoter = MAX_IMG_COLUMN / 4.0;
+            int unit = (int) (quoter * fieldOnPage);
+            if (value <= unit) {
+                w = (int) quoter + 1;
                 h = 1;
-            } else if (value <= 22344) {
-                w = 100;
-                h = 2;
-            } else if (value <= 44744) {
-                w = 200;
+            } else if (value <= unit * 2) {
+                w = (int) quoter + 1;
                 h = 2;
             } else {
-                w = 200;
-                h = 15;
+                w = (int) quoter + 1;
+                h = 300;
             }
 
             while (value < size(w, h - 1)) {
@@ -155,7 +156,7 @@ public class SquareFigureStep4 {
                 w -= 1;
             }
 
-            assert value < size(w, h);
+            assert value < size(w, h) : w + " " + h;
 
 //            System.out.printf("%d, %d, %d%n", pair.getValue(), w, h);
             squares.add(new Square(pair.getKey(), pair.getValue(), w, h));
