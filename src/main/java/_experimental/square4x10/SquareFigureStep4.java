@@ -45,7 +45,7 @@ public class SquareFigureStep4 {
     private static final int FIELD_WIDTH_MARGIN = 8;
     private static final int FIELD_HEIGHT_MARGIN = 8;
 
-    private static final int MAX_IMG_COLUMN = 10;  // 許可する画像の最大横数
+    private static final int MAX_IMG_COLUMN = 8;  // 許可する画像の最大横数
     private static final int MAX_IMG_ROW = 120;  // 許可する画像の最大縦数
 
     private static final boolean IS_INDEX_NAME = true;  // 出力ファイル名をインデックスにする
