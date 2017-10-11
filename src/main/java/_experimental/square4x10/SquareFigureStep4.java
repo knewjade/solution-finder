@@ -34,18 +34,18 @@ import java.util.stream.IntStream;
 // 各ブロックに分割したcsvから画像に変換
 public class SquareFigureStep4 {
     private static final int BLOCK_SIZE = 8;
-    private static final int BLOCK_WIDTH_COUNT = 5;  // フィールドの横ブロック数
+    private static final int BLOCK_WIDTH_COUNT = 6;  // フィールドの横ブロック数
     private static final int BLOCK_HEIGHT_COUNT = 4;
     private static final int BLOCK_BOARDER = 1;
     private static final int FIELD_WIDTH_SIZE = BLOCK_SIZE * BLOCK_WIDTH_COUNT + BLOCK_BOARDER * (BLOCK_WIDTH_COUNT - 1);
     private static final int FIELD_HEIGHT_SIZE = BLOCK_SIZE * BLOCK_HEIGHT_COUNT + BLOCK_BOARDER * (BLOCK_HEIGHT_COUNT - 1);
 
-    private static final int FIELD_ROW_COUNT = 4;  // 縦のフィールド数
+    private static final int FIELD_ROW_COUNT = 5;  // 縦のフィールド数
     private static final int FIELD_COLUMN_COUNT = 12;  // 横のフィールド数
     private static final int FIELD_WIDTH_MARGIN = 8;
     private static final int FIELD_HEIGHT_MARGIN = 8;
 
-    private static final int MAX_IMG_COLUMN = 10;  // 許可する画像の最大横数
+    private static final int MAX_IMG_COLUMN = 17;  // 許可する画像の最大横数
     private static final int MAX_IMG_ROW = 120;  // 許可する画像の最大縦数
 
     private static final boolean IS_INDEX_NAME = true;  // 出力ファイル名をインデックスにする
@@ -63,7 +63,7 @@ public class SquareFigureStep4 {
             new Color(0xFFEBEF),
             new Color(0xFFF5FE),
             new Color(0xF3FFFD)
-            );
+    );
 
     // 画像化
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -71,7 +71,7 @@ public class SquareFigureStep4 {
         assert !file.exists();
         file.mkdirs();
 
-        String inputDirectory = "input/5x4";
+        String inputDirectory = "input/6x4";
         List<PatternFile> patterns = premain(inputDirectory);
         main(patterns);
 
@@ -622,9 +622,13 @@ public class SquareFigureStep4 {
         System.out.println("max height:");
         System.out.println(s);
 
+        System.out.println("-> " + ((double) s / (maxX + 1)));
+
         //　白紙のページを作成
         int widthSize = (FIELD_WIDTH_SIZE + FIELD_WIDTH_MARGIN) * FIELD_COLUMN_COUNT;
         int heightSize = (FIELD_HEIGHT_SIZE + FIELD_HEIGHT_MARGIN) * FIELD_ROW_COUNT;
+
+        System.out.printf("%dx%d: %.3f%n", widthSize, heightSize, (double) widthSize / heightSize);
 
         BufferedImage image = new BufferedImage(widthSize, heightSize, BufferedImage.TYPE_INT_RGB);
         Graphics graphics = image.getGraphics();
