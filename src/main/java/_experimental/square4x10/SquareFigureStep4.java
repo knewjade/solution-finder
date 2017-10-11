@@ -34,18 +34,18 @@ import java.util.stream.IntStream;
 // 各ブロックに分割したcsvから画像に変換
 public class SquareFigureStep4 {
     private static final int BLOCK_SIZE = 8;
-    private static final int BLOCK_WIDTH_COUNT = 4;  // フィールドの横ブロック数
+    private static final int BLOCK_WIDTH_COUNT = 5;  // フィールドの横ブロック数
     private static final int BLOCK_HEIGHT_COUNT = 4;
     private static final int BLOCK_BOARDER = 1;
     private static final int FIELD_WIDTH_SIZE = BLOCK_SIZE * BLOCK_WIDTH_COUNT + BLOCK_BOARDER * (BLOCK_WIDTH_COUNT - 1);
     private static final int FIELD_HEIGHT_SIZE = BLOCK_SIZE * BLOCK_HEIGHT_COUNT + BLOCK_BOARDER * (BLOCK_HEIGHT_COUNT - 1);
 
     private static final int FIELD_ROW_COUNT = 4;  // 縦のフィールド数
-    private static final int FIELD_COLUMN_COUNT = 10;  // 横のフィールド数
+    private static final int FIELD_COLUMN_COUNT = 12;  // 横のフィールド数
     private static final int FIELD_WIDTH_MARGIN = 8;
     private static final int FIELD_HEIGHT_MARGIN = 8;
 
-    private static final int MAX_IMG_COLUMN = 8;  // 許可する画像の最大横数
+    private static final int MAX_IMG_COLUMN = 10;  // 許可する画像の最大横数
     private static final int MAX_IMG_ROW = 100;  // 許可する画像の最大縦数
 
     private static final boolean IS_INDEX_NAME = true;  // 出力ファイル名をインデックスにする
@@ -65,10 +65,12 @@ public class SquareFigureStep4 {
     );
 
     // 画像化
-    public static void main(String[] args) throws IOException {
-        new File("output/img/").mkdirs();
+    public static void main(String[] args) throws IOException, InterruptedException {
+        File file = new File("output/img/");
+        assert !file.exists();
+        file.mkdirs();
 
-        String inputDirectory = "input/4x4";
+        String inputDirectory = "input/5x4";
         List<PatternFile> patterns = premain(inputDirectory);
         main(patterns);
 
