@@ -34,7 +34,7 @@ import java.util.stream.IntStream;
 // 各ブロックに分割したcsvから画像に変換
 public class SquareFigureStep4 {
     private static final int BLOCK_SIZE = 8;
-    private static final int BLOCK_WIDTH_COUNT = 7;  // フィールドの横ブロック数
+    private static final int BLOCK_WIDTH_COUNT = 8;  // フィールドの横ブロック数
     private static final int BLOCK_HEIGHT_COUNT = 4;
     private static final int BLOCK_BOARDER = 1;
     private static final int FIELD_WIDTH_SIZE = BLOCK_SIZE * BLOCK_WIDTH_COUNT + BLOCK_BOARDER * (BLOCK_WIDTH_COUNT - 1);
@@ -45,10 +45,11 @@ public class SquareFigureStep4 {
     private static final int FIELD_WIDTH_MARGIN = 8;
     private static final int FIELD_HEIGHT_MARGIN = 8;
 
-    private static final int MAX_IMG_COLUMN = 30;  // 許可する画像の最大横数
-    private static final int MAX_IMG_ROW = 120;  // 許可する画像の最大縦数
+    private static final int MAX_IMG_COLUMN = 60;  // 許可する画像の最大横数
+    private static final int MAX_IMG_ROW = 200;  // 許可する画像の最大縦数
 
     private static final boolean IS_INDEX_NAME = true;  // 出力ファイル名をインデックスにする
+    private static final boolean IS_EMPTY_RUN = true;  // 出力ファイル名をインデックスにする
 
     private static final ListComparator<OperationWithKey> OPERATION_WITH_KEY_LIST_COMPARATOR = new ListComparator<>(new OperationWithKeyComparator());
 
@@ -71,7 +72,7 @@ public class SquareFigureStep4 {
         assert !file.exists();
         file.mkdirs();
 
-        String inputDirectory = "input/7x4";
+        String inputDirectory = "input/8x4";
         List<PatternFile> patterns = premain(inputDirectory);
         main(patterns);
 
@@ -261,23 +262,25 @@ public class SquareFigureStep4 {
     }
 
     private static void main3(PatternFile patternFile, FixSquare fixSquare, List<List<OperationWithKey>> lists, EnumMap<Block, EnumMap<Rotate, ArrayList<HashMap<Long, List<Delta>>>>> minoMap) throws IOException {
-        // 全ての操作を並び替える
-        for (List<OperationWithKey> list : lists) {
-            list.sort((o1, o2) -> {
-                int compareBlock = o1.getMino().getBlock().compareTo(o2.getMino().getBlock());
-                if (compareBlock != 0)
-                    return compareBlock;
+        if (!IS_EMPTY_RUN) {
+            // 全ての操作を並び替える
+            for (List<OperationWithKey> list : lists) {
+                list.sort((o1, o2) -> {
+                    int compareBlock = o1.getMino().getBlock().compareTo(o2.getMino().getBlock());
+                    if (compareBlock != 0)
+                        return compareBlock;
 
-                int compareX = Integer.compare(o1.getX(), o2.getX());
-                if (compareX != 0)
-                    return compareX;
+                    int compareX = Integer.compare(o1.getX(), o2.getX());
+                    if (compareX != 0)
+                        return compareX;
 
-                return Integer.compare(o1.getY(), o2.getY());
-            });
+                    return Integer.compare(o1.getY(), o2.getY());
+                });
+            }
+
+            // 操作リスト自体を並び替える
+            lists.sort(OPERATION_WITH_KEY_LIST_COMPARATOR);
         }
-
-        // 操作リスト自体を並び替える
-        lists.sort(OPERATION_WITH_KEY_LIST_COMPARATOR);
 
         for (int yIndex = 0; yIndex < fixSquare.square.height; yIndex++) {
             for (int xIndex = 0; xIndex < fixSquare.square.width; xIndex++) {
@@ -314,86 +317,89 @@ public class SquareFigureStep4 {
 
         ArrayList<TaskData> blackColorTasks = new ArrayList<>();
 
-        int leftXIndex = xIndex * FIELD_COLUMN_COUNT - 1;
-        int topYIndex = yIndex * FIELD_ROW_COUNT - 1;
-        int maxColumnFieldCount = (FIELD_COLUMN_COUNT * fixSquare.square.width) - 2;
+        if (!IS_EMPTY_RUN) {
 
-        // 塗りつぶす場所を全て列挙
-        for (int patternY = 0; patternY < FIELD_ROW_COUNT; patternY++) {
-            if (patternY == 0 && yIndex == 0) {
-                // 四角全体の一番上の行
-                continue;
-            }
+            int leftXIndex = xIndex * FIELD_COLUMN_COUNT - 1;
+            int topYIndex = yIndex * FIELD_ROW_COUNT - 1;
+            int maxColumnFieldCount = (FIELD_COLUMN_COUNT * fixSquare.square.width) - 2;
 
-            if (patternY == FIELD_ROW_COUNT - 1 && yIndex == fixSquare.square.height - 1) {
-                // 四角全体の一番下の行
-                continue;
-            }
-
-            for (int patternX = 0; patternX < FIELD_COLUMN_COUNT; patternX++) {
-                if (patternX == 0 && xIndex == 0) {
-                    // 四角全体の一番左の列
+            // 塗りつぶす場所を全て列挙
+            for (int patternY = 0; patternY < FIELD_ROW_COUNT; patternY++) {
+                if (patternY == 0 && yIndex == 0) {
+                    // 四角全体の一番上の行
                     continue;
                 }
 
-                if (patternX == FIELD_COLUMN_COUNT - 1 && xIndex == fixSquare.square.width - 1) {
-                    // 四角全体の一番右の列
+                if (patternY == FIELD_ROW_COUNT - 1 && yIndex == fixSquare.square.height - 1) {
+                    // 四角全体の一番下の行
                     continue;
                 }
 
-                // フィールドの左上の座標
-                int left = patternX * (FIELD_WIDTH_SIZE + FIELD_WIDTH_MARGIN) + FIELD_WIDTH_MARGIN;
-                int top = patternY * (FIELD_HEIGHT_SIZE + FIELD_HEIGHT_MARGIN) + FIELD_HEIGHT_MARGIN;
-
-                // フィールドの番号を計算
-                int fieldIndex = (topYIndex + patternY) * maxColumnFieldCount + (leftXIndex + patternX);
-                if (lists.size() <= fieldIndex)
-                    continue;
-
-                List<OperationWithKey> sample = lists.get(fieldIndex);
-
-                // フィールドを黒で塗る 線の色
-                blackColorTasks.add(new TaskData(left, top));
-
-                // 色を決定する
-                EnumMap<Block, Prev> prev = new EnumMap<>(Block.class);
-                for (OperationWithKey operationWithKey : sample) {
-                    Block block = operationWithKey.getMino().getBlock();
-                    Mino mino = operationWithKey.getMino();
-                    List<Delta> deltas = minoMap.get(mino.getBlock()).get(mino.getRotate()).get(operationWithKey.getY()).get(operationWithKey.getNeedDeletedKey());
-//                        System.out.println(block);
-//                        System.out.println(deltas);
-                    int x = operationWithKey.getX();
-                    int y = operationWithKey.getY();
-
-                    Prev prevKey = prev.getOrDefault(block, null);
-
-                    SmallField field = new SmallField();
-                    field.put(operationWithKey.getMino(), operationWithKey.getX(), operationWithKey.getY());
-                    field.insertWhiteLineWithKey(operationWithKey.getNeedDeletedKey());
-
-                    List<TaskData> list;
-                    if (prevKey == null) {
-                        list = normalColorTasks.get(block);
-                        prev.put(block, new Prev(field));
-                    } else {
-                        if (!prevKey.flag) {
-                            boolean isNoDuplicate = prevKey.getRange().canMerge(field);
-                            if (isNoDuplicate) {
-                                list = normalColorTasks.get(block);
-                                prev.put(block, new Prev(field));
-                            } else {
-                                list = strongColorTasks.get(block);
-                                prev.put(block, new Prev(field, true));
-                            }
-                        } else {
-                            list = normalColorTasks.get(block);
-                            prev.put(block, new Prev(field));
-                        }
+                for (int patternX = 0; patternX < FIELD_COLUMN_COUNT; patternX++) {
+                    if (patternX == 0 && xIndex == 0) {
+                        // 四角全体の一番左の列
+                        continue;
                     }
 
-                    for (Delta delta : deltas) {
-                        list.add(new TaskData(left, top, x + delta.x, y + delta.y));
+                    if (patternX == FIELD_COLUMN_COUNT - 1 && xIndex == fixSquare.square.width - 1) {
+                        // 四角全体の一番右の列
+                        continue;
+                    }
+
+                    // フィールドの左上の座標
+                    int left = patternX * (FIELD_WIDTH_SIZE + FIELD_WIDTH_MARGIN) + FIELD_WIDTH_MARGIN;
+                    int top = patternY * (FIELD_HEIGHT_SIZE + FIELD_HEIGHT_MARGIN) + FIELD_HEIGHT_MARGIN;
+
+                    // フィールドの番号を計算
+                    int fieldIndex = (topYIndex + patternY) * maxColumnFieldCount + (leftXIndex + patternX);
+                    if (lists.size() <= fieldIndex)
+                        continue;
+
+                    List<OperationWithKey> sample = lists.get(fieldIndex);
+
+                    // フィールドを黒で塗る 線の色
+                    blackColorTasks.add(new TaskData(left, top));
+
+                    // 色を決定する
+                    EnumMap<Block, Prev> prev = new EnumMap<>(Block.class);
+                    for (OperationWithKey operationWithKey : sample) {
+                        Block block = operationWithKey.getMino().getBlock();
+                        Mino mino = operationWithKey.getMino();
+                        List<Delta> deltas = minoMap.get(mino.getBlock()).get(mino.getRotate()).get(operationWithKey.getY()).get(operationWithKey.getNeedDeletedKey());
+//                        System.out.println(block);
+//                        System.out.println(deltas);
+                        int x = operationWithKey.getX();
+                        int y = operationWithKey.getY();
+
+                        Prev prevKey = prev.getOrDefault(block, null);
+
+                        SmallField field = new SmallField();
+                        field.put(operationWithKey.getMino(), operationWithKey.getX(), operationWithKey.getY());
+                        field.insertWhiteLineWithKey(operationWithKey.getNeedDeletedKey());
+
+                        List<TaskData> list;
+                        if (prevKey == null) {
+                            list = normalColorTasks.get(block);
+                            prev.put(block, new Prev(field));
+                        } else {
+                            if (!prevKey.flag) {
+                                boolean isNoDuplicate = prevKey.getRange().canMerge(field);
+                                if (isNoDuplicate) {
+                                    list = normalColorTasks.get(block);
+                                    prev.put(block, new Prev(field));
+                                } else {
+                                    list = strongColorTasks.get(block);
+                                    prev.put(block, new Prev(field, true));
+                                }
+                            } else {
+                                list = normalColorTasks.get(block);
+                                prev.put(block, new Prev(field));
+                            }
+                        }
+
+                        for (Delta delta : deltas) {
+                            list.add(new TaskData(left, top, x + delta.x, y + delta.y));
+                        }
                     }
                 }
             }
@@ -408,40 +414,40 @@ public class SquareFigureStep4 {
         int heightSize = (FIELD_HEIGHT_SIZE + FIELD_HEIGHT_MARGIN) * FIELD_ROW_COUNT;
 
         BufferedImage image = new BufferedImage(widthSize, heightSize, BufferedImage.TYPE_INT_RGB);
+        if (!IS_EMPTY_RUN) {
+            // 白色で背景を塗る
+            Graphics graphics = image.getGraphics();
+            graphics.setColor(Color.WHITE);
+            graphics.fillRect(0, 0, widthSize, heightSize);
 
-        // 白色で背景を塗る
-        Graphics graphics = image.getGraphics();
-        graphics.setColor(Color.WHITE);
-        graphics.fillRect(0, 0, widthSize, heightSize);
+            // 背景色を塗る
+            int backX = 0;
+            int backWidth = widthSize;
+            int backY = 0;
+            int backHeight = heightSize;
 
-        // 背景色を塗る
-        int backX = 0;
-        int backWidth = widthSize;
-        int backY = 0;
-        int backHeight = heightSize;
+            if (xIndex == 0) {
+                backX += FIELD_WIDTH_SIZE / 2;
+                backWidth -= FIELD_WIDTH_SIZE / 2;
+            }
+            if (xIndex == fixSquare.square.width - 1) {
+                backWidth -= FIELD_WIDTH_SIZE / 2;
+            }
+            if (yIndex == 0) {
+                backY += FIELD_HEIGHT_SIZE / 4;
+                backHeight -= FIELD_HEIGHT_SIZE / 4;
+            }
+            if (yIndex == fixSquare.square.height - 1) {
+                backHeight -= FIELD_HEIGHT_SIZE / 2;
+            }
+            graphics.setColor(background);
+            graphics.fillRect(backX, backY, backWidth, backHeight);
 
-        if (xIndex == 0) {
-            backX += FIELD_WIDTH_SIZE / 2;
-            backWidth -= FIELD_WIDTH_SIZE / 2;
-        }
-        if (xIndex == fixSquare.square.width - 1) {
-            backWidth -= FIELD_WIDTH_SIZE / 2;
-        }
-        if (yIndex == 0) {
-            backY += FIELD_HEIGHT_SIZE / 4;
-            backHeight -= FIELD_HEIGHT_SIZE / 4;
-        }
-        if (yIndex == fixSquare.square.height - 1) {
-            backHeight -= FIELD_HEIGHT_SIZE / 2;
-        }
-        graphics.setColor(background);
-        graphics.fillRect(backX, backY, backWidth, backHeight);
-
-        // テキストを入力
-        graphics.setColor(new Color(0x4E4E4E));
-        if (xIndex == 0 && yIndex == 0) {
-            EnumMap<Block, Integer> map = fixSquare.square.blockCounter.getEnumMap();
-            ArrayList<Map.Entry<Block, Integer>> entries = new ArrayList<>(map.entrySet());
+            // テキストを入力
+            graphics.setColor(new Color(0x4E4E4E));
+            if (xIndex == 0 && yIndex == 0) {
+                EnumMap<Block, Integer> map = fixSquare.square.blockCounter.getEnumMap();
+                ArrayList<Map.Entry<Block, Integer>> entries = new ArrayList<>(map.entrySet());
 //            entries.sort((o1, o2) -> {
 //                int compare = Integer.compare(o1.getValue(), o2.getValue());
 //                if (compare != 0)
@@ -449,59 +455,60 @@ public class SquareFigureStep4 {
 //                return o1.getKey().compareTo(o2.getKey());
 //            });
 
-            // 名前を取得
-            String delimiter = " ";
-            String name = getName(map, delimiter);
+                // 名前を取得
+                String delimiter = " ";
+                String name = getName(map, delimiter);
 
-            // アンチエイリアス
-            Graphics2D g2 = (Graphics2D) graphics;
-            g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                // アンチエイリアス
+                Graphics2D g2 = (Graphics2D) graphics;
+                g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
-            // piecesの表示
-            Font font = new Font("Verdana", Font.BOLD, 35);
-            graphics.setFont(font);
+                // piecesの表示
+                Font font = new Font("Verdana", Font.BOLD, 35);
+                graphics.setFont(font);
 
-            FontMetrics fontmetrics = graphics.getFontMetrics();
-            int ascent = fontmetrics.getAscent();
-            int x = FIELD_WIDTH_SIZE / 2 + 15;
-            int y = FIELD_HEIGHT_SIZE / 4 + ascent;
+                FontMetrics fontmetrics = graphics.getFontMetrics();
+                int ascent = fontmetrics.getAscent();
+                int x = FIELD_WIDTH_SIZE / 2 + 15;
+                int y = FIELD_HEIGHT_SIZE / 4 + ascent;
 
-            // 詳細を表示
-            String str1 = String.format("%s / %d", name, fixSquare.square.solutionCount);
-            graphics.drawString(str1, x, y);
-            int stringWidth = fontmetrics.stringWidth(str1);
+                // 詳細を表示
+                String str1 = String.format("%s / %d", name, fixSquare.square.solutionCount);
+                graphics.drawString(str1, x, y);
+                int stringWidth = fontmetrics.stringWidth(str1);
 
-            Font font2 = new Font("Verdana", Font.BOLD, 30);
-            graphics.setFont(font2);
-            graphics.drawString(" solutions", x + stringWidth, y);
-        }
-
-        // フィールドの線を塗る
-        for (TaskData data : blackColorTasks) {
-            graphics.fillRect(data.x, data.y, FIELD_WIDTH_SIZE, FIELD_HEIGHT_SIZE);
-        }
-
-        // ブロックを塗る
-        for (Block key : normalColorTasks.keySet()) {
-            List<TaskData> normalColor = normalColorTasks.get(key);
-            List<TaskData> strongColor = strongColorTasks.get(key);
-
-            Color color = getNormalColor(key);
-            graphics.setColor(color);
-
-            for (TaskData data : normalColor) {
-                graphics.fillRect(data.x, data.y, BLOCK_SIZE, BLOCK_SIZE);
+                Font font2 = new Font("Verdana", Font.BOLD, 30);
+                graphics.setFont(font2);
+                graphics.drawString(" solutions", x + stringWidth, y);
             }
 
-            for (TaskData data : strongColor) {
-                graphics.fillRect(data.x, data.y, BLOCK_SIZE, BLOCK_SIZE);
+            // フィールドの線を塗る
+            for (TaskData data : blackColorTasks) {
+                graphics.fillRect(data.x, data.y, FIELD_WIDTH_SIZE, FIELD_HEIGHT_SIZE);
             }
 
-            Color strong = getStrongColor(key);
-            graphics.setColor(strong);
+            // ブロックを塗る
+            for (Block key : normalColorTasks.keySet()) {
+                List<TaskData> normalColor = normalColorTasks.get(key);
+                List<TaskData> strongColor = strongColorTasks.get(key);
 
-            for (TaskData data : strongColor) {
-                graphics.fillRect(data.x + 2, data.y + 2, BLOCK_SIZE - 4, BLOCK_SIZE - 4);
+                Color color = getNormalColor(key);
+                graphics.setColor(color);
+
+                for (TaskData data : normalColor) {
+                    graphics.fillRect(data.x, data.y, BLOCK_SIZE, BLOCK_SIZE);
+                }
+
+                for (TaskData data : strongColor) {
+                    graphics.fillRect(data.x, data.y, BLOCK_SIZE, BLOCK_SIZE);
+                }
+
+                Color strong = getStrongColor(key);
+                graphics.setColor(strong);
+
+                for (TaskData data : strongColor) {
+                    graphics.fillRect(data.x + 2, data.y + 2, BLOCK_SIZE - 4, BLOCK_SIZE - 4);
+                }
             }
         }
 
