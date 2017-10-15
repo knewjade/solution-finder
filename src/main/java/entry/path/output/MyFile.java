@@ -1,22 +1,16 @@
 package entry.path.output;
 
 import exceptions.FinderInitializeException;
+import lib.AsyncBufferedFileWriter;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 
 class MyFile {
     private static final Charset CHARSET = StandardCharsets.UTF_8;
-    private static final StandardOpenOption[] FILE_OPEN_OPTIONS = new StandardOpenOption[]{
-            StandardOpenOption.TRUNCATE_EXISTING,
-            StandardOpenOption.CREATE
-    };
-
+    
     static void mkdirs(String baseFilePath) throws FinderInitializeException {
         File outputFile = new File(baseFilePath);
 
@@ -45,7 +39,7 @@ class MyFile {
             throw new FinderInitializeException("Cannot write output file: Path=" + path);
     }
 
-    BufferedWriter newBufferedWriter() throws IOException {
-        return Files.newBufferedWriter(file.toPath(), CHARSET, FILE_OPEN_OPTIONS);
+    AsyncBufferedFileWriter newAsyncWriter() throws IOException {
+        return new AsyncBufferedFileWriter(file, CHARSET, false, 10L);
     }
 }

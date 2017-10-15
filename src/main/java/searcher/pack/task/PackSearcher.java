@@ -207,7 +207,7 @@ public class PackSearcher {
         return result;
     }
 
-    SizedBit getSizedBit() {
+    public SizedBit getSizedBit() {
         return sizedBit;
     }
 

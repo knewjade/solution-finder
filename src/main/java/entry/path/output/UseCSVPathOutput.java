@@ -13,9 +13,9 @@ import entry.path.PathSettings;
 import entry.path.ReduceBlocksGenerator;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
+import lib.AsyncBufferedFileWriter;
 import searcher.pack.SizedBit;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -79,9 +79,8 @@ public class UseCSVPathOutput implements PathOutput {
                 }));
 
         List<PathPair> emptyValidList = Collections.emptyList();
-        try (BufferedWriter writer = outputBaseFile.newBufferedWriter()) {
-            writer.write("使用ミノ,対応地形数,対応ツモ数 (対パターン),テト譜,ツモ (対パターン)");
-            writer.newLine();
+        try (AsyncBufferedFileWriter writer = outputBaseFile.newAsyncWriter()) {
+            writer.writeAndNewLine("使用ミノ,対応地形数,対応ツモ数 (対パターン),テト譜,ツモ (対パターン)");
 
             generator.blockCountersStream().parallel()
                     .map(blockCounter -> {
@@ -121,15 +120,8 @@ public class UseCSVPathOutput implements PathOutput {
 
                         return String.format("%s,%d,%d,%s,%s%n", blockCounterName, possibleSize, possiblePatternSize, fumens, patterns);
                     })
-                    .forEach(line -> {
-                        synchronized (this) {
-                            try {
-                                writer.write(line);
-                            } catch (IOException e) {
-                                this.lastException = e;
-                            }
-                        }
-                    });
+                    .forEach(writer::writeAndNewLine);
+
             writer.flush();
         } catch (IOException e) {
             throw new FinderExecuteException("Failed to output file", e);

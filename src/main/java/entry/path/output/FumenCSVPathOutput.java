@@ -8,9 +8,9 @@ import entry.path.PathPair;
 import entry.path.PathSettings;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
+import lib.AsyncBufferedFileWriter;
 import searcher.pack.SizedBit;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
@@ -63,9 +63,8 @@ public class FumenCSVPathOutput implements PathOutput {
 
         outputLog("Found path = " + pathPairs.size());
 
-        try (BufferedWriter writer = outputBaseFile.newBufferedWriter()) {
-            writer.write("テト譜,使用ミノ,対応ツモ数 (対地形),対応ツモ数 (対パターン),ツモ (対地形),ツモ (対パターン)");
-            writer.newLine();
+        try (AsyncBufferedFileWriter writer = outputBaseFile.newAsyncWriter()) {
+            writer.writeAndNewLine("テト譜,使用ミノ,対応ツモ数 (対地形),対応ツモ数 (対パターン),ツモ (対地形),ツモ (対パターン)");
 
             pathPairs.parallelStream()
                     .map(pathPair -> {
@@ -95,17 +94,10 @@ public class FumenCSVPathOutput implements PathOutput {
                         // 対応ツモ数 (対地形)
                         int solution = solutionBuildBlocks.size();
 
-                        return String.format("http://fumen.zui.jp/?v115@%s,%s,%d,%d,%s,%s%n", encode, usingPieces, solution, pattern, validOrdersSolution, validOrdersPattern);
+                        return String.format("http://fumen.zui.jp/?v115@%s,%s,%d,%d,%s,%s", encode, usingPieces, solution, pattern, validOrdersSolution, validOrdersPattern);
                     })
-                    .forEach(line -> {
-                        synchronized (this) {
-                            try {
-                                writer.write(line);
-                            } catch (IOException e) {
-                                this.lastException = e;
-                            }
-                        }
-                    });
+                    .forEach(writer::writeAndNewLine);
+
             writer.flush();
         } catch (IOException e) {
             throw new FinderExecuteException("Failed to output file", e);

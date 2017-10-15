@@ -1,6 +1,6 @@
 package _usecase.path;
 
-import _experimental.cycle1.EasyPool;
+import helper.EasyPool;
 import _usecase.ConfigFileHelper;
 import _usecase.OutputFileHelper;
 import common.tetfu.Tetfu;
