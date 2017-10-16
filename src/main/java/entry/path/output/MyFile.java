@@ -3,14 +3,13 @@ package entry.path.output;
 import exceptions.FinderInitializeException;
 import lib.AsyncBufferedFileWriter;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 class MyFile {
     private static final Charset CHARSET = StandardCharsets.UTF_8;
-    
+
     static void mkdirs(String baseFilePath) throws FinderInitializeException {
         File outputFile = new File(baseFilePath);
 
@@ -41,5 +40,9 @@ class MyFile {
 
     AsyncBufferedFileWriter newAsyncWriter() throws IOException {
         return new AsyncBufferedFileWriter(file, CHARSET, false, 10L);
+    }
+
+    BufferedWriter newBufferedWriter() throws FileNotFoundException {
+        return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false), CHARSET));
     }
 }
