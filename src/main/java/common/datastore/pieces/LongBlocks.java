@@ -63,11 +63,7 @@ public class LongBlocks implements Blocks, Comparable<LongBlocks> {
     }
 
     public LongBlocks(Stream<Block> blocks) {
-        TemporaryCount temporary = new TemporaryCount(0L, 0);
-        blocks.sequential().forEach(temporary::add);
-        this.pieces = temporary.value;
-        this.max = temporary.index;
-        assert this.max <= 22;
+        this(0L, 0, blocks);
     }
 
     private LongBlocks(LongBlocks parent, List<Block> blocks) {
@@ -79,6 +75,18 @@ public class LongBlocks implements Blocks, Comparable<LongBlocks> {
     private LongBlocks(LongBlocks parent, Block block) {
         this.pieces = parent.pieces + SCALE[parent.max] * block.getNumber();
         this.max = parent.max + 1;
+        assert this.max <= 22;
+    }
+
+    private LongBlocks(LongBlocks parent, Stream<Block> blocks) {
+        this(parent.pieces, parent.max, blocks);
+    }
+
+    private LongBlocks(long pieces, int max, Stream<Block> blocks) {
+        TemporaryCount temporary = new TemporaryCount(pieces, max);
+        blocks.sequential().forEach(temporary::add);
+        this.pieces = temporary.value;
+        this.max = temporary.index;
         assert this.max <= 22;
     }
 
@@ -120,6 +128,11 @@ public class LongBlocks implements Blocks, Comparable<LongBlocks> {
     @Override
     public Blocks addAndReturnNew(Block block) {
         return new LongBlocks(this, block);
+    }
+
+    @Override
+    public Blocks addAndReturnNew(Stream<Block> blocks) {
+        return new LongBlocks(this, blocks);
     }
 
     @Override

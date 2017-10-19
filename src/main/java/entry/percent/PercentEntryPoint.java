@@ -93,13 +93,7 @@ public class PercentEntryPoint implements EntryPoint {
         if (patterns.isEmpty())
             throw new FinderInitializeException("Should specify patterns, not allow empty");
 
-        try {
-            BlocksGenerator.verify(patterns);
-        } catch (SyntaxException e) {
-            output("Pattern syntax error");
-            output(e.getMessage());
-            throw new FinderInitializeException("Pattern syntax error", e);
-        }
+        IBlocksGenerator generator = createBlockGenerator(patterns);
 
         for (String pattern : patterns)
             output("  " + pattern);
@@ -109,7 +103,6 @@ public class PercentEntryPoint implements EntryPoint {
         output("# Initialize / System");
         int core = Runtime.getRuntime().availableProcessors();
         ExecutorService executorService = Executors.newFixedThreadPool(core);
-        IBlocksGenerator generator = new BlocksGenerator(patterns);
 
         output("Version = " + FinderConstant.VERSION);
         output("Available processors = " + core);
@@ -215,7 +208,17 @@ public class PercentEntryPoint implements EntryPoint {
         flush();
     }
 
-    ThreadLocal<Candidate<Action>> createCandidateThreadLocal(DropType dropType, int maxClearLine) throws FinderInitializeException {
+    private IBlocksGenerator createBlockGenerator(List<String> patterns) throws FinderInitializeException, FinderExecuteException {
+        try {
+            return new BlocksGenerator(patterns);
+        } catch (SyntaxException e) {
+            output("Pattern syntax error");
+            output(e.getMessage());
+            throw new FinderInitializeException("Pattern syntax error", e);
+        }
+    }
+
+    private ThreadLocal<Candidate<Action>> createCandidateThreadLocal(DropType dropType, int maxClearLine) throws FinderInitializeException {
         switch (dropType) {
             case Softdrop:
                 return new LockedCandidateThreadLocal(maxClearLine);

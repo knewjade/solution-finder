@@ -13,4 +13,7 @@ public interface Blocks {
     Blocks addAndReturnNew(List<Block> blocks);
 
     Blocks addAndReturnNew(Block block);
+
+    Blocks addAndReturnNew(Stream<Block> blocks);
+
 }

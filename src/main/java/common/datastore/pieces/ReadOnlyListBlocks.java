@@ -35,6 +35,11 @@ public class ReadOnlyListBlocks implements Blocks, Comparable<Blocks> {
     }
 
     @Override
+    public Blocks addAndReturnNew(Stream<Block> blocks) {
+        throw new UnsupportedOperationException("Unsafe operation");
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null) return false;

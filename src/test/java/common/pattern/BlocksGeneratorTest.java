@@ -16,36 +16,48 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BlocksGeneratorTest {
+    private void assertSame(IBlocksGenerator actual, IBlocksGenerator expected) {
+        assertThat(actual.getDepth()).isEqualTo(expected.getDepth());
+
+        List<Blocks> blocks = expected.blocksStream().collect(Collectors.toList());
+        assertThat(actual.blocksStream())
+                .hasSize(blocks.size())
+                .containsAll(blocks);
+
+        List<BlockCounter> blockCounters = expected.blockCountersStream().collect(Collectors.toList());
+        assertThat(actual.blockCountersStream())
+                .hasSize(blockCounters.size())
+                .containsAll(blockCounters);
+    }
+
     @Test
-    void toList1() {
+    void toList1() throws SyntaxException {
+        IBlocksGenerator generator = new BlocksGenerator("I");
+        assertThat(generator.getDepth()).isEqualTo(1);
+
+        assertThat(generator.blocksStream())
+                .hasSize(1)
+                .containsExactly(new LongBlocks(Collections.singletonList(I)));
+
+        assertThat(generator.blockCountersStream())
+                .hasSize(1)
+                .containsExactly(new BlockCounter(Collections.singletonList(I)));
+    }
+
+    @Test
+    void toList1WithComment() throws SyntaxException {
         IBlocksGenerator generator = new BlocksGenerator("I # comment");
-        assertThat(generator.getDepth()).isEqualTo(1);
-
-        assertThat(generator.blocksStream())
-                .hasSize(1)
-                .containsExactly(new LongBlocks(Collections.singletonList(I)));
-
-        assertThat(generator.blockCountersStream())
-                .hasSize(1)
-                .containsExactly(new BlockCounter(Collections.singletonList(I)));
+        assertSame(generator, new BlocksGenerator("I"));
     }
 
     @Test
-    void toList1LowerCase() {
+    void toList1LowerCase() throws SyntaxException {
         IBlocksGenerator generator = new BlocksGenerator("i");
-        assertThat(generator.getDepth()).isEqualTo(1);
-
-        assertThat(generator.blocksStream())
-                .hasSize(1)
-                .containsExactly(new LongBlocks(Collections.singletonList(I)));
-
-        assertThat(generator.blockCountersStream())
-                .hasSize(1)
-                .containsExactly(new BlockCounter(Collections.singletonList(I)));
+        assertSame(generator, new BlocksGenerator("I"));
     }
 
     @Test
-    void toList2() {
+    void toList2() throws SyntaxException {
         IBlocksGenerator generator = new BlocksGenerator("I,J");
         assertThat(generator.getDepth()).isEqualTo(2);
 
@@ -59,22 +71,26 @@ class BlocksGeneratorTest {
     }
 
     @Test
-    void toList2WithSpace() {
+    void toList2WithSpace() throws SyntaxException {
         IBlocksGenerator generator = new BlocksGenerator(" I , J ");
-        assertThat(generator.getDepth()).isEqualTo(2);
-
-        assertThat(generator.blocksStream())
-                .hasSize(1)
-                .containsExactly(new LongBlocks(Arrays.asList(I, J)));
-
-        assertThat(generator.blockCountersStream())
-                .hasSize(1)
-                .containsExactly(new BlockCounter(Arrays.asList(I, J)));
+        assertSame(generator, new BlocksGenerator("I,J"));
     }
 
     @Test
-    void toListAsterisk() {
-        IBlocksGenerator generator = new BlocksGenerator(" * ");
+    void toList2WithSpace2() throws SyntaxException {
+        IBlocksGenerator generator = new BlocksGenerator(" I J ");
+        assertSame(generator, new BlocksGenerator("I,J"));
+    }
+
+    @Test
+    void toList2WithoutSeparator() throws SyntaxException {
+        IBlocksGenerator generator = new BlocksGenerator(" IJ ");
+        assertSame(generator, new BlocksGenerator("I,J"));
+    }
+
+    @Test
+    void toListAsterisk() throws SyntaxException {
+        IBlocksGenerator generator = new BlocksGenerator("*");
         assertThat(generator.getDepth()).isEqualTo(1);
 
         assertThat(generator.blocksStream())
@@ -87,8 +103,8 @@ class BlocksGeneratorTest {
     }
 
     @Test
-    void toListAsterisk2() {
-        IBlocksGenerator generator = new BlocksGenerator(" *, * ");
+    void toListAsterisk2() throws SyntaxException {
+        IBlocksGenerator generator = new BlocksGenerator("*,*");
         assertThat(generator.getDepth()).isEqualTo(2);
 
         assertThat(generator.blockCountersStream())
@@ -101,8 +117,20 @@ class BlocksGeneratorTest {
     }
 
     @Test
-    void toListSelector() {
-        IBlocksGenerator generator = new BlocksGenerator(" [TSZ] ");
+    void toListAsterisk2WithoutSeparator() throws SyntaxException {
+        IBlocksGenerator generator = new BlocksGenerator("**");
+        assertSame(generator, new BlocksGenerator("*,*"));
+    }
+
+    @Test
+    void toListAsterisk2WithSpace() throws SyntaxException {
+        IBlocksGenerator generator = new BlocksGenerator(" * * ");
+        assertSame(generator, new BlocksGenerator("*,*"));
+    }
+
+    @Test
+    void toListSelector() throws SyntaxException {
+        IBlocksGenerator generator = new BlocksGenerator("[TSZ]");
         assertThat(generator.getDepth()).isEqualTo(1);
 
         assertThat(generator.blocksStream())
@@ -119,8 +147,14 @@ class BlocksGeneratorTest {
     }
 
     @Test
-    void toListSelector2() {
-        IBlocksGenerator generator = new BlocksGenerator(" [TsZ] , [IOjl]");
+    void toListSelectorWithSpace() throws SyntaxException {
+        IBlocksGenerator generator = new BlocksGenerator("[ T S Z ]");
+        assertSame(generator, new BlocksGenerator("[TSZ]"));
+    }
+
+    @Test
+    void toListSelector2() throws SyntaxException {
+        IBlocksGenerator generator = new BlocksGenerator("[TSZ],[IOJL]");
         assertThat(generator.getDepth()).isEqualTo(2);
 
         assertThat(generator.blocksStream())
@@ -155,8 +189,20 @@ class BlocksGeneratorTest {
     }
 
     @Test
-    void toListSelectorWithPermutation() {
-        IBlocksGenerator generator = new BlocksGenerator(" [TSZ]p2 ");
+    void toListSelector2WithLowercase() throws SyntaxException {
+        IBlocksGenerator generator = new BlocksGenerator(" [TsZ] , [IOjl]");
+        assertSame(generator, new BlocksGenerator("[TSZ],[IOJL]"));
+    }
+
+    @Test
+    void toListSelector2WithSpace() throws SyntaxException {
+        IBlocksGenerator generator = new BlocksGenerator(" [ T S Z ] , [ I O J L ]");
+        assertSame(generator, new BlocksGenerator("[TSZ],[IOJL]"));
+    }
+
+    @Test
+    void toListSelectorWithPermutation() throws SyntaxException {
+        IBlocksGenerator generator = new BlocksGenerator("[TSZ]p2");
         assertThat(generator.getDepth()).isEqualTo(2);
 
         assertThat(generator.blocksStream())
@@ -176,16 +222,13 @@ class BlocksGeneratorTest {
     }
 
     @Test
-    void toListAsteriskWithPermutation() {
-        IBlocksGenerator generator = new BlocksGenerator(" *p4 ");
-        assertThat(generator.getDepth()).isEqualTo(4);
-
-        assertThat(generator.blocksStream()).hasSize(840);
-        assertThat(generator.blockCountersStream()).hasSize(35);
+    void toListAsteriskWithPermutation() throws SyntaxException {
+        IBlocksGenerator generator = new BlocksGenerator("*p4");
+        assertSame(generator, new BlocksGenerator("[TIOJLSZ]p4"));
     }
 
     @Test
-    void toMultiList1() {
+    void toMultiList1() throws SyntaxException {
         List<String> patterns = Arrays.asList("I#comment", "T", "# comment");
         IBlocksGenerator generator = new BlocksGenerator(patterns);
         assertThat(generator.getDepth()).isEqualTo(1);
@@ -195,7 +238,7 @@ class BlocksGeneratorTest {
     }
 
     @Test
-    void toMultiList2() {
+    void toMultiList2() throws SyntaxException {
         List<String> patterns = Arrays.asList("I, *p4", "*p5", "[TISZL]p5");
         IBlocksGenerator generator = new BlocksGenerator(patterns);
         assertThat(generator.getDepth()).isEqualTo(5);
@@ -206,7 +249,7 @@ class BlocksGeneratorTest {
     }
 
     @Test
-    void toMultiList3() {
+    void toMultiList3() throws SyntaxException {
         List<String> patterns = Arrays.asList(
                 "I, I, *p3",
                 "I, S, *p3",
@@ -224,7 +267,7 @@ class BlocksGeneratorTest {
     }
 
     @Test
-    void toMultiList4() {
+    void toMultiList4() throws SyntaxException {
         List<String> patterns = Arrays.asList("T,T", "Z,* # comment");
         IBlocksGenerator generator = new BlocksGenerator(patterns);
         assertThat(generator.getDepth()).isEqualTo(2);
@@ -234,27 +277,21 @@ class BlocksGeneratorTest {
     }
 
     @Test
-    void factorial1() {
+    void factorial1() throws SyntaxException {
         List<String> patterns = Collections.singletonList("[SZO]!");
         IBlocksGenerator generator = new BlocksGenerator(patterns);
-        assertThat(generator.getDepth()).isEqualTo(3);
-
-        assertThat(generator.blocksStream()).hasSize(6);
-        assertThat(generator.blockCountersStream()).hasSize(1);
+        assertSame(generator, new BlocksGenerator("[SZO]p3"));
     }
 
     @Test
-    void factorial2() {
+    void factorial2() throws SyntaxException {
         List<String> patterns = Collections.singletonList("*!");
         IBlocksGenerator generator = new BlocksGenerator(patterns);
-        assertThat(generator.getDepth()).isEqualTo(7);
-
-        assertThat(generator.blocksStream()).hasSize(5040);
-        assertThat(generator.blockCountersStream()).hasSize(1);
+        assertSame(generator, new BlocksGenerator("[TIOSZLJ]p7"));
     }
 
     @Test
-    void singleQuote() {
+    void singleQuote() throws SyntaxException {
         IBlocksGenerator generator = new BlocksGenerator(" ' *p3, *p2 ' ");
         assertThat(generator.getDepth()).isEqualTo(5);
 
@@ -266,7 +303,7 @@ class BlocksGeneratorTest {
     void errorOverPopPermutation() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                BlocksGenerator.verify(" *p8 ");
+                new BlocksGenerator(" *p8 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -278,7 +315,7 @@ class BlocksGeneratorTest {
     void errorLessPopPermutation() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                BlocksGenerator.verify(" *p0 ");
+                new BlocksGenerator(" *p0 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -290,7 +327,7 @@ class BlocksGeneratorTest {
     void errorIllegalNumberPermutation() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                BlocksGenerator.verify(" *pf ");
+                new BlocksGenerator(" *pf ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -303,7 +340,7 @@ class BlocksGeneratorTest {
         assertThrows(SyntaxException.class, () -> {
 
             try {
-                BlocksGenerator.verify(" *7p4 ");
+                new BlocksGenerator(" *7p4 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -316,7 +353,7 @@ class BlocksGeneratorTest {
         assertThrows(SyntaxException.class, () -> {
 
             try {
-                BlocksGenerator.verify(" *6 ");
+                new BlocksGenerator(" *6 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -329,19 +366,7 @@ class BlocksGeneratorTest {
         assertThrows(SyntaxException.class, () -> {
 
             try {
-                BlocksGenerator.verify(" []p1 ");
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw e;
-            }
-        });
-    }
-
-    @Test
-    void errorAsteriskAndBlocksPermutation() {
-        assertThrows(SyntaxException.class, () -> {
-            try {
-                BlocksGenerator.verify(" [SZT]*p2 ");
+                new BlocksGenerator(" []p1 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -353,31 +378,7 @@ class BlocksGeneratorTest {
     void errorUnknownAndBlocksPermutation() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                BlocksGenerator.verify(" [SZT]kp2 ");
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw e;
-            }
-        });
-    }
-
-    @Test
-    void errorAsteriskAndBlocksPermutation2() {
-        assertThrows(SyntaxException.class, () -> {
-            try {
-                BlocksGenerator.verify(" *[SZT]p2 ");
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw e;
-            }
-        });
-    }
-
-    @Test
-    void errorUnknownAndBlocksPermutation2() {
-        assertThrows(SyntaxException.class, () -> {
-            try {
-                BlocksGenerator.verify(" z[SZT]p2 ");
+                new BlocksGenerator(" [SZT]kp2 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -389,7 +390,7 @@ class BlocksGeneratorTest {
     void errorNoCloseBracketPermutation() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                BlocksGenerator.verify(" [TSZ  p1 ");
+                new BlocksGenerator(" [TSZ  p1 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -401,7 +402,7 @@ class BlocksGeneratorTest {
     void errorOverOpenBracketPermutation1() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                BlocksGenerator.verify(" [[TSZ]  p1 ");
+                new BlocksGenerator(" [[TSZ]  p1 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -413,7 +414,7 @@ class BlocksGeneratorTest {
     void errorOverOpenBracketPermutation2() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                BlocksGenerator.verify(" [TS[Z]  p1 ");
+                new BlocksGenerator(" [TS[Z]  p1 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -425,7 +426,7 @@ class BlocksGeneratorTest {
     void errorIllegalPositionOfBracketPermutation1() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                BlocksGenerator.verify(" T[SZ]  p1 ");
+                new BlocksGenerator(" T[SZ]  p1 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -437,7 +438,43 @@ class BlocksGeneratorTest {
     void errorIllegalPositionOfBracketPermutation2() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                BlocksGenerator.verify(" [TSZ  p1] ");
+                new BlocksGenerator(" IJ LS [SZ] ! ");
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw e;
+            }
+        });
+    }
+
+    @Test
+    void errorIllegalPositionOfBracketPermutation3() {
+        assertThrows(SyntaxException.class, () -> {
+            try {
+                new BlocksGenerator(" [TSZ  p1] ");
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw e;
+            }
+        });
+    }
+
+    @Test
+    void errorIllegalPositionOfAsteriskPermutation1() {
+        assertThrows(SyntaxException.class, () -> {
+            try {
+                new BlocksGenerator(" * p1 ");
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw e;
+            }
+        });
+    }
+
+    @Test
+    void errorIllegalPositionOfAsteriskPermutation2() {
+        assertThrows(SyntaxException.class, () -> {
+            try {
+                new BlocksGenerator(" * ! ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -449,7 +486,7 @@ class BlocksGeneratorTest {
     void errorNoOpenBracketPermutation() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                BlocksGenerator.verify(" TSZ]  p1 ");
+                new BlocksGenerator(" TSZ]  p1 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -461,7 +498,7 @@ class BlocksGeneratorTest {
     void errorOverCloseBracketPermutation1() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                BlocksGenerator.verify(" [TSZ]  p1 ]");
+                new BlocksGenerator(" [TSZ]  p1 ]");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -473,7 +510,7 @@ class BlocksGeneratorTest {
     void errorOverCloseBracketPermutation2() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                BlocksGenerator.verify(" [TSZ]]  p1 ");
+                new BlocksGenerator(" [TSZ]]  p1 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -485,7 +522,7 @@ class BlocksGeneratorTest {
     void errorIllegalNumberSelector() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                BlocksGenerator.verify(" [T SZ LJ I]pk ");
+                new BlocksGenerator(" [T SZ LJ I]pk ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -497,7 +534,7 @@ class BlocksGeneratorTest {
     void errorSelectorNoP() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                BlocksGenerator.verify(" [TIJ]2 ");
+                new BlocksGenerator(" [TIJ]2 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -509,7 +546,7 @@ class BlocksGeneratorTest {
     void errorEmptySelector() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                BlocksGenerator.verify(" [  ] ");
+                new BlocksGenerator(" [  ] ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -521,7 +558,7 @@ class BlocksGeneratorTest {
     void errorIllegalBlockSelector() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                BlocksGenerator.verify(" [X] ");
+                new BlocksGenerator(" [X] ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -533,19 +570,7 @@ class BlocksGeneratorTest {
     void errorIllegalBlock() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                BlocksGenerator.verify(" X ");
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw e;
-            }
-        });
-    }
-
-    @Test
-    void errorOverBlock() {
-        assertThrows(SyntaxException.class, () -> {
-            try {
-                BlocksGenerator.verify(" T S ");
+                new BlocksGenerator(" X ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -557,7 +582,7 @@ class BlocksGeneratorTest {
     void errorDifferentDepthList() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                BlocksGenerator.verify(Arrays.asList(" T ,S ", "", "I"));
+                new BlocksGenerator(Arrays.asList(" T ,S ", "", "I"));
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -569,7 +594,7 @@ class BlocksGeneratorTest {
     void errorFactorial1() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                BlocksGenerator.verify(" [SZ]p! ");
+                new BlocksGenerator(" [SZ]p! ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -581,7 +606,7 @@ class BlocksGeneratorTest {
     void errorFactorial2() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                BlocksGenerator.verify(" [SZ]!p ");
+                new BlocksGenerator(" [SZ]!p ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -593,7 +618,7 @@ class BlocksGeneratorTest {
     void errorFactorial3() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                BlocksGenerator.verify(" [SZ]x! ");
+                new BlocksGenerator(" [SZ]x! ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -605,7 +630,7 @@ class BlocksGeneratorTest {
     void errorFactorial4() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                BlocksGenerator.verify(" *p! ");
+                new BlocksGenerator(" *p! ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -617,7 +642,7 @@ class BlocksGeneratorTest {
     void errorFactorial5() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                BlocksGenerator.verify(" *!p ");
+                new BlocksGenerator(" *!p ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -626,10 +651,10 @@ class BlocksGeneratorTest {
     }
 
     @Test
-    void errorDuplicateBlock() {
+    void errorDuplicateBlock1() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                BlocksGenerator.verify(" [SS]p2 ");
+                new BlocksGenerator("[tt]");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -638,10 +663,10 @@ class BlocksGeneratorTest {
     }
 
     @Test
-    void errorSingleQuote1() {
+    void errorDuplicateBlock2() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                BlocksGenerator.verify(" '*p4' ");
+                new BlocksGenerator(" [SS]p2 ");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
@@ -653,7 +678,19 @@ class BlocksGeneratorTest {
     void errorSingleQuote2() {
         assertThrows(SyntaxException.class, () -> {
             try {
-                BlocksGenerator.verify(" '*p4 ");
+                new BlocksGenerator(" '*p4 ");
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw e;
+            }
+        });
+    }
+
+    @Test
+    void errorInvalidSeparatorInSelector() {
+        assertThrows(SyntaxException.class, () -> {
+            try {
+                new BlocksGenerator("[S,Z,T,O]");
             } catch (Exception e) {
                 e.printStackTrace();
                 throw e;

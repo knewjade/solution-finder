@@ -1,5 +1,6 @@
 package searcher.checker;
 
+import common.SyntaxException;
 import common.datastore.action.Action;
 import common.pattern.BlocksGenerator;
 import common.pattern.IBlocksGenerator;
@@ -136,7 +137,7 @@ class CheckerNoHoldCountTest {
         private IBlocksGenerator blocksGenerator;
 
         @BeforeEach
-        void setUp() {
+        void setUp() throws SyntaxException {
             this.blocksGenerator = new BlocksGenerator(pattern);
         }
 

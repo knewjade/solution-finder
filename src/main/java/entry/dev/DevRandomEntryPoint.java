@@ -1,7 +1,9 @@
 package entry.dev;
 
+import common.SyntaxException;
 import common.datastore.pieces.Blocks;
 import common.pattern.BlocksGenerator;
+import common.pattern.IBlocksGenerator;
 import common.tetfu.Tetfu;
 import common.tetfu.TetfuElement;
 import common.tetfu.TetfuPage;
@@ -10,9 +12,7 @@ import common.tetfu.field.ArrayColoredField;
 import common.tetfu.field.ColoredField;
 import core.mino.MinoFactory;
 import entry.EntryPoint;
-import exceptions.FinderException;
-import exceptions.FinderParseException;
-import exceptions.FinderTerminateException;
+import exceptions.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,7 +40,7 @@ public class DevRandomEntryPoint implements EntryPoint {
 
     @Override
     public void run() throws FinderException {
-        BlocksGenerator generator = new BlocksGenerator(pattern);
+        IBlocksGenerator generator = createBlockGenerator(pattern);
         List<Blocks> blocks = generator.blocksStream().collect(Collectors.toList());
         int index = new Random().nextInt(blocks.size());
         Blocks selected = blocks.get(index);
@@ -57,6 +57,14 @@ public class DevRandomEntryPoint implements EntryPoint {
         String encode = tetfu.encode(Collections.singletonList(element));
 
         System.out.println("v115@" + encode);
+    }
+
+    private IBlocksGenerator createBlockGenerator(String pattern) throws FinderInitializeException, FinderExecuteException {
+        try {
+            return new BlocksGenerator(pattern);
+        } catch (SyntaxException e) {
+            throw new FinderInitializeException("Pattern syntax error", e);
+        }
     }
 
     private ColoredField getTetfu(MinoFactory minoFactory, ColorConverter converter) throws FinderParseException {

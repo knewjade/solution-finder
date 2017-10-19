@@ -1,5 +1,6 @@
 package common.tree;
 
+import common.SyntaxException;
 import common.datastore.pieces.LongBlocks;
 import common.pattern.BlocksGenerator;
 import common.pattern.IBlocksGenerator;
@@ -39,7 +40,7 @@ class VisitedTreeTest {
     }
 
     @Test
-    void random() {
+    void random() throws SyntaxException {
         Randoms randoms = new Randoms();
         for (int size = 1; size <= 7; size++) {
             IBlocksGenerator generator = new BlocksGenerator("*p" + size);
@@ -80,7 +81,7 @@ class VisitedTreeTest {
 
     @Test
     @Tag("long")
-    void randomLong() {
+    void randomLong() throws SyntaxException {
         Randoms randoms = new Randoms();
         for (int size = 8; size <= 11; size++) {
             IBlocksGenerator generator = new BlocksGenerator("*p7, *p" + (size - 7));

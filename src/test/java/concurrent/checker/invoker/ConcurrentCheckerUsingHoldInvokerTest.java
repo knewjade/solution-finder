@@ -1,5 +1,6 @@
 package concurrent.checker.invoker;
 
+import common.SyntaxException;
 import common.datastore.Pair;
 import common.datastore.action.Action;
 import common.datastore.pieces.Blocks;
@@ -276,7 +277,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
 
     @Test
     @Tag("long")
-    void random() throws ExecutionException, InterruptedException {
+    void random() throws ExecutionException, InterruptedException, SyntaxException {
         Randoms randoms = new Randoms();
 
         MinoFactory minoFactory = new MinoFactory();
@@ -303,7 +304,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
         }
     }
 
-    private IBlocksGenerator createPiecesGenerator(int maxDepth) {
+    private IBlocksGenerator createPiecesGenerator(int maxDepth) throws SyntaxException {
         switch (maxDepth) {
             case 3:
                 return new BlocksGenerator("*, *p3");

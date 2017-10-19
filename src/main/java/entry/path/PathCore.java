@@ -1,5 +1,6 @@
 package entry.path;
 
+import common.SyntaxException;
 import common.buildup.BuildUpStream;
 import common.datastore.BlockField;
 import common.datastore.OperationWithKey;
@@ -34,7 +35,7 @@ class PathCore {
     private final HashSet<LongBlocks> validPieces;
     private final HashSet<LongBlocks> allPieces;
 
-    PathCore(List<String> patterns, PackSearcher searcher, int maxDepth, boolean isUsingHold, FumenParser fumenParser, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal) {
+    PathCore(List<String> patterns, PackSearcher searcher, int maxDepth, boolean isUsingHold, FumenParser fumenParser, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal) throws SyntaxException {
         this.searcher = searcher;
         this.fumenParser = fumenParser;
         this.buildUpStreamTh1readLocal = buildUpStreamThreadLocal;

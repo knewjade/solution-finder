@@ -3,64 +3,37 @@ package common.pattern;
 import common.datastore.BlockCounter;
 import common.datastore.pieces.Blocks;
 import common.datastore.pieces.LongBlocks;
-import common.iterable.CombinationIterable;
-import common.iterable.PermutationIterable;
-import core.mino.Block;
-import lib.MyIterables;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 class PiecesStreamBuilder {
-    private final List<PatternElement> elements;
+    private final List<Element> elements;
     private final int lastIndex;
 
-    PiecesStreamBuilder(String pattern) {
-        this.elements = Arrays.stream(pattern.split(","))
-                .map(PatternElement::parseWithoutCheck)
-                .map(Optional::get)
-                .collect(Collectors.toList());
-
-        this.lastIndex = elements.size() - 1;
-    }
-
-    PiecesStreamBuilder(List<PatternElement> elements) {
+    PiecesStreamBuilder(List<Element> elements) {
         this.elements = elements;
         this.lastIndex = elements.size() - 1;
     }
 
-    int getDepths() {
-        return elements.stream()
-                .mapToInt(PatternElement::getPopCount)
-                .sum();
-    }
-
     Stream<Blocks> blocksStream() {
-        List<List<List<Block>>> combinations = createCombinations();
+        List<List<Blocks>> combinations = createPermutations();
         Stream.Builder<Blocks> builder = Stream.builder();
         if (!combinations.isEmpty())
             enumerate(combinations, builder, new LongBlocks(), 0);
         return builder.build();
     }
 
-    private List<List<List<Block>>> createCombinations() {
+    private List<List<Blocks>> createPermutations() {
         return elements.stream()
-                .map(element -> {
-                    int popCount = element.getPopCount();
-                    List<Block> blocks = element.getBlocks();
-                    Iterable<List<Block>> iterable = new PermutationIterable<>(blocks, popCount);
-                    return MyIterables.toList(iterable);
-                })
+                .map(Element::getPermutationBlocks)
                 .collect(Collectors.toList());
     }
 
-    private void enumerate(List<List<List<Block>>> combinations, Stream.Builder<Blocks> builder, Blocks blocks, int index) {
-        for (List<Block> combination : combinations.get(index)) {
-            Blocks newBlocks = blocks.addAndReturnNew(combination);
+    private void enumerate(List<List<Blocks>> combinations, Stream.Builder<Blocks> builder, Blocks blocks, int index) {
+        for (Blocks combination : combinations.get(index)) {
+            Blocks newBlocks = blocks.addAndReturnNew(combination.blockStream());
             if (index == lastIndex) {
                 builder.accept(newBlocks);
             } else {
@@ -79,14 +52,7 @@ class PiecesStreamBuilder {
 
     private List<List<BlockCounter>> createBlockCounters() {
         return elements.stream()
-                .map(element -> {
-                    int popCount = element.getPopCount();
-                    List<Block> blocks = element.getBlocks();
-                    Iterable<List<Block>> iterable = new CombinationIterable<>(blocks, popCount);
-                    return StreamSupport.stream(iterable.spliterator(), false)
-                            .map(BlockCounter::new)
-                            .collect(Collectors.toList());
-                })
+                .map(Element::getBlockCounters)
                 .collect(Collectors.toList());
     }
 

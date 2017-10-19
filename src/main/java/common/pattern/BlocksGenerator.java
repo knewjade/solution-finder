@@ -1,104 +1,87 @@
 package common.pattern;
 
-
 import common.SyntaxException;
 import common.datastore.BlockCounter;
 import common.datastore.pieces.Blocks;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class BlocksGenerator implements IBlocksGenerator {
-    public static void verify(String pattern) throws SyntaxException {
-        verify(Collections.singletonList(pattern));
-    }
+    private final List<BlockInterpreter> interpreters;
 
-    public static void verify(List<String> patterns) throws SyntaxException {
-        int depth = -1;
-        for (int index = 0; index < patterns.size(); index++) {
-            String pattern = patterns.get(index);
-            if (pattern.contains("#"))
-                pattern = pattern.substring(0, pattern.indexOf('#'));
-
-            pattern = pattern.trim();
-
-            if (pattern.equals(""))
-                continue;
-
-            int currentDepth = 0;
-            String[] splits = pattern.split(",");
-            for (String split : splits) {
-                try {
-                    currentDepth += PatternElement.verify(split);
-                } catch (SyntaxException e) {
-                    String message = String.format("'%s' on %d line :: cause = %s", split.trim(), index + 1, e.getMessage());
-                    throw new SyntaxException(message);
-                }
-            }
-
-            if (depth == -1) {
-                depth = currentDepth;  // First depth
-            } else if (depth != currentDepth) {
-                String message = String.format("'%s' on %d line :: cause = %s", pattern.trim(), index + 1, "Num of blocks is not equal to others");
-                throw new SyntaxException(message);
-            }
-        }
-    }
-
-    private final List<List<PatternElement>> elementsList;
-
-    public BlocksGenerator(String pattern) {
+    public BlocksGenerator(String pattern) throws SyntaxException {
         this(Collections.singletonList(pattern));
     }
 
-    public BlocksGenerator(List<String> patterns) {
-        this.elementsList = patterns.stream()
-                .map(String::trim)
-                .map(str -> {
-                    if (str.startsWith("'") && str.endsWith("'"))
-                        return str.substring(1, str.length() - 1);
-                    return str;
-                })
-                .map(str -> {
-                    if (str.contains("#"))
-                        return str.substring(0, str.indexOf('#'));
-                    return str;
-                })
-                .map(String::trim)
-                .filter(pattern -> !pattern.isEmpty())
-                .map(pattern -> {
-                    return Arrays.stream(pattern.split(","))
-                            .map(PatternElement::parseWithoutCheck)
-                            .map(Optional::get)
-                            .collect(Collectors.toList());
-                })
-                .collect(Collectors.toList());
+    public BlocksGenerator(List<String> patterns) throws SyntaxException {
+        ArrayList<BlockInterpreter> interpreters = new ArrayList<>();
+        int depth = -1;
+        for (int index = 0; index < patterns.size(); index++) {
+            String pattern = patterns.get(index);
+            String trim = pattern.trim();
+            if (trim.startsWith("'") && trim.endsWith("'"))
+                trim = trim.substring(1, trim.length() - 1);
+
+            if (trim.isEmpty() || trim.startsWith("#"))
+                continue;
+
+            BlockInterpreter interpreter = parseInterpreter(index, trim);
+
+            if (depth == -1) {
+                depth = getDepth(interpreter);
+            } else if (getDepth(interpreter) != depth) {
+                String message = SyntaxException.formatMessageOnLine("Num of blocks is not equal to other line", index + 1);
+                throw new SyntaxException(message);
+            }
+
+            interpreters.add(interpreter);
+        }
+
+        this.interpreters = interpreters;
+    }
+
+    private BlockInterpreter parseInterpreter(int index, String trim) throws SyntaxException {
+        try {
+            return new BlockInterpreter(trim);
+        } catch (SyntaxException e) {
+            throw new SyntaxException(e, index + 1);
+        }
     }
 
     @Override
     public int getDepth() {
-        if (elementsList.isEmpty())
+        if (interpreters.isEmpty())
             return 0;
-        return new PiecesStreamBuilder(elementsList.get(0)).getDepths();
+        return getDepth(interpreters.get(0));
+    }
+
+    private int getDepth(BlockInterpreter interpreter) {
+        List<Element> elements = interpreter.getElements();
+        return elements.stream()
+                .mapToInt(Element::getPopCount)
+                .sum();
     }
 
     @Override
     public Stream<Blocks> blocksStream() {
         Stream<Blocks> stream = Stream.empty();
-        for (List<PatternElement> elements : elementsList)
+        for (BlockInterpreter interpreter : interpreters) {
+            List<Element> elements = interpreter.getElements();
             stream = Stream.concat(stream, new PiecesStreamBuilder(elements).blocksStream());
+        }
         return stream;
     }
 
     @Override
     public Stream<BlockCounter> blockCountersStream() {
         Stream<BlockCounter> stream = Stream.empty();
-        for (List<PatternElement> elements : elementsList)
+        for (BlockInterpreter interpreter : interpreters) {
+            List<Element> elements = interpreter.getElements();
             stream = Stream.concat(stream, new PiecesStreamBuilder(elements).blockCountersStream());
+        }
         return stream;
     }
 }

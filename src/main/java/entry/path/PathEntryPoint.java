@@ -115,13 +115,7 @@ public class PathEntryPoint implements EntryPoint {
         if (patterns.isEmpty())
             throw new FinderInitializeException("Should specify patterns, not allow empty");
 
-        try {
-            BlocksGenerator.verify(patterns);
-        } catch (SyntaxException e) {
-            output("Pattern syntax error");
-            output(e.getMessage());
-            throw new FinderInitializeException("Pattern syntax error", e);
-        }
+        IBlocksGenerator generator = createBlockGenerator(patterns);
 
         for (String pattern : patterns)
             output("  " + pattern);
@@ -141,7 +135,6 @@ public class PathEntryPoint implements EntryPoint {
 
         // ブロック数が足りないときはエラー
         int maxDepth = emptyCount / 4;
-        IBlocksGenerator generator = new BlocksGenerator(patterns);
         int piecesDepth = generator.getDepth();
         if (piecesDepth < maxDepth)
             throw new FinderInitializeException(String.format("Should specify equal to or more than %d pieces: CurrentPieces=%d", maxDepth, piecesDepth));
@@ -225,6 +218,16 @@ public class PathEntryPoint implements EntryPoint {
         flush();
     }
 
+    private IBlocksGenerator createBlockGenerator(List<String> patterns) throws FinderInitializeException, FinderExecuteException {
+        try {
+            return new BlocksGenerator(patterns);
+        } catch (SyntaxException e) {
+            output("Pattern syntax error");
+            output(e.getMessage());
+            throw new FinderInitializeException("Pattern syntax error", e);
+        }
+    }
+
     private List<PathPair> run(PathCore pathCore, Field field, SizedBit sizedBit, BlockField blockField) throws FinderExecuteException {
         try {
             if (blockField == null)
@@ -246,9 +249,15 @@ public class PathEntryPoint implements EntryPoint {
         return new OneFumenParser(minoFactory, colorConverter);
     }
 
-    private PathCore createPathCore(List<String> patterns, int maxDepth, boolean isUsingHold, PackSearcher searcher, FumenParser fumenParser, int maxClearLine) throws FinderInitializeException {
+    private PathCore createPathCore(List<String> patterns, int maxDepth, boolean isUsingHold, PackSearcher searcher, FumenParser fumenParser, int maxClearLine) throws FinderInitializeException, FinderExecuteException {
         ThreadLocal<BuildUpStream> threadLocalBuildUpStream = createBuildUpStreamThreadLocal(settings.getDropType(), maxClearLine);
-        return new PathCore(patterns, searcher, maxDepth, isUsingHold, fumenParser, threadLocalBuildUpStream);
+        try {
+            return new PathCore(patterns, searcher, maxDepth, isUsingHold, fumenParser, threadLocalBuildUpStream);
+        } catch (SyntaxException e) {
+            output("Pattern syntax error");
+            output(e.getMessage());
+            throw new FinderInitializeException("Pattern syntax error", e);
+        }
     }
 
     private ThreadLocal<BuildUpStream> createBuildUpStreamThreadLocal(DropType dropType, int maxClearLine) throws FinderInitializeException {
