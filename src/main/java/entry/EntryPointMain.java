@@ -8,6 +8,9 @@ import entry.path.PathSettings;
 import entry.percent.PercentEntryPoint;
 import entry.percent.PercentSettingParser;
 import entry.percent.PercentSettings;
+import entry.setup.SetupEntryPoint;
+import entry.setup.SetupSettingParser;
+import entry.setup.SetupSettings;
 import entry.util.fig.FigUtilEntryPoint;
 import entry.util.fig.FigUtilSettingParser;
 import entry.util.fig.FigUtilSettings;
@@ -159,6 +162,8 @@ public class EntryPointMain {
                 return getPathEntryPoint(commands);
             case "util":
                 return getUtilEntryPoint(commands);
+            case "setup":
+                return getSetupEntryPoint(commands);
             case "dev":
                 return getDevEntryPoint(commands);
             default:
@@ -200,10 +205,19 @@ public class EntryPointMain {
         return new FigUtilEntryPoint(settings.get());
     }
 
+    private static EntryPoint getSetupEntryPoint(List<String> commands) throws FinderParseException {
+        SetupSettingParser settingParser = new SetupSettingParser(commands);
+        Optional<SetupSettings> settings = settingParser.parse();
+
+        if (!settings.isPresent())
+            throw new FinderParseException("Cannot parse setting for percent");
+
+        return new SetupEntryPoint(settings.get());
+    }
+
     private static EntryPoint getDevEntryPoint(List<String> commands) throws FinderInitializeException, FinderParseException {
         if (commands.get(0).equals("quiz"))
             return new DevRandomEntryPoint(commands.subList(1, commands.size()));
         throw new IllegalArgumentException("util: Invalid type: Use quiz");
     }
-
 }

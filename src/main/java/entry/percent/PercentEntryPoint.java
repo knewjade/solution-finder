@@ -16,6 +16,8 @@ import core.field.Field;
 import core.field.FieldView;
 import entry.DropType;
 import entry.EntryPoint;
+import entry.Verify;
+import entry.path.output.MyFile;
 import entry.searching_pieces.NormalEnumeratePieces;
 import exceptions.FinderException;
 import exceptions.FinderExecuteException;
@@ -23,7 +25,8 @@ import exceptions.FinderInitializeException;
 import exceptions.FinderTerminateException;
 import lib.Stopwatch;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -34,7 +37,6 @@ import java.util.stream.Collectors;
 
 public class PercentEntryPoint implements EntryPoint {
     private static final String LINE_SEPARATOR = System.lineSeparator();
-    private static final String CHARSET = "utf-8";
 
     private final PercentSettings settings;
     private final BufferedWriter logWriter;
@@ -42,87 +44,78 @@ public class PercentEntryPoint implements EntryPoint {
     public PercentEntryPoint(PercentSettings settings) throws FinderInitializeException {
         this.settings = settings;
 
+        // ログファイルの出力先を整備
         String logFilePath = settings.getLogFilePath();
-        File logFile = new File(logFilePath);
+        MyFile logFile = new MyFile(logFilePath);
 
-        // 親ディレクトリがない場合は作成
-        if (!logFile.getParentFile().exists()) {
-            boolean mairSuccess = logFile.getParentFile().mkdir();
-            if (!mairSuccess) {
-                throw new FinderInitializeException("Failed to make log directory: LogFilePath=" + logFilePath);
-            }
-        }
-
-        if (logFile.isDirectory())
-            throw new FinderInitializeException("Cannot specify directory as log file path: LogFilePath=" + logFilePath);
-        if (logFile.exists() && !logFile.canWrite())
-            throw new FinderInitializeException("Cannot write log file: LogFilePath=" + logFilePath);
+        logFile.mkdirs();
+        logFile.verify();
 
         try {
-            this.logWriter = createBufferedWriter(logFile);
-        } catch (UnsupportedEncodingException | FileNotFoundException e) {
+            this.logWriter = logFile.newBufferedWriter();
+        } catch (IOException e) {
             throw new FinderInitializeException(e);
         }
-    }
-
-    private BufferedWriter createBufferedWriter(File logFile) throws UnsupportedEncodingException, FileNotFoundException {
-        return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile, false), CHARSET));
     }
 
     @Override
     public void run() throws FinderException {
         output("# Setup Field");
+
+        // Setup field
         Field field = settings.getField();
-        if (field == null)
-            throw new FinderInitializeException("Should specify field");
+        Verify.field(field);
 
+        // Setup max clear line
         int maxClearLine = settings.getMaxClearLine();
-        if (maxClearLine < 2 || 12 < maxClearLine)
-            throw new FinderInitializeException("Clear-Line should be 2 <= line <= 12: line=" + maxClearLine);
+        Verify.maxClearLineUnder12(maxClearLine);
 
+        // Output field
         output(FieldView.toString(field, maxClearLine));
 
+        // Setup space
+        int emptyCount = Verify.emptyCount(field, maxClearLine);  // 残りのスペース
+        int maxDepth = Verify.maxDepth(emptyCount);  // パフェに必要なミノ数
+
         output();
+
         // ========================================
+
+        // Output user-defined
         output("# Initialize / User-defined");
         output("Max clear lines: " + maxClearLine);
         output("Using hold: " + (settings.isUsingHold() ? "use" : "avoid"));
         output("Drop: " + settings.getDropType().name().toLowerCase());
         output("Searching patterns:");
+
+        // Setup patterns
         List<String> patterns = settings.getPatterns();
-        if (patterns.isEmpty())
-            throw new FinderInitializeException("Should specify patterns, not allow empty");
+        IBlocksGenerator generator = Verify.patterns(patterns, emptyCount, maxDepth);
 
-        IBlocksGenerator generator = createBlockGenerator(patterns);
-
+        // Output patterns
         for (String pattern : patterns)
             output("  " + pattern);
 
         output();
+
         // ========================================
+
+        // Setup core
         output("# Initialize / System");
         int core = Runtime.getRuntime().availableProcessors();
         ExecutorService executorService = Executors.newFixedThreadPool(core);
 
         output("Version = " + FinderConstant.VERSION);
         output("Available processors = " + core);
-
-        // 残りのスペースが4の倍数でないときはエラー
-        int emptyCount = maxClearLine * 10 - field.getNumOfAllBlocks();
-        if (emptyCount % 4 != 0)
-            throw new FinderInitializeException("Empty block in field should be multiples of 4: EmptyCount=" + emptyCount);
-
-        // ブロック数が足りないときはエラー
-        int maxDepth = emptyCount / 4;
-        int piecesDepth = generator.getDepth();
-        if (piecesDepth < maxDepth)
-            throw new FinderInitializeException(String.format("Should specify equal to or more than %d pieces: CurrentPieces=%d", maxDepth, piecesDepth));
-
         output("Necessary Pieces = " + maxDepth);
 
         output();
+
         // ========================================
+
+        // Holdができるときは必要なミノ分（maxDepth + 1）だけを取り出す。maxDepth + 1だけないときはブロックの個数をそのまま指定
         output("# Enumerate pieces");
+        int piecesDepth = generator.getDepth();
         int popCount = settings.isUsingHold() && maxDepth < piecesDepth ? maxDepth + 1 : maxDepth;
         output("Piece pop count = " + popCount);
         if (popCount < piecesDepth) {
@@ -137,19 +130,20 @@ public class PercentEntryPoint implements EntryPoint {
 
         // 探索パターンの列挙
         NormalEnumeratePieces normalEnumeratePieces = new NormalEnumeratePieces(generator, maxDepth, settings.isUsingHold());
-
         Set<LongBlocks> searchingPieces = normalEnumeratePieces.enumerate();
 
         output("Searching pattern size (duplicate) = " + normalEnumeratePieces.getCounter());
         output("Searching pattern size ( no dup. ) = " + searchingPieces.size());
 
         output();
+
         // ========================================
+
+        // 探索を行う
         output("# Search");
         output("  -> Stopwatch start");
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
-        // 探索を行う
         ThreadLocal<Candidate<Action>> candidateThreadLocal = createCandidateThreadLocal(settings.getDropType(), maxClearLine);
         PercentCore percentCore = new PercentCore(executorService, candidateThreadLocal, settings.isUsingHold());
         try {
@@ -165,19 +159,25 @@ public class PercentEntryPoint implements EntryPoint {
         output("  -> Stopwatch stop : " + stopwatch.toMessage(TimeUnit.MILLISECONDS));
 
         output();
+
         // ========================================
+
+        // Output tree
         output("# Output");
         output(tree.show());
 
         output();
 
+        // Output failed patterns
         int treeDepth = settings.getTreeDepth();
         if (piecesDepth < treeDepth)
             treeDepth = piecesDepth;
+
         output(String.format("Success pattern tree [Head %d pieces]:", treeDepth));
         output(tree.tree(treeDepth));
 
         output("-------------------");
+
         int failedMaxCount = settings.getFailedCount();
         // skip if failedMaxCount == 0
         if (0 < failedMaxCount) {
@@ -200,7 +200,9 @@ public class PercentEntryPoint implements EntryPoint {
         }
 
         output();
+
         // ========================================
+        
         output("# Finalize");
         executorService.shutdown();
         output("done");
