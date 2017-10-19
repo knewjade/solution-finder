@@ -82,7 +82,6 @@ public class BlockInterpreter {
     private BracketElement combination() throws SyntaxException {
         int lastIndex = token.getLastIndex();
         LinkedList<String> combinationTokenList = getCombinationTokenList();
-        System.out.println(combinationTokenList);
         Token subToken = Token.createSubToken(combinationTokenList, lastIndex);
         boolean blankNext = token.isBlankNext();
         switch (token.check()) {
