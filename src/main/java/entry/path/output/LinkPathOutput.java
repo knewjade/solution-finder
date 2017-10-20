@@ -38,7 +38,8 @@ public class LinkPathOutput implements PathOutput {
 
         // baseファイル
         String outputFilePath = String.format("%s%s", namePath, FILE_EXTENSION);
-        MyFile.mkdirs(outputFilePath);
+        MyFile base = new MyFile(outputFilePath);
+        base.mkdirs();
 
         // uniqueファイル
         String uniqueOutputFilePath = String.format("%s_unique%s", namePath, FILE_EXTENSION);

@@ -174,14 +174,6 @@ public class PercentSettingParser {
         return Optional.of(settings);
     }
 
-    private CommandLine parseToCommandLine(Options options, CommandLineParser parser, String[] commands) throws FinderParseException {
-        try {
-            return parser.parse(options, commands);
-        } catch (ParseException e) {
-            throw new FinderParseException(e);
-        }
-    }
-
     private Options createOptions() {
         Options options = new Options();
 
@@ -303,6 +295,14 @@ public class PercentSettingParser {
         options.addOption(dropOption);
 
         return options;
+    }
+
+    private CommandLine parseToCommandLine(Options options, CommandLineParser parser, String[] commands) throws FinderParseException {
+        try {
+            return parser.parse(options, commands);
+        } catch (ParseException e) {
+            throw new FinderParseException(e);
+        }
     }
 
     private CommandLineWrapper loadTetfu(String data, CommandLineParser parser, Options options, CommandLineWrapper wrapper, PercentSettings settings) throws FinderParseException {

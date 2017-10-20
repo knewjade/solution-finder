@@ -205,7 +205,7 @@ public class EntryPointMain {
         return new FigUtilEntryPoint(settings.get());
     }
 
-    private static EntryPoint getSetupEntryPoint(List<String> commands) throws FinderParseException {
+    private static EntryPoint getSetupEntryPoint(List<String> commands) throws FinderParseException, FinderInitializeException {
         SetupSettingParser settingParser = new SetupSettingParser(commands);
         Optional<SetupSettings> settings = settingParser.parse();
 

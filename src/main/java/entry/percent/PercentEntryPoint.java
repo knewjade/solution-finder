@@ -202,12 +202,10 @@ public class PercentEntryPoint implements EntryPoint {
         output();
 
         // ========================================
-        
+
         output("# Finalize");
         executorService.shutdown();
         output("done");
-
-        flush();
     }
 
     private IBlocksGenerator createBlockGenerator(List<String> patterns) throws FinderInitializeException, FinderExecuteException {
@@ -264,8 +262,9 @@ public class PercentEntryPoint implements EntryPoint {
     @Override
     public void close() throws FinderTerminateException {
         try {
+            flush();
             logWriter.close();
-        } catch (IOException e) {
+        } catch (IOException | FinderExecuteException e) {
             throw new FinderTerminateException(e);
         }
     }

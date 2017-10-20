@@ -36,8 +36,8 @@ public class FumenCSVPathOutput implements PathOutput {
 
         // baseファイル
         String outputFilePath = String.format("%s%s", namePath, FILE_EXTENSION);
-        MyFile.mkdirs(outputFilePath);
         MyFile base = new MyFile(outputFilePath);
+        base.mkdirs();
         base.verify();
 
         // 保存

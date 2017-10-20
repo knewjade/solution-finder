@@ -1,4 +1,4 @@
-package entry.path;
+package core.field;
 
 import common.datastore.BlockField;
 import core.mino.Block;
@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-class BlockFieldView {
+public class BlockFieldView {
     private static final int FIELD_WIDTH = 10;
     private static final String LINE_SEPARATOR = System.lineSeparator();
     private static final char EMPTY_CHAR = '_';

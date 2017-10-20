@@ -8,6 +8,7 @@ import common.tetfu.common.ColorConverter;
 import core.FinderConstant;
 import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
+import core.field.BlockFieldView;
 import core.field.Field;
 import core.field.FieldView;
 import core.mino.MinoFactory;
@@ -185,8 +186,6 @@ public class PathEntryPoint implements EntryPoint {
 
         output("# Finalize");
         output("done");
-
-        flush();
     }
 
     private SizedBit decideSizedBitSolutionWidth(int maxClearLine) {
@@ -304,8 +303,9 @@ public class PathEntryPoint implements EntryPoint {
     @Override
     public void close() throws FinderTerminateException {
         try {
+            flush();
             logWriter.close();
-        } catch (IOException e) {
+        } catch (IOException | FinderExecuteException e) {
             throw new FinderTerminateException(e);
         }
     }
