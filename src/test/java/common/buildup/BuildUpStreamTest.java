@@ -26,10 +26,7 @@ import searcher.pack.memento.AllPassedSolutionFilter;
 import searcher.pack.memento.SRSValidSolutionFilter;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.solutions.OnDemandBasicSolutions;
-import searcher.pack.task.Field4x10MinoPackingHelper;
-import searcher.pack.task.PackSearcher;
-import searcher.pack.task.Result;
-import searcher.pack.task.TaskResultHelper;
+import searcher.pack.task.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -137,7 +134,7 @@ class BuildUpStreamTest {
             // Search
             List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(basicWidth, height, field);
             SolutionFilter solutionFilter = createRandomSolutionFilter(randoms, sizedBit, lockedReachableThreadLocal, field);
-            PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
+            PerfectPackSearcher searcher = new PerfectPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
             Optional<Result> resultOptional = searcher.findAny();
 
             // If found solution
@@ -204,7 +201,7 @@ class BuildUpStreamTest {
             // Search
             List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(basicWidth, height, field);
             SolutionFilter solutionFilter = createRandomSolutionFilter(randoms, sizedBit, lockedReachableThreadLocal, field);
-            PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
+            PerfectPackSearcher searcher = new PerfectPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
             Optional<Result> resultOptional = searcher.findAny();
 
             // If found solution

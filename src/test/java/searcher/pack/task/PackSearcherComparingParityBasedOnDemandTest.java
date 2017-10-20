@@ -170,7 +170,7 @@ class PackSearcherComparingParityBasedOnDemandTest {
 
         // 探索準備
         TaskResultHelper taskResultHelper = createTaskResultHelper(sizedBit);
-        PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
+        PerfectPackSearcher searcher = new PerfectPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
 
         // 探索
         return searcher.count();

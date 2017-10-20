@@ -187,7 +187,7 @@ class PackSearcherTest {
                 Field initField = createSquareEmptyField(emptyWidth, sizedBit.getHeight());
                 List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(sizedBit, initField);
 
-                PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
+                PerfectPackSearcher searcher = new PerfectPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
                 assertThat(searcher.count()).isEqualTo(expectedCount);
             }
         }
@@ -254,7 +254,7 @@ class PackSearcherTest {
                 List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(sizedBit, initField);
 
                 SolutionFilter solutionFilter = createSRSSolutionFilter(sizedBit, initField);
-                PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
+                PerfectPackSearcher searcher = new PerfectPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
                 Long expectedCount = pair.getValue();
                 assertThat(searcher.count()).isEqualTo(expectedCount);
             }
@@ -297,7 +297,7 @@ class PackSearcherTest {
 
             // Pack
             BasicSolutions basicSolutions = basicSolutionSupplier.apply(initField, solutionFilter);
-            PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
+            PerfectPackSearcher searcher = new PerfectPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
             List<Result> results = searcher.toList();
 
             // Possible
@@ -351,7 +351,7 @@ class PackSearcherTest {
 
             // Pack
             BasicSolutions basicSolutions = basicSolutionSupplier.apply(initField, solutionFilter);
-            PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
+            PerfectPackSearcher searcher = new PerfectPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
             List<Result> results = searcher.toList();
 
             // Possible

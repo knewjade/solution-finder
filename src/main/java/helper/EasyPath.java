@@ -22,7 +22,7 @@ import searcher.pack.mino_fields.RecursiveMinoFields;
 import searcher.pack.solutions.BasicSolutionsCalculator;
 import searcher.pack.solutions.MappedBasicSolutions;
 import searcher.pack.task.Field4x10MinoPackingHelper;
-import searcher.pack.task.PackSearcher;
+import searcher.pack.task.PerfectPackSearcher;
 import searcher.pack.task.Result;
 import searcher.pack.task.TaskResultHelper;
 
@@ -65,7 +65,7 @@ public class EasyPath {
         SolutionFilter solutionFilter = createSRSSolutionFilter(sizedBit, initField);
 
         // パフェ手順の列挙
-        PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
+        PerfectPackSearcher searcher = new PerfectPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
         return searcher.toList();
     }
 
@@ -96,7 +96,7 @@ public class EasyPath {
         SolutionFilter solutionFilter = createSRSSolutionFilter(sizedBit, initField);
 
         // パフェ手順の列挙
-        PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
+        PerfectPackSearcher searcher = new PerfectPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
         return searcher.toList();
     }
 
@@ -115,7 +115,7 @@ public class EasyPath {
         SolutionFilter solutionFilter = createSRSSolutionFilter(sizedBit, initField);
 
         // パフェ手順の列挙
-        PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
+        PerfectPackSearcher searcher = new PerfectPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
         LockedReachableThreadLocal reachableThreadLocal = easyPool.getLockedReachableThreadLocal(height);
 
         List<Result> results = searcher.toList();

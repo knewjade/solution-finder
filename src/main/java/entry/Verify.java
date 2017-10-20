@@ -30,7 +30,7 @@ public class Verify {
             throw new FinderInitializeException("Invalid reserved blocks");
     }
 
-    public static IBlocksGenerator patterns(List<String> patterns, int emptyCount, int maxDepth) throws FinderInitializeException {
+    public static IBlocksGenerator patterns(List<String> patterns, int maxDepth) throws FinderInitializeException {
         if (patterns.isEmpty())
             throw new FinderInitializeException("Should specify patterns, not allow empty");
 
@@ -51,14 +51,15 @@ public class Verify {
         }
     }
 
-    public static int emptyCount(Field field, int maxClearLine) throws FinderInitializeException {
+    public static int maxDepth(Field field, int maxClearLine) throws FinderInitializeException {
+        int emptyCount = emptyCount(field, maxClearLine);
+        return emptyCount / 4;
+    }
+
+    private static int emptyCount(Field field, int maxClearLine) throws FinderInitializeException {
         int emptyCount = maxClearLine * 10 - field.getNumOfAllBlocks();
         if (emptyCount % 4 != 0)
             throw new FinderInitializeException("Empty block in field should be multiples of 4: EmptyCount=" + emptyCount);
         return emptyCount;
-    }
-
-    public static int maxDepth(int emptyCount) throws FinderInitializeException {
-        return emptyCount / 4;
     }
 }

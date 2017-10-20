@@ -31,7 +31,7 @@ import searcher.pack.separable_mino.SeparableMinoFactory;
 import searcher.pack.solutions.FilterOnDemandBasicSolutions;
 import searcher.pack.task.BasicMinoPackingHelper;
 import searcher.pack.task.Field4x10MinoPackingHelper;
-import searcher.pack.task.PackSearcher;
+import searcher.pack.task.PerfectPackSearcher;
 import searcher.pack.task.TaskResultHelper;
 
 import java.io.BufferedWriter;
@@ -88,9 +88,8 @@ public class PathEntryPoint implements EntryPoint {
             output(BlockFieldView.toString(reservedBlocks));
         }
 
-        // Setup space
-        int emptyCount = Verify.emptyCount(field, maxClearLine);  // 残りのスペース
-        int maxDepth = Verify.maxDepth(emptyCount);  // パフェに必要なミノ数
+        // Setup max depth
+        int maxDepth = Verify.maxDepth(field, maxClearLine);  // パフェに必要なミノ数
 
         output();
 
@@ -105,7 +104,7 @@ public class PathEntryPoint implements EntryPoint {
 
         // Setup patterns
         List<String> patterns = settings.getPatterns();
-        IBlocksGenerator generator = Verify.patterns(patterns, emptyCount, maxDepth);
+        IBlocksGenerator generator = Verify.patterns(patterns, maxDepth);
 
         // Output patterns
         for (String pattern : patterns)
@@ -215,7 +214,7 @@ public class PathEntryPoint implements EntryPoint {
     private PathCore createPathCore(Field field, int maxClearLine, int maxDepth, List<String> patterns, MinoFactory minoFactory, ColorConverter colorConverter, SizedBit sizedBit, SolutionFilter solutionFilter, boolean isUsingHold, BasicSolutions basicSolutions) throws FinderInitializeException, FinderExecuteException {
         List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(sizedBit, field);
         TaskResultHelper taskResultHelper = createTaskResultHelper(maxClearLine);
-        PackSearcher searcher = new PackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
+        PerfectPackSearcher searcher = new PerfectPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
         FumenParser fumenParser = createFumenParser(settings.isTetfuSplit(), minoFactory, colorConverter);
         ThreadLocal<BuildUpStream> threadLocalBuildUpStream = createBuildUpStreamThreadLocal(settings.getDropType(), maxClearLine);
         try {

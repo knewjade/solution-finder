@@ -73,9 +73,8 @@ public class PercentEntryPoint implements EntryPoint {
         // Output field
         output(FieldView.toString(field, maxClearLine));
 
-        // Setup space
-        int emptyCount = Verify.emptyCount(field, maxClearLine);  // 残りのスペース
-        int maxDepth = Verify.maxDepth(emptyCount);  // パフェに必要なミノ数
+        // Setup max depth
+        int maxDepth = Verify.maxDepth(field, maxClearLine);  // パフェに必要なミノ数
 
         output();
 
@@ -90,7 +89,7 @@ public class PercentEntryPoint implements EntryPoint {
 
         // Setup patterns
         List<String> patterns = settings.getPatterns();
-        IBlocksGenerator generator = Verify.patterns(patterns, emptyCount, maxDepth);
+        IBlocksGenerator generator = Verify.patterns(patterns, maxDepth);
 
         // Output patterns
         for (String pattern : patterns)

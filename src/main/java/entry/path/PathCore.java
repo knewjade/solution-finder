@@ -17,7 +17,7 @@ import core.mino.Block;
 import core.mino.Mino;
 import entry.path.output.FumenParser;
 import searcher.pack.SizedBit;
-import searcher.pack.task.PackSearcher;
+import searcher.pack.task.PerfectPackSearcher;
 import searcher.pack.task.Result;
 
 import java.util.*;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 class PathCore {
-    private final PackSearcher searcher;
+    private final PerfectPackSearcher searcher;
     private final FumenParser fumenParser;
     private final ThreadLocal<BuildUpStream> buildUpStreamTh1readLocal;
     private final boolean isReduced;
@@ -35,7 +35,7 @@ class PathCore {
     private final HashSet<LongBlocks> validPieces;
     private final HashSet<LongBlocks> allPieces;
 
-    PathCore(List<String> patterns, PackSearcher searcher, int maxDepth, boolean isUsingHold, FumenParser fumenParser, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal) throws SyntaxException {
+    PathCore(List<String> patterns, PerfectPackSearcher searcher, int maxDepth, boolean isUsingHold, FumenParser fumenParser, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal) throws SyntaxException {
         this.searcher = searcher;
         this.fumenParser = fumenParser;
         this.buildUpStreamTh1readLocal = buildUpStreamThreadLocal;

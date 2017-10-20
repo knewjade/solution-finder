@@ -35,7 +35,7 @@ class MinoPackingTaskWidthForWidth2 implements PackingTask {
 
     @Override
     public Stream<Result> compute() {
-        if (innerField.getBoard(0) == searcher.getSizedBit().getFillBoard()) {
+        if (searcher.isFilled(innerField, index)) {
             // innerFieldが埋まっている
             if (index == searcher.getLastIndex()) {
                 // 最後の計算
@@ -50,7 +50,7 @@ class MinoPackingTaskWidthForWidth2 implements PackingTask {
                 return createTask(searcher, innerFieldBoard, nextMemento, index + 1).compute();
             }
         } else {
-            MinoFields minoFields = searcher.getSolutions().parse(innerField);
+            MinoFields minoFields = searcher.getSolutions(index).parse(innerField);
 
             // innerFieldが埋まっていない
             if (index == searcher.getLastIndex()) {

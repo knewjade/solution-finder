@@ -24,7 +24,8 @@ public class BasicMinoPackingHelper implements TaskResultHelper {
             return Stream.empty();
         } else {
             ColumnSmallField nextInnerField = ColumnFieldFactory.createField(board);
-            MinoFields minoFields = searcher.getSolutions().parse(nextInnerField);
+            int lastIndex = searcher.getLastIndex();
+            MinoFields minoFields = searcher.getSolutions(lastIndex).parse(nextInnerField);
 
             return minoFields.stream()
                     .filter(minoField -> over.canMerge(minoField.getOuterField()))
