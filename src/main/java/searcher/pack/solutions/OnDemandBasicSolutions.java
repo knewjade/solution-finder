@@ -23,19 +23,25 @@ public class OnDemandBasicSolutions implements BasicSolutions, SolutionsCalculat
 
     private final SeparableMinos separableMinos;
     private final ColumnSmallField limitOuterField;
+    private final long needFillBoard;
     private final SizedBit sizedBit;
     private final BasicReference reference;
     private final SmallField originWallField;
     private final Predicate<ColumnField> memorizedPredicate;
     private final ConcurrentHashMap<ColumnField, RecursiveMinoFields> resultsMap;
 
-    public OnDemandBasicSolutions(SeparableMinos separableMinos, SizedBit sizedBit, Predicate<ColumnField> memorizedPredicate) {
-        this(separableMinos, sizedBit, ColumnFieldFactory.createField(), memorizedPredicate);
+    public OnDemandBasicSolutions(SeparableMinos separableMinos, SizedBit sizedBit, long needFillBoard) {
+        this(separableMinos, sizedBit, ColumnFieldFactory.createField(), columnField -> true, needFillBoard);
     }
 
-    public OnDemandBasicSolutions(SeparableMinos separableMinos, SizedBit sizedBit, ColumnSmallField limitOuterField, Predicate<ColumnField> memorizedPredicate) {
+    public OnDemandBasicSolutions(SeparableMinos separableMinos, SizedBit sizedBit, Predicate<ColumnField> memorizedPredicate) {
+        this(separableMinos, sizedBit, ColumnFieldFactory.createField(), memorizedPredicate, sizedBit.getFillBoard());
+    }
+
+    public OnDemandBasicSolutions(SeparableMinos separableMinos, SizedBit sizedBit, ColumnSmallField limitOuterField, Predicate<ColumnField> memorizedPredicate, long needFillBoard) {
         this.separableMinos = separableMinos;
         this.limitOuterField = limitOuterField;
+        this.needFillBoard = needFillBoard;
         assert sizedBit.getHeight() <= 10;
         this.sizedBit = sizedBit;
         this.reference = createBasicReference(sizedBit, separableMinos);
@@ -105,7 +111,7 @@ public class OnDemandBasicSolutions implements BasicSolutions, SolutionsCalculat
 
     @Override
     public boolean isFilled(ColumnField columnField) {
-        return columnField.getBoard(0) == sizedBit.getFillBoard();
+        return (columnField.getBoard(0) & needFillBoard) == needFillBoard;
     }
 
     @Override

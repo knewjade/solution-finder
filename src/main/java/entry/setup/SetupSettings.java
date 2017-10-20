@@ -35,8 +35,22 @@ public class SetupSettings {
         return true;
     }
 
-    Field getField() {
-        return field;
+    Field getNeedFillField() {
+        return FieldFactory.createField("" +
+                "__________" +
+                "X__X______" +
+                "XXXX______" +
+                "XXXX______"
+        );
+    }
+
+    Field getDoNotFillField() {
+        return FieldFactory.createField("" +
+                "____XXXXXX" +
+                "____XXXXXX" +
+                "____XXXXXX" +
+                "____XXXXXX"
+        );
     }
 
     int getMaxClearLine() {

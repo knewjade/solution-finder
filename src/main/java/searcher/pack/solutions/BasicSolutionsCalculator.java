@@ -28,6 +28,7 @@ public class BasicSolutionsCalculator implements SolutionsCalculator {
     private final BasicReference reference;
     private final SeparableMinos separableMinos;
     private final ColumnSmallField limitOuterField;
+    private final long needFillBoard;
     private final HashMap<ColumnField, RecursiveMinoFields> resultsMap = new HashMap<>();
     private final SmallField originWallField;
     private final Predicate<ColumnField> memorizedPredicate;
@@ -36,9 +37,18 @@ public class BasicSolutionsCalculator implements SolutionsCalculator {
         this(separableMinos, sizedBit, ColumnFieldFactory.createField(), columnField -> true);
     }
 
+    public BasicSolutionsCalculator(SeparableMinos separableMinos, SizedBit sizedBit, long needFillBoard) {
+        this(separableMinos, sizedBit, ColumnFieldFactory.createField(), columnField -> true, needFillBoard);
+    }
+
     public BasicSolutionsCalculator(SeparableMinos separableMinos, SizedBit sizedBit, ColumnSmallField limitOuterField, Predicate<ColumnField> memorizedPredicate) {
+        this(separableMinos, sizedBit, limitOuterField, memorizedPredicate, sizedBit.getFillBoard());
+    }
+
+    public BasicSolutionsCalculator(SeparableMinos separableMinos, SizedBit sizedBit, ColumnSmallField limitOuterField, Predicate<ColumnField> memorizedPredicate, long needFillBoard) {
         this.separableMinos = separableMinos;
         this.limitOuterField = limitOuterField;
+        this.needFillBoard = needFillBoard;
         assert sizedBit.getHeight() <= 10;
         this.sizedBit = sizedBit;
         this.reference = createBasicReference(sizedBit, separableMinos);
@@ -111,7 +121,7 @@ public class BasicSolutionsCalculator implements SolutionsCalculator {
 
     @Override
     public boolean isFilled(ColumnField columnField) {
-        return columnField.getBoard(0) == sizedBit.getFillBoard();
+        return (columnField.getBoard(0) & needFillBoard) == needFillBoard;
     }
 
     @Override

@@ -4,13 +4,14 @@ import common.datastore.BlockField;
 import common.datastore.Operation;
 import common.datastore.OperationWithKey;
 import common.datastore.Operations;
-import common.parser.OperationInterpreter;
 import common.parser.OperationTransform;
-import common.parser.OperationWithKeyInterpreter;
-import common.pattern.IBlocksGenerator;
 import common.tetfu.common.ColorConverter;
+import concurrent.LockedReachableThreadLocal;
 import core.FinderConstant;
 import core.column_field.ColumnField;
+import core.column_field.ColumnFieldFactory;
+import core.column_field.ColumnFieldView;
+import core.column_field.ColumnSmallField;
 import core.field.BlockFieldView;
 import core.field.Field;
 import core.field.FieldFactory;
@@ -20,27 +21,29 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import entry.EntryPoint;
 import entry.Verify;
-import entry.path.ForPathSolutionFilter;
 import entry.path.output.MyFile;
 import exceptions.FinderException;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
 import exceptions.FinderTerminateException;
-import helper.EasyPath;
 import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.calculator.BasicSolutions;
+import searcher.pack.memento.AllPassedSolutionFilter;
+import searcher.pack.memento.SRSValidSolutionFilter;
 import searcher.pack.memento.SolutionFilter;
-import searcher.pack.mino_fields.RecursiveMinoFields;
-import searcher.pack.solutions.BasicSolutionsCalculator;
-import searcher.pack.solutions.MappedBasicSolutions;
-import searcher.pack.task.*;
+import searcher.pack.mino_fields.MinoFields;
+import searcher.pack.solutions.OnDemandBasicSolutions;
+import searcher.pack.task.Field4x10MinoPackingHelper;
+import searcher.pack.task.Result;
+import searcher.pack.task.SetupPackSearcher;
+import searcher.pack.task.TaskResultHelper;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -72,14 +75,14 @@ public class SetupEntryPoint implements EntryPoint {
         output("# Setup Field");
 
         // Setup field
-        Field field2 = settings.getField();
+        Field field = settings.getNeedFillField();
 
         // Setup max clear line
         int maxClearLine = settings.getMaxClearLine();
         Verify.maxClearLineUnder10(maxClearLine);
 
         // Output field
-        output(FieldView.toString(field2, maxClearLine));
+        output(FieldView.toString(field, maxClearLine));
 
         // Setup reserved blocks
         BlockField reservedBlocks = settings.getReservedBlock();
@@ -91,12 +94,11 @@ public class SetupEntryPoint implements EntryPoint {
         }
 
         // Setup inverse field
-        String goalFieldMarks = FieldView.toString(field2, maxClearLine, "");
-        Field goalField = FieldFactory.createInverseField(goalFieldMarks);
-        Verify.field(goalField);
+        output("# Setup Inverse Field");
 
-        // Setup max depth
-        int maxDepth = Verify.maxDepth(goalField, maxClearLine);  // セットアップに必要なミノ数
+        Field goalField = settings.getDoNotFillField();
+
+        output(FieldView.toString(goalField, maxClearLine));
 
         output();
 
@@ -111,7 +113,7 @@ public class SetupEntryPoint implements EntryPoint {
 
         // Setup patterns
         List<String> patterns = settings.getPatterns();
-        IBlocksGenerator generator = Verify.patterns(patterns, maxDepth);
+//        IBlocksGenerator generator = Verify.patterns(patterns, maxDepth);
 
         // Output patterns
         for (String pattern : patterns)
@@ -128,7 +130,6 @@ public class SetupEntryPoint implements EntryPoint {
         // Output system-defined
         output("Version = " + FinderConstant.VERSION);
         output("Available processors = " + core);
-        output("Need Pieces = " + maxDepth);
 
         output();
 
@@ -139,13 +140,9 @@ public class SetupEntryPoint implements EntryPoint {
         MinoShifter minoShifter = new MinoShifter();
         ColorConverter colorConverter = new ColorConverter();
         SizedBit sizedBit = decideSizedBitSolutionWidth(maxClearLine);
-        SolutionFilter solutionFilter = new ForPathSolutionFilter(generator, maxClearLine);
-
-        // Holdができるときは必要なミノ分（maxDepth + 1）だけを取り出す。maxDepth + 1だけないときはブロックの個数をそのまま指定
-        output("# Enumerate pieces");
-        boolean isUsingHold = settings.isUsingHold();
-        int piecesDepth = generator.getDepth();
-        output("Piece pop count = " + (isUsingHold && maxDepth < piecesDepth ? maxDepth + 1 : maxDepth));
+//        SolutionFilter solutionFilter = new ForPathSolutionFilter(generator, maxClearLine);
+        SolutionFilter solutionFilter = createSRSSolutionFilter(sizedBit, FieldFactory.createField(maxClearLine));
+//        solutionFilter = new AllPassedSolutionFilter();
 
         output();
 
@@ -182,17 +179,46 @@ public class SetupEntryPoint implements EntryPoint {
 
         // 置く可能性のある場所
 
+        // 必ず置かないブロック
         List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(sizedBit, goalField);
 
         // Create
         SeparableMinos separableMinos = SeparableMinos.createSeparableMinos(minoFactory, minoShifter, sizedBit);
-        BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
-        Map<ColumnField, RecursiveMinoFields> calculate = calculator.calculate();
-        BasicSolutions basicSolutions =  new MappedBasicSolutions(calculate);
+//        BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit, needFillBoard);
+//        Map<ColumnField, RecursiveMinoFields> calculate = calculator.calculate();
+//        BasicSolutions basicSolutions = new MappedBasicSolutions(calculate);
         TaskResultHelper taskResultHelper = new Field4x10MinoPackingHelper();
 
-        // パフェ手順の列挙
-        PerfectPackSearcher searcher = new PerfectPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
+        // 必ず置く必要があるブロック
+        ArrayList<BasicSolutions> basicSolutions = new ArrayList<>();
+        List<InOutPairField> pairs = InOutPairField.createInOutPairFields(sizedBit, field);
+        List<ColumnField> needFillFields = new ArrayList<>();
+        for (int index = 0; index < pairs.size(); index++) {
+            InOutPairField pairField = pairs.get(index);
+            ColumnField innerField = pairField.getInnerField();
+            System.out.println(ColumnFieldView.toString(innerField, sizedBit));
+            System.out.println("===");
+            OnDemandBasicSolutions solutions = new OnDemandBasicSolutions(separableMinos, sizedBit, innerField.getBoard(0));
+
+            basicSolutions.add(solutions);
+            needFillFields.add(innerField);
+
+            if (index == 0) {
+                ColumnSmallField field1 = ColumnFieldFactory.createField(0L);
+                MinoFields parse = solutions.parse(field1);
+                System.out.println(parse.stream().count());
+            } else if (index == 1) {
+                ColumnSmallField field1 = ColumnFieldFactory.createField("" +
+                        "_XX" +
+                        "_XX" +
+                        "_XX" +
+                        "_XX", 4);
+                MinoFields parse = solutions.parse(field1);
+                System.out.println(parse.stream().count());
+            }
+        }
+
+        SetupPackSearcher searcher = new SetupPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper, needFillFields);
         try {
             List<Result> results = searcher.toList();
             System.out.println(results.size());
@@ -209,6 +235,7 @@ public class SetupEntryPoint implements EntryPoint {
                     System.out.println(mino);
                 }
                 System.out.println(FieldView.toString(allField));
+                System.out.println("*****");
             }
 
         } catch (InterruptedException | ExecutionException e) {
@@ -218,6 +245,11 @@ public class SetupEntryPoint implements EntryPoint {
 
     private SizedBit decideSizedBitSolutionWidth(int maxClearLine) {
         return maxClearLine <= 4 ? new SizedBit(3, maxClearLine) : new SizedBit(2, maxClearLine);
+    }
+
+    private SolutionFilter createSRSSolutionFilter(SizedBit sizedBit, Field initField) {
+        LockedReachableThreadLocal lockedReachableThreadLocal = new LockedReachableThreadLocal(sizedBit.getHeight());
+        return new SRSValidSolutionFilter(initField, lockedReachableThreadLocal, sizedBit);
     }
 
     private void output() throws FinderExecuteException {
