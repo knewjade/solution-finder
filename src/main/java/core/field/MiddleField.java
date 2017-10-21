@@ -12,6 +12,7 @@ public class MiddleField implements Field {
     private static final int FIELD_WIDTH = 10;
     private static final int MAX_FIELD_HEIGHT = 12;
     private static final int FIELD_ROW_BOARDER_Y = 6;
+    private static final long VALID_BOARD_RANGE = 0xfffffffffffffffL;
 
     private long xBoardLow = 0; // x,y: 最下位 (0,0), (1,0),  ... , (9,0), (0,1), ... 最上位 // フィールド範囲外は必ず0であること
     private long xBoardHigh = 0; // x,y: 最下位 (0,0), (1,0),  ... , (9,0), (0,1), ... 最上位 // フィールド範囲外は必ず0であること
@@ -272,7 +273,7 @@ public class MiddleField implements Field {
 
         int deleteLineLow = Long.bitCount(deleteKeyLow);
 
-        this.xBoardLow = (newXBoardLow | (newXBoardHigh << (6 - deleteLineLow) * 10)) & 0xfffffffffffffffL;
+        this.xBoardLow = (newXBoardLow | (newXBoardHigh << (6 - deleteLineLow) * 10)) & VALID_BOARD_RANGE;
         this.xBoardHigh = newXBoardHigh >>> deleteLineLow * 10;
 
         return deleteKeyLow | (deleteKeyHigh << 1);
@@ -289,7 +290,7 @@ public class MiddleField implements Field {
         long newXBoardHigh = LongBoardMap.insertBlackLine((xBoardHigh << 10 * deleteLineLow) | ((xBoardLow & BitOperators.getRowMaskAboveY(leftLineLow)) >> 10 * leftLineLow), deleteKeyHigh);
 
         this.xBoardLow = newXBoardLow;
-        this.xBoardHigh = newXBoardHigh & 0xfffffffffffffffL;
+        this.xBoardHigh = newXBoardHigh & VALID_BOARD_RANGE;
     }
 
     @Override
@@ -303,7 +304,7 @@ public class MiddleField implements Field {
         long newXBoardHigh = LongBoardMap.insertWhiteLine((xBoardHigh << 10 * deleteLineLow) | ((xBoardLow & BitOperators.getRowMaskAboveY(leftLineLow)) >> 10 * leftLineLow), deleteKeyHigh);
 
         this.xBoardLow = newXBoardLow;
-        this.xBoardHigh = newXBoardHigh & 0xfffffffffffffffL;
+        this.xBoardHigh = newXBoardHigh & VALID_BOARD_RANGE;
     }
 
     @Override
@@ -431,6 +432,13 @@ public class MiddleField implements Field {
         long childBoardLow = child.getBoard(0);
         long childBoardHigh = child.getBoard(1);
         return (xBoardLow & childBoardLow) == childBoardLow && (xBoardHigh & childBoardHigh) == childBoardHigh;
+    }
+
+    // TODO: write unittest
+    @Override
+    public void inverse() {
+        xBoardLow = (~xBoardLow) & VALID_BOARD_RANGE;
+        xBoardHigh = (~xBoardHigh) & VALID_BOARD_RANGE;
     }
 
     @Override

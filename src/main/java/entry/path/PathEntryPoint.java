@@ -201,8 +201,7 @@ public class PathEntryPoint implements EntryPoint {
 
     private BasicSolutions calculateBasicSolutions(Field field, MinoFactory minoFactory, MinoShifter minoShifter, SizedBit sizedBit, SolutionFilter solutionFilter) throws FinderInitializeException {
         // ミノのリストを作成する
-        SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, sizedBit.getWidth(), sizedBit.getHeight());
-        SeparableMinos separableMinos = new SeparableMinos(factory.create());
+        SeparableMinos separableMinos = SeparableMinos.createSeparableMinos(minoFactory, minoShifter, sizedBit);
 
         // 基本パターンを計算
         int cachedMinBit = settings.getCachedMinBit();

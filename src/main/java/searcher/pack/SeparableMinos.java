@@ -1,5 +1,6 @@
 package searcher.pack;
 
+import core.field.KeyOperators;
 import core.mino.Block;
 import core.mino.Mino;
 import core.mino.MinoFactory;
@@ -17,7 +18,13 @@ public class SeparableMinos {
     private static final Comparator<SeparableMino> SEPARABLE_MINO_COMPARATOR = new SeparableMinoComparator();
 
     public static SeparableMinos createSeparableMinos(MinoFactory minoFactory, MinoShifter minoShifter, SizedBit sizedBit) {
-        SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, sizedBit.getWidth(), sizedBit.getHeight());
+        int height = sizedBit.getHeight();
+        long mask = KeyOperators.getMaskForKeyBelowY(height);
+        return createSeparableMinos(minoFactory, minoShifter, sizedBit, mask);
+    }
+
+    public static SeparableMinos createSeparableMinos(MinoFactory minoFactory, MinoShifter minoShifter, SizedBit sizedBit, long deleteKeyMask) {
+        SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, sizedBit.getWidth(), sizedBit.getHeight(), deleteKeyMask);
         List<SeparableMino> separableMinos = factory.create();
         return new SeparableMinos(separableMinos);
     }

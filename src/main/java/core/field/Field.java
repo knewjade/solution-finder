@@ -118,4 +118,7 @@ public interface Field extends Comparable<Field> {
 
     // childの全てのブロックが、フィールド内の同じ位置にブロックがあればtrue
     boolean contains(Field child);
+
+    // ブロックと空白を反転させる
+    void inverse();
 }

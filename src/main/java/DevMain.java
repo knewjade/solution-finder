@@ -10,7 +10,7 @@ public class DevMain {
     public static void main(String[] args) throws Exception {
 //        String command = "path -f csv -k p -t v115@9gF8DeF8DeF8DeF8NeAgH -p T,*p4";
 
-        String command = "setup -t v115@HhUpB8BeglF8CeglC8zhAehlJeAgH -p *p4 -m o";
+        String command = "setup -t v115@Pg1hDe1hBeB8FtCeA8FtB8AeB8EtA8BeD8CtA8CeE8?AtB8AeI8AeG8JeAgH -p *p7 -m i -f z";
         int returnCode = EntryPointMain.main(command.split(" "));
         System.exit(returnCode);
 

@@ -15,6 +15,13 @@ public class Verify {
             throw new FinderInitializeException("Should specify field");
     }
 
+    public static void needFilledField(Field field) throws FinderInitializeException {
+        field(field);
+
+        if (field.isPerfect())
+            throw new FinderInitializeException("Should specify filled field");
+    }
+
     public static void maxClearLineUnder10(int maxClearLine) throws FinderInitializeException {
         if (maxClearLine < 2 || 10 < maxClearLine)
             throw new FinderInitializeException("Clear-Line should be 2 <= line <= 10: line=" + maxClearLine);

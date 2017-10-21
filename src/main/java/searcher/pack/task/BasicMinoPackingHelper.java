@@ -9,23 +9,24 @@ import searcher.pack.mino_fields.MinoFields;
 
 import java.util.stream.Stream;
 
+// パフェ&セットアップ兼用。汎用的なTaskResultHelper
 public class BasicMinoPackingHelper implements TaskResultHelper {
     @Override
     public Stream<Result> fixResult(PackSearcher searcher, long innerFieldBoard, MinoFieldMemento nextMemento) {
         SizedBit sizedBit = searcher.getSizedBit();
         SolutionFilter solutionFilter = searcher.getSolutionFilter();
         long fillBoard = sizedBit.getFillBoard();
-        ColumnSmallField over = ColumnFieldFactory.createField(innerFieldBoard & ~fillBoard);
 
         long board = innerFieldBoard & fillBoard;
-        if (board == fillBoard) {
+        int resultIndex = searcher.getLastIndex() + 1;
+        ColumnSmallField nextInnerField = ColumnFieldFactory.createField(board);
+        if (searcher.isFilled(nextInnerField, resultIndex)) {
             if (solutionFilter.testLast(nextMemento))
                 return Stream.of(createResult(nextMemento));
             return Stream.empty();
         } else {
-            ColumnSmallField nextInnerField = ColumnFieldFactory.createField(board);
-            int lastIndex = searcher.getLastIndex();
-            MinoFields minoFields = searcher.getSolutions(lastIndex).parse(nextInnerField);
+            ColumnSmallField over = ColumnFieldFactory.createField(innerFieldBoard & ~fillBoard);
+            MinoFields minoFields = searcher.getSolutions(resultIndex).parse(nextInnerField);
 
             return minoFields.stream()
                     .filter(minoField -> over.canMerge(minoField.getOuterField()))

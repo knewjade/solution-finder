@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 // フィールドの探索範囲が4x10のとき限定のTask。最後のパターンが決まっているため少し高速に動作
+// パフェ用
 public class Field4x10MinoPackingHelper implements TaskResultHelper {
     private static class IOnlyMinoField implements MinoField {
         private static final List<OperationWithKey> OPERATION_WITH_KEYS = Collections.singletonList(

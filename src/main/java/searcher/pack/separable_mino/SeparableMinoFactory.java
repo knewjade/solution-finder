@@ -15,11 +15,11 @@ import java.util.List;
 public class SeparableMinoFactory {
     private final EnumMap<Block, EnumMap<Rotate, List<SeparableMino>>> maps;
 
-    public SeparableMinoFactory(MinoFactory minoFactory, MinoShifter minoShifter, int fieldWidth, int fieldHeight) {
-        this.maps = initializeMaps(minoFactory, minoShifter, fieldWidth, fieldHeight);
+    public SeparableMinoFactory(MinoFactory minoFactory, MinoShifter minoShifter, int fieldWidth, int fieldHeight, long deleteKeyMask) {
+        this.maps = initializeMaps(minoFactory, minoShifter, fieldWidth, fieldHeight, deleteKeyMask);
     }
 
-    private EnumMap<Block, EnumMap<Rotate, List<SeparableMino>>> initializeMaps(MinoFactory minoFactory, MinoShifter minoShifter, int fieldWidth, int fieldHeight) {
+    private EnumMap<Block, EnumMap<Rotate, List<SeparableMino>>> initializeMaps(MinoFactory minoFactory, MinoShifter minoShifter, int fieldWidth, int fieldHeight, long deleteKeyMask) {
         EnumMap<Block, EnumMap<Rotate, List<SeparableMino>>> maps = new EnumMap<>(Block.class);
         for (Block block : Block.values()) {
             EnumMap<Rotate, List<SeparableMino>> rotateMaps = maps.computeIfAbsent(block, blk -> new EnumMap<>(Rotate.class));
@@ -73,8 +73,9 @@ public class SeparableMinoFactory {
 
                     assert Long.bitCount(deleteKey) + indexes.size() == upperY - lowerY + 1;
 
-                    for (int x = -mino.getMinX(); x < fieldWidth - mino.getMinX(); x++)
-                        deleteLimitedMinos.add(SeparableMino.create(mino, deleteKey, usingKey, x, lowerY, upperY, fieldHeight));
+                    if ((deleteKeyMask & deleteKey) == deleteKey)
+                        for (int x = -mino.getMinX(); x < fieldWidth - mino.getMinX(); x++)
+                            deleteLimitedMinos.add(SeparableMino.create(mino, deleteKey, usingKey, x, lowerY, upperY, fieldHeight));
                 }
 
                 rotateMaps.put(rotate, deleteLimitedMinos);

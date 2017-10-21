@@ -186,6 +186,11 @@ public class LargeField implements Field {
     }
 
     @Override
+    public void inverse() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public boolean equals(Object o) {
         throw new UnsupportedOperationException();
     }

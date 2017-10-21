@@ -4,9 +4,6 @@ import core.column_field.ColumnField;
 import core.column_field.ColumnFieldFactory;
 import core.column_field.ColumnSmallField;
 import core.field.Field;
-import core.field.FieldFactory;
-import core.field.FieldView;
-import core.field.SmallField;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,6 +99,32 @@ public class InOutPairField {
             }
         }
         return new InOutPairField(innerField, outerField);
+    }
+
+    public static List<ColumnField> createInnerFields(SizedBit sizedBit, Field initField) {
+        int width = sizedBit.getWidth();
+        int height = sizedBit.getHeight();
+        return createInnerFields(width, height, initField, (9 / width) + 1);
+    }
+
+    private static List<ColumnField> createInnerFields(int width, int height, Field initField, int max) {
+        ArrayList<ColumnField> fields = new ArrayList<>();
+
+        Field field = initField.freeze(height);
+        for (int count = 0; count < max; count++) {
+            ColumnSmallField innerField = ColumnFieldFactory.createField();
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    if (!field.isEmpty(x, y))
+                        innerField.setBlock(x, y, height);
+                }
+            }
+
+            fields.add(innerField);
+            field.slideLeft(width);
+        }
+
+        return fields;
     }
 
     private final ColumnField innerField;

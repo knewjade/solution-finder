@@ -80,7 +80,7 @@ public class SetupEntryPoint implements EntryPoint {
 
         // Setup need filled field
         Field needFilledField = settings.getNeedFilledField();
-        Verify.field(needFilledField);
+        Verify.needFilledField(needFilledField);
 
         // Setup not filled field
         Field notFilledField = settings.getNotFilledField();
@@ -180,30 +180,30 @@ public class SetupEntryPoint implements EntryPoint {
         MinoShifter minoShifter = new MinoShifter();
         ColorConverter colorConverter = new ColorConverter();
         SizedBit sizedBit = decideSizedBitSolutionWidth(maxHeight);
-        SeparableMinos separableMinos = SeparableMinos.createSeparableMinos(minoFactory, minoShifter, sizedBit);
         TaskResultHelper taskResultHelper = new BasicMinoPackingHelper();
         SolutionFilter solutionFilter = new ForPathSolutionFilter(generator, maxHeight);
         ThreadLocal<BuildUpStream> buildUpStreamThreadLocal = createBuildUpStreamThreadLocal(dropType, maxHeight);
         OneFumenParser fumenParser = new OneFumenParser(minoFactory, colorConverter);
+
+        // ミノリストの作成
+        long deleteKeyMask = getDeleteKeyMask(notFilledField, maxHeight);
+        SeparableMinos separableMinos = SeparableMinos.createSeparableMinos(minoFactory, minoShifter, sizedBit, deleteKeyMask);
 
         // 絶対に置かないブロック
         List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(sizedBit, notFilledField);
 
         // 絶対に置く必要があるブロック
         ArrayList<BasicSolutions> basicSolutions = new ArrayList<>();
-        List<InOutPairField> pairs = InOutPairField.createInOutPairFields(sizedBit, needFilledField);
-        List<ColumnField> needFillFields = new ArrayList<>();
-        for (InOutPairField pairField : pairs) {
-            ColumnField innerField = pairField.getInnerField();
+        List<ColumnField> needFillFields = InOutPairField.createInnerFields(sizedBit, needFilledField);
+        for (ColumnField innerField : needFillFields) {
             OnDemandBasicSolutions solutions = new OnDemandBasicSolutions(separableMinos, sizedBit, innerField.getBoard(0));
             basicSolutions.add(solutions);
-            needFillFields.add(innerField);
         }
 
         // 探索
         SetupPackSearcher searcher = new SetupPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper, needFillFields);
         List<Result> results = getResults(initField, sizedBit, buildUpStreamThreadLocal, searcher);
-        output("Found solution = " + results.size());
+        output("     Found solution = " + results.size());
 
         stopwatch.stop();
         output("  -> Stopwatch stop : " + stopwatch.toMessage(TimeUnit.MILLISECONDS));
@@ -256,6 +256,12 @@ public class SetupEntryPoint implements EntryPoint {
 
         output("# Finalize");
         output("done");
+    }
+
+    private long getDeleteKeyMask(Field notFilledField, int maxHeight) {
+        Field freeze = notFilledField.freeze(maxHeight);
+        freeze.inverse();
+        return freeze.clearLineReturnKey();
     }
 
     private List<Result> getResults(Field initField, SizedBit sizedBit, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal, SetupPackSearcher searcher) throws FinderExecuteException {

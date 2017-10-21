@@ -29,6 +29,8 @@ public class SetupPackSearcher implements PackSearcher {
     private final List<ColumnField> needFillFields;
 
     public SetupPackSearcher(List<InOutPairField> inOutPairFields, List<BasicSolutions> solutions, SizedBit sizedBit, SolutionFilter solutionFilter, TaskResultHelper taskResultHelper, List<ColumnField> needFillFields) {
+        assert inOutPairFields.size() + 1 == solutions.size();
+        assert inOutPairFields.size() + 1 == needFillFields.size();
         this.inOutPairFields = inOutPairFields;
         this.solutions = solutions;
         this.sizedBit = sizedBit;

@@ -169,7 +169,7 @@ public class SetupSettingParser {
         int maxHeight = maxHeightForce != -1 ? maxHeightForce : coloredField.getUsingHeight();
 
         // Load init field
-        String initFieldMarks = fieldMarks.replace(".", " ").replace("*", " ");
+        String initFieldMarks = fieldMarks.replace(".", "_").replace("*", "_");
         Field initField = FieldFactory.createField(initFieldMarks);
         for (int y = maxHeight; y < initField.getMaxFieldHeight(); y++)
             for (int x = 0; x < 10; x++)
@@ -183,7 +183,7 @@ public class SetupSettingParser {
                 needFilledField.removeBlock(x, y);
 
         // Load not filled field
-        Field notFilledField = FieldFactory.createInverseField(fieldMarks.replace(".", " "));
+        Field notFilledField = FieldFactory.createInverseField(fieldMarks.replace("X", "_"));
         for (int y = maxHeight; y < notFilledField.getMaxFieldHeight(); y++)
             for (int x = 0; x < 10; x++)
                 notFilledField.removeBlock(x, y);
@@ -195,11 +195,11 @@ public class SetupSettingParser {
         }
     }
 
-    private String filterString(String str, char allow, char replace) {
+    private String filterString(String str, char allow, char notAllowTo) {
         char[] chars = str.toCharArray();
         for (int index = 0; index < chars.length; index++)
             if (chars[index] != allow)
-                chars[index] = replace;
+                chars[index] = notAllowTo;
         return String.valueOf(chars);
     }
 
@@ -444,25 +444,27 @@ public class SetupSettingParser {
             Field notFilledField = FieldFactory.createField(maxHeight);
 
             ColorType marginColorType = settings.getMarginColorType();
+            ColorType fillColorType = settings.getFillColorType();
 
             for (int y = 0; y < maxHeight; y++) {
                 for (int x = 0; x < 10; x++) {
                     ColorType colorType = coloredField.getColorType(x, y);
 
-                    if (colorType.equals(marginColorType))
-                        continue;  // skip
-
-                    switch (colorType) {
-                        case Gray:
-                            needFilledField.setBlock(x, y);
-                            break;
-                        case Empty:
-                            notFilledField.setBlock(x, y);
-                            break;
-                        default:
-                            initField.setBlock(x, y);
-                            notFilledField.setBlock(x, y);
-                            break;
+                    if (colorType.equals(marginColorType)) {
+                        // skip
+                    } else if (colorType.equals(fillColorType)) {
+                        needFilledField.setBlock(x, y);
+                    } else {
+                        switch (colorType) {
+                            case Empty:
+                                notFilledField.setBlock(x, y);
+                                break;
+                            case Gray:
+                            default:
+                                initField.setBlock(x, y);
+                                notFilledField.setBlock(x, y);
+                                break;
+                        }
                     }
                 }
             }
