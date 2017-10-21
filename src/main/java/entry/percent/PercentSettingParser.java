@@ -16,7 +16,6 @@ import entry.PriorityCommandLineWrapper;
 import exceptions.FinderParseException;
 import org.apache.commons.cli.*;
 
-import javax.activation.UnsupportedDataTypeException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -125,7 +124,7 @@ public class PercentSettingParser {
                 String key = dropType.orElse("softdrop");
                 try {
                     settings.setDropType(key);
-                } catch (UnsupportedDataTypeException e) {
+                } catch (FinderParseException e) {
                     throw new RuntimeException(e);
                 }
             });
@@ -244,7 +243,7 @@ public class PercentSettingParser {
                 .build();
         options.addOption(patternFileOption);
 
-        Option logFileOption = Option.builder("l")
+        Option logFileOption = Option.builder("lp")
                 .optionalArg(true)
                 .hasArg()
                 .numberOfArgs(1)
@@ -350,7 +349,6 @@ public class PercentSettingParser {
             ColorConverter colorConverter = new ColorConverter();
             Mino mino = new Mino(colorConverter.parseToBlock(colorType), rotate);
             coloredField.putMino(mino, x, y);
-            coloredField.clearLine();
         }
         settings.setField(coloredField, settings.getMaxClearLine());
 

@@ -197,8 +197,8 @@ class PathSettingParserTest {
         String fieldPath = ClassLoader.getSystemResource("field/4row.txt").getPath();
         String patternsPath = ClassLoader.getSystemResource("patterns/7mino.txt").getPath();
 
-        // comment: 3 -p T,S,L,O,L
-        String tetfu = "v115@vh2SSYRBFLDmClcJSAVDEHBEooRBMoAVBUujPCv3jx?CPNUPCJHWWCJtPFDs+bgC6P9VCp/dgCzn9VCzvaFDUePFDv?+TWCviLuCqe1LCqHLWCzAAAANpBXqBGjBznB0fB0rBdnBzq?BxvB/tBqsBGjBJnB1vBTmBxkB3pBikBGrByuB9tBXjB0sB0?rBTkBmfBplBxmBirBNpBWyBXqB0fBToBCjBRmBesBTmB0qB?NpBpoBXqB0fBmrBzsQaAzno2ANI98AQe88ADd88AjS88ADX?88AjCBAA3rQjAFLDmClcJSAVztSAVG88A4c88AZyKWCat/w?CJePFDvyzBA6qBzsBirB0sB/tBGjB1wBNmQSA0no2AtTKNE?M388AwBrNEJnBAA";
+        // comment: 4 -p T,S,L,O,L
+        String tetfu = "v115@vh2SSYRBFLDmClcJSAVDEHBEooRBMoAVBUujPCv3jx?CPNUPCJHWWCJtPFDs+bgC6P9VCp/dgCzn9VCzvaFDUePFDv?+TWCviLuCqe1LCqHLWCzAAAANpBXqBGjBznB0fB0rBdnBzq?BxvB/tBqsBGjBJnB1vBTmBxkB3pBikBGrByuB9tBXjB0sB0?rBTkBmfBplBxmBirBNpBWyBXqB0fBToBCjBRmBesBTmB0qB?NpBpoBXqB0fBmrBzsQaA0no2ANI98AQe88ADd88AjS88ADX?88AjCBAA3rQjAFLDmClcJSAVztSAVG88A4c88AZyKWCat/w?CJePFDvyzBA6qBzsBirB0sB/tBGjB1wBNmQSA0no2AtTKNE?M388AwBrNEJnBAA";
         String commands = String.format("--hold avoid -fp %s -pp %s --tetfu %s --patterns *p5 --log-path output/dummy -P 46 -o output/result_dummy.txt -s yes", fieldPath, patternsPath, tetfu);
 
         PathSettingParser entryPoint = new PathSettingParser(commands);
@@ -207,6 +207,7 @@ class PathSettingParserTest {
         Field expectedField = FieldFactory.createField("" +
                 "XX_______X" +
                 "XXX______X" +
+                "XXXXXXXXXX" +
                 "XXX___XXXX"
         );
 
@@ -214,7 +215,7 @@ class PathSettingParserTest {
         parse.ifPresent(settings -> {
             assertThat(settings)
                     .returns("output/dummy", PathSettings::getLogFilePath)
-                    .returns(3, PathSettings::getMaxClearLine)
+                    .returns(4, PathSettings::getMaxClearLine)
                     .returns(Collections.singletonList("*p5"), PathSettings::getPatterns)
                     .returns(true, PathSettings::isOutputToConsole)
                     .returns(false, PathSettings::isUsingHold)
@@ -238,13 +239,14 @@ class PathSettingParserTest {
         Field expectedField = FieldFactory.createField("" +
                 "XX_______X" +
                 "XXX______X" +
+                "XXXXXXXXXX" +
                 "XXX___XXXX"
         );
 
         assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
             assertThat(settings)
-                    .returns(3, PathSettings::getMaxClearLine)
+                    .returns(4, PathSettings::getMaxClearLine)
                     .returns(Collections.singletonList("T,S,L,O,L"), PathSettings::getPatterns)
                     .returns(true, PathSettings::isOutputToConsole)
                     .returns(true, PathSettings::isUsingHold)

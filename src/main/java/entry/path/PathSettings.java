@@ -8,8 +8,8 @@ import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
 import entry.DropType;
+import exceptions.FinderParseException;
 
-import javax.activation.UnsupportedDataTypeException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -156,7 +156,7 @@ public class PathSettings {
         this.pathLayer = pathLayer;
     }
 
-    void setOutputType(String type, String key) throws UnsupportedDataTypeException {
+    void setOutputType(String type, String key) throws FinderParseException {
         switch (type.trim().toLowerCase()) {
             case "csv":
                 switch (key.trim().toLowerCase()) {
@@ -177,13 +177,13 @@ public class PathSettings {
                         this.outputType = OutputType.UseCSV;
                         return;
                     default:
-                        throw new UnsupportedDataTypeException("Unsupported CSV key: key=" + key);
+                        throw new FinderParseException("Unsupported CSV key: key=" + key);
                 }
             case "link":
                 this.outputType = OutputType.Link;
                 return;
             default:
-                throw new UnsupportedDataTypeException("Unsupported format: format=" + type);
+                throw new FinderParseException("Unsupported format: format=" + type);
         }
     }
 
@@ -199,7 +199,7 @@ public class PathSettings {
         this.isReserved = isReversed;
     }
 
-    void setDropType(String type) throws UnsupportedDataTypeException {
+    void setDropType(String type) throws FinderParseException {
         switch (type.trim().toLowerCase()) {
             case "soft":
             case "softdrop":
@@ -210,7 +210,7 @@ public class PathSettings {
                 this.dropType = DropType.Harddrop;
                 return;
             default:
-                throw new UnsupportedDataTypeException("Unsupported droptype: type=" + type);
+                throw new FinderParseException("Unsupported droptype: type=" + type);
         }
     }
 }

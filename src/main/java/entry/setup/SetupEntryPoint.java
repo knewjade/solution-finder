@@ -138,7 +138,6 @@ public class SetupEntryPoint implements EntryPoint {
         DropType dropType = settings.getDropType();
         output("# Initialize / User-defined");
         output("Max height: " + maxHeight);
-//        output("Using hold: " + (settings.isUsingHold() ? "use" : "avoid"));
         output("Drop: " + dropType.name().toLowerCase());
         output("Searching patterns:");
 

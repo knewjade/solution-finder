@@ -29,15 +29,25 @@ public class OutputFileHelper {
     }
 
     public static PathHTML loadPathUniqueHTML(String path) throws IOException {
+        return loadHTML(path);
+    }
+
+    private static PathHTML loadHTML(String path) throws IOException {
         String html = Files.lines(Paths.get(path)).collect(Collectors.joining());
         int pattern = extractPattern(html);
 
-        String[] split = html.split("ライン消去あり");
-        String noDeletedLine = split[0];
-        String deletedLine = split[1];
-        List<String> noDeletedLineFumens = extractTetfu(noDeletedLine);
-        List<String> deletedLineFumens = extractTetfu(deletedLine);
-        return new PathHTML(html, pattern, noDeletedLineFumens, deletedLineFumens);
+        if (html.contains("ライン消去あり")) {
+            String[] split = html.split("ライン消去あり");
+            String noDeletedLine = split[0];
+            String deletedLine = split[1];
+            List<String> noDeletedLineFumens = extractTetfu(noDeletedLine);
+            List<String> deletedLineFumens = extractTetfu(deletedLine);
+            return new PathHTML(html, pattern, noDeletedLineFumens, deletedLineFumens);
+        } else {
+            List<String> noDeletedLineFumens = extractTetfu(html);
+            List<String> deletedLineFumens = extractTetfu("");
+            return new PathHTML(html, pattern, noDeletedLineFumens, deletedLineFumens);
+        }
     }
 
     public static PathCSV loadPathUniqueCSV() throws IOException {
@@ -52,15 +62,7 @@ public class OutputFileHelper {
     }
 
     public static PathHTML loadPathMinimalHTML(String path) throws IOException {
-        String html = Files.lines(Paths.get(path)).collect(Collectors.joining());
-        int pattern = extractPattern(html);
-
-        String[] split = html.split("ライン消去あり");
-        String noDeletedLine = split[0];
-        String deletedLine = split[1];
-        List<String> noDeletedLineFumens = extractTetfu(noDeletedLine);
-        List<String> deletedLineFumens = extractTetfu(deletedLine);
-        return new PathHTML(html, pattern, noDeletedLineFumens, deletedLineFumens);
+        return loadHTML(path);
     }
 
     public static PathCSV loadPathMinimalCSV() throws IOException {

@@ -402,7 +402,7 @@ class PercentIrregularCaseTest extends PercentUseCaseBaseTest {
         logDirectory.deleteOnExit();
 
         String tetfu = "v115@vhEKJJUqB0fBetBpoB";
-        String command = String.format("percent -t %s -P 5 -p *p5 -l output/log_directory", tetfu);
+        String command = String.format("percent -t %s -P 5 -p *p5 -lp output/log_directory", tetfu);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
         assertThat(log.getReturnCode()).isEqualTo(1);
@@ -415,7 +415,7 @@ class PercentIrregularCaseTest extends PercentUseCaseBaseTest {
         String errorFile = OutputFileHelper.loadErrorText();
         assertThat(errorFile)
                 .contains(command)
-                .contains("Cannot specify directory as log file path: LogFilePath=output/log_directory [FinderInitializeException]");
+                .contains("Cannot specify directory as output file path: Path=output/log_directory [FinderInitializeException]");
 
         // noinspection ResultOfMethodCallIgnored
         logDirectory.delete();

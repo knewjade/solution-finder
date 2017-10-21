@@ -7,8 +7,8 @@ import common.tetfu.field.ColoredField;
 import core.field.Field;
 import core.mino.Block;
 import entry.DropType;
+import exceptions.FinderParseException;
 
-import javax.activation.UnsupportedDataTypeException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -153,11 +153,12 @@ public class SetupSettings {
         this.reservedBlock = reservedBlock;
     }
 
-    void setMarginColorType(String marginColor) throws UnsupportedDataTypeException {
-        ColorType colorType = parseToColor(marginColor);
-        if (colorType == null)
-            throw new UnsupportedDataTypeException("Unsupported margin color: value=" + marginColor);
-        this.marginColorType = colorType;
+    void setMarginColorType(String marginColor) throws FinderParseException {
+        try {
+            this.marginColorType = parseToColor(marginColor);
+        } catch (IllegalArgumentException e) {
+            throw new FinderParseException("Unsupported margin color: value=" + marginColor);
+        }
     }
 
     // The Tetris Company standardization
@@ -191,19 +192,24 @@ public class SetupSettings {
             case "red":
             case "re":
                 return ColorType.Z;
-            default:
+            case "none":
+            case "null":
+            case "empty":
                 return null;
+            default:
+                throw new IllegalArgumentException();
         }
     }
 
-    void setFillColorType(String fillColor) throws UnsupportedDataTypeException {
-        ColorType colorType = parseToColor(fillColor);
-        if (colorType == null)
-            throw new UnsupportedDataTypeException("Unsupported fill color: value=" + fillColor);
-        this.fillColorType = colorType;
+    void setFillColorType(String fillColor) throws FinderParseException {
+        try {
+            this.fillColorType = parseToColor(fillColor);
+        } catch (IllegalArgumentException e) {
+            throw new FinderParseException("Unsupported fill color: value=" + fillColor);
+        }
     }
 
-    void setDropType(String type) throws UnsupportedDataTypeException {
+    void setDropType(String type) throws FinderParseException {
         switch (type.trim().toLowerCase()) {
             case "soft":
             case "softdrop":
@@ -214,7 +220,7 @@ public class SetupSettings {
                 this.dropType = DropType.Harddrop;
                 return;
             default:
-                throw new UnsupportedDataTypeException("Unsupported droptype: type=" + type);
+                throw new FinderParseException("Unsupported droptype: type=" + type);
         }
     }
 }

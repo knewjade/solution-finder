@@ -38,6 +38,10 @@ public class OnDemandBasicSolutions implements BasicSolutions, SolutionsCalculat
         this(separableMinos, sizedBit, ColumnFieldFactory.createField(), memorizedPredicate, sizedBit.getFillBoard());
     }
 
+    public OnDemandBasicSolutions(SeparableMinos separableMinos, SizedBit sizedBit, ColumnSmallField limitOuterField, Predicate<ColumnField> memorizedPredicate) {
+        this(separableMinos, sizedBit, limitOuterField, memorizedPredicate, sizedBit.getFillBoard());
+    }
+
     public OnDemandBasicSolutions(SeparableMinos separableMinos, SizedBit sizedBit, ColumnSmallField limitOuterField, Predicate<ColumnField> memorizedPredicate, long needFillBoard) {
         this.separableMinos = separableMinos;
         this.limitOuterField = limitOuterField;

@@ -214,4 +214,29 @@ class PathCountCaseTest extends PathUseCaseBaseTest {
                 .contains(Messages.minimalCount(1))
                 .contains(Messages.useHold());
     }
+
+    @Test
+    void pattern9() throws Exception {
+        // ミノを置いてライン消去される場合
+
+            /*
+            XXXXX_____
+            XXXXXXXXXX
+            XXXXXXX___
+            XXXXXX____
+             */
+
+        String tetfu = "v115@9gE8EeF8DeG8CeF8NexHJ";
+
+        String command = String.format("path -p *p3 -t %s", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getReturnCode()).isEqualTo(0);
+
+        assertThat(log.getOutput())
+                .contains("*p3")
+                .contains(Messages.uniqueCount(14))
+                .contains(Messages.minimalCount(13))
+                .contains(Messages.useHold());
+    }
 }

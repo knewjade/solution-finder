@@ -17,7 +17,6 @@ import entry.PriorityCommandLineWrapper;
 import exceptions.FinderParseException;
 import org.apache.commons.cli.*;
 
-import javax.activation.UnsupportedDataTypeException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -88,7 +87,7 @@ public class SetupSettingParser {
                         .collect(Collectors.toCollection(LinkedList::new));
 
                 if (fieldLines.isEmpty())
-                    throw new FinderParseException("Should specify clear-line & field-definition in field file");
+                    throw new FinderParseException("Should specify field-definition in field file");
 
                 String removeDomainData = Tetfu.removeDomainData(fieldLines.get(0));
                 if (Tetfu.isDataLater115(removeDomainData)) {
@@ -111,8 +110,6 @@ public class SetupSettingParser {
                     String fieldMarks = String.join("", fieldLines);
                     parseField(fieldMarks, settings, maxHeightForce);
                 }
-            } catch (NumberFormatException e) {
-                throw new FinderParseException("Cannot read clear-line from " + fieldPath);
             } catch (IOException e) {
                 throw new FinderParseException("Cannot open field file", e);
             }
@@ -133,7 +130,7 @@ public class SetupSettingParser {
                 String key = dropType.orElse("softdrop");
                 try {
                     settings.setDropType(key);
-                } catch (UnsupportedDataTypeException e) {
+                } catch (FinderParseException e) {
                     throw new RuntimeException(e);
                 }
             });
@@ -216,16 +213,6 @@ public class SetupSettingParser {
                 .build();
         options.addOption(helpOption);
 
-        Option holdOption = Option.builder("H")
-                .optionalArg(true)
-                .hasArg()
-                .numberOfArgs(1)
-                .argName("use or avoid")
-                .longOpt("hold")
-                .desc("If use hold, set 'use'. If not use hold, set 'avoid'")
-                .build();
-        options.addOption(holdOption);
-
         Option tetfuOption = Option.builder("t")
                 .optionalArg(true)
                 .hasArg()
@@ -276,7 +263,7 @@ public class SetupSettingParser {
                 .build();
         options.addOption(patternFileOption);
 
-        Option logFileOption = Option.builder("l")
+        Option logFileOption = Option.builder("lp")
                 .optionalArg(true)
                 .hasArg()
                 .numberOfArgs(1)
@@ -296,25 +283,25 @@ public class SetupSettingParser {
                 .build();
         options.addOption(outputFileOption);
 
-        Option clearLineOption = Option.builder("c")
+        Option maxHeightOption = Option.builder("l")
                 .optionalArg(true)
                 .hasArg()
                 .numberOfArgs(1)
                 .argName("num-of-line")
-                .longOpt("clear-line")
-                .desc("Max clear line")
+                .longOpt("line")
+                .desc("Max height line")
                 .build();
-        options.addOption(clearLineOption);
+        options.addOption(maxHeightOption);
 
-        Option reservedOption = Option.builder("r")
-                .optionalArg(true)
-                .hasArg()
-                .numberOfArgs(1)
-                .argName("reserved-block")
-                .longOpt("reserved")
-                .desc("Specify reserved block")
-                .build();
-        options.addOption(reservedOption);
+//        Option reservedOption = Option.builder("r")
+//                .optionalArg(true)
+//                .hasArg()
+//                .numberOfArgs(1)
+//                .argName("reserved-block")
+//                .longOpt("reserved")
+//                .desc("Specify reserved block")
+//                .build();
+//        options.addOption(reservedOption);
 
         Option marginColorOption = Option.builder("m")
                 .optionalArg(true)
@@ -366,9 +353,7 @@ public class SetupSettingParser {
         TetfuPage tetfuPage = extractTetfuPage(decoded, page);
 
         // コメントの抽出
-        // 先頭が数字ではない(--clear-line -p *p7のようになる)場合でも、parserはエラーにならない
-        // データ取得時にOptional.emptyがかえるだけ
-        String comment = "--clear-line " + tetfuPage.getComment();
+        String comment = tetfuPage.getComment();
         List<String> splitComment = Arrays.stream(comment.split(" "))
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
@@ -382,33 +367,24 @@ public class SetupSettingParser {
         try {
             CommandLine commandLineTetfu = parseToCommandLine(options, parser, commentArgs);
             CommandLineWrapper newWrapper = new NormalCommandLineWrapper(commandLineTetfu);
-            newWrapper.getIntegerOption("clear-line");  // 削除ラインが読み取れればOK
             wrapper = new PriorityCommandLineWrapper(Arrays.asList(wrapper, newWrapper));
         } catch (FinderParseException ignore) {
         }
 
         // 固定ピースの指定があるか
-        Optional<Boolean> reservedOption = wrapper.getBoolOption("reserved");
-        reservedOption.ifPresent(settings::setReserved);
+//        Optional<Boolean> reservedOption = wrapper.getBoolOption("reserved");
+//        reservedOption.ifPresent(settings::setReserved);
 
         // マージン色の指定があるか
         Optional<String> fillColorOption = wrapper.getStringOption("fill-color");
         if (fillColorOption.isPresent()) {
-            try {
-                settings.setFillColorType(fillColorOption.get());
-            } catch (UnsupportedDataTypeException e) {
-                throw new FinderParseException(e);
-            }
+            settings.setFillColorType(fillColorOption.get());
         }
 
         // マージン色の指定があるか
         Optional<String> marginColorOption = wrapper.getStringOption("margin-color");
         if (marginColorOption.isPresent()) {
-            try {
-                settings.setMarginColorType(marginColorOption.get());
-            } catch (UnsupportedDataTypeException e) {
-                throw new FinderParseException(e);
-            }
+            settings.setMarginColorType(marginColorOption.get());
         }
 
         // フィールドを設定
@@ -422,11 +398,10 @@ public class SetupSettingParser {
             ColorConverter colorConverter = new ColorConverter();
             Mino mino = new Mino(colorConverter.parseToBlock(colorType), rotate);
             coloredField.putMino(mino, x, y);
-            coloredField.clearLine();
         }
 
         // 最大削除ラインの設定
-        Optional<Integer> maxHeightOption = wrapper.getIntegerOption("clear-line");
+        Optional<Integer> maxHeightOption = wrapper.getIntegerOption("line");
         int maxHeight = maxHeightOption.orElse(coloredField.getUsingHeight());
 
         if (settings.isReserved()) {
@@ -456,7 +431,6 @@ public class SetupSettingParser {
                                 notFilledField.setBlock(x, y);
                                 break;
                             default:
-                                initField.setBlock(x, y);
                                 break;
                         }
                     }

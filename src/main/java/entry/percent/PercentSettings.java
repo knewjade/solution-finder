@@ -5,8 +5,8 @@ import common.tetfu.field.ColoredField;
 import core.field.Field;
 import core.field.FieldFactory;
 import entry.DropType;
+import exceptions.FinderParseException;
 
-import javax.activation.UnsupportedDataTypeException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -98,11 +98,7 @@ public class PercentSettings {
         this.failedCount = maxCount;
     }
 
-    void setDropType(DropType dropType) {
-        this.dropType = dropType;
-    }
-
-    void setDropType(String type) throws UnsupportedDataTypeException {
+    void setDropType(String type) throws FinderParseException {
         switch (type.trim().toLowerCase()) {
             case "soft":
             case "softdrop":
@@ -113,7 +109,7 @@ public class PercentSettings {
                 this.dropType = DropType.Harddrop;
                 return;
             default:
-                throw new UnsupportedDataTypeException("Unsupported droptype: type=" + type);
+                throw new FinderParseException("Unsupported droptype: type=" + type);
         }
     }
 }

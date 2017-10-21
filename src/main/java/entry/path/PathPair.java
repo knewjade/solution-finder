@@ -30,7 +30,7 @@ public class PathPair implements HaveSet<LongBlocks> {
         this.piecesPattern = piecesPattern;
         this.fumen = fumen;
         this.sampleOperations = sampleOperations;
-        this.deletedLine = containsDeletedLine();
+        this.deletedLine = result != null && containsDeletedLine();
     }
 
     private boolean containsDeletedLine() {

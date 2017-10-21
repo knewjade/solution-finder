@@ -134,4 +134,29 @@ class PercentCountCaseTest extends PercentUseCaseBaseTest {
 
         assertThat(log.getError()).isEmpty();
     }
+
+    @Test
+    void pattern6() throws Exception {
+        // ミノを置いてライン消去される場合
+
+            /*
+            XXXXX_____
+            XXXXXXXXXX
+            XXXXXXX___
+            XXXXXX____
+             */
+
+        String tetfu = "v115@9gE8EeF8DeG8CeF8NexHJ";
+
+        String command = String.format("percent -p *p3 -t %s", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getOutput())
+                .contains(Messages.clearLine(4))
+                .contains(Messages.useHold())
+                .contains(Messages.success(54, 210))
+                .contains("*p3");
+
+        assertThat(log.getError()).isEmpty();
+    }
 }
