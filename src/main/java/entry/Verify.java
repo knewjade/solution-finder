@@ -30,15 +30,15 @@ public class Verify {
             throw new FinderInitializeException("Invalid reserved blocks");
     }
 
-    public static IBlocksGenerator patterns(List<String> patterns, int maxDepth) throws FinderInitializeException {
+    public static IBlocksGenerator patterns(List<String> patterns, int depth) throws FinderInitializeException {
         if (patterns.isEmpty())
             throw new FinderInitializeException("Should specify patterns, not allow empty");
 
         IBlocksGenerator generator = createBlocksGenerator(patterns);
 
         int piecesDepth = generator.getDepth();
-        if (piecesDepth < maxDepth)
-            throw new FinderInitializeException(String.format("Should specify equal to or more than %d pieces: CurrentPieces=%d", maxDepth, piecesDepth));
+        if (piecesDepth < depth)
+            throw new FinderInitializeException(String.format("Should specify equal to or more than %d pieces: CurrentPieces=%d", depth, piecesDepth));
 
         return generator;
     }
@@ -54,6 +54,10 @@ public class Verify {
     public static int maxDepth(Field field, int maxClearLine) throws FinderInitializeException {
         int emptyCount = emptyCount(field, maxClearLine);
         return emptyCount / 4;
+    }
+
+    public static int minDepth(Field field) throws FinderInitializeException {
+        return (int) Math.ceil(field.getNumOfAllBlocks() / 4.0);
     }
 
     private static int emptyCount(Field field, int maxClearLine) throws FinderInitializeException {

@@ -8,7 +8,6 @@ import common.tetfu.common.ColorConverter;
 import core.FinderConstant;
 import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
-import core.field.BlockFieldView;
 import core.field.Field;
 import core.field.FieldView;
 import core.mino.MinoFactory;
@@ -76,16 +75,25 @@ public class PathEntryPoint implements EntryPoint {
         int maxClearLine = settings.getMaxClearLine();
         Verify.maxClearLineUnder10(maxClearLine);
 
-        // Output field
-        output(FieldView.toString(field, maxClearLine));
-
         // Setup reserved blocks
         BlockField reservedBlocks = settings.getReservedBlock();
-        if (settings.isRevered()) {
+        if (settings.isReserved()) {
             Verify.reservedBlocks(reservedBlocks);
-            output("");
-            output("# Setup Reserved blocks");
-            output(BlockFieldView.toString(reservedBlocks));
+
+            for (int y = maxClearLine - 1; 0 <= y; y--) {
+                StringBuilder builder = new StringBuilder();
+                for (int x = 0; x < 10; x++) {
+                    if (reservedBlocks.getBlock(x, y) != null)
+                        builder.append(reservedBlocks.getBlock(x, y).getName());
+                    else if (!field.isEmpty(x, y))
+                        builder.append('X');
+                    else
+                        builder.append('_');
+                }
+                output(builder.toString());
+            }
+        } else {
+            output(FieldView.toString(field, maxClearLine));
         }
 
         // Setup max depth

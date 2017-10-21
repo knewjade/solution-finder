@@ -20,8 +20,8 @@ public class ColoredFieldFactory {
         for (int y = 0; y < maxY; y++) {
             for (int x = 0; x < 10; x++) {
                 char mark = marks.charAt((maxY - y - 1) * 10 + x);
-                if (mark != ' ' && mark != '_') {
-                    ColorType colorType = get(mark);
+                ColorType colorType = get(mark);
+                if (colorType != ColorType.Empty) {
                     field.setColorType(colorType, x, y);
                 }
             }
@@ -53,6 +53,8 @@ public class ColoredFieldFactory {
                 return ColorType.Empty;
             case '_':
                 return ColorType.Empty;
+            case '*':
+                return ColorType.Gray;
             default:
                 return ColorType.Gray;
         }

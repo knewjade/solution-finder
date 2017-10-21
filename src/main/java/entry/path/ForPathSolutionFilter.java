@@ -46,7 +46,13 @@ public class ForPathSolutionFilter implements SolutionFilter {
     // 回転入れで入るかどうかの確認は後で行うため、この段階ではしない
     @Override
     public boolean testLast(MinoFieldMemento memento) {
-        return test(memento);
+        // ブロックの使用状況を確認
+        if (!checksValidCounter(memento.getSumBlockCounter()))
+            return false;
+
+        // 手順のkeyに矛盾がないかを確認
+        LinkedList<OperationWithKey> rawOperations = memento.getRawOperationsStream().collect(Collectors.toCollection(LinkedList::new));
+        return BuildUp.checksKeyDirectly(rawOperations, 0L, height);
     }
 
     @Override

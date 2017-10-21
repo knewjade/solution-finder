@@ -5,6 +5,7 @@ import common.tetfu.TetfuPage;
 import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
+import common.tetfu.field.ColoredFieldFactory;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Mino;
@@ -13,7 +14,6 @@ import core.srs.Rotate;
 import entry.CommandLineWrapper;
 import entry.NormalCommandLineWrapper;
 import entry.PriorityCommandLineWrapper;
-import entry.percent.PercentSettings;
 import exceptions.FinderParseException;
 import org.apache.commons.cli.*;
 
@@ -95,14 +95,17 @@ public class SetupSettingParser {
                     // テト譜から
                     wrapper = loadTetfu(removeDomainData, parser, options, wrapper, settings);
                 } else {
+                    // 固定ピースの指定があるか
+                    Optional<Boolean> reservedOption = wrapper.getBoolOption("reserved");
+                    reservedOption.ifPresent(settings::setReserved);
+
                     // 最大削除ラインの設定
                     int maxClearLine = Integer.valueOf(fieldLines.pollFirst());
                     settings.setMaxClearLine(maxClearLine);
 
                     // フィールドの設定
                     String fieldMarks = String.join("", fieldLines);
-                    Field field = FieldFactory.createField(fieldMarks);
-                    settings.setFieldFilePath(field);
+                    parseField(fieldMarks, settings, maxClearLine);
                 }
             } catch (NumberFormatException e) {
                 throw new FinderParseException("Cannot read clear-line from " + fieldPath);
@@ -111,20 +114,13 @@ public class SetupSettingParser {
             }
         }
 
-        // ドロップの設定
-        Optional<String> dropType = wrapper.getStringOption("drop");
-        try {
-            dropType.ifPresent(type -> {
-                String key = dropType.orElse("softdrop");
-                try {
-                    settings.setDropType(key);
-                } catch (UnsupportedDataTypeException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-        } catch (Exception e) {
-            throw new FinderParseException("Unsupported format: format=" + dropType.orElse("<empty>"));
-        }
+        // ログファイルの設定
+        Optional<String> logFilePath = wrapper.getStringOption("log-path");
+        logFilePath.ifPresent(settings::setLogFilePath);
+
+        // アウトプットファイルの設定
+        Optional<String> outputBaseFilePath = wrapper.getStringOption("output-base");
+        outputBaseFilePath.ifPresent(settings::setOutputBaseFilePath);
 
         // 探索パターンの設定
         if (wrapper.hasOption("patterns")) {
@@ -150,6 +146,22 @@ public class SetupSettingParser {
         }
 
         return Optional.of(settings);
+    }
+
+    private void parseField(String fieldMarks, SetupSettings settings, int maxClearLine) {
+        // Load need filled field
+        String needFilledFieldMarks = fieldMarks.replace("*", " ");
+        Field needFilledField = FieldFactory.createField(needFilledFieldMarks);
+
+        // Load not filled field
+        Field notFilledField = FieldFactory.createInverseField(needFilledFieldMarks);
+
+        if (settings.isReserved()) {
+            ColoredField coloredField = ColoredFieldFactory.createColoredField(fieldMarks);
+            settings.setFieldWithReserved(needFilledField, notFilledField, coloredField, maxClearLine);
+        } else {
+            settings.setField(needFilledField, notFilledField);
+        }
     }
 
     private Options createOptions() {
@@ -232,15 +244,15 @@ public class SetupSettingParser {
                 .build();
         options.addOption(logFileOption);
 
-//        Option outputFileOption = Option.builder("o")
-//                .optionalArg(true)
-//                .hasArg()
-//                .numberOfArgs(1)
-//                .argName("file-path")
-//                .longOpt("output-base")
-//                .desc("Base file path of result to output")
-//                .build();
-//        options.addOption(outputFileOption);
+        Option outputFileOption = Option.builder("o")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("file-path")
+                .longOpt("output-base")
+                .desc("Base file path of result to output")
+                .build();
+        options.addOption(outputFileOption);
 
         Option clearLineOption = Option.builder("c")
                 .optionalArg(true)
@@ -262,15 +274,15 @@ public class SetupSettingParser {
                 .build();
         options.addOption(reservedOption);
 
-        Option dropOption = Option.builder("d")
+        Option marginColorOption = Option.builder("m")
                 .optionalArg(true)
                 .hasArg()
                 .numberOfArgs(1)
-                .argName("drop")
-                .longOpt("drop")
-                .desc("Specify drop")
+                .argName("color")
+                .longOpt("margin-color")
+                .desc("Specify margin color")
                 .build();
-        options.addOption(dropOption);
+        options.addOption(marginColorOption);
 
         return options;
     }
@@ -313,6 +325,20 @@ public class SetupSettingParser {
         } catch (FinderParseException ignore) {
         }
 
+        // 固定ピースの指定があるか
+        Optional<Boolean> reservedOption = wrapper.getBoolOption("reserved");
+        reservedOption.ifPresent(settings::setReserved);
+
+        // マージン色の指定があるか
+        Optional<String> marginColorOption = wrapper.getStringOption("margin-color");
+        if (marginColorOption.isPresent()) {
+            try {
+                settings.setMarginColorType(marginColorOption.get());
+            } catch (UnsupportedDataTypeException e) {
+                throw new FinderParseException(e);
+            }
+        }
+
         // 最大削除ラインの設定
         Optional<Integer> maxClearLineOption = wrapper.getIntegerOption("clear-line");
         maxClearLineOption.ifPresent(settings::setMaxClearLine);
@@ -330,7 +356,59 @@ public class SetupSettingParser {
             coloredField.putMino(mino, x, y);
             coloredField.clearLine();
         }
-        settings.setField(coloredField, settings.getMaxClearLine());
+
+        if (settings.isReserved()) {
+            int maxClearLine = settings.getMaxClearLine();
+            Field needFilledField = FieldFactory.createField(maxClearLine);
+            Field notFilledField = FieldFactory.createField(maxClearLine);
+            ColorType marginColorType = settings.getMarginColorType();
+
+            for (int y = 0; y < maxClearLine; y++) {
+                for (int x = 0; x < 10; x++) {
+                    ColorType colorType = coloredField.getColorType(x, y);
+                    if (colorType.equals(marginColorType)) {
+                        coloredField.setColorType(ColorType.Empty, x, y);
+                        continue;
+                    }
+
+                    switch (colorType) {
+                        case Gray:
+                            needFilledField.setBlock(x, y);
+                            coloredField.setColorType(ColorType.Empty, x, y);
+                            break;
+                        case Empty:
+                            notFilledField.setBlock(x, y);
+                            break;
+                        default:
+                            needFilledField.setBlock(x, y);
+                            break;
+                    }
+                }
+            }
+
+            settings.setFieldWithReserved(needFilledField, notFilledField, coloredField, maxClearLine);
+        } else {
+            int maxClearLine = settings.getMaxClearLine();
+            Field needFilledField = FieldFactory.createField(maxClearLine);
+            Field notFilledField = FieldFactory.createField(maxClearLine);
+
+            for (int y = 0; y < maxClearLine; y++) {
+                for (int x = 0; x < 10; x++) {
+                    ColorType colorType = coloredField.getColorType(x, y);
+
+                    switch (colorType) {
+                        case Gray:
+                            needFilledField.setBlock(x, y);
+                            break;
+                        case Empty:
+                            notFilledField.setBlock(x, y);
+                            break;
+                    }
+                }
+            }
+
+            settings.setField(needFilledField, notFilledField);
+        }
 
         return wrapper;
     }

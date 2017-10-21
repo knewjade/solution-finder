@@ -103,7 +103,7 @@ public class PathSettingParser {
                 } else {
                     // 固定ピースの指定があるか
                     Optional<Boolean> reservedOption = wrapper.getBoolOption("reserved");
-                    reservedOption.ifPresent(settings::setRevered);
+                    reservedOption.ifPresent(settings::setReserved);
 
                     // 最大削除ラインの設定
                     int maxClearLine = Integer.valueOf(fieldLines.pollFirst());
@@ -112,7 +112,7 @@ public class PathSettingParser {
                     // フィールドの設定
                     String fieldMarks = String.join("", fieldLines);
                     ColoredField coloredField = ColoredFieldFactory.createColoredField(fieldMarks);
-                    if (settings.isRevered()) {
+                    if (settings.isReserved()) {
                         settings.setFieldWithReserved(coloredField, maxClearLine);
                     } else {
                         settings.setField(coloredField, maxClearLine);
@@ -420,7 +420,7 @@ public class PathSettingParser {
 
         // 固定ピースの指定があるか
         Optional<Boolean> reservedOption = wrapper.getBoolOption("reserved");
-        reservedOption.ifPresent(settings::setRevered);
+        reservedOption.ifPresent(settings::setReserved);
 
         // 最大削除ラインの設定
         Optional<Integer> maxClearLineOption = wrapper.getIntegerOption("clear-line");
@@ -440,7 +440,7 @@ public class PathSettingParser {
             coloredField.clearLine();
         }
 
-        if (settings.isRevered())
+        if (settings.isReserved())
             settings.setFieldWithReserved(coloredField, settings.getMaxClearLine());
         else
             settings.setField(coloredField, settings.getMaxClearLine());

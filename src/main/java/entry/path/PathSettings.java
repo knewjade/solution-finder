@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PathSettings {
-    private static final int EMPTY_BLOCK_NUMBER = ColorType.Empty.getNumber();
     private static final String DEFAULT_LOG_FILE_PATH = "output/last_output.txt";
     private static final String DEFAULT_OUTPUT_BASE_FILE_PATH = "output/path.txt";
 
@@ -29,7 +28,7 @@ public class PathSettings {
     private boolean isSplit = false;
     private int cachedMinBit = 0;
     private BlockField reservedBlock = null;
-    private boolean isReversed = false;
+    private boolean isReserved = false;
     private DropType dropType = DropType.Softdrop;
 
     // ********* Getter ************
@@ -81,8 +80,8 @@ public class PathSettings {
         return reservedBlock;
     }
 
-    boolean isRevered() {
-        return isReversed;
+    boolean isReserved() {
+        return isReserved;
     }
 
     DropType getDropType() {
@@ -102,7 +101,7 @@ public class PathSettings {
         Field field = FieldFactory.createField(height);
         for (int y = 0; y < height; y++)
             for (int x = 0; x < 10; x++)
-                if (coloredField.getBlockNumber(x, y) != EMPTY_BLOCK_NUMBER)
+                if (coloredField.getColorType(x, y) != ColorType.Empty)
                     field.setBlock(x, y);
         setField(field);
         setReservedBlock(null);
@@ -116,10 +115,9 @@ public class PathSettings {
                 ColorConverter colorConverter = new ColorConverter();
                 ColorType colorType = colorConverter.parseToColorType(coloredField.getBlockNumber(x, y));
 
-                if (coloredField.getBlockNumber(x, y) == EMPTY_BLOCK_NUMBER)
-                    continue;
-
                 switch (colorType) {
+                    case Empty:
+                        break;
                     case Gray:
                         field.setBlock(x, y);
                         break;
@@ -197,8 +195,8 @@ public class PathSettings {
         this.cachedMinBit = minBit;
     }
 
-    void setRevered(Boolean isReversed) {
-        this.isReversed = isReversed;
+    void setReserved(Boolean isReversed) {
+        this.isReserved = isReversed;
     }
 
     void setDropType(String type) throws UnsupportedDataTypeException {

@@ -5,9 +5,7 @@ import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import core.field.Field;
-import core.field.FieldFactory;
 import core.mino.Block;
-import entry.DropType;
 
 import javax.activation.UnsupportedDataTypeException;
 import java.util.ArrayList;
@@ -16,100 +14,85 @@ import java.util.List;
 public class SetupSettings {
     private static final int EMPTY_BLOCK_NUMBER = ColorType.Empty.getNumber();
     private static final String DEFAULT_LOG_FILE_PATH = "output/last_output.txt";
+    private static final String DEFAULT_OUTPUT_BASE_FILE_PATH = "output/path.txt";
 
-    private boolean isUsingHold = true;
-    private int maxClearLine = 4;
-    private Field field = null;
     private String logFilePath = DEFAULT_LOG_FILE_PATH;
+    private boolean isReserved = false;
+    private int maxClearLine = 4;
     private List<String> patterns = new ArrayList<>();
-    private DropType dropType = DropType.Softdrop;
+    private Field needFilledField = null;
+    private Field notFilledField = null;
     private BlockField reservedBlock = null;
-    private boolean isReversed = false;
+    private ColorType marginColorType = null;
 
     // ********* Getter ************
-    public boolean isUsingHold() {
-        return isUsingHold;
+
+    String getLogFilePath() {
+        return logFilePath;
     }
 
-    boolean isOutputToConsole() {
-        return true;
-    }
-
-    Field getNeedFillField() {
-        return FieldFactory.createField("" +
-                "__________" +
-                "X__X______" +
-                "XXXX______" +
-                "XXXX______"
-        );
-    }
-
-    Field getDoNotFillField() {
-        return FieldFactory.createField("" +
-                "____XXXXXX" +
-                "____XXXXXX" +
-                "____XXXXXX" +
-                "____XXXXXX"
-        );
+    boolean isReserved() {
+        return isReserved;
     }
 
     int getMaxClearLine() {
         return maxClearLine;
     }
 
-    String getLogFilePath() {
-        return logFilePath;
-    }
-
     List<String> getPatterns() {
         return patterns;
     }
 
-    DropType getDropType() {
-        return dropType;
+    boolean isOutputToConsole() {
+        return true;
+    }
+
+    Field getNeedFilledField() {
+        return needFilledField;
+    }
+
+    Field getNotFilledField() {
+        return notFilledField;
     }
 
     BlockField getReservedBlock() {
         return reservedBlock;
     }
 
-    boolean isRevered() {
-        return isReversed;
+    ColorType getMarginColorType() {
+        return marginColorType;
     }
 
     // ********* Setter ************
-    public void setMaxClearLine(int maxClearLine) {
+    void setLogFilePath(String path) {
+        this.logFilePath = path;
+    }
+
+    void setOutputBaseFilePath(String path) {
+//        this.outputBaseFilePath = path;
+    }
+
+    void setReserved(boolean isReserved) {
+        this.isReserved = isReserved;
+    }
+
+    void setMaxClearLine(int maxClearLine) {
         this.maxClearLine = maxClearLine;
     }
 
-    void setUsingHold(Boolean isUsingHold) {
-        this.isUsingHold = isUsingHold;
+    void setPatterns(List<String> patterns) {
+        this.patterns = patterns;
     }
 
-    void setField(ColoredField coloredField, int height) {
-        Field field = FieldFactory.createField(height);
-        for (int y = 0; y < height; y++)
-            for (int x = 0; x < 10; x++)
-                if (coloredField.getBlockNumber(x, y) != EMPTY_BLOCK_NUMBER)
-                    field.setBlock(x, y);
-        setField(field);
-        setReservedBlock(null);
-    }
-
-    void setFieldWithReserved(ColoredField coloredField, int height) {
-        Field field = FieldFactory.createField(height);
-        BlockField blockField = new BlockField(height);
-        for (int y = 0; y < height; y++) {
+    void setFieldWithReserved(Field needFilledField, Field notFilledField, ColoredField coloredField, int maxClearLine) {
+        BlockField blockField = new BlockField(maxClearLine);
+        for (int y = 0; y < maxClearLine; y++) {
             for (int x = 0; x < 10; x++) {
                 ColorConverter colorConverter = new ColorConverter();
                 ColorType colorType = colorConverter.parseToColorType(coloredField.getBlockNumber(x, y));
-
-                if (coloredField.getBlockNumber(x, y) == EMPTY_BLOCK_NUMBER)
-                    continue;
-
                 switch (colorType) {
                     case Gray:
-                        field.setBlock(x, y);
+                    case Empty:
                         break;
                     default:
                         Block block = colorConverter.parseToBlock(colorType);
@@ -118,46 +101,70 @@ public class SetupSettings {
                 }
             }
         }
-        setField(field);
+
+        setNeedFilledField(needFilledField);
+        setNotFilledField(notFilledField);
         setReservedBlock(blockField);
     }
 
-    private void setField(Field field) {
-        this.field = field;
+    void setField(Field needFilledField, Field notFilledField) {
+        setNeedFilledField(needFilledField);
+        setNotFilledField(notFilledField);
+        setReservedBlock(null);
     }
 
-    private void setReservedBlock(BlockField blockField) {
-        this.reservedBlock = blockField;
+    private void setNeedFilledField(Field needFilledField) {
+        this.needFilledField = needFilledField;
     }
 
-    void setFieldFilePath(Field field) {
-        this.field = field;
+    private void setNotFilledField(Field notFilledField) {
+        this.notFilledField = notFilledField;
     }
 
-    void setLogFilePath(String path) {
-        this.logFilePath = path;
+    private void setReservedBlock(BlockField reservedBlock) {
+        this.reservedBlock = reservedBlock;
     }
 
-    void setPatterns(List<String> patterns) {
-        this.patterns = patterns;
-    }
-
-    void setDropType(DropType dropType) {
-        this.dropType = dropType;
-    }
-
-    void setDropType(String type) throws UnsupportedDataTypeException {
-        switch (type.trim().toLowerCase()) {
-            case "soft":
-            case "softdrop":
-                this.dropType = DropType.Softdrop;
-                return;
-            case "hard":
-            case "harddrop":
-                this.dropType = DropType.Harddrop;
-                return;
+    // The Tetris Company standardization
+    void setMarginColorType(String marginColor) throws UnsupportedDataTypeException {
+        switch (marginColor.trim().toLowerCase()) {
+            case "i":
+            case "cyan":
+            case "cy":
+                this.marginColorType = ColorType.I;
+                break;
+            case "j":
+            case "blue":
+            case "bl":
+                this.marginColorType = ColorType.J;
+                break;
+            case "l":
+            case "orange":
+            case "or":
+                this.marginColorType = ColorType.L;
+                break;
+            case "o":
+            case "yellow":
+            case "ye":
+                this.marginColorType = ColorType.O;
+                break;
+            case "s":
+            case "green":
+            case "gr":
+                this.marginColorType = ColorType.S;
+                break;
+            case "t":
+            case "purple":
+            case "pu":
+                this.marginColorType = ColorType.T;
+                break;
+            case "z":
+            case "red":
+            case "re":
+                this.marginColorType = ColorType.Z;
+                break;
             default:
-                throw new UnsupportedDataTypeException("Unsupported droptype: type=" + type);
+                throw new UnsupportedDataTypeException("Unsupported margin color: value=" + marginColor);
         }
     }
 }
