@@ -10,12 +10,15 @@ import core.mino.Block;
 import entry.path.*;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
+import output.HTMLBuilder;
+import output.HTMLColumn;
 import searcher.pack.SizedBit;
-import searcher.pack.task.Result;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class LinkPathOutput implements PathOutput {
@@ -104,58 +107,38 @@ public class LinkPathOutput implements PathOutput {
                 if (!field.isEmpty(x, y))
                     initField.setColorType(ColorType.Gray, x, y);
 
-        // ライン消去ありとなしに振り分ける // true: ライン消去あり, false: ライン消去なし
-        Map<Boolean, List<PathPair>> groupByDelete = pathPairs.stream()
-                .collect(Collectors.groupingBy(pathPair -> {
-                    Result result = pathPair.getResult();
-                    return result.getMemento().getRawOperationsStream()
-                            .anyMatch(operationWithKey -> operationWithKey.getNeedDeletedKey() != 0L);
-                }));
-
-        // それぞれで並び替える
+        // 並び替える
         Comparator<PathPair> comparator = new PathPairComparator();
-        for (List<PathPair> objs : groupByDelete.values())
-            objs.sort(comparator);
+        pathPairs.sort(comparator);
+
+        // HTMLの生成  // true: ライン消去あり, false: ライン消去なし
+        HTMLBuilder<HTMLColumn> htmlBuilder = new HTMLBuilder<>("Path Result");
+        htmlBuilder.addHeader(String.format("<div>%dパターン</div>", pathPairs.size()));
+
+        pathPairs.parallelStream()
+                .forEach(pathPair -> {
+                    PathHTMLColumn htmlColumn = getHTMLColumn(pathPair);
+                    String link = createALink(pathPair);
+                    String line = String.format("<div>%s</div>", link);
+                    htmlBuilder.addColumn(htmlColumn, line);
+                });
 
         // 出力
         try (BufferedWriter writer = file.newBufferedWriter()) {
-            // headerの出力
-            writer.write("<!DOCTYPE html>");
-            writer.newLine();
-            writer.write("<html lang=ja><head><meta charset=\"UTF-8\"></head><body>");
-            writer.newLine();
-
-            // パターン数の出力
-            writer.write(String.format("<div>%dパターン</div>", pathPairs.size()));
-            writer.newLine();
-
-            // 手順の出力 (ライン消去なし)
-            writer.write("<h2>ライン消去なし</h2>");
-            writer.newLine();
-
-            for (PathPair pathPair : groupByDelete.getOrDefault(false, Collections.emptyList())) {
-                String link = createALink(pathPair);
-                writer.write(String.format("<div>%s</div>", link));
-                writer.newLine();
-            }
-
-            // 手順の出力 (ライン消去あり)
-            writer.write("<h2>ライン消去あり</h2>");
-            writer.newLine();
-
-            for (PathPair pathPair : groupByDelete.getOrDefault(true, Collections.emptyList())) {
-                String link = createALink(pathPair);
-                writer.write(String.format("<div>%s</div>", link));
-                writer.newLine();
-            }
-
-            // footerの出力
-            writer.write("<html lang=ja><head><meta charset=\"UTF-8\"></head><body>");
-            writer.newLine();
+            List<HTMLColumn> priorityList = Arrays.asList(PathHTMLColumn.NotDeletedLine, PathHTMLColumn.DeletedLine);
+            for (String line : htmlBuilder.toList(priorityList, false))
+                writer.write(line);
             writer.flush();
         } catch (Exception e) {
             throw new FinderExecuteException("Failed to output file", e);
         }
+    }
+
+    private PathHTMLColumn getHTMLColumn(PathPair pathPair) {
+        if (pathPair.isDeletedLine())
+            return PathHTMLColumn.DeletedLine;
+        else
+            return PathHTMLColumn.NotDeletedLine;
     }
 
     private String createALink(PathPair pathPair) {

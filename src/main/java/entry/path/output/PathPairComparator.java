@@ -10,6 +10,10 @@ import java.util.List;
 public class PathPairComparator implements Comparator<PathPair> {
     @Override
     public int compare(PathPair o1, PathPair o2) {
+        int compareDeletedLine = Boolean.compare(o1.isDeletedLine(), o2.isDeletedLine());
+        if (compareDeletedLine != 0)
+            return compareDeletedLine;
+
         List<OperationWithKey> operations1 = o1.getSampleOperations();
         List<OperationWithKey> operations2 = o2.getSampleOperations();
 

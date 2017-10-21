@@ -100,12 +100,16 @@ public class SetupSettingParser {
                     reservedOption.ifPresent(settings::setReserved);
 
                     // 最大削除ラインの設定
-                    int maxClearLine = Integer.valueOf(fieldLines.pollFirst());
-                    settings.setMaxClearLine(maxClearLine);
+                    int maxHeightForce = -1;
+                    try {
+                        maxHeightForce = Integer.valueOf(fieldLines.peekFirst());
+                        fieldLines.pollFirst();  // 読み込みに成功したときだけ進める
+                    } catch (Exception ignore) {
+                    }
 
                     // フィールドの設定
                     String fieldMarks = String.join("", fieldLines);
-                    parseField(fieldMarks, settings, maxClearLine);
+                    parseField(fieldMarks, settings, maxHeightForce);
                 }
             } catch (NumberFormatException e) {
                 throw new FinderParseException("Cannot read clear-line from " + fieldPath);
@@ -121,6 +125,21 @@ public class SetupSettingParser {
         // アウトプットファイルの設定
         Optional<String> outputBaseFilePath = wrapper.getStringOption("output-base");
         outputBaseFilePath.ifPresent(settings::setOutputBaseFilePath);
+
+        // ドロップの設定
+        Optional<String> dropType = wrapper.getStringOption("drop");
+        try {
+            dropType.ifPresent(type -> {
+                String key = dropType.orElse("softdrop");
+                try {
+                    settings.setDropType(key);
+                } catch (UnsupportedDataTypeException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            throw new FinderParseException("Unsupported format: format=" + dropType.orElse("<empty>"));
+        }
 
         // 探索パターンの設定
         if (wrapper.hasOption("patterns")) {
@@ -148,20 +167,43 @@ public class SetupSettingParser {
         return Optional.of(settings);
     }
 
-    private void parseField(String fieldMarks, SetupSettings settings, int maxClearLine) {
+    private void parseField(String fieldMarks, SetupSettings settings, int maxHeightForce) {
+        ColoredField coloredField = ColoredFieldFactory.createColoredField(fieldMarks);
+        int maxHeight = maxHeightForce != -1 ? maxHeightForce : coloredField.getUsingHeight();
+
+        // Load init field
+        String initFieldMarks = fieldMarks.replace(".", " ").replace("*", " ");
+        Field initField = FieldFactory.createField(initFieldMarks);
+        for (int y = maxHeight; y < initField.getMaxFieldHeight(); y++)
+            for (int x = 0; x < 10; x++)
+                initField.removeBlock(x, y);
+
         // Load need filled field
-        String needFilledFieldMarks = fieldMarks.replace("*", " ");
+        String needFilledFieldMarks = filterString(fieldMarks, '*', '_');
         Field needFilledField = FieldFactory.createField(needFilledFieldMarks);
+        for (int y = maxHeight; y < needFilledField.getMaxFieldHeight(); y++)
+            for (int x = 0; x < 10; x++)
+                needFilledField.removeBlock(x, y);
 
         // Load not filled field
-        Field notFilledField = FieldFactory.createInverseField(needFilledFieldMarks);
+        Field notFilledField = FieldFactory.createInverseField(fieldMarks.replace(".", " "));
+        for (int y = maxHeight; y < notFilledField.getMaxFieldHeight(); y++)
+            for (int x = 0; x < 10; x++)
+                notFilledField.removeBlock(x, y);
 
         if (settings.isReserved()) {
-            ColoredField coloredField = ColoredFieldFactory.createColoredField(fieldMarks);
-            settings.setFieldWithReserved(needFilledField, notFilledField, coloredField, maxClearLine);
+            settings.setFieldWithReserved(initField, needFilledField, notFilledField, coloredField, maxHeight);
         } else {
-            settings.setField(needFilledField, notFilledField);
+            settings.setField(initField, needFilledField, notFilledField, maxHeight);
         }
+    }
+
+    private String filterString(String str, char allow, char replace) {
+        char[] chars = str.toCharArray();
+        for (int index = 0; index < chars.length; index++)
+            if (chars[index] != allow)
+                chars[index] = replace;
+        return String.valueOf(chars);
     }
 
     private Options createOptions() {
@@ -284,6 +326,26 @@ public class SetupSettingParser {
                 .build();
         options.addOption(marginColorOption);
 
+        Option fillColorOption = Option.builder("f")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("color")
+                .longOpt("fill-color")
+                .desc("Specify fill color")
+                .build();
+        options.addOption(fillColorOption);
+
+        Option dropOption = Option.builder("d")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("drop")
+                .longOpt("drop")
+                .desc("Specify drop")
+                .build();
+        options.addOption(dropOption);
+
         return options;
     }
 
@@ -330,6 +392,16 @@ public class SetupSettingParser {
         reservedOption.ifPresent(settings::setReserved);
 
         // マージン色の指定があるか
+        Optional<String> fillColorOption = wrapper.getStringOption("fill-color");
+        if (fillColorOption.isPresent()) {
+            try {
+                settings.setFillColorType(fillColorOption.get());
+            } catch (UnsupportedDataTypeException e) {
+                throw new FinderParseException(e);
+            }
+        }
+
+        // マージン色の指定があるか
         Optional<String> marginColorOption = wrapper.getStringOption("margin-color");
         if (marginColorOption.isPresent()) {
             try {
@@ -338,10 +410,6 @@ public class SetupSettingParser {
                 throw new FinderParseException(e);
             }
         }
-
-        // 最大削除ラインの設定
-        Optional<Integer> maxClearLineOption = wrapper.getIntegerOption("clear-line");
-        maxClearLineOption.ifPresent(settings::setMaxClearLine);
 
         // フィールドを設定
         ColoredField coloredField = tetfuPage.getField();
@@ -357,57 +425,75 @@ public class SetupSettingParser {
             coloredField.clearLine();
         }
 
-        if (settings.isReserved()) {
-            int maxClearLine = settings.getMaxClearLine();
-            Field needFilledField = FieldFactory.createField(maxClearLine);
-            Field notFilledField = FieldFactory.createField(maxClearLine);
-            ColorType marginColorType = settings.getMarginColorType();
+        // 最大削除ラインの設定
+        Optional<Integer> maxHeightOption = wrapper.getIntegerOption("clear-line");
+        int maxHeight = maxHeightOption.orElse(coloredField.getUsingHeight());
 
-            for (int y = 0; y < maxClearLine; y++) {
+        if (settings.isReserved()) {
+            Field initField = FieldFactory.createField(maxHeight);
+            Field needFilledField = FieldFactory.createField(maxHeight);
+            Field notFilledField = FieldFactory.createField(maxHeight);
+
+            ColorType marginColorType = settings.getMarginColorType();
+            ColorType fillColorType = settings.getFillColorType();
+
+            for (int y = 0; y < maxHeight; y++) {
                 for (int x = 0; x < 10; x++) {
                     ColorType colorType = coloredField.getColorType(x, y);
                     if (colorType.equals(marginColorType)) {
                         coloredField.setColorType(ColorType.Empty, x, y);
-                        continue;
+                    } else if (colorType.equals(fillColorType)) {
+                        coloredField.setColorType(ColorType.Empty, x, y);
+                        needFilledField.setBlock(x, y);
+                    } else {
+                        switch (colorType) {
+                            case Gray:
+                                initField.setBlock(x, y);
+                                notFilledField.setBlock(x, y);
+                                coloredField.setColorType(ColorType.Empty, x, y);
+                                break;
+                            case Empty:
+                                notFilledField.setBlock(x, y);
+                                break;
+                            default:
+                                initField.setBlock(x, y);
+                                break;
+                        }
                     }
+                }
+            }
+
+            settings.setFieldWithReserved(initField, needFilledField, notFilledField, coloredField, maxHeight);
+        } else {
+            Field initField = FieldFactory.createField(maxHeight);
+            Field needFilledField = FieldFactory.createField(maxHeight);
+            Field notFilledField = FieldFactory.createField(maxHeight);
+
+            ColorType marginColorType = settings.getMarginColorType();
+
+            for (int y = 0; y < maxHeight; y++) {
+                for (int x = 0; x < 10; x++) {
+                    ColorType colorType = coloredField.getColorType(x, y);
+
+                    if (colorType.equals(marginColorType))
+                        continue;  // skip
 
                     switch (colorType) {
                         case Gray:
                             needFilledField.setBlock(x, y);
-                            coloredField.setColorType(ColorType.Empty, x, y);
                             break;
                         case Empty:
                             notFilledField.setBlock(x, y);
                             break;
                         default:
-                            needFilledField.setBlock(x, y);
-                            break;
-                    }
-                }
-            }
-
-            settings.setFieldWithReserved(needFilledField, notFilledField, coloredField, maxClearLine);
-        } else {
-            int maxClearLine = settings.getMaxClearLine();
-            Field needFilledField = FieldFactory.createField(maxClearLine);
-            Field notFilledField = FieldFactory.createField(maxClearLine);
-
-            for (int y = 0; y < maxClearLine; y++) {
-                for (int x = 0; x < 10; x++) {
-                    ColorType colorType = coloredField.getColorType(x, y);
-
-                    switch (colorType) {
-                        case Gray:
-                            needFilledField.setBlock(x, y);
-                            break;
-                        case Empty:
+                            initField.setBlock(x, y);
                             notFilledField.setBlock(x, y);
                             break;
                     }
                 }
             }
 
-            settings.setField(needFilledField, notFilledField);
+            settings.setField(initField, needFilledField, notFilledField, maxHeight);
         }
 
         return wrapper;

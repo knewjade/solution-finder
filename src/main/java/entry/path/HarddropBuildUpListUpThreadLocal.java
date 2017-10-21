@@ -8,7 +8,7 @@ import core.mino.MinoShifter;
 public class HarddropBuildUpListUpThreadLocal extends ThreadLocal<BuildUpStream> {
     private final int height;
 
-    HarddropBuildUpListUpThreadLocal(int height) {
+    public HarddropBuildUpListUpThreadLocal(int height) {
         this.height = height;
     }
 

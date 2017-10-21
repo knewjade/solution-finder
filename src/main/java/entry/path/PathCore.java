@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 class PathCore {
     private final PerfectPackSearcher searcher;
     private final FumenParser fumenParser;
-    private final ThreadLocal<BuildUpStream> buildUpStreamTh1readLocal;
+    private final ThreadLocal<BuildUpStream> buildUpStreamThreadLocal;
     private final boolean isReduced;
     private final boolean isUsingHold;
     private final int maxDepth;
@@ -38,7 +38,7 @@ class PathCore {
     PathCore(List<String> patterns, PerfectPackSearcher searcher, int maxDepth, boolean isUsingHold, FumenParser fumenParser, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal) throws SyntaxException {
         this.searcher = searcher;
         this.fumenParser = fumenParser;
-        this.buildUpStreamTh1readLocal = buildUpStreamThreadLocal;
+        this.buildUpStreamThreadLocal = buildUpStreamThreadLocal;
         IBlocksGenerator blocksGenerator = new BlocksGenerator(patterns);
         this.isReduced = isReducedPieces(blocksGenerator, maxDepth, isUsingHold);
         this.isUsingHold = isUsingHold;
@@ -104,7 +104,7 @@ class PathCore {
                     LinkedList<OperationWithKey> operations = result.getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toCollection(LinkedList::new));
 
                     // 地形の中で組むことができるoperationsを一つ作成
-                    BuildUpStream buildUpStream = buildUpStreamTh1readLocal.get();
+                    BuildUpStream buildUpStream = buildUpStreamThreadLocal.get();
                     List<OperationWithKey> sampleOperations = buildUpStream.existsValidBuildPatternDirectly(field, operations)
                             .findFirst()
                             .orElse(Collections.emptyList());
@@ -165,7 +165,7 @@ class PathCore {
                     LinkedList<OperationWithKey> operations = result.getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toCollection(LinkedList::new));
 
                     // 地形の中で組むことができるoperationsを一つ作成
-                    BuildUpStream buildUpStream = buildUpStreamTh1readLocal.get();
+                    BuildUpStream buildUpStream = buildUpStreamThreadLocal.get();
                     List<OperationWithKey> sampleOperations = buildUpStream.existsValidBuildPatternDirectly(field, operations)
                             .findFirst()
                             .orElse(Collections.emptyList());

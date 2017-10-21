@@ -55,6 +55,8 @@ public class ColoredFieldFactory {
                 return ColorType.Empty;
             case '*':
                 return ColorType.Gray;
+            case '.':
+                return ColorType.Gray;
             default:
                 return ColorType.Gray;
         }

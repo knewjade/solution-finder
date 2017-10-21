@@ -6,24 +6,28 @@ import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import core.field.Field;
 import core.mino.Block;
+import entry.DropType;
 
 import javax.activation.UnsupportedDataTypeException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SetupSettings {
-    private static final int EMPTY_BLOCK_NUMBER = ColorType.Empty.getNumber();
     private static final String DEFAULT_LOG_FILE_PATH = "output/last_output.txt";
-    private static final String DEFAULT_OUTPUT_BASE_FILE_PATH = "output/path.txt";
+    private static final String DEFAULT_OUTPUT_BASE_FILE_PATH = "output/setup.html";
 
     private String logFilePath = DEFAULT_LOG_FILE_PATH;
     private boolean isReserved = false;
-    private int maxClearLine = 4;
+    private int maxHeight = -1;
     private List<String> patterns = new ArrayList<>();
+    private Field initField = null;
     private Field needFilledField = null;
     private Field notFilledField = null;
     private BlockField reservedBlock = null;
     private ColorType marginColorType = null;
+    private ColorType fillColorType = null;
+    private DropType dropType = DropType.Softdrop;
+    private String outputBaseFilePath = DEFAULT_OUTPUT_BASE_FILE_PATH;
 
     // ********* Getter ************
 
@@ -31,12 +35,16 @@ public class SetupSettings {
         return logFilePath;
     }
 
+    String getOutputBaseFilePath() {
+        return outputBaseFilePath;
+    }
+
     boolean isReserved() {
         return isReserved;
     }
 
-    int getMaxClearLine() {
-        return maxClearLine;
+    int getMaxHeight() {
+        return maxHeight;
     }
 
     List<String> getPatterns() {
@@ -45,6 +53,10 @@ public class SetupSettings {
 
     boolean isOutputToConsole() {
         return true;
+    }
+
+    Field getInitField() {
+        return initField;
     }
 
     Field getNeedFilledField() {
@@ -63,30 +75,38 @@ public class SetupSettings {
         return marginColorType;
     }
 
+    ColorType getFillColorType() {
+        return fillColorType;
+    }
+
+    DropType getDropType() {
+        return dropType;
+    }
+
     // ********* Setter ************
     void setLogFilePath(String path) {
         this.logFilePath = path;
     }
 
     void setOutputBaseFilePath(String path) {
-//        this.outputBaseFilePath = path;
+        this.outputBaseFilePath = path;
     }
 
     void setReserved(boolean isReserved) {
         this.isReserved = isReserved;
     }
 
-    void setMaxClearLine(int maxClearLine) {
-        this.maxClearLine = maxClearLine;
+    private void setMaxHeight(int maxHeight) {
+        this.maxHeight = maxHeight;
     }
 
     void setPatterns(List<String> patterns) {
         this.patterns = patterns;
     }
 
-    void setFieldWithReserved(Field needFilledField, Field notFilledField, ColoredField coloredField, int maxClearLine) {
-        BlockField blockField = new BlockField(maxClearLine);
-        for (int y = 0; y < maxClearLine; y++) {
+    void setFieldWithReserved(Field initField, Field needFilledField, Field notFilledField, ColoredField coloredField, int maxHeight) {
+        BlockField blockField = new BlockField(maxHeight);
+        for (int y = 0; y < maxHeight; y++) {
             for (int x = 0; x < 10; x++) {
                 ColorConverter colorConverter = new ColorConverter();
                 ColorType colorType = colorConverter.parseToColorType(coloredField.getBlockNumber(x, y));
@@ -102,69 +122,99 @@ public class SetupSettings {
             }
         }
 
+        setMaxHeight(maxHeight);
+        setInitField(initField);
         setNeedFilledField(needFilledField);
         setNotFilledField(notFilledField);
         setReservedBlock(blockField);
     }
 
-    void setField(Field needFilledField, Field notFilledField) {
+    void setField(Field initField, Field needFilledField, Field notFilledField, int maxHeight) {
+        setMaxHeight(maxHeight);
+        setInitField(initField);
         setNeedFilledField(needFilledField);
         setNotFilledField(notFilledField);
         setReservedBlock(null);
     }
 
-    private void setNeedFilledField(Field needFilledField) {
-        this.needFilledField = needFilledField;
+    private void setInitField(Field field) {
+        this.initField = field;
     }
 
-    private void setNotFilledField(Field notFilledField) {
-        this.notFilledField = notFilledField;
+    private void setNeedFilledField(Field field) {
+        this.needFilledField = field;
+    }
+
+    private void setNotFilledField(Field field) {
+        this.notFilledField = field;
     }
 
     private void setReservedBlock(BlockField reservedBlock) {
         this.reservedBlock = reservedBlock;
     }
 
-    // The Tetris Company standardization
     void setMarginColorType(String marginColor) throws UnsupportedDataTypeException {
-        switch (marginColor.trim().toLowerCase()) {
+        ColorType colorType = parseToColor(marginColor);
+        if (colorType == null)
+            throw new UnsupportedDataTypeException("Unsupported margin color: value=" + marginColor);
+        this.marginColorType = colorType;
+    }
+
+    // The Tetris Company standardization
+    private ColorType parseToColor(String color) {
+        switch (color.trim().toLowerCase()) {
             case "i":
             case "cyan":
             case "cy":
-                this.marginColorType = ColorType.I;
-                break;
+                return ColorType.I;
             case "j":
             case "blue":
             case "bl":
-                this.marginColorType = ColorType.J;
-                break;
+                return ColorType.J;
             case "l":
             case "orange":
             case "or":
-                this.marginColorType = ColorType.L;
-                break;
+                return ColorType.L;
             case "o":
             case "yellow":
             case "ye":
-                this.marginColorType = ColorType.O;
-                break;
+                return ColorType.O;
             case "s":
             case "green":
             case "gr":
-                this.marginColorType = ColorType.S;
-                break;
+                return ColorType.S;
             case "t":
             case "purple":
             case "pu":
-                this.marginColorType = ColorType.T;
-                break;
+                return ColorType.T;
             case "z":
             case "red":
             case "re":
-                this.marginColorType = ColorType.Z;
-                break;
+                return ColorType.Z;
             default:
-                throw new UnsupportedDataTypeException("Unsupported margin color: value=" + marginColor);
+                return null;
+        }
+    }
+
+    void setFillColorType(String fillColor) throws UnsupportedDataTypeException {
+        ColorType colorType = parseToColor(fillColor);
+        if (colorType == null)
+            throw new UnsupportedDataTypeException("Unsupported fill color: value=" + fillColor);
+        this.fillColorType = colorType;
+    }
+
+    void setDropType(String type) throws UnsupportedDataTypeException {
+        switch (type.trim().toLowerCase()) {
+            case "soft":
+            case "softdrop":
+                this.dropType = DropType.Softdrop;
+                return;
+            case "hard":
+            case "harddrop":
+                this.dropType = DropType.Harddrop;
+                return;
+            default:
+                throw new UnsupportedDataTypeException("Unsupported droptype: type=" + type);
         }
     }
 }

@@ -22,6 +22,7 @@ public class PathPair implements HaveSet<LongBlocks> {
     private final HashSet<LongBlocks> piecesPattern;
     private final String fumen;
     private final List<OperationWithKey> sampleOperations;
+    private final boolean deletedLine;
 
     public PathPair(Result result, HashSet<LongBlocks> piecesSolution, HashSet<LongBlocks> piecesPattern, String fumen, List<OperationWithKey> sampleOperations) {
         this.result = result;
@@ -29,6 +30,12 @@ public class PathPair implements HaveSet<LongBlocks> {
         this.piecesPattern = piecesPattern;
         this.fumen = fumen;
         this.sampleOperations = sampleOperations;
+        this.deletedLine = containsDeletedLine();
+    }
+
+    private boolean containsDeletedLine() {
+        return result.getMemento().getRawOperationsStream()
+                .anyMatch(operationWithKey -> operationWithKey.getNeedDeletedKey() != 0L);
     }
 
     @Override
@@ -79,5 +86,9 @@ public class PathPair implements HaveSet<LongBlocks> {
 
     public BlockCounter getBlockCounter() {
         return new BlockCounter(sampleOperations.stream().map(OperationWithKey::getMino).map(Mino::getBlock));
+    }
+
+    public boolean isDeletedLine() {
+        return deletedLine;
     }
 }

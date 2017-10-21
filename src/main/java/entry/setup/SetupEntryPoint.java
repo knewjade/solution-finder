@@ -1,43 +1,50 @@
 package entry.setup;
 
+import common.buildup.BuildUpStream;
 import common.datastore.BlockField;
 import common.datastore.Operation;
 import common.datastore.OperationWithKey;
 import common.datastore.Operations;
 import common.parser.OperationTransform;
 import common.pattern.IBlocksGenerator;
+import common.tetfu.common.ColorConverter;
 import core.FinderConstant;
 import core.column_field.ColumnField;
 import core.field.Field;
-import core.field.FieldFactory;
-import core.field.FieldView;
+import core.mino.Block;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import entry.DropType;
 import entry.EntryPoint;
 import entry.Verify;
 import entry.path.ForPathSolutionFilter;
+import entry.path.HarddropBuildUpListUpThreadLocal;
+import entry.path.LockedBuildUpListUpThreadLocal;
 import entry.path.output.MyFile;
+import entry.path.output.OneFumenParser;
 import exceptions.FinderException;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
 import exceptions.FinderTerminateException;
+import lib.Stopwatch;
+import output.HTMLBuilder;
 import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.calculator.BasicSolutions;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.solutions.OnDemandBasicSolutions;
-import searcher.pack.task.Field4x10MinoPackingHelper;
+import searcher.pack.task.BasicMinoPackingHelper;
 import searcher.pack.task.Result;
 import searcher.pack.task.SetupPackSearcher;
 import searcher.pack.task.TaskResultHelper;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class SetupEntryPoint implements EntryPoint {
@@ -67,6 +74,10 @@ public class SetupEntryPoint implements EntryPoint {
     public void run() throws FinderException {
         output("# Setup Field");
 
+        // Setup init field
+        Field initField = settings.getInitField();
+        Verify.field(initField);
+
         // Setup need filled field
         Field needFilledField = settings.getNeedFilledField();
         Verify.field(needFilledField);
@@ -74,22 +85,24 @@ public class SetupEntryPoint implements EntryPoint {
         // Setup not filled field
         Field notFilledField = settings.getNotFilledField();
 
-        // Setup max clear line
-        int maxClearLine = settings.getMaxClearLine();
-        Verify.maxClearLineUnder10(maxClearLine);
+        // Setup max height
+        int maxHeight = settings.getMaxHeight();
+        Verify.maxClearLineUnder10(maxHeight);
 
         // Setup reserved blocks
         BlockField reservedBlocks = settings.getReservedBlock();
         if (settings.isReserved()) {
             Verify.reservedBlocks(reservedBlocks);
 
-            for (int y = maxClearLine - 1; 0 <= y; y--) {
+            for (int y = maxHeight - 1; 0 <= y; y--) {
                 StringBuilder builder = new StringBuilder();
                 for (int x = 0; x < 10; x++) {
                     if (reservedBlocks.getBlock(x, y) != null)
                         builder.append(reservedBlocks.getBlock(x, y).getName());
-                    else if (!needFilledField.isEmpty(x, y))
+                    else if (!initField.isEmpty(x, y))
                         builder.append('X');
+                    else if (!needFilledField.isEmpty(x, y))
+                        builder.append('*');
                     else if (!notFilledField.isEmpty(x, y))
                         builder.append('_');
                     else
@@ -98,11 +111,13 @@ public class SetupEntryPoint implements EntryPoint {
                 output(builder.toString());
             }
         } else {
-            for (int y = maxClearLine - 1; 0 <= y; y--) {
+            for (int y = maxHeight - 1; 0 <= y; y--) {
                 StringBuilder builder = new StringBuilder();
                 for (int x = 0; x < 10; x++) {
-                    if (!needFilledField.isEmpty(x, y))
+                    if (!initField.isEmpty(x, y))
                         builder.append('X');
+                    else if (!needFilledField.isEmpty(x, y))
+                        builder.append('*');
                     else if (!notFilledField.isEmpty(x, y))
                         builder.append('_');
                     else
@@ -120,10 +135,11 @@ public class SetupEntryPoint implements EntryPoint {
         // ========================================
 
         // Output user-defined
+        DropType dropType = settings.getDropType();
         output("# Initialize / User-defined");
-        output("Max clear lines: " + maxClearLine);
+        output("Max height: " + maxHeight);
 //        output("Using hold: " + (settings.isUsingHold() ? "use" : "avoid"));
-//        output("Drop: " + settings.getDropType().name().toLowerCase());
+        output("Drop: " + dropType.name().toLowerCase());
         output("Searching patterns:");
 
         // Setup patterns
@@ -133,6 +149,11 @@ public class SetupEntryPoint implements EntryPoint {
         // Output patterns
         for (String pattern : patterns)
             output("  " + pattern);
+
+        // Setup output file
+        MyFile base = new MyFile(settings.getOutputBaseFilePath());
+        base.mkdirs();
+        base.verify();
 
         output();
 
@@ -151,24 +172,25 @@ public class SetupEntryPoint implements EntryPoint {
 
         // ========================================
 
+        output("# Search");
+        output("  -> Stopwatch start");
+        Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
+
         // Initialize
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        SizedBit sizedBit = decideSizedBitSolutionWidth(maxClearLine);
-        SolutionFilter solutionFilter = new ForPathSolutionFilter(generator, maxClearLine);
+        ColorConverter colorConverter = new ColorConverter();
+        SizedBit sizedBit = decideSizedBitSolutionWidth(maxHeight);
+        SeparableMinos separableMinos = SeparableMinos.createSeparableMinos(minoFactory, minoShifter, sizedBit);
+        TaskResultHelper taskResultHelper = new BasicMinoPackingHelper();
+        SolutionFilter solutionFilter = new ForPathSolutionFilter(generator, maxHeight);
+        ThreadLocal<BuildUpStream> buildUpStreamThreadLocal = createBuildUpStreamThreadLocal(dropType, maxHeight);
+        OneFumenParser fumenParser = new OneFumenParser(minoFactory, colorConverter);
 
-        output();
-
-        // ========================================
-
-        // 必ず置かないブロック
+        // 絶対に置かないブロック
         List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(sizedBit, notFilledField);
 
-        // Create
-        SeparableMinos separableMinos = SeparableMinos.createSeparableMinos(minoFactory, minoShifter, sizedBit);
-        TaskResultHelper taskResultHelper = new Field4x10MinoPackingHelper();
-
-        // 必ず置く必要があるブロック
+        // 絶対に置く必要があるブロック
         ArrayList<BasicSolutions> basicSolutions = new ArrayList<>();
         List<InOutPairField> pairs = InOutPairField.createInOutPairFields(sizedBit, needFilledField);
         List<ColumnField> needFillFields = new ArrayList<>();
@@ -179,26 +201,81 @@ public class SetupEntryPoint implements EntryPoint {
             needFillFields.add(innerField);
         }
 
+        // 探索
         SetupPackSearcher searcher = new SetupPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper, needFillFields);
-        try {
-            List<Result> results = searcher.toList();
-            System.out.println(results.size());
-            for (Result result : results) {
-                List<OperationWithKey> list = result.getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toList());
-                Field allField = FieldFactory.createField(sizedBit.getHeight());
-                Operations operations = OperationTransform.parseToOperations(allField, list, sizedBit.getHeight());
-                List<? extends Operation> operationList = operations.getOperations();
-                for (Operation operation : operationList) {
-                    Mino mino = minoFactory.create(operation.getBlock(), operation.getRotate());
-                    int x = operation.getX();
-                    int y = operation.getY();
-                    allField.put(mino, x, y);
-                    System.out.println(mino);
-                }
-                System.out.println(FieldView.toString(allField));
-                System.out.println("*****");
-            }
+        List<Result> results = getResults(initField, sizedBit, buildUpStreamThreadLocal, searcher);
+        output("Found solution = " + results.size());
 
+        stopwatch.stop();
+        output("  -> Stopwatch stop : " + stopwatch.toMessage(TimeUnit.MILLISECONDS));
+
+        output();
+
+        // ========================================
+
+        output("# Output file");
+
+        HTMLBuilder<FieldHTMLColumn> htmlBuilder = new HTMLBuilder<>("Setup result");
+
+        results.parallelStream()
+                .forEach(result -> {
+                    List<OperationWithKey> operationWithKeys = result.getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toList());
+                    Field allField = initField.freeze(maxHeight);
+                    Operations operations = OperationTransform.parseToOperations(allField, operationWithKeys, sizedBit.getHeight());
+                    List<? extends Operation> operationList = operations.getOperations();
+                    for (Operation operation : operationList) {
+                        Mino mino = minoFactory.create(operation.getBlock(), operation.getRotate());
+                        int x = operation.getX();
+                        int y = operation.getY();
+                        allField.put(mino, x, y);
+                    }
+
+                    // 譜面の作成
+                    String encode = fumenParser.parse(operationWithKeys, initField, maxHeight);
+
+                    String name = operationWithKeys.stream().map(OperationWithKey::getMino).map(Mino::getBlock).map(Block::getName).collect(Collectors.joining());
+                    String link = String.format("<a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a>", encode, name);
+                    String line = String.format("<div>%s</div>", link);
+                    htmlBuilder.addColumn(new FieldHTMLColumn(allField, maxHeight), line);
+                });
+
+        ArrayList<FieldHTMLColumn> columns = new ArrayList<>(htmlBuilder.getRegisteredColumns());
+        columns.sort(Comparator.comparing(FieldHTMLColumn::getTitle).reversed());
+        try (BufferedWriter bufferedWriter = base.newBufferedWriter()) {
+            for (String line : htmlBuilder.toList(columns, true)) {
+                bufferedWriter.write(line);
+                bufferedWriter.newLine();
+            }
+            bufferedWriter.flush();
+        } catch (IOException e) {
+            throw new FinderExecuteException(e);
+        }
+
+        output();
+
+        // ========================================
+
+        output("# Finalize");
+        output("done");
+    }
+
+    private List<Result> getResults(Field initField, SizedBit sizedBit, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal, SetupPackSearcher searcher) throws FinderExecuteException {
+        try {
+            List<Result> candidates = searcher.toList();
+            return candidates.parallelStream()
+                    .filter(result -> {
+                        LinkedList<OperationWithKey> operations = result.getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toCollection(LinkedList::new));
+
+                        // 地形の中で組むことができるoperationsを一つ作成
+                        BuildUpStream buildUpStream = buildUpStreamThreadLocal.get();
+                        List<OperationWithKey> sampleOperations = buildUpStream.existsValidBuildPatternDirectly(initField, operations)
+                                .findFirst()
+                                .orElse(Collections.emptyList());
+
+                        // 地形の中で組むことができるものがないときはスキップ
+                        return !sampleOperations.isEmpty();
+                    })
+                    .collect(Collectors.toList());
         } catch (InterruptedException | ExecutionException e) {
             throw new FinderExecuteException(e);
         }
@@ -206,6 +283,16 @@ public class SetupEntryPoint implements EntryPoint {
 
     private SizedBit decideSizedBitSolutionWidth(int maxClearLine) {
         return maxClearLine <= 4 ? new SizedBit(3, maxClearLine) : new SizedBit(2, maxClearLine);
+    }
+
+    private ThreadLocal<BuildUpStream> createBuildUpStreamThreadLocal(DropType dropType, int maxClearLine) throws FinderInitializeException {
+        switch (dropType) {
+            case Softdrop:
+                return new LockedBuildUpListUpThreadLocal(maxClearLine);
+            case Harddrop:
+                return new HarddropBuildUpListUpThreadLocal(maxClearLine);
+        }
+        throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
     }
 
     private void output() throws FinderExecuteException {
