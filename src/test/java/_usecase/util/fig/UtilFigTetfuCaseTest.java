@@ -31,6 +31,17 @@ class UtilFigTetfuCaseTest extends UtilFigUseCaseBaseTest {
     }
 
     @Test
+    void help() throws Exception {
+        // ヘルプ
+        String command = "util fig -h";
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getReturnCode()).isEqualTo(0);
+        assertThat(log.getOutput()).contains("usage");
+        assertThat(log.getError()).isEmpty();
+    }
+
+    @Test
     void useTetfuCase1() throws Exception {
         // オプションなし
 

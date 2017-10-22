@@ -21,6 +21,17 @@ class PercentOptionCaseTest extends PercentUseCaseBaseTest {
     }
 
     @Test
+    void help() throws Exception {
+        // ヘルプ
+        String command = "percent -h";
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getReturnCode()).isEqualTo(0);
+        assertThat(log.getOutput()).contains("usage");
+        assertThat(log.getError()).isEmpty();
+    }
+
+    @Test
     void withoutHold1() throws Exception {
         // ホールドなしコマンド
 

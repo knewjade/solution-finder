@@ -2,12 +2,15 @@ package _usecase;
 
 import common.datastore.Operations;
 import common.parser.OperationInterpreter;
+import helper.CSVStore;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,6 +21,7 @@ public class OutputFileHelper {
     private static final String MINIMAL_PATH = concatPath("output", "path_minimal.html");
     private static final String UNIQUE_CSV = concatPath("output", "path_unique.csv");
     private static final String MINIMAL_CSV = concatPath("output", "path_minimal.csv");
+    private static final String DEFAULT_CSV = concatPath("output", "path.csv");
     private static final String ERROR_PATH = concatPath("output", "error.txt");
 
     private static String concatPath(String... names) {
@@ -50,13 +54,6 @@ public class OutputFileHelper {
         }
     }
 
-    public static PathCSV loadPathUniqueCSV() throws IOException {
-        List<Operations> operations = Files.lines(Paths.get(UNIQUE_CSV))
-                .map(OperationInterpreter::parseToOperations)
-                .collect(Collectors.toList());
-        return new PathCSV(operations);
-    }
-
     public static PathHTML loadPathMinimalHTML() throws IOException {
         return loadPathMinimalHTML(MINIMAL_PATH);
     }
@@ -65,11 +62,39 @@ public class OutputFileHelper {
         return loadHTML(path);
     }
 
-    public static PathCSV loadPathMinimalCSV() throws IOException {
-        List<Operations> operations = Files.lines(Paths.get(MINIMAL_CSV))
+    public static PathCSV loadPathUniqueNoneCSV() throws IOException {
+        return loadPathCSV(Paths.get(UNIQUE_CSV));
+    }
+
+    public static PathCSV loadPathMinimalNoneCSV() throws IOException {
+        return loadPathCSV(Paths.get(MINIMAL_CSV));
+    }
+
+    private static PathCSV loadPathCSV(Path path) throws IOException {
+        List<Operations> operations = Files.lines(path)
                 .map(OperationInterpreter::parseToOperations)
                 .collect(Collectors.toList());
         return new PathCSV(operations);
+    }
+
+    public static CSVStore loadPathSolutionCSV() throws IOException {
+        return loadCSVStore(Paths.get(DEFAULT_CSV), Arrays.asList("fumen", "use", "num-solutions", "num-patterns", "solutions", "patterns"));
+    }
+
+    public static CSVStore loadPathUseCSV() throws IOException {
+        return loadCSVStore(Paths.get(DEFAULT_CSV), Arrays.asList("use", "num-solutions", "num-patterns", "fumens", "patterns"));
+    }
+
+    public static CSVStore loadPathPatternCSV() throws IOException {
+        return loadCSVStore(Paths.get(DEFAULT_CSV), Arrays.asList("pattern", "num-solutions", "use", "nouse", "fumens"));
+    }
+
+    private static CSVStore loadCSVStore(Path path, List<String> columnNames) throws IOException {
+        CSVStore csvStore = new CSVStore(columnNames);
+        Files.lines(path)
+                .skip(1)  // skip header
+                .forEach(csvStore::load);
+        return csvStore;
     }
 
     private static int extractPattern(String html) {

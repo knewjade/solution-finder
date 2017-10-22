@@ -46,11 +46,11 @@ class Messages {
         return "Fail pattern (all)";
     }
 
-    static String  harddrop() {
+    static String harddrop() {
         return "Drop: harddrop";
     }
 
-    static String  softdrop() {
+    static String softdrop() {
         return "Drop: softdrop";
     }
 }

@@ -140,7 +140,7 @@ public class PatternCSVPathOutput implements PathOutput {
                                 })
                                 .collect(Collectors.joining(";"));
 
-                        return String.format("%s,%d,%s,%s,%s%n", sequenceName, possibleSize, uses, noUses, fumens);
+                        return String.format("%s,%d,%s,%s,%s", sequenceName, possibleSize, uses, noUses, fumens);
                     })
                     .forEach(writer::writeAndNewLine);
 

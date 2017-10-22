@@ -398,8 +398,11 @@ class PathIrregularCaseTest extends PathUseCaseBaseTest {
         File minimalDirectory = new File("output/path_minimal.html");
 
         // noinspection ResultOfMethodCallIgnored
+        minimalDirectory.delete();
+        // noinspection ResultOfMethodCallIgnored
         minimalDirectory.mkdir();
-        minimalDirectory.deleteOnExit();
+        while (!minimalDirectory.exists())
+            Thread.sleep(200L);
 
         String tetfu = "v115@vhEKJJUqB0fBetBpoB";
         String command = String.format("path -t %s -P 5 -p *p5 -f link", tetfu);
@@ -428,8 +431,9 @@ class PathIrregularCaseTest extends PathUseCaseBaseTest {
         File minimalDirectory = new File("output/path_minimal.csv");
 
         // noinspection ResultOfMethodCallIgnored
+        minimalDirectory.delete();
+        // noinspection ResultOfMethodCallIgnored
         minimalDirectory.mkdir();
-        minimalDirectory.deleteOnExit();
         while (!minimalDirectory.exists())
             Thread.sleep(200L);
 
@@ -437,6 +441,8 @@ class PathIrregularCaseTest extends PathUseCaseBaseTest {
         String command = String.format("path -t %s -P 5 -p *p5 -f csv", tetfu);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
+        System.out.println(minimalDirectory.exists());
+        System.out.println(minimalDirectory.isDirectory());
         assertThat(log.getReturnCode())
                 .as(log.getOutput())
                 .isEqualTo(1);
@@ -462,8 +468,11 @@ class PathIrregularCaseTest extends PathUseCaseBaseTest {
         File uniqueDirectory = new File("output/path_unique.html");
 
         // noinspection ResultOfMethodCallIgnored
+        uniqueDirectory.delete();
+        // noinspection ResultOfMethodCallIgnored
         uniqueDirectory.mkdir();
-        uniqueDirectory.deleteOnExit();
+        while (!uniqueDirectory.exists())
+            Thread.sleep(200L);
 
         String tetfu = "v115@vhEKJJUqB0fBetBpoB";
         String command = String.format("path -t %s -P 5 -p *p5 -f link", tetfu);
@@ -492,8 +501,9 @@ class PathIrregularCaseTest extends PathUseCaseBaseTest {
         File uniqueDirectory = new File("output/path_unique.csv");
 
         // noinspection ResultOfMethodCallIgnored
+        uniqueDirectory.delete();
+        // noinspection ResultOfMethodCallIgnored
         uniqueDirectory.mkdir();
-        uniqueDirectory.deleteOnExit();
         while (!uniqueDirectory.exists())
             Thread.sleep(200L);
 
@@ -501,7 +511,9 @@ class PathIrregularCaseTest extends PathUseCaseBaseTest {
         String command = String.format("path -t %s -P 5 -p *p5 -f csv", tetfu);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
-        assertThat(log.getReturnCode()).isEqualTo(1);
+        assertThat(log.getReturnCode())
+                .isEqualTo(1)
+                .as(log.getOutput());
 
         assertThat(log.getError())
                 .contains(ErrorMessages.failMain());
@@ -524,8 +536,11 @@ class PathIrregularCaseTest extends PathUseCaseBaseTest {
         File logDirectory = new File("output/log_directory");
 
         // noinspection ResultOfMethodCallIgnored
+        logDirectory.delete();
+        // noinspection ResultOfMethodCallIgnored
         logDirectory.mkdir();
-        logDirectory.deleteOnExit();
+        while (!logDirectory.exists())
+            Thread.sleep(200L);
 
         String tetfu = "v115@vhEKJJUqB0fBetBpoB";
         String command = String.format("path -t %s -P 5 -p *p5 -f link -lp output/log_directory", tetfu);
@@ -554,8 +569,11 @@ class PathIrregularCaseTest extends PathUseCaseBaseTest {
         File logDirectory = new File("output/log_directory");
 
         // noinspection ResultOfMethodCallIgnored
+        logDirectory.delete();
+        // noinspection ResultOfMethodCallIgnored
         logDirectory.mkdir();
-        logDirectory.deleteOnExit();
+        while (!logDirectory.exists())
+            Thread.sleep(200L);
 
         String tetfu = "v115@vhEKJJUqB0fBetBpoB";
         String command = String.format("path -t %s -P 5 -p *p5 -f csv -lp output/log_directory", tetfu);

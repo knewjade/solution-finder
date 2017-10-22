@@ -102,9 +102,7 @@ class OnDemandBasicSolutionsFactoryTest {
     private static SeparableMinos createSeparableMinos(SizedBit sizedBit) {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, sizedBit.getWidth(), sizedBit.getHeight());
-        List<SeparableMino> separableMinos = factory.create();
-        return new SeparableMinos(separableMinos);
+        return SeparableMinos.createSeparableMinos(minoFactory, minoShifter, sizedBit);
     }
 
     private static long countValidKey(OnDemandBasicSolutions basicSolutions) {

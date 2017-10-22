@@ -20,8 +20,6 @@ import searcher.pack.SizedBit;
 import searcher.pack.calculator.BasicSolutions;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.memento.UsingBlockAndValidKeySolutionFilter;
-import searcher.pack.separable_mino.SeparableMino;
-import searcher.pack.separable_mino.SeparableMinoFactory;
 import searcher.pack.solutions.FilterWrappedBasicSolutions;
 import searcher.pack.solutions.OnDemandBasicSolutions;
 
@@ -157,9 +155,7 @@ class PackSearcherComparingParityBasedOnDemandTest {
     private static SeparableMinos createSeparableMinos(SizedBit sizedBit) {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, sizedBit.getWidth(), sizedBit.getHeight());
-        List<SeparableMino> separableMinos = factory.create();
-        return new SeparableMinos(separableMinos);
+        return SeparableMinos.createSeparableMinos(minoFactory, minoShifter, sizedBit);
     }
 
     private long calculateSRSValidCount(SizedBit sizedBit, BasicSolutions basicSolutions, Field initField, SolutionFilter solutionFilter) throws InterruptedException, ExecutionException {

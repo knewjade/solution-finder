@@ -8,14 +8,14 @@ import org.junit.jupiter.api.Test;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.mino_field.MinoField;
-import searcher.pack.separable_mino.SeparableMino;
-import searcher.pack.separable_mino.SeparableMinoFactory;
 
-import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import static java.time.Duration.ofMinutes;
+import static java.time.Duration.ofSeconds;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTimeout;
 
 class OnDemandBasicSolutionsTest {
     @Test
@@ -70,19 +70,19 @@ class OnDemandBasicSolutionsTest {
 
     @Test
     void get3x5() throws Exception {
-        SizedBit sizedBit = new SizedBit(3, 5);
-        SeparableMinos separableMinos = createSeparableMinos(sizedBit);
-        Predicate<ColumnField> memorizedPredicate = columnField -> true;
-        OnDemandBasicSolutions solutions = new OnDemandBasicSolutions(separableMinos, sizedBit, memorizedPredicate);
-        Stream<? extends MinoField> stream = solutions.parse(ColumnFieldFactory.createField()).stream();
-        assertThat(stream.count()).isEqualTo(260179L);
+        assertTimeout(ofMinutes(1), () -> {
+            SizedBit sizedBit = new SizedBit(3, 5);
+            SeparableMinos separableMinos = createSeparableMinos(sizedBit);
+            Predicate<ColumnField> memorizedPredicate = columnField -> true;
+            OnDemandBasicSolutions solutions = new OnDemandBasicSolutions(separableMinos, sizedBit, memorizedPredicate);
+            Stream<? extends MinoField> stream = solutions.parse(ColumnFieldFactory.createField()).stream();
+            assertThat(stream.count()).isEqualTo(260179L);
+        });
     }
 
     private static SeparableMinos createSeparableMinos(SizedBit sizedBit) {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, sizedBit.getWidth(), sizedBit.getHeight());
-        List<SeparableMino> separableMinos = factory.create();
-        return new SeparableMinos(separableMinos);
+        return SeparableMinos.createSeparableMinos(minoFactory, minoShifter, sizedBit);
     }
 }

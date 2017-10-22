@@ -11,10 +11,7 @@ import searcher.pack.calculator.BasicSolutions;
 import searcher.pack.mino_field.MinoField;
 import searcher.pack.mino_fields.MinoFields;
 import searcher.pack.mino_fields.RecursiveMinoFields;
-import searcher.pack.separable_mino.SeparableMino;
-import searcher.pack.separable_mino.SeparableMinoFactory;
 
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -96,8 +93,6 @@ class MappedBasicSolutionsTest {
     private static SeparableMinos createSeparableMinos(SizedBit sizedBit) {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, sizedBit.getWidth(), sizedBit.getHeight());
-        List<SeparableMino> separableMinos = factory.create();
-        return new SeparableMinos(separableMinos);
+        return SeparableMinos.createSeparableMinos(minoFactory, minoShifter, sizedBit);
     }
 }

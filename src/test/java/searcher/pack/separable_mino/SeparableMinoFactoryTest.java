@@ -2,10 +2,13 @@ package searcher.pack.separable_mino;
 
 import core.column_field.ColumnField;
 import core.column_field.ColumnFieldView;
+import core.field.KeyOperators;
 import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import org.junit.jupiter.api.Test;
+import searcher.pack.SeparableMinos;
+import searcher.pack.SizedBit;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -19,8 +22,7 @@ class SeparableMinoFactoryTest {
         MinoShifter minoShifter = new MinoShifter();
         int width = 2;
         int height = 3;
-        SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, width, height);
-        List<SeparableMino> minos = factory.create();
+        List<SeparableMino> minos = getSeparableMinos(minoFactory, minoShifter, width, height);
 
         assertThat(minos.stream()).hasSize(76);
         assertThat(minos.stream().filter(createBlockPredicate(Block.T))).hasSize(16);
@@ -38,8 +40,7 @@ class SeparableMinoFactoryTest {
         MinoShifter minoShifter = new MinoShifter();
         int width = 2;
         int height = 4;
-        SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, width, height);
-        List<SeparableMino> minos = factory.create();
+        List<SeparableMino> minos = getSeparableMinos(minoFactory, minoShifter, width, height);
 
         for (SeparableMino separableMino : minos) {
 
@@ -64,8 +65,7 @@ class SeparableMinoFactoryTest {
         MinoShifter minoShifter = new MinoShifter();
         int width = 2;
         int height = 5;
-        SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, width, height);
-        List<SeparableMino> minos = factory.create();
+        List<SeparableMino> minos = getSeparableMinos(minoFactory, minoShifter, width, height);
 
         assertThat(minos.stream()).hasSize(360);
         assertThat(minos.stream().filter(createBlockPredicate(Block.T))).hasSize(80);
@@ -83,8 +83,7 @@ class SeparableMinoFactoryTest {
         MinoShifter minoShifter = new MinoShifter();
         int width = 3;
         int height = 3;
-        SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, width, height);
-        List<SeparableMino> minos = factory.create();
+        List<SeparableMino> minos = getSeparableMinos(minoFactory, minoShifter, width, height);
 
         assertThat(minos.stream()).hasSize(114);
         assertThat(minos.stream().filter(createBlockPredicate(Block.T))).hasSize(24);
@@ -102,8 +101,7 @@ class SeparableMinoFactoryTest {
         MinoShifter minoShifter = new MinoShifter();
         int width = 3;
         int height = 4;
-        SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, width, height);
-        List<SeparableMino> minos = factory.create();
+        List<SeparableMino> minos = getSeparableMinos(minoFactory, minoShifter, width, height);
 
         assertThat(minos.stream()).hasSize(273);
         assertThat(minos.stream().filter(createBlockPredicate(Block.T))).hasSize(60);
@@ -121,8 +119,7 @@ class SeparableMinoFactoryTest {
         MinoShifter minoShifter = new MinoShifter();
         int width = 3;
         int height = 5;
-        SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, width, height);
-        List<SeparableMino> minos = factory.create();
+        List<SeparableMino> minos = getSeparableMinos(minoFactory, minoShifter, width, height);
 
         assertThat(minos.stream()).hasSize(540);
         assertThat(minos.stream().filter(createBlockPredicate(Block.T))).hasSize(120);
@@ -136,5 +133,11 @@ class SeparableMinoFactoryTest {
 
     private Predicate<SeparableMino> createBlockPredicate(Block block) {
         return separableMino -> separableMino.getMino().getBlock() == block;
+    }
+
+    private List<SeparableMino> getSeparableMinos(MinoFactory minoFactory, MinoShifter minoShifter, int width, int height) {
+        long mask = KeyOperators.getMaskForKeyBelowY(height);
+        SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, width, height, mask);
+        return factory.create();
     }
 }

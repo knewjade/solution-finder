@@ -118,7 +118,7 @@ public class UseCSVPathOutput implements PathOutput {
                                 .map(blocks -> blocks.stream().map(Block::getName).collect(Collectors.joining("")))
                                 .collect(Collectors.joining(";"));
 
-                        return String.format("%s,%d,%d,%s,%s%n", blockCounterName, possibleSize, possiblePatternSize, fumens, patterns);
+                        return String.format("%s,%d,%d,%s,%s", blockCounterName, possibleSize, possiblePatternSize, fumens, patterns);
                     })
                     .forEach(writer::writeAndNewLine);
 

@@ -308,7 +308,7 @@ public class SetupSettingParser {
                 .hasArg()
                 .numberOfArgs(1)
                 .argName("color")
-                .longOpt("margin-color")
+                .longOpt("margin")
                 .desc("Specify margin color")
                 .build();
         options.addOption(marginColorOption);
@@ -318,7 +318,7 @@ public class SetupSettingParser {
                 .hasArg()
                 .numberOfArgs(1)
                 .argName("color")
-                .longOpt("fill-color")
+                .longOpt("fill")
                 .desc("Specify fill color")
                 .build();
         options.addOption(fillColorOption);
@@ -376,13 +376,13 @@ public class SetupSettingParser {
 //        reservedOption.ifPresent(settings::setReserved);
 
         // マージン色の指定があるか
-        Optional<String> fillColorOption = wrapper.getStringOption("fill-color");
+        Optional<String> fillColorOption = wrapper.getStringOption("fill");
         if (fillColorOption.isPresent()) {
             settings.setFillColorType(fillColorOption.get());
         }
 
         // マージン色の指定があるか
-        Optional<String> marginColorOption = wrapper.getStringOption("margin-color");
+        Optional<String> marginColorOption = wrapper.getStringOption("margin");
         if (marginColorOption.isPresent()) {
             settings.setMarginColorType(marginColorOption.get());
         }

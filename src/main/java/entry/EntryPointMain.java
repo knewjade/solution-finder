@@ -45,7 +45,10 @@ public class EntryPointMain {
         // 実行を振り分け
         EntryPoint entryPoint;
         try {
-            entryPoint = createEntryPoint(args[0], argsList);
+            Optional<EntryPoint> optional = createEntryPoint(args[0], argsList);
+            if (!optional.isPresent())
+                return 0;
+            entryPoint = optional.get();
         } catch (Exception e) {
             System.err.println("Error: Failed to execute pre-main. Output stack trace to output/error.txt");
             System.err.println("Message: " + e.getMessage());
@@ -153,7 +156,7 @@ public class EntryPointMain {
         }
     }
 
-    private static EntryPoint createEntryPoint(String type, List<String> commands) throws FinderInitializeException, FinderParseException {
+    private static Optional<EntryPoint> createEntryPoint(String type, List<String> commands) throws FinderInitializeException, FinderParseException {
         // 実行を振り分け
         switch (type) {
             case "percent":
@@ -171,53 +174,58 @@ public class EntryPointMain {
         }
     }
 
-    private static EntryPoint getPercentEntryPoint(List<String> commands) throws FinderInitializeException, FinderParseException {
+    private static Optional<EntryPoint> getPercentEntryPoint(List<String> commands) throws FinderInitializeException, FinderParseException {
         PercentSettingParser settingParser = new PercentSettingParser(commands);
-        Optional<PercentSettings> settings = settingParser.parse();
-
-        if (!settings.isPresent())
-            throw new FinderParseException("Cannot parse setting for percent");
-
-        return new PercentEntryPoint(settings.get());
+        Optional<PercentSettings> settingsOptional = settingParser.parse();
+        if (settingsOptional.isPresent()) {
+            PercentSettings settings = settingsOptional.get();
+            return Optional.of(new PercentEntryPoint(settings));
+        } else {
+            return Optional.empty();
+        }
     }
 
-    private static EntryPoint getPathEntryPoint(List<String> commands) throws FinderInitializeException, FinderParseException {
+    private static Optional<EntryPoint> getPathEntryPoint(List<String> commands) throws FinderInitializeException, FinderParseException {
         PathSettingParser settingParser = new PathSettingParser(commands);
-        Optional<PathSettings> settings = settingParser.parse();
-
-        if (!settings.isPresent())
-            throw new FinderParseException("Cannot parse setting for path");
-
-        return new PathEntryPoint(settings.get());
+        Optional<PathSettings> settingsOptional = settingParser.parse();
+        if (settingsOptional.isPresent()) {
+            PathSettings settings = settingsOptional.get();
+            return Optional.of(new PathEntryPoint(settings));
+        } else {
+            return Optional.empty();
+        }
     }
 
-    private static EntryPoint getUtilEntryPoint(List<String> commands) throws FinderParseException {
+    private static Optional<EntryPoint> getUtilEntryPoint(List<String> commands) throws FinderParseException {
         if (!commands.get(0).equals("fig"))
             throw new IllegalArgumentException("util: Invalid type: Use fig");
 
         List<String> figCommands = commands.subList(1, commands.size());
         FigUtilSettingParser settingParser = new FigUtilSettingParser(figCommands);
-        Optional<FigUtilSettings> settings = settingParser.parse();
+        Optional<FigUtilSettings> settingsOptional = settingParser.parse();
 
-        if (!settings.isPresent())
-            throw new FinderParseException("Cannot parse setting for util fig");
-
-        return new FigUtilEntryPoint(settings.get());
+        if (settingsOptional.isPresent()) {
+            FigUtilSettings settings = settingsOptional.get();
+            return Optional.of(new FigUtilEntryPoint(settings));
+        } else {
+            return Optional.empty();
+        }
     }
 
-    private static EntryPoint getSetupEntryPoint(List<String> commands) throws FinderParseException, FinderInitializeException {
+    private static Optional<EntryPoint> getSetupEntryPoint(List<String> commands) throws FinderParseException, FinderInitializeException {
         SetupSettingParser settingParser = new SetupSettingParser(commands);
-        Optional<SetupSettings> settings = settingParser.parse();
-
-        if (!settings.isPresent())
-            throw new FinderParseException("Cannot parse setting for percent");
-
-        return new SetupEntryPoint(settings.get());
+        Optional<SetupSettings> settingsOptional = settingParser.parse();
+        if (settingsOptional.isPresent()) {
+            SetupSettings settings = settingsOptional.get();
+            return Optional.of(new SetupEntryPoint(settings));
+        } else {
+            return Optional.empty();
+        }
     }
 
-    private static EntryPoint getDevEntryPoint(List<String> commands) throws FinderInitializeException, FinderParseException {
+    private static Optional<EntryPoint> getDevEntryPoint(List<String> commands) throws FinderInitializeException, FinderParseException {
         if (commands.get(0).equals("quiz"))
-            return new DevRandomEntryPoint(commands.subList(1, commands.size()));
-        throw new IllegalArgumentException("util: Invalid type: Use quiz");
+            return Optional.of(new DevRandomEntryPoint(commands.subList(1, commands.size())));
+        throw new IllegalArgumentException("dev: Invalid type: Use quiz");
     }
 }

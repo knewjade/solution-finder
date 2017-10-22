@@ -61,7 +61,7 @@ public class PathSettingParser {
         // help
         if (wrapper.hasOption("help")) {
             HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("p-percent [options]", options);
+            formatter.printHelp("path [options]", options);
             return Optional.empty();
         }
 

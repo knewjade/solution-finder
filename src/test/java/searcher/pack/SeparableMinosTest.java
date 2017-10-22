@@ -23,8 +23,9 @@ class SeparableMinosTest {
 
         int fieldHeight = randoms.nextIntClosed(1, 10);
         int fieldWidth = randoms.nextIntClosed(1, 4);
+        SizedBit sizedBit = new SizedBit(fieldWidth, fieldHeight);
 
-        SeparableMinoFactory separableMinoFactory = new SeparableMinoFactory(minoFactory, minoShifter, fieldWidth, fieldHeight);
+        SeparableMinoFactory separableMinoFactory = new SeparableMinoFactory(minoFactory, minoShifter, sizedBit.getWidth(), sizedBit.getHeight(), sizedBit.getFillBoard());
         return separableMinoFactory.create();
     }
 
