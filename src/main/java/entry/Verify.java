@@ -19,7 +19,7 @@ public class Verify {
         field(field);
 
         if (field.isPerfect())
-            throw new FinderInitializeException("Should specify filled field");
+            throw new FinderInitializeException("Should specify filled block");
     }
 
     public static void maxClearLineUnder10(int maxClearLine) throws FinderInitializeException {
