@@ -29,7 +29,7 @@ class PathCore {
     private final PerfectPackSearcher searcher;
     private final FumenParser fumenParser;
     private final ThreadLocal<BuildUpStream> buildUpStreamThreadLocal;
-    private final boolean isReduced;
+    private final boolean isHoldReduced;
     private final boolean isUsingHold;
     private final int maxDepth;
     private final HashSet<LongBlocks> validPieces;
@@ -40,29 +40,42 @@ class PathCore {
         this.fumenParser = fumenParser;
         this.buildUpStreamThreadLocal = buildUpStreamThreadLocal;
         IBlocksGenerator blocksGenerator = new BlocksGenerator(patterns);
-        this.isReduced = isReducedPieces(blocksGenerator, maxDepth, isUsingHold);
+        this.isHoldReduced = isHoldReducedPieces(blocksGenerator, maxDepth, isUsingHold);
         this.isUsingHold = isUsingHold;
         this.maxDepth = maxDepth;
-        this.allPieces = getAllPieces(blocksGenerator, maxDepth, isReduced);
-        this.validPieces = getValidPieces(blocksGenerator, allPieces, maxDepth, isReduced);
+        this.allPieces = getAllPieces(blocksGenerator, maxDepth, isUsingHold);
+        this.validPieces = getValidPieces(blocksGenerator, allPieces, maxDepth, isHoldReduced);
     }
 
-    private boolean isReducedPieces(IBlocksGenerator blocksGenerator, int maxDepth, boolean isUsingHold) {
+    private boolean isHoldReducedPieces(IBlocksGenerator blocksGenerator, int maxDepth, boolean isUsingHold) {
         return isUsingHold && maxDepth < blocksGenerator.getDepth();
     }
 
     private HashSet<LongBlocks> getAllPieces(IBlocksGenerator blocksGenerator, int maxDepth, boolean isUsingHold) {
-        if (isUsingHold && maxDepth + 1 < blocksGenerator.getDepth()) {
-            return toReducedHashSetWithHold(blocksGenerator.blocksStream(), maxDepth + 1);
-        } else if (!isUsingHold && maxDepth < blocksGenerator.getDepth()) {
-            return toReducedHashSetWithoutHold(blocksGenerator.blocksStream(), maxDepth);
+        if (isUsingHold) {
+            // ホールドあり
+            if (maxDepth < blocksGenerator.getDepth()) {
+                // Reduceあり  // isHoldReduceの対象
+                return toReducedHashSetWithHold(blocksGenerator.blocksStream(), maxDepth + 1);
+            } else {
+                // 場所の交換のみ
+                return toReducedHashSetWithHold(blocksGenerator.blocksStream(), maxDepth);
+            }
         } else {
-            return toDirectHashSet(blocksGenerator.blocksStream());
+            // ホールドなし
+            if (maxDepth < blocksGenerator.getDepth()) {
+                // Reduceあり
+                return toReducedHashSetWithoutHold(blocksGenerator.blocksStream(), maxDepth);
+            } else {
+                // そのまま
+                return toDirectHashSet(blocksGenerator.blocksStream());
+            }
         }
     }
 
-    private HashSet<LongBlocks> getValidPieces(IBlocksGenerator blocksGenerator, HashSet<LongBlocks> allPieces, int maxDepth, boolean isUsingHold) {
-        if (isReducedPieces(blocksGenerator, maxDepth, isUsingHold)) {
+    private HashSet<LongBlocks> getValidPieces(IBlocksGenerator blocksGenerator, HashSet<LongBlocks> allPieces, int maxDepth, boolean isHoldReduced) {
+        if (isHoldReduced) {
+            // パフェ時に使用ミノが少なくなるケースのため改めて専用のSetを作る
             return toReducedHashSetWithHold(blocksGenerator.blocksStream(), maxDepth);
         } else {
             return allPieces;
@@ -160,7 +173,7 @@ class PathCore {
                     .collect(Collectors.toList());
         });
 
-        return candidates.parallelStream()
+        return candidates.stream()
                 .map(result -> {
                     LinkedList<OperationWithKey> operations = result.getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toCollection(LinkedList::new));
 
@@ -209,7 +222,7 @@ class PathCore {
     }
 
     private HashSet<LongBlocks> getPiecesPattern(HashSet<LongBlocks> piecesSolution) {
-        if (isReduced) {
+        if (isHoldReduced) {
             // allとvalidが異なる
             ReverseOrderLookUp reverseOrderLookUp = new ReverseOrderLookUp(maxDepth, maxDepth + 1);
 

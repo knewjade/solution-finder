@@ -188,7 +188,7 @@ class PathCountCaseTest extends PathUseCaseBaseTest {
         assertThat(log.getOutput())
                 .contains("*,*p4")
                 .contains(Messages.uniqueCount(298))
-                .contains(Messages.minimalCount(172))
+                .contains(Messages.minimalCount(239))
                 .contains(Messages.useHold());
     }
 
@@ -211,7 +211,7 @@ class PathCountCaseTest extends PathUseCaseBaseTest {
         assertThat(log.getOutput())
                 .contains("S,L,O,I,T")
                 .contains(Messages.uniqueCount(3))
-                .contains(Messages.minimalCount(1))
+                .contains(Messages.minimalCount(3))
                 .contains(Messages.useHold());
     }
 
@@ -237,6 +237,31 @@ class PathCountCaseTest extends PathUseCaseBaseTest {
                 .contains("*p3")
                 .contains(Messages.uniqueCount(14))
                 .contains(Messages.minimalCount(13))
+                .contains(Messages.useHold());
+    }
+
+    @Test
+    void pattern10() throws Exception {
+        // ミノを置いてライン消去される場合
+
+            /*
+            _______XXX
+            ________XX
+            ______XXXX
+            _______XXX
+             */
+
+        String tetfu = "v115@Ehi0HeQ4g0FeBtR4GeBtQ4JeAgH";
+
+        String command = String.format("path -p L,I,T,O,Z,S,I -t %s", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getReturnCode()).isEqualTo(0);
+
+        assertThat(log.getOutput())
+                .contains("L,I,T,O,Z,S,I")
+                .contains(Messages.uniqueCount(2))
+                .contains(Messages.minimalCount(1))
                 .contains(Messages.useHold());
     }
 }
