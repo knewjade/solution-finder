@@ -41,7 +41,7 @@ public class SeparableMinos {
         HashMap<Key, Integer> indexes = new HashMap<>();
         for (int index = 0; index < minos.size(); index++) {
             SeparableMino mino = minos.get(index);
-            Key key = new Key(mino);
+            Key key = Key.create(mino);
             indexes.put(key, index);
         }
         this.indexes = indexes;
@@ -58,24 +58,37 @@ public class SeparableMinos {
     }
 
     public int toIndex(SeparableMino separableMino) {
-        Key key = new Key(separableMino);
+        Key key = Key.create(separableMino);
+        return toIndex(key);
+    }
+
+    public int toIndex(Mino mino, int x, int y, long deleteKey) {
+        Key key = new Key(mino, x, y, deleteKey);
         return toIndex(key);
     }
 
     private static class Key {
+        private static Key create(SeparableMino separableMino) {
+            Mino mino = separableMino.getMino();
+            return createFromLowerY(mino, separableMino.getX(), separableMino.getLowerY(), separableMino.getDeleteKey());
+        }
+
+        private static Key createFromLowerY(Mino mino, int x, int lowerY, long deleteKey) {
+            return new Key(mino, x, lowerY - mino.getMinY(), deleteKey);
+        }
+
         private final Block block;
         private final Rotate rotate;
         private final int x;
         private final int y;
         private final long deleteKey;
 
-        private Key(SeparableMino separableMino) {
-            Mino mino = separableMino.getMino();
+        private Key(Mino mino, int x, int y, long deleteKey) {
             this.block = mino.getBlock();
             this.rotate = mino.getRotate();
-            this.x = separableMino.getX();
-            this.y = separableMino.getLowerY() - mino.getMinY();
-            this.deleteKey = separableMino.getDeleteKey();
+            this.x = x;
+            this.y = y;
+            this.deleteKey = deleteKey;
         }
 
         @Override

@@ -36,7 +36,7 @@ public class MyFile {
             throw new FinderInitializeException("Cannot write output file: Path=" + path);
     }
 
-    AsyncBufferedFileWriter newAsyncWriter() throws IOException {
+    public AsyncBufferedFileWriter newAsyncWriter() throws IOException {
         return new AsyncBufferedFileWriter(file, CHARSET, false, 10L);
     }
 
