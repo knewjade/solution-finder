@@ -1,9 +1,7 @@
 package core.action.candidate;
 
-import core.action.candidate.LockedNeighborCandidate;
 import common.datastore.action.Action;
 import common.datastore.action.MinimalAction;
-import core.action.candidate.LockedCandidate;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
@@ -11,7 +9,7 @@ import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.mino.piece.Neighbor;
-import core.mino.piece.PieceFactory;
+import core.mino.piece.OriginalPieceFactory;
 import core.srs.MinoRotation;
 import lib.Randoms;
 import lib.Stopwatch;
@@ -33,7 +31,7 @@ class LockedNeighborCandidateTest {
         int height = 3;
         LockedCandidate candidate1 = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
 
-        PieceFactory pieceFactory = new PieceFactory(height + 3);
+        OriginalPieceFactory pieceFactory = new OriginalPieceFactory(height + 3);
         LockedNeighborCandidate candidate2 = new LockedNeighborCandidate(minoFactory, minoShifter, minoRotation, pieceFactory);
 
         Randoms randoms = new Randoms();
@@ -117,7 +115,7 @@ class LockedNeighborCandidateTest {
         int height = 4;
         LockedCandidate candidate1 = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
 
-        PieceFactory pieceFactory = new PieceFactory(height);
+        OriginalPieceFactory pieceFactory = new OriginalPieceFactory(height);
         LockedNeighborCandidate candidate2 = new LockedNeighborCandidate(minoFactory, minoShifter, minoRotation, pieceFactory);
 
         Field field = FieldFactory.createSmallField("" +
@@ -159,7 +157,7 @@ class LockedNeighborCandidateTest {
         int height = 4;
         LockedCandidate candidate1 = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
 
-        PieceFactory pieceFactory = new PieceFactory(height);
+        OriginalPieceFactory pieceFactory = new OriginalPieceFactory(height);
         LockedNeighborCandidate candidate2 = new LockedNeighborCandidate(minoFactory, minoShifter, minoRotation, pieceFactory);
 
         Field field = FieldFactory.createSmallField("" +
@@ -202,7 +200,7 @@ class LockedNeighborCandidateTest {
         int height = 4;
         LockedCandidate candidate1 = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
 
-        PieceFactory pieceFactory = new PieceFactory(height + 3);
+        OriginalPieceFactory pieceFactory = new OriginalPieceFactory(height + 3);
         LockedNeighborCandidate candidate2 = new LockedNeighborCandidate(minoFactory, minoShifter, minoRotation, pieceFactory);
 
         Field field = FieldFactory.createSmallField("" +
@@ -245,7 +243,7 @@ class LockedNeighborCandidateTest {
         int height = 4;
         LockedCandidate candidate1 = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
 
-        PieceFactory pieceFactory = new PieceFactory(height + 3);
+        OriginalPieceFactory pieceFactory = new OriginalPieceFactory(height + 3);
         LockedNeighborCandidate candidate2 = new LockedNeighborCandidate(minoFactory, minoShifter, minoRotation, pieceFactory);
 
         Field field = FieldFactory.createSmallField("" +
@@ -287,7 +285,7 @@ class LockedNeighborCandidateTest {
         int height = 4;
         LockedCandidate candidate1 = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
 
-        PieceFactory pieceFactory = new PieceFactory(height + 3);
+        OriginalPieceFactory pieceFactory = new OriginalPieceFactory(height + 3);
         LockedNeighborCandidate candidate2 = new LockedNeighborCandidate(minoFactory, minoShifter, minoRotation, pieceFactory);
 
         Field field = FieldFactory.createSmallField("" +

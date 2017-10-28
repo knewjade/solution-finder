@@ -16,18 +16,18 @@ public class Neighbors {
     private final Neighbor[][][][] neighbors;
     private final int maxHeight;
 
-    public Neighbors(MinoFactory minoFactory, MinoRotation minoRotation, PieceFactory pieceFactory) {
+    public Neighbors(MinoFactory minoFactory, MinoRotation minoRotation, OriginalPieceFactory pieceFactory) {
         this.maxHeight = pieceFactory.getMaxHeight();
         this.neighbors = createNeighbors(pieceFactory, maxHeight);
         updateNeighbors(minoFactory, minoRotation);
     }
 
-    private Neighbor[][][][] createNeighbors(PieceFactory pieceFactory, int maxHeight) {
+    private Neighbor[][][][] createNeighbors(OriginalPieceFactory pieceFactory, int maxHeight) {
         int maxBlock = Block.values().length;
         int maxRotate = Rotate.values().length;
         Neighbor[][][][] neighbors = new Neighbor[maxBlock][maxRotate][maxHeight][FIELD_WIDTH];
-        Collection<Piece> pieces = pieceFactory.getAllPieces();
-        for (Piece piece : pieces) {
+        Collection<OriginalPiece> pieces = pieceFactory.getAllPieces();
+        for (OriginalPiece piece : pieces) {
             Mino mino = piece.getMino();
             Block block = mino.getBlock();
             Rotate rotate = mino.getRotate();
@@ -49,7 +49,7 @@ public class Neighbors {
     }
 
     private void updateNeighbor(MinoFactory minoFactory, MinoRotation minoRotation, Neighbor current) {
-        Piece piece = current.getPiece();
+        OriginalPiece piece = current.getPiece();
         Mino mino = piece.getMino();
         int x = piece.getX();
         int y = piece.getY();

@@ -5,24 +5,24 @@ import java.util.List;
 
 // TODO: write unittest
 public class Neighbor {
-    public static final Neighbor EMPTY_NEIGHBOR = new Neighbor(Piece.EMPTY_PIECE);
+    public static final Neighbor EMPTY_NEIGHBOR = new Neighbor(OriginalPiece.EMPTY_COLLIDER_PIECE);
 
     private boolean isValid(Neighbor neighbor) {
         return !EMPTY_NEIGHBOR.equals(neighbor);
     }
 
-    private final Piece piece;
+    private final OriginalPiece piece;
     private final List<Neighbor> nextMovesSources = new ArrayList<>();
     private final List<Neighbor> nextLeftRotateSources = new ArrayList<>();
     private final List<Neighbor> nextRightRotateSources = new ArrayList<>();
     private final List<Neighbor> nextLeftRotateDestinations = new ArrayList<>();
     private final List<Neighbor> nextRightRotateDestinations = new ArrayList<>();
 
-    Neighbor(Piece piece) {
+    Neighbor(OriginalPiece piece) {
         this.piece = piece;
     }
 
-    public Piece getPiece() {
+    public OriginalPiece getPiece() {
         return piece;
     }
 

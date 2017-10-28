@@ -2,7 +2,7 @@ package core.field;
 
 import core.mino.Block;
 import core.mino.Mino;
-import core.mino.piece.Piece;
+import core.mino.piece.OriginalPiece;
 import core.srs.Rotate;
 import lib.Randoms;
 import org.junit.jupiter.api.Test;
@@ -15,14 +15,14 @@ import static org.assertj.core.api.Assertions.fail;
 class MiddleFieldTest {
     private static final int FIELD_WIDTH = 10;
 
-    private ArrayList<Piece> createAllPieces(int fieldHeight) {
-        ArrayList<Piece> pieces = new ArrayList<>();
+    private ArrayList<OriginalPiece> createAllPieces(int fieldHeight) {
+        ArrayList<OriginalPiece> pieces = new ArrayList<>();
         for (Block block : Block.values()) {
             for (Rotate rotate : Rotate.values()) {
                 Mino mino = new Mino(block, rotate);
                 for (int y = -mino.getMinY(); y < fieldHeight - mino.getMaxY(); y++) {
                     for (int x = -mino.getMinX(); x < FIELD_WIDTH - mino.getMaxX(); x++) {
-                        pieces.add(new Piece(mino, x, y, fieldHeight));
+                        pieces.add(new OriginalPiece(mino, x, y, fieldHeight));
                     }
                 }
             }
@@ -85,8 +85,8 @@ class MiddleFieldTest {
         MiddleField field = FieldFactory.createMiddleField();
         int maxFieldHeight = field.getMaxFieldHeight();
 
-        ArrayList<Piece> pieces = createAllPieces(maxFieldHeight);
-        for (Piece piece : pieces) {
+        ArrayList<OriginalPiece> pieces = createAllPieces(maxFieldHeight);
+        for (OriginalPiece piece : pieces) {
             // Initialize
             Mino mino = piece.getMino();
             int x = piece.getX();
@@ -155,8 +155,8 @@ class MiddleFieldTest {
         MiddleField field = createRandomMiddleField(randoms);
         String string = FieldView.toString(field);
 
-        ArrayList<Piece> pieces = createAllPieces(field.getMaxFieldHeight());
-        for (Piece piece : pieces) {
+        ArrayList<OriginalPiece> pieces = createAllPieces(field.getMaxFieldHeight());
+        for (OriginalPiece piece : pieces) {
             Mino mino = piece.getMino();
             int x = piece.getX();
             int y = piece.getY();
@@ -313,8 +313,8 @@ class MiddleFieldTest {
         MiddleField field = createRandomMiddleField(randoms);
         int maxFieldHeight = field.getMaxFieldHeight();
 
-        ArrayList<Piece> pieces = createAllPieces(maxFieldHeight);
-        for (Piece piece : pieces) {
+        ArrayList<OriginalPiece> pieces = createAllPieces(maxFieldHeight);
+        for (OriginalPiece piece : pieces) {
             Mino mino = piece.getMino();
             int x = piece.getX();
             int y = piece.getY();

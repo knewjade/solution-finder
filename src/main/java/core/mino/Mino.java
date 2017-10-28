@@ -2,7 +2,7 @@ package core.mino;
 
 import core.srs.Rotate;
 
-public class Mino {
+public class Mino implements Comparable<Mino> {
     private static final int MASK_CENTER_X = 4;
     private static final int MASK_CENTER_Y = 2;
 
@@ -172,5 +172,13 @@ public class Mino {
     @Override
     public int hashCode() {
         return block.hashCode() ^ rotate.hashCode();
+    }
+
+    @Override
+    public int compareTo(Mino o) {
+        int compareBlock = block.compareTo(o.block);
+        if (compareBlock != 0)
+            return compareBlock;
+        return rotate.compareTo(o.rotate);
     }
 }

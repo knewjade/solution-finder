@@ -2,7 +2,7 @@ package core.field;
 
 import common.comparator.FieldComparator;
 import core.mino.Mino;
-import core.mino.piece.Piece;
+import core.mino.piece.OriginalPiece;
 
 /**
  * フィールドの高さ height <= 6 であること
@@ -51,12 +51,12 @@ public class SmallField implements Field {
     }
 
     @Override
-    public void put(Piece piece) {
+    public void put(OriginalPiece piece) {
         merge(piece.getMinoField());
     }
 
     @Override
-    public boolean canPut(Piece piece) {
+    public boolean canPut(OriginalPiece piece) {
         return canMerge(piece.getMinoField());
     }
 
@@ -66,7 +66,7 @@ public class SmallField implements Field {
     }
 
     @Override
-    public void remove(Piece piece) {
+    public void remove(OriginalPiece piece) {
         reduce(piece.getMinoField());
     }
 
@@ -89,7 +89,7 @@ public class SmallField implements Field {
     }
 
     @Override
-    public boolean canReachOnHarddrop(Piece piece) {
+    public boolean canReachOnHarddrop(OriginalPiece piece) {
         Field collider = piece.getHarddropCollider();
         return canMerge(collider);
     }

@@ -1,8 +1,7 @@
 package common.datastore;
 
-import core.mino.Block;
 import core.mino.Mino;
-import core.srs.Rotate;
+import core.mino.piece.Piece;
 
 public class SimpleOperationWithKey implements OperationWithKey {
     private final Mino mino;
@@ -26,6 +25,10 @@ public class SimpleOperationWithKey implements OperationWithKey {
         this.y = y;
         this.needDeletedKey = needDeletedKey;
         this.usingKey = usingKey;
+    }
+
+    public SimpleOperationWithKey(Piece piece, long usingKey, int lowerY) {
+        this(piece.getMino(), piece.getX(), piece.getDeleteKey(), usingKey, lowerY);
     }
 
     @Override
@@ -57,13 +60,8 @@ public class SimpleOperationWithKey implements OperationWithKey {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         SimpleOperationWithKey that = (SimpleOperationWithKey) o;
-
-        if (x != that.x) return false;
-        if (y != that.y) return false;
-        if (needDeletedKey != that.needDeletedKey) return false;
-        return mino.equals(that.mino);
+        return x == that.x && y == that.y && needDeletedKey == that.needDeletedKey && mino.equals(that.mino);
     }
 
     @Override

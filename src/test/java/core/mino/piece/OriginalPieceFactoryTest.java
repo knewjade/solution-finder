@@ -8,10 +8,6 @@ import core.field.MiddleField;
 import core.mino.Block;
 import core.mino.Mino;
 import core.mino.MinoFactory;
-import core.mino.MinoShifter;
-import core.mino.piece.Neighbor;
-import core.mino.piece.Neighbors;
-import core.mino.piece.PieceFactory;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
 import lib.BooleanWalker;
@@ -24,12 +20,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-class PieceFactoryTest {
+class OriginalPieceFactoryTest {
     // TODO: write unittest
     @Disabled
     @Test
     void create() {
-        PieceFactory pieceFactory = new PieceFactory(4);
+        OriginalPieceFactory pieceFactory = new OriginalPieceFactory(4);
         MinoFactory minoFactory = new MinoFactory();
         MinoRotation minoRotation = new MinoRotation();
         Neighbors neighbors = new Neighbors(minoFactory, minoRotation, pieceFactory);

@@ -1,68 +1,22 @@
 package core.mino.piece;
 
-import common.ActionParser;
-import core.field.Field;
-import core.field.FieldFactory;
-import core.mino.Block;
 import core.mino.Mino;
-import core.srs.Rotate;
 
-// TODO: write unittest
-public class Piece {
-    static final Piece EMPTY_PIECE = new Piece();
-
+/**
+ * フィールド幅は通常の10を想定
+ */
+public class Piece implements Comparable<Piece> {
     private final Mino mino;
     private final int x;
     private final int y;
-    private final Field minoField;
-    private final Field harddropCollider;
-    private final int hash;
+    private final long deleteKey;
 
-    public Piece(Mino mino, int x, int y, int fieldHeight) {
+    // x, yは回転軸の座標
+    public Piece(Mino mino, int x, int y, long deleteKey) {
         this.mino = mino;
         this.x = x;
         this.y = y;
-        this.minoField = createMinoField();
-        this.harddropCollider = createHarddropCollider(mino, x, y, fieldHeight);
-        this.hash = ActionParser.parseToInt(mino.getBlock(), mino.getRotate(), x, y);
-    }
-
-    private Piece() {
-        this.mino = new Mino(Block.I, Rotate.Spawn);
-        this.x = -1;
-        this.y = -1;
-        this.minoField = FieldFactory.createField(1);
-        this.harddropCollider = FieldFactory.createField(1);
-        this.hash = -1;
-    }
-
-    private Field createMinoField() {
-        Field field = FieldFactory.createField(y + mino.getMaxY() + 1);
-        field.put(mino, x, y);
-        return field;
-    }
-
-    private Field createHarddropCollider(Mino mino, int x, int y, int fieldHeight) {
-        Field field = FieldFactory.createField(fieldHeight);
-        for (int yIndex = y; yIndex < fieldHeight - mino.getMinY(); yIndex++)
-            field.put(mino, x, yIndex);
-        for (int yIndex = fieldHeight; yIndex < field.getMaxFieldHeight(); yIndex++)
-            for (int xIndex = 0; xIndex < 10; xIndex++)
-                field.removeBlock(xIndex, yIndex);
-        return field;
-    }
-
-    public Field getMinoField() {
-        return minoField;
-    }
-
-    @Override
-    public String toString() {
-        return "Piece{" +
-                "mino=" + mino +
-                ", x=" + x +
-                ", y=" + y +
-                '}';
+        this.deleteKey = deleteKey;
     }
 
     public Mino getMino() {
@@ -77,20 +31,46 @@ public class Piece {
         return y;
     }
 
-    public Field getHarddropCollider() {
-        return harddropCollider;
+    public long getDeleteKey() {
+        return deleteKey;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+
+        if (o == null || getClass() != o.getClass())
+            return false;
+
         Piece piece = (Piece) o;
-        return x == piece.x & y == piece.y & mino.equals(piece.mino);
+        return x == piece.x && y == piece.y && deleteKey == piece.deleteKey && mino.equals(piece.mino);
     }
 
     @Override
     public int hashCode() {
-        return hash;
+        int result = y;
+        result = 10 * result + x;
+        result = 7 * result + mino.getBlock().getNumber();
+        result = 4 * result + mino.getRotate().getNumber();
+        result = 31 * result + (int) (deleteKey ^ (deleteKey >>> 32));
+        return result;
+    }
+
+    @Override
+    public int compareTo(Piece o) {
+        int compareX = Integer.compare(x, o.x);
+        if (compareX != 0)
+            return compareX;
+
+        int compareY = Integer.compare(y, o.y);
+        if (compareY != 0)
+            return compareY;
+
+        int compareDeleteKey = Long.compare(deleteKey, o.deleteKey);
+        if (compareDeleteKey != 0)
+            return compareDeleteKey;
+
+        return mino.compareTo(o.mino);
     }
 }

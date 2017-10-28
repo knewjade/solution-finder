@@ -26,7 +26,6 @@ import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.calculator.BasicSolutions;
 import searcher.pack.memento.SolutionFilter;
-import searcher.pack.separable_mino.SeparableMinoFactory;
 import searcher.pack.solutions.FilterOnDemandBasicSolutions;
 import searcher.pack.task.BasicMinoPackingHelper;
 import searcher.pack.task.Field4x10MinoPackingHelper;

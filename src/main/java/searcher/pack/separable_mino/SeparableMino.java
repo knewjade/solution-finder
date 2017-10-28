@@ -1,7 +1,6 @@
 package searcher.pack.separable_mino;
 
 import common.datastore.OperationWithKey;
-import common.datastore.SimpleOperationWithKey;
 import core.column_field.ColumnField;
 import core.column_field.ColumnFieldFactory;
 import core.column_field.ColumnSmallField;
@@ -11,12 +10,18 @@ import searcher.pack.separable_mino.mask.MinoMask;
 import searcher.pack.separable_mino.mask.MinoMaskFactory;
 
 public class SeparableMino {
-    public static SeparableMino create(Mino mino, long deleteKey, long usingKey, int x, int lowerY, int upperY, int fieldHeight) {
-        assert 0 <= lowerY && upperY <= 10 : lowerY;
+    public static SeparableMino create(OperationWithKey operationWithKey, int upperY, int fieldHeight) {
+        assert upperY <= 10 : upperY;
 
-        MinoMask minoMask = MinoMaskFactory.create(fieldHeight, mino, lowerY - mino.getMinY(), deleteKey);
+        Mino mino = operationWithKey.getMino();
+        long deleteKey = operationWithKey.getNeedDeletedKey();
+        int y = operationWithKey.getY();
+        MinoMask minoMask = MinoMaskFactory.create(fieldHeight, mino, y, deleteKey);
+
+        int x = operationWithKey.getX();
         Field mask = minoMask.getMinoMask(x);
 
+        int lowerY = operationWithKey.getY() + operationWithKey.getMino().getMinY();
         ColumnSmallField field = ColumnFieldFactory.createField();
         for (int ny = lowerY; ny <= upperY; ny++) {
             for (int nx = x + mino.getMinX(); nx <= x + mino.getMaxX(); nx++) {
@@ -25,29 +30,22 @@ public class SeparableMino {
             }
         }
 
-        return new SeparableMino(mino, field, x, lowerY, deleteKey, usingKey);
+        return new SeparableMino(operationWithKey, field);
     }
 
-    private final Mino mino;
-    private final ColumnField field;
-    private final int x;
-    private final int lowerY;
-    private final long deleteKey;
-    private final long usingKey;
     private final OperationWithKey operation;
+    private final ColumnField field;
+    private final int lowerY;
 
-    private SeparableMino(Mino mino, ColumnField field, int x, int lowerY, long deleteKey, long usingKey) {
-        this.mino = mino;
+    private SeparableMino(OperationWithKey operationWithKey, ColumnField field) {
+        this.operation = operationWithKey;
         this.field = field;
-        this.x = x;
-        this.lowerY = lowerY;
-        this.deleteKey = deleteKey;
-        this.usingKey = usingKey;
-        this.operation = new SimpleOperationWithKey(mino, x, deleteKey, usingKey, lowerY);
+        this.lowerY = operationWithKey.getY() + operationWithKey.getMino().getMinY();
+        assert 0 <= lowerY : lowerY;
     }
 
     public Mino getMino() {
-        return mino;
+        return operation.getMino();
     }
 
     public int getLowerY() {
@@ -55,7 +53,7 @@ public class SeparableMino {
     }
 
     public long getDeleteKey() {
-        return deleteKey;
+        return operation.getNeedDeletedKey();
     }
 
     public ColumnField getField() {
@@ -63,11 +61,11 @@ public class SeparableMino {
     }
 
     public int getX() {
-        return x;
+        return operation.getX();
     }
 
     public long getUsingKey() {
-        return usingKey;
+        return operation.getUsingKey();
     }
 
     public OperationWithKey toOperation() {

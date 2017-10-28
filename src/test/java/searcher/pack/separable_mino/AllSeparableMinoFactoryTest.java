@@ -7,22 +7,20 @@ import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import org.junit.jupiter.api.Test;
-import searcher.pack.SeparableMinos;
-import searcher.pack.SizedBit;
 
-import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class SeparableMinoFactoryTest {
+class AllSeparableMinoFactoryTest {
     @Test
     void create2x3() throws Exception {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         int width = 2;
         int height = 3;
-        List<SeparableMino> minos = getSeparableMinos(minoFactory, minoShifter, width, height);
+        Set<SeparableMino> minos = getSeparableMinos(minoFactory, minoShifter, width, height);
 
         assertThat(minos.stream()).hasSize(76);
         assertThat(minos.stream().filter(createBlockPredicate(Block.T))).hasSize(16);
@@ -40,7 +38,7 @@ class SeparableMinoFactoryTest {
         MinoShifter minoShifter = new MinoShifter();
         int width = 2;
         int height = 4;
-        List<SeparableMino> minos = getSeparableMinos(minoFactory, minoShifter, width, height);
+        Set<SeparableMino> minos = getSeparableMinos(minoFactory, minoShifter, width, height);
 
         for (SeparableMino separableMino : minos) {
 
@@ -65,7 +63,7 @@ class SeparableMinoFactoryTest {
         MinoShifter minoShifter = new MinoShifter();
         int width = 2;
         int height = 5;
-        List<SeparableMino> minos = getSeparableMinos(minoFactory, minoShifter, width, height);
+        Set<SeparableMino> minos = getSeparableMinos(minoFactory, minoShifter, width, height);
 
         assertThat(minos.stream()).hasSize(360);
         assertThat(minos.stream().filter(createBlockPredicate(Block.T))).hasSize(80);
@@ -83,7 +81,7 @@ class SeparableMinoFactoryTest {
         MinoShifter minoShifter = new MinoShifter();
         int width = 3;
         int height = 3;
-        List<SeparableMino> minos = getSeparableMinos(minoFactory, minoShifter, width, height);
+        Set<SeparableMino> minos = getSeparableMinos(minoFactory, minoShifter, width, height);
 
         assertThat(minos.stream()).hasSize(114);
         assertThat(minos.stream().filter(createBlockPredicate(Block.T))).hasSize(24);
@@ -101,7 +99,7 @@ class SeparableMinoFactoryTest {
         MinoShifter minoShifter = new MinoShifter();
         int width = 3;
         int height = 4;
-        List<SeparableMino> minos = getSeparableMinos(minoFactory, minoShifter, width, height);
+        Set<SeparableMino> minos = getSeparableMinos(minoFactory, minoShifter, width, height);
 
         assertThat(minos.stream()).hasSize(273);
         assertThat(minos.stream().filter(createBlockPredicate(Block.T))).hasSize(60);
@@ -119,7 +117,7 @@ class SeparableMinoFactoryTest {
         MinoShifter minoShifter = new MinoShifter();
         int width = 3;
         int height = 5;
-        List<SeparableMino> minos = getSeparableMinos(minoFactory, minoShifter, width, height);
+        Set<SeparableMino> minos = getSeparableMinos(minoFactory, minoShifter, width, height);
 
         assertThat(minos.stream()).hasSize(540);
         assertThat(minos.stream().filter(createBlockPredicate(Block.T))).hasSize(120);
@@ -135,9 +133,9 @@ class SeparableMinoFactoryTest {
         return separableMino -> separableMino.getMino().getBlock() == block;
     }
 
-    private List<SeparableMino> getSeparableMinos(MinoFactory minoFactory, MinoShifter minoShifter, int width, int height) {
+    private Set<SeparableMino> getSeparableMinos(MinoFactory minoFactory, MinoShifter minoShifter, int width, int height) {
         long mask = KeyOperators.getMaskForKeyBelowY(height);
-        SeparableMinoFactory factory = new SeparableMinoFactory(minoFactory, minoShifter, width, height, mask);
+        AllSeparableMinoFactory factory = new AllSeparableMinoFactory(minoFactory, minoShifter, width, height, mask);
         return factory.create();
     }
 }
