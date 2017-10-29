@@ -1,7 +1,7 @@
 package lib;
 
 import common.datastore.Coordinate;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
 import org.junit.jupiter.api.Test;
@@ -15,70 +15,70 @@ class CoordinatesTest {
     @Test
     void walkSizeWithI() {
         MinoFactory minoFactory = new MinoFactory();
-        assertThat(Coordinates.walk(minoFactory.create(Block.I, Rotate.Spawn), 4)).hasSize(28);
-        assertThat(Coordinates.walk(minoFactory.create(Block.I, Rotate.Left), 4)).hasSize(10);
-        assertThat(Coordinates.walk(minoFactory.create(Block.I, Rotate.Reverse), 4)).hasSize(28);
-        assertThat(Coordinates.walk(minoFactory.create(Block.I, Rotate.Right), 4)).hasSize(10);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.I, Rotate.Spawn), 4)).hasSize(28);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.I, Rotate.Left), 4)).hasSize(10);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.I, Rotate.Reverse), 4)).hasSize(28);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.I, Rotate.Right), 4)).hasSize(10);
     }
 
     @Test
     void walkSizeWithJ() {
         MinoFactory minoFactory = new MinoFactory();
-        assertThat(Coordinates.walk(minoFactory.create(Block.J, Rotate.Spawn), 4)).hasSize(24);
-        assertThat(Coordinates.walk(minoFactory.create(Block.J, Rotate.Left), 4)).hasSize(18);
-        assertThat(Coordinates.walk(minoFactory.create(Block.J, Rotate.Reverse), 4)).hasSize(24);
-        assertThat(Coordinates.walk(minoFactory.create(Block.J, Rotate.Right), 4)).hasSize(18);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.J, Rotate.Spawn), 4)).hasSize(24);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.J, Rotate.Left), 4)).hasSize(18);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.J, Rotate.Reverse), 4)).hasSize(24);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.J, Rotate.Right), 4)).hasSize(18);
     }
 
     @Test
     void walkSizeWithL() {
         MinoFactory minoFactory = new MinoFactory();
-        assertThat(Coordinates.walk(minoFactory.create(Block.L, Rotate.Spawn), 4)).hasSize(24);
-        assertThat(Coordinates.walk(minoFactory.create(Block.L, Rotate.Left), 4)).hasSize(18);
-        assertThat(Coordinates.walk(minoFactory.create(Block.L, Rotate.Reverse), 4)).hasSize(24);
-        assertThat(Coordinates.walk(minoFactory.create(Block.L, Rotate.Right), 4)).hasSize(18);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.L, Rotate.Spawn), 4)).hasSize(24);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.L, Rotate.Left), 4)).hasSize(18);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.L, Rotate.Reverse), 4)).hasSize(24);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.L, Rotate.Right), 4)).hasSize(18);
     }
 
     @Test
     void walkSizeWithO() {
         MinoFactory minoFactory = new MinoFactory();
-        assertThat(Coordinates.walk(minoFactory.create(Block.O, Rotate.Spawn), 4)).hasSize(27);
-        assertThat(Coordinates.walk(minoFactory.create(Block.O, Rotate.Left), 4)).hasSize(27);
-        assertThat(Coordinates.walk(minoFactory.create(Block.O, Rotate.Reverse), 4)).hasSize(27);
-        assertThat(Coordinates.walk(minoFactory.create(Block.O, Rotate.Right), 4)).hasSize(27);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.O, Rotate.Spawn), 4)).hasSize(27);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.O, Rotate.Left), 4)).hasSize(27);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.O, Rotate.Reverse), 4)).hasSize(27);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.O, Rotate.Right), 4)).hasSize(27);
     }
 
     @Test
     void walkSizeWithS() {
         MinoFactory minoFactory = new MinoFactory();
-        assertThat(Coordinates.walk(minoFactory.create(Block.S, Rotate.Spawn), 4)).hasSize(24);
-        assertThat(Coordinates.walk(minoFactory.create(Block.S, Rotate.Left), 4)).hasSize(18);
-        assertThat(Coordinates.walk(minoFactory.create(Block.S, Rotate.Reverse), 4)).hasSize(24);
-        assertThat(Coordinates.walk(minoFactory.create(Block.S, Rotate.Right), 4)).hasSize(18);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.S, Rotate.Spawn), 4)).hasSize(24);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.S, Rotate.Left), 4)).hasSize(18);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.S, Rotate.Reverse), 4)).hasSize(24);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.S, Rotate.Right), 4)).hasSize(18);
     }
 
     @Test
     void walkSizeWithZ() {
         MinoFactory minoFactory = new MinoFactory();
-        assertThat(Coordinates.walk(minoFactory.create(Block.Z, Rotate.Spawn), 4)).hasSize(24);
-        assertThat(Coordinates.walk(minoFactory.create(Block.Z, Rotate.Left), 4)).hasSize(18);
-        assertThat(Coordinates.walk(minoFactory.create(Block.Z, Rotate.Reverse), 4)).hasSize(24);
-        assertThat(Coordinates.walk(minoFactory.create(Block.Z, Rotate.Right), 4)).hasSize(18);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.Z, Rotate.Spawn), 4)).hasSize(24);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.Z, Rotate.Left), 4)).hasSize(18);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.Z, Rotate.Reverse), 4)).hasSize(24);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.Z, Rotate.Right), 4)).hasSize(18);
     }
 
     @Test
     void walkSizeWithT() {
         MinoFactory minoFactory = new MinoFactory();
-        assertThat(Coordinates.walk(minoFactory.create(Block.T, Rotate.Spawn), 4)).hasSize(24);
-        assertThat(Coordinates.walk(minoFactory.create(Block.T, Rotate.Left), 4)).hasSize(18);
-        assertThat(Coordinates.walk(minoFactory.create(Block.T, Rotate.Reverse), 4)).hasSize(24);
-        assertThat(Coordinates.walk(minoFactory.create(Block.T, Rotate.Right), 4)).hasSize(18);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.T, Rotate.Spawn), 4)).hasSize(24);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.T, Rotate.Left), 4)).hasSize(18);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.T, Rotate.Reverse), 4)).hasSize(24);
+        assertThat(Coordinates.walk(minoFactory.create(Piece.T, Rotate.Right), 4)).hasSize(18);
     }
 
     @Test
     void walkContainsWithI() {
         MinoFactory minoFactory = new MinoFactory();
-        Set<Coordinate> coordinates = Coordinates.walk(minoFactory.create(Block.I, Rotate.Spawn), 4)
+        Set<Coordinate> coordinates = Coordinates.walk(minoFactory.create(Piece.I, Rotate.Spawn), 4)
                 .collect(Collectors.toSet());
 
         assertThat(coordinates)

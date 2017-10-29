@@ -1,7 +1,7 @@
 package searcher.pack;
 
 import common.datastore.FullOperationWithKey;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.srs.Rotate;
 import lib.Randoms;
@@ -15,9 +15,9 @@ class SlideXOperationWithKeyTest {
         Randoms randoms = new Randoms();
 
         for (int count = 0; count < 10000; count++) {
-            Block block = randoms.block();
+            Piece piece = randoms.block();
             Rotate rotate = randoms.rotate();
-            Mino mino = new Mino(block, rotate);
+            Mino mino = new Mino(piece, rotate);
             int x = randoms.nextInt(0, 10);
             int y = randoms.nextInt(0, 10);
             long usingKey = randoms.key();

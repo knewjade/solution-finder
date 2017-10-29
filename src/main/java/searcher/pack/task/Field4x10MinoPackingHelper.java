@@ -1,13 +1,13 @@
 package searcher.pack.task;
 
-import common.datastore.BlockCounter;
+import common.datastore.PieceCounter;
 import common.datastore.FullOperationWithKey;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.OperationWithKey;
 import core.column_field.ColumnField;
 import core.column_field.ColumnFieldFactory;
 import core.column_field.ColumnSmallField;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.srs.Rotate;
 import searcher.pack.SizedBit;
@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 // パフェ用
 public class Field4x10MinoPackingHelper implements TaskResultHelper {
     private static class IOnlyMinoField implements MinoField {
-        private static final FullOperationWithKey LAST_OPERATION = new FullOperationWithKey(new Mino(Block.I, Rotate.Left), 0, 0L, 1074791425L, 0);
+        private static final FullOperationWithKey LAST_OPERATION = new FullOperationWithKey(new Mino(Piece.I, Rotate.Left), 0, 0L, 1074791425L, 0);
         private static final SeparableMino LAST_SEPARABLE_MINO = new SeparableMino() {
             @Override
             public int getLowerY() {
@@ -44,7 +44,7 @@ public class Field4x10MinoPackingHelper implements TaskResultHelper {
 
         private final List<OperationWithKey> operationWithKeys = Collections.singletonList(LAST_OPERATION);
         private final ColumnSmallField columnSmallField = ColumnFieldFactory.createField();
-        private final BlockCounter blockCounter = new BlockCounter(Collections.singletonList(Block.I));
+        private final PieceCounter pieceCounter = new PieceCounter(Collections.singletonList(Piece.I));
 
         @Override
         public ColumnField getOuterField() {
@@ -57,8 +57,8 @@ public class Field4x10MinoPackingHelper implements TaskResultHelper {
         }
 
         @Override
-        public BlockCounter getBlockCounter() {
-            return blockCounter;
+        public PieceCounter getPieceCounter() {
+            return pieceCounter;
         }
 
         @Override

@@ -3,7 +3,7 @@ package common.parser;
 import common.datastore.Operation;
 import common.datastore.Operations;
 import common.datastore.SimpleOperation;
-import core.mino.Block;
+import core.mino.Piece;
 import core.srs.Rotate;
 import lib.Randoms;
 import org.junit.jupiter.api.Test;
@@ -28,11 +28,11 @@ class OperationInterpreterTest {
         Randoms randoms = new Randoms();
         for (int size = 1; size < 20; size++) {
             List<Operation> operationList = Stream.generate(() -> {
-                Block block = randoms.block();
+                Piece piece = randoms.block();
                 Rotate rotate = randoms.rotate();
                 int x = randoms.nextInt(10);
                 int y = randoms.nextInt(4);
-                return new SimpleOperation(block, rotate, x, y);
+                return new SimpleOperation(piece, rotate, x, y);
             }).limit(size).collect(Collectors.toList());
 
             Operations operations = new Operations(operationList);

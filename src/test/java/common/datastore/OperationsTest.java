@@ -1,6 +1,6 @@
 package common.datastore;
 
-import core.mino.Block;
+import core.mino.Piece;
 import core.srs.Rotate;
 import lib.Randoms;
 import org.junit.jupiter.api.Test;
@@ -17,10 +17,10 @@ class OperationsTest {
     @Test
     void create() throws Exception {
         List<SimpleOperation> list = Arrays.asList(
-                new SimpleOperation(Block.I, Rotate.Left, 0, 1),
-                new SimpleOperation(Block.L, Rotate.Spawn, 2, 0),
-                new SimpleOperation(Block.O, Rotate.Spawn, 1, 1),
-                new SimpleOperation(Block.J, Rotate.Reverse, 2, 3)
+                new SimpleOperation(Piece.I, Rotate.Left, 0, 1),
+                new SimpleOperation(Piece.L, Rotate.Spawn, 2, 0),
+                new SimpleOperation(Piece.O, Rotate.Spawn, 1, 1),
+                new SimpleOperation(Piece.J, Rotate.Reverse, 2, 3)
         );
         Operations operations = new Operations(new ArrayList<>(list));
         assertThat(operations.getOperations()).isEqualTo(list);
@@ -53,10 +53,10 @@ class OperationsTest {
     }
 
     private Operation createRandomOperation(Randoms randoms) {
-        Block block = randoms.block();
+        Piece piece = randoms.block();
         Rotate rotate = randoms.rotate();
         int x = randoms.nextInt(10);
         int y = randoms.nextInt(20);
-        return new SimpleOperation(block, rotate, x, y);
+        return new SimpleOperation(piece, rotate, x, y);
     }
 }

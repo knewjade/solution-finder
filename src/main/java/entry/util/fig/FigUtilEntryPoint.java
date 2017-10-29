@@ -5,7 +5,7 @@ import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import core.FinderConstant;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
@@ -166,8 +166,8 @@ public class FigUtilEntryPoint implements EntryPoint {
                     figGenerator.updateMino(colorType, rotate, x, y);
 
                     // bagの更新
-                    Block block = colorConverter.parseToBlock(colorType);
-                    bag.use(block);
+                    Piece piece = colorConverter.parseToBlock(colorType);
+                    bag.use(piece);
                 }
 
                 // ネクストの更新
@@ -290,8 +290,8 @@ public class FigUtilEntryPoint implements EntryPoint {
                 figGenerator.updateMino(colorType, rotate, x, y);
 
                 // bagの更新
-                Block block = colorConverter.parseToBlock(colorType);
-                bag.use(block);
+                Piece piece = colorConverter.parseToBlock(colorType);
+                bag.use(piece);
             }
 
             // ネクストの更新
@@ -330,28 +330,28 @@ public class FigUtilEntryPoint implements EntryPoint {
         if (settings.isUsingHold() && quiz != null) {
             int holdIndex = quiz.indexOf('[') + 1;
             char holdChar = quiz.charAt(holdIndex);
-            Block hold = null;
+            Piece hold = null;
             if (holdChar != ']')
-                hold = Block.valueOf(String.valueOf(holdChar).toUpperCase());
+                hold = Piece.valueOf(String.valueOf(holdChar).toUpperCase());
 
             int currentIndex = quiz.indexOf('(') + 1;
             int currentChar = quiz.charAt(currentIndex);
             String next = quiz.substring(quiz.indexOf(')') + 1, quiz.length());
-            List<Block> blocks = IntStream.concat(IntStream.of(currentChar), next.chars())
+            List<Piece> pieces = IntStream.concat(IntStream.of(currentChar), next.chars())
                     .mapToObj(value -> (char) value)
                     .map(String::valueOf)
                     .map(String::toUpperCase)
-                    .map(Block::valueOf)
+                    .map(Piece::valueOf)
                     .collect(Collectors.toList());
 
-            Bag bag = new Bag(blocks, hold);
+            Bag bag = new Bag(pieces, hold);
             for (int index = quizIndex; index < startPageIndex; index++) {
                 ColorType colorType = tetfuPages.get(index).getColorType();
                 bag.use(colorConverter.parseToBlock(colorType));
             }
             return bag;
         } else {
-            List<Block> collect = usingTetfuPages.stream()
+            List<Piece> collect = usingTetfuPages.stream()
                     .map(TetfuPage::getColorType)
                     .filter(ColorType::isMinoBlock)
                     .map(colorConverter::parseToBlock)

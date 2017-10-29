@@ -3,7 +3,7 @@ package common.datastore;
 import common.comparator.FieldComparator;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Block;
+import core.mino.Piece;
 
 import java.util.Comparator;
 import java.util.EnumMap;
@@ -14,29 +14,29 @@ public class BlockField implements Comparable<BlockField> {
     private static final Field EMPTY_FIELD = FieldFactory.createField(1);
 
     private final int height;
-    private final EnumMap<Block, Field> map;
+    private final EnumMap<Piece, Field> map;
 
     public BlockField(int height) {
-        this(height, new EnumMap<>(Block.class));
+        this(height, new EnumMap<>(Piece.class));
     }
 
-    private BlockField(int height, EnumMap<Block, Field> map) {
+    private BlockField(int height, EnumMap<Piece, Field> map) {
         this.height = height;
         this.map = map;
     }
 
     // TODO: write unittest
-    public void setBlock(Block block, int x, int y) {
-        assert block != null;
-        map.computeIfAbsent(block, b -> FieldFactory.createField(height)).setBlock(x, y);
+    public void setBlock(Piece piece, int x, int y) {
+        assert piece != null;
+        map.computeIfAbsent(piece, b -> FieldFactory.createField(height)).setBlock(x, y);
     }
 
-    public void merge(Field field, Block block) {
-        map.computeIfAbsent(block, b -> FieldFactory.createField(height)).merge(field);
+    public void merge(Field field, Piece piece) {
+        map.computeIfAbsent(piece, b -> FieldFactory.createField(height)).merge(field);
     }
 
-    public Field get(Block block) {
-        return map.getOrDefault(block, EMPTY_FIELD);
+    public Field get(Piece piece) {
+        return map.getOrDefault(piece, EMPTY_FIELD);
     }
 
     @Override
@@ -54,9 +54,9 @@ public class BlockField implements Comparable<BlockField> {
 
     @Override
     public int compareTo(BlockField o) {
-        for (Block block : Block.values()) {
-            Field field = this.map.getOrDefault(block, EMPTY_FIELD);
-            Field oField = o.map.getOrDefault(block, EMPTY_FIELD);
+        for (Piece piece : Piece.values()) {
+            Field field = this.map.getOrDefault(piece, EMPTY_FIELD);
+            Field oField = o.map.getOrDefault(piece, EMPTY_FIELD);
             int compare = FIELD_COMPARATOR.compare(field, oField);
             if (compare != 0)
                 return compare;
@@ -65,8 +65,8 @@ public class BlockField implements Comparable<BlockField> {
     }
 
     public boolean containsAll(BlockField target) {
-        for (Map.Entry<Block, Field> targetEntry : target.map.entrySet()) {
-            Block key = targetEntry.getKey();
+        for (Map.Entry<Piece, Field> targetEntry : target.map.entrySet()) {
+            Piece key = targetEntry.getKey();
             Field targetField = targetEntry.getValue();
             Field myField = this.get(key);
             if (!myField.contains(targetField)) {
@@ -77,8 +77,8 @@ public class BlockField implements Comparable<BlockField> {
     }
 
     // TODO: write unittest
-    public Block getBlock(int x, int y) {
-        for (Map.Entry<Block, Field> entry : map.entrySet()) {
+    public Piece getBlock(int x, int y) {
+        for (Map.Entry<Piece, Field> entry : map.entrySet()) {
             Field field = entry.getValue();
             if (!field.isEmpty(x, y))
                 return entry.getKey();

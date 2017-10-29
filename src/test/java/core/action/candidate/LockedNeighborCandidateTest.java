@@ -5,7 +5,7 @@ import common.datastore.action.MinimalAction;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.mino.piece.Neighbor;
@@ -39,18 +39,18 @@ class LockedNeighborCandidateTest {
         for (int count = 0; count < 100000; count++) {
             Field field = randoms.field(height, 7);
             field = FieldFactory.createSmallField();
-            for (Block block : Block.values()) {
-                Set<Action> search1 = candidate1.search(field, block, height);
-                Set<Neighbor> neighbors = candidate2.search(field, block, height);
+            for (Piece piece : Piece.values()) {
+                Set<Action> search1 = candidate1.search(field, piece, height);
+                Set<Neighbor> neighbors = candidate2.search(field, piece, height);
                 Set<Action> search2 = neighbors.stream()
                         .map(Neighbor::getPiece)
-                        .map(piece -> MinimalAction.create(piece.getX(), piece.getY(), piece.getMino().getRotate()))
-                        .map(action -> minoShifter.createTransformedAction(block, action))
+                        .map(piece2 -> MinimalAction.create(piece2.getX(), piece2.getY(), piece2.getMino().getRotate()))
+                        .map(action -> minoShifter.createTransformedAction(piece, action))
                         .collect(Collectors.toSet());
 
                 if (!search1.equals(search2)) {
                     System.out.println(FieldView.toString(field));
-                    System.out.println(block);
+                    System.out.println(piece);
                     for (Action action : search1) {
                         System.out.println(action);
                     }
@@ -71,23 +71,23 @@ class LockedNeighborCandidateTest {
         for (int count = 0; count < 100000; count++) {
             Field field = randoms.field(height, 7);
             field = FieldFactory.createSmallField();
-            for (Block block : Block.values()) {
+            for (Piece piece : Piece.values()) {
                 stopwatch1.start();
-                Set<Action> search1 = candidate1.search(field, block, height);
+                Set<Action> search1 = candidate1.search(field, piece, height);
                 stopwatch1.stop();
 
                 stopwatch2.start();
-                Set<Neighbor> neighbors = candidate2.search(field, block, height);
+                Set<Neighbor> neighbors = candidate2.search(field, piece, height);
                 stopwatch2.stop();
                 Set<Action> search2 = neighbors.stream()
                         .map(Neighbor::getPiece)
-                        .map(piece -> MinimalAction.create(piece.getX(), piece.getY(), piece.getMino().getRotate()))
-                        .map(action -> minoShifter.createTransformedAction(block, action))
+                        .map(piece2 -> MinimalAction.create(piece2.getX(), piece2.getY(), piece2.getMino().getRotate()))
+                        .map(action -> minoShifter.createTransformedAction(piece, action))
                         .collect(Collectors.toSet());
 
                 if (!search1.equals(search2)) {
                     System.out.println(FieldView.toString(field));
-                    System.out.println(block);
+                    System.out.println(piece);
                     for (Action action : search1) {
                         System.out.println(action);
                     }
@@ -125,17 +125,17 @@ class LockedNeighborCandidateTest {
                 "__________" +
                 ""
         );
-        Block block = Block.T;
-        Set<Action> search1 = candidate1.search(field, block, height);
-        Set<Neighbor> neighbors = candidate2.search(field, block, height);
+        Piece piece = Piece.T;
+        Set<Action> search1 = candidate1.search(field, piece, height);
+        Set<Neighbor> neighbors = candidate2.search(field, piece, height);
         Set<Action> search2 = neighbors.stream()
                 .map(Neighbor::getPiece)
-                .map(piece -> MinimalAction.create(piece.getX(), piece.getY(), piece.getMino().getRotate()))
-                .map(action -> minoShifter.createTransformedAction(block, action))
+                .map(piece2 -> MinimalAction.create(piece2.getX(), piece2.getY(), piece2.getMino().getRotate()))
+                .map(action -> minoShifter.createTransformedAction(piece, action))
                 .collect(Collectors.toSet());
         if (!search1.equals(search2)) {
             System.out.println(FieldView.toString(field));
-            System.out.println(block);
+            System.out.println(piece);
             for (Action action : search1) {
                 System.out.println(action);
             }
@@ -167,18 +167,18 @@ class LockedNeighborCandidateTest {
                 "__________" +
                 ""
         );
-        Block block = Block.T;
-        Set<Action> search1 = candidate1.search(field, block, height);
-        Set<Neighbor> neighbors = candidate2.search(field, block, height);
+        Piece piece = Piece.T;
+        Set<Action> search1 = candidate1.search(field, piece, height);
+        Set<Neighbor> neighbors = candidate2.search(field, piece, height);
         Set<Action> search2 = neighbors.stream()
                 .map(Neighbor::getPiece)
-                .map(piece -> MinimalAction.create(piece.getX(), piece.getY(), piece.getMino().getRotate()))
-                .map(action -> minoShifter.createTransformedAction(block, action))
+                .map(piece2 -> MinimalAction.create(piece2.getX(), piece2.getY(), piece2.getMino().getRotate()))
+                .map(action -> minoShifter.createTransformedAction(piece, action))
                 .collect(Collectors.toSet());
 
         if (!search1.equals(search2)) {
             System.out.println(FieldView.toString(field));
-            System.out.println(block);
+            System.out.println(piece);
             for (Action action : search1) {
                 System.out.println(action);
             }
@@ -210,18 +210,18 @@ class LockedNeighborCandidateTest {
                 "__________" +
                 ""
         );
-        Block block = Block.T;
-        Set<Action> search1 = candidate1.search(field, block, height);
-        Set<Neighbor> neighbors = candidate2.search(field, block, height);
+        Piece piece = Piece.T;
+        Set<Action> search1 = candidate1.search(field, piece, height);
+        Set<Neighbor> neighbors = candidate2.search(field, piece, height);
         Set<Action> search2 = neighbors.stream()
                 .map(Neighbor::getPiece)
-                .map(piece -> MinimalAction.create(piece.getX(), piece.getY(), piece.getMino().getRotate()))
-                .map(action -> minoShifter.createTransformedAction(block, action))
+                .map(piece2 -> MinimalAction.create(piece2.getX(), piece2.getY(), piece2.getMino().getRotate()))
+                .map(action -> minoShifter.createTransformedAction(piece, action))
                 .collect(Collectors.toSet());
 
         if (!search1.equals(search2)) {
             System.out.println(FieldView.toString(field));
-            System.out.println(block);
+            System.out.println(piece);
             for (Action action : search1) {
                 System.out.println(action);
             }
@@ -253,18 +253,18 @@ class LockedNeighborCandidateTest {
                 "X________X" +
                 ""
         );
-        Block block = Block.S;
-        Set<Action> search1 = candidate1.search(field, block, height);
-        Set<Neighbor> neighbors = candidate2.search(field, block, height);
+        Piece piece = Piece.S;
+        Set<Action> search1 = candidate1.search(field, piece, height);
+        Set<Neighbor> neighbors = candidate2.search(field, piece, height);
         Set<Action> search2 = neighbors.stream()
                 .map(Neighbor::getPiece)
-                .map(piece -> MinimalAction.create(piece.getX(), piece.getY(), piece.getMino().getRotate()))
-                .map(action -> minoShifter.createTransformedAction(block, action))
+                .map(piece2 -> MinimalAction.create(piece2.getX(), piece2.getY(), piece2.getMino().getRotate()))
+                .map(action -> minoShifter.createTransformedAction(piece, action))
                 .collect(Collectors.toSet());
 
         if (!search1.equals(search2)) {
             System.out.println(FieldView.toString(field));
-            System.out.println(block);
+            System.out.println(piece);
             for (Action action : search1) {
                 System.out.println(action);
             }
@@ -295,18 +295,18 @@ class LockedNeighborCandidateTest {
                 "_________X" +
                 ""
         );
-        Block block = Block.I;
-        Set<Action> search1 = candidate1.search(field, block, height);
-        Set<Neighbor> neighbors = candidate2.search(field, block, height);
+        Piece piece = Piece.I;
+        Set<Action> search1 = candidate1.search(field, piece, height);
+        Set<Neighbor> neighbors = candidate2.search(field, piece, height);
         Set<Action> search2 = neighbors.stream()
                 .map(Neighbor::getPiece)
-                .map(piece -> MinimalAction.create(piece.getX(), piece.getY(), piece.getMino().getRotate()))
-                .map(action -> minoShifter.createTransformedAction(block, action))
+                .map(piece2 -> MinimalAction.create(piece2.getX(), piece2.getY(), piece2.getMino().getRotate()))
+                .map(action -> minoShifter.createTransformedAction(piece, action))
                 .collect(Collectors.toSet());
 
         if (!search1.equals(search2)) {
             System.out.println(FieldView.toString(field));
-            System.out.println(block);
+            System.out.println(piece);
             for (Action action : search1) {
                 System.out.println(action);
             }

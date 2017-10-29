@@ -1,11 +1,10 @@
 package core.field;
 
 import common.datastore.BlockField;
-import core.mino.Block;
+import core.mino.Piece;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class BlockFieldView {
@@ -27,8 +26,8 @@ public class BlockFieldView {
         for (int y = maxHeight - 1; y >= 0; y--) {
             StringBuilder builder = new StringBuilder();
             for (int x = 0; x < FIELD_WIDTH; x++) {
-                Block block = blockField.getBlock(x, y);
-                builder.append(block == null ? EMPTY_CHAR : block.getName());
+                Piece piece = blockField.getBlock(x, y);
+                builder.append(piece == null ? EMPTY_CHAR : piece.getName());
             }
             lines.add(builder.toString());
         }

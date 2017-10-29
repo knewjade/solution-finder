@@ -1,6 +1,6 @@
 package common.order;
 
-import core.mino.Block;
+import core.mino.Piece;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,9 +49,9 @@ public class ReverseOrderLookUp {
                 .collect(Collectors.toList());
     }
 
-    public Stream<Stream<Block>> parse(List<Block> blocks) {
-        assert blocks.size() <= indexesList.get(0).size();
+    public Stream<Stream<Piece>> parse(List<Piece> pieces) {
+        assert pieces.size() <= indexesList.get(0).size();
         return indexesList.stream()
-                .map(indexes -> indexes.stream().map(index -> index != -1 ? blocks.get(index) : null));
+                .map(indexes -> indexes.stream().map(index -> index != -1 ? pieces.get(index) : null));
     }
 }

@@ -1,6 +1,6 @@
 package core.mino.piece;
 
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.srs.MinoRotation;
@@ -23,13 +23,13 @@ public class Neighbors {
     }
 
     private Neighbor[][][][] createNeighbors(OriginalPieceFactory pieceFactory, int maxHeight) {
-        int maxBlock = Block.values().length;
+        int maxBlock = Piece.values().length;
         int maxRotate = Rotate.values().length;
         Neighbor[][][][] neighbors = new Neighbor[maxBlock][maxRotate][maxHeight][FIELD_WIDTH];
         Collection<OriginalPiece> pieces = pieceFactory.getAllPieces();
         for (OriginalPiece piece : pieces) {
             Mino mino = piece.getMino();
-            Block block = mino.getBlock();
+            Piece block = mino.getPiece();
             Rotate rotate = mino.getRotate();
             int x = piece.getX();
             int y = piece.getY();
@@ -61,24 +61,24 @@ public class Neighbors {
 
         // 左回転でジャンプする先を更新
         int[][] patternsLeftDest = minoRotation.getLeftPatternsFrom(mino);
-        Mino afterLeft = minoFactory.create(mino.getBlock(), mino.getRotate().getLeftRotate());
+        Mino afterLeft = minoFactory.create(mino.getPiece(), mino.getRotate().getLeftRotate());
         ArrayList<Neighbor> neighborsLeftDest = createDestinations(afterLeft, x, y, patternsLeftDest);
         current.updateLeftRotateDestination(neighborsLeftDest);
 
         // 右回転でジャンプする先を更新
         int[][] patternsRightDest = minoRotation.getRightPatternsFrom(mino);
-        Mino afterRight = minoFactory.create(mino.getBlock(), mino.getRotate().getRightRotate());
+        Mino afterRight = minoFactory.create(mino.getPiece(), mino.getRotate().getRightRotate());
         ArrayList<Neighbor> neighborsRightDest = createDestinations(afterRight, x, y, patternsRightDest);
         current.updateRightRotateDestination(neighborsRightDest);
 
         // 左回転でここにジャンプしてくる元を更新
-        Mino beforeLeft = minoFactory.create(mino.getBlock(), mino.getRotate().getRightRotate());
+        Mino beforeLeft = minoFactory.create(mino.getPiece(), mino.getRotate().getRightRotate());
         int[][] patternsLeftSrc = minoRotation.getLeftPatternsFrom(beforeLeft);
         ArrayList<Neighbor> neighborsLeftSrc = createSources(beforeLeft, x, y, patternsLeftSrc);
         current.updateLeftRotateSource(neighborsLeftSrc);
 
         // 右回転でここにジャンプしてくる元を更新
-        Mino beforeRight = minoFactory.create(mino.getBlock(), mino.getRotate().getLeftRotate());
+        Mino beforeRight = minoFactory.create(mino.getPiece(), mino.getRotate().getLeftRotate());
         int[][] patternsRightSrc = minoRotation.getRightPatternsFrom(beforeRight);
         ArrayList<Neighbor> neighborsRightSrc = createSources(beforeRight, x, y, patternsRightSrc);
         current.updateRightRotateSource(neighborsRightSrc);
@@ -103,18 +103,18 @@ public class Neighbors {
     }
 
     private Neighbor getNeighbor(Mino mino, int x, int y) {
-        return getNeighbor(mino.getBlock(), mino.getRotate(), x, y);
+        return getNeighbor(mino.getPiece(), mino.getRotate(), x, y);
     }
 
-    private Neighbor getNeighbor(Block block, Rotate rotate, int x, int y) {
+    private Neighbor getNeighbor(Piece piece, Rotate rotate, int x, int y) {
         if (x < 0 || FIELD_WIDTH <= x || y < 0 || maxHeight <= y)
             return Neighbor.EMPTY_NEIGHBOR;
-        Neighbor neighbor = neighbors[block.getNumber()][rotate.getNumber()][y][x];
+        Neighbor neighbor = neighbors[piece.getNumber()][rotate.getNumber()][y][x];
         return neighbor != null ? neighbor : Neighbor.EMPTY_NEIGHBOR;
     }
 
-    public Neighbor get(Block block, Rotate rotate, int x, int y) {
-        Neighbor neighbor = neighbors[block.getNumber()][rotate.getNumber()][y][x];
+    public Neighbor get(Piece piece, Rotate rotate, int x, int y) {
+        Neighbor neighbor = neighbors[piece.getNumber()][rotate.getNumber()][y][x];
         assert neighbor != null;
         return neighbor;
     }

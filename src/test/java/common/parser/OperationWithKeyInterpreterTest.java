@@ -3,7 +3,7 @@ package common.parser;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.OperationWithKey;
 import common.datastore.FullOperationWithKey;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
 import lib.Randoms;
@@ -32,13 +32,13 @@ class OperationWithKeyInterpreterTest {
         MinoFactory minoFactory = new MinoFactory();
         for (int size = 1; size < 20; size++) {
             List<OperationWithKey> operations = Stream.generate(() -> {
-                Block block = randoms.block();
+                Piece piece = randoms.block();
                 Rotate rotate = randoms.rotate();
                 int x = randoms.nextInt(10);
                 int y = randoms.nextInt(4);
                 long deleteKey = randoms.key();
                 long usingKey = randoms.key();
-                return new FullOperationWithKey(minoFactory.create(block, rotate), x, y, deleteKey, usingKey);
+                return new FullOperationWithKey(minoFactory.create(piece, rotate), x, y, deleteKey, usingKey);
             }).limit(size).collect(Collectors.toList());
 
             String str = OperationWithKeyInterpreter.parseToString(operations);

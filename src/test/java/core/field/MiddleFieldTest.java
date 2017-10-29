@@ -1,6 +1,6 @@
 package core.field;
 
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.piece.OriginalPiece;
 import core.srs.Rotate;
@@ -17,9 +17,9 @@ class MiddleFieldTest {
 
     private ArrayList<OriginalPiece> createAllPieces(int fieldHeight) {
         ArrayList<OriginalPiece> pieces = new ArrayList<>();
-        for (Block block : Block.values()) {
+        for (Piece piece : Piece.values()) {
             for (Rotate rotate : Rotate.values()) {
-                Mino mino = new Mino(block, rotate);
+                Mino mino = new Mino(piece, rotate);
                 for (int y = -mino.getMinY(); y < fieldHeight - mino.getMaxY(); y++) {
                     for (int x = -mino.getMinX(); x < FIELD_WIDTH - mino.getMaxX(); x++) {
                         pieces.add(new OriginalPiece(mino, x, y, fieldHeight));
@@ -56,27 +56,27 @@ class MiddleFieldTest {
     void testPutAndRemoveMino() throws Exception {
         Field field = FieldFactory.createMiddleField();
 
-        field.put(new Mino(Block.T, Rotate.Spawn), 1, 0);
+        field.put(new Mino(Piece.T, Rotate.Spawn), 1, 0);
         assertThat(field.isEmpty(0, 0)).isFalse();
         assertThat(field.isEmpty(1, 0)).isFalse();
         assertThat(field.isEmpty(2, 0)).isFalse();
         assertThat(field.isEmpty(1, 1)).isFalse();
 
-        field.put(new Mino(Block.I, Rotate.Left), 4, 6);
+        field.put(new Mino(Piece.I, Rotate.Left), 4, 6);
         assertThat(field.isEmpty(4, 5)).isFalse();
         assertThat(field.isEmpty(4, 6)).isFalse();
         assertThat(field.isEmpty(4, 7)).isFalse();
         assertThat(field.isEmpty(4, 8)).isFalse();
 
-        field.put(new Mino(Block.O, Rotate.Spawn), 8, 8);
+        field.put(new Mino(Piece.O, Rotate.Spawn), 8, 8);
         assertThat(field.isEmpty(8, 8)).isFalse();
         assertThat(field.isEmpty(8, 9)).isFalse();
         assertThat(field.isEmpty(9, 8)).isFalse();
         assertThat(field.isEmpty(9, 9)).isFalse();
 
-        field.remove(new Mino(Block.T, Rotate.Spawn), 1, 0);
-        field.remove(new Mino(Block.I, Rotate.Left), 4, 6);
-        field.remove(new Mino(Block.O, Rotate.Spawn), 8, 8);
+        field.remove(new Mino(Piece.T, Rotate.Spawn), 1, 0);
+        field.remove(new Mino(Piece.I, Rotate.Left), 4, 6);
+        field.remove(new Mino(Piece.O, Rotate.Spawn), 8, 8);
         assertThat(field.isPerfect()).isTrue();
     }
 
@@ -124,10 +124,10 @@ class MiddleFieldTest {
                 "";
         Field field = FieldFactory.createMiddleField(marks);
 
-        assertThat(field.getYOnHarddrop(new Mino(Block.T, Rotate.Spawn), 1, 10)).isEqualTo(6);
-        assertThat(field.getYOnHarddrop(new Mino(Block.T, Rotate.Spawn), 2, 10)).isEqualTo(0);
-        assertThat(field.getYOnHarddrop(new Mino(Block.T, Rotate.Spawn), 3, 10)).isEqualTo(1);
-        assertThat(field.getYOnHarddrop(new Mino(Block.T, Rotate.Spawn), 8, 10)).isEqualTo(2);
+        assertThat(field.getYOnHarddrop(new Mino(Piece.T, Rotate.Spawn), 1, 10)).isEqualTo(6);
+        assertThat(field.getYOnHarddrop(new Mino(Piece.T, Rotate.Spawn), 2, 10)).isEqualTo(0);
+        assertThat(field.getYOnHarddrop(new Mino(Piece.T, Rotate.Spawn), 3, 10)).isEqualTo(1);
+        assertThat(field.getYOnHarddrop(new Mino(Piece.T, Rotate.Spawn), 8, 10)).isEqualTo(2);
     }
 
     @Test
@@ -143,10 +143,10 @@ class MiddleFieldTest {
                 "";
         Field field = FieldFactory.createMiddleField(marks);
 
-        assertThat(field.canReachOnHarddrop(new Mino(Block.T, Rotate.Spawn), 1, 4)).isFalse();
-        assertThat(field.canReachOnHarddrop(new Mino(Block.T, Rotate.Spawn), 2, 4)).isTrue();
-        assertThat(field.canReachOnHarddrop(new Mino(Block.T, Rotate.Spawn), 2, 3)).isTrue();
-        assertThat(field.canReachOnHarddrop(new Mino(Block.T, Rotate.Spawn), 1, 1)).isFalse();
+        assertThat(field.canReachOnHarddrop(new Mino(Piece.T, Rotate.Spawn), 1, 4)).isFalse();
+        assertThat(field.canReachOnHarddrop(new Mino(Piece.T, Rotate.Spawn), 2, 4)).isTrue();
+        assertThat(field.canReachOnHarddrop(new Mino(Piece.T, Rotate.Spawn), 2, 3)).isTrue();
+        assertThat(field.canReachOnHarddrop(new Mino(Piece.T, Rotate.Spawn), 1, 1)).isFalse();
     }
 
     @Test
@@ -270,17 +270,17 @@ class MiddleFieldTest {
                 "";
         Field field = FieldFactory.createMiddleField(marks);
 
-        assertThat(field.canPut(new Mino(Block.T, Rotate.Spawn), 4, 7)).isTrue();
-        assertThat(field.canPut(new Mino(Block.T, Rotate.Spawn), 5, 6)).isTrue();
-        assertThat(field.canPut(new Mino(Block.T, Rotate.Right), 1, 1)).isTrue();
-        assertThat(field.canPut(new Mino(Block.T, Rotate.Reverse), 1, 3)).isTrue();
-        assertThat(field.canPut(new Mino(Block.T, Rotate.Left), 3, 1)).isTrue();
+        assertThat(field.canPut(new Mino(Piece.T, Rotate.Spawn), 4, 7)).isTrue();
+        assertThat(field.canPut(new Mino(Piece.T, Rotate.Spawn), 5, 6)).isTrue();
+        assertThat(field.canPut(new Mino(Piece.T, Rotate.Right), 1, 1)).isTrue();
+        assertThat(field.canPut(new Mino(Piece.T, Rotate.Reverse), 1, 3)).isTrue();
+        assertThat(field.canPut(new Mino(Piece.T, Rotate.Left), 3, 1)).isTrue();
 
-        assertThat(field.canPut(new Mino(Block.T, Rotate.Spawn), 5, 7)).isFalse();
-        assertThat(field.canPut(new Mino(Block.T, Rotate.Spawn), 4, 6)).isFalse();
-        assertThat(field.canPut(new Mino(Block.T, Rotate.Right), 0, 1)).isFalse();
-        assertThat(field.canPut(new Mino(Block.T, Rotate.Reverse), 1, 1)).isFalse();
-        assertThat(field.canPut(new Mino(Block.T, Rotate.Left), 1, 1)).isFalse();
+        assertThat(field.canPut(new Mino(Piece.T, Rotate.Spawn), 5, 7)).isFalse();
+        assertThat(field.canPut(new Mino(Piece.T, Rotate.Spawn), 4, 6)).isFalse();
+        assertThat(field.canPut(new Mino(Piece.T, Rotate.Right), 0, 1)).isFalse();
+        assertThat(field.canPut(new Mino(Piece.T, Rotate.Reverse), 1, 1)).isFalse();
+        assertThat(field.canPut(new Mino(Piece.T, Rotate.Left), 1, 1)).isFalse();
     }
 
     @Test
@@ -300,11 +300,11 @@ class MiddleFieldTest {
                 "XXXXXXXX_X";
         Field field = FieldFactory.createMiddleField(marks);
 
-        assertThat(field.canPut(new Mino(Block.I, Rotate.Left), 8, 1)).isTrue();
-        assertThat(field.canPut(new Mino(Block.I, Rotate.Left), 8, 11)).isTrue();
-        assertThat(field.canPut(new Mino(Block.I, Rotate.Left), 8, 12)).isTrue();
-        assertThat(field.canPut(new Mino(Block.I, Rotate.Left), 8, 13)).isTrue();
-        assertThat(field.canPut(new Mino(Block.I, Rotate.Left), 8, 14)).isTrue();
+        assertThat(field.canPut(new Mino(Piece.I, Rotate.Left), 8, 1)).isTrue();
+        assertThat(field.canPut(new Mino(Piece.I, Rotate.Left), 8, 11)).isTrue();
+        assertThat(field.canPut(new Mino(Piece.I, Rotate.Left), 8, 12)).isTrue();
+        assertThat(field.canPut(new Mino(Piece.I, Rotate.Left), 8, 13)).isTrue();
+        assertThat(field.canPut(new Mino(Piece.I, Rotate.Left), 8, 14)).isTrue();
     }
 
     @Test
@@ -343,18 +343,18 @@ class MiddleFieldTest {
                 "";
         Field field = FieldFactory.createMiddleField(marks);
 
-        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Spawn), 1, 7)).isTrue();
-        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Spawn), 5, 5)).isTrue();
-        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Right), 8, 1)).isTrue();
-        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Reverse), 1, 3)).isTrue();
-        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Left), 1, 2)).isTrue();
+        assertThat(field.isOnGround(new Mino(Piece.T, Rotate.Spawn), 1, 7)).isTrue();
+        assertThat(field.isOnGround(new Mino(Piece.T, Rotate.Spawn), 5, 5)).isTrue();
+        assertThat(field.isOnGround(new Mino(Piece.T, Rotate.Right), 8, 1)).isTrue();
+        assertThat(field.isOnGround(new Mino(Piece.T, Rotate.Reverse), 1, 3)).isTrue();
+        assertThat(field.isOnGround(new Mino(Piece.T, Rotate.Left), 1, 2)).isTrue();
 
-        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Spawn), 1, 6)).isFalse();
-        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Spawn), 6, 5)).isFalse();
-        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Spawn), 8, 1)).isFalse();
-        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Right), 8, 2)).isFalse();
-        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Reverse), 7, 3)).isFalse();
-        assertThat(field.isOnGround(new Mino(Block.T, Rotate.Left), 9, 2)).isFalse();
+        assertThat(field.isOnGround(new Mino(Piece.T, Rotate.Spawn), 1, 6)).isFalse();
+        assertThat(field.isOnGround(new Mino(Piece.T, Rotate.Spawn), 6, 5)).isFalse();
+        assertThat(field.isOnGround(new Mino(Piece.T, Rotate.Spawn), 8, 1)).isFalse();
+        assertThat(field.isOnGround(new Mino(Piece.T, Rotate.Right), 8, 2)).isFalse();
+        assertThat(field.isOnGround(new Mino(Piece.T, Rotate.Reverse), 7, 3)).isFalse();
+        assertThat(field.isOnGround(new Mino(Piece.T, Rotate.Left), 9, 2)).isFalse();
     }
 
     @Test

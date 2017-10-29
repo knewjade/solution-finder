@@ -1,8 +1,8 @@
 package common.iterable;
 
 import com.google.common.collect.Iterables;
-import common.datastore.blocks.LongBlocks;
-import core.mino.Block;
+import common.datastore.blocks.LongPieces;
+import core.mino.Piece;
 import lib.Randoms;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Tag;
@@ -70,18 +70,18 @@ class PermutationIterableTest {
     @Tag("long")
     void iteratorRandomBlock() throws Exception {
         Randoms randoms = new Randoms();
-        ArrayList<Block> allBlocks = Lists.newArrayList(Iterables.concat(Block.valueList(), Block.valueList()));
+        ArrayList<Piece> allPieces = Lists.newArrayList(Iterables.concat(Piece.valueList(), Piece.valueList()));
         for (int pop = 1; pop <= 7; pop++) {
-            PermutationIterable<Block> iterable = new PermutationIterable<>(allBlocks, pop);
-            HashSet<LongBlocks> sets = StreamSupport.stream(iterable.spliterator(), false)
+            PermutationIterable<Piece> iterable = new PermutationIterable<>(allPieces, pop);
+            HashSet<LongPieces> sets = StreamSupport.stream(iterable.spliterator(), false)
                     .map(Collection::stream)
-                    .map(LongBlocks::new)
+                    .map(LongPieces::new)
                     .collect(Collectors.toCollection(HashSet::new));
 
             // ランダムにサンプルを選択し、必ず列挙したセットの中にあることを確認
             for (int count = 0; count < 1000; count++) {
-                List<Block> sample = randoms.sample(allBlocks, pop);
-                LongBlocks pieces = new LongBlocks(sample);
+                List<Piece> sample = randoms.sample(allPieces, pop);
+                LongPieces pieces = new LongPieces(sample);
                 assertThat(pieces).isIn(sets);
             }
         }

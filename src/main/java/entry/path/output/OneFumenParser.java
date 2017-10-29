@@ -11,7 +11,7 @@ import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
@@ -36,8 +36,8 @@ public class OneFumenParser implements FumenParser {
 
         // パターンを表す名前 を生成
         String blocksName = operations.stream()
-                .map(OperationWithKey::getBlock)
-                .map(Block::getName)
+                .map(OperationWithKey::getPiece)
+                .map(Piece::getName)
                 .collect(Collectors.joining());
 
         // テト譜1ページを作成
@@ -53,7 +53,7 @@ public class OneFumenParser implements FumenParser {
         for (MinoOperationWithKey key : operations) {
             Field test = createField(key, maxClearLine);
             Mino mino = key.getMino();
-            blockField.merge(test, mino.getBlock());
+            blockField.merge(test, mino.getPiece());
         }
 
         return blockField;
@@ -70,9 +70,9 @@ public class OneFumenParser implements FumenParser {
     private TetfuElement createTetfuElement(Field initField, BlockField blockField, String comment, int maxClearLine) {
         ColoredField coloredField = createInitColoredField(initField, maxClearLine);
 
-        for (Block block : Block.values()) {
-            Field target = blockField.get(block);
-            ColorType colorType = this.colorConverter.parseToColorType(block);
+        for (Piece piece : Piece.values()) {
+            Field target = blockField.get(piece);
+            ColorType colorType = this.colorConverter.parseToColorType(piece);
             fillInField(coloredField, colorType, target, maxClearLine);
         }
 

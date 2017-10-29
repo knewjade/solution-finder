@@ -3,7 +3,7 @@ package entry.path;
 import common.SyntaxException;
 import common.buildup.BuildUpStream;
 import common.datastore.BlockField;
-import common.pattern.IBlocksGenerator;
+import common.pattern.PatternGenerator;
 import common.tetfu.common.ColorConverter;
 import core.FinderConstant;
 import core.column_field.ColumnField;
@@ -111,7 +111,7 @@ public class PathEntryPoint implements EntryPoint {
 
         // Setup patterns
         List<String> patterns = settings.getPatterns();
-        IBlocksGenerator generator = Verify.patterns(patterns, maxDepth);
+        PatternGenerator generator = Verify.patterns(patterns, maxDepth);
 
         // Output patterns
         for (String pattern : patterns)
@@ -265,7 +265,7 @@ public class PathEntryPoint implements EntryPoint {
         }
     }
 
-    private PathOutput createOutput(OutputType outputType, IBlocksGenerator generator, int maxDepth) throws FinderExecuteException, FinderInitializeException {
+    private PathOutput createOutput(OutputType outputType, PatternGenerator generator, int maxDepth) throws FinderExecuteException, FinderInitializeException {
         switch (outputType) {
             case CSV:
                 return new CSVPathOutput(this, settings);

@@ -1,6 +1,6 @@
 package common.datastore.blocks;
 
-import core.mino.Block;
+import core.mino.Piece;
 import lib.Randoms;
 import org.junit.jupiter.api.Test;
 
@@ -8,18 +8,18 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class BlocksTest {
+class PiecesTest {
     @Test
     void testHashCode() throws Exception {
         Randoms randoms = new Randoms();
         for (int count = 0; count < 10000; count++) {
             int size = randoms.nextInt(4, 10);
-            List<Block> blocks = randoms.blocks(size);
+            List<Piece> pieces = randoms.blocks(size);
 
-            ReadOnlyListBlocks readOnlyListPieces = new ReadOnlyListBlocks(blocks);
-            LongBlocks longPieces = new LongBlocks(blocks);
+            ReadOnlyListPieces readOnlyListPieces = new ReadOnlyListPieces(pieces);
+            LongPieces longPieces = new LongPieces(pieces);
             assertThat(readOnlyListPieces.hashCode())
-                    .as(blocks.toString())
+                    .as(pieces.toString())
                     .isEqualTo(longPieces.hashCode());
         }
     }

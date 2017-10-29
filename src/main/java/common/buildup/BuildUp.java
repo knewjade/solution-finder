@@ -5,7 +5,7 @@ import common.datastore.OperationWithKey;
 import core.action.reachable.Reachable;
 import core.field.Field;
 import core.field.KeyOperators;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 
 import java.util.EnumMap;
@@ -148,20 +148,20 @@ public class BuildUp {
 
     // block順番で組み立てられる手順が存在するかチェックする
     // operationsで使用するミノとblocksが一致していること
-    public static boolean existsValidByOrder(Field field, Stream<MinoOperationWithKey> operations, List<Block> blocks, int height, Reachable reachable) {
-        EnumMap<Block, LinkedList<MinoOperationWithKey>> eachBlocks = operations.sequential().collect(() -> new EnumMap<Block, LinkedList<MinoOperationWithKey>>(Block.class), (blockLinkedListEnumMap, operationWithKey) -> {
-            Block block = operationWithKey.getBlock();
-            LinkedList<MinoOperationWithKey> operationWithKeys = blockLinkedListEnumMap.computeIfAbsent(block, b -> new LinkedList<>());
+    public static boolean existsValidByOrder(Field field, Stream<MinoOperationWithKey> operations, List<Piece> pieces, int height, Reachable reachable) {
+        EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks = operations.sequential().collect(() -> new EnumMap<Piece, LinkedList<MinoOperationWithKey>>(Piece.class), (blockLinkedListEnumMap, operationWithKey) -> {
+            Piece piece = operationWithKey.getPiece();
+            LinkedList<MinoOperationWithKey> operationWithKeys = blockLinkedListEnumMap.computeIfAbsent(piece, b -> new LinkedList<>());
             operationWithKeys.add(operationWithKey);
         }, EnumMap::putAll);
 
-        return existsValidByOrder(field.freeze(height), eachBlocks, blocks, height, reachable, 0);
+        return existsValidByOrder(field.freeze(height), eachBlocks, pieces, height, reachable, 0);
     }
 
-    private static boolean existsValidByOrder(Field field, EnumMap<Block, LinkedList<MinoOperationWithKey>> eachBlocks, List<Block> blocks, int height, Reachable reachable, int depth) {
+    private static boolean existsValidByOrder(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height, Reachable reachable, int depth) {
         long deleteKey = field.clearLineReturnKey();
-        Block block = blocks.get(depth);
-        LinkedList<MinoOperationWithKey> operationWithKeys = eachBlocks.get(block);
+        Piece piece = pieces.get(depth);
+        LinkedList<MinoOperationWithKey> operationWithKeys = eachBlocks.get(piece);
 
         for (int index = 0; index < operationWithKeys.size(); index++) {
             MinoOperationWithKey key = operationWithKeys.remove(index);
@@ -182,14 +182,14 @@ public class BuildUp {
             int y = originalY - deletedLines;
 
             if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY())) {
-                if (blocks.size() == depth + 1)
+                if (pieces.size() == depth + 1)
                     return true;
 
                 Field nextField = field.freeze(height);
                 nextField.put(mino, x, y);
                 nextField.insertBlackLineWithKey(deleteKey);
 
-                boolean exists = existsValidByOrder(nextField, eachBlocks, blocks, height, reachable, depth + 1);
+                boolean exists = existsValidByOrder(nextField, eachBlocks, pieces, height, reachable, depth + 1);
                 if (exists)
                     return true;
             }

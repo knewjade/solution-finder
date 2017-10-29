@@ -1,13 +1,13 @@
 package common.parser;
 
-import core.mino.Block;
+import core.mino.Piece;
 
 import java.util.stream.Stream;
 
 import static common.parser.StringEnumTransform.toBlock;
 
 public class BlockInterpreter {
-    public static Stream<Block> parse10(String a) {
+    public static Stream<Piece> parse10(String a) {
         return Stream.of(
                 toBlock(a.charAt(0)),
                 toBlock(a.charAt(1)),
@@ -22,7 +22,7 @@ public class BlockInterpreter {
         );
     }
 
-    public static Stream<Block> parse11(String a) {
+    public static Stream<Piece> parse11(String a) {
         return Stream.of(
                 toBlock(a.charAt(0)),
                 toBlock(a.charAt(1)),
@@ -38,12 +38,12 @@ public class BlockInterpreter {
         );
     }
 
-    public static Stream<Block> parse(String str) {
-        Stream.Builder<Block> builder = Stream.builder();
+    public static Stream<Piece> parse(String str) {
+        Stream.Builder<Piece> builder = Stream.builder();
         for (int index = 0; index < str.length(); index++) {
             char c = str.charAt(index);
-            Block block = StringEnumTransform.toBlock(c);
-            builder.accept(block);
+            Piece piece = StringEnumTransform.toBlock(c);
+            builder.accept(piece);
         }
         return builder.build();
     }

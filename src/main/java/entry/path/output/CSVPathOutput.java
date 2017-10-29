@@ -3,7 +3,7 @@ package entry.path.output;
 import common.buildup.BuildUpStream;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.Operations;
-import common.datastore.blocks.LongBlocks;
+import common.datastore.blocks.LongPieces;
 import common.parser.OperationInterpreter;
 import common.parser.OperationTransform;
 import core.field.Field;
@@ -86,7 +86,7 @@ public class CSVPathOutput implements PathOutput {
 
         // 少ないパターンでカバーできるパスを出力
         if (pathLayer.contains(PathLayer.Minimal)) {
-            Selector<PathPair, LongBlocks> selector = new Selector<>(pathPairs);
+            Selector<PathPair, LongPieces> selector = new Selector<>(pathPairs);
             List<PathPair> minimal = selector.select();
             outputLog("Found path [minimal] = " + minimal.size());
             outputOperationsToCSV(field, outputMinimalFile, minimal, sizedBit);

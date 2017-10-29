@@ -2,7 +2,7 @@ package common.pattern;
 
 import common.SyntaxException;
 import common.parser.StringEnumTransform;
-import core.mino.Block;
+import core.mino.Piece;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -96,7 +96,7 @@ public class Token {
         }
     }
 
-    Block nextBlock() throws SyntaxException {
+    Piece nextBlock() throws SyntaxException {
         String s = nextString();
         try {
             return StringEnumTransform.toBlock(s);

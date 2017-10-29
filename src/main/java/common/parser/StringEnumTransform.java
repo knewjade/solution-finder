@@ -1,45 +1,45 @@
 package common.parser;
 
-import core.mino.Block;
+import core.mino.Piece;
 import core.srs.Rotate;
 
 public class StringEnumTransform {
-    public static Block toBlock(String name) {
+    public static Piece toBlock(String name) {
         switch (name) {
             case "T":
-                return Block.T;
+                return Piece.T;
             case "S":
-                return Block.S;
+                return Piece.S;
             case "Z":
-                return Block.Z;
+                return Piece.Z;
             case "I":
-                return Block.I;
+                return Piece.I;
             case "O":
-                return Block.O;
+                return Piece.O;
             case "J":
-                return Block.J;
+                return Piece.J;
             case "L":
-                return Block.L;
+                return Piece.L;
         }
         throw new IllegalArgumentException("No reachable");
     }
 
-    public static Block toBlock(char ch) {
+    public static Piece toBlock(char ch) {
         switch (ch) {
             case 'T':
-                return Block.T;
+                return Piece.T;
             case 'S':
-                return Block.S;
+                return Piece.S;
             case 'Z':
-                return Block.Z;
+                return Piece.Z;
             case 'O':
-                return Block.O;
+                return Piece.O;
             case 'I':
-                return Block.I;
+                return Piece.I;
             case 'L':
-                return Block.L;
+                return Piece.L;
             case 'J':
-                return Block.J;
+                return Piece.J;
         }
         throw new IllegalArgumentException("No reachable");
     }

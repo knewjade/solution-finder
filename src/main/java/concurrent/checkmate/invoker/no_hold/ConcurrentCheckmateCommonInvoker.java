@@ -1,10 +1,10 @@
 package concurrent.checkmate.invoker.no_hold;
 
+import common.datastore.blocks.ReadOnlyListPieces;
 import core.action.candidate.Candidate;
 import common.datastore.Pair;
 import core.field.Field;
-import core.mino.Block;
-import common.datastore.blocks.ReadOnlyListBlocks;
+import core.mino.Piece;
 import searcher.checkmate.Checkmate;
 import common.datastore.Result;
 import common.datastore.action.Action;
@@ -29,10 +29,10 @@ public class ConcurrentCheckmateCommonInvoker {
         this.taskSplitCount = taskSplitCount;
     }
 
-    public List<Pair<List<Block>, List<Result>>> search(Field field, List<List<Block>> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
+    public List<Pair<List<Piece>, List<Result>>> search(Field field, List<List<Piece>> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
         // ミノごとにソートする
-        List<ReadOnlyListBlocks> sortedPieces = searchingPieces.stream()
-                .map(ReadOnlyListBlocks::new)
+        List<ReadOnlyListPieces> sortedPieces = searchingPieces.stream()
+                .map(ReadOnlyListPieces::new)
                 .sorted()
                 .collect(Collectors.toList());
 
@@ -44,15 +44,15 @@ public class ConcurrentCheckmateCommonInvoker {
         int lastIndex = 0;
         for (int count = 0; count < taskSplitCount; count++) {
             int toIndex = (int) (size * ((double) (count + 1) / taskSplitCount));
-            List<ReadOnlyListBlocks> subPieces = sortedPieces.subList(lastIndex, toIndex);
+            List<ReadOnlyListPieces> subPieces = sortedPieces.subList(lastIndex, toIndex);
             tasks.add(new Task(obj, subPieces));
             lastIndex = toIndex;
         }
-        List<Future<List<Pair<List<Block>, List<Result>>>>> futures = executorService.invokeAll(tasks);
+        List<Future<List<Pair<List<Piece>, List<Result>>>>> futures = executorService.invokeAll(tasks);
 
-        List<Pair<List<Block>, List<Result>>> results = new ArrayList<>();
-        for (Future<List<Pair<List<Block>, List<Result>>>> future : futures) {
-            List<Pair<List<Block>, List<Result>>> pairs = future.get();
+        List<Pair<List<Piece>, List<Result>>> results = new ArrayList<>();
+        for (Future<List<Pair<List<Piece>, List<Result>>>> future : futures) {
+            List<Pair<List<Piece>, List<Result>>> pairs = future.get();
             results.addAll(pairs);
         }
 

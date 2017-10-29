@@ -3,7 +3,7 @@ package core.action.candidate;
 import common.datastore.action.Action;
 import core.action.cache.LockedNeighborCache;
 import core.field.Field;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
@@ -41,20 +41,20 @@ public class LockedNeighborCandidate implements Candidate<Neighbor> {
     }
 
     @Override
-    public Set<Neighbor> search(Field field, Block block, int appearY) {
+    public Set<Neighbor> search(Field field, Piece piece, int appearY) {
         this.field = field;
 
         HashSet<Neighbor> results = new HashSet<>();
 
         cache.clear();
 
-        Set<Rotate> uniqueRotates = minoShifter.getUniqueRotates(block);
+        Set<Rotate> uniqueRotates = minoShifter.getUniqueRotates(piece);
 
         for (Rotate rotate : uniqueRotates) {
-            Mino mino = minoFactory.create(block, rotate);
+            Mino mino = minoFactory.create(piece, rotate);
             for (int x = -mino.getMinX(); x < FIELD_WIDTH - mino.getMaxX(); x++) {
                 for (int y = -mino.getMinY(); y < appearY - mino.getMaxY(); y++) {
-                    Neighbor neighbor = neighbors.get(block, rotate, x, y);
+                    Neighbor neighbor = neighbors.get(piece, rotate, x, y);
                     if (field.canPut(neighbor.getPiece()) && field.isOnGround(mino, x, y)) {
                         loop(results, neighbor);
                     }
@@ -73,7 +73,7 @@ public class LockedNeighborCandidate implements Candidate<Neighbor> {
         } else {
             OriginalPiece piece = neighbor.getPiece();
             Mino mino = piece.getMino();
-            Block block = mino.getBlock();
+            Piece block = mino.getPiece();
             List<Action> actions = minoShifter.enumerateSameOtherActions(block, mino.getRotate(), piece.getX(), piece.getY());
             for (Action action : actions) {
                 Neighbor similar = neighbors.get(block, action.getRotate(), action.getX(), action.getY());

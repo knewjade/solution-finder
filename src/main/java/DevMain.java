@@ -27,10 +27,10 @@ public class DevMain {
 //            executorService.shutdown();
 //            executorService.awaitTermination(100L, TimeUnit.SECONDS);
 //        }
-//        BlocksGenerator generator = new BlocksGenerator("TISZ*![tisz]");
+//        LoadedPatternGenerator generator = new LoadedPatternGenerator("TISZ*![tisz]");
 //        int depth = generator.getDepth();
 //        System.out.println(depth);
-//        generator.blocksStream().map(Blocks::getBlocks).forEach(System.out::println);
+//        generator.blocksStream().map(Pieces::getPieces).forEach(System.out::println);
 
         HTMLBuilder<TestColumn> builder = new HTMLBuilder<>("hello");
         builder.addColumn(TestColumn.SECTION1, "hello");

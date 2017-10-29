@@ -1,7 +1,7 @@
 package core.action.candidate;
 
 import core.field.Field;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
@@ -32,19 +32,19 @@ public class LimitIterationCandidate implements Candidate<Action> {
     }
 
     @Override
-    public Set<Action> search(Field field, Block block, int appearY) {
+    public Set<Action> search(Field field, Piece piece, int appearY) {
         // temporaryの初期化
         this.appearY = appearY;
 
         HashSet<Action> actions = new HashSet<>();
 
         for (Rotate rotate : Rotate.values()) {
-            Mino mino = minoFactory.create(block, rotate);
+            Mino mino = minoFactory.create(piece, rotate);
             for (int x = -mino.getMinX(); x < FIELD_WIDTH - mino.getMaxX(); x++) {
                 for (int y = appearY - mino.getMaxY() - 1; -mino.getMinY() <= y; y--) {
                     if (field.canPut(mino, x, y) && field.isOnGround(mino, x, y)) {
                         if (check(field, mino, x, y, From.None, 0)) {
-                            Action action = minoShifter.createTransformedAction(block, rotate, x, y);
+                            Action action = minoShifter.createTransformedAction(piece, rotate, x, y);
                             actions.add(action);
                         }
                     }
@@ -95,7 +95,7 @@ public class LimitIterationCandidate implements Candidate<Action> {
     }
 
     private boolean checkRightRotation(Field field, Mino mino, int x, int y, int iteration) {
-        Mino minoBefore = minoFactory.create(mino.getBlock(), mino.getRotate().getLeftRotate());
+        Mino minoBefore = minoFactory.create(mino.getPiece(), mino.getRotate().getLeftRotate());
         int[][] patterns = minoRotation.getRightPatternsFrom(minoBefore);  // 右回転前のテストパターンを取得
         for (int[] pattern : patterns) {
             int fromX = x - pattern[0];
@@ -111,7 +111,7 @@ public class LimitIterationCandidate implements Candidate<Action> {
     }
 
     private boolean checkLeftRotation(Field field, Mino mino, int x, int y, int iteration) {
-        Mino minoBefore = minoFactory.create(mino.getBlock(), mino.getRotate().getRightRotate());
+        Mino minoBefore = minoFactory.create(mino.getPiece(), mino.getRotate().getRightRotate());
         int[][] patterns = minoRotation.getLeftPatternsFrom(minoBefore);  // 右回転前のテストパターンを取得
         for (int[] pattern : patterns) {
             int fromX = x - pattern[0];

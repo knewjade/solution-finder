@@ -1,6 +1,6 @@
 package searcher.pack.memento;
 
-import common.datastore.BlockCounter;
+import common.datastore.PieceCounter;
 import common.datastore.OperationWithKey;
 import searcher.pack.mino_field.MinoField;
 import searcher.pack.separable_mino.SeparableMino;
@@ -12,7 +12,7 @@ public interface MinoFieldMemento {
 
     MinoFieldMemento skip();
 
-    BlockCounter getSumBlockCounter();
+    PieceCounter getSumBlockCounter();
 
     Stream<OperationWithKey> getRawOperationsStream();
 

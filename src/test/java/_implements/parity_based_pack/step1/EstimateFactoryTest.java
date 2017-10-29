@@ -1,6 +1,6 @@
 package _implements.parity_based_pack.step1;
 
-import core.mino.Block;
+import core.mino.Piece;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -16,9 +16,9 @@ class EstimateFactoryTest {
         List<DeltaLimitedMino> szo = list.get(0);
 
         assertThat(szo).hasSize(4);
-        assertThat(szo.stream().filter(mino -> mino.getBlock() == Block.S)).hasSize(2);
-        assertThat(szo.stream().filter(mino -> mino.getBlock() == Block.Z)).hasSize(1);
-        assertThat(szo.stream().filter(mino -> mino.getBlock() == Block.O)).hasSize(1);
+        assertThat(szo.stream().filter(mino -> mino.getPiece() == Piece.S)).hasSize(2);
+        assertThat(szo.stream().filter(mino -> mino.getPiece() == Piece.Z)).hasSize(1);
+        assertThat(szo.stream().filter(mino -> mino.getPiece() == Piece.O)).hasSize(1);
 
         assertThat(szo.stream().filter(mino -> mino.getDeltaLimit() == DeltaLimit.EvenUp)).hasSize(0);
         assertThat(szo.stream().filter(mino -> mino.getDeltaLimit() == DeltaLimit.OddUp)).hasSize(0);
@@ -33,8 +33,8 @@ class EstimateFactoryTest {
         List<DeltaLimitedMino> lj = list.get(0);
 
         assertThat(lj).hasSize(3);
-        assertThat(lj.stream().filter(mino -> mino.getBlock() == Block.L)).hasSize(1);
-        assertThat(lj.stream().filter(mino -> mino.getBlock() == Block.J)).hasSize(2);
+        assertThat(lj.stream().filter(mino -> mino.getPiece() == Piece.L)).hasSize(1);
+        assertThat(lj.stream().filter(mino -> mino.getPiece() == Piece.J)).hasSize(2);
 
         assertThat(lj.stream().filter(mino -> mino.getDeltaLimit() == DeltaLimit.EvenUp)).hasSize(0);
         assertThat(lj.stream().filter(mino -> mino.getDeltaLimit() == DeltaLimit.OddUp)).hasSize(3);

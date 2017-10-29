@@ -2,7 +2,7 @@ package core.action.candidate;
 
 import core.action.cache.LockedCache;
 import core.field.Field;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
@@ -36,7 +36,7 @@ public class LockedCandidate implements Candidate<Action> {
     }
 
     @Override
-    public Set<Action> search(Field field, Block block, int appearY) {
+    public Set<Action> search(Field field, Piece piece, int appearY) {
         // temporaryの初期化
         this.appearY = appearY;
         lockedCache.clear();
@@ -44,12 +44,12 @@ public class LockedCandidate implements Candidate<Action> {
         HashSet<Action> actions = new HashSet<>();
 
         for (Rotate rotate : Rotate.values()) {
-            Mino mino = minoFactory.create(block, rotate);
+            Mino mino = minoFactory.create(piece, rotate);
             for (int x = -mino.getMinX(); x < FIELD_WIDTH - mino.getMaxX(); x++) {
                 for (int y = appearY - mino.getMaxY() - 1; -mino.getMinY() <= y; y--) {
                     if (field.canPut(mino, x, y) && field.isOnGround(mino, x, y)) {
                         if (check(field, mino, x, y, From.None)) {
-                            Action action = minoShifter.createTransformedAction(block, rotate, x, y);
+                            Action action = minoShifter.createTransformedAction(piece, rotate, x, y);
                             actions.add(action);
                         } else {
                             lockedCache.visit(x, y, rotate);
@@ -126,7 +126,7 @@ public class LockedCandidate implements Candidate<Action> {
 
     private boolean checkRightRotation(Field field, Mino mino, int x, int y) {
         Rotate currentRotate = mino.getRotate();
-        Mino minoBefore = minoFactory.create(mino.getBlock(), currentRotate.getLeftRotate());
+        Mino minoBefore = minoFactory.create(mino.getPiece(), currentRotate.getLeftRotate());
         int[][] patterns = minoRotation.getRightPatternsFrom(minoBefore);  // 右回転前のテストパターンを取得
         for (int[] pattern : patterns) {
             int fromX = x - pattern[0];
@@ -147,7 +147,7 @@ public class LockedCandidate implements Candidate<Action> {
 
     private boolean checkLeftRotation(Field field, Mino mino, int x, int y) {
         Rotate currentRotate = mino.getRotate();
-        Mino minoBefore = minoFactory.create(mino.getBlock(), currentRotate.getRightRotate());
+        Mino minoBefore = minoFactory.create(mino.getPiece(), currentRotate.getRightRotate());
         int[][] patterns = minoRotation.getLeftPatternsFrom(minoBefore);  // 右回転前のテストパターンを取得
         for (int[] pattern : patterns) {
             int fromX = x - pattern[0];

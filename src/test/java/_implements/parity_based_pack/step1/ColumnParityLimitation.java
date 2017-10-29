@@ -1,8 +1,8 @@
 package _implements.parity_based_pack.step1;
 
 import _implements.parity_based_pack.ParityField;
-import common.datastore.BlockCounter;
-import core.mino.Block;
+import common.datastore.PieceCounter;
+import core.mino.Piece;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -13,14 +13,14 @@ public class ColumnParityLimitation {
     private final ParityField parityField;
     private final int maxClearLine;
     private final List<EstimateBuilder> builders = new ArrayList<>();
-    private final BlockCounter blockCounter;
-    private final EnumMap<Block, Integer> map;
+    private final PieceCounter pieceCounter;
+    private final EnumMap<Piece, Integer> map;
     private final long numOfBlocks;
 
-    public ColumnParityLimitation(BlockCounter blockCounter, ParityField parityField, int maxClearLine) {
-        this.blockCounter = blockCounter;
-        this.map = blockCounter.getEnumMap();
-        this.numOfBlocks = blockCounter.getBlockStream().count();
+    public ColumnParityLimitation(PieceCounter pieceCounter, ParityField parityField, int maxClearLine) {
+        this.pieceCounter = pieceCounter;
+        this.map = pieceCounter.getEnumMap();
+        this.numOfBlocks = pieceCounter.getBlockStream().count();
         this.parityField = parityField;
         this.maxClearLine = maxClearLine;
     }
@@ -35,13 +35,13 @@ public class ColumnParityLimitation {
         assert numOfBlocks * 4 == evenParity + oddParity;
 
         // SZO対応: どの置き方でも 2:2 で減少
-        int SZOCount = map.getOrDefault(Block.S, 0) + map.getOrDefault(Block.Z, 0) + map.getOrDefault(Block.O, 0);
+        int SZOCount = map.getOrDefault(Piece.S, 0) + map.getOrDefault(Piece.Z, 0) + map.getOrDefault(Piece.O, 0);
         evenParity -= 2 * SZOCount;
         oddParity -= 2 * SZOCount;
 
         // LJ対応: どの置き方でも 3:1 で減少
         // 最低でも LJCount　減少し、最大で LJCount + LJCount * 2 減少
-        int LJCount = map.getOrDefault(Block.L, 0) + map.getOrDefault(Block.J, 0);
+        int LJCount = map.getOrDefault(Piece.L, 0) + map.getOrDefault(Piece.J, 0);
         for (int count = -LJCount; count <= LJCount; count++) {
             int oddLJ = 2 * LJCount + count;
             int evenLJ = 2 * LJCount - count;
@@ -64,7 +64,7 @@ public class ColumnParityLimitation {
             return;
 
         // T対応: 縦3:1,1:3 と 横2:2 の3種
-        int TCount = map.getOrDefault(Block.T, 0);
+        int TCount = map.getOrDefault(Piece.T, 0);
         for (int count = -TCount; count <= TCount; count++) {
             int oddT = 2 * TCount + count;
             int evenT = 2 * TCount - count;
@@ -85,7 +85,7 @@ public class ColumnParityLimitation {
             return;
 
         // I対応: 横2:2 と 縦:4:0,0:4 の3種
-        int ICount = map.getOrDefault(Block.I, 0);
+        int ICount = map.getOrDefault(Piece.I, 0);
         for (int count = -ICount; count <= ICount; count++) {
             int oddI = 2 * (ICount + count);
             int evenI = 2 * (ICount - count);
@@ -102,7 +102,7 @@ public class ColumnParityLimitation {
         // oddCountT : 偶数列を3にするTの置き方の総数  // マイナスの場合は、奇数列を3にするTの置き方の総数
         // oddCountI : 偶数列を4にするIの置き方の総数  // マイナスの場合は、奇数列を4にするIの置き方の総数
 
-        EstimateBuilder estimateBuilder = new EstimateBuilder(blockCounter, oddCountLJ, oddCountT, oddCountI);
+        EstimateBuilder estimateBuilder = new EstimateBuilder(pieceCounter, oddCountLJ, oddCountT, oddCountI);
         builders.add(estimateBuilder);
     }
 }

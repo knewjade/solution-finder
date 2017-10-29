@@ -1,7 +1,7 @@
 package common.order;
 
-import common.datastore.blocks.LongBlocks;
-import core.mino.Block;
+import common.datastore.blocks.LongPieces;
+import core.mino.Piece;
 import lib.Randoms;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -17,39 +17,39 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ReverseOrderLookUpTest {
     @Test
     void parseJustBlocksCount() throws Exception {
-        List<Block> blockList = Block.valueList();
-        int toDepth = blockList.size();
+        List<Piece> pieceList = Piece.valueList();
+        int toDepth = pieceList.size();
 
-        ReverseOrderLookUp lookUp = new ReverseOrderLookUp(blockList.size(), toDepth);
-        long count = lookUp.parse(blockList).count();
+        ReverseOrderLookUp lookUp = new ReverseOrderLookUp(pieceList.size(), toDepth);
+        long count = lookUp.parse(pieceList).count();
 
         assertThat(count).isEqualTo(64);
     }
 
     @Test
     void parseOverBlocksCount() throws Exception {
-        List<Block> blockList = Block.valueList();
-        int toDepth = blockList.size() + 1;
+        List<Piece> pieceList = Piece.valueList();
+        int toDepth = pieceList.size() + 1;
 
-        ReverseOrderLookUp lookUp = new ReverseOrderLookUp(blockList.size(), toDepth);
-        long count = lookUp.parse(blockList).count();
+        ReverseOrderLookUp lookUp = new ReverseOrderLookUp(pieceList.size(), toDepth);
+        long count = lookUp.parse(pieceList).count();
 
         assertThat(count).isEqualTo(128);
     }
 
     @Test
     void parseOver() throws Exception {
-        List<Block> blockList = Arrays.asList(Block.I, Block.T, Block.Z, Block.O, Block.I, Block.L);
-        int fromDepth = blockList.size() + 1;
+        List<Piece> pieceList = Arrays.asList(Piece.I, Piece.T, Piece.Z, Piece.O, Piece.I, Piece.L);
+        int fromDepth = pieceList.size() + 1;
 
-        Comparator<List<Block>> comparator = (o1, o2) -> {
+        Comparator<List<Piece>> comparator = (o1, o2) -> {
             int size1 = o1.size();
             int size2 = o2.size();
             int compareSize = Integer.compare(size1, size2);
             if (compareSize != 0)
                 return compareSize;
 
-            Comparator<Block> blockComparator = Comparator.nullsLast(Enum::compareTo);
+            Comparator<Piece> blockComparator = Comparator.nullsLast(Enum::compareTo);
             for (int index = 0; index < size1; index++) {
                 int compare = blockComparator.compare(o1.get(index), o2.get(index));
                 if (compare != 0)
@@ -59,13 +59,13 @@ class ReverseOrderLookUpTest {
             return 0;
         };
 
-        List<List<Block>> reverse1 = OrderLookup.reverseBlocks(blockList, fromDepth).stream()
+        List<List<Piece>> reverse1 = OrderLookup.reverseBlocks(pieceList, fromDepth).stream()
                 .map(StackOrder::toList)
                 .sorted(comparator)
                 .collect(Collectors.toList());
 
-        ReverseOrderLookUp lookUp = new ReverseOrderLookUp(blockList.size(), fromDepth);
-        List<List<Block>> reverse2 = lookUp.parse(blockList)
+        ReverseOrderLookUp lookUp = new ReverseOrderLookUp(pieceList.size(), fromDepth);
+        List<List<Piece>> reverse2 = lookUp.parse(pieceList)
                 .map(blockStream -> blockStream.collect(Collectors.toList()))
                 .sorted(comparator)
                 .collect(Collectors.toList());
@@ -77,19 +77,19 @@ class ReverseOrderLookUpTest {
     void parseJustRandom() throws Exception {
         Randoms randoms = new Randoms();
         for (int size = 2; size <= 13; size++) {
-            List<Block> blocks = randoms.blocks(size);
+            List<Piece> blocks = randoms.blocks(size);
             int fromDepth = blocks.size();
 
             ReverseOrderLookUp reverseOrderLookUp = new ReverseOrderLookUp(blocks.size(), fromDepth);
-            List<LongBlocks> reverse = reverseOrderLookUp.parse(blocks)
-                    .map(LongBlocks::new)
+            List<LongPieces> reverse = reverseOrderLookUp.parse(blocks)
+                    .map(LongPieces::new)
                     .collect(Collectors.toList());
 
-            LongBlocks target = new LongBlocks(blocks);
+            LongPieces target = new LongPieces(blocks);
             ForwardOrderLookUp forwardOrderLookUp = new ForwardOrderLookUp(blocks.size(), fromDepth);
-            for (LongBlocks pieces : reverse) {
-                boolean isFound = forwardOrderLookUp.parse(pieces.getBlocks())
-                        .map(LongBlocks::new)
+            for (LongPieces pieces : reverse) {
+                boolean isFound = forwardOrderLookUp.parse(pieces.getPieces())
+                        .map(LongPieces::new)
                         .anyMatch(target::equals);
                 assertThat(isFound).isTrue();
             }
@@ -101,21 +101,21 @@ class ReverseOrderLookUpTest {
     void parseOverRandom() throws Exception {
         Randoms randoms = new Randoms();
         for (int size = 2; size <= 13; size++) {
-            List<Block> blocks = randoms.blocks(size);
-            int fromDepth = blocks.size() + 1;
+            List<Piece> pieces = randoms.blocks(size);
+            int fromDepth = pieces.size() + 1;
 
-            ReverseOrderLookUp reverseOrderLookUp = new ReverseOrderLookUp(blocks.size(), fromDepth);
-            List<Stream<Block>> reverse = reverseOrderLookUp.parse(blocks)
+            ReverseOrderLookUp reverseOrderLookUp = new ReverseOrderLookUp(pieces.size(), fromDepth);
+            List<Stream<Piece>> reverse = reverseOrderLookUp.parse(pieces)
                     .collect(Collectors.toList());
 
-            LongBlocks target = new LongBlocks(blocks);
-            ForwardOrderLookUp forwardOrderLookUp = new ForwardOrderLookUp(blocks.size(), fromDepth);
-            for (Stream<Block> stream : reverse) {
-                List<Block> sample = stream
+            LongPieces target = new LongPieces(pieces);
+            ForwardOrderLookUp forwardOrderLookUp = new ForwardOrderLookUp(pieces.size(), fromDepth);
+            for (Stream<Piece> stream : reverse) {
+                List<Piece> sample = stream
                         .map(block -> block != null ? block : randoms.block())
                         .collect(Collectors.toList());
                 boolean isFound = forwardOrderLookUp.parse(sample)
-                        .map(LongBlocks::new)
+                        .map(LongPieces::new)
                         .anyMatch(target::equals);
                 assertThat(isFound).isTrue();
             }
@@ -126,21 +126,21 @@ class ReverseOrderLookUpTest {
     void parseOver2Random() throws Exception {
         Randoms randoms = new Randoms();
         for (int size = 2; size <= 12; size++) {
-            List<Block> blocks = randoms.blocks(size);
-            int fromDepth = blocks.size() + 2;
+            List<Piece> pieces = randoms.blocks(size);
+            int fromDepth = pieces.size() + 2;
 
-            ReverseOrderLookUp reverseOrderLookUp = new ReverseOrderLookUp(blocks.size(), fromDepth);
-            List<Stream<Block>> reverse = reverseOrderLookUp.parse(blocks)
+            ReverseOrderLookUp reverseOrderLookUp = new ReverseOrderLookUp(pieces.size(), fromDepth);
+            List<Stream<Piece>> reverse = reverseOrderLookUp.parse(pieces)
                     .collect(Collectors.toList());
 
-            LongBlocks target = new LongBlocks(blocks);
-            ForwardOrderLookUp forwardOrderLookUp = new ForwardOrderLookUp(blocks.size(), fromDepth);
-            for (Stream<Block> stream : reverse) {
-                List<Block> sample = stream
+            LongPieces target = new LongPieces(pieces);
+            ForwardOrderLookUp forwardOrderLookUp = new ForwardOrderLookUp(pieces.size(), fromDepth);
+            for (Stream<Piece> stream : reverse) {
+                List<Piece> sample = stream
                         .map(block -> block != null ? block : randoms.block())
                         .collect(Collectors.toList());
                 boolean isFound = forwardOrderLookUp.parse(sample)
-                        .map(LongBlocks::new)
+                        .map(LongPieces::new)
                         .anyMatch(target::equals);
                 assertThat(isFound).isTrue();
             }

@@ -1,10 +1,10 @@
 package common.datastore;
 
-import core.mino.Block;
+import core.mino.Piece;
 import core.srs.Rotate;
 
 public interface Operation {
-    Block getBlock();
+    Piece getPiece();
 
     Rotate getRotate();
 

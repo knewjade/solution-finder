@@ -1,5 +1,6 @@
 package util.fig.generator;
 
+import core.mino.Piece;
 import util.fig.FigColor;
 import util.fig.FigSetting;
 import util.fig.Rectangle;
@@ -7,7 +8,6 @@ import util.fig.position.PositionDecider;
 import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
-import core.mino.Block;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
@@ -75,8 +75,8 @@ public class AllFigGenerator implements FigGenerator {
 
     @Override
     public void updateMino(ColorType colorType, Rotate rotate, int xIndex, int yIndex) {
-        Block block = colorConverter.parseToBlock(colorType);
-        Mino mino = minoFactory.create(block, rotate);
+        Piece piece = colorConverter.parseToBlock(colorType);
+        Mino mino = minoFactory.create(piece, rotate);
         FigColor figColor = FigColor.parse(colorType);
         Color color = figColor.getStrongColor();
         graphics.setColor(color);
@@ -87,11 +87,11 @@ public class AllFigGenerator implements FigGenerator {
     }
 
     @Override
-    public void updateNext(List<Block> blocks) {
+    public void updateNext(List<Piece> pieces) {
         Color color = new Color(0x999999);
-        int nextBoxCount = setting.geNextBoxCount() < blocks.size() ? setting.geNextBoxCount() : blocks.size();
+        int nextBoxCount = setting.geNextBoxCount() < pieces.size() ? setting.geNextBoxCount() : pieces.size();
 
-        assert nextBoxCount <= blocks.size();
+        assert nextBoxCount <= pieces.size();
 
         for (int index = 0; index < nextBoxCount; index++) {
             Rectangle rectangle = positionDecider.getNext(index);
@@ -102,20 +102,20 @@ public class AllFigGenerator implements FigGenerator {
             graphics.setStroke(new BasicStroke(2.0f));
             drawRoundRect(rectangle, 2);
 
-            drawMino(blocks.get(index), rectangle);
+            drawMino(pieces.get(index), rectangle);
         }
     }
 
-    private void drawMino(Block block, Rectangle rectangle) {
-        if (block == null)
+    private void drawMino(Piece piece, Rectangle rectangle) {
+        if (piece == null)
             return;
 
-        ColorType colorType = colorConverter.parseToColorType(block);
+        ColorType colorType = colorConverter.parseToColorType(piece);
         FigColor figColor = FigColor.parse(colorType);
         Color color = getColor(figColor, true);
         graphics.setColor(color);
 
-        Mino mino = minoFactory.create(block, Rotate.Spawn);
+        Mino mino = minoFactory.create(piece, Rotate.Spawn);
         int maxX = mino.getMaxX();
         int minX = mino.getMinX();
         double mx = (maxX - minX + 1) / 2.0 + minX;
@@ -137,7 +137,7 @@ public class AllFigGenerator implements FigGenerator {
     }
 
     @Override
-    public void updateHold(Block block) {
+    public void updateHold(Piece piece) {
         Color color = new Color(0xdddddd);
         Rectangle rectangle = positionDecider.getHold();
         graphics.setColor(FigColor.Background.getNormalColor());
@@ -147,7 +147,7 @@ public class AllFigGenerator implements FigGenerator {
         graphics.setStroke(new BasicStroke(2.0f));
         drawRoundRect(rectangle, 0);
 
-        drawMino(block, rectangle);
+        drawMino(piece, rectangle);
     }
 
     private Color getColor(FigColor figColor, boolean isFilledLine) {

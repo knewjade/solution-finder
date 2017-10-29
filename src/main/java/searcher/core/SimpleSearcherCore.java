@@ -7,7 +7,7 @@ import common.datastore.order.NormalOrder;
 import common.datastore.order.Order;
 import core.action.candidate.Candidate;
 import core.field.Field;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import searcher.common.DataPool;
@@ -26,8 +26,8 @@ public class SimpleSearcherCore<T extends Action> {
         this.dataPool = dataPool;
     }
 
-    public void stepWithNext(Candidate<T> candidate, Block drawn, Order order, boolean isLast) {
-        Block hold = order.getHold();
+    public void stepWithNext(Candidate<T> candidate, Piece drawn, Order order, boolean isLast) {
+        Piece hold = order.getHold();
         step(candidate, drawn, hold, order, isLast);
 
         if (drawn != hold) {
@@ -36,16 +36,16 @@ public class SimpleSearcherCore<T extends Action> {
         }
     }
 
-    public void stepWithNextNoHold(Candidate<T> candidate, Block drawn, Order order, boolean isLast) {
+    public void stepWithNextNoHold(Candidate<T> candidate, Piece drawn, Order order, boolean isLast) {
         step(candidate, drawn, order.getHold(), order, isLast);
     }
 
     public void stepWhenNoNext(Candidate<T> candidate, Order order, boolean isLast) {
-        Block hold = order.getHold();
+        Piece hold = order.getHold();
         step(candidate, hold, null, order, isLast);
     }
 
-    private void step(Candidate<T> candidate, Block drawn, Block nextHold, Order order, boolean isLast) {
+    private void step(Candidate<T> candidate, Piece drawn, Piece nextHold, Order order, boolean isLast) {
         Field currentField = order.getField();
         int max = order.getMaxClearLine();
         Set<T> candidateList = candidate.search(currentField, drawn, max);

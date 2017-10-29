@@ -43,7 +43,7 @@ public class FullLimitedMinos implements Comparable<FullLimitedMinos> {
         Mino mino = o1.getMino();
         Mino oMino = o2.getMino();
 
-        int block = mino.getBlock().compareTo(oMino.getBlock());
+        int block = mino.getPiece().compareTo(oMino.getPiece());
         if (block != 0)
             return block;
 

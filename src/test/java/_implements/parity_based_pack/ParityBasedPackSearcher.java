@@ -7,11 +7,11 @@ import _implements.parity_based_pack.step2.FullLimitedMino;
 import _implements.parity_based_pack.step2.PositionLimitParser;
 import _implements.parity_based_pack.step3.CrossBuilder;
 import common.buildup.BuildUp;
-import common.datastore.BlockCounter;
+import common.datastore.PieceCounter;
 import common.datastore.MinoOperationWithKey;
 import concurrent.LockedReachableThreadLocal;
 import core.field.Field;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.MinoFactory;
 
 import java.util.Collection;
@@ -35,15 +35,15 @@ public class ParityBasedPackSearcher {
         this.maxClearLine = maxClearLine;
     }
 
-    public Stream<List<MinoOperationWithKey>> search(List<Block> usingBlocks) {
+    public Stream<List<MinoOperationWithKey>> search(List<Piece> usingPieces) {
         // 準備
         MinoFactory minoFactory = new MinoFactory();
         PositionLimitParser positionLimitParser = new PositionLimitParser(minoFactory, maxClearLine);
         LockedReachableThreadLocal threadLocal = new LockedReachableThreadLocal(maxClearLine);
 
         ParityField parityField = new ParityField(field);
-        BlockCounter blockCounter = new BlockCounter(usingBlocks);
-        ColumnParityLimitation limitation = new ColumnParityLimitation(blockCounter, parityField, maxClearLine);
+        PieceCounter pieceCounter = new PieceCounter(usingPieces);
+        ColumnParityLimitation limitation = new ColumnParityLimitation(pieceCounter, parityField, maxClearLine);
 
         return limitation.enumerate().parallelStream()
                 .map(EstimateBuilder::create)
@@ -61,14 +61,14 @@ public class ParityBasedPackSearcher {
                 .collect(Collectors.toList());
 
         // 候補数が小さい順  // 同種のブロックを固めるため
-        List<Block> priority = collect.stream()
+        List<Piece> priority = collect.stream()
                 .sorted(Comparator.comparingInt(List::size))
-                .map(fullLimitedMinos -> fullLimitedMinos.get(0).getMino().getBlock())
+                .map(fullLimitedMinos -> fullLimitedMinos.get(0).getMino().getPiece())
                 .collect(Collectors.toList());
 
         // ソートする
         collect.sort((o1, o2) -> {
-            int compare = Integer.compare(priority.indexOf(o1.get(0).getMino().getBlock()), priority.indexOf(o2.get(0).getMino().getBlock()));
+            int compare = Integer.compare(priority.indexOf(o1.get(0).getMino().getPiece()), priority.indexOf(o2.get(0).getMino().getPiece()));
             if (compare != 0)
                 return compare;
             return -Integer.compare(o1.size(), o2.size());

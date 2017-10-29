@@ -3,7 +3,7 @@ package common;
 import common.datastore.Operation;
 import common.datastore.SimpleOperation;
 import common.datastore.action.MinimalAction;
-import core.mino.Block;
+import core.mino.Piece;
 import core.srs.Rotate;
 import lib.Randoms;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 
 class OperationHistoryTest {
@@ -27,14 +26,14 @@ class OperationHistoryTest {
             OperationHistory history = new OperationHistory(size);
 
             for (int index = 0; index < size; index++) {
-                Block block = randoms.block();
+                Piece piece = randoms.block();
                 Rotate rotate = randoms.rotate();
                 int y = randoms.nextInt(4);
                 int x = randoms.nextInt(10);
                 MinimalAction action = MinimalAction.create(x, y, rotate);
-                history = history.recordAndReturnNew(block, action);
+                history = history.recordAndReturnNew(piece, action);
 
-                operations.add(new SimpleOperation(block, rotate, x, y));
+                operations.add(new SimpleOperation(piece, rotate, x, y));
             }
 
             List<Operation> actual = history.getOperationStream().collect(Collectors.toList());

@@ -1,7 +1,6 @@
 package entry.path.output;
 
 import common.datastore.OperationWithKey;
-import core.mino.Mino;
 import entry.path.PathPair;
 
 import java.util.Comparator;
@@ -25,7 +24,7 @@ public class PathPairComparator implements Comparator<PathPair> {
             OperationWithKey operation1 = operations1.get(index);
             OperationWithKey operation2 = operations2.get(index);
 
-            int compareBlock = operation1.getBlock().compareTo(operation2.getBlock());
+            int compareBlock = operation1.getPiece().compareTo(operation2.getPiece());
             if (compareBlock != 0)
                 return compareBlock;
 

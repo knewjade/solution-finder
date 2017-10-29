@@ -1,9 +1,9 @@
 package common.iterable;
 
 import com.google.common.collect.Iterables;
+import common.datastore.PieceCounter;
+import core.mino.Piece;
 import lib.MyIterables;
-import common.datastore.BlockCounter;
-import core.mino.Block;
 import lib.Randoms;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
@@ -76,18 +76,18 @@ class CombinationIterableTest {
     @Test
     void iteratorRandomBlockCount() throws Exception {
         Randoms randoms = new Randoms();
-        ArrayList<Block> allBlocks = Lists.newArrayList(Iterables.concat(Block.valueList(), Block.valueList()));
+        ArrayList<Piece> allPieces = Lists.newArrayList(Iterables.concat(Piece.valueList(), Piece.valueList()));
         for (int pop = 1; pop <= 14; pop++) {
-            CombinationIterable<Block> iterable = new CombinationIterable<>(allBlocks, pop);
-            Set<BlockCounter> sets = StreamSupport.stream(iterable.spliterator(), false)
-                    .map(BlockCounter::new)
+            CombinationIterable<Piece> iterable = new CombinationIterable<>(allPieces, pop);
+            Set<PieceCounter> sets = StreamSupport.stream(iterable.spliterator(), false)
+                    .map(PieceCounter::new)
                     .collect(Collectors.toSet());
 
             // ランダムに組み合わせを選択し、必ず列挙したセットの中にあることを確認
             for (int count = 0; count < 10000; count++) {
-                List<Block> combinations = randoms.sample(allBlocks, pop);
-                BlockCounter blockCounter = new BlockCounter(combinations);
-                assertThat(blockCounter).isIn(sets);
+                List<Piece> combinations = randoms.sample(allPieces, pop);
+                PieceCounter pieceCounter = new PieceCounter(combinations);
+                assertThat(pieceCounter).isIn(sets);
             }
         }
     }

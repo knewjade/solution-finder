@@ -1,6 +1,6 @@
 package common.datastore;
 
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.srs.Rotate;
 
@@ -42,8 +42,8 @@ public class FullOperationWithKey implements MinoOperationWithKey {
     }
 
     @Override
-    public Block getBlock() {
-        return mino.getBlock();
+    public Piece getPiece() {
+        return mino.getPiece();
     }
 
     @Override
@@ -83,7 +83,7 @@ public class FullOperationWithKey implements MinoOperationWithKey {
     public int hashCode() {
         int result = y;
         result = 10 * result + x;
-        result = 7 * result + getMino().getBlock().getNumber();
+        result = 7 * result + getMino().getPiece().getNumber();
         result = 4 * result + getMino().getRotate().getNumber();
         result = 31 * result + (int) (needDeletedKey ^ (needDeletedKey >>> 32));
         result = 31 * result + (int) (usingKey ^ (usingKey >>> 32));
@@ -93,7 +93,7 @@ public class FullOperationWithKey implements MinoOperationWithKey {
     @Override
     public String toString() {
         return "OperationWithKey{" +
-                "mino=" + mino.getBlock() + "-" + mino.getRotate() +
+                "mino=" + mino.getPiece() + "-" + mino.getRotate() +
                 ", x=" + x +
                 ", y=" + y +
                 ", needDeletedKey=" + needDeletedKey +

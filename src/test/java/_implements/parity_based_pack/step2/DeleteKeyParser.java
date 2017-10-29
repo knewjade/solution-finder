@@ -1,7 +1,7 @@
 package _implements.parity_based_pack.step2;
 
 import core.field.KeyOperators;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
@@ -12,19 +12,19 @@ import java.util.EnumMap;
 import java.util.List;
 
 class DeleteKeyParser {
-    private final EnumMap<Block, EnumMap<Rotate, List<DeleteKey>>> maps;
+    private final EnumMap<Piece, EnumMap<Rotate, List<DeleteKey>>> maps;
 
     DeleteKeyParser(MinoFactory minoFactory, int maxClearLine) {
         this.maps = initializeMaps(minoFactory, maxClearLine);
     }
 
-    private EnumMap<Block, EnumMap<Rotate, List<DeleteKey>>> initializeMaps(MinoFactory minoFactory, int maxClearLine) {
-        EnumMap<Block, EnumMap<Rotate, List<DeleteKey>>> maps = new EnumMap<>(Block.class);
-        for (Block block : Block.values()) {
-            EnumMap<Rotate, List<DeleteKey>> rotateMaps = maps.computeIfAbsent(block, blk -> new EnumMap<>(Rotate.class));
+    private EnumMap<Piece, EnumMap<Rotate, List<DeleteKey>>> initializeMaps(MinoFactory minoFactory, int maxClearLine) {
+        EnumMap<Piece, EnumMap<Rotate, List<DeleteKey>>> maps = new EnumMap<>(Piece.class);
+        for (Piece piece : Piece.values()) {
+            EnumMap<Rotate, List<DeleteKey>> rotateMaps = maps.computeIfAbsent(piece, blk -> new EnumMap<>(Rotate.class));
 
             for (Rotate rotate : Rotate.values()) {
-                Mino mino = minoFactory.create(block, rotate);
+                Mino mino = minoFactory.create(piece, rotate);
 
                 // ミノの高さを計算
                 int minoHeight = mino.getMaxY() - mino.getMinY() + 1;
@@ -76,6 +76,6 @@ class DeleteKeyParser {
     }
 
     List<DeleteKey> parse(Mino mino) {
-        return maps.get(mino.getBlock()).get(mino.getRotate());
+        return maps.get(mino.getPiece()).get(mino.getRotate());
     }
 }

@@ -3,7 +3,7 @@ package common.parser;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.OperationWithKey;
 import common.datastore.FullOperationWithKey;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
@@ -26,7 +26,7 @@ public class OperationWithKeyInterpreter {
 
     private static String parseToString(OperationWithKey operation) {
         return String.format("%s,%s,%d,%d,%d,%d",
-                operation.getBlock().getName(),
+                operation.getPiece().getName(),
                 StringEnumTransform.toString(operation.getRotate()),
                 operation.getX(),
                 operation.getY(),
@@ -43,9 +43,9 @@ public class OperationWithKeyInterpreter {
         return Arrays.stream(operations.split(";"))
                 .map(s -> s.split(","))
                 .map(strings -> {
-                    Block block = StringEnumTransform.toBlock(strings[0]);
+                    Piece piece = StringEnumTransform.toBlock(strings[0]);
                     Rotate rotate = StringEnumTransform.toRotate(strings[1]);
-                    Mino mino = minoFactory.create(block, rotate);
+                    Mino mino = minoFactory.create(piece, rotate);
                     int x = Integer.valueOf(strings[2]);
                     int y = Integer.valueOf(strings[3]);
                     long deleteKey = Long.valueOf(strings[4]);

@@ -2,7 +2,7 @@ package util.fig.generator;
 
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.srs.Rotate;
 
@@ -16,9 +16,9 @@ public interface FigGenerator {
 
     void updateMino(ColorType colorType, Rotate rotate, int xIndex, int yIndex);
 
-    void updateNext(List<Block> blocks);
+    void updateNext(List<Piece> pieces);
 
-    void updateHold(Block block);
+    void updateHold(Piece piece);
 
     BufferedImage fix();
 }

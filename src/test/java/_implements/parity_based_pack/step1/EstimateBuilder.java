@@ -1,30 +1,30 @@
 package _implements.parity_based_pack.step1;
 
-import common.datastore.BlockCounter;
-import core.mino.Block;
+import common.datastore.PieceCounter;
+import core.mino.Piece;
 
 import java.util.EnumMap;
 import java.util.List;
 
 import static _implements.parity_based_pack.ListHelper.crossConcatList;
-import static core.mino.Block.*;
+import static core.mino.Piece.*;
 
 // 偶奇数列の変化量から、各ブロックの方向と接着座標の制限をすべて列挙
 public class EstimateBuilder {
-    private final BlockCounter blockCounter;
+    private final PieceCounter pieceCounter;
     private final int oddCountLJ;
     private final int oddCountT;
     private final int oddCountI;
 
-    EstimateBuilder(BlockCounter blockCounter, int oddCountLJ, int oddCountT, int oddCountI) {
-        this.blockCounter = blockCounter;
+    EstimateBuilder(PieceCounter pieceCounter, int oddCountLJ, int oddCountT, int oddCountI) {
+        this.pieceCounter = pieceCounter;
         this.oddCountLJ = oddCountLJ;
         this.oddCountT = oddCountT;
         this.oddCountI = oddCountI;
     }
 
     public List<List<DeltaLimitedMino>> create() {
-        EnumMap<Block, Integer> map = blockCounter.getEnumMap();
+        EnumMap<Piece, Integer> map = pieceCounter.getEnumMap();
         List<List<DeltaLimitedMino>> szo = EstimateFactory.createSZO(map.getOrDefault(S, 0), map.getOrDefault(Z, 0), map.getOrDefault(O, 0));
         List<List<DeltaLimitedMino>> lj = EstimateFactory.createLJ(map.getOrDefault(L, 0), map.getOrDefault(J, 0), oddCountLJ);
         List<List<DeltaLimitedMino>> t = EstimateFactory.createT(map.getOrDefault(T, 0), oddCountT);
@@ -39,7 +39,7 @@ public class EstimateBuilder {
     @Override
     public String toString() {
         return "EstimateBuilder{" +
-                "blockCounter=" + blockCounter +
+                "pieceCounter=" + pieceCounter +
                 ", oddCountLJ=" + oddCountLJ +
                 ", oddCountT=" + oddCountT +
                 ", oddCountI=" + oddCountI +

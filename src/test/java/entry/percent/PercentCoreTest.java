@@ -1,8 +1,8 @@
 package entry.percent;
 
-import common.datastore.blocks.LongBlocks;
-import common.pattern.BlocksGenerator;
-import common.pattern.IBlocksGenerator;
+import common.datastore.blocks.LongPieces;
+import common.pattern.LoadedPatternGenerator;
+import common.pattern.PatternGenerator;
 import concurrent.LockedCandidateThreadLocal;
 import core.field.Field;
 import core.field.FieldFactory;
@@ -47,9 +47,9 @@ class PercentCoreTest {
 
         Field field = FieldFactory.createField(obj.marks);
 
-        IBlocksGenerator generator = new BlocksGenerator(obj.patterns);
+        PatternGenerator generator = new LoadedPatternGenerator(obj.patterns);
         NormalEnumeratePieces enumeratePieces = new NormalEnumeratePieces(generator, obj.maxDepth, obj.isUsingHold);
-        Set<LongBlocks> blocks = enumeratePieces.enumerate();
+        Set<LongPieces> blocks = enumeratePieces.enumerate();
         percentCore.run(field, blocks, obj.maxClearLine, obj.maxDepth);
 
         assertThat(percentCore.getResultTree().getSuccessPercent()).isEqualTo(successPercent);

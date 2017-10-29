@@ -1,14 +1,14 @@
 package entry.path.output;
 
-import common.datastore.BlockCounter;
-import common.datastore.blocks.Blocks;
-import common.pattern.IBlocksGenerator;
+import common.datastore.PieceCounter;
+import common.datastore.blocks.Pieces;
+import common.pattern.PatternGenerator;
 import core.field.Field;
-import core.mino.Block;
+import core.mino.Piece;
 import entry.path.PathEntryPoint;
 import entry.path.PathPair;
 import entry.path.PathSettings;
-import entry.path.ReduceBlocksGenerator;
+import entry.path.ReducePatternGenerator;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
 import lib.AsyncBufferedFileWriter;
@@ -29,10 +29,10 @@ public class PatternCSVPathOutput implements PathOutput {
     private final PathEntryPoint pathEntryPoint;
 
     private final MyFile outputBaseFile;
-    private final ReduceBlocksGenerator generator;
+    private final ReducePatternGenerator generator;
     private Exception lastException = null;
 
-    public PatternCSVPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings, IBlocksGenerator generator, int maxDepth) throws FinderInitializeException {
+    public PatternCSVPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings, PatternGenerator generator, int maxDepth) throws FinderInitializeException {
         // 出力ファイルが正しく出力できるか確認
         String outputBaseFilePath = pathSettings.getOutputBaseFilePath();
         String namePath = getRemoveExtensionFromPath(outputBaseFilePath);
@@ -53,11 +53,11 @@ public class PatternCSVPathOutput implements PathOutput {
         this.generator = createReduceBlocksGenerator(generator, pathSettings, maxDepth);
     }
 
-    private ReduceBlocksGenerator createReduceBlocksGenerator(IBlocksGenerator generator, PathSettings pathSettings, int maxDepth) {
+    private ReducePatternGenerator createReduceBlocksGenerator(PatternGenerator generator, PathSettings pathSettings, int maxDepth) {
         if (pathSettings.isUsingHold())
-            return new ReduceBlocksGenerator(generator, maxDepth + 1);
+            return new ReducePatternGenerator(generator, maxDepth + 1);
         else
-            return new ReduceBlocksGenerator(generator, maxDepth);
+            return new ReducePatternGenerator(generator, maxDepth);
     }
 
     private String getRemoveExtensionFromPath(String path) throws FinderInitializeException {
@@ -88,13 +88,13 @@ public class PatternCSVPathOutput implements PathOutput {
                     .map(blocks -> {
                         // シーケンス名を取得
                         String sequenceName = blocks.blockStream()
-                                .map(Block::getName)
+                                .map(Piece::getName)
                                 .collect(Collectors.joining());
 
                         // パフェ可能な地形を抽出
                         List<PathPair> valid = pathPairs.stream()
                                 .filter(pathPair -> {
-                                    HashSet<? extends Blocks> buildBlocks = pathPair.blocksHashSetForPattern();
+                                    HashSet<? extends Pieces> buildBlocks = pathPair.blocksHashSetForPattern();
                                     return buildBlocks.contains(blocks);
                                 })
                                 .collect(Collectors.toList());
@@ -114,7 +114,7 @@ public class PatternCSVPathOutput implements PathOutput {
                                 .collect(Collectors.joining(";"));
 
                         // 使うミノ一覧を抽出
-                        Set<BlockCounter> usesSet = valid.stream()
+                        Set<PieceCounter> usesSet = valid.stream()
                                 .map(PathPair::getBlockCounter)
                                 .collect(Collectors.toSet());
 
@@ -122,20 +122,20 @@ public class PatternCSVPathOutput implements PathOutput {
                                 .map(blockCounter -> {
                                     return blockCounter.getBlockStream()
                                             .sorted()
-                                            .map(Block::getName)
+                                            .map(Piece::getName)
                                             .collect(Collectors.joining());
                                 })
                                 .collect(Collectors.joining(";"));
 
                         // 残せるミノ一覧を抽出
-                        BlockCounter orderBlockCounter = new BlockCounter(blocks.blockStream());
+                        PieceCounter orderPieceCounter = new PieceCounter(blocks.blockStream());
                         String noUses = usesSet.stream()
-                                .map(orderBlockCounter::removeAndReturnNew)
+                                .map(orderPieceCounter::removeAndReturnNew)
                                 .distinct()
                                 .map(blockCounter -> {
                                     return blockCounter.getBlockStream()
                                             .sorted()
-                                            .map(Block::getName)
+                                            .map(Piece::getName)
                                             .collect(Collectors.joining());
                                 })
                                 .collect(Collectors.joining(";"));

@@ -12,7 +12,7 @@ import core.column_field.ColumnField;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
@@ -63,10 +63,10 @@ class BuildUpStreamTest {
         Operations operations = OperationInterpreter.parseToOperations("J,0,1,0;S,L,1,2;O,0,2,1;J,2,2,1");
         List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
 
-        // Create Blocks
+        // Create Pieces
         Set<String> valid = new BuildUpStream(reachable, height)
                 .existsValidBuildPattern(field, operationWithKeys)
-                .map(op -> op.stream().map(OperationWithKey::getBlock).map(Block::name).collect(Collectors.joining()))
+                .map(op -> op.stream().map(OperationWithKey::getPiece).map(Piece::name).collect(Collectors.joining()))
                 .collect(Collectors.toSet());
 
         // Assertion
@@ -94,10 +94,10 @@ class BuildUpStreamTest {
         Operations operations = OperationInterpreter.parseToOperations("J,R,0,1;O,0,1,0;L,L,3,1;I,0,1,0");
         List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
 
-        // Create Blocks
+        // Create Pieces
         Set<String> valid = new BuildUpStream(reachable, height)
                 .existsValidBuildPattern(field, operationWithKeys)
-                .map(op -> op.stream().map(OperationWithKey::getBlock).map(Block::name).collect(Collectors.joining()))
+                .map(op -> op.stream().map(OperationWithKey::getPiece).map(Piece::name).collect(Collectors.joining()))
                 .collect(Collectors.toSet());
 
         // Assertion
@@ -149,7 +149,7 @@ class BuildUpStreamTest {
                         .map(SeparableMino::toMinoOperationWithKey)
                         .collect(Collectors.toCollection(LinkedList::new));
 
-                // Create Blocks
+                // Create Pieces
                 LockedReachable reachable = lockedReachableThreadLocal.get();
                 Set<List<MinoOperationWithKey>> valid = new BuildUpStream(reachable, height)
                         .existsValidBuildPattern(field, operationWithKeys)
@@ -217,7 +217,7 @@ class BuildUpStreamTest {
                         .map(SeparableMino::toMinoOperationWithKey)
                         .collect(Collectors.toCollection(LinkedList::new));
 
-                // Create Blocks
+                // Create Pieces
                 LockedReachable reachable = lockedReachableThreadLocal.get();
                 Set<List<MinoOperationWithKey>> valid = new BuildUpStream(reachable, height)
                         .existsValidBuildPattern(field, operationWithKeys)

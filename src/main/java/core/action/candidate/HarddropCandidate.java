@@ -1,7 +1,7 @@
 package core.action.candidate;
 
 import core.field.Field;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
@@ -9,7 +9,6 @@ import core.srs.Rotate;
 import common.datastore.action.Action;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class HarddropCandidate implements Candidate<Action> {
@@ -25,17 +24,17 @@ public class HarddropCandidate implements Candidate<Action> {
 
     @Override
     // ハードドロップで置くことができ、appearY以下にミノがすべて収まる場所を列挙する
-    public Set<Action> search(Field field, Block block, int appearY) {
+    public Set<Action> search(Field field, Piece piece, int appearY) {
         HashSet<Action> actions = new HashSet<>();
 
-        for (Rotate rotate : minoShifter.getUniqueRotates(block)) {
-            Mino mino = minoFactory.create(block, rotate);
+        for (Rotate rotate : minoShifter.getUniqueRotates(piece)) {
+            Mino mino = minoFactory.create(piece, rotate);
             int y = appearY - mino.getMinY();
             int maxY = appearY - mino.getMaxY();
             for (int x = -mino.getMinX(); x < FIELD_WIDTH - mino.getMaxX(); x++) {
                 int harddropY = field.getYOnHarddrop(mino, x, y);
                 if (harddropY < maxY) {
-                    Action action = minoShifter.createTransformedAction(block, rotate, x, harddropY);
+                    Action action = minoShifter.createTransformedAction(piece, rotate, x, harddropY);
                     actions.add(action);
                 }
             }

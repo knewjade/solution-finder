@@ -3,7 +3,7 @@ package core.mino;
 import java.util.Arrays;
 import java.util.List;
 
-public enum Block {
+public enum Piece {
     T(new int[][]{{0, 0}, {-1, 0}, {1, 0}, {0, 1}}, 0),
     I(new int[][]{{0, 0}, {-1, 0}, {1, 0}, {2, 0}}, 1),
     L(new int[][]{{0, 0}, {-1, 0}, {1, 0}, {1, 1}}, 2),
@@ -12,31 +12,31 @@ public enum Block {
     Z(new int[][]{{0, 0}, {1, 0}, {0, 1}, {-1, 1}}, 5),
     O(new int[][]{{0, 0}, {1, 0}, {0, 1}, {1, 1}}, 6),;
 
-    private static final Block[] BLOCK_MAP = new Block[Block.values().length];
+    private static final Piece[] PIECE_MAP = new Piece[Piece.values().length];
 
     static {
-        for (Block block : Block.values())
-            BLOCK_MAP[block.getNumber()] = block;
+        for (Piece piece : Piece.values())
+            PIECE_MAP[piece.getNumber()] = piece;
     }
 
-    public static Block getBlock(int number) {
-        assert number < BLOCK_MAP.length;
-        return BLOCK_MAP[number];
+    public static Piece getBlock(int number) {
+        assert number < PIECE_MAP.length;
+        return PIECE_MAP[number];
     }
 
-    public static List<Block> valueList() {
+    public static List<Piece> valueList() {
         return Arrays.asList(values());
     }
 
     public static int getSize() {
-        return BLOCK_MAP.length;
+        return PIECE_MAP.length;
     }
 
     private final int[][] positions;
     private final int number;
     private final String name;
 
-    Block(int[][] positions, int number) {
+    Piece(int[][] positions, int number) {
         this.positions = positions;
         this.number = number;
         this.name = name();

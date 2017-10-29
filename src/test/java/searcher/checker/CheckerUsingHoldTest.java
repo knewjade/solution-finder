@@ -4,7 +4,7 @@ import common.ResultHelper;
 import common.buildup.BuildUp;
 import common.datastore.*;
 import common.datastore.action.Action;
-import common.datastore.blocks.LongBlocks;
+import common.datastore.blocks.LongPieces;
 import common.order.OrderLookup;
 import common.order.StackOrder;
 import common.parser.BlockInterpreter;
@@ -14,7 +14,7 @@ import core.action.candidate.LockedCandidate;
 import core.action.reachable.LockedReachable;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
@@ -29,7 +29,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static core.mino.Block.*;
+import static core.mino.Piece.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CheckerUsingHoldTest {
@@ -39,9 +39,9 @@ class CheckerUsingHoldTest {
     private final PerfectValidator validator = new PerfectValidator();
     private final CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
 
-    private List<Block> parseToBlocks(Result result) {
+    private List<Piece> parseToBlocks(Result result) {
         return ResultHelper.createOperationStream(result)
-                .map(Operation::getBlock)
+                .map(Operation::getPiece)
                 .collect(Collectors.toList());
     }
 
@@ -49,19 +49,19 @@ class CheckerUsingHoldTest {
         return new Operations(ResultHelper.createOperationStream(result));
     }
 
-    private void assertResult(Field field, int maxClearLine, LockedReachable reachable, List<Block> blocks) {
+    private void assertResult(Field field, int maxClearLine, LockedReachable reachable, List<Piece> blocks) {
         Result result = checker.getResult();
 
         // Check blocks is same
-        List<Block> resultBlocks = parseToBlocks(result);
-        Block lastHoldBlock = result.getLastHold();
-        HashSet<LongBlocks> pieces = OrderLookup.reverseBlocks(resultBlocks, blocks.size()).stream()
+        List<Piece> resultPieces = parseToBlocks(result);
+        Piece lastHoldPiece = result.getLastHold();
+        HashSet<LongPieces> pieces = OrderLookup.reverseBlocks(resultPieces, blocks.size()).stream()
                 .map(StackOrder::toStream)
-                .map(stream -> stream.map(block -> block != null ? block : lastHoldBlock))
-                .map(LongBlocks::new)
+                .map(stream -> stream.map(block -> block != null ? block : lastHoldPiece))
+                .map(LongPieces::new)
                 .collect(Collectors.toCollection(HashSet::new));
 
-        assertThat(pieces).contains(new LongBlocks(blocks));
+        assertThat(pieces).contains(new LongPieces(blocks));
 
         // Check can build result
         Operations operations = parseToOperations(result);
@@ -72,7 +72,7 @@ class CheckerUsingHoldTest {
 
     @Test
     void testGraceSystem() throws Exception {
-        List<Pair<List<Block>, Boolean>> testCases = new ArrayList<Pair<List<Block>, Boolean>>() {
+        List<Pair<List<Piece>, Boolean>> testCases = new ArrayList<Pair<List<Piece>, Boolean>>() {
             {
                 add(new Pair<>(Arrays.asList(T, S, O, J), false));
                 add(new Pair<>(Arrays.asList(T, O, J, S), false));
@@ -103,24 +103,24 @@ class CheckerUsingHoldTest {
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         // Assertion
-        for (Pair<List<Block>, Boolean> testCase : testCases) {
+        for (Pair<List<Piece>, Boolean> testCase : testCases) {
             // Set test case
-            List<Block> blocks = testCase.getKey();
+            List<Piece> pieces = testCase.getKey();
             Boolean expectedCheckFlag = testCase.getValue();
 
             // Execute
-            boolean isSucceed = checker.check(field, blocks, candidate, maxClearLine, maxDepth);
+            boolean isSucceed = checker.check(field, pieces, candidate, maxClearLine, maxDepth);
             assertThat(isSucceed).isEqualTo(expectedCheckFlag);
 
             // Check result
             if (isSucceed)
-                assertResult(field, maxClearLine, reachable, blocks);
+                assertResult(field, maxClearLine, reachable, pieces);
         }
     }
 
     @Test
     void testCaseFilledLine() throws Exception {
-        List<Pair<List<Block>, Boolean>> testCases = new ArrayList<Pair<List<Block>, Boolean>>() {
+        List<Pair<List<Piece>, Boolean>> testCases = new ArrayList<Pair<List<Piece>, Boolean>>() {
             {
                 add(new Pair<>(Arrays.asList(I, Z, L, I), true));
             }
@@ -143,18 +143,18 @@ class CheckerUsingHoldTest {
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         // Assertion
-        for (Pair<List<Block>, Boolean> testCase : testCases) {
+        for (Pair<List<Piece>, Boolean> testCase : testCases) {
             // Set test case
-            List<Block> blocks = testCase.getKey();
+            List<Piece> pieces = testCase.getKey();
             Boolean expectedCheckFlag = testCase.getValue();
 
             // Execute
-            boolean isSucceed = checker.check(field, blocks, candidate, maxClearLine, maxDepth);
+            boolean isSucceed = checker.check(field, pieces, candidate, maxClearLine, maxDepth);
             assertThat(isSucceed).isEqualTo(expectedCheckFlag);
 
             // Check result
             if (isSucceed)
-                assertResult(field, maxClearLine, reachable, blocks);
+                assertResult(field, maxClearLine, reachable, pieces);
         }
     }
 
@@ -166,11 +166,11 @@ class CheckerUsingHoldTest {
         int maxClearLine = 4;
         int maxDepth = 10;
 
-        // Block
+        // Piece
         URL noPerfect = ClassLoader.getSystemResource("orders/noperfect.txt");
-        List<LongBlocks> testCases = Files.lines(Paths.get(noPerfect.toURI()))
+        List<LongPieces> testCases = Files.lines(Paths.get(noPerfect.toURI()))
                 .map(BlockInterpreter::parse)
-                .map(LongBlocks::new)
+                .map(LongPieces::new)
                 .collect(Collectors.toList());
         Collections.shuffle(testCases);
 
@@ -179,9 +179,9 @@ class CheckerUsingHoldTest {
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         // Assertion
-        for (LongBlocks pieces : testCases.subList(0, 10)) {
+        for (LongPieces pieces : testCases.subList(0, 10)) {
             // Set test case
-            List<Block> blocks = pieces.getBlocks();
+            List<Piece> blocks = pieces.getPieces();
 
             // Execute
             boolean isSucceed = checker.check(field, blocks, candidate, maxClearLine, maxDepth);
@@ -203,9 +203,9 @@ class CheckerUsingHoldTest {
 
         // Set to check No Possible Perfect
         URL noPerfect = ClassLoader.getSystemResource("orders/noperfect.txt");
-        HashSet<LongBlocks> noPerfectSet = Files.lines(Paths.get(noPerfect.toURI()))
+        HashSet<LongPieces> noPerfectSet = Files.lines(Paths.get(noPerfect.toURI()))
                 .map(BlockInterpreter::parse)
-                .map(LongBlocks::new)
+                .map(LongPieces::new)
                 .collect(Collectors.toCollection(HashSet::new));
 
         // Initialize
@@ -217,16 +217,16 @@ class CheckerUsingHoldTest {
         for (int count = 0; count < 100; count++) {
             // Set test case
             int cycle = randoms.nextIntClosed(0, 8);
-            List<Block> blocks = randoms.block11InCycle(cycle);
+            List<Piece> pieces = randoms.block11InCycle(cycle);
 
             // Execute
-            boolean isSucceed = checker.check(field, blocks, candidate, maxClearLine, maxDepth);
-            boolean expectedFlag = !noPerfectSet.contains(new LongBlocks(blocks));
+            boolean isSucceed = checker.check(field, pieces, candidate, maxClearLine, maxDepth);
+            boolean expectedFlag = !noPerfectSet.contains(new LongPieces(pieces));
             assertThat(isSucceed).isEqualTo(expectedFlag);
 
             // Check result
             if (isSucceed)
-                assertResult(field, maxClearLine, reachable, blocks);
+                assertResult(field, maxClearLine, reachable, pieces);
         }
     }
 }

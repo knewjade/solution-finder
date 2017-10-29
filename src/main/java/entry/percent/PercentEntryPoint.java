@@ -3,10 +3,10 @@ package entry.percent;
 import common.SyntaxException;
 import common.datastore.Pair;
 import common.datastore.action.Action;
-import common.datastore.blocks.Blocks;
-import common.datastore.blocks.LongBlocks;
-import common.pattern.BlocksGenerator;
-import common.pattern.IBlocksGenerator;
+import common.datastore.blocks.LongPieces;
+import common.datastore.blocks.Pieces;
+import common.pattern.LoadedPatternGenerator;
+import common.pattern.PatternGenerator;
 import common.tree.AnalyzeTree;
 import concurrent.HarddropCandidateThreadLocal;
 import concurrent.LockedCandidateThreadLocal;
@@ -89,7 +89,7 @@ public class PercentEntryPoint implements EntryPoint {
 
         // Setup patterns
         List<String> patterns = settings.getPatterns();
-        IBlocksGenerator generator = Verify.patterns(patterns, maxDepth);
+        PatternGenerator generator = Verify.patterns(patterns, maxDepth);
 
         // Output patterns
         for (String pattern : patterns)
@@ -129,7 +129,7 @@ public class PercentEntryPoint implements EntryPoint {
 
         // 探索パターンの列挙
         NormalEnumeratePieces normalEnumeratePieces = new NormalEnumeratePieces(generator, maxDepth, settings.isUsingHold());
-        Set<LongBlocks> searchingPieces = normalEnumeratePieces.enumerate();
+        Set<LongPieces> searchingPieces = normalEnumeratePieces.enumerate();
 
         output("Searching pattern size (duplicate) = " + normalEnumeratePieces.getCounter());
         output("Searching pattern size ( no dup. ) = " + searchingPieces.size());
@@ -152,7 +152,7 @@ public class PercentEntryPoint implements EntryPoint {
         }
 
         AnalyzeTree tree = percentCore.getResultTree();
-        List<Pair<Blocks, Boolean>> resultPairs = percentCore.getResultPairs();
+        List<Pair<Pieces, Boolean>> resultPairs = percentCore.getResultPairs();
 
         stopwatch.stop();
         output("  -> Stopwatch stop : " + stopwatch.toMessage(TimeUnit.MILLISECONDS));
@@ -182,7 +182,7 @@ public class PercentEntryPoint implements EntryPoint {
         if (0 < failedMaxCount) {
             output(String.format("Fail pattern (max. %d)", failedMaxCount));
 
-            List<Pair<Blocks, Boolean>> failedPairs = resultPairs.stream()
+            List<Pair<Pieces, Boolean>> failedPairs = resultPairs.stream()
                     .filter(pair -> !pair.getValue())
                     .limit(failedMaxCount)
                     .collect(Collectors.toList());
@@ -191,7 +191,7 @@ public class PercentEntryPoint implements EntryPoint {
         } else if (failedMaxCount < 0) {
             output("Fail pattern (all)");
 
-            List<Pair<Blocks, Boolean>> failedPairs = resultPairs.stream()
+            List<Pair<Pieces, Boolean>> failedPairs = resultPairs.stream()
                     .filter(pair -> !pair.getValue())
                     .collect(Collectors.toList());
 
@@ -207,9 +207,9 @@ public class PercentEntryPoint implements EntryPoint {
         output("done");
     }
 
-    private IBlocksGenerator createBlockGenerator(List<String> patterns) throws FinderInitializeException, FinderExecuteException {
+    private PatternGenerator createBlockGenerator(List<String> patterns) throws FinderInitializeException, FinderExecuteException {
         try {
-            return new BlocksGenerator(patterns);
+            return new LoadedPatternGenerator(patterns);
         } catch (SyntaxException e) {
             output("Pattern syntax error");
             output(e.getMessage());
@@ -227,9 +227,9 @@ public class PercentEntryPoint implements EntryPoint {
         throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
     }
 
-    private void outputFailedPatterns(List<Pair<Blocks, Boolean>> failedPairs) throws FinderExecuteException {
-        for (Pair<Blocks, Boolean> resultPair : failedPairs)
-            output(resultPair.getKey().getBlocks().toString());
+    private void outputFailedPatterns(List<Pair<Pieces, Boolean>> failedPairs) throws FinderExecuteException {
+        for (Pair<Pieces, Boolean> resultPair : failedPairs)
+            output(resultPair.getKey().getPieces().toString());
 
         if (failedPairs.isEmpty())
             output("nothing");

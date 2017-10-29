@@ -5,18 +5,18 @@ import core.srs.Rotate;
 import java.util.EnumMap;
 
 public class MinoFactory {
-    private final EnumMap<Block, EnumMap<Rotate, Mino>> maps = new EnumMap<>(Block.class);
+    private final EnumMap<Piece, EnumMap<Rotate, Mino>> maps = new EnumMap<>(Piece.class);
 
     public MinoFactory() {
-        for (Block block : Block.values()) {
+        for (Piece piece : Piece.values()) {
             EnumMap<Rotate, Mino> minos = new EnumMap<>(Rotate.class);
             for (Rotate rotate : Rotate.values())
-                minos.put(rotate, new Mino(block, rotate));
-            maps.put(block, minos);
+                minos.put(rotate, new Mino(piece, rotate));
+            maps.put(piece, minos);
         }
     }
 
-    public Mino create(Block block, Rotate rotate) {
-        return maps.get(block).get(rotate);
+    public Mino create(Piece piece, Rotate rotate) {
+        return maps.get(piece).get(rotate);
     }
 }

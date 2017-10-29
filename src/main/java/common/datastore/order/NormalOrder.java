@@ -3,19 +3,19 @@ package common.datastore.order;
 import common.OperationHistory;
 import common.comparator.OrderComparator;
 import core.field.Field;
-import core.mino.Block;
+import core.mino.Piece;
 
 public class NormalOrder implements Order {
-    private final Block hold;
+    private final Piece hold;
     private final Field field;
     private final int maxClearLine;
     private final OperationHistory history;
 
-    public NormalOrder(Field field, Block hold, int maxClearLine, int maxDepth) {
+    public NormalOrder(Field field, Piece hold, int maxClearLine, int maxDepth) {
         this(field, hold, maxClearLine, new OperationHistory(maxDepth - 1));
     }
 
-    public NormalOrder(Field field, Block hold, int maxClearLine, OperationHistory history) {
+    public NormalOrder(Field field, Piece hold, int maxClearLine, OperationHistory history) {
         this.field = field;
         this.hold = hold;
         this.maxClearLine = maxClearLine;
@@ -26,7 +26,7 @@ public class NormalOrder implements Order {
         return history;
     }
 
-    public Block getHold() {
+    public Piece getHold() {
         return hold;
     }
 

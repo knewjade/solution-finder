@@ -13,13 +13,13 @@ class MinoTest {
     class I {
         @Test
         void spawn() {
-            Mino mino = new Mino(Block.I, Rotate.Spawn);
+            Mino mino = new Mino(Piece.I, Rotate.Spawn);
             assertThat(mino)
                     .returns(-1, Mino::getMinX)
                     .returns(2, Mino::getMaxX)
                     .returns(0, Mino::getMinY)
                     .returns(0, Mino::getMaxY)
-                    .returns(Block.I, Mino::getBlock)
+                    .returns(Piece.I, Mino::getPiece)
                     .returns(Rotate.Spawn, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{-1, 0})
@@ -35,13 +35,13 @@ class MinoTest {
 
         @Test
         void left() {
-            Mino mino = new Mino(Block.I, Rotate.Left);
+            Mino mino = new Mino(Piece.I, Rotate.Left);
             assertThat(mino)
                     .returns(0, Mino::getMinX)
                     .returns(0, Mino::getMaxX)
                     .returns(-1, Mino::getMinY)
                     .returns(2, Mino::getMaxY)
-                    .returns(Block.I, Mino::getBlock)
+                    .returns(Piece.I, Mino::getPiece)
                     .returns(Rotate.Left, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{0, -1})
@@ -60,13 +60,13 @@ class MinoTest {
 
         @Test
         void reverse() {
-            Mino mino = new Mino(Block.I, Rotate.Reverse);
+            Mino mino = new Mino(Piece.I, Rotate.Reverse);
             assertThat(mino)
                     .returns(-2, Mino::getMinX)
                     .returns(1, Mino::getMaxX)
                     .returns(0, Mino::getMinY)
                     .returns(0, Mino::getMaxY)
-                    .returns(Block.I, Mino::getBlock)
+                    .returns(Piece.I, Mino::getPiece)
                     .returns(Rotate.Reverse, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{-2, 0})
@@ -82,13 +82,13 @@ class MinoTest {
 
         @Test
         void right() {
-            Mino mino = new Mino(Block.I, Rotate.Right);
+            Mino mino = new Mino(Piece.I, Rotate.Right);
             assertThat(mino)
                     .returns(0, Mino::getMinX)
                     .returns(0, Mino::getMaxX)
                     .returns(-2, Mino::getMinY)
                     .returns(1, Mino::getMaxY)
-                    .returns(Block.I, Mino::getBlock)
+                    .returns(Piece.I, Mino::getPiece)
                     .returns(Rotate.Right, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{0, -2})
@@ -110,13 +110,13 @@ class MinoTest {
     class O {
         @Test
         void spawn() {
-            Mino mino = new Mino(Block.O, Rotate.Spawn);
+            Mino mino = new Mino(Piece.O, Rotate.Spawn);
             assertThat(mino)
                     .returns(0, Mino::getMinX)
                     .returns(1, Mino::getMaxX)
                     .returns(0, Mino::getMinY)
                     .returns(1, Mino::getMaxY)
-                    .returns(Block.O, Mino::getBlock)
+                    .returns(Piece.O, Mino::getPiece)
                     .returns(Rotate.Spawn, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{0, 0})
@@ -133,13 +133,13 @@ class MinoTest {
 
         @Test
         void left() {
-            Mino mino = new Mino(Block.O, Rotate.Left);
+            Mino mino = new Mino(Piece.O, Rotate.Left);
             assertThat(mino)
                     .returns(-1, Mino::getMinX)
                     .returns(0, Mino::getMaxX)
                     .returns(0, Mino::getMinY)
                     .returns(1, Mino::getMaxY)
-                    .returns(Block.O, Mino::getBlock)
+                    .returns(Piece.O, Mino::getPiece)
                     .returns(Rotate.Left, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{-1, 0})
@@ -156,13 +156,13 @@ class MinoTest {
 
         @Test
         void reverse() {
-            Mino mino = new Mino(Block.O, Rotate.Reverse);
+            Mino mino = new Mino(Piece.O, Rotate.Reverse);
             assertThat(mino)
                     .returns(-1, Mino::getMinX)
                     .returns(0, Mino::getMaxX)
                     .returns(-1, Mino::getMinY)
                     .returns(0, Mino::getMaxY)
-                    .returns(Block.O, Mino::getBlock)
+                    .returns(Piece.O, Mino::getPiece)
                     .returns(Rotate.Reverse, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{-1, 0})
@@ -179,13 +179,13 @@ class MinoTest {
 
         @Test
         void right() {
-            Mino mino = new Mino(Block.O, Rotate.Right);
+            Mino mino = new Mino(Piece.O, Rotate.Right);
             assertThat(mino)
                     .returns(0, Mino::getMinX)
                     .returns(1, Mino::getMaxX)
                     .returns(-1, Mino::getMinY)
                     .returns(0, Mino::getMaxY)
-                    .returns(Block.O, Mino::getBlock)
+                    .returns(Piece.O, Mino::getPiece)
                     .returns(Rotate.Right, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{0, -1})
@@ -205,13 +205,13 @@ class MinoTest {
     class S {
         @Test
         void spawn() {
-            Mino mino = new Mino(Block.S, Rotate.Spawn);
+            Mino mino = new Mino(Piece.S, Rotate.Spawn);
             assertThat(mino)
                     .returns(-1, Mino::getMinX)
                     .returns(1, Mino::getMaxX)
                     .returns(0, Mino::getMinY)
                     .returns(1, Mino::getMaxY)
-                    .returns(Block.S, Mino::getBlock)
+                    .returns(Piece.S, Mino::getPiece)
                     .returns(Rotate.Spawn, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{0, 0})
@@ -228,13 +228,13 @@ class MinoTest {
 
         @Test
         void left() {
-            Mino mino = new Mino(Block.S, Rotate.Left);
+            Mino mino = new Mino(Piece.S, Rotate.Left);
             assertThat(mino)
                     .returns(-1, Mino::getMinX)
                     .returns(0, Mino::getMaxX)
                     .returns(-1, Mino::getMinY)
                     .returns(1, Mino::getMaxY)
-                    .returns(Block.S, Mino::getBlock)
+                    .returns(Piece.S, Mino::getPiece)
                     .returns(Rotate.Left, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{-1, 0})
@@ -252,13 +252,13 @@ class MinoTest {
 
         @Test
         void reverse() {
-            Mino mino = new Mino(Block.S, Rotate.Reverse);
+            Mino mino = new Mino(Piece.S, Rotate.Reverse);
             assertThat(mino)
                     .returns(-1, Mino::getMinX)
                     .returns(1, Mino::getMaxX)
                     .returns(-1, Mino::getMinY)
                     .returns(0, Mino::getMaxY)
-                    .returns(Block.S, Mino::getBlock)
+                    .returns(Piece.S, Mino::getPiece)
                     .returns(Rotate.Reverse, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{0, 0})
@@ -275,13 +275,13 @@ class MinoTest {
 
         @Test
         void right() {
-            Mino mino = new Mino(Block.S, Rotate.Right);
+            Mino mino = new Mino(Piece.S, Rotate.Right);
             assertThat(mino)
                     .returns(0, Mino::getMinX)
                     .returns(1, Mino::getMaxX)
                     .returns(-1, Mino::getMinY)
                     .returns(1, Mino::getMaxY)
-                    .returns(Block.S, Mino::getBlock)
+                    .returns(Piece.S, Mino::getPiece)
                     .returns(Rotate.Right, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{0, 0})
@@ -302,13 +302,13 @@ class MinoTest {
     class Z {
         @Test
         void spawn() {
-            Mino mino = new Mino(Block.Z, Rotate.Spawn);
+            Mino mino = new Mino(Piece.Z, Rotate.Spawn);
             assertThat(mino)
                     .returns(-1, Mino::getMinX)
                     .returns(1, Mino::getMaxX)
                     .returns(0, Mino::getMinY)
                     .returns(1, Mino::getMaxY)
-                    .returns(Block.Z, Mino::getBlock)
+                    .returns(Piece.Z, Mino::getPiece)
                     .returns(Rotate.Spawn, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{0, 0})
@@ -325,13 +325,13 @@ class MinoTest {
 
         @Test
         void left() {
-            Mino mino = new Mino(Block.Z, Rotate.Left);
+            Mino mino = new Mino(Piece.Z, Rotate.Left);
             assertThat(mino)
                     .returns(-1, Mino::getMinX)
                     .returns(0, Mino::getMaxX)
                     .returns(-1, Mino::getMinY)
                     .returns(1, Mino::getMaxY)
-                    .returns(Block.Z, Mino::getBlock)
+                    .returns(Piece.Z, Mino::getPiece)
                     .returns(Rotate.Left, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{-1, 0})
@@ -349,13 +349,13 @@ class MinoTest {
 
         @Test
         void reverse() {
-            Mino mino = new Mino(Block.Z, Rotate.Reverse);
+            Mino mino = new Mino(Piece.Z, Rotate.Reverse);
             assertThat(mino)
                     .returns(-1, Mino::getMinX)
                     .returns(1, Mino::getMaxX)
                     .returns(-1, Mino::getMinY)
                     .returns(0, Mino::getMaxY)
-                    .returns(Block.Z, Mino::getBlock)
+                    .returns(Piece.Z, Mino::getPiece)
                     .returns(Rotate.Reverse, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{0, 0})
@@ -372,13 +372,13 @@ class MinoTest {
 
         @Test
         void right() {
-            Mino mino = new Mino(Block.Z, Rotate.Right);
+            Mino mino = new Mino(Piece.Z, Rotate.Right);
             assertThat(mino)
                     .returns(0, Mino::getMinX)
                     .returns(1, Mino::getMaxX)
                     .returns(-1, Mino::getMinY)
                     .returns(1, Mino::getMaxY)
-                    .returns(Block.Z, Mino::getBlock)
+                    .returns(Piece.Z, Mino::getPiece)
                     .returns(Rotate.Right, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{0, 0})
@@ -399,13 +399,13 @@ class MinoTest {
     class L {
         @Test
         void spawn() {
-            Mino mino = new Mino(Block.L, Rotate.Spawn);
+            Mino mino = new Mino(Piece.L, Rotate.Spawn);
             assertThat(mino)
                     .returns(-1, Mino::getMinX)
                     .returns(1, Mino::getMaxX)
                     .returns(0, Mino::getMinY)
                     .returns(1, Mino::getMaxY)
-                    .returns(Block.L, Mino::getBlock)
+                    .returns(Piece.L, Mino::getPiece)
                     .returns(Rotate.Spawn, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{0, 0})
@@ -422,13 +422,13 @@ class MinoTest {
 
         @Test
         void left() {
-            Mino mino = new Mino(Block.L, Rotate.Left);
+            Mino mino = new Mino(Piece.L, Rotate.Left);
             assertThat(mino)
                     .returns(-1, Mino::getMinX)
                     .returns(0, Mino::getMaxX)
                     .returns(-1, Mino::getMinY)
                     .returns(1, Mino::getMaxY)
-                    .returns(Block.L, Mino::getBlock)
+                    .returns(Piece.L, Mino::getPiece)
                     .returns(Rotate.Left, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{-1, 1})
@@ -446,13 +446,13 @@ class MinoTest {
 
         @Test
         void reverse() {
-            Mino mino = new Mino(Block.L, Rotate.Reverse);
+            Mino mino = new Mino(Piece.L, Rotate.Reverse);
             assertThat(mino)
                     .returns(-1, Mino::getMinX)
                     .returns(1, Mino::getMaxX)
                     .returns(-1, Mino::getMinY)
                     .returns(0, Mino::getMaxY)
-                    .returns(Block.L, Mino::getBlock)
+                    .returns(Piece.L, Mino::getPiece)
                     .returns(Rotate.Reverse, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{0, 0})
@@ -469,13 +469,13 @@ class MinoTest {
 
         @Test
         void right() {
-            Mino mino = new Mino(Block.L, Rotate.Right);
+            Mino mino = new Mino(Piece.L, Rotate.Right);
             assertThat(mino)
                     .returns(0, Mino::getMinX)
                     .returns(1, Mino::getMaxX)
                     .returns(-1, Mino::getMinY)
                     .returns(1, Mino::getMaxY)
-                    .returns(Block.L, Mino::getBlock)
+                    .returns(Piece.L, Mino::getPiece)
                     .returns(Rotate.Right, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{0, 0})
@@ -496,13 +496,13 @@ class MinoTest {
     class J {
         @Test
         void spawn() {
-            Mino mino = new Mino(Block.J, Rotate.Spawn);
+            Mino mino = new Mino(Piece.J, Rotate.Spawn);
             assertThat(mino)
                     .returns(-1, Mino::getMinX)
                     .returns(1, Mino::getMaxX)
                     .returns(0, Mino::getMinY)
                     .returns(1, Mino::getMaxY)
-                    .returns(Block.J, Mino::getBlock)
+                    .returns(Piece.J, Mino::getPiece)
                     .returns(Rotate.Spawn, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{0, 0})
@@ -519,13 +519,13 @@ class MinoTest {
 
         @Test
         void left() {
-            Mino mino = new Mino(Block.J, Rotate.Left);
+            Mino mino = new Mino(Piece.J, Rotate.Left);
             assertThat(mino)
                     .returns(-1, Mino::getMinX)
                     .returns(0, Mino::getMaxX)
                     .returns(-1, Mino::getMinY)
                     .returns(1, Mino::getMaxY)
-                    .returns(Block.J, Mino::getBlock)
+                    .returns(Piece.J, Mino::getPiece)
                     .returns(Rotate.Left, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{0, 0})
@@ -543,13 +543,13 @@ class MinoTest {
 
         @Test
         void reverse() {
-            Mino mino = new Mino(Block.J, Rotate.Reverse);
+            Mino mino = new Mino(Piece.J, Rotate.Reverse);
             assertThat(mino)
                     .returns(-1, Mino::getMinX)
                     .returns(1, Mino::getMaxX)
                     .returns(-1, Mino::getMinY)
                     .returns(0, Mino::getMaxY)
-                    .returns(Block.J, Mino::getBlock)
+                    .returns(Piece.J, Mino::getPiece)
                     .returns(Rotate.Reverse, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{0, 0})
@@ -566,13 +566,13 @@ class MinoTest {
 
         @Test
         void right() {
-            Mino mino = new Mino(Block.J, Rotate.Right);
+            Mino mino = new Mino(Piece.J, Rotate.Right);
             assertThat(mino)
                     .returns(0, Mino::getMinX)
                     .returns(1, Mino::getMaxX)
                     .returns(-1, Mino::getMinY)
                     .returns(1, Mino::getMaxY)
-                    .returns(Block.J, Mino::getBlock)
+                    .returns(Piece.J, Mino::getPiece)
                     .returns(Rotate.Right, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{0, 0})
@@ -593,13 +593,13 @@ class MinoTest {
     class T {
         @Test
         void spawn() {
-            Mino mino = new Mino(Block.T, Rotate.Spawn);
+            Mino mino = new Mino(Piece.T, Rotate.Spawn);
             assertThat(mino)
                     .returns(-1, Mino::getMinX)
                     .returns(1, Mino::getMaxX)
                     .returns(0, Mino::getMinY)
                     .returns(1, Mino::getMaxY)
-                    .returns(Block.T, Mino::getBlock)
+                    .returns(Piece.T, Mino::getPiece)
                     .returns(Rotate.Spawn, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{0, 0})
@@ -616,13 +616,13 @@ class MinoTest {
 
         @Test
         void left() {
-            Mino mino = new Mino(Block.T, Rotate.Left);
+            Mino mino = new Mino(Piece.T, Rotate.Left);
             assertThat(mino)
                     .returns(-1, Mino::getMinX)
                     .returns(0, Mino::getMaxX)
                     .returns(-1, Mino::getMinY)
                     .returns(1, Mino::getMaxY)
-                    .returns(Block.T, Mino::getBlock)
+                    .returns(Piece.T, Mino::getPiece)
                     .returns(Rotate.Left, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{-1, 0})
@@ -640,13 +640,13 @@ class MinoTest {
 
         @Test
         void reverse() {
-            Mino mino = new Mino(Block.T, Rotate.Reverse);
+            Mino mino = new Mino(Piece.T, Rotate.Reverse);
             assertThat(mino)
                     .returns(-1, Mino::getMinX)
                     .returns(1, Mino::getMaxX)
                     .returns(-1, Mino::getMinY)
                     .returns(0, Mino::getMaxY)
-                    .returns(Block.T, Mino::getBlock)
+                    .returns(Piece.T, Mino::getPiece)
                     .returns(Rotate.Reverse, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{0, 0})
@@ -663,13 +663,13 @@ class MinoTest {
 
         @Test
         void right() {
-            Mino mino = new Mino(Block.T, Rotate.Right);
+            Mino mino = new Mino(Piece.T, Rotate.Right);
             assertThat(mino)
                     .returns(0, Mino::getMinX)
                     .returns(1, Mino::getMaxX)
                     .returns(-1, Mino::getMinY)
                     .returns(1, Mino::getMaxY)
-                    .returns(Block.T, Mino::getBlock)
+                    .returns(Piece.T, Mino::getPiece)
                     .returns(Rotate.Right, Mino::getRotate);
             assertThat(mino.getPositions())
                     .contains(new int[]{0, 0})
@@ -688,49 +688,49 @@ class MinoTest {
 
     @Test
     void testEquals() {
-        Mino mino1 = new Mino(Block.I, Rotate.Spawn);
-        Mino mino2 = new Mino(Block.I, Rotate.Spawn);
+        Mino mino1 = new Mino(Piece.I, Rotate.Spawn);
+        Mino mino2 = new Mino(Piece.I, Rotate.Spawn);
         assertThat(mino1.equals(mino2)).isTrue();
     }
 
     @Test
     void testEqualsDiffRotate() {
-        Mino mino1 = new Mino(Block.I, Rotate.Spawn);
-        Mino mino2 = new Mino(Block.I, Rotate.Reverse);
+        Mino mino1 = new Mino(Piece.I, Rotate.Spawn);
+        Mino mino2 = new Mino(Piece.I, Rotate.Reverse);
         assertThat(mino1.equals(mino2)).isFalse();
     }
 
     @Test
     void testEqualsDiffBlock() {
-        Mino mino1 = new Mino(Block.I, Rotate.Spawn);
-        Mino mino2 = new Mino(Block.T, Rotate.Spawn);
+        Mino mino1 = new Mino(Piece.I, Rotate.Spawn);
+        Mino mino2 = new Mino(Piece.T, Rotate.Spawn);
         assertThat(mino1.equals(mino2)).isFalse();
     }
 
     @Test
     void testHashCode() {
-        Mino mino1 = new Mino(Block.I, Rotate.Spawn);
-        Mino mino2 = new Mino(Block.I, Rotate.Spawn);
+        Mino mino1 = new Mino(Piece.I, Rotate.Spawn);
+        Mino mino2 = new Mino(Piece.I, Rotate.Spawn);
         assertThat(mino1.hashCode()).isEqualTo(mino2.hashCode());
 
-        Mino mino3 = new Mino(Block.I, Rotate.Reverse);
+        Mino mino3 = new Mino(Piece.I, Rotate.Reverse);
         assertThat(mino1.hashCode()).isNotEqualTo(mino3.hashCode());
 
-        Mino mino4 = new Mino(Block.T, Rotate.Spawn);
+        Mino mino4 = new Mino(Piece.T, Rotate.Spawn);
         assertThat(mino1.hashCode()).isNotEqualTo(mino4.hashCode());
     }
 
     @Test
     void testHashCodeDiffBlock() {
-        Mino mino1 = new Mino(Block.I, Rotate.Spawn);
-        Mino mino2 = new Mino(Block.I, Rotate.Reverse);
+        Mino mino1 = new Mino(Piece.I, Rotate.Spawn);
+        Mino mino2 = new Mino(Piece.I, Rotate.Reverse);
         assertThat(mino1.hashCode()).isNotEqualTo(mino2.hashCode());
     }
 
     @Test
     void testHashCodeDiffRotate() {
-        Mino mino1 = new Mino(Block.I, Rotate.Spawn);
-        Mino mino2 = new Mino(Block.T, Rotate.Spawn);
+        Mino mino1 = new Mino(Piece.I, Rotate.Spawn);
+        Mino mino2 = new Mino(Piece.T, Rotate.Spawn);
         assertThat(mino1.hashCode()).isNotEqualTo(mino2.hashCode());
     }
 }

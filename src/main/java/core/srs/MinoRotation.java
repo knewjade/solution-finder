@@ -1,6 +1,6 @@
 package core.srs;
 
-import core.mino.Block;
+import core.mino.Piece;
 import core.field.Field;
 import core.mino.Mino;
 
@@ -9,29 +9,29 @@ import java.util.EnumMap;
 public class MinoRotation {
     private static final int FIELD_WIDTH = 10;
 
-    private final EnumMap<Block, EnumMap<Rotate, Pattern>> rightMap;
-    private final EnumMap<Block, EnumMap<Rotate, Pattern>> leftMap;
+    private final EnumMap<Piece, EnumMap<Rotate, Pattern>> rightMap;
+    private final EnumMap<Piece, EnumMap<Rotate, Pattern>> leftMap;
 
     public MinoRotation() {
         this.rightMap = createRightMap();
         this.leftMap = createLeftMap();
     }
 
-    private EnumMap<Block, EnumMap<Rotate, Pattern>> createRightMap() {
-        EnumMap<Block, EnumMap<Rotate, Pattern>> blockMap = new EnumMap<>(Block.class);
-        for (Block block : Block.values()) {
+    private EnumMap<Piece, EnumMap<Rotate, Pattern>> createRightMap() {
+        EnumMap<Piece, EnumMap<Rotate, Pattern>> blockMap = new EnumMap<>(Piece.class);
+        for (Piece piece : Piece.values()) {
             EnumMap<Rotate, Pattern> rotateMap = new EnumMap<>(Rotate.class);
             for (Rotate rotate : Rotate.values()) {
-                Pattern pattern = getPattern(block, rotate, rotate.getRightRotate());
+                Pattern pattern = getPattern(piece, rotate, rotate.getRightRotate());
                 rotateMap.put(rotate, pattern);
             }
-            blockMap.put(block, rotateMap);
+            blockMap.put(piece, rotateMap);
         }
         return blockMap;
     }
 
-    private Pattern getPattern(Block block, Rotate current, Rotate next) {
-        switch (block) {
+    private Pattern getPattern(Piece piece, Rotate current, Rotate next) {
+        switch (piece) {
             case I:
                 return OffsetDefine.I.getPattern(current, next);
             case O:
@@ -41,21 +41,21 @@ public class MinoRotation {
         }
     }
 
-    private EnumMap<Block, EnumMap<Rotate, Pattern>> createLeftMap() {
-        EnumMap<Block, EnumMap<Rotate, Pattern>> blockMap = new EnumMap<>(Block.class);
-        for (Block block : Block.values()) {
+    private EnumMap<Piece, EnumMap<Rotate, Pattern>> createLeftMap() {
+        EnumMap<Piece, EnumMap<Rotate, Pattern>> blockMap = new EnumMap<>(Piece.class);
+        for (Piece piece : Piece.values()) {
             EnumMap<Rotate, Pattern> rotateMap = new EnumMap<>(Rotate.class);
             for (Rotate rotate : Rotate.values()) {
-                Pattern pattern = getPattern(block, rotate, rotate.getLeftRotate());
+                Pattern pattern = getPattern(piece, rotate, rotate.getLeftRotate());
                 rotateMap.put(rotate, pattern);
             }
-            blockMap.put(block, rotateMap);
+            blockMap.put(piece, rotateMap);
         }
         return blockMap;
     }
 
     public int[] getKicksWithRightRotation(Field field, Mino before, Mino after, int x, int y) {
-        Pattern pattern = rightMap.get(before.getBlock()).get(before.getRotate());
+        Pattern pattern = rightMap.get(before.getPiece()).get(before.getRotate());
         return getKicks(field, x, y, after, pattern);
     }
 
@@ -74,15 +74,15 @@ public class MinoRotation {
     }
 
     public int[] getKicksWithLeftRotation(Field field,Mino before, Mino after, int x, int y) {
-        Pattern pattern = leftMap.get(before.getBlock()).get(before.getRotate());
+        Pattern pattern = leftMap.get(before.getPiece()).get(before.getRotate());
         return getKicks(field, x, y, after, pattern);
     }
 
     public int[][] getRightPatternsFrom(Mino current) {
-        return rightMap.get(current.getBlock()).get(current.getRotate()).getOffsets();
+        return rightMap.get(current.getPiece()).get(current.getRotate()).getOffsets();
     }
 
     public int[][] getLeftPatternsFrom(Mino current) {
-        return leftMap.get(current.getBlock()).get(current.getRotate()).getOffsets();
+        return leftMap.get(current.getPiece()).get(current.getRotate()).getOffsets();
     }
 }

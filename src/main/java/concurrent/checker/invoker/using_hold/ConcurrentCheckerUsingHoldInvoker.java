@@ -2,7 +2,7 @@ package concurrent.checker.invoker.using_hold;
 
 import common.datastore.Pair;
 import common.datastore.action.Action;
-import common.datastore.blocks.Blocks;
+import common.datastore.blocks.Pieces;
 import common.tree.ConcurrentVisitedTree;
 import concurrent.checker.CheckerUsingHoldThreadLocal;
 import concurrent.checker.invoker.ConcurrentCheckerInvoker;
@@ -28,19 +28,19 @@ public class ConcurrentCheckerUsingHoldInvoker implements ConcurrentCheckerInvok
     }
 
     @Override
-    public List<Pair<Blocks, Boolean>> search(Field field, List<Blocks> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
+    public List<Pair<Pieces, Boolean>> search(Field field, List<Pieces> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
         ConcurrentVisitedTree visitedTree = new ConcurrentVisitedTree();
 
         Obj obj = new Obj(field, maxClearLine, maxDepth, visitedTree, candidateThreadLocal, checkerThreadLocal);
         ArrayList<Task> tasks = new ArrayList<>();
-        for (Blocks target : searchingPieces)
+        for (Pieces target : searchingPieces)
             tasks.add(new Task(obj, target));
 
-        List<Future<Pair<Blocks, Boolean>>> futureResults = executorService.invokeAll(tasks);
+        List<Future<Pair<Pieces, Boolean>>> futureResults = executorService.invokeAll(tasks);
 
         // 結果をリストに追加する
-        ArrayList<Pair<Blocks, Boolean>> pairs = new ArrayList<>();
-        for (Future<Pair<Blocks, Boolean>> future : futureResults)
+        ArrayList<Pair<Pieces, Boolean>> pairs = new ArrayList<>();
+        for (Future<Pair<Pieces, Boolean>> future : futureResults)
             pairs.add(future.get());
 
         return pairs;

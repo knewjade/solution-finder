@@ -1,6 +1,6 @@
 package concurrent.checker.invoker.no_hold;
 
-import common.datastore.blocks.Blocks;
+import common.datastore.blocks.Pieces;
 import core.action.candidate.Candidate;
 import concurrent.checker.CheckerNoHoldThreadLocal;
 import concurrent.checker.invoker.ConcurrentCheckerInvoker;
@@ -27,17 +27,17 @@ public class ConcurrentCheckerNoHoldInvoker implements ConcurrentCheckerInvoker 
     }
 
     @Override
-    public List<Pair<Blocks, Boolean>> search(Field field, List<Blocks> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
+    public List<Pair<Pieces, Boolean>> search(Field field, List<Pieces> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
         Obj obj = new Obj(field, maxClearLine, maxDepth, candidateThreadLocal, checkerThreadLocal);
         ArrayList<Task> tasks = new ArrayList<>();
-        for (Blocks target : searchingPieces)
+        for (Pieces target : searchingPieces)
             tasks.add(new Task(obj, target));
 
-        List<Future<Pair<Blocks, Boolean>>> futureResults = executorService.invokeAll(tasks);
+        List<Future<Pair<Pieces, Boolean>>> futureResults = executorService.invokeAll(tasks);
 
         // 結果をリストに追加する
-        ArrayList<Pair<Blocks, Boolean>> pairs = new ArrayList<>();
-        for (Future<Pair<Blocks, Boolean>> future : futureResults)
+        ArrayList<Pair<Pieces, Boolean>> pairs = new ArrayList<>();
+        for (Future<Pair<Pieces, Boolean>> future : futureResults)
             pairs.add(future.get());
 
         return pairs;

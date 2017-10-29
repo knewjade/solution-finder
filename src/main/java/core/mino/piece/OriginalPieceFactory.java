@@ -1,7 +1,7 @@
 package core.mino.piece;
 
 import common.ActionParser;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.srs.Rotate;
 
@@ -22,7 +22,7 @@ public class OriginalPieceFactory {
 
     private HashMap<Integer, OriginalPiece> createPieces(int fieldHeight) {
         HashMap<Integer, OriginalPiece> pieces = new HashMap<>();
-        for (Block block : Block.values()) {
+        for (Piece block : Piece.values()) {
             for (Rotate rotate : Rotate.values()) {
                 Mino mino = new Mino(block, rotate);
                 for (int y = -mino.getMinY(); y < fieldHeight - mino.getMaxY(); y++) {

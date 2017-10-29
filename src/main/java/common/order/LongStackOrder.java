@@ -1,14 +1,14 @@
 package common.order;
 
 import common.comparator.StackOrderComparator;
-import core.mino.Block;
+import core.mino.Piece;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
 // max <= 21であること
-public class LongStackOrder implements StackOrder<Block> {
+public class LongStackOrder implements StackOrder<Piece> {
     private static final long[] SCALE = new long[21];
     private static final int KIND_TYPE = 8;
 
@@ -36,13 +36,13 @@ public class LongStackOrder implements StackOrder<Block> {
     }
 
     @Override
-    public void addLast(Block block) {
-        pieces += toNumber(block, max);
+    public void addLast(Piece piece) {
+        pieces += toNumber(piece, max);
         max += 1;
     }
 
-    private long toNumber(Block block, int index) {
-        int number = block != null ? block.getNumber() : KIND_TYPE - 1;
+    private long toNumber(Piece piece, int index) {
+        int number = piece != null ? piece.getNumber() : KIND_TYPE - 1;
         return getScale(index) * number;
     }
 
@@ -51,57 +51,57 @@ public class LongStackOrder implements StackOrder<Block> {
     }
 
     @Override
-    public void addLastTwo(Block block) {
+    public void addLastTwo(Piece piece) {
         assert 1 <= max;
-        insertBlock(block, max - 1);
+        insertBlock(piece, max - 1);
         max += 1;
     }
 
     @Override
-    public void addLastTwoAndRemoveLast(Block block) {
+    public void addLastTwoAndRemoveLast(Piece piece) {
         assert 1 <= max;
         int index = max - 1;
         long head = pieces % getScale(index);
-        pieces = toNumber(block, index) + head;
+        pieces = toNumber(piece, index) + head;
     }
 
-    private void insertBlock(Block block, int index) {
+    private void insertBlock(Piece piece, int index) {
         long head = pieces % getScale(index);
         long last = pieces - head;
-        pieces = last * KIND_TYPE + toNumber(block, index) + head;
+        pieces = last * KIND_TYPE + toNumber(piece, index) + head;
     }
 
     @Override
-    public void stock(Block block) {
-        insertBlock(block, stockIndex);
+    public void stock(Piece piece) {
+        insertBlock(piece, stockIndex);
         max += 1;
         stockIndex = max;
     }
 
     @Override
-    public List<Block> toList() {
-        ArrayList<Block> blocks = new ArrayList<>();
-        long value = pieces;
+    public List<Piece> toList() {
+        ArrayList<Piece> pieces = new ArrayList<>();
+        long value = this.pieces;
         for (int count = 0; count < max; count++) {
-            Block block = getBlock((int) (value % KIND_TYPE));
-            blocks.add(block);
+            Piece piece = getBlock((int) (value % KIND_TYPE));
+            pieces.add(piece);
             value = value / KIND_TYPE;
         }
         assert value == 0 : max;
-        return blocks;
+        return pieces;
     }
 
-    private Block getBlock(int number) {
-        return number != KIND_TYPE - 1 ? Block.getBlock(number) : null;
+    private Piece getBlock(int number) {
+        return number != KIND_TYPE - 1 ? Piece.getBlock(number) : null;
     }
 
     @Override
-    public Stream<Block> toStream() {
-        Stream.Builder<Block> builder = Stream.builder();
+    public Stream<Piece> toStream() {
+        Stream.Builder<Piece> builder = Stream.builder();
         long value = pieces;
         for (int count = 0; count < max; count++) {
-            Block block = getBlock((int) (value % KIND_TYPE));
-            builder.accept(block);
+            Piece piece = getBlock((int) (value % KIND_TYPE));
+            builder.accept(piece);
             value = value / KIND_TYPE;
         }
         assert value == 0;
@@ -109,12 +109,12 @@ public class LongStackOrder implements StackOrder<Block> {
     }
 
     @Override
-    public StackOrder<Block> freeze() {
+    public StackOrder<Piece> freeze() {
         return new LongStackOrder(pieces, stockIndex, max);
     }
 
     @Override
-    public StackOrder<Block> fix() {
+    public StackOrder<Piece> fix() {
         return new FrozenLongStackOrder(pieces, max);
     }
 

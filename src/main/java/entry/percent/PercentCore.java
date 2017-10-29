@@ -2,8 +2,8 @@ package entry.percent;
 
 import common.datastore.Pair;
 import common.datastore.action.Action;
-import common.datastore.blocks.Blocks;
-import common.datastore.blocks.LongBlocks;
+import common.datastore.blocks.LongPieces;
+import common.datastore.blocks.Pieces;
 import common.tree.AnalyzeTree;
 import concurrent.checker.CheckerNoHoldThreadLocal;
 import concurrent.checker.CheckerUsingHoldThreadLocal;
@@ -23,7 +23,7 @@ class PercentCore {
     private final ConcurrentCheckerInvoker invoker;
 
     private AnalyzeTree resultTree;
-    private List<Pair<Blocks, Boolean>> resultPairs;
+    private List<Pair<Pieces, Boolean>> resultPairs;
 
     PercentCore(ExecutorService executorService, ThreadLocal<Candidate<Action>> candidateThreadLocal, boolean isUsingHold) {
         this.invoker = createConcurrentCheckerInvoker(executorService, candidateThreadLocal, isUsingHold);
@@ -39,15 +39,15 @@ class PercentCore {
         }
     }
 
-    void run(Field field, Set<LongBlocks> searchingPiecesSet, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
-        List<Blocks> searchingPieces = new ArrayList<>(searchingPiecesSet);
+    void run(Field field, Set<LongPieces> searchingPiecesSet, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
+        List<Pieces> searchingPieces = new ArrayList<>(searchingPiecesSet);
 
         this.resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
 
         // 最低限の探索結果を集計する
         this.resultTree = new AnalyzeTree();
-        for (Pair<Blocks, Boolean> resultPair : resultPairs) {
-            Blocks pieces = resultPair.getKey();
+        for (Pair<Pieces, Boolean> resultPair : resultPairs) {
+            Pieces pieces = resultPair.getKey();
             Boolean result = resultPair.getValue();
             resultTree.set(result, pieces);
         }
@@ -57,7 +57,7 @@ class PercentCore {
         return resultTree;
     }
 
-    List<Pair<Blocks, Boolean>> getResultPairs() {
+    List<Pair<Pieces, Boolean>> getResultPairs() {
         return resultPairs;
     }
 }

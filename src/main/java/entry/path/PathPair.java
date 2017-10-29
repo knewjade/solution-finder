@@ -1,9 +1,9 @@
 package entry.path;
 
-import common.datastore.BlockCounter;
+import common.datastore.PieceCounter;
 import common.datastore.OperationWithKey;
-import common.datastore.blocks.LongBlocks;
-import core.mino.Block;
+import common.datastore.blocks.LongPieces;
+import core.mino.Piece;
 import searcher.pack.task.Result;
 
 import java.util.Collections;
@@ -13,17 +13,17 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class PathPair implements HaveSet<LongBlocks> {
+public class PathPair implements HaveSet<LongPieces> {
     static final PathPair EMPTY_PAIR = new PathPair(null, new HashSet<>(), null, "", Collections.emptyList());
 
     private final Result result;
-    private final HashSet<LongBlocks> piecesSolution;
-    private final HashSet<LongBlocks> piecesPattern;
+    private final HashSet<LongPieces> piecesSolution;
+    private final HashSet<LongPieces> piecesPattern;
     private final String fumen;
     private final List<OperationWithKey> sampleOperations;
     private final boolean deletedLine;
 
-    public PathPair(Result result, HashSet<LongBlocks> piecesSolution, HashSet<LongBlocks> piecesPattern, String fumen, List<OperationWithKey> sampleOperations) {
+    public PathPair(Result result, HashSet<LongPieces> piecesSolution, HashSet<LongPieces> piecesPattern, String fumen, List<OperationWithKey> sampleOperations) {
         this.result = result;
         this.piecesSolution = piecesSolution;
         this.piecesPattern = piecesPattern;
@@ -38,7 +38,7 @@ public class PathPair implements HaveSet<LongBlocks> {
     }
 
     @Override
-    public Set<LongBlocks> getSet() {
+    public Set<LongPieces> getSet() {
         return blocksHashSetForPattern();
     }
 
@@ -50,19 +50,19 @@ public class PathPair implements HaveSet<LongBlocks> {
         return fumen;
     }
 
-    public Stream<LongBlocks> blocksStreamForPattern() {
+    public Stream<LongPieces> blocksStreamForPattern() {
         return piecesPattern.stream();
     }
 
-    public Stream<LongBlocks> blocksStreamForSolution() {
+    public Stream<LongPieces> blocksStreamForSolution() {
         return piecesSolution.stream();
     }
 
-    public HashSet<LongBlocks> blocksHashSetForPattern() {
+    public HashSet<LongPieces> blocksHashSetForPattern() {
         return piecesPattern;
     }
 
-    public HashSet<LongBlocks> blocksHashSetForSolution() {
+    public HashSet<LongPieces> blocksHashSetForSolution() {
         return piecesSolution;
     }
 
@@ -72,9 +72,9 @@ public class PathPair implements HaveSet<LongBlocks> {
 
     public String getUsingBlockName() {
         return sampleOperations.stream()
-                .map(OperationWithKey::getBlock)
+                .map(OperationWithKey::getPiece)
                 .sorted()
-                .map(Block::getName)
+                .map(Piece::getName)
                 .collect(Collectors.joining());
     }
 
@@ -82,8 +82,8 @@ public class PathPair implements HaveSet<LongBlocks> {
         return blocksHashSetForPattern().size();
     }
 
-    public BlockCounter getBlockCounter() {
-        return new BlockCounter(sampleOperations.stream().map(OperationWithKey::getBlock));
+    public PieceCounter getBlockCounter() {
+        return new PieceCounter(sampleOperations.stream().map(OperationWithKey::getPiece));
     }
 
     public boolean isDeletedLine() {

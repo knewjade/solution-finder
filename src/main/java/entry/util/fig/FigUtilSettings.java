@@ -4,7 +4,7 @@ import common.tetfu.TetfuPage;
 import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
@@ -127,9 +127,9 @@ public class FigUtilSettings {
                         int fieldHeight = field.getUsingHeight();
                         ColorType colorType = page.getColorType();
                         if (ColorType.isMinoBlock(colorType)) {
-                            Block block = colorConverter.parseToBlock(colorType);
+                            Piece piece = colorConverter.parseToBlock(colorType);
                             Rotate rotate = page.getRotate();
-                            Mino mino = minoFactory.create(block, rotate);
+                            Mino mino = minoFactory.create(piece, rotate);
                             int minoHeight = page.getY() + mino.getMaxY() + 1;
                             return fieldHeight < minoHeight ? minoHeight : fieldHeight;
                         } else {

@@ -10,7 +10,7 @@ import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
@@ -43,10 +43,10 @@ public class EasyTetfu {
         operationWithKeys
                 .forEach(key -> {
                     Field test = FieldFactory.createField(height);
-                    Mino mino = minoFactory.create(key.getBlock(), key.getRotate());
+                    Mino mino = minoFactory.create(key.getPiece(), key.getRotate());
                     test.put(mino, key.getX(), key.getY());
                     test.insertWhiteLineWithKey(key.getNeedDeletedKey());
-                    blockField.merge(test, mino.getBlock());
+                    blockField.merge(test, mino.getPiece());
                 });
         return blockField;
     }
@@ -54,9 +54,9 @@ public class EasyTetfu {
     private TetfuElement parseBlockFieldToTetfuElement(Field initField, ColorConverter colorConverter, BlockField blockField, String comment) {
         ColoredField coloredField = ColoredFieldFactory.createGrayField(initField);
 
-        for (Block block : Block.values()) {
-            Field target = blockField.get(block);
-            ColorType colorType = colorConverter.parseToColorType(block);
+        for (Piece piece : Piece.values()) {
+            Field target = blockField.get(piece);
+            ColorType colorType = colorConverter.parseToColorType(piece);
             fillInField(coloredField, colorType, target);
         }
 

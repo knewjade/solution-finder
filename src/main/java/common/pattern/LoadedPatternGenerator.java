@@ -1,23 +1,23 @@
 package common.pattern;
 
 import common.SyntaxException;
-import common.datastore.BlockCounter;
-import common.datastore.blocks.Blocks;
+import common.datastore.PieceCounter;
+import common.datastore.blocks.Pieces;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class BlocksGenerator implements IBlocksGenerator {
-    private final List<BlockInterpreter> interpreters;
+public class LoadedPatternGenerator implements PatternGenerator {
+    private final List<PatternInterpreter> interpreters;
 
-    public BlocksGenerator(String pattern) throws SyntaxException {
+    public LoadedPatternGenerator(String pattern) throws SyntaxException {
         this(Collections.singletonList(pattern));
     }
 
-    public BlocksGenerator(List<String> patterns) throws SyntaxException {
-        ArrayList<BlockInterpreter> interpreters = new ArrayList<>();
+    public LoadedPatternGenerator(List<String> patterns) throws SyntaxException {
+        ArrayList<PatternInterpreter> interpreters = new ArrayList<>();
         int depth = -1;
         for (int index = 0; index < patterns.size(); index++) {
             String pattern = patterns.get(index);
@@ -28,7 +28,7 @@ public class BlocksGenerator implements IBlocksGenerator {
             if (trim.isEmpty() || trim.startsWith("#"))
                 continue;
 
-            BlockInterpreter interpreter = parseInterpreter(index, trim);
+            PatternInterpreter interpreter = parseInterpreter(index, trim);
 
             if (depth == -1) {
                 depth = getDepth(interpreter);
@@ -43,9 +43,9 @@ public class BlocksGenerator implements IBlocksGenerator {
         this.interpreters = interpreters;
     }
 
-    private BlockInterpreter parseInterpreter(int index, String trim) throws SyntaxException {
+    private PatternInterpreter parseInterpreter(int index, String trim) throws SyntaxException {
         try {
-            return new BlockInterpreter(trim);
+            return new PatternInterpreter(trim);
         } catch (SyntaxException e) {
             throw new SyntaxException(e, index + 1);
         }
@@ -58,7 +58,7 @@ public class BlocksGenerator implements IBlocksGenerator {
         return getDepth(interpreters.get(0));
     }
 
-    private int getDepth(BlockInterpreter interpreter) {
+    private int getDepth(PatternInterpreter interpreter) {
         List<Element> elements = interpreter.getElements();
         return elements.stream()
                 .mapToInt(Element::getPopCount)
@@ -66,9 +66,9 @@ public class BlocksGenerator implements IBlocksGenerator {
     }
 
     @Override
-    public Stream<Blocks> blocksStream() {
-        Stream<Blocks> stream = Stream.empty();
-        for (BlockInterpreter interpreter : interpreters) {
+    public Stream<Pieces> blocksStream() {
+        Stream<Pieces> stream = Stream.empty();
+        for (PatternInterpreter interpreter : interpreters) {
             List<Element> elements = interpreter.getElements();
             stream = Stream.concat(stream, new PiecesStreamBuilder(elements).blocksStream());
         }
@@ -76,9 +76,9 @@ public class BlocksGenerator implements IBlocksGenerator {
     }
 
     @Override
-    public Stream<BlockCounter> blockCountersStream() {
-        Stream<BlockCounter> stream = Stream.empty();
-        for (BlockInterpreter interpreter : interpreters) {
+    public Stream<PieceCounter> blockCountersStream() {
+        Stream<PieceCounter> stream = Stream.empty();
+        for (PatternInterpreter interpreter : interpreters) {
             List<Element> elements = interpreter.getElements();
             stream = Stream.concat(stream, new PiecesStreamBuilder(elements).blockCountersStream());
         }

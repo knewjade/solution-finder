@@ -3,7 +3,7 @@ package common.parser;
 import common.datastore.FullOperationWithKey;
 import common.iterable.CombinationIterable;
 import core.field.KeyOperators;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
@@ -33,10 +33,10 @@ public abstract class AbstractAllOperationFactory<T> {
         HashSet<T> pieces = new HashSet<>();
         HashSet<Mino> createdCheckSet = new HashSet<>();
 
-        for (Block block : Block.values()) {
+        for (Piece piece : Piece.values()) {
             for (Rotate originRotate : Rotate.values()) {
-                Rotate rotate = minoShifter.createTransformedRotate(block, originRotate);
-                Mino mino = minoFactory.create(block, rotate);
+                Rotate rotate = minoShifter.createTransformedRotate(piece, originRotate);
+                Mino mino = minoFactory.create(piece, rotate);
 
                 // 追加済みかチェック
                 if (createdCheckSet.contains(mino))

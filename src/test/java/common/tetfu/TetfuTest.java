@@ -12,7 +12,7 @@ import common.tetfu.field.ColoredFieldFactory;
 import concurrent.LockedReachableThreadLocal;
 import core.column_field.ColumnField;
 import core.field.Field;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
@@ -40,8 +40,8 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static core.mino.Block.J;
-import static core.mino.Block.L;
+import static core.mino.Piece.J;
+import static core.mino.Piece.L;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class TetfuTest {
@@ -173,7 +173,7 @@ class TetfuTest {
     void encode4() throws Exception {
         MinoFactory factory = new MinoFactory();
         ArrayColoredField field = new ArrayColoredField(Tetfu.TETFU_MAX_HEIGHT);
-        field.putMino(factory.create(Block.I, Rotate.Spawn), 1, 0);
+        field.putMino(factory.create(Piece.I, Rotate.Spawn), 1, 0);
 
         List<TetfuElement> elements = Collections.singletonList(
                 new TetfuElement(field, ColorType.I, Rotate.Spawn, 5, 0, "")
@@ -189,7 +189,7 @@ class TetfuTest {
     void encode5() throws Exception {
         MinoFactory factory = new MinoFactory();
         ArrayColoredField field = new ArrayColoredField(Tetfu.TETFU_MAX_HEIGHT);
-        field.putMino(factory.create(Block.I, Rotate.Spawn), 1, 0);
+        field.putMino(factory.create(Piece.I, Rotate.Spawn), 1, 0);
 
         List<TetfuElement> elements = Collections.singletonList(
                 new TetfuElement(field, ColorType.I, Rotate.Reverse, 6, 0)
@@ -233,7 +233,7 @@ class TetfuTest {
 
     @Test
     void encodeQuiz1() throws Exception {
-        List<Block> orders = Collections.singletonList(L);
+        List<Piece> orders = Collections.singletonList(L);
         String quiz = Tetfu.encodeForQuiz(orders);
 
         List<TetfuElement> elements = Collections.singletonList(
@@ -249,7 +249,7 @@ class TetfuTest {
 
     @Test
     void encodeQuiz2() throws Exception {
-        List<Block> orders = Arrays.asList(J, L);
+        List<Piece> orders = Arrays.asList(J, L);
         String quiz = Tetfu.encodeForQuiz(orders, L);
 
         List<TetfuElement> elements = Arrays.asList(
@@ -489,7 +489,7 @@ class TetfuTest {
                     Operations operations = OperationTransform.parseToOperations(field, operationWithKeys, height);
                     List<TetfuElement> elements = operations.getOperations().stream()
                             .map(operation -> {
-                                ColorType colorType = colorConverter.parseToColorType(operation.getBlock());
+                                ColorType colorType = colorConverter.parseToColorType(operation.getPiece());
                                 Rotate rotate = operation.getRotate();
                                 int x = operation.getX();
                                 int y = operation.getY();

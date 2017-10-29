@@ -1,7 +1,7 @@
 package lib;
 
 import core.field.Field;
-import core.mino.Block;
+import core.mino.Piece;
 import core.srs.Rotate;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -77,9 +77,9 @@ class RandomsTest {
     void block() throws Exception {
         Randoms randoms = new Randoms();
         for (int count = 0; count < 10000; count++) {
-            Block block = randoms.block();
-            assertThat(block)
-                    .isIn(Block.valueList());
+            Piece piece = randoms.block();
+            assertThat(piece)
+                    .isIn(Piece.valueList());
         }
     }
 
@@ -88,8 +88,8 @@ class RandomsTest {
         Randoms randoms = new Randoms();
         for (int count = 0; count < 10000; count++) {
             int size = randoms.nextInt(3, 19);
-            List<Block> blocks = randoms.blocks(size);
-            assertThat(blocks)
+            List<Piece> pieces = randoms.blocks(size);
+            assertThat(pieces)
                     .hasSize(size)
                     .doesNotContainNull();
         }
@@ -151,8 +151,8 @@ class RandomsTest {
     }
 
     @Nested
-    class Blocks11 {
-        boolean isUnique(List<Block> list) {
+    class Pieces11 {
+        boolean isUnique(List<Piece> list) {
             return new HashSet<>(list).size() == list.size();
         }
 
@@ -160,10 +160,10 @@ class RandomsTest {
         void first() {
             Randoms randoms = new Randoms();
             for (int count = 0; count < 100000; count++) {
-                List<Block> blocks = randoms.block11InCycle(0);
-                assertThat(blocks).hasSize(11);
-                assertThat(isUnique(blocks.subList(0, 7))).isTrue();
-                assertThat(isUnique(blocks.subList(7, 11))).isTrue();
+                List<Piece> pieces = randoms.block11InCycle(0);
+                assertThat(pieces).hasSize(11);
+                assertThat(isUnique(pieces.subList(0, 7))).isTrue();
+                assertThat(isUnique(pieces.subList(7, 11))).isTrue();
             }
         }
 
@@ -171,11 +171,11 @@ class RandomsTest {
         void second() {
             Randoms randoms = new Randoms();
             for (int count = 0; count < 100000; count++) {
-                List<Block> blocks = randoms.block11InCycle(1);
-                assertThat(blocks).hasSize(11);
-                assertThat(isUnique(blocks.subList(0, 1))).isTrue();
-                assertThat(isUnique(blocks.subList(1, 4))).isTrue();
-                assertThat(isUnique(blocks.subList(4, 11))).isTrue();
+                List<Piece> pieces = randoms.block11InCycle(1);
+                assertThat(pieces).hasSize(11);
+                assertThat(isUnique(pieces.subList(0, 1))).isTrue();
+                assertThat(isUnique(pieces.subList(1, 4))).isTrue();
+                assertThat(isUnique(pieces.subList(4, 11))).isTrue();
             }
         }
 
@@ -183,11 +183,11 @@ class RandomsTest {
         void third() {
             Randoms randoms = new Randoms();
             for (int count = 0; count < 100000; count++) {
-                List<Block> blocks = randoms.block11InCycle(2);
-                assertThat(blocks).hasSize(11);
-                assertThat(isUnique(blocks.subList(0, 1))).isTrue();
-                assertThat(isUnique(blocks.subList(1, 8))).isTrue();
-                assertThat(isUnique(blocks.subList(8, 11))).isTrue();
+                List<Piece> pieces = randoms.block11InCycle(2);
+                assertThat(pieces).hasSize(11);
+                assertThat(isUnique(pieces.subList(0, 1))).isTrue();
+                assertThat(isUnique(pieces.subList(1, 8))).isTrue();
+                assertThat(isUnique(pieces.subList(8, 11))).isTrue();
             }
         }
 
@@ -195,11 +195,11 @@ class RandomsTest {
         void forth() {
             Randoms randoms = new Randoms();
             for (int count = 0; count < 100000; count++) {
-                List<Block> blocks = randoms.block11InCycle(3);
-                assertThat(blocks).hasSize(11);
-                assertThat(isUnique(blocks.subList(0, 1))).isTrue();
-                assertThat(isUnique(blocks.subList(1, 5))).isTrue();
-                assertThat(isUnique(blocks.subList(5, 11))).isTrue();
+                List<Piece> pieces = randoms.block11InCycle(3);
+                assertThat(pieces).hasSize(11);
+                assertThat(isUnique(pieces.subList(0, 1))).isTrue();
+                assertThat(isUnique(pieces.subList(1, 5))).isTrue();
+                assertThat(isUnique(pieces.subList(5, 11))).isTrue();
             }
         }
 
@@ -207,12 +207,12 @@ class RandomsTest {
         void fifth() {
             Randoms randoms = new Randoms();
             for (int count = 0; count < 100000; count++) {
-                List<Block> blocks = randoms.block11InCycle(4);
-                assertThat(blocks).hasSize(11);
-                assertThat(isUnique(blocks.subList(0, 1))).isTrue();
-                assertThat(isUnique(blocks.subList(1, 2))).isTrue();
-                assertThat(isUnique(blocks.subList(2, 9))).isTrue();
-                assertThat(isUnique(blocks.subList(9, 11))).isTrue();
+                List<Piece> pieces = randoms.block11InCycle(4);
+                assertThat(pieces).hasSize(11);
+                assertThat(isUnique(pieces.subList(0, 1))).isTrue();
+                assertThat(isUnique(pieces.subList(1, 2))).isTrue();
+                assertThat(isUnique(pieces.subList(2, 9))).isTrue();
+                assertThat(isUnique(pieces.subList(9, 11))).isTrue();
             }
         }
 
@@ -220,11 +220,11 @@ class RandomsTest {
         void sixth() {
             Randoms randoms = new Randoms();
             for (int count = 0; count < 100000; count++) {
-                List<Block> blocks = randoms.block11InCycle(5);
-                assertThat(blocks).hasSize(11);
-                assertThat(isUnique(blocks.subList(0, 1))).isTrue();
-                assertThat(isUnique(blocks.subList(1, 6))).isTrue();
-                assertThat(isUnique(blocks.subList(6, 11))).isTrue();
+                List<Piece> pieces = randoms.block11InCycle(5);
+                assertThat(pieces).hasSize(11);
+                assertThat(isUnique(pieces.subList(0, 1))).isTrue();
+                assertThat(isUnique(pieces.subList(1, 6))).isTrue();
+                assertThat(isUnique(pieces.subList(6, 11))).isTrue();
             }
         }
 
@@ -232,12 +232,12 @@ class RandomsTest {
         void seventh() {
             Randoms randoms = new Randoms();
             for (int count = 0; count < 100000; count++) {
-                List<Block> blocks = randoms.block11InCycle(6);
-                assertThat(blocks).hasSize(11);
-                assertThat(isUnique(blocks.subList(0, 1))).isTrue();
-                assertThat(isUnique(blocks.subList(1, 3))).isTrue();
-                assertThat(isUnique(blocks.subList(3, 10))).isTrue();
-                assertThat(isUnique(blocks.subList(10, 11))).isTrue();
+                List<Piece> pieces = randoms.block11InCycle(6);
+                assertThat(pieces).hasSize(11);
+                assertThat(isUnique(pieces.subList(0, 1))).isTrue();
+                assertThat(isUnique(pieces.subList(1, 3))).isTrue();
+                assertThat(isUnique(pieces.subList(3, 10))).isTrue();
+                assertThat(isUnique(pieces.subList(10, 11))).isTrue();
             }
         }
 
@@ -245,18 +245,18 @@ class RandomsTest {
         void eighth() {
             Randoms randoms = new Randoms();
             for (int count = 0; count < 100000; count++) {
-                List<Block> blocks = randoms.block11InCycle(7);
-                assertThat(blocks).hasSize(11);
-                assertThat(isUnique(blocks.subList(0, 1))).isTrue();
-                assertThat(isUnique(blocks.subList(1, 7))).isTrue();
-                assertThat(isUnique(blocks.subList(7, 11))).isTrue();
+                List<Piece> pieces = randoms.block11InCycle(7);
+                assertThat(pieces).hasSize(11);
+                assertThat(isUnique(pieces.subList(0, 1))).isTrue();
+                assertThat(isUnique(pieces.subList(1, 7))).isTrue();
+                assertThat(isUnique(pieces.subList(7, 11))).isTrue();
             }
         }
     }
 
     @Nested
-    class Blocks10 {
-        boolean isUnique(List<Block> list) {
+    class Pieces10 {
+        boolean isUnique(List<Piece> list) {
             return new HashSet<>(list).size() == list.size();
         }
 
@@ -264,10 +264,10 @@ class RandomsTest {
         void first() {
             Randoms randoms = new Randoms();
             for (int count = 0; count < 100000; count++) {
-                List<Block> blocks = randoms.block10InCycle(0);
-                assertThat(blocks).hasSize(10);
-                assertThat(isUnique(blocks.subList(0, 7))).isTrue();
-                assertThat(isUnique(blocks.subList(7, 10))).isTrue();
+                List<Piece> pieces = randoms.block10InCycle(0);
+                assertThat(pieces).hasSize(10);
+                assertThat(isUnique(pieces.subList(0, 7))).isTrue();
+                assertThat(isUnique(pieces.subList(7, 10))).isTrue();
             }
         }
 
@@ -275,10 +275,10 @@ class RandomsTest {
         void second() {
             Randoms randoms = new Randoms();
             for (int count = 0; count < 100000; count++) {
-                List<Block> blocks = randoms.block10InCycle(1);
-                assertThat(blocks).hasSize(10);
-                assertThat(isUnique(blocks.subList(0, 4))).isTrue();
-                assertThat(isUnique(blocks.subList(4, 10))).isTrue();
+                List<Piece> pieces = randoms.block10InCycle(1);
+                assertThat(pieces).hasSize(10);
+                assertThat(isUnique(pieces.subList(0, 4))).isTrue();
+                assertThat(isUnique(pieces.subList(4, 10))).isTrue();
             }
         }
 
@@ -286,11 +286,11 @@ class RandomsTest {
         void third() {
             Randoms randoms = new Randoms();
             for (int count = 0; count < 100000; count++) {
-                List<Block> blocks = randoms.block10InCycle(2);
-                assertThat(blocks).hasSize(10);
-                assertThat(isUnique(blocks.subList(0, 1))).isTrue();
-                assertThat(isUnique(blocks.subList(1, 8))).isTrue();
-                assertThat(isUnique(blocks.subList(8, 10))).isTrue();
+                List<Piece> pieces = randoms.block10InCycle(2);
+                assertThat(pieces).hasSize(10);
+                assertThat(isUnique(pieces.subList(0, 1))).isTrue();
+                assertThat(isUnique(pieces.subList(1, 8))).isTrue();
+                assertThat(isUnique(pieces.subList(8, 10))).isTrue();
             }
         }
 
@@ -298,10 +298,10 @@ class RandomsTest {
         void forth() {
             Randoms randoms = new Randoms();
             for (int count = 0; count < 100000; count++) {
-                List<Block> blocks = randoms.block10InCycle(3);
-                assertThat(blocks).hasSize(10);
-                assertThat(isUnique(blocks.subList(0, 5))).isTrue();
-                assertThat(isUnique(blocks.subList(5, 10))).isTrue();
+                List<Piece> pieces = randoms.block10InCycle(3);
+                assertThat(pieces).hasSize(10);
+                assertThat(isUnique(pieces.subList(0, 5))).isTrue();
+                assertThat(isUnique(pieces.subList(5, 10))).isTrue();
             }
         }
 
@@ -309,11 +309,11 @@ class RandomsTest {
         void fifth() {
             Randoms randoms = new Randoms();
             for (int count = 0; count < 100000; count++) {
-                List<Block> blocks = randoms.block10InCycle(4);
-                assertThat(blocks).hasSize(10);
-                assertThat(isUnique(blocks.subList(0, 2))).isTrue();
-                assertThat(isUnique(blocks.subList(2, 9))).isTrue();
-                assertThat(isUnique(blocks.subList(9, 10))).isTrue();
+                List<Piece> pieces = randoms.block10InCycle(4);
+                assertThat(pieces).hasSize(10);
+                assertThat(isUnique(pieces.subList(0, 2))).isTrue();
+                assertThat(isUnique(pieces.subList(2, 9))).isTrue();
+                assertThat(isUnique(pieces.subList(9, 10))).isTrue();
             }
         }
 
@@ -321,10 +321,10 @@ class RandomsTest {
         void sixth() {
             Randoms randoms = new Randoms();
             for (int count = 0; count < 100000; count++) {
-                List<Block> blocks = randoms.block10InCycle(5);
-                assertThat(blocks).hasSize(10);
-                assertThat(isUnique(blocks.subList(0, 6))).isTrue();
-                assertThat(isUnique(blocks.subList(6, 10))).isTrue();
+                List<Piece> pieces = randoms.block10InCycle(5);
+                assertThat(pieces).hasSize(10);
+                assertThat(isUnique(pieces.subList(0, 6))).isTrue();
+                assertThat(isUnique(pieces.subList(6, 10))).isTrue();
             }
         }
 
@@ -332,10 +332,10 @@ class RandomsTest {
         void seventh() {
             Randoms randoms = new Randoms();
             for (int count = 0; count < 100000; count++) {
-                List<Block> blocks = randoms.block10InCycle(6);
-                assertThat(blocks).hasSize(10);
-                assertThat(isUnique(blocks.subList(0, 3))).isTrue();
-                assertThat(isUnique(blocks.subList(3, 10))).isTrue();
+                List<Piece> pieces = randoms.block10InCycle(6);
+                assertThat(pieces).hasSize(10);
+                assertThat(isUnique(pieces.subList(0, 3))).isTrue();
+                assertThat(isUnique(pieces.subList(3, 10))).isTrue();
             }
         }
 
@@ -343,10 +343,10 @@ class RandomsTest {
         void eighth() {
             Randoms randoms = new Randoms();
             for (int count = 0; count < 100000; count++) {
-                List<Block> blocks = randoms.block10InCycle(7);
-                assertThat(blocks).hasSize(10);
-                assertThat(isUnique(blocks.subList(0, 7))).isTrue();
-                assertThat(isUnique(blocks.subList(7, 10))).isTrue();
+                List<Piece> pieces = randoms.block10InCycle(7);
+                assertThat(pieces).hasSize(10);
+                assertThat(isUnique(pieces.subList(0, 7))).isTrue();
+                assertThat(isUnique(pieces.subList(7, 10))).isTrue();
             }
         }
     }

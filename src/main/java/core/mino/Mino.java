@@ -46,7 +46,7 @@ public class Mino implements Comparable<Mino> {
         return rotated;
     }
 
-    private final Block block;
+    private final Piece piece;
     private final Rotate rotate;
 
     private final MinMax xMinMax;
@@ -56,53 +56,53 @@ public class Mino implements Comparable<Mino> {
 
     private final long mask;
 
-    public Mino(Block block, Rotate rotate) {
-        this.block = block;
+    public Mino(Piece piece, Rotate rotate) {
+        this.piece = piece;
         this.rotate = rotate;
-        this.xMinMax = calcXMinMax(block, rotate);
-        this.yMinMax = calcYMinMax(block, rotate);
-        this.positions = calcPositions(block, rotate);
+        this.xMinMax = calcXMinMax(piece, rotate);
+        this.yMinMax = calcYMinMax(piece, rotate);
+        this.positions = calcPositions(piece, rotate);
         this.mask = calcMask();
     }
 
-    private MinMax calcXMinMax(Block block, Rotate rotate) {
+    private MinMax calcXMinMax(Piece piece, Rotate rotate) {
         switch (rotate) {
             case Spawn:
-                return new MinMax(block.minX(), block.maxX());
+                return new MinMax(piece.minX(), piece.maxX());
             case Right:
-                return new MinMax(block.minY(), block.maxY());
+                return new MinMax(piece.minY(), piece.maxY());
             case Reverse:
-                return new MinMax(-block.maxX(), -block.minX());
+                return new MinMax(-piece.maxX(), -piece.minX());
             case Left:
-                return new MinMax(-block.maxY(), -block.minY());
+                return new MinMax(-piece.maxY(), -piece.minY());
         }
         throw new IllegalStateException("No unreachable");
     }
 
-    private MinMax calcYMinMax(Block block, Rotate rotate) {
+    private MinMax calcYMinMax(Piece piece, Rotate rotate) {
         switch (rotate) {
             case Spawn:
-                return new MinMax(block.minY(), block.maxY());
+                return new MinMax(piece.minY(), piece.maxY());
             case Right:
-                return new MinMax(-block.maxX(), -block.minX());
+                return new MinMax(-piece.maxX(), -piece.minX());
             case Reverse:
-                return new MinMax(-block.maxY(), -block.minY());
+                return new MinMax(-piece.maxY(), -piece.minY());
             case Left:
-                return new MinMax(block.minX(), block.maxX());
+                return new MinMax(piece.minX(), piece.maxX());
         }
         throw new IllegalStateException("No unreachable");
     }
 
-    private int[][] calcPositions(Block block, Rotate rotate) {
+    private int[][] calcPositions(Piece piece, Rotate rotate) {
         switch (rotate) {
             case Spawn:
-                return block.getPositions();
+                return piece.getPositions();
             case Right:
-                return rotateRight(block.getPositions());
+                return rotateRight(piece.getPositions());
             case Reverse:
-                return rotateReverse(block.getPositions());
+                return rotateReverse(piece.getPositions());
             case Left:
-                return rotateLeft(block.getPositions());
+                return rotateLeft(piece.getPositions());
         }
         throw new IllegalStateException("No unreachable");
     }
@@ -118,8 +118,8 @@ public class Mino implements Comparable<Mino> {
         return mask;
     }
 
-    public Block getBlock() {
-        return block;
+    public Piece getPiece() {
+        return piece;
     }
 
     public Rotate getRotate() {
@@ -156,7 +156,7 @@ public class Mino implements Comparable<Mino> {
     @Override
     public String toString() {
         return "Mino{" +
-                "block=" + block +
+                "piece=" + piece +
                 ", rotate=" + rotate +
                 '}';
     }
@@ -166,17 +166,17 @@ public class Mino implements Comparable<Mino> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Mino mino = (Mino) o;
-        return block == mino.block && rotate == mino.rotate;
+        return piece == mino.piece && rotate == mino.rotate;
     }
 
     @Override
     public int hashCode() {
-        return block.hashCode() ^ rotate.hashCode();
+        return piece.hashCode() ^ rotate.hashCode();
     }
 
     @Override
     public int compareTo(Mino o) {
-        int compareBlock = block.compareTo(o.block);
+        int compareBlock = piece.compareTo(o.piece);
         if (compareBlock != 0)
             return compareBlock;
         return rotate.compareTo(o.rotate);

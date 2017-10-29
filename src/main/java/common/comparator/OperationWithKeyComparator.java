@@ -1,13 +1,12 @@
 package common.comparator;
 
 import common.datastore.OperationWithKey;
-import core.mino.Mino;
 
 import java.util.Comparator;
 
 public class OperationWithKeyComparator<T extends OperationWithKey> implements Comparator<T> {
     public static int compareOperationWithKey(OperationWithKey o1, OperationWithKey o2) {
-        int compareBlock = o1.getBlock().compareTo(o2.getBlock());
+        int compareBlock = o1.getPiece().compareTo(o2.getPiece());
         if (compareBlock != 0)
             return compareBlock;
 

@@ -3,12 +3,12 @@ package entry.setup;
 import common.buildup.BuildUpStream;
 import common.datastore.*;
 import common.parser.OperationTransform;
-import common.pattern.IBlocksGenerator;
+import common.pattern.PatternGenerator;
 import common.tetfu.common.ColorConverter;
 import core.FinderConstant;
 import core.column_field.ColumnField;
 import core.field.Field;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
@@ -141,7 +141,7 @@ public class SetupEntryPoint implements EntryPoint {
 
         // Setup patterns
         List<String> patterns = settings.getPatterns();
-        IBlocksGenerator generator = Verify.patterns(patterns, minDepth);
+        PatternGenerator generator = Verify.patterns(patterns, minDepth);
 
         // Output patterns
         for (String pattern : patterns)
@@ -225,7 +225,7 @@ public class SetupEntryPoint implements EntryPoint {
                     Operations operations = OperationTransform.parseToOperations(allField, operationWithKeys, sizedBit.getHeight());
                     List<? extends Operation> operationList = operations.getOperations();
                     for (Operation operation : operationList) {
-                        Mino mino = minoFactory.create(operation.getBlock(), operation.getRotate());
+                        Mino mino = minoFactory.create(operation.getPiece(), operation.getRotate());
                         int x = operation.getX();
                         int y = operation.getY();
                         allField.put(mino, x, y);
@@ -234,7 +234,7 @@ public class SetupEntryPoint implements EntryPoint {
                     // 譜面の作成
                     String encode = fumenParser.parse(operationWithKeys, initField, maxHeight);
 
-                    String name = operationWithKeys.stream().map(OperationWithKey::getBlock).map(Block::getName).collect(Collectors.joining());
+                    String name = operationWithKeys.stream().map(OperationWithKey::getPiece).map(Piece::getName).collect(Collectors.joining());
                     String link = String.format("<a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a>", encode, name);
                     String line = String.format("<div>%s</div>", link);
                     htmlBuilder.addColumn(new FieldHTMLColumn(allField, maxHeight), line);

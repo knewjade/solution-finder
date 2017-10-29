@@ -1,20 +1,20 @@
 package entry.path;
 
-import common.datastore.BlockCounter;
-import common.datastore.blocks.Blocks;
-import common.datastore.blocks.LongBlocks;
+import common.datastore.PieceCounter;
+import common.datastore.blocks.LongPieces;
+import common.datastore.blocks.Pieces;
 import common.iterable.CombinationIterable;
-import common.pattern.IBlocksGenerator;
-import core.mino.Block;
+import common.pattern.PatternGenerator;
+import core.mino.Piece;
 
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class ReduceBlocksGenerator implements IBlocksGenerator {
-    private final IBlocksGenerator blocksGenerator;
+public class ReducePatternGenerator implements PatternGenerator {
+    private final PatternGenerator blocksGenerator;
     private final int maxDepth;
 
-    public ReduceBlocksGenerator(IBlocksGenerator blocksGenerator, int maxDepth) {
+    public ReducePatternGenerator(PatternGenerator blocksGenerator, int maxDepth) {
         this.blocksGenerator = blocksGenerator;
         this.maxDepth = maxDepth;
     }
@@ -27,34 +27,34 @@ public class ReduceBlocksGenerator implements IBlocksGenerator {
         return depth;
     }
 
-    public Stream<Blocks> blocksStream() {
+    public Stream<Pieces> blocksStream() {
         if (blocksGenerator.getDepth() <= maxDepth)
             return blocksGenerator.blocksStream();
         else
             return blocksGenerator.blocksStream()
-                    .map(Blocks::getBlocks)
+                    .map(Pieces::getPieces)
                     .map(blocks -> blocks.subList(0, maxDepth))
-                    .map(LongBlocks::new);
+                    .map(LongPieces::new);
     }
 
-    public Stream<Blocks> blocksParallelStream() {
+    public Stream<Pieces> blocksParallelStream() {
         return blocksStream().parallel();
     }
 
-    public Stream<BlockCounter> blockCountersStream() {
+    public Stream<PieceCounter> blockCountersStream() {
         if (blocksGenerator.getDepth() <= maxDepth)
             return blocksGenerator.blockCountersStream();
         else
             return blocksGenerator.blockCountersStream()
-                    .map(BlockCounter::getBlocks)
+                    .map(PieceCounter::getBlocks)
                     .flatMap(blocks -> {
-                        CombinationIterable<Block> lists = new CombinationIterable<>(blocks, maxDepth);
+                        CombinationIterable<Piece> lists = new CombinationIterable<>(blocks, maxDepth);
                         return StreamSupport.stream(lists.spliterator(), false);
                     })
-                    .map(BlockCounter::new);
+                    .map(PieceCounter::new);
     }
 
-    public Stream<BlockCounter> blockCountersParallelStream() {
+    public Stream<PieceCounter> blockCountersParallelStream() {
         return blockCountersStream().parallel();
     }
 }

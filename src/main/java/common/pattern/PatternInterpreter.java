@@ -1,18 +1,18 @@
 package common.pattern;
 
 import common.SyntaxException;
-import core.mino.Block;
+import core.mino.Piece;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public class BlockInterpreter {
+public class PatternInterpreter {
     private final ArrayList<Element> elements = new ArrayList<>();
     private final Token token;
 
-    public BlockInterpreter(String pattern) throws SyntaxException {
+    public PatternInterpreter(String pattern) throws SyntaxException {
         List<String> tokenList = Arrays.asList(pattern.split(""));
         this.token = Token.createToken(tokenList);
         while (token.isContinue()) {
@@ -25,19 +25,19 @@ public class BlockInterpreter {
     private Element parse(String s) throws SyntaxException {
         switch (s) {
             case "T":
-                return constant(Block.T);
+                return constant(Piece.T);
             case "I":
-                return constant(Block.I);
+                return constant(Piece.I);
             case "O":
-                return constant(Block.O);
+                return constant(Piece.O);
             case "J":
-                return constant(Block.J);
+                return constant(Piece.J);
             case "L":
-                return constant(Block.L);
+                return constant(Piece.L);
             case "S":
-                return constant(Block.S);
+                return constant(Piece.S);
             case "Z":
-                return constant(Block.Z);
+                return constant(Piece.Z);
             case "*":
                 return wildcard();
             case "[":
@@ -48,8 +48,8 @@ public class BlockInterpreter {
         throw new SyntaxException("Unknown block type: value=" + s, token.getLastIndex());
     }
 
-    private SingleElement constant(Block block) {
-        return new SingleElement(block);
+    private SingleElement constant(Piece piece) {
+        return new SingleElement(piece);
     }
 
     private WildcardElement wildcard() throws SyntaxException {

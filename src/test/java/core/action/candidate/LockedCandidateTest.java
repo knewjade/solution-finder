@@ -30,7 +30,7 @@ class LockedCandidateTest {
                 "____X_____";
         Field field = FieldFactory.createField(marks);
 
-        Set<Action> actions = candidate.search(field, Block.T, 4);
+        Set<Action> actions = candidate.search(field, Piece.T, 4);
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Spawn)).hasSize(8);
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Right)).hasSize(9);
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Reverse)).hasSize(8);
@@ -51,7 +51,7 @@ class LockedCandidateTest {
                 "XX_XX_____";
         Field field = FieldFactory.createField(marks);
 
-        Set<Action> actions = candidate.search(field, Block.T, 4);
+        Set<Action> actions = candidate.search(field, Piece.T, 4);
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Spawn)).hasSize(3);
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Right)).hasSize(4);
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Reverse)).hasSize(4);
@@ -72,7 +72,7 @@ class LockedCandidateTest {
                 "XX_X______";
         Field field = FieldFactory.createField(marks);
 
-        Set<Action> actions = candidate.search(field, Block.T, 4);
+        Set<Action> actions = candidate.search(field, Piece.T, 4);
         assertThat(actions)
                 .hasSize(11)
                 .contains(MinimalAction.create(8, 0, Rotate.Spawn))
@@ -102,7 +102,7 @@ class LockedCandidateTest {
                 "X_XXXXXXXX";
         Field field = FieldFactory.createField(marks);
 
-        Set<Action> actions = candidate.search(field, Block.Z, 4);
+        Set<Action> actions = candidate.search(field, Piece.Z, 4);
         assertThat(actions)
                 .hasSize(5)
                 .contains(MinimalAction.create(2, 2, Rotate.Spawn))
@@ -125,20 +125,20 @@ class LockedCandidateTest {
             int numOfMinos = randoms.nextIntClosed(4, randomHeight * 10 / 4 - 1);
             Field field = randoms.field(randomHeight, numOfMinos);
             int height = randomHeight - field.clearLine();
-            Block block = randoms.block();
+            Piece piece = randoms.block();
 
             LockedCandidate candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
-            Set<Action> actions = candidate.search(field, block, height);
+            Set<Action> actions = candidate.search(field, piece, height);
 
             LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
 
             for (Rotate rotate : Rotate.values()) {
-                Coordinates.walk(minoFactory.create(block, rotate), height)
+                Coordinates.walk(minoFactory.create(piece, rotate), height)
                         .map(coordinate -> MinimalAction.create(coordinate.x, coordinate.y, rotate))
                         .forEach(action -> {
                             int x = action.getX();
                             int y = action.getY();
-                            Mino mino = minoFactory.create(block, action.getRotate());
+                            Mino mino = minoFactory.create(piece, action.getRotate());
 
                             if (actions.contains(action)) {
                                 // おける

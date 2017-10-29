@@ -28,7 +28,7 @@ class HarddropCandidateTest {
                 "____X_____";
         Field field = FieldFactory.createField(marks);
 
-        Set<Action> actions = candidate.search(field, Block.T, 4);
+        Set<Action> actions = candidate.search(field, Piece.T, 4);
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Spawn)).hasSize(8);
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Right)).hasSize(9);
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Reverse)).hasSize(8);
@@ -48,7 +48,7 @@ class HarddropCandidateTest {
                 "XX_XX_____";
         Field field = FieldFactory.createField(marks);
 
-        Set<Action> actions = candidate.search(field, Block.T, 4);
+        Set<Action> actions = candidate.search(field, Piece.T, 4);
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Spawn)).hasSize(3);
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Right)).hasSize(4);
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Reverse)).hasSize(4);
@@ -68,7 +68,7 @@ class HarddropCandidateTest {
                 "XX_XX_____";
         Field field = FieldFactory.createField(marks);
 
-        Set<Action> actions = candidate.search(field, Block.T, 4);
+        Set<Action> actions = candidate.search(field, Piece.T, 4);
         assertThat(actions)
                 .hasSize(3)
                 .contains(MinimalAction.create(9, 1, Rotate.Left))
@@ -87,7 +87,7 @@ class HarddropCandidateTest {
                 "_________X";
         Field field = FieldFactory.createField(marks);
 
-        Set<Action> actions = candidate.search(field, Block.T, 2);
+        Set<Action> actions = candidate.search(field, Piece.T, 2);
         assertThat(actions)
                 .contains(MinimalAction.create(5, 0, Rotate.Spawn))
                 .doesNotContain(MinimalAction.create(6, 0, Rotate.Spawn));
@@ -110,7 +110,7 @@ class HarddropCandidateTest {
 
         Field field = FieldFactory.createField(marks);
 
-        Set<Action> actions = candidate.search(field, Block.J, 7);
+        Set<Action> actions = candidate.search(field, Piece.J, 7);
         assertThat(actions)
                 .doesNotContain(MinimalAction.create(1, 4, Rotate.Left));
     }
@@ -129,17 +129,17 @@ class HarddropCandidateTest {
             Field field = randoms.field(randomHeight, numOfMinos);
             int clearLine = field.clearLine();
             int height = randomHeight - clearLine;
-            Block block = randoms.block();
+            Piece piece = randoms.block();
 
-            Set<Action> actions = candidate.search(field, block, height);
+            Set<Action> actions = candidate.search(field, piece, height);
 
-            for (Rotate rotate : minoShifter.getUniqueRotates(block)) {
-                Coordinates.walk(minoFactory.create(block, rotate), height)
+            for (Rotate rotate : minoShifter.getUniqueRotates(piece)) {
+                Coordinates.walk(minoFactory.create(piece, rotate), height)
                         .map(coordinate -> MinimalAction.create(coordinate.x, coordinate.y, rotate))
                         .forEach(action -> {
                             int x = action.getX();
                             int y = action.getY();
-                            Mino mino = minoFactory.create(block, action.getRotate());
+                            Mino mino = minoFactory.create(piece, action.getRotate());
 
                             boolean canPut = field.isOnGround(mino, x, y) &&
                                     IntStream.range(y, height - mino.getMinY())

@@ -2,32 +2,31 @@ package common.datastore;
 
 import common.datastore.action.Action;
 import common.datastore.order.Order;
-import core.field.Field;
-import core.mino.Block;
+import core.mino.Piece;
 
 public class Result {
     private final Order order;
-    private final Block lastBlock;
+    private final Piece lastPiece;
     private final Action action;
-    private final Block lastHold;
+    private final Piece lastHold;
 
-    public Result(Order order, Block lastBlock, Action action, Block lastHold) {
-        assert order != null && lastBlock != null && action != null;
+    public Result(Order order, Piece lastPiece, Action action, Piece lastHold) {
+        assert order != null && lastPiece != null && action != null;
         this.order = order;
-        this.lastBlock = lastBlock;
+        this.lastPiece = lastPiece;
         this.action = action;
         this.lastHold = lastHold;
     }
 
-    public Block getLastBlock() {
-        return lastBlock;
+    public Piece getLastPiece() {
+        return lastPiece;
     }
 
     public Action getLastAction() {
         return action;
     }
 
-    public Block getLastHold() {
+    public Piece getLastHold() {
         return lastHold;
     }
 
@@ -43,7 +42,7 @@ public class Result {
         Result result = (Result) o;
 
         if (!order.equals(result.order)) return false;
-        if (lastBlock != result.lastBlock) return false;
+        if (lastPiece != result.lastPiece) return false;
         if (!action.equals(result.action)) return false;
         return lastHold == result.lastHold;
     }
@@ -51,7 +50,7 @@ public class Result {
     @Override
     public int hashCode() {
         int result = order.hashCode();
-        result = 31 * result + lastBlock.hashCode();
+        result = 31 * result + lastPiece.hashCode();
         result = 31 * result + action.hashCode();
         result = 31 * result + (lastHold != null ? lastHold.hashCode() : 0);
         return result;
@@ -61,7 +60,7 @@ public class Result {
     public String toString() {
         return "Result{" +
                 "order=" + order.getHistory() +
-                ", lastBlock=" + lastBlock +
+                ", lastPiece=" + lastPiece +
                 ", candidate.candidate=" + action +
                 ", hold=" + lastHold +
                 '}';

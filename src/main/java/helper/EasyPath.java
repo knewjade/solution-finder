@@ -2,12 +2,12 @@ package helper;
 
 import common.buildup.BuildUpStream;
 import common.datastore.OperationWithKey;
-import common.datastore.blocks.LongBlocks;
+import common.datastore.blocks.LongPieces;
 import concurrent.LockedReachableThreadLocal;
 import core.column_field.ColumnField;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import searcher.pack.InOutPairField;
@@ -97,7 +97,7 @@ public class EasyPath {
         return searcher.toList();
     }
 
-    public Set<LongBlocks> buildUp(String goalFieldMarks, Field initField, int width, int height) throws ExecutionException, InterruptedException {
+    public Set<LongPieces> buildUp(String goalFieldMarks, Field initField, int width, int height) throws ExecutionException, InterruptedException {
         assert !initField.existsAbove(height);
 
         SizedBit sizedBit = new SizedBit(width, height);
@@ -126,9 +126,9 @@ public class EasyPath {
                 .map(operations -> new BuildUpStream(reachableThreadLocal.get(), height).existsValidBuildPattern(initField, operations))
                 .flatMap(listStream -> {
                     return listStream.map(operationWithKeys -> {
-                        Stream<Block> blocks = operationWithKeys.stream()
-                                .map(OperationWithKey::getBlock);
-                        return new LongBlocks(blocks);
+                        Stream<Piece> blocks = operationWithKeys.stream()
+                                .map(OperationWithKey::getPiece);
+                        return new LongPieces(blocks);
                     });
                 })
                 .collect(Collectors.toSet());

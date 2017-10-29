@@ -16,7 +16,7 @@ public class OperationTransform {
         ArrayList<MinoOperationWithKey> keys = new ArrayList<>();
         Field field = fieldOrigin.freeze(height);
         for (Operation op : operations.getOperations()) {
-            Mino mino = minoFactory.create(op.getBlock(), op.getRotate());
+            Mino mino = minoFactory.create(op.getPiece(), op.getRotate());
             int x = op.getX();
             int y = op.getY();
 
@@ -64,7 +64,7 @@ public class OperationTransform {
             int x = operationWithKey.getX();
             int y = originalY - deletedLines;
 
-            operations.add(new SimpleOperation(mino.getBlock(), mino.getRotate(), x, y));
+            operations.add(new SimpleOperation(mino.getPiece(), mino.getRotate(), x, y));
 
             field.put(mino, x, y);
             field.insertBlackLineWithKey(deleteKey);

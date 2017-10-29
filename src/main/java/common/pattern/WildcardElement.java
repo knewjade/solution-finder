@@ -1,40 +1,40 @@
 package common.pattern;
 
-import common.datastore.BlockCounter;
-import common.datastore.blocks.Blocks;
-import common.datastore.blocks.LongBlocks;
+import common.datastore.PieceCounter;
+import common.datastore.blocks.Pieces;
+import common.datastore.blocks.LongPieces;
 import common.iterable.CombinationIterable;
 import common.iterable.PermutationIterable;
-import core.mino.Block;
+import core.mino.Piece;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class WildcardElement implements Element {
     private final int size;
-    private final List<Blocks> permutationBlocks;
-    private final List<BlockCounter> blockCounters;
+    private final List<Pieces> permutationBlocks;
+    private final List<PieceCounter> pieceCounters;
 
     WildcardElement(int size) {
         this.size = size;
         this.permutationBlocks = createPermutationBlocks(size);
-        this.blockCounters = createBlockCounters(size);
+        this.pieceCounters = createBlockCounters(size);
     }
 
-    private ArrayList<Blocks> createPermutationBlocks(int size) {
-        PermutationIterable<Block> iterable = new PermutationIterable<>(Block.valueList(), size);
-        ArrayList<Blocks> blocksList = new ArrayList<>();
-        for (List<Block> permutation : iterable)
-            blocksList.add(new LongBlocks(permutation));
-        return blocksList;
+    private ArrayList<Pieces> createPermutationBlocks(int size) {
+        PermutationIterable<Piece> iterable = new PermutationIterable<>(Piece.valueList(), size);
+        ArrayList<Pieces> piecesList = new ArrayList<>();
+        for (List<Piece> permutation : iterable)
+            piecesList.add(new LongPieces(permutation));
+        return piecesList;
     }
 
-    private ArrayList<BlockCounter> createBlockCounters(int size) {
-        CombinationIterable<Block> iterable = new CombinationIterable<>(Block.valueList(), size);
-        ArrayList<BlockCounter> blockCounterList = new ArrayList<>();
-        for (List<Block> combination : iterable)
-            blockCounterList.add(new BlockCounter(combination));
-        return blockCounterList;
+    private ArrayList<PieceCounter> createBlockCounters(int size) {
+        CombinationIterable<Piece> iterable = new CombinationIterable<>(Piece.valueList(), size);
+        ArrayList<PieceCounter> pieceCounterList = new ArrayList<>();
+        for (List<Piece> combination : iterable)
+            pieceCounterList.add(new PieceCounter(combination));
+        return pieceCounterList;
     }
 
     @Override
@@ -43,12 +43,12 @@ public class WildcardElement implements Element {
     }
 
     @Override
-    public List<Blocks> getPermutationBlocks() {
+    public List<Pieces> getPermutationBlocks() {
         return permutationBlocks;
     }
 
     @Override
-    public List<BlockCounter> getBlockCounters() {
-        return blockCounters;
+    public List<PieceCounter> getPieceCounters() {
+        return pieceCounters;
     }
 }

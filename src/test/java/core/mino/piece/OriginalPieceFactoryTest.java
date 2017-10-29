@@ -5,7 +5,7 @@ import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
 import core.field.MiddleField;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.srs.MinoRotation;
@@ -29,7 +29,7 @@ class OriginalPieceFactoryTest {
         MinoFactory minoFactory = new MinoFactory();
         MinoRotation minoRotation = new MinoRotation();
         Neighbors neighbors = new Neighbors(minoFactory, minoRotation, pieceFactory);
-        Neighbor neighbor = neighbors.get(Block.I, Rotate.Spawn, 1, 0);
+        Neighbor neighbor = neighbors.get(Piece.I, Rotate.Spawn, 1, 0);
         System.out.println(neighbor);
     }
 
@@ -40,16 +40,16 @@ class OriginalPieceFactoryTest {
         int x = 5;
         int y = 4;
         ArrayList<Integer> lines = new ArrayList<>();
-        for (Block block : Block.values()) {
+        for (Piece piece : Piece.values()) {
             for (Rotate rotate : Rotate.values()) {
-                Mino mino = new Mino(block, rotate);
+                Mino mino = new Mino(piece, rotate);
                 int[][] from = minoRotation.getLeftPatternsFrom(mino);
                 Rotate left = rotate.getLeftRotate();
 
                 Field field = FieldFactory.createMiddleField();
                 for (int[] ints : from) {
                     System.out.println(Arrays.toString(ints));
-                    field.put(new Mino(block, left), x + ints[0], y + ints[1]);
+                    field.put(new Mino(piece, left), x + ints[0], y + ints[1]);
                 }
                 System.out.println(FieldView.toString(field));
                 int blocks = field.getNumOfAllBlocks();
@@ -63,11 +63,11 @@ class OriginalPieceFactoryTest {
     @Disabled
     @Test
     void name2() {
-        Block block = Block.I;
+        Piece piece = Piece.I;
         Rotate rotate = Rotate.Spawn;
         MinoRotation minoRotation = new MinoRotation();
-        Mino mino = new Mino(block, rotate);
-        Mino nextMino = new Mino(block, rotate.getLeftRotate());
+        Mino mino = new Mino(piece, rotate);
+        Mino nextMino = new Mino(piece, rotate.getLeftRotate());
         int[][] patterns = minoRotation.getLeftPatternsFrom(mino);
         Field field = FieldFactory.createMiddleField();
         int startX = 5;

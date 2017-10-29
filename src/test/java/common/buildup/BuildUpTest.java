@@ -15,7 +15,7 @@ import core.column_field.ColumnField;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static core.mino.Block.*;
+import static core.mino.Piece.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class BuildUpTest {
@@ -96,8 +96,8 @@ class BuildUpTest {
             // Pickup solution from checker
             int numOfMinos = randoms.nextInt(1, 7);
             Field field = randoms.field(height, numOfMinos);
-            List<Block> blocks = randoms.blocks(numOfMinos);
-            boolean check = checker.check(field, blocks, candidate, height, numOfMinos);
+            List<Piece> pieces = randoms.blocks(numOfMinos);
+            boolean check = checker.check(field, pieces, candidate, height, numOfMinos);
 
             if (check) {
                 counter.incrementAndGet();
@@ -105,7 +105,7 @@ class BuildUpTest {
                 Operations operations = new Operations(operationStream);
                 List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
                 assertThat(BuildUp.cansBuild(field, operationWithKeys, height, reachable))
-                        .as(FieldView.toString(field) + blocks)
+                        .as(FieldView.toString(field) + pieces)
                         .isTrue();
             }
         }
@@ -137,8 +137,8 @@ class BuildUpTest {
             // Pickup solution from checker
             int numOfMinos = randoms.nextIntClosed(7, 10);
             Field field = randoms.field(height, numOfMinos);
-            List<Block> blocks = randoms.blocks(numOfMinos);
-            boolean check = checker.check(field, blocks, candidate, height, numOfMinos);
+            List<Piece> pieces = randoms.blocks(numOfMinos);
+            boolean check = checker.check(field, pieces, candidate, height, numOfMinos);
 
             if (check) {
                 counter.incrementAndGet();
@@ -146,7 +146,7 @@ class BuildUpTest {
                 Operations operations = new Operations(operationStream);
                 List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
                 assertThat(BuildUp.cansBuild(field, operationWithKeys, height, reachable))
-                        .as(FieldView.toString(field) + blocks)
+                        .as(FieldView.toString(field) + pieces)
                         .isTrue();
             }
         }
@@ -168,10 +168,10 @@ class BuildUpTest {
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
 
         List<MinoOperationWithKey> operationWithKeys = Arrays.asList(
-                new FullOperationWithKey(minoFactory.create(Block.J, Rotate.Right), 5, 0L, 0L, 0),
-                new FullOperationWithKey(minoFactory.create(Block.J, Rotate.Reverse), 8, 0L, 0L, 2),
-                new FullOperationWithKey(minoFactory.create(Block.L, Rotate.Spawn), 7, 0L, 0L, 0),
-                new FullOperationWithKey(minoFactory.create(Block.S, Rotate.Spawn), 7, 0L, 0L, 1)
+                new FullOperationWithKey(minoFactory.create(Piece.J, Rotate.Right), 5, 0L, 0L, 0),
+                new FullOperationWithKey(minoFactory.create(Piece.J, Rotate.Reverse), 8, 0L, 0L, 2),
+                new FullOperationWithKey(minoFactory.create(Piece.L, Rotate.Spawn), 7, 0L, 0L, 0),
+                new FullOperationWithKey(minoFactory.create(Piece.S, Rotate.Spawn), 7, 0L, 0L, 1)
         );
 
         boolean exists = BuildUp.existsValidBuildPattern(field, operationWithKeys, maxY, reachable);
@@ -194,8 +194,8 @@ class BuildUpTest {
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
 
         List<MinoOperationWithKey> operationWithKeys = Arrays.asList(
-                new FullOperationWithKey(minoFactory.create(Block.J, Rotate.Right), 0, 0L, 0L, 0),
-                new FullOperationWithKey(minoFactory.create(Block.L, Rotate.Left), 1, 1048576L, 0L, 0)
+                new FullOperationWithKey(minoFactory.create(Piece.J, Rotate.Right), 0, 0L, 0L, 0),
+                new FullOperationWithKey(minoFactory.create(Piece.L, Rotate.Left), 1, 1048576L, 0L, 0)
         );
 
         boolean exists = BuildUp.existsValidBuildPattern(field, operationWithKeys, maxY, reachable);
@@ -263,8 +263,8 @@ class BuildUpTest {
                     // existsValidByOrderは必ずtrueになる
                     assert valid.isPresent();
                     List<MinoOperationWithKey> keys = valid.get();
-                    List<Block> blocks = keys.stream().map(OperationWithKey::getBlock).collect(Collectors.toList());
-                    assertThat(BuildUp.existsValidByOrder(field, keys.stream(), blocks, height, reachable))
+                    List<Piece> pieces = keys.stream().map(OperationWithKey::getPiece).collect(Collectors.toList());
+                    assertThat(BuildUp.existsValidByOrder(field, keys.stream(), pieces, height, reachable))
                             .isTrue();
                 } else {
                     // cansBuildですべてがfalseとなることを確認
@@ -275,8 +275,8 @@ class BuildUpTest {
                             .isTrue();
 
                     // existsValidByOrderは必ずfalseになる
-                    List<Block> blocks = operationWithKeys.stream().map(OperationWithKey::getBlock).collect(Collectors.toList());
-                    assertThat(BuildUp.existsValidByOrder(field, operationWithKeys.stream(), blocks, height, reachable))
+                    List<Piece> pieces = operationWithKeys.stream().map(OperationWithKey::getPiece).collect(Collectors.toList());
+                    assertThat(BuildUp.existsValidByOrder(field, operationWithKeys.stream(), pieces, height, reachable))
                             .isFalse();
                 }
             });
@@ -347,8 +347,8 @@ class BuildUpTest {
                     // existsValidByOrderは必ずtrueになる
                     assert valid.isPresent();
                     List<MinoOperationWithKey> keys = valid.get();
-                    List<Block> blocks = keys.stream().map(OperationWithKey::getBlock).collect(Collectors.toList());
-                    assertThat(BuildUp.existsValidByOrder(field, keys.stream(), blocks, height, reachable))
+                    List<Piece> pieces = keys.stream().map(OperationWithKey::getPiece).collect(Collectors.toList());
+                    assertThat(BuildUp.existsValidByOrder(field, keys.stream(), pieces, height, reachable))
                             .isTrue();
                 } else {
                     // cansBuildですべてがfalseとなることを確認
@@ -359,8 +359,8 @@ class BuildUpTest {
                             .isTrue();
 
                     // existsValidByOrderは必ずfalseになる
-                    List<Block> blocks = operationWithKeys.stream().map(OperationWithKey::getBlock).collect(Collectors.toList());
-                    assertThat(BuildUp.existsValidByOrder(field, operationWithKeys.stream(), blocks, height, reachable))
+                    List<Piece> pieces = operationWithKeys.stream().map(OperationWithKey::getPiece).collect(Collectors.toList());
+                    assertThat(BuildUp.existsValidByOrder(field, operationWithKeys.stream(), pieces, height, reachable))
                             .isFalse();
                 }
             });
@@ -379,9 +379,9 @@ class BuildUpTest {
                 "___XXXXXXX"
         );
         Operations operations = new Operations(Arrays.asList(
-                new SimpleOperation(Block.T, Rotate.Right, 0, 1),
-                new SimpleOperation(Block.S, Rotate.Spawn, 2, 1),
-                new SimpleOperation(Block.Z, Rotate.Spawn, 1, 0)
+                new SimpleOperation(Piece.T, Rotate.Right, 0, 1),
+                new SimpleOperation(Piece.S, Rotate.Spawn, 2, 1),
+                new SimpleOperation(Piece.Z, Rotate.Spawn, 1, 0)
         ));
 
         // OperationWithKeyに変換
@@ -423,10 +423,10 @@ class BuildUpTest {
                 "____XXXXXX"
         );
         Operations operations = new Operations(Arrays.asList(
-                new SimpleOperation(Block.I, Rotate.Left, 0, 1),
-                new SimpleOperation(Block.J, Rotate.Spawn, 2, 0),
-                new SimpleOperation(Block.S, Rotate.Right, 1, 1),
-                new SimpleOperation(Block.T, Rotate.Reverse, 3, 1)
+                new SimpleOperation(Piece.I, Rotate.Left, 0, 1),
+                new SimpleOperation(Piece.J, Rotate.Spawn, 2, 0),
+                new SimpleOperation(Piece.S, Rotate.Right, 1, 1),
+                new SimpleOperation(Piece.T, Rotate.Reverse, 3, 1)
         ));
 
         // OperationWithKeyに変換
