@@ -129,10 +129,21 @@ class OperationWithKeyComparatorTest {
     }
 
     private OperationWithKey createNewOperationWithKey(Mino mino, int x, int y, long deleteKey, long usingKey) {
+        // TODO: Use mock
         return new OperationWithKey() {
             @Override
             public Mino getMino() {
                 return mino;
+            }
+
+            @Override
+            public Block getBlock() {
+                return mino.getBlock();
+            }
+
+            @Override
+            public Rotate getRotate() {
+                return mino.getRotate();
             }
 
             @Override

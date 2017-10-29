@@ -20,6 +20,16 @@ public class SlideXOperationWithKey implements OperationWithKey {
     }
 
     @Override
+    public Block getBlock() {
+        return operationWithKey.getBlock();
+    }
+
+    @Override
+    public Rotate getRotate() {
+        return operationWithKey.getRotate();
+    }
+
+    @Override
     public int getX() {
         return operationWithKey.getX() + slideX;
     }

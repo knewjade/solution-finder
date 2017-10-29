@@ -14,7 +14,7 @@ public class OperationListComparator implements Comparator<List<? extends Operat
             return compareSize;
 
         for (int index = 0; index < size1; index++) {
-            int compare = Operation.compareTo(o1.get(index), o2.get(index));
+            int compare = OperationComparator.compareOperation(o1.get(index), o2.get(index));
             if (compare != 0)
                 return compare;
         }

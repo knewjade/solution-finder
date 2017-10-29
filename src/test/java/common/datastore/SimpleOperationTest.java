@@ -1,5 +1,6 @@
 package common.datastore;
 
+import common.comparator.OperationComparator;
 import core.mino.Block;
 import core.srs.Rotate;
 import org.junit.jupiter.api.Test;
@@ -44,13 +45,13 @@ class SimpleOperationTest {
         SimpleOperation operation3 = new SimpleOperation(Block.T, Rotate.Spawn, 4, 13);
         SimpleOperation operation4 = new SimpleOperation(Block.T, Rotate.Spawn, 5, 13);
 
-        assertThat(Operation.compareTo(operation1, operation2)).isEqualTo(0);
+        assertThat(OperationComparator.compareOperation(operation1, operation2)).isEqualTo(0);
 
-        assertThat(Operation.compareTo(operation1, operation3)).isNotEqualTo(0);
-        assertThat(Operation.compareTo(operation1, operation4)).isNotEqualTo(0);
-        assertThat(Operation.compareTo(operation3, operation4)).isNotEqualTo(0);
+        assertThat(OperationComparator.compareOperation(operation1, operation3)).isNotEqualTo(0);
+        assertThat(OperationComparator.compareOperation(operation1, operation4)).isNotEqualTo(0);
+        assertThat(OperationComparator.compareOperation(operation3, operation4)).isNotEqualTo(0);
 
-        assert Operation.compareTo(operation1, operation3) < 0 && Operation.compareTo(operation3, operation4) < 0;
-        assertThat(Operation.compareTo(operation1, operation4)).isLessThan(0);
+        assert OperationComparator.compareOperation(operation1, operation3) < 0 && OperationComparator.compareOperation(operation3, operation4) < 0;
+        assertThat(OperationComparator.compareOperation(operation1, operation4)).isLessThan(0);
     }
 }

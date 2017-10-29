@@ -1,7 +1,9 @@
 package common.datastore;
 
+import core.mino.Block;
 import core.mino.Mino;
 import core.mino.piece.Piece;
+import core.srs.Rotate;
 
 public class SimpleOperationWithKey implements OperationWithKey {
     private final Mino mino;
@@ -34,6 +36,16 @@ public class SimpleOperationWithKey implements OperationWithKey {
     @Override
     public Mino getMino() {
         return mino;
+    }
+
+    @Override
+    public Block getBlock() {
+        return mino.getBlock();
+    }
+
+    @Override
+    public Rotate getRotate() {
+        return mino.getRotate();
     }
 
     @Override
