@@ -1,6 +1,6 @@
 package common.parser;
 
-import common.datastore.MinoOperationWithKey;
+import common.datastore.FullOperationWithKey;
 import common.iterable.CombinationIterable;
 import core.field.KeyOperators;
 import core.mino.Block;
@@ -106,7 +106,7 @@ public abstract class AbstractAllOperationFactory<T> {
 
             if ((deleteKeyMask & deleteKey) == deleteKey) {
                 for (int x = -mino.getMinX(); x < fieldWidth - mino.getMinX(); x++) {
-                    MinoOperationWithKey operationWithKey = new MinoOperationWithKey(mino, x, lowerY - mino.getMinY(), deleteKey, usingKey);
+                    FullOperationWithKey operationWithKey = new FullOperationWithKey(mino, x, lowerY - mino.getMinY(), deleteKey, usingKey);
                     pieces.add(parseOperation(operationWithKey, upperY, fieldHeight));
                 }
             }
@@ -115,5 +115,5 @@ public abstract class AbstractAllOperationFactory<T> {
         return pieces;
     }
 
-    protected abstract T parseOperation(MinoOperationWithKey operationWithKey, int upperY, int fieldHeight);
+    protected abstract T parseOperation(FullOperationWithKey operationWithKey, int upperY, int fieldHeight);
 }

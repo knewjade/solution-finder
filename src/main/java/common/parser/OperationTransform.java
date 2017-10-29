@@ -1,9 +1,6 @@
 package common.parser;
 
-import common.datastore.MinoOperationWithKey;
-import common.datastore.Operation;
-import common.datastore.Operations;
-import common.datastore.SimpleOperation;
+import common.datastore.*;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.KeyOperators;
@@ -40,7 +37,7 @@ public class OperationTransform {
             long usingKey = keyLine & ~needDeletedKey;
 
             // 操作・消去されている必要がある行をセットで記録
-            MinoOperationWithKey operationWithKey = new MinoOperationWithKey(mino, x, needDeletedKey, usingKey, lowerY);
+            MinoOperationWithKey operationWithKey = new FullOperationWithKey(mino, x, needDeletedKey, usingKey, lowerY);
             keys.add(operationWithKey);
 
             // 次のフィールドを作成

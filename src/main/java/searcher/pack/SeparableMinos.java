@@ -1,5 +1,6 @@
 package searcher.pack;
 
+import common.datastore.FullOperationWithKey;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.OperationWithKey;
 import core.field.KeyOperators;
@@ -7,12 +8,13 @@ import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import searcher.pack.separable_mino.AllSeparableMinoFactory;
+import searcher.pack.separable_mino.FullOperationSeparableMino;
 import searcher.pack.separable_mino.SeparableMino;
 
 import java.util.*;
 
 public class SeparableMinos {
-    private static final Comparator<SeparableMino> SEPARABLE_MINO_COMPARATOR = new SeparableMinoComparator();
+    private static final Comparator<SeparableMino> SEPARABLE_MINO_COMPARATOR = new FullOperationSeparableMinoComparator();
 
     public static SeparableMinos createSeparableMinos(MinoFactory minoFactory, MinoShifter minoShifter, SizedBit sizedBit) {
         int height = sizedBit.getHeight();
@@ -41,9 +43,8 @@ public class SeparableMinos {
 
         HashMap<OperationWithKey, Integer> indexes = new HashMap<>();
         for (int index = 0; index < minos.size(); index++) {
-            SeparableMino mino = minos.get(index);
-            Mino mino1 = mino.getMino();
-            OperationWithKey operationWithKey = new MinoOperationWithKey(mino1, mino.getX(), mino.getLowerY() - mino1.getMinY(), mino.getDeleteKey());
+            SeparableMino separableMino = minos.get(index);
+            MinoOperationWithKey operationWithKey = separableMino.toMinoOperationWithKey();
             indexes.put(operationWithKey, index);
         }
         this.indexes = indexes;
@@ -60,13 +61,12 @@ public class SeparableMinos {
     }
 
     public int toIndex(SeparableMino separableMino) {
-        Mino mino = separableMino.getMino();
-        OperationWithKey operation = new MinoOperationWithKey(mino, separableMino.getX(), separableMino.getLowerY() - mino.getMinY(), separableMino.getDeleteKey());
-        return toIndex(operation);
+        MinoOperationWithKey operationWithKey = separableMino.toMinoOperationWithKey();
+        return toIndex(operationWithKey);
     }
 
     public int toIndex(Mino mino, int x, int y, long deleteKey) {
-        OperationWithKey operation = new MinoOperationWithKey(mino, x, y, deleteKey);
+        OperationWithKey operation = new FullOperationWithKey(mino, x, y, deleteKey);
         return toIndex(operation);
     }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class SeparableMinoComparatorTest {
+class FullOperationSeparableMinoComparatorTest {
     private final SeparableMinos separableMinos = createSeparableMinos();
 
     private SeparableMinos createSeparableMinos() {
@@ -28,7 +28,7 @@ class SeparableMinoComparatorTest {
         int index = randoms.nextInt(minos.size());
         SeparableMino mino = minos.get(index);
 
-        SeparableMinoComparator comparator = new SeparableMinoComparator();
+        FullOperationSeparableMinoComparator comparator = new FullOperationSeparableMinoComparator();
         assertThat(comparator.compare(mino, mino)).isEqualTo(0);
     }
 
@@ -36,7 +36,7 @@ class SeparableMinoComparatorTest {
     void compareMinoFieldDiff() {
         List<SeparableMino> minos = separableMinos.getMinos();
         Randoms randoms = new Randoms();
-        SeparableMinoComparator comparator = new SeparableMinoComparator();
+        FullOperationSeparableMinoComparator comparator = new FullOperationSeparableMinoComparator();
 
         for (int count = 0; count < 100000; count++) {
             int index1 = randoms.nextInt(minos.size() - 1);

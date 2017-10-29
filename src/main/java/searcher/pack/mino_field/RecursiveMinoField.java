@@ -5,6 +5,7 @@ import common.datastore.OperationWithKey;
 import core.column_field.ColumnField;
 import searcher.pack.MinoFieldComparator;
 import searcher.pack.SeparableMinos;
+import searcher.pack.separable_mino.FullOperationSeparableMino;
 import searcher.pack.separable_mino.SeparableMino;
 
 import java.util.Collections;
@@ -21,7 +22,7 @@ public class RecursiveMinoField implements MinoField {
         this.separableMino = separableMino;
         this.minoField = null;
         this.outerField = outerField;
-        this.blockCounter = new BlockCounter(Collections.singletonList(separableMino.getMino().getBlock()));
+        this.blockCounter = new BlockCounter(Collections.singletonList(separableMino.toMinoOperationWithKey().getBlock()));
         this.maxIndex = separableMinos.toIndex(separableMino);
     }
 
@@ -36,7 +37,7 @@ public class RecursiveMinoField implements MinoField {
     }
 
     private BlockCounter addToBlockCounter(BlockCounter blockCounter, SeparableMino separableMino) {
-        return blockCounter.addAndReturnNew(Collections.singletonList(separableMino.getMino().getBlock()));
+        return blockCounter.addAndReturnNew(Collections.singletonList(separableMino.toMinoOperationWithKey().getBlock()));
     }
 
     @Override
@@ -46,13 +47,7 @@ public class RecursiveMinoField implements MinoField {
 
     @Override
     public Stream<OperationWithKey> getOperationsStream() {
-        Stream.Builder<OperationWithKey> builder = Stream.builder();
-        RecursiveMinoField current = this;
-        do {
-            builder.accept(current.separableMino.toOperation());
-            current = current.minoField;
-        } while (current != null);
-        return builder.build();
+        return getSeparableMinoStream().map(SeparableMino::toMinoOperationWithKey);
     }
 
     @Override
@@ -63,6 +58,17 @@ public class RecursiveMinoField implements MinoField {
     @Override
     public int getMaxIndex() {
         return maxIndex;
+    }
+
+    @Override
+    public Stream<SeparableMino> getSeparableMinoStream() {
+        Stream.Builder<SeparableMino> builder = Stream.builder();
+        RecursiveMinoField current = this;
+        do {
+            builder.accept(current.separableMino);
+            current = current.minoField;
+        } while (current != null);
+        return builder.build();
     }
 
     @Override

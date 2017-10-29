@@ -168,10 +168,10 @@ class BuildUpTest {
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
 
         List<MinoOperationWithKey> operationWithKeys = Arrays.asList(
-                new MinoOperationWithKey(minoFactory.create(Block.J, Rotate.Right), 5, 0L, 0L, 0),
-                new MinoOperationWithKey(minoFactory.create(Block.J, Rotate.Reverse), 8, 0L, 0L, 2),
-                new MinoOperationWithKey(minoFactory.create(Block.L, Rotate.Spawn), 7, 0L, 0L, 0),
-                new MinoOperationWithKey(minoFactory.create(Block.S, Rotate.Spawn), 7, 0L, 0L, 1)
+                new FullOperationWithKey(minoFactory.create(Block.J, Rotate.Right), 5, 0L, 0L, 0),
+                new FullOperationWithKey(minoFactory.create(Block.J, Rotate.Reverse), 8, 0L, 0L, 2),
+                new FullOperationWithKey(minoFactory.create(Block.L, Rotate.Spawn), 7, 0L, 0L, 0),
+                new FullOperationWithKey(minoFactory.create(Block.S, Rotate.Spawn), 7, 0L, 0L, 1)
         );
 
         boolean exists = BuildUp.existsValidBuildPattern(field, operationWithKeys, maxY, reachable);
@@ -194,8 +194,8 @@ class BuildUpTest {
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
 
         List<MinoOperationWithKey> operationWithKeys = Arrays.asList(
-                new MinoOperationWithKey(minoFactory.create(Block.J, Rotate.Right), 0, 0L, 0L, 0),
-                new MinoOperationWithKey(minoFactory.create(Block.L, Rotate.Left), 1, 1048576L, 0L, 0)
+                new FullOperationWithKey(minoFactory.create(Block.J, Rotate.Right), 0, 0L, 0L, 0),
+                new FullOperationWithKey(minoFactory.create(Block.L, Rotate.Left), 1, 1048576L, 0L, 0)
         );
 
         boolean exists = BuildUp.existsValidBuildPattern(field, operationWithKeys, maxY, reachable);

@@ -1,6 +1,6 @@
 package searcher.pack.separable_mino;
 
-import common.datastore.MinoOperationWithKey;
+import common.datastore.FullOperationWithKey;
 import common.parser.AbstractAllOperationFactory;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
@@ -11,7 +11,7 @@ public class AllSeparableMinoFactory extends AbstractAllOperationFactory<Separab
     }
 
     @Override
-    protected SeparableMino parseOperation(MinoOperationWithKey operationWithKey, int upperY, int fieldHeight) {
-        return SeparableMino.create(operationWithKey, upperY, fieldHeight);
+    protected SeparableMino parseOperation(FullOperationWithKey operationWithKey, int upperY, int fieldHeight) {
+        return FullOperationSeparableMino.create(operationWithKey, upperY, fieldHeight);
     }
 }

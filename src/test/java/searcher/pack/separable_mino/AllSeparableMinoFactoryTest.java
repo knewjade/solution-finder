@@ -130,7 +130,7 @@ class AllSeparableMinoFactoryTest {
     }
 
     private Predicate<SeparableMino> createBlockPredicate(Block block) {
-        return separableMino -> separableMino.getMino().getBlock() == block;
+        return separableMino -> separableMino.toMinoOperationWithKey().getBlock() == block;
     }
 
     private Set<SeparableMino> getSeparableMinos(MinoFactory minoFactory, MinoShifter minoShifter, int width, int height) {

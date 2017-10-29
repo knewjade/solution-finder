@@ -1,6 +1,7 @@
 package core.mino.piece;
 
 import common.ActionParser;
+import common.datastore.FullOperationWithKey;
 import common.datastore.MinoOperationWithKey;
 import core.field.Field;
 import core.field.FieldFactory;
@@ -18,14 +19,14 @@ public class OriginalPiece {
     private final MinoOperationWithKey operationWithKey;
 
     public OriginalPiece(Mino mino, int x, int y, int fieldHeight) {
-        this.operationWithKey = new MinoOperationWithKey(mino, x, y, 0L);
+        this.operationWithKey = new FullOperationWithKey(mino, x, y, 0L);
         this.minoField = createMinoField();
         this.harddropCollider = createHarddropCollider(mino, x, y, fieldHeight);
         this.hash = ActionParser.parseToInt(mino.getBlock(), mino.getRotate(), x, y);
     }
 
     private OriginalPiece() {
-        this.operationWithKey = new MinoOperationWithKey(new Mino(Block.I, Rotate.Spawn), -1, -1, 0L);
+        this.operationWithKey = new FullOperationWithKey(new Mino(Block.I, Rotate.Spawn), -1, -1, 0L);
         this.minoField = FieldFactory.createField(1);
         this.harddropCollider = FieldFactory.createField(1);
         this.hash = -1;

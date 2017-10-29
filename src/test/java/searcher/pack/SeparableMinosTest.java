@@ -4,8 +4,8 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import lib.Randoms;
 import org.junit.jupiter.api.Test;
-import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.separable_mino.AllSeparableMinoFactory;
+import searcher.pack.separable_mino.SeparableMino;
 
 import java.util.ArrayList;
 import java.util.Collections;

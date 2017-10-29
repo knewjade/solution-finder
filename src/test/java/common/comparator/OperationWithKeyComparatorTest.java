@@ -1,7 +1,7 @@
 package common.comparator;
 
 import common.datastore.OperationWithKey;
-import common.datastore.MinoOperationWithKey;
+import common.datastore.FullOperationWithKey;
 import core.mino.Block;
 import core.mino.Mino;
 import core.mino.MinoFactory;
@@ -20,7 +20,7 @@ class OperationWithKeyComparatorTest {
         int y = randoms.nextInt(20);
         long deleteKey = 0L;
         long usingKey = 1049600L;
-        OperationWithKey operationWithKey1 = new MinoOperationWithKey(minoFactory.create(Block.I, Rotate.Spawn), x, y, deleteKey, usingKey);
+        OperationWithKey operationWithKey1 = new FullOperationWithKey(minoFactory.create(Block.I, Rotate.Spawn), x, y, deleteKey, usingKey);
 
         Mino newMino = new MinoFactory().create(Block.I, Rotate.Spawn);
         OperationWithKey operationWithKey2 = createNewOperationWithKey(newMino, x, y, deleteKey, usingKey);
@@ -42,7 +42,7 @@ class OperationWithKeyComparatorTest {
         int y = randoms.nextInt(20);
         long deleteKey = 0L;
         long usingKey = 1049600L;
-        OperationWithKey operationWithKey1 = new MinoOperationWithKey(minoFactory.create(Block.I, Rotate.Spawn), x, y, deleteKey, usingKey);
+        OperationWithKey operationWithKey1 = new FullOperationWithKey(minoFactory.create(Block.I, Rotate.Spawn), x, y, deleteKey, usingKey);
 
         int newX = randoms.nextInt(10);
         if (newX == x)
@@ -65,7 +65,7 @@ class OperationWithKeyComparatorTest {
         int y = randoms.nextInt(20);
         long deleteKey = 0L;
         long usingKey = 1049600L;
-        OperationWithKey operationWithKey1 = new MinoOperationWithKey(minoFactory.create(Block.I, Rotate.Spawn), x, y, deleteKey, usingKey);
+        OperationWithKey operationWithKey1 = new FullOperationWithKey(minoFactory.create(Block.I, Rotate.Spawn), x, y, deleteKey, usingKey);
 
         int newY = randoms.nextInt(20);
         if (newY == y)
@@ -88,7 +88,7 @@ class OperationWithKeyComparatorTest {
         int y = randoms.nextInt(20);
         long deleteKey = 0L;
         long usingKey = 1049600L;
-        OperationWithKey operationWithKey1 = new MinoOperationWithKey(minoFactory.create(Block.I, Rotate.Spawn), x, y, deleteKey, usingKey);
+        OperationWithKey operationWithKey1 = new FullOperationWithKey(minoFactory.create(Block.I, Rotate.Spawn), x, y, deleteKey, usingKey);
 
         Mino newMino = new MinoFactory().create(Block.I, Rotate.Spawn);
         Long choose = randoms.key();
@@ -112,7 +112,7 @@ class OperationWithKeyComparatorTest {
         int y = randoms.nextInt(20);
         long deleteKey = 0L;
         long usingKey = 1049600L;
-        OperationWithKey operationWithKey1 = new MinoOperationWithKey(minoFactory.create(Block.I, Rotate.Spawn), x, y, deleteKey, usingKey);
+        OperationWithKey operationWithKey1 = new FullOperationWithKey(minoFactory.create(Block.I, Rotate.Spawn), x, y, deleteKey, usingKey);
 
         Mino newMino = new MinoFactory().create(Block.I, Rotate.Spawn);
         Long choose = randoms.key();

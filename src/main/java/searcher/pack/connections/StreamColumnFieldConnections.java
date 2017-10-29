@@ -3,10 +3,9 @@ package searcher.pack.connections;
 import core.column_field.ColumnField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
+import searcher.pack.separable_mino.FullOperationSeparableMino;
 import searcher.pack.separable_mino.SeparableMino;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class StreamColumnFieldConnections implements ColumnFieldConnections {

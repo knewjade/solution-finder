@@ -2,7 +2,6 @@ package common.tetfu;
 
 import common.buildup.BuildUpStream;
 import common.datastore.MinoOperationWithKey;
-import common.datastore.OperationWithKey;
 import common.datastore.Operations;
 import common.parser.OperationTransform;
 import common.tetfu.common.ColorConverter;

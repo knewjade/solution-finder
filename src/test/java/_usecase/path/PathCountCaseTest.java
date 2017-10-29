@@ -35,6 +35,7 @@ class PathCountCaseTest extends PathUseCaseBaseTest {
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
         assertThat(log.getReturnCode())
+                .as(log.getError())
                 .isEqualTo(0);
 
         assertThat(log.getOutput())

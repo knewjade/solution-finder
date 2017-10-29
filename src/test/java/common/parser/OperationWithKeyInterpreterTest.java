@@ -1,7 +1,8 @@
 package common.parser;
 
-import common.datastore.OperationWithKey;
 import common.datastore.MinoOperationWithKey;
+import common.datastore.OperationWithKey;
+import common.datastore.FullOperationWithKey;
 import core.mino.Block;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
@@ -37,7 +38,7 @@ class OperationWithKeyInterpreterTest {
                 int y = randoms.nextInt(4);
                 long deleteKey = randoms.key();
                 long usingKey = randoms.key();
-                return new MinoOperationWithKey(minoFactory.create(block, rotate), x, y, deleteKey, usingKey);
+                return new FullOperationWithKey(minoFactory.create(block, rotate), x, y, deleteKey, usingKey);
             }).limit(size).collect(Collectors.toList());
 
             String str = OperationWithKeyInterpreter.parseToString(operations);

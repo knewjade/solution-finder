@@ -1,8 +1,9 @@
 package searcher.pack.task;
 
 import common.datastore.BlockCounter;
-import common.datastore.OperationWithKey;
+import common.datastore.FullOperationWithKey;
 import common.datastore.MinoOperationWithKey;
+import common.datastore.OperationWithKey;
 import core.column_field.ColumnField;
 import core.column_field.ColumnFieldFactory;
 import core.column_field.ColumnSmallField;
@@ -13,6 +14,7 @@ import searcher.pack.SizedBit;
 import searcher.pack.memento.MinoFieldMemento;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.mino_field.MinoField;
+import searcher.pack.separable_mino.SeparableMino;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,11 +24,25 @@ import java.util.stream.Stream;
 // パフェ用
 public class Field4x10MinoPackingHelper implements TaskResultHelper {
     private static class IOnlyMinoField implements MinoField {
-        private static final List<OperationWithKey> OPERATION_WITH_KEYS = Collections.singletonList(
-                new MinoOperationWithKey(new Mino(Block.I, Rotate.Left), 0, 0L, 1074791425L, 0)
-        );
+        private static final FullOperationWithKey LAST_OPERATION = new FullOperationWithKey(new Mino(Block.I, Rotate.Left), 0, 0L, 1074791425L, 0);
+        private static final SeparableMino LAST_SEPARABLE_MINO = new SeparableMino() {
+            @Override
+            public int getLowerY() {
+                return 0;
+            }
 
-        private final List<OperationWithKey> operationWithKeys = OPERATION_WITH_KEYS;
+            @Override
+            public ColumnField getField() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public MinoOperationWithKey toMinoOperationWithKey() {
+                return LAST_OPERATION;
+            }
+        };
+
+        private final List<OperationWithKey> operationWithKeys = Collections.singletonList(LAST_OPERATION);
         private final ColumnSmallField columnSmallField = ColumnFieldFactory.createField();
         private final BlockCounter blockCounter = new BlockCounter(Collections.singletonList(Block.I));
 
@@ -48,6 +64,11 @@ public class Field4x10MinoPackingHelper implements TaskResultHelper {
         @Override
         public int getMaxIndex() {
             throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Stream<SeparableMino> getSeparableMinoStream() {
+            return Stream.of(LAST_SEPARABLE_MINO);
         }
     }
 
