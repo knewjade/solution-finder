@@ -2,7 +2,6 @@ package searcher.pack.separable_mino;
 
 import common.datastore.FullOperationWithKey;
 import common.datastore.MinoOperationWithKey;
-import common.datastore.OperationWithKey;
 import core.column_field.ColumnField;
 import core.column_field.ColumnFieldFactory;
 import core.column_field.ColumnSmallField;

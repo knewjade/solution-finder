@@ -58,7 +58,7 @@ public class StringEnumTransform {
         throw new IllegalArgumentException("No reachable");
     }
 
-    static String toString(Rotate rotate) {
+    public static String toString(Rotate rotate) {
         switch (rotate) {
             case Spawn:
                 return "0";

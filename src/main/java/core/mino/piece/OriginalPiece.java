@@ -1,12 +1,12 @@
 package core.mino.piece;
 
 import common.ActionParser;
-import common.datastore.FullOperationWithKey;
+import common.datastore.MinimalOperationWithKey;
 import common.datastore.MinoOperationWithKey;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Piece;
 import core.mino.Mino;
+import core.mino.Piece;
 import core.srs.Rotate;
 
 // TODO: write unittest
@@ -19,14 +19,14 @@ public class OriginalPiece {
     private final MinoOperationWithKey operationWithKey;
 
     public OriginalPiece(Mino mino, int x, int y, int fieldHeight) {
-        this.operationWithKey = new FullOperationWithKey(mino, x, y, 0L);
+        this.operationWithKey = new MinimalOperationWithKey(mino, x, y, 0L);
         this.minoField = createMinoField();
         this.harddropCollider = createHarddropCollider(mino, x, y, fieldHeight);
         this.hash = ActionParser.parseToInt(mino.getPiece(), mino.getRotate(), x, y);
     }
 
     private OriginalPiece() {
-        this.operationWithKey = new FullOperationWithKey(new Mino(Piece.I, Rotate.Spawn), -1, -1, 0L);
+        this.operationWithKey = new MinimalOperationWithKey(new Mino(Piece.I, Rotate.Spawn), -1, -1, 0L);
         this.minoField = FieldFactory.createField(1);
         this.harddropCollider = FieldFactory.createField(1);
         this.hash = -1;

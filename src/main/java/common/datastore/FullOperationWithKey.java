@@ -28,14 +28,6 @@ public class FullOperationWithKey implements MinoOperationWithKey {
         this.usingKey = usingKey;
     }
 
-    public FullOperationWithKey(Mino mino, int x, int y, long needDeletedKey) {
-        this.mino = mino;
-        this.x = x;
-        this.y = y;
-        this.needDeletedKey = needDeletedKey;
-        this.usingKey = -1L;
-    }
-
     @Override
     public Mino getMino() {
         return mino;

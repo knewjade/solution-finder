@@ -1,6 +1,6 @@
 package searcher.pack;
 
-import common.datastore.FullOperationWithKey;
+import common.datastore.MinimalOperationWithKey;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.OperationWithKey;
 import core.field.KeyOperators;
@@ -8,7 +8,6 @@ import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import searcher.pack.separable_mino.AllSeparableMinoFactory;
-import searcher.pack.separable_mino.FullOperationSeparableMino;
 import searcher.pack.separable_mino.SeparableMino;
 
 import java.util.*;
@@ -66,7 +65,7 @@ public class SeparableMinos {
     }
 
     public int toIndex(Mino mino, int x, int y, long deleteKey) {
-        OperationWithKey operation = new FullOperationWithKey(mino, x, y, deleteKey);
+        OperationWithKey operation = new MinimalOperationWithKey(mino, x, y, deleteKey);
         return toIndex(operation);
     }
 }

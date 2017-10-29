@@ -14,14 +14,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class AllSeparableMinoFactory {
+public class AllMinoFactory {
     private final MinoFactory minoFactory;
     private final MinoShifter minoShifter;
     private final int fieldWidth;
     private final int fieldHeight;
     private final long deleteKeyMask;
 
-    public AllSeparableMinoFactory(MinoFactory minoFactory, MinoShifter minoShifter, int fieldWidth, int fieldHeight, long deleteKeyMask) {
+    public AllMinoFactory(MinoFactory minoFactory, MinoShifter minoShifter, int fieldWidth, int fieldHeight, long deleteKeyMask) {
         this.minoFactory = minoFactory;
         this.minoShifter = minoShifter;
         this.fieldWidth = fieldWidth;
@@ -105,7 +105,7 @@ public class AllSeparableMinoFactory {
             assert Long.bitCount(deleteKey) + indexes.size() == upperY - lowerY + 1;
 
             if ((deleteKeyMask & deleteKey) == deleteKey) {
-                for (int x = -mino.getMinX(); x < fieldWidth - mino.getMinX(); x++) {
+                for (int x = -mino.getMinX(); x < fieldWidth + mino.getMinX(); x++) {
                     FullOperationWithKey operationWithKey = new FullOperationWithKey(mino, x, lowerY - mino.getMinY(), deleteKey, usingKey);
                     pieces.add(parseOperation(operationWithKey, upperY, fieldHeight));
                 }
