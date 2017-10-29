@@ -4,7 +4,6 @@ import common.datastore.BlockCounter;
 import common.datastore.OperationWithKey;
 import common.datastore.blocks.LongBlocks;
 import core.mino.Block;
-import core.mino.Mino;
 import searcher.pack.task.Result;
 
 import java.util.Collections;
@@ -73,8 +72,7 @@ public class PathPair implements HaveSet<LongBlocks> {
 
     public String getUsingBlockName() {
         return sampleOperations.stream()
-                .map(OperationWithKey::getMino)
-                .map(Mino::getBlock)
+                .map(OperationWithKey::getBlock)
                 .sorted()
                 .map(Block::getName)
                 .collect(Collectors.joining());
@@ -85,7 +83,7 @@ public class PathPair implements HaveSet<LongBlocks> {
     }
 
     public BlockCounter getBlockCounter() {
-        return new BlockCounter(sampleOperations.stream().map(OperationWithKey::getMino).map(Mino::getBlock));
+        return new BlockCounter(sampleOperations.stream().map(OperationWithKey::getBlock));
     }
 
     public boolean isDeletedLine() {

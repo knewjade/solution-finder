@@ -19,7 +19,7 @@ class OperationWithKeyInterpreterTest {
     void parseToOperationWithKey() throws Exception {
         String base = "J,0,1,0,0,1025;I,0,1,2,0,1048576;L,L,3,1,1048576,1073742849;J,0,1,3,0,1100585369600";
         MinoFactory minoFactory = new MinoFactory();
-        List<OperationWithKey> operationWithKeys = OperationWithKeyInterpreter.parseToList(base, minoFactory);
+        List<MinoOperationWithKey> operationWithKeys = OperationWithKeyInterpreter.parseToList(base, minoFactory);
         String line = OperationWithKeyInterpreter.parseToString(operationWithKeys);
 
         assertThat(line).isEqualTo(base);
@@ -41,7 +41,7 @@ class OperationWithKeyInterpreterTest {
             }).limit(size).collect(Collectors.toList());
 
             String str = OperationWithKeyInterpreter.parseToString(operations);
-            List<OperationWithKey> actual = OperationWithKeyInterpreter.parseToList(str, minoFactory);
+            List<MinoOperationWithKey> actual = OperationWithKeyInterpreter.parseToList(str, minoFactory);
 
             assertThat(actual).isEqualTo(operations);
         }

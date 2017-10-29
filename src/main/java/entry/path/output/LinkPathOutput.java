@@ -1,6 +1,5 @@
 package entry.path.output;
 
-import common.datastore.OperationWithKey;
 import common.datastore.blocks.LongBlocks;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
@@ -144,8 +143,7 @@ public class LinkPathOutput implements PathOutput {
     private String createALink(PathPair pathPair) {
         // パターンを表す名前 を生成
         String linkText = pathPair.getSampleOperations().stream()
-                .map(OperationWithKey::getMino)
-                .map(mino -> mino.getBlock().getName() + "-" + mino.getRotate().name())
+                .map(operationWithKey -> operationWithKey.getBlock().getName() + "-" + operationWithKey.getRotate().name())
                 .collect(Collectors.joining(" "));
 
         // テト譜に変換

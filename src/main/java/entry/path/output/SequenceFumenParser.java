@@ -1,7 +1,7 @@
 package entry.path.output;
 
+import common.datastore.MinoOperationWithKey;
 import common.datastore.Operation;
-import common.datastore.OperationWithKey;
 import common.datastore.Operations;
 import common.parser.OperationTransform;
 import common.tetfu.Tetfu;
@@ -28,7 +28,7 @@ public class SequenceFumenParser implements FumenParser {
     }
 
     @Override
-    public String parse(List<OperationWithKey> operations, Field field, int maxClearLine) {
+    public String parse(List<MinoOperationWithKey> operations, Field field, int maxClearLine) {
         Operations operations2 = OperationTransform.parseToOperations(field, operations, maxClearLine);
         List<? extends Operation> operationsList = operations2.getOperations();
 
@@ -59,8 +59,7 @@ public class SequenceFumenParser implements FumenParser {
         }
 
         Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
-        String encode = tetfu.encode(tetfuElements);
-        return encode;
+        return tetfu.encode(tetfuElements);
     }
 
     private ColoredField createInitColoredField(Field initField, int maxClearLine) {

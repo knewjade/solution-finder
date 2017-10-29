@@ -1,6 +1,5 @@
 package common.parser;
 
-import common.datastore.OperationWithKey;
 import common.datastore.MinoOperationWithKey;
 import common.iterable.CombinationIterable;
 import core.field.KeyOperators;
@@ -116,5 +115,5 @@ public abstract class AbstractAllOperationFactory<T> {
         return pieces;
     }
 
-    protected abstract T parseOperation(OperationWithKey operationWithKey, int upperY, int fieldHeight);
+    protected abstract T parseOperation(MinoOperationWithKey operationWithKey, int upperY, int fieldHeight);
 }

@@ -2,7 +2,7 @@ package common.parser;
 
 import common.buildup.BuildUpStream;
 import common.comparator.OperationWithKeyComparator;
-import common.datastore.OperationWithKey;
+import common.datastore.MinoOperationWithKey;
 import common.datastore.Operations;
 import concurrent.LockedReachableThreadLocal;
 import core.column_field.ColumnField;
@@ -21,6 +21,7 @@ import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.memento.SRSValidSolutionFilter;
 import searcher.pack.memento.SolutionFilter;
+import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.solutions.OnDemandBasicSolutions;
 import searcher.pack.task.Field4x10MinoPackingHelper;
 import searcher.pack.task.PerfectPackSearcher;
@@ -48,7 +49,7 @@ class OperationTransformTest {
         String base = "L,0,2,0;Z,R,2,2;O,0,0,1;L,2,1,1";
         Operations operations = OperationInterpreter.parseToOperations(base);
         MinoFactory minoFactory = new MinoFactory();
-        List<OperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, 4);
+        List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, 4);
 
         String line = OperationWithKeyInterpreter.parseToString(operationWithKeys);
         assertThat(line).isEqualTo("L,0,2,0,0,1025;Z,R,2,2,0,1074791424;O,0,0,1,0,1049600;L,2,1,1,1049600,1073741825");
@@ -67,7 +68,7 @@ class OperationTransformTest {
         String base = "J,2,2,1;I,0,1,2;J,R,0,1;S,0,2,0";
         Operations operations = OperationInterpreter.parseToOperations(base);
         MinoFactory minoFactory = new MinoFactory();
-        List<OperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, 4);
+        List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, 4);
         Operations restoreOperations = OperationTransform.parseToOperations(field, operationWithKeys, 4);
 
         assertThat(restoreOperations).isEqualTo(operations);
@@ -105,17 +106,20 @@ class OperationTransformTest {
             PerfectPackSearcher searcher = new PerfectPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
             Optional<Result> resultOptional = searcher.findAny();
 
-            ListComparator<OperationWithKey> comparator = new ListComparator<>(new OperationWithKeyComparator());
+            OperationWithKeyComparator<MinoOperationWithKey> operationWithKeyComparator = new OperationWithKeyComparator<>();
+            ListComparator<MinoOperationWithKey> comparator = new ListComparator<>(operationWithKeyComparator);
             BuildUpStream buildUpStream = new BuildUpStream(lockedReachableThreadLocal.get(), height);
+
             // If found solution
             resultOptional.ifPresent(result -> {
-                List<OperationWithKey> list = result.getMemento()
-                        .getOperationsStream(basicWidth)
+                List<MinoOperationWithKey> list = result.getMemento()
+                        .getSeparableMinoStream(basicWidth)
+                        .map(SeparableMino::toMinoOperationWithKey)
                         .collect(Collectors.toList());
-                Optional<List<OperationWithKey>> validOption = buildUpStream.existsValidBuildPattern(field, list).findAny();
+                Optional<List<MinoOperationWithKey>> validOption = buildUpStream.existsValidBuildPattern(field, list).findAny();
                 validOption.ifPresent(operationWithKeys -> {
                     Operations operations = OperationTransform.parseToOperations(field, operationWithKeys, height);
-                    List<OperationWithKey> actual = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
+                    List<MinoOperationWithKey> actual = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
                     assertThat(comparator.compare(operationWithKeys, actual))
                             .as("%s%n%s%n %s", FieldView.toString(field, height), OperationWithKeyInterpreter.parseToString(operationWithKeys), OperationWithKeyInterpreter.parseToString(actual))
                             .isEqualTo(0);

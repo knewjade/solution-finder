@@ -2,11 +2,13 @@ package searcher.pack.memento;
 
 import common.buildup.BuildUp;
 import common.datastore.BlockCounter;
+import common.datastore.MinoOperationWithKey;
 import common.datastore.OperationWithKey;
 import core.action.reachable.Reachable;
 import core.field.Field;
 import searcher.pack.mino_field.MinoField;
 import searcher.pack.SizedBit;
+import searcher.pack.separable_mino.SeparableMino;
 
 import java.util.LinkedList;
 import java.util.Set;
@@ -49,7 +51,11 @@ public class UsingBlockAndValidKeySolutionFilter implements SolutionFilter {
         if (!test(memento))
             return false;
 
-        LinkedList<OperationWithKey> operations = memento.getOperationsStream(sizedBit.getWidth()).collect(Collectors.toCollection(LinkedList::new));
+        LinkedList<MinoOperationWithKey> operations = memento
+                .getSeparableMinoStream(sizedBit.getWidth())
+                .map(SeparableMino::toMinoOperationWithKey)
+                .collect(Collectors.toCollection(LinkedList::new));
+
         Reachable reachable = reachableThreadLocal.get();
         return BuildUp.existsValidBuildPatternDirectly(field, operations, sizedBit.getHeight(), reachable);
     }

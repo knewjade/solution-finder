@@ -1,6 +1,7 @@
 package common.tetfu;
 
 import common.buildup.BuildUpStream;
+import common.datastore.MinoOperationWithKey;
 import common.datastore.OperationWithKey;
 import common.datastore.Operations;
 import common.parser.OperationTransform;
@@ -26,6 +27,7 @@ import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.memento.SRSValidSolutionFilter;
 import searcher.pack.memento.SolutionFilter;
+import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.solutions.OnDemandBasicSolutions;
 import searcher.pack.task.Field4x10MinoPackingHelper;
 import searcher.pack.task.PerfectPackSearcher;
@@ -479,10 +481,11 @@ class TetfuTest {
             BuildUpStream buildUpStream = new BuildUpStream(lockedReachableThreadLocal.get(), height);
             // If found solution
             resultOptional.ifPresent(result -> {
-                List<OperationWithKey> list = result.getMemento()
-                        .getOperationsStream(basicWidth)
+                List<MinoOperationWithKey> list = result.getMemento()
+                        .getSeparableMinoStream(basicWidth)
+                        .map(SeparableMino::toMinoOperationWithKey)
                         .collect(Collectors.toList());
-                Optional<List<OperationWithKey>> validOption = buildUpStream.existsValidBuildPattern(field, list).findAny();
+                Optional<List<MinoOperationWithKey>> validOption = buildUpStream.existsValidBuildPattern(field, list).findAny();
                 validOption.ifPresent(operationWithKeys -> {
                     Operations operations = OperationTransform.parseToOperations(field, operationWithKeys, height);
                     List<TetfuElement> elements = operations.getOperations().stream()

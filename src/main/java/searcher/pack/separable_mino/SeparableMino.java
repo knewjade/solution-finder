@@ -1,5 +1,6 @@
 package searcher.pack.separable_mino;
 
+import common.datastore.MinoOperationWithKey;
 import common.datastore.OperationWithKey;
 import core.column_field.ColumnField;
 import core.column_field.ColumnFieldFactory;
@@ -8,9 +9,10 @@ import core.field.Field;
 import core.mino.Mino;
 import searcher.pack.separable_mino.mask.MinoMask;
 import searcher.pack.separable_mino.mask.MinoMaskFactory;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class SeparableMino {
-    public static SeparableMino create(OperationWithKey operationWithKey, int upperY, int fieldHeight) {
+    public static SeparableMino create(MinoOperationWithKey operationWithKey, int upperY, int fieldHeight) {
         assert upperY <= 10 : upperY;
 
         Mino mino = operationWithKey.getMino();
@@ -33,11 +35,11 @@ public class SeparableMino {
         return new SeparableMino(operationWithKey, field);
     }
 
-    private final OperationWithKey operation;
+    private final MinoOperationWithKey operation;
     private final ColumnField field;
     private final int lowerY;
 
-    private SeparableMino(OperationWithKey operationWithKey, ColumnField field) {
+    private SeparableMino(MinoOperationWithKey operationWithKey, ColumnField field) {
         this.operation = operationWithKey;
         this.field = field;
         this.lowerY = operationWithKey.getY() + operationWithKey.getMino().getMinY();
@@ -70,5 +72,9 @@ public class SeparableMino {
 
     public OperationWithKey toOperation() {
         return operation;
+    }
+
+    public MinoOperationWithKey toMinoOperationWithKey() {
+        throw new NotImplementedException();  // FIXME
     }
 }

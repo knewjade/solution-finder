@@ -58,7 +58,7 @@ class CheckerNoHoldTest {
 
         // Check can build result
         Operations operations = parseToOperations(result);
-        List<OperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, maxClearLine);
+        List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, maxClearLine);
         boolean cansBuild = BuildUp.cansBuild(field, operationWithKeys, maxClearLine, reachable);
         assertThat(cansBuild).isTrue();
     }

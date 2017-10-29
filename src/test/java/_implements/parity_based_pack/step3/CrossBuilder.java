@@ -1,12 +1,11 @@
 package _implements.parity_based_pack.step3;
 
-import common.datastore.OperationWithKey;
+import _implements.parity_based_pack.step2.FullLimitedMino;
 import common.datastore.MinoOperationWithKey;
 import core.field.Field;
 import core.mino.Mino;
-import _implements.parity_based_pack.step2.FullLimitedMino;
-import searcher.pack.separable_mino.mask.MinoMask;
 import searcher.common.validator.PerfectValidator;
+import searcher.pack.separable_mino.mask.MinoMask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,7 @@ public class CrossBuilder {
     private final List<List<FullLimitedMino>> sets;
     private final int maxClearLine;
     private final LineCounterField lineCounterField;
-    private final List<List<OperationWithKey>> results = new ArrayList<>();
+    private final List<List<MinoOperationWithKey>> results = new ArrayList<>();
     private final int lastIndex;
     private final PerfectValidator perfectValidator;
     private final boolean[] isSame;
@@ -51,7 +50,7 @@ public class CrossBuilder {
         this.cache.get(0).add(XField.createFirst(field, sets.size()));
     }
 
-    public List<List<OperationWithKey>> create() {
+    public List<List<MinoOperationWithKey>> create() {
         assert results.isEmpty();
         createList(0);
         return results;
@@ -113,7 +112,7 @@ public class CrossBuilder {
                     for (XField nextXField : nextXFields) {
                         int[] history = nextXField.getxHistory().getHistory();
                         assert fullLimitedMinos.length == history.length;
-                        List<OperationWithKey> result = new ArrayList<>();
+                        List<MinoOperationWithKey> result = new ArrayList<>();
                         for (int i = 0, length = history.length; i < length; i++) {
                             FullLimitedMino limitedMino = fullLimitedMinos[i];
                             int x = history[i];
@@ -122,7 +121,7 @@ public class CrossBuilder {
                             long deleteKey = limitedMino.getDeleteKey();
                             long usingKey = limitedMino.getUsingKey();
                             int lowerY = limitedMino.getLowerY();
-                            OperationWithKey withKey = new MinoOperationWithKey(mino, x, deleteKey, usingKey, lowerY);
+                            MinoOperationWithKey withKey = new MinoOperationWithKey(mino, x, deleteKey, usingKey, lowerY);
                             result.add(withKey);
                         }
                         results.add(result);

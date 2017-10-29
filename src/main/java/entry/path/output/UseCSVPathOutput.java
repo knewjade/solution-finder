@@ -6,7 +6,6 @@ import common.datastore.blocks.LongBlocks;
 import common.pattern.IBlocksGenerator;
 import core.field.Field;
 import core.mino.Block;
-import core.mino.Mino;
 import entry.path.PathEntryPoint;
 import entry.path.PathPair;
 import entry.path.PathSettings;
@@ -75,7 +74,7 @@ public class UseCSVPathOutput implements PathOutput {
         Map<BlockCounter, List<PathPair>> groupingByClockCounter = pathPairs.parallelStream()
                 .collect(Collectors.groupingBy(pathPair -> {
                     List<OperationWithKey> operations = pathPair.getSampleOperations();
-                    return new BlockCounter(operations.stream().map(OperationWithKey::getMino).map(Mino::getBlock));
+                    return new BlockCounter(operations.stream().map(OperationWithKey::getBlock));
                 }));
 
         List<PathPair> emptyValidList = Collections.emptyList();

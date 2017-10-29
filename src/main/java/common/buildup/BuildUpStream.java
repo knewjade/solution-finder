@@ -1,6 +1,6 @@
 package common.buildup;
 
-import common.datastore.OperationWithKey;
+import common.datastore.MinoOperationWithKey;
 import core.action.reachable.Reachable;
 import core.field.Field;
 import core.field.KeyOperators;
@@ -17,8 +17,8 @@ import java.util.stream.Stream;
 public class BuildUpStream {
     private final Reachable reachable;
     private final int height;
-    private LinkedList<OperationWithKey> currentOperations = new LinkedList<>();
-    private Stream.Builder<List<OperationWithKey>> solutions = Stream.builder();
+    private LinkedList<MinoOperationWithKey> currentOperations = new LinkedList<>();
+    private Stream.Builder<List<MinoOperationWithKey>> solutions = Stream.builder();
 
     public BuildUpStream(Reachable reachable, int height) {
         this.reachable = reachable;
@@ -26,12 +26,12 @@ public class BuildUpStream {
     }
 
     // 組み立てられる手順が存在するか確認
-    public Stream<List<OperationWithKey>> existsValidBuildPattern(Field fieldOrigin, List<OperationWithKey> operationWithKeys) {
-        LinkedList<OperationWithKey> keys = new LinkedList<>(operationWithKeys);
+    public Stream<List<MinoOperationWithKey>> existsValidBuildPattern(Field fieldOrigin, List<MinoOperationWithKey> operationWithKeys) {
+        LinkedList<MinoOperationWithKey> keys = new LinkedList<>(operationWithKeys);
         return existsValidBuildPatternDirectly(fieldOrigin, keys);
     }
 
-    public Stream<List<OperationWithKey>> existsValidBuildPatternDirectly(Field fieldOrigin, LinkedList<OperationWithKey> operationWithKeys) {
+    public Stream<List<MinoOperationWithKey>> existsValidBuildPatternDirectly(Field fieldOrigin, LinkedList<MinoOperationWithKey> operationWithKeys) {
         operationWithKeys.sort((o1, o2) -> {
             int compare = Integer.compare(o1.getY(), o2.getY());
             if (compare != 0)
@@ -44,11 +44,11 @@ public class BuildUpStream {
         return solutions.build();
     }
 
-    private void existsValidBuildPatternRecursive(Field field, LinkedList<OperationWithKey> operationWithKeys) {
+    private void existsValidBuildPatternRecursive(Field field, LinkedList<MinoOperationWithKey> operationWithKeys) {
         long deleteKey = field.clearLineReturnKey();
 
         for (int index = 0; index < operationWithKeys.size(); index++) {
-            OperationWithKey key = operationWithKeys.remove(index);
+            MinoOperationWithKey key = operationWithKeys.remove(index);
             this.currentOperations.addLast(key);
 
             long needDeletedKey = key.getNeedDeletedKey();

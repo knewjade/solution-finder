@@ -30,7 +30,6 @@ class SlideXOperationWithKeyTest {
             assertThat(key)
                     .returns(x + slide, SlideXOperationWithKey::getX)
                     .returns(y, SlideXOperationWithKey::getY)
-                    .returns(mino, SlideXOperationWithKey::getMino)
                     .returns(deleteKey, SlideXOperationWithKey::getNeedDeletedKey)
                     .returns(usingKey, SlideXOperationWithKey::getUsingKey);
         }

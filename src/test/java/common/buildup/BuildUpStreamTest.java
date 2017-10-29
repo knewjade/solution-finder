@@ -1,5 +1,6 @@
 package common.buildup;
 
+import common.datastore.MinoOperationWithKey;
 import common.datastore.OperationWithKey;
 import common.datastore.Operations;
 import common.iterable.PermutationIterable;
@@ -12,7 +13,6 @@ import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
 import core.mino.Block;
-import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
@@ -25,8 +25,12 @@ import searcher.pack.SizedBit;
 import searcher.pack.memento.AllPassedSolutionFilter;
 import searcher.pack.memento.SRSValidSolutionFilter;
 import searcher.pack.memento.SolutionFilter;
+import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.solutions.OnDemandBasicSolutions;
-import searcher.pack.task.*;
+import searcher.pack.task.Field4x10MinoPackingHelper;
+import searcher.pack.task.PerfectPackSearcher;
+import searcher.pack.task.Result;
+import searcher.pack.task.TaskResultHelper;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -57,12 +61,12 @@ class BuildUpStreamTest {
                 "____XXXXXX"
         );
         Operations operations = OperationInterpreter.parseToOperations("J,0,1,0;S,L,1,2;O,0,2,1;J,2,2,1");
-        List<OperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
+        List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
 
         // Create Blocks
         Set<String> valid = new BuildUpStream(reachable, height)
                 .existsValidBuildPattern(field, operationWithKeys)
-                .map(op -> op.stream().map(OperationWithKey::getMino).map(Mino::getBlock).map(Block::name).collect(Collectors.joining()))
+                .map(op -> op.stream().map(OperationWithKey::getBlock).map(Block::name).collect(Collectors.joining()))
                 .collect(Collectors.toSet());
 
         // Assertion
@@ -88,12 +92,12 @@ class BuildUpStreamTest {
                 "____XXXXXX"
         );
         Operations operations = OperationInterpreter.parseToOperations("J,R,0,1;O,0,1,0;L,L,3,1;I,0,1,0");
-        List<OperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
+        List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
 
         // Create Blocks
         Set<String> valid = new BuildUpStream(reachable, height)
                 .existsValidBuildPattern(field, operationWithKeys)
-                .map(op -> op.stream().map(OperationWithKey::getMino).map(Mino::getBlock).map(Block::name).collect(Collectors.joining()))
+                .map(op -> op.stream().map(OperationWithKey::getBlock).map(Block::name).collect(Collectors.joining()))
                 .collect(Collectors.toSet());
 
         // Assertion
@@ -141,17 +145,18 @@ class BuildUpStreamTest {
             resultOptional.ifPresent(result -> {
                 counter.incrementAndGet();
 
-                LinkedList<OperationWithKey> operationWithKeys = result.getMemento().getOperationsStream(basicWidth)
+                LinkedList<MinoOperationWithKey> operationWithKeys = result.getMemento().getSeparableMinoStream(basicWidth)
+                        .map(SeparableMino::toMinoOperationWithKey)
                         .collect(Collectors.toCollection(LinkedList::new));
 
                 // Create Blocks
                 LockedReachable reachable = lockedReachableThreadLocal.get();
-                Set<List<OperationWithKey>> valid = new BuildUpStream(reachable, height)
+                Set<List<MinoOperationWithKey>> valid = new BuildUpStream(reachable, height)
                         .existsValidBuildPattern(field, operationWithKeys)
                         .collect(Collectors.toSet());
 
-                PermutationIterable<OperationWithKey> permutations = new PermutationIterable<>(operationWithKeys, operationWithKeys.size());
-                for (List<OperationWithKey> permutation : permutations) {
+                PermutationIterable<MinoOperationWithKey> permutations = new PermutationIterable<>(operationWithKeys, operationWithKeys.size());
+                for (List<MinoOperationWithKey> permutation : permutations) {
                     boolean canBuild = BuildUp.cansBuild(field, permutation, height, reachable);
 
                     if (canBuild) {
@@ -208,17 +213,18 @@ class BuildUpStreamTest {
             resultOptional.ifPresent(result -> {
                 counter.incrementAndGet();
 
-                LinkedList<OperationWithKey> operationWithKeys = result.getMemento().getOperationsStream(basicWidth)
+                LinkedList<MinoOperationWithKey> operationWithKeys = result.getMemento().getSeparableMinoStream(basicWidth)
+                        .map(SeparableMino::toMinoOperationWithKey)
                         .collect(Collectors.toCollection(LinkedList::new));
 
                 // Create Blocks
                 LockedReachable reachable = lockedReachableThreadLocal.get();
-                Set<List<OperationWithKey>> valid = new BuildUpStream(reachable, height)
+                Set<List<MinoOperationWithKey>> valid = new BuildUpStream(reachable, height)
                         .existsValidBuildPattern(field, operationWithKeys)
                         .collect(Collectors.toSet());
 
-                PermutationIterable<OperationWithKey> permutations = new PermutationIterable<>(operationWithKeys, operationWithKeys.size());
-                for (List<OperationWithKey> permutation : permutations) {
+                PermutationIterable<MinoOperationWithKey> permutations = new PermutationIterable<>(operationWithKeys, operationWithKeys.size());
+                for (List<MinoOperationWithKey> permutation : permutations) {
                     boolean canBuild = BuildUp.cansBuild(field, permutation, height, reachable);
 
                     if (canBuild) {

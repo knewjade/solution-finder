@@ -4,6 +4,8 @@ import common.datastore.BlockCounter;
 import common.datastore.OperationWithKey;
 import searcher.pack.mino_field.MinoField;
 import searcher.pack.SlideXOperationWithKey;
+import searcher.pack.separable_mino.SeparableMino;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.stream.Stream;
 
@@ -79,12 +81,17 @@ public class RecursiveMinoFieldMemento implements MinoFieldMemento {
         } while (target != null);
         return operations;
     }
-    
+
     private Stream<OperationWithKey> addSlideX(Stream<OperationWithKey> operations, int slideX) {
         return operations.map(operationWithKey -> toSlideWrapper(operationWithKey, slideX));
     }
 
     private OperationWithKey toSlideWrapper(OperationWithKey operationWithKey, int slideX) {
         return new SlideXOperationWithKey(operationWithKey, slideX);
+    }
+
+    @Override
+    public Stream<SeparableMino> getSeparableMinoStream(int width) {
+        throw new NotImplementedException();  // FIXME
     }
 }

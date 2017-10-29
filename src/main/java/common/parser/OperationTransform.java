@@ -1,6 +1,9 @@
 package common.parser;
 
-import common.datastore.*;
+import common.datastore.MinoOperationWithKey;
+import common.datastore.Operation;
+import common.datastore.Operations;
+import common.datastore.SimpleOperation;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.KeyOperators;
@@ -12,8 +15,8 @@ import java.util.List;
 
 public class OperationTransform {
     // List<OperationWithKey>に変換する。正しく組み立てられるかはチェックしない
-    public static List<OperationWithKey> parseToOperationWithKeys(Field fieldOrigin, Operations operations, MinoFactory minoFactory, int height) {
-        ArrayList<OperationWithKey> keys = new ArrayList<>();
+    public static List<MinoOperationWithKey> parseToOperationWithKeys(Field fieldOrigin, Operations operations, MinoFactory minoFactory, int height) {
+        ArrayList<MinoOperationWithKey> keys = new ArrayList<>();
         Field field = fieldOrigin.freeze(height);
         for (Operation op : operations.getOperations()) {
             Mino mino = minoFactory.create(op.getBlock(), op.getRotate());
@@ -37,7 +40,7 @@ public class OperationTransform {
             long usingKey = keyLine & ~needDeletedKey;
 
             // 操作・消去されている必要がある行をセットで記録
-            OperationWithKey operationWithKey = new MinoOperationWithKey(mino, x, needDeletedKey, usingKey, lowerY);
+            MinoOperationWithKey operationWithKey = new MinoOperationWithKey(mino, x, needDeletedKey, usingKey, lowerY);
             keys.add(operationWithKey);
 
             // 次のフィールドを作成
@@ -49,11 +52,11 @@ public class OperationTransform {
 
     // List<Operation>に変換する。正しく組み立てられるかはチェックしない
     // operationWithKeysは組み立てられる順番に並んでいること
-    public static Operations parseToOperations(Field fieldOrigin, List<OperationWithKey> operationWithKeys, int height) {
+    public static Operations parseToOperations(Field fieldOrigin, List<MinoOperationWithKey> operationWithKeys, int height) {
         ArrayList<Operation> operations = new ArrayList<>();
 
         Field field = fieldOrigin.freeze(height);
-        for (OperationWithKey operationWithKey : operationWithKeys) {
+        for (MinoOperationWithKey operationWithKey : operationWithKeys) {
             long deleteKey = field.clearLineReturnKey();
 
             // すでに下のラインが消えているときは、その分スライドさせる

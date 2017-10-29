@@ -3,6 +3,7 @@ package entry.path;
 import common.SyntaxException;
 import common.buildup.BuildUpStream;
 import common.datastore.BlockField;
+import common.datastore.MinoOperationWithKey;
 import common.datastore.OperationWithKey;
 import common.datastore.blocks.Blocks;
 import common.datastore.blocks.LongBlocks;
@@ -17,6 +18,7 @@ import core.mino.Block;
 import core.mino.Mino;
 import entry.path.output.FumenParser;
 import searcher.pack.SizedBit;
+import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.task.PerfectPackSearcher;
 import searcher.pack.task.Result;
 
@@ -114,11 +116,14 @@ class PathCore {
         int maxClearLine = sizedBit.getHeight();
         return candidates.parallelStream()
                 .map(result -> {
-                    LinkedList<OperationWithKey> operations = result.getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toCollection(LinkedList::new));
+                    LinkedList<MinoOperationWithKey> operations = result.getMemento()
+                            .getSeparableMinoStream(sizedBit.getWidth())
+                            .map(SeparableMino::toMinoOperationWithKey)
+                            .collect(Collectors.toCollection(LinkedList::new));
 
                     // 地形の中で組むことができるoperationsを一つ作成
                     BuildUpStream buildUpStream = buildUpStreamThreadLocal.get();
-                    List<OperationWithKey> sampleOperations = buildUpStream.existsValidBuildPatternDirectly(field, operations)
+                    List<MinoOperationWithKey> sampleOperations = buildUpStream.existsValidBuildPatternDirectly(field, operations)
                             .findFirst()
                             .orElse(Collections.emptyList());
 
@@ -129,8 +134,7 @@ class PathCore {
                     // 地形の中で組むことができるSetを作成
                     HashSet<LongBlocks> piecesSolution = buildUpStream.existsValidBuildPatternDirectly(field, operations)
                             .map(operationWithKeys -> operationWithKeys.stream()
-                                    .map(OperationWithKey::getMino)
-                                    .map(Mino::getBlock)
+                                    .map(OperationWithKey::getBlock)
                                     .collect(Collectors.toList())
                             )
                             .map(LongBlocks::new)
@@ -158,14 +162,15 @@ class PathCore {
         List<Result> candidates = searcher.stream(resultStream -> {
             return resultStream
                     .filter(result -> {
-                        LinkedList<OperationWithKey> operations = result.getMemento()
-                                .getOperationsStream(sizedBit.getWidth())
+                        LinkedList<MinoOperationWithKey> operations = result.getMemento()
+                                .getSeparableMinoStream(sizedBit.getWidth())
+                                .map(SeparableMino::toMinoOperationWithKey)
                                 .collect(Collectors.toCollection(LinkedList::new));
 
                         BlockField mergedField = new BlockField(maxClearLine);
                         operations.forEach(operation -> {
                             Field operationField = createField(operation, maxClearLine);
-                            mergedField.merge(operationField, operation.getMino().getBlock());
+                            mergedField.merge(operationField, operation.getBlock());
                         });
 
                         return mergedField.containsAll(blockField);
@@ -175,11 +180,14 @@ class PathCore {
 
         return candidates.stream()
                 .map(result -> {
-                    LinkedList<OperationWithKey> operations = result.getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toCollection(LinkedList::new));
+                    LinkedList<MinoOperationWithKey> operations = result.getMemento()
+                            .getSeparableMinoStream(sizedBit.getWidth())
+                            .map(SeparableMino::toMinoOperationWithKey)
+                            .collect(Collectors.toCollection(LinkedList::new));
 
                     // 地形の中で組むことができるoperationsを一つ作成
                     BuildUpStream buildUpStream = buildUpStreamThreadLocal.get();
-                    List<OperationWithKey> sampleOperations = buildUpStream.existsValidBuildPatternDirectly(field, operations)
+                    List<MinoOperationWithKey> sampleOperations = buildUpStream.existsValidBuildPatternDirectly(field, operations)
                             .findFirst()
                             .orElse(Collections.emptyList());
 
@@ -190,8 +198,7 @@ class PathCore {
                     // 地形の中で組むことができるSetを作成
                     HashSet<LongBlocks> piecesSolution = buildUpStream.existsValidBuildPatternDirectly(field, operations)
                             .map(operationWithKeys -> operationWithKeys.stream()
-                                    .map(OperationWithKey::getMino)
-                                    .map(Mino::getBlock)
+                                    .map(OperationWithKey::getBlock)
                                     .collect(Collectors.toList())
                             )
                             .map(LongBlocks::new)
@@ -213,7 +220,7 @@ class PathCore {
                 .collect(Collectors.toList());
     }
 
-    private Field createField(OperationWithKey key, int maxClearLine) {
+    private Field createField(MinoOperationWithKey key, int maxClearLine) {
         Mino mino = key.getMino();
         Field test = FieldFactory.createField(maxClearLine);
         test.put(mino, key.getX(), key.getY());

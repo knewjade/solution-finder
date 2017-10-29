@@ -2,6 +2,7 @@ package searcher.pack.task;
 
 import common.SyntaxException;
 import common.buildup.BuildUpStream;
+import common.datastore.MinoOperationWithKey;
 import common.datastore.OperationWithKey;
 import common.datastore.Pair;
 import common.datastore.action.Action;
@@ -18,7 +19,6 @@ import core.column_field.ColumnSmallField;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
-import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
@@ -36,6 +36,7 @@ import searcher.pack.memento.AllPassedSolutionFilter;
 import searcher.pack.memento.SRSValidSolutionFilter;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.mino_fields.RecursiveMinoFields;
+import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.solutions.BasicSolutionsCalculator;
 import searcher.pack.solutions.FilterOnDemandBasicSolutions;
 import searcher.pack.solutions.MappedBasicSolutions;
@@ -304,9 +305,13 @@ class PackSearcherTest {
             HashSet<Blocks> possiblePieces = new HashSet<>();
             for (Result result : results) {
                 // result to possible pieces
-                List<OperationWithKey> operationWithKeys = result.getMemento().getOperationsStream(width).collect(Collectors.toList());
+                List<MinoOperationWithKey> operationWithKeys = result.getMemento()
+                        .getSeparableMinoStream(width)
+                        .map(SeparableMino::toMinoOperationWithKey)
+                        .collect(Collectors.toList());
+
                 Set<LongBlocks> sets = new BuildUpStream(reachable, height).existsValidBuildPattern(initField, operationWithKeys)
-                        .map(keys -> keys.stream().map(OperationWithKey::getMino).map(Mino::getBlock))
+                        .map(keys -> keys.stream().map(OperationWithKey::getBlock))
                         .map(LongBlocks::new)
                         .collect(Collectors.toSet());
                 possiblePieces.addAll(sets);
@@ -358,9 +363,13 @@ class PackSearcherTest {
             HashSet<Blocks> possiblePieces = new HashSet<>();
             for (Result result : results) {
                 // result to possible pieces
-                List<OperationWithKey> operationWithKeys = result.getMemento().getOperationsStream(width).collect(Collectors.toList());
+                List<MinoOperationWithKey> operationWithKeys = result.getMemento()
+                        .getSeparableMinoStream(width)
+                        .map(SeparableMino::toMinoOperationWithKey)
+                        .collect(Collectors.toList());
+
                 Set<LongBlocks> sets = new BuildUpStream(reachable, height).existsValidBuildPattern(initField, operationWithKeys)
-                        .map(keys -> keys.stream().map(OperationWithKey::getMino).map(Mino::getBlock))
+                        .map(keys -> keys.stream().map(OperationWithKey::getBlock))
                         .map(LongBlocks::new)
                         .collect(Collectors.toSet());
                 possiblePieces.addAll(sets);

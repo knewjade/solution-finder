@@ -36,7 +36,6 @@ public class MinoOperationWithKey implements OperationWithKey {
         this.usingKey = -1L;
     }
 
-    @Override
     public Mino getMino() {
         return mino;
     }

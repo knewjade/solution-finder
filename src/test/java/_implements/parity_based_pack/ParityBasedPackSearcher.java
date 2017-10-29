@@ -8,7 +8,7 @@ import _implements.parity_based_pack.step2.PositionLimitParser;
 import _implements.parity_based_pack.step3.CrossBuilder;
 import common.buildup.BuildUp;
 import common.datastore.BlockCounter;
-import common.datastore.OperationWithKey;
+import common.datastore.MinoOperationWithKey;
 import concurrent.LockedReachableThreadLocal;
 import core.field.Field;
 import core.mino.Block;
@@ -25,17 +25,17 @@ public class ParityBasedPackSearcher {
     private final Field verifyField;
     private final int maxClearLine;
 
-    public ParityBasedPackSearcher(Field field, int maxClearLine) {
+    ParityBasedPackSearcher(Field field, int maxClearLine) {
         this(field, field.freeze(maxClearLine), maxClearLine);
     }
 
-    public ParityBasedPackSearcher(Field field, Field verifyField, int maxClearLine) {
+    private ParityBasedPackSearcher(Field field, Field verifyField, int maxClearLine) {
         this.field = field;
         this.verifyField = verifyField;
         this.maxClearLine = maxClearLine;
     }
 
-    public Stream<List<OperationWithKey>> search(List<Block> usingBlocks) {
+    public Stream<List<MinoOperationWithKey>> search(List<Block> usingBlocks) {
         // 準備
         MinoFactory minoFactory = new MinoFactory();
         PositionLimitParser positionLimitParser = new PositionLimitParser(minoFactory, maxClearLine);

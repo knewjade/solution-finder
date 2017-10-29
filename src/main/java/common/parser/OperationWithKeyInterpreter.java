@@ -24,10 +24,9 @@ public class OperationWithKeyInterpreter {
     }
 
     private static String parseToString(OperationWithKey operation) {
-        Mino mino = operation.getMino();
         return String.format("%s,%s,%d,%d,%d,%d",
-                mino.getBlock().getName(),
-                StringEnumTransform.toString(mino.getRotate()),
+                operation.getBlock().getName(),
+                StringEnumTransform.toString(operation.getRotate()),
                 operation.getX(),
                 operation.getY(),
                 operation.getNeedDeletedKey(),
@@ -35,11 +34,11 @@ public class OperationWithKeyInterpreter {
         );
     }
 
-    public static List<OperationWithKey> parseToList(String operations, MinoFactory minoFactory) {
+    public static List<MinoOperationWithKey> parseToList(String operations, MinoFactory minoFactory) {
         return parseToStream(operations, minoFactory).collect(Collectors.toList());
     }
 
-    public static Stream<OperationWithKey> parseToStream(String operations, MinoFactory minoFactory) {
+    public static Stream<MinoOperationWithKey> parseToStream(String operations, MinoFactory minoFactory) {
         return Arrays.stream(operations.split(";"))
                 .map(s -> s.split(","))
                 .map(strings -> {

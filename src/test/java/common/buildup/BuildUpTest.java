@@ -16,7 +16,6 @@ import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
 import core.mino.Block;
-import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
@@ -31,6 +30,7 @@ import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.memento.AllPassedSolutionFilter;
 import searcher.pack.memento.SolutionFilter;
+import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.solutions.OnDemandBasicSolutions;
 import searcher.pack.task.Field4x10MinoPackingHelper;
 import searcher.pack.task.PerfectPackSearcher;
@@ -65,10 +65,10 @@ class BuildUpTest {
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
 
         Operations operations = OperationInterpreter.parseToOperations("J,0,1,0;S,L,1,2;O,0,2,1;J,2,2,1");
-        List<OperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
+        List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
         assertThat(BuildUp.cansBuild(field, operationWithKeys, height, reachable)).isTrue();
 
-        OperationWithKey remove = operationWithKeys.remove(0);
+        MinoOperationWithKey remove = operationWithKeys.remove(0);
         operationWithKeys.add(1, remove);
         assertThat(BuildUp.cansBuild(field, operationWithKeys, height, reachable)).isFalse();
     }
@@ -103,7 +103,7 @@ class BuildUpTest {
                 counter.incrementAndGet();
                 Stream<Operation> operationStream = ResultHelper.createOperationStream(checker.getResult());
                 Operations operations = new Operations(operationStream);
-                List<OperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
+                List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
                 assertThat(BuildUp.cansBuild(field, operationWithKeys, height, reachable))
                         .as(FieldView.toString(field) + blocks)
                         .isTrue();
@@ -144,7 +144,7 @@ class BuildUpTest {
                 counter.incrementAndGet();
                 Stream<Operation> operationStream = ResultHelper.createOperationStream(checker.getResult());
                 Operations operations = new Operations(operationStream);
-                List<OperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
+                List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
                 assertThat(BuildUp.cansBuild(field, operationWithKeys, height, reachable))
                         .as(FieldView.toString(field) + blocks)
                         .isTrue();
@@ -167,7 +167,7 @@ class BuildUpTest {
         MinoRotation minoRotation = new MinoRotation();
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
 
-        List<OperationWithKey> operationWithKeys = Arrays.asList(
+        List<MinoOperationWithKey> operationWithKeys = Arrays.asList(
                 new MinoOperationWithKey(minoFactory.create(Block.J, Rotate.Right), 5, 0L, 0L, 0),
                 new MinoOperationWithKey(minoFactory.create(Block.J, Rotate.Reverse), 8, 0L, 0L, 2),
                 new MinoOperationWithKey(minoFactory.create(Block.L, Rotate.Spawn), 7, 0L, 0L, 0),
@@ -193,7 +193,7 @@ class BuildUpTest {
         MinoRotation minoRotation = new MinoRotation();
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
 
-        List<OperationWithKey> operationWithKeys = Arrays.asList(
+        List<MinoOperationWithKey> operationWithKeys = Arrays.asList(
                 new MinoOperationWithKey(minoFactory.create(Block.J, Rotate.Right), 0, 0L, 0L, 0),
                 new MinoOperationWithKey(minoFactory.create(Block.L, Rotate.Left), 1, 1048576L, 0L, 0)
         );
@@ -239,7 +239,8 @@ class BuildUpTest {
             resultOptional.ifPresent(result -> {
                 counter.incrementAndGet();
 
-                LinkedList<OperationWithKey> operationWithKeys = result.getMemento().getOperationsStream(basicWidth)
+                LinkedList<MinoOperationWithKey> operationWithKeys = result.getMemento().getSeparableMinoStream(basicWidth)
+                        .map(SeparableMino::toMinoOperationWithKey)
                         .collect(Collectors.toCollection(LinkedList::new));
 
                 LockedReachable reachable = lockedReachableThreadLocal.get();
@@ -247,7 +248,7 @@ class BuildUpTest {
 
                 if (exists) {
                     // cansBuildでtrueとなるものがあることを確認
-                    Optional<List<OperationWithKey>> valid = StreamSupport.stream(new PermutationIterable<>(operationWithKeys, operationWithKeys.size()).spliterator(), false)
+                    Optional<List<MinoOperationWithKey>> valid = StreamSupport.stream(new PermutationIterable<>(operationWithKeys, operationWithKeys.size()).spliterator(), false)
                             .filter(combination -> BuildUp.cansBuild(field, combination, height, lockedReachableThreadLocal.get()))
                             .findAny();
                     assertThat(valid.isPresent())
@@ -261,8 +262,8 @@ class BuildUpTest {
 
                     // existsValidByOrderは必ずtrueになる
                     assert valid.isPresent();
-                    List<OperationWithKey> keys = valid.get();
-                    List<Block> blocks = keys.stream().map(OperationWithKey::getMino).map(Mino::getBlock).collect(Collectors.toList());
+                    List<MinoOperationWithKey> keys = valid.get();
+                    List<Block> blocks = keys.stream().map(OperationWithKey::getBlock).collect(Collectors.toList());
                     assertThat(BuildUp.existsValidByOrder(field, keys.stream(), blocks, height, reachable))
                             .isTrue();
                 } else {
@@ -274,7 +275,7 @@ class BuildUpTest {
                             .isTrue();
 
                     // existsValidByOrderは必ずfalseになる
-                    List<Block> blocks = operationWithKeys.stream().map(OperationWithKey::getMino).map(Mino::getBlock).collect(Collectors.toList());
+                    List<Block> blocks = operationWithKeys.stream().map(OperationWithKey::getBlock).collect(Collectors.toList());
                     assertThat(BuildUp.existsValidByOrder(field, operationWithKeys.stream(), blocks, height, reachable))
                             .isFalse();
                 }
@@ -322,7 +323,8 @@ class BuildUpTest {
             resultOptional.ifPresent(result -> {
                 counter.incrementAndGet();
 
-                LinkedList<OperationWithKey> operationWithKeys = result.getMemento().getOperationsStream(basicWidth)
+                LinkedList<MinoOperationWithKey> operationWithKeys = result.getMemento().getSeparableMinoStream(basicWidth)
+                        .map(SeparableMino::toMinoOperationWithKey)
                         .collect(Collectors.toCollection(LinkedList::new));
 
                 LockedReachable reachable = lockedReachableThreadLocal.get();
@@ -330,7 +332,7 @@ class BuildUpTest {
 
                 if (exists) {
                     // cansBuildでtrueとなるものがあることを確認
-                    Optional<List<OperationWithKey>> valid = StreamSupport.stream(new PermutationIterable<>(operationWithKeys, operationWithKeys.size()).spliterator(), false)
+                    Optional<List<MinoOperationWithKey>> valid = StreamSupport.stream(new PermutationIterable<>(operationWithKeys, operationWithKeys.size()).spliterator(), false)
                             .filter(combination -> BuildUp.cansBuild(field, combination, height, lockedReachableThreadLocal.get()))
                             .findAny();
                     assertThat(valid.isPresent())
@@ -344,8 +346,8 @@ class BuildUpTest {
 
                     // existsValidByOrderは必ずtrueになる
                     assert valid.isPresent();
-                    List<OperationWithKey> keys = valid.get();
-                    List<Block> blocks = keys.stream().map(OperationWithKey::getMino).map(Mino::getBlock).collect(Collectors.toList());
+                    List<MinoOperationWithKey> keys = valid.get();
+                    List<Block> blocks = keys.stream().map(OperationWithKey::getBlock).collect(Collectors.toList());
                     assertThat(BuildUp.existsValidByOrder(field, keys.stream(), blocks, height, reachable))
                             .isTrue();
                 } else {
@@ -357,7 +359,7 @@ class BuildUpTest {
                             .isTrue();
 
                     // existsValidByOrderは必ずfalseになる
-                    List<Block> blocks = operationWithKeys.stream().map(OperationWithKey::getMino).map(Mino::getBlock).collect(Collectors.toList());
+                    List<Block> blocks = operationWithKeys.stream().map(OperationWithKey::getBlock).collect(Collectors.toList());
                     assertThat(BuildUp.existsValidByOrder(field, operationWithKeys.stream(), blocks, height, reachable))
                             .isFalse();
                 }
@@ -384,7 +386,7 @@ class BuildUpTest {
 
         // OperationWithKeyに変換
         MinoFactory minoFactory = new MinoFactory();
-        List<OperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
+        List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
 
         // reachableの準備
         MinoShifter minoShifter = new MinoShifter();
@@ -397,12 +399,12 @@ class BuildUpTest {
 
         // 有効な手順を列挙する
         BuildUpStream buildUpStream = new BuildUpStream(reachable, height);
-        Set<List<OperationWithKey>> validPatterns = buildUpStream.existsValidBuildPattern(field, operationWithKeys)
+        Set<List<MinoOperationWithKey>> validPatterns = buildUpStream.existsValidBuildPattern(field, operationWithKeys)
                 .collect(Collectors.toSet());
 
         // すべての組み合わせでチェック
-        Iterable<List<OperationWithKey>> iterable = new PermutationIterable<>(operationWithKeys, operationWithKeys.size());
-        for (List<OperationWithKey> withKeys : iterable) {
+        Iterable<List<MinoOperationWithKey>> iterable = new PermutationIterable<>(operationWithKeys, operationWithKeys.size());
+        for (List<MinoOperationWithKey> withKeys : iterable) {
             boolean canBuild = BuildUp.cansBuild(field, withKeys, height, reachable);
             assertThat(canBuild).isEqualTo(validPatterns.contains(withKeys));
 
@@ -429,7 +431,7 @@ class BuildUpTest {
 
         // OperationWithKeyに変換
         MinoFactory minoFactory = new MinoFactory();
-        List<OperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
+        List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
 
         // reachableの準備
         MinoShifter minoShifter = new MinoShifter();
@@ -442,12 +444,12 @@ class BuildUpTest {
 
         // 有効な手順を列挙する
         BuildUpStream buildUpStream = new BuildUpStream(reachable, height);
-        Set<List<OperationWithKey>> validPatterns = buildUpStream.existsValidBuildPattern(field, operationWithKeys)
+        Set<List<MinoOperationWithKey>> validPatterns = buildUpStream.existsValidBuildPattern(field, operationWithKeys)
                 .collect(Collectors.toSet());
 
         // すべての組み合わせでチェック
-        Iterable<List<OperationWithKey>> iterable = new PermutationIterable<>(operationWithKeys, operationWithKeys.size());
-        for (List<OperationWithKey> withKeys : iterable) {
+        Iterable<List<MinoOperationWithKey>> iterable = new PermutationIterable<>(operationWithKeys, operationWithKeys.size());
+        for (List<MinoOperationWithKey> withKeys : iterable) {
             boolean canBuild = BuildUp.cansBuild(field, withKeys, height, reachable);
             assertThat(canBuild).isEqualTo(validPatterns.contains(withKeys));
 
@@ -467,8 +469,8 @@ class BuildUpTest {
         );
         String line = "L,L,3,1,0,1049601;L,R,1,1,0,1049601;I,L,0,1,0,1074791425;T,2,2,2,1048576,1073742848";
         MinoFactory minoFactory = new MinoFactory();
-        Stream<OperationWithKey> stream = OperationWithKeyInterpreter.parseToStream(line, minoFactory);
-        List<OperationWithKey> operations = stream.collect(Collectors.toList());
+        Stream<MinoOperationWithKey> stream = OperationWithKeyInterpreter.parseToStream(line, minoFactory);
+        List<MinoOperationWithKey> operations = stream.collect(Collectors.toList());
         System.out.println(operations);
 
         int height = 4;

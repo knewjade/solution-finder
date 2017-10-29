@@ -22,14 +22,14 @@ public class PathPairComparator implements Comparator<PathPair> {
             return compareSize;
 
         for (int index = 0; index < operations1.size(); index++) {
-            Mino mino1 = operations1.get(index).getMino();
-            Mino mino2 = operations2.get(index).getMino();
+            OperationWithKey operation1 = operations1.get(index);
+            OperationWithKey operation2 = operations2.get(index);
 
-            int compareBlock = mino1.getBlock().compareTo(mino2.getBlock());
+            int compareBlock = operation1.getBlock().compareTo(operation2.getBlock());
             if (compareBlock != 0)
                 return compareBlock;
 
-            int compareRotate = mino1.getRotate().compareTo(mino2.getRotate());
+            int compareRotate = operation1.getRotate().compareTo(operation2.getRotate());
             if (compareRotate != 0)
                 return compareRotate;
         }

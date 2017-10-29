@@ -119,7 +119,7 @@ class OperationWithKeyComparatorTest {
         OperationWithKey operationWithKey2 = createNewOperationWithKey(newMino, x, y, deleteKey, choose);
 
         // assert is 0
-        OperationWithKeyComparator comparator = new OperationWithKeyComparator();
+        OperationWithKeyComparator<OperationWithKey> comparator = new OperationWithKeyComparator<>();
         assertThat(comparator.compare(operationWithKey1, operationWithKey2))
                 .as(operationWithKey1.toString())
                 .isEqualTo(0);
@@ -131,11 +131,6 @@ class OperationWithKeyComparatorTest {
     private OperationWithKey createNewOperationWithKey(Mino mino, int x, int y, long deleteKey, long usingKey) {
         // TODO: Use mock
         return new OperationWithKey() {
-            @Override
-            public Mino getMino() {
-                return mino;
-            }
-
             @Override
             public Block getBlock() {
                 return mino.getBlock();

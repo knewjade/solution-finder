@@ -2,7 +2,6 @@ package searcher.pack;
 
 import common.datastore.OperationWithKey;
 import core.mino.Block;
-import core.mino.Mino;
 import core.srs.Rotate;
 
 public class SlideXOperationWithKey implements OperationWithKey {
@@ -12,11 +11,6 @@ public class SlideXOperationWithKey implements OperationWithKey {
     public SlideXOperationWithKey(OperationWithKey operationWithKey, int slideX) {
         this.operationWithKey = operationWithKey;
         this.slideX = slideX;
-    }
-
-    @Override
-    public Mino getMino() {
-        return operationWithKey.getMino();
     }
 
     @Override

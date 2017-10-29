@@ -6,13 +6,14 @@ import _implements.parity_based_pack.step1.EstimateBuilder;
 import _implements.parity_based_pack.step2.FullLimitedMino;
 import _implements.parity_based_pack.step2.PositionLimitParser;
 import _implements.parity_based_pack.step3.CrossBuilder;
-import common.datastore.BlockCounter;
-import common.parser.OperationWithKeyInterpreter;
-import lib.Stopwatch;
 import common.buildup.BuildUp;
+import common.comparator.OperationWithKeyComparator;
+import common.datastore.BlockCounter;
 import common.datastore.BlockField;
+import common.datastore.MinoOperationWithKey;
 import common.datastore.OperationWithKey;
 import common.iterable.CombinationIterable;
+import common.parser.OperationWithKeyInterpreter;
 import common.tetfu.Tetfu;
 import common.tetfu.TetfuElement;
 import common.tetfu.common.ColorConverter;
@@ -27,6 +28,7 @@ import core.mino.Block;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
+import lib.Stopwatch;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -67,12 +69,12 @@ public class Main3 {
             counter++;
             System.out.println(usedBlocks);
             System.out.println(counter + " / " + sets.size());
-            List<List<OperationWithKey>> operationsWithKey = search(usedBlocks, field, maxClearLine, verifyField);
+            List<List<MinoOperationWithKey>> operationsWithKey = search(usedBlocks, field, maxClearLine, verifyField);
             List<Obj> objs = operationsWithKey.stream()
                     .map(operationWithKeys -> {
                         boolean isDeleted = false;
                         BlockField blockField = new BlockField(maxClearLine);
-                        for (OperationWithKey key : operationWithKeys) {
+                        for (MinoOperationWithKey key : operationWithKeys) {
                             Field test = FieldFactory.createField(maxClearLine);
                             Mino mino = key.getMino();
                             test.put(mino, key.getX(), key.getY());
@@ -265,7 +267,7 @@ public class Main3 {
         }
     }
 
-    public static List<List<OperationWithKey>> search(List<Block> usedBlocks, Field field, int maxClearLine, Field verifyField) {
+    public static List<List<MinoOperationWithKey>> search(List<Block> usedBlocks, Field field, int maxClearLine, Field verifyField) {
         MinoFactory minoFactory = new MinoFactory();
         PositionLimitParser positionLimitParser = new PositionLimitParser(minoFactory, maxClearLine);
         LockedReachableThreadLocal threadLocal = new LockedReachableThreadLocal(maxClearLine);
@@ -318,38 +320,17 @@ public class Main3 {
                 .collect(Collectors.toList());
     }
 
-    private static final Comparator<OperationWithKey> OPERATION_WITH_KEY_COMPARATOR = (o1, o2) -> {
-        Mino mino1 = o1.getMino();
-        Mino mino2 = o2.getMino();
-
-        int compareBlock = mino1.getBlock().compareTo(mino2.getBlock());
-        if (compareBlock != 0)
-            return compareBlock;
-
-        int compareRotate = mino1.getRotate().compareTo(mino2.getRotate());
-        if (compareRotate != 0)
-            return compareRotate;
-
-        int compareX = Integer.compare(o1.getX(), o2.getX());
-        if (compareX != 0)
-            return compareX;
-
-        int compareY = Integer.compare(o1.getY(), o2.getY());
-        if (compareY != 0)
-            return compareY;
-
-        return Long.compare(o1.getNeedDeletedKey(), o2.getNeedDeletedKey());
-    };
+    private static final Comparator<OperationWithKey> OPERATION_WITH_KEY_COMPARATOR = new OperationWithKeyComparator();
 
     private static class Obj implements Comparable<Obj> {
         private final List<Block> blocks;
         private final BlockField blockField;
         private final boolean isDeleted;
-        private final List<OperationWithKey> operations;
+        private final List<MinoOperationWithKey> operations;
         private final boolean isDouble;
         private int duplicate = 0;
 
-        public Obj(List<Block> blocks, BlockField blockField, boolean isDeleted, List<OperationWithKey> operations) {
+        private Obj(List<Block> blocks, BlockField blockField, boolean isDeleted, List<MinoOperationWithKey> operations) {
             operations.sort(OPERATION_WITH_KEY_COMPARATOR);
             this.blocks = blocks;
             this.blockField = blockField;

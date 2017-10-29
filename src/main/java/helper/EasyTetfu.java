@@ -31,19 +31,19 @@ public class EasyTetfu {
         this.colorConverter = easyPool.getColorConverter();
     }
 
-    public String encode(Field initField, List<OperationWithKey> operationWithKeys, int height) {
+    public <T extends OperationWithKey> String encode(Field initField, List<T> operationWithKeys, int height) {
         Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
         BlockField blockField = createBlockField(operationWithKeys, height);
         TetfuElement elementOnePage = parseBlockFieldToTetfuElement(initField, colorConverter, blockField, "");
         return "http://fumen.zui.jp/?v115@" + tetfu.encode(Collections.singletonList(elementOnePage));
     }
 
-    private static BlockField createBlockField(List<OperationWithKey> operationWithKeys, int height) {
+    private <T extends OperationWithKey> BlockField createBlockField(List<T> operationWithKeys, int height) {
         BlockField blockField = new BlockField(height);
         operationWithKeys
                 .forEach(key -> {
                     Field test = FieldFactory.createField(height);
-                    Mino mino = key.getMino();
+                    Mino mino = minoFactory.create(key.getBlock(), key.getRotate());
                     test.put(mino, key.getX(), key.getY());
                     test.insertWhiteLineWithKey(key.getNeedDeletedKey());
                     blockField.merge(test, mino.getBlock());
