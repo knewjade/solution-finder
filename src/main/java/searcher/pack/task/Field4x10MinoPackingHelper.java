@@ -2,7 +2,7 @@ package searcher.pack.task;
 
 import common.datastore.BlockCounter;
 import common.datastore.OperationWithKey;
-import common.datastore.SimpleOperationWithKey;
+import common.datastore.MinoOperationWithKey;
 import core.column_field.ColumnField;
 import core.column_field.ColumnFieldFactory;
 import core.column_field.ColumnSmallField;
@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 public class Field4x10MinoPackingHelper implements TaskResultHelper {
     private static class IOnlyMinoField implements MinoField {
         private static final List<OperationWithKey> OPERATION_WITH_KEYS = Collections.singletonList(
-                new SimpleOperationWithKey(new Mino(Block.I, Rotate.Left), 0, 0L, 1074791425L, 0)
+                new MinoOperationWithKey(new Mino(Block.I, Rotate.Left), 0, 0L, 1074791425L, 0)
         );
 
         private final List<OperationWithKey> operationWithKeys = OPERATION_WITH_KEYS;

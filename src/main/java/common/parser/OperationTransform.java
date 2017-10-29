@@ -37,7 +37,7 @@ public class OperationTransform {
             long usingKey = keyLine & ~needDeletedKey;
 
             // 操作・消去されている必要がある行をセットで記録
-            OperationWithKey operationWithKey = new SimpleOperationWithKey(mino, x, needDeletedKey, usingKey, lowerY);
+            OperationWithKey operationWithKey = new MinoOperationWithKey(mino, x, needDeletedKey, usingKey, lowerY);
             keys.add(operationWithKey);
 
             // 次のフィールドを作成

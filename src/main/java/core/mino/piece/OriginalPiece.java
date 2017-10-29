@@ -1,6 +1,7 @@
 package core.mino.piece;
 
 import common.ActionParser;
+import common.datastore.MinoOperationWithKey;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Block;
@@ -14,26 +15,26 @@ public class OriginalPiece {
     private final Field minoField;
     private final Field harddropCollider;
     private final int hash;
-    private final Piece piece;
+    private final MinoOperationWithKey operationWithKey;
 
     public OriginalPiece(Mino mino, int x, int y, int fieldHeight) {
-        this.piece = new Piece(mino, x, y, 0L);
+        this.operationWithKey = new MinoOperationWithKey(mino, x, y, 0L);
         this.minoField = createMinoField();
         this.harddropCollider = createHarddropCollider(mino, x, y, fieldHeight);
         this.hash = ActionParser.parseToInt(mino.getBlock(), mino.getRotate(), x, y);
     }
 
     private OriginalPiece() {
-        this.piece = new Piece(new Mino(Block.I, Rotate.Spawn), -1, -1, 0L);
+        this.operationWithKey = new MinoOperationWithKey(new Mino(Block.I, Rotate.Spawn), -1, -1, 0L);
         this.minoField = FieldFactory.createField(1);
         this.harddropCollider = FieldFactory.createField(1);
         this.hash = -1;
     }
 
     private Field createMinoField() {
-        Mino mino = piece.getMino();
-        int x = piece.getX();
-        int y = piece.getY();
+        Mino mino = operationWithKey.getMino();
+        int x = operationWithKey.getX();
+        int y = operationWithKey.getY();
         Field field = FieldFactory.createField(y + mino.getMaxY() + 1);
         field.put(mino, x, y);
         return field;
@@ -55,21 +56,21 @@ public class OriginalPiece {
 
     @Override
     public String toString() {
-        return "Piece{" +
-                piece.toString() +
+        return "OriginalPiece{" +
+                operationWithKey.toString() +
                 '}';
     }
 
     public Mino getMino() {
-        return piece.getMino();
+        return operationWithKey.getMino();
     }
 
     public int getX() {
-        return piece.getX();
+        return operationWithKey.getX();
     }
 
     public int getY() {
-        return piece.getY();
+        return operationWithKey.getY();
     }
 
     public Field getHarddropCollider() {

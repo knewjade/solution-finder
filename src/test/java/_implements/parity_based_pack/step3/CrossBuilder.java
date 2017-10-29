@@ -1,7 +1,7 @@
 package _implements.parity_based_pack.step3;
 
 import common.datastore.OperationWithKey;
-import common.datastore.SimpleOperationWithKey;
+import common.datastore.MinoOperationWithKey;
 import core.field.Field;
 import core.mino.Mino;
 import _implements.parity_based_pack.step2.FullLimitedMino;
@@ -122,7 +122,7 @@ public class CrossBuilder {
                             long deleteKey = limitedMino.getDeleteKey();
                             long usingKey = limitedMino.getUsingKey();
                             int lowerY = limitedMino.getLowerY();
-                            OperationWithKey withKey = new SimpleOperationWithKey(mino, x, deleteKey, usingKey, lowerY);
+                            OperationWithKey withKey = new MinoOperationWithKey(mino, x, deleteKey, usingKey, lowerY);
                             result.add(withKey);
                         }
                         results.add(result);

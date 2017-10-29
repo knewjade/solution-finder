@@ -2,10 +2,9 @@ package common.datastore;
 
 import core.mino.Block;
 import core.mino.Mino;
-import core.mino.piece.Piece;
 import core.srs.Rotate;
 
-public class SimpleOperationWithKey implements OperationWithKey {
+public class MinoOperationWithKey implements OperationWithKey {
     private final Mino mino;
     private final int x;
     private final int y;
@@ -13,7 +12,7 @@ public class SimpleOperationWithKey implements OperationWithKey {
     private final long usingKey;
 
     // lowerY: 最も下にあるブロックのy座標
-    public SimpleOperationWithKey(Mino mino, int x, long needDeletedKey, long usingKey, int lowerY) {
+    public MinoOperationWithKey(Mino mino, int x, long needDeletedKey, long usingKey, int lowerY) {
         this.mino = mino;
         this.x = x;
         this.y = lowerY - mino.getMinY();  // 回転軸のy座標 (ライン消去後のフィールドに対して置かれるべき位置)に直す
@@ -21,7 +20,7 @@ public class SimpleOperationWithKey implements OperationWithKey {
         this.usingKey = usingKey;
     }
 
-    public SimpleOperationWithKey(Mino mino, int x, int y, long needDeletedKey, long usingKey) {
+    public MinoOperationWithKey(Mino mino, int x, int y, long needDeletedKey, long usingKey) {
         this.mino = mino;
         this.x = x;
         this.y = y;
@@ -29,8 +28,12 @@ public class SimpleOperationWithKey implements OperationWithKey {
         this.usingKey = usingKey;
     }
 
-    public SimpleOperationWithKey(Piece piece, long usingKey, int lowerY) {
-        this(piece.getMino(), piece.getX(), piece.getDeleteKey(), usingKey, lowerY);
+    public MinoOperationWithKey(Mino mino, int x, int y, long needDeletedKey) {
+        this.mino = mino;
+        this.x = x;
+        this.y = y;
+        this.needDeletedKey = needDeletedKey;
+        this.usingKey = -1L;
     }
 
     @Override
@@ -72,7 +75,7 @@ public class SimpleOperationWithKey implements OperationWithKey {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SimpleOperationWithKey that = (SimpleOperationWithKey) o;
+        MinoOperationWithKey that = (MinoOperationWithKey) o;
         return x == that.x && y == that.y && needDeletedKey == that.needDeletedKey && mino.equals(that.mino);
     }
 

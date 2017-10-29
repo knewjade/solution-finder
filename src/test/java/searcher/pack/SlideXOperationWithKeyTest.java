@@ -1,7 +1,7 @@
 package searcher.pack;
 
 import common.datastore.OperationWithKey;
-import common.datastore.SimpleOperationWithKey;
+import common.datastore.MinoOperationWithKey;
 import core.mino.Block;
 import core.mino.Mino;
 import core.srs.Rotate;
@@ -23,7 +23,7 @@ class SlideXOperationWithKeyTest {
             int y = randoms.nextInt(0, 10);
             long usingKey = randoms.key();
             long deleteKey = randoms.key();
-            OperationWithKey operationWithKey = new SimpleOperationWithKey(mino, x, y, deleteKey, usingKey);
+            OperationWithKey operationWithKey = new MinoOperationWithKey(mino, x, y, deleteKey, usingKey);
 
             int slide = randoms.nextInt(4);
             SlideXOperationWithKey key = new SlideXOperationWithKey(operationWithKey, slide);

@@ -1,7 +1,7 @@
 package common.parser;
 
 import common.datastore.OperationWithKey;
-import common.datastore.SimpleOperationWithKey;
+import common.datastore.MinoOperationWithKey;
 import core.mino.Block;
 import core.mino.Mino;
 import core.mino.MinoFactory;
@@ -50,7 +50,7 @@ public class OperationWithKeyInterpreter {
                     int y = Integer.valueOf(strings[3]);
                     long deleteKey = Long.valueOf(strings[4]);
                     long usingKey = Long.valueOf(strings[5]);
-                    return new SimpleOperationWithKey(mino, x, y, deleteKey, usingKey);
+                    return new MinoOperationWithKey(mino, x, y, deleteKey, usingKey);
                 });
     }
 }
