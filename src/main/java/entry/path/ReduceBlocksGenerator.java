@@ -1,8 +1,8 @@
 package entry.path;
 
 import common.datastore.BlockCounter;
-import common.datastore.pieces.Blocks;
-import common.datastore.pieces.LongBlocks;
+import common.datastore.blocks.Blocks;
+import common.datastore.blocks.LongBlocks;
 import common.iterable.CombinationIterable;
 import common.pattern.IBlocksGenerator;
 import core.mino.Block;

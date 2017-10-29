@@ -1,7 +1,7 @@
 package entry.searching_pieces;
 
-import common.datastore.pieces.Blocks;
-import common.datastore.pieces.LongBlocks;
+import common.datastore.blocks.Blocks;
+import common.datastore.blocks.LongBlocks;
 import common.order.ForwardOrderLookUp;
 import common.pattern.IBlocksGenerator;
 

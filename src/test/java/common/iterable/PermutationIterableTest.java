@@ -1,7 +1,7 @@
 package common.iterable;
 
 import com.google.common.collect.Iterables;
-import common.datastore.pieces.LongBlocks;
+import common.datastore.blocks.LongBlocks;
 import core.mino.Block;
 import lib.Randoms;
 import org.assertj.core.util.Lists;

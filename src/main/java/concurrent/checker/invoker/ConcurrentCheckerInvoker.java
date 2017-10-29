@@ -1,7 +1,7 @@
 package concurrent.checker.invoker;
 
 import common.datastore.Pair;
-import common.datastore.pieces.Blocks;
+import common.datastore.blocks.Blocks;
 import core.field.Field;
 
 import java.util.List;

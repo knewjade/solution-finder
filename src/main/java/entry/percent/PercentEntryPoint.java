@@ -3,8 +3,8 @@ package entry.percent;
 import common.SyntaxException;
 import common.datastore.Pair;
 import common.datastore.action.Action;
-import common.datastore.pieces.Blocks;
-import common.datastore.pieces.LongBlocks;
+import common.datastore.blocks.Blocks;
+import common.datastore.blocks.LongBlocks;
 import common.pattern.BlocksGenerator;
 import common.pattern.IBlocksGenerator;
 import common.tree.AnalyzeTree;
@@ -120,7 +120,7 @@ public class PercentEntryPoint implements EntryPoint {
         if (popCount < piecesDepth) {
             output();
             output("####################################################################");
-            output("WARNING: Inputted pieces is more than 'necessary pieces'.");
+            output("WARNING: Inputted pieces is more than 'necessary blocks'.");
             output("         Because reduce unnecessary pieces,");
             output("         there is a possibility of getting no expected percentages.");
             output("####################################################################");

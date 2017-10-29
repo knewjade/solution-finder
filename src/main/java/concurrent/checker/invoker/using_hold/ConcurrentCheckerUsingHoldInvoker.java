@@ -2,7 +2,7 @@ package concurrent.checker.invoker.using_hold;
 
 import common.datastore.Pair;
 import common.datastore.action.Action;
-import common.datastore.pieces.Blocks;
+import common.datastore.blocks.Blocks;
 import common.tree.ConcurrentVisitedTree;
 import concurrent.checker.CheckerUsingHoldThreadLocal;
 import concurrent.checker.invoker.ConcurrentCheckerInvoker;

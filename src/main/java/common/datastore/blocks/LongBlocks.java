@@ -1,4 +1,4 @@
-package common.datastore.pieces;
+package common.datastore.blocks;
 
 import common.comparator.PiecesNumberComparator;
 import core.mino.Block;

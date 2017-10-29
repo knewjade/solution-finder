@@ -1,12 +1,11 @@
 package concurrent.checker.invoker.no_hold;
 
-import common.datastore.pieces.Blocks;
+import common.datastore.blocks.Blocks;
 import core.action.candidate.Candidate;
 import concurrent.checker.CheckerNoHoldThreadLocal;
 import concurrent.checker.invoker.ConcurrentCheckerInvoker;
 import common.datastore.Pair;
 import core.field.Field;
-import core.mino.Block;
 import searcher.checker.Checker;
 import common.datastore.action.Action;
 

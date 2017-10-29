@@ -1,8 +1,8 @@
 package searcher.pack.task;
 
 import common.datastore.BlockCounter;
-import common.datastore.pieces.Blocks;
-import common.datastore.pieces.LongBlocks;
+import common.datastore.blocks.Blocks;
+import common.datastore.blocks.LongBlocks;
 import common.iterable.CombinationIterable;
 import common.parser.BlockInterpreter;
 import concurrent.LockedReachableThreadLocal;

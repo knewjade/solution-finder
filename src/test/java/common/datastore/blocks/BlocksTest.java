@@ -1,4 +1,4 @@
-package common.datastore.pieces;
+package common.datastore.blocks;
 
 import core.mino.Block;
 import lib.Randoms;

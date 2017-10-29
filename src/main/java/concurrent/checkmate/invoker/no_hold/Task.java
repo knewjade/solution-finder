@@ -1,6 +1,6 @@
 package concurrent.checkmate.invoker.no_hold;
 
-import common.datastore.pieces.ReadOnlyListBlocks;
+import common.datastore.blocks.ReadOnlyListBlocks;
 import core.action.candidate.Candidate;
 import common.datastore.Pair;
 import core.mino.Block;

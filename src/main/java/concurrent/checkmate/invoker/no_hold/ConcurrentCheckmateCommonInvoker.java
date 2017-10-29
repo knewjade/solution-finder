@@ -4,7 +4,7 @@ import core.action.candidate.Candidate;
 import common.datastore.Pair;
 import core.field.Field;
 import core.mino.Block;
-import common.datastore.pieces.ReadOnlyListBlocks;
+import common.datastore.blocks.ReadOnlyListBlocks;
 import searcher.checkmate.Checkmate;
 import common.datastore.Result;
 import common.datastore.action.Action;

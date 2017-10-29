@@ -2,7 +2,7 @@ package entry.path.output;
 
 import common.datastore.BlockCounter;
 import common.datastore.OperationWithKey;
-import common.datastore.pieces.LongBlocks;
+import common.datastore.blocks.LongBlocks;
 import common.pattern.IBlocksGenerator;
 import core.field.Field;
 import core.mino.Block;

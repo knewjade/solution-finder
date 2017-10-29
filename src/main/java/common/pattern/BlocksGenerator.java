@@ -2,7 +2,7 @@ package common.pattern;
 
 import common.SyntaxException;
 import common.datastore.BlockCounter;
-import common.datastore.pieces.Blocks;
+import common.datastore.blocks.Blocks;
 
 import java.util.ArrayList;
 import java.util.Collections;

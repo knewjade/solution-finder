@@ -1,7 +1,7 @@
 package entry.searching_pieces;
 
-import common.datastore.pieces.LongBlocks;
-import common.datastore.pieces.Blocks;
+import common.datastore.blocks.LongBlocks;
+import common.datastore.blocks.Blocks;
 import common.pattern.IBlocksGenerator;
 
 import java.util.HashSet;

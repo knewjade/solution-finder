@@ -1,6 +1,6 @@
 package common.tree;
 
-import common.datastore.pieces.Blocks;
+import common.datastore.blocks.Blocks;
 import core.mino.Block;
 
 import java.util.EnumMap;

@@ -5,7 +5,7 @@ import common.datastore.Operation;
 import common.datastore.Pair;
 import common.datastore.Result;
 import common.datastore.action.Action;
-import common.datastore.pieces.Blocks;
+import common.datastore.blocks.Blocks;
 import common.order.OrderLookup;
 import common.tree.VisitedTree;
 import core.action.candidate.Candidate;

@@ -1,7 +1,7 @@
 package entry.path.output;
 
 import common.datastore.OperationWithKey;
-import common.datastore.pieces.LongBlocks;
+import common.datastore.blocks.LongBlocks;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;

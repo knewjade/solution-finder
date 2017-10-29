@@ -1,6 +1,6 @@
 package entry.searching_pieces;
 
-import common.datastore.pieces.LongBlocks;
+import common.datastore.blocks.LongBlocks;
 
 import java.io.IOException;
 import java.util.Set;

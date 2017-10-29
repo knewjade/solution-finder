@@ -2,8 +2,8 @@ package common.pattern;
 
 import common.SyntaxException;
 import common.datastore.BlockCounter;
-import common.datastore.pieces.Blocks;
-import common.datastore.pieces.LongBlocks;
+import common.datastore.blocks.Blocks;
+import common.datastore.blocks.LongBlocks;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 

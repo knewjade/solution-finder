@@ -1,7 +1,7 @@
 package entry.path.output;
 
 import common.datastore.BlockCounter;
-import common.datastore.pieces.Blocks;
+import common.datastore.blocks.Blocks;
 import common.pattern.IBlocksGenerator;
 import core.field.Field;
 import core.mino.Block;

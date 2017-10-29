@@ -3,7 +3,7 @@ package entry.path.output;
 import common.buildup.BuildUpStream;
 import common.datastore.OperationWithKey;
 import common.datastore.Operations;
-import common.datastore.pieces.LongBlocks;
+import common.datastore.blocks.LongBlocks;
 import common.parser.OperationInterpreter;
 import common.parser.OperationTransform;
 import core.field.Field;

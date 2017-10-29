@@ -1,6 +1,6 @@
 package entry.percent;
 
-import common.datastore.pieces.LongBlocks;
+import common.datastore.blocks.LongBlocks;
 import common.pattern.BlocksGenerator;
 import common.pattern.IBlocksGenerator;
 import concurrent.LockedCandidateThreadLocal;

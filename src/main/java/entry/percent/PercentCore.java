@@ -2,8 +2,8 @@ package entry.percent;
 
 import common.datastore.Pair;
 import common.datastore.action.Action;
-import common.datastore.pieces.Blocks;
-import common.datastore.pieces.LongBlocks;
+import common.datastore.blocks.Blocks;
+import common.datastore.blocks.LongBlocks;
 import common.tree.AnalyzeTree;
 import concurrent.checker.CheckerNoHoldThreadLocal;
 import concurrent.checker.CheckerUsingHoldThreadLocal;

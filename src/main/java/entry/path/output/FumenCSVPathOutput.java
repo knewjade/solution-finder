@@ -1,6 +1,6 @@
 package entry.path.output;
 
-import common.datastore.pieces.LongBlocks;
+import common.datastore.blocks.LongBlocks;
 import core.field.Field;
 import core.mino.Block;
 import entry.path.PathEntryPoint;

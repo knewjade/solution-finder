@@ -1,7 +1,7 @@
 package entry.dev;
 
 import common.SyntaxException;
-import common.datastore.pieces.Blocks;
+import common.datastore.blocks.Blocks;
 import common.pattern.BlocksGenerator;
 import common.pattern.IBlocksGenerator;
 import common.tetfu.Tetfu;

@@ -1,7 +1,7 @@
 package common.order;
 
 import common.comparator.PiecesNumberComparator;
-import common.datastore.pieces.LongBlocks;
+import common.datastore.blocks.LongBlocks;
 import core.mino.Block;
 import lib.ListComparator;
 import lib.Randoms;

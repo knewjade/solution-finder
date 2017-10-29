@@ -1,7 +1,7 @@
 package common.pattern;
 
 import common.datastore.BlockCounter;
-import common.datastore.pieces.Blocks;
+import common.datastore.blocks.Blocks;
 
 import java.util.List;
 

@@ -1,8 +1,8 @@
 package common.pattern;
 
 import common.datastore.BlockCounter;
-import common.datastore.pieces.Blocks;
-import common.datastore.pieces.LongBlocks;
+import common.datastore.blocks.Blocks;
+import common.datastore.blocks.LongBlocks;
 
 import java.util.List;
 import java.util.stream.Collectors;

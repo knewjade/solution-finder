@@ -1,6 +1,6 @@
 package common.comparator;
 
-import common.datastore.pieces.Blocks;
+import common.datastore.blocks.Blocks;
 import core.mino.Block;
 
 import java.util.Comparator;

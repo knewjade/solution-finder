@@ -1,6 +1,6 @@
 package common.order;
 
-import common.datastore.pieces.LongBlocks;
+import common.datastore.blocks.LongBlocks;
 import core.mino.Block;
 import lib.Randoms;
 import org.junit.jupiter.api.Tag;
