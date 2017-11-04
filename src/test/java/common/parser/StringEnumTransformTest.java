@@ -9,24 +9,24 @@ import static org.assertj.core.api.Assertions.*;
 class StringEnumTransformTest {
     @Test
     void toBlockString() {
-        assertThat(StringEnumTransform.toBlock("T")).isEqualTo(Piece.T);
-        assertThat(StringEnumTransform.toBlock("J")).isEqualTo(Piece.J);
-        assertThat(StringEnumTransform.toBlock("L")).isEqualTo(Piece.L);
-        assertThat(StringEnumTransform.toBlock("S")).isEqualTo(Piece.S);
-        assertThat(StringEnumTransform.toBlock("Z")).isEqualTo(Piece.Z);
-        assertThat(StringEnumTransform.toBlock("O")).isEqualTo(Piece.O);
-        assertThat(StringEnumTransform.toBlock("I")).isEqualTo(Piece.I);
+        assertThat(StringEnumTransform.toPiece("T")).isEqualTo(Piece.T);
+        assertThat(StringEnumTransform.toPiece("J")).isEqualTo(Piece.J);
+        assertThat(StringEnumTransform.toPiece("L")).isEqualTo(Piece.L);
+        assertThat(StringEnumTransform.toPiece("S")).isEqualTo(Piece.S);
+        assertThat(StringEnumTransform.toPiece("Z")).isEqualTo(Piece.Z);
+        assertThat(StringEnumTransform.toPiece("O")).isEqualTo(Piece.O);
+        assertThat(StringEnumTransform.toPiece("I")).isEqualTo(Piece.I);
     }
 
     @Test
     void toBlockChar() {
-        assertThat(StringEnumTransform.toBlock('T')).isEqualTo(Piece.T);
-        assertThat(StringEnumTransform.toBlock('J')).isEqualTo(Piece.J);
-        assertThat(StringEnumTransform.toBlock('L')).isEqualTo(Piece.L);
-        assertThat(StringEnumTransform.toBlock('S')).isEqualTo(Piece.S);
-        assertThat(StringEnumTransform.toBlock('Z')).isEqualTo(Piece.Z);
-        assertThat(StringEnumTransform.toBlock('O')).isEqualTo(Piece.O);
-        assertThat(StringEnumTransform.toBlock('I')).isEqualTo(Piece.I);
+        assertThat(StringEnumTransform.toPiece('T')).isEqualTo(Piece.T);
+        assertThat(StringEnumTransform.toPiece('J')).isEqualTo(Piece.J);
+        assertThat(StringEnumTransform.toPiece('L')).isEqualTo(Piece.L);
+        assertThat(StringEnumTransform.toPiece('S')).isEqualTo(Piece.S);
+        assertThat(StringEnumTransform.toPiece('Z')).isEqualTo(Piece.Z);
+        assertThat(StringEnumTransform.toPiece('O')).isEqualTo(Piece.O);
+        assertThat(StringEnumTransform.toPiece('I')).isEqualTo(Piece.I);
     }
 
     @Test

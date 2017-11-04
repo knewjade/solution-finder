@@ -1,8 +1,8 @@
 package searcher.pack;
 
 import common.datastore.MinoOperationWithKey;
-import core.mino.Piece;
 import core.mino.Mino;
+import core.mino.Piece;
 import core.srs.Rotate;
 
 public class SlideXOperationWithKey implements MinoOperationWithKey {
@@ -47,5 +47,21 @@ public class SlideXOperationWithKey implements MinoOperationWithKey {
     @Override
     public Mino getMino() {
         return operationWithKey.getMino();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+
+        if (!(o instanceof MinoOperationWithKey))
+            return false;
+
+        return MinoOperationWithKey.defaultEquals(this, (MinoOperationWithKey) o);
+    }
+
+    @Override
+    public int hashCode() {
+        return MinoOperationWithKey.defaultHash(getMino(), getX(), getY(), getNeedDeletedKey());
     }
 }

@@ -4,7 +4,7 @@ import core.mino.Piece;
 import core.srs.Rotate;
 
 public class StringEnumTransform {
-    public static Piece toBlock(String name) {
+    public static Piece toPiece(String name) {
         switch (name) {
             case "T":
                 return Piece.T;
@@ -24,7 +24,7 @@ public class StringEnumTransform {
         throw new IllegalArgumentException("No reachable");
     }
 
-    public static Piece toBlock(char ch) {
+    public static Piece toPiece(char ch) {
         switch (ch) {
             case 'T':
                 return Piece.T;
@@ -44,7 +44,7 @@ public class StringEnumTransform {
         throw new IllegalArgumentException("No reachable");
     }
 
-    static Rotate toRotate(String name) {
+    public static Rotate toRotate(String name) {
         switch (name) {
             case "0":
                 return Rotate.Spawn;

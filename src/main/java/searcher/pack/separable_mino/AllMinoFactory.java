@@ -105,7 +105,7 @@ public class AllMinoFactory {
             assert Long.bitCount(deleteKey) + indexes.size() == upperY - lowerY + 1;
 
             if ((deleteKeyMask & deleteKey) == deleteKey) {
-                for (int x = -mino.getMinX(); x < fieldWidth + mino.getMinX(); x++) {
+                for (int x = -mino.getMinX(); x < fieldWidth - mino.getMaxX(); x++) {
                     FullOperationWithKey operationWithKey = new FullOperationWithKey(mino, x, lowerY - mino.getMinY(), deleteKey, usingKey);
                     pieces.add(parseOperation(operationWithKey, upperY, fieldHeight));
                 }

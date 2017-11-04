@@ -21,7 +21,7 @@ public class OperationInterpreter {
     private static Operation createOperation(String strings) {
         String[] split = strings.split(",");
         assert split.length == 4;
-        Piece piece = StringEnumTransform.toBlock(split[0].trim());
+        Piece piece = StringEnumTransform.toPiece(split[0].trim());
         Rotate rotate = StringEnumTransform.toRotate(split[1].trim());
         int x = Integer.valueOf(split[2].trim());
         int y = Integer.valueOf(split[3].trim());

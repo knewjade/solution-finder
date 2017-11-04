@@ -1,7 +1,7 @@
 package common.datastore;
 
-import core.mino.Piece;
 import core.mino.Mino;
+import core.mino.Piece;
 import core.srs.Rotate;
 
 public class FullOperationWithKey implements MinoOperationWithKey {
@@ -65,21 +65,18 @@ public class FullOperationWithKey implements MinoOperationWithKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FullOperationWithKey that = (FullOperationWithKey) o;
-        return x == that.x && y == that.y && needDeletedKey == that.needDeletedKey && mino.equals(that.mino);
+        if (this == o)
+            return true;
+
+        if (!(o instanceof MinoOperationWithKey))
+            return false;
+
+        return MinoOperationWithKey.defaultEquals(this, (MinoOperationWithKey) o);
     }
 
     @Override
     public int hashCode() {
-        int result = y;
-        result = 10 * result + x;
-        result = 7 * result + getMino().getPiece().getNumber();
-        result = 4 * result + getMino().getRotate().getNumber();
-        result = 31 * result + (int) (needDeletedKey ^ (needDeletedKey >>> 32));
-        result = 31 * result + (int) (usingKey ^ (usingKey >>> 32));
-        return result;
+        return MinoOperationWithKey.defaultHash(mino, x, y, needDeletedKey);
     }
 
     @Override

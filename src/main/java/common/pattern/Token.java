@@ -99,7 +99,7 @@ public class Token {
     Piece nextBlock() throws SyntaxException {
         String s = nextString();
         try {
-            return StringEnumTransform.toBlock(s);
+            return StringEnumTransform.toPiece(s);
         } catch (Exception e) {
             throw new SyntaxException("Unexpected block format: value=" + s, getLastIndex());
         }

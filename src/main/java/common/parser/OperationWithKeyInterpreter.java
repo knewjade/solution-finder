@@ -43,7 +43,7 @@ public class OperationWithKeyInterpreter {
         return Arrays.stream(operations.split(";"))
                 .map(s -> s.split(","))
                 .map(strings -> {
-                    Piece piece = StringEnumTransform.toBlock(strings[0]);
+                    Piece piece = StringEnumTransform.toPiece(strings[0]);
                     Rotate rotate = StringEnumTransform.toRotate(strings[1]);
                     Mino mino = minoFactory.create(piece, rotate);
                     int x = Integer.valueOf(strings[2]);
