@@ -3,6 +3,7 @@ package common.order;
 import common.datastore.blocks.LongPieces;
 import core.mino.Piece;
 import lib.Randoms;
+import module.LongTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -97,7 +98,7 @@ class ReverseOrderLookUpTest {
     }
 
     @Test
-    @Tag("long")
+    @LongTest
     void parseOverRandom() throws Exception {
         Randoms randoms = new Randoms();
         for (int size = 2; size <= 13; size++) {

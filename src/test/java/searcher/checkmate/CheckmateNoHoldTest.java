@@ -17,6 +17,7 @@ import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
+import module.LongTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.common.validator.PerfectValidator;
@@ -114,7 +115,7 @@ class CheckmateNoHoldTest {
     }
 
     @Test
-    @Tag("long")
+    @LongTest
     void testLong10() throws Exception {
         List<Pair<List<Piece>, Integer>> testCases = new ArrayList<Pair<List<Piece>, Integer>>() {
             {
@@ -261,7 +262,7 @@ class CheckmateNoHoldTest {
     }
 
     @Test
-    @Tag("long")
+    @LongTest
     void testCaseList() throws Exception {
         String resultPath = ClassLoader.getSystemResource("perfects/checkmate_nohold.txt").getPath();
         List<Pair<Pieces, Integer>> testCases = Files.lines(Paths.get(resultPath))

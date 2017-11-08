@@ -1,14 +1,14 @@
 package core.action.reachable;
 
+import common.datastore.action.Action;
 import core.action.cache.MinimalLockedCache;
-import core.mino.Piece;
 import core.field.Field;
-import core.srs.MinoRotation;
-import core.srs.Rotate;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
-import common.datastore.action.Action;
+import core.mino.Piece;
+import core.srs.MinoRotation;
+import core.srs.Rotate;
 import searcher.common.From;
 
 import java.util.List;
@@ -34,10 +34,12 @@ public class LockedReachable implements Reachable {
         this.lockedCache = new MinimalLockedCache(maxY);
     }
 
-    // checksを呼び出す前に、Field.cansPutの確認を必ずしていること
     @Override
     public boolean checks(Field field, Mino mino, int x, int y, int appearY) {
+        assert field.canPut(mino, x, y);
+
         this.appearY = appearY;
+        lockedCache.clear();
 
         Piece piece = mino.getPiece();
         Rotate rotate = mino.getRotate();
@@ -54,7 +56,6 @@ public class LockedReachable implements Reachable {
     }
 
     private boolean check(Field field, Piece piece, int x, int y, Rotate rotate) {
-        lockedCache.clear();
         Mino mino = minoFactory.create(piece, rotate);
         return check(field, mino, x, y, From.None);
     }

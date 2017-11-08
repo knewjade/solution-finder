@@ -19,6 +19,7 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import lib.Randoms;
+import module.LongTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.common.validator.PerfectValidator;
@@ -159,7 +160,7 @@ class CheckerUsingHoldTest {
     }
 
     @Test
-    @Tag("long")
+    @LongTest
     void testNoPossiblePerfect() throws Exception {
         // Field
         Field field = FieldFactory.createSmallField();
@@ -194,7 +195,7 @@ class CheckerUsingHoldTest {
     }
 
     @Test
-    @Tag("long")
+    @LongTest
     void testPossiblePerfect() throws Exception {
         // Field
         Field field = FieldFactory.createSmallField();

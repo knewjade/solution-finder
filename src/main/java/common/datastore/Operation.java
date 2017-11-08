@@ -1,14 +1,8 @@
 package common.datastore;
 
+import common.datastore.action.Action;
 import core.mino.Piece;
-import core.srs.Rotate;
 
-public interface Operation {
+public interface Operation extends Action {
     Piece getPiece();
-
-    Rotate getRotate();
-
-    int getX();
-
-    int getY();
 }

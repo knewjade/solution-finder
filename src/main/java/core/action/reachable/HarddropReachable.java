@@ -3,10 +3,10 @@ package core.action.reachable;
 import common.datastore.action.Action;
 import core.action.cache.MinimalLockedCache;
 import core.field.Field;
-import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import core.mino.Piece;
 import core.srs.Rotate;
 
 import java.util.List;
@@ -28,9 +28,10 @@ public class HarddropReachable implements Reachable {
         this.lockedCache = new MinimalLockedCache(maxY);
     }
 
-    // checksを呼び出す前に、Field.cansPutの確認を必ずしていること
     @Override
     public boolean checks(Field field, Mino mino, int x, int y, int appearY) {
+        assert field.canPut(mino, x, y);
+
         this.appearY = appearY;
 
         Piece piece = mino.getPiece();

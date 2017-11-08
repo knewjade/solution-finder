@@ -1,15 +1,14 @@
-package core.mino.piece;
+package core.neighbor;
 
-import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
+import core.mino.Piece;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-// TODO: write unittest
 public class Neighbors {
     private static final int FIELD_WIDTH = 10;
 
@@ -17,8 +16,9 @@ public class Neighbors {
     private final int maxHeight;
 
     public Neighbors(MinoFactory minoFactory, MinoRotation minoRotation, OriginalPieceFactory pieceFactory) {
-        this.maxHeight = pieceFactory.getMaxHeight();
+        int maxHeight = pieceFactory.getMaxHeight();
         this.neighbors = createNeighbors(pieceFactory, maxHeight);
+        this.maxHeight = maxHeight;
         updateNeighbors(minoFactory, minoRotation);
     }
 
@@ -26,7 +26,7 @@ public class Neighbors {
         int maxBlock = Piece.values().length;
         int maxRotate = Rotate.values().length;
         Neighbor[][][][] neighbors = new Neighbor[maxBlock][maxRotate][maxHeight][FIELD_WIDTH];
-        Collection<OriginalPiece> pieces = pieceFactory.getAllPieces();
+        Collection<OriginalPiece> pieces = pieceFactory.create();
         for (OriginalPiece piece : pieces) {
             Mino mino = piece.getMino();
             Piece block = mino.getPiece();
@@ -117,5 +117,9 @@ public class Neighbors {
         Neighbor neighbor = neighbors[piece.getNumber()][rotate.getNumber()][y][x];
         assert neighbor != null;
         return neighbor;
+    }
+
+    public int getMaxHeight() {
+        return maxHeight;
     }
 }

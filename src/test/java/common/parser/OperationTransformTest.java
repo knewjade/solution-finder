@@ -14,6 +14,7 @@ import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import lib.ListComparator;
 import lib.Randoms;
+import module.LongTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.pack.InOutPairField;
@@ -75,7 +76,7 @@ class OperationTransformTest {
     }
 
     @Test
-    @Tag("long")
+    @LongTest
     void randomParse() throws Exception {
         // Initialize
         Randoms randoms = new Randoms();

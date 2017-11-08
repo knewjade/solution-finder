@@ -12,6 +12,7 @@ import core.field.FieldFactory;
 import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import module.LongTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.pack.InOutPairField;
@@ -59,7 +60,7 @@ class PackSearcherComparingParityBasedOnDemandTest {
 
     // 高さ4: パリティベースとの探索結果を比較する (同一ミノは2つまで)
     @Test
-    @Tag("long")
+    @LongTest
     void testAllSRSValidPacksHeight4() throws Exception {
         int width = 3;
         int height = 4;
@@ -106,7 +107,7 @@ class PackSearcherComparingParityBasedOnDemandTest {
 
     // 高さ6: パリティベースとの探索結果を比較する (同一ミノは2つまで)
     @Test
-    @Tag("long")
+    @LongTest
     void testAllSRSValidPacksHeight6() throws Exception {
         int width = 2;
         int height = 6;

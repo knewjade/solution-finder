@@ -7,10 +7,10 @@ import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
-import core.mino.piece.OriginalPiece;
-import core.mino.piece.Neighbor;
-import core.mino.piece.Neighbors;
-import core.mino.piece.OriginalPieceFactory;
+import core.neighbor.OriginalPiece;
+import core.neighbor.Neighbor;
+import core.neighbor.Neighbors;
+import core.neighbor.OriginalPieceFactory;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
 
@@ -111,6 +111,17 @@ public class LockedNeighborCandidate implements Candidate<Neighbor> {
         }
 
         // 左回転でくる可能性がある場所を移動
+        if (checkLeftRotation(current))
+            return true;
+
+        // 右回転でくる可能性がある場所を移動
+        if (checkRightRotation(current))
+            return true;
+
+        return false;
+    }
+
+    private boolean checkLeftRotation(Neighbor current) {
         List<Neighbor> nextLeftRotateSources = current.getNextLeftRotateSources();
         for (Neighbor source : nextLeftRotateSources) {
             if (!field.canPut(source.getPiece()))
@@ -124,8 +135,10 @@ public class LockedNeighborCandidate implements Candidate<Neighbor> {
                 return true;
             }
         }
+        return false;
+    }
 
-        // 右回転でくる可能性がある場所を移動
+    private boolean checkRightRotation(Neighbor current) {
         List<Neighbor> nextRightRotateSources = current.getNextRightRotateSources();
         for (Neighbor source : nextRightRotateSources) {
             if (!field.canPut(source.getPiece()))
@@ -139,7 +152,6 @@ public class LockedNeighborCandidate implements Candidate<Neighbor> {
                 return true;
             }
         }
-
         return false;
     }
 

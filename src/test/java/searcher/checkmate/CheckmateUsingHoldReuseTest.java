@@ -11,6 +11,7 @@ import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import lib.Randoms;
 import lib.Stopwatch;
+import module.LongTest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ class CheckmateUsingHoldReuseTest {
     private final CheckmateUsingHoldReuse<Action> checkmateReuse = new CheckmateUsingHoldReuse<>(minoFactory, validator);
 
     @Test
-    @Tag("long")
+    @LongTest
     void randomCheckmateWithJustBlock() {
         Randoms randoms = new Randoms();
 
@@ -119,7 +120,7 @@ class CheckmateUsingHoldReuseTest {
     }
 
     @Test
-    @Tag("long")
+    @LongTest
     void randomCheckmateOverBlock() {
         Randoms randoms = new Randoms();
 
@@ -159,7 +160,7 @@ class CheckmateUsingHoldReuseTest {
     }
 
     @Test
-    @Tag("long")
+    @LongTest
     void randomCheckmateOverMoreBlock() {
         Randoms randoms = new Randoms();
 

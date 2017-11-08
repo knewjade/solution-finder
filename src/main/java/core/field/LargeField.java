@@ -1,7 +1,7 @@
 package core.field;
 
 import core.mino.Mino;
-import core.mino.piece.OriginalPiece;
+import core.neighbor.OriginalPiece;
 
 // TODO: 実装する
 public class LargeField implements Field {

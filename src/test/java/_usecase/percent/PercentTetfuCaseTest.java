@@ -7,6 +7,7 @@ import core.field.Field;
 import core.field.FieldFactory;
 import core.field.SmallField;
 import entry.EntryPointMain;
+import module.LongTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -55,7 +56,7 @@ class PercentTetfuCaseTest extends PercentUseCaseBaseTest {
     }
 
     @Test
-    @Tag("long")
+    @LongTest
     void useTetfuAndCommand1() throws Exception {
         // テト譜 + パターンコマンド
 
@@ -91,7 +92,7 @@ class PercentTetfuCaseTest extends PercentUseCaseBaseTest {
     }
 
     @Test
-    @Tag("long")
+    @LongTest
     void useTetfuAndPatternsFile1() throws Exception {
         // テト譜 + パターンファイル
 

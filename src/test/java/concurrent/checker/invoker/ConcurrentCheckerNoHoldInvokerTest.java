@@ -18,7 +18,7 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import lib.Randoms;
-import org.junit.jupiter.api.Tag;
+import module.LongTest;
 import org.junit.jupiter.api.Test;
 import searcher.checker.CheckerNoHold;
 import searcher.common.validator.PerfectValidator;
@@ -342,7 +342,7 @@ class ConcurrentCheckerNoHoldInvokerTest {
     }
 
     @Test
-    @Tag("long")
+    @LongTest
     void random() throws ExecutionException, InterruptedException, SyntaxException {
         Randoms randoms = new Randoms();
 

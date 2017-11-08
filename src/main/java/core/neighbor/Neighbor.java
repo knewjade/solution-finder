@@ -1,9 +1,8 @@
-package core.mino.piece;
+package core.neighbor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: write unittest
 public class Neighbor {
     public static final Neighbor EMPTY_NEIGHBOR = new Neighbor(OriginalPiece.EMPTY_COLLIDER_PIECE);
 
@@ -76,6 +75,13 @@ public class Neighbor {
     @Override
     public int hashCode() {
         return piece.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Neighbor{" +
+                "piece=" + piece +
+                '}';
     }
 
     public List<Neighbor> getNextMovesSources() {

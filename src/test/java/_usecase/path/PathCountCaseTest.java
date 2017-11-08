@@ -4,6 +4,7 @@ import _usecase.Log;
 import _usecase.RunnerHelper;
 import entry.EntryPointMain;
 import lib.BooleanWalker;
+import module.LongTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -142,7 +143,7 @@ class PathCountCaseTest extends PathUseCaseBaseTest {
     }
 
     @Test
-    @Tag("long")
+    @LongTest
     void pattern6() throws Exception {
             /*
             __________

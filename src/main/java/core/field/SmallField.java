@@ -2,7 +2,7 @@ package core.field;
 
 import common.comparator.FieldComparator;
 import core.mino.Mino;
-import core.mino.piece.OriginalPiece;
+import core.neighbor.OriginalPiece;
 
 /**
  * フィールドの高さ height <= 6 であること

@@ -1,7 +1,7 @@
-package core.mino.piece;
+package core.neighbor;
 
-import core.mino.Piece;
 import core.mino.Mino;
+import core.mino.Piece;
 import core.srs.Rotate;
 import org.junit.jupiter.api.Test;
 

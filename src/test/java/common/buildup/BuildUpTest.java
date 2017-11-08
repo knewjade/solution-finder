@@ -21,6 +21,7 @@ import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
 import lib.Randoms;
+import module.LongTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.checker.CheckerUsingHold;
@@ -114,7 +115,7 @@ class BuildUpTest {
     }
 
     @Test
-    @Tag("long")
+    @LongTest
     void cansBuildRandomLongByCheck() {
         Randoms randoms = new Randoms();
 
@@ -286,7 +287,7 @@ class BuildUpTest {
     }
 
     @Test
-    @Tag("long")
+    @LongTest
     void randomLongByPacking() throws ExecutionException, InterruptedException {
         // Initialize
         Randoms randoms = new Randoms();

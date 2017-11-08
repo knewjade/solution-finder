@@ -5,7 +5,7 @@ import core.srs.Rotate;
 /*
  * y < 24であること
  */
-public class MinimalAction implements Action {
+public class MinimalAction implements Action, Comparable<Action> {
     public static MinimalAction create(int x, int y, Rotate rotate) {
         return new MinimalAction(x, y, rotate);
     }

@@ -1,18 +1,17 @@
-package core.mino.piece;
+package core.neighbor;
 
-import common.ActionParser;
-import core.mino.Piece;
 import core.mino.Mino;
+import core.mino.Piece;
 import core.srs.Rotate;
 
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 // TODO: write unittest
 public class OriginalPieceFactory {
     private static final int FIELD_WIDTH = 10;
 
-    private final HashMap<Integer, OriginalPiece> pieces;
+    private final Set<OriginalPiece> pieces;
     private final int maxHeight;
 
     public OriginalPieceFactory(int fieldHeight) {
@@ -20,16 +19,15 @@ public class OriginalPieceFactory {
         this.maxHeight = fieldHeight;
     }
 
-    private HashMap<Integer, OriginalPiece> createPieces(int fieldHeight) {
-        HashMap<Integer, OriginalPiece> pieces = new HashMap<>();
+    private Set<OriginalPiece> createPieces(int fieldHeight) {
+        Set<OriginalPiece> pieces = new HashSet<>();
         for (Piece block : Piece.values()) {
             for (Rotate rotate : Rotate.values()) {
                 Mino mino = new Mino(block, rotate);
                 for (int y = -mino.getMinY(); y < fieldHeight - mino.getMaxY(); y++) {
                     for (int x = -mino.getMinX(); x < FIELD_WIDTH - mino.getMaxX(); x++) {
-                        int indexKey = ActionParser.parseToInt(block, rotate, x, y);
                         OriginalPiece piece = new OriginalPiece(mino, x, y, fieldHeight);
-                        pieces.put(indexKey, piece);
+                        pieces.add(piece);
                     }
                 }
             }
@@ -37,8 +35,8 @@ public class OriginalPieceFactory {
         return pieces;
     }
 
-    Collection<OriginalPiece> getAllPieces() {
-        return pieces.values();
+    public Set<OriginalPiece> create() {
+        return pieces;
     }
 
     public int getMaxHeight() {

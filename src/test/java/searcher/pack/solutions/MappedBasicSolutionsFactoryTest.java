@@ -4,6 +4,7 @@ import core.column_field.ColumnField;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import lib.Stopwatch;
+import module.LongTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.pack.SeparableMinos;
@@ -62,7 +63,7 @@ class MappedBasicSolutionsFactoryTest {
     }
 
     @Test
-    @Tag("long")
+    @LongTest
     void create2x6() throws Exception {
         SizedBit sizedBit = new SizedBit(2, 6);
         int expectedSolutions = 3490;

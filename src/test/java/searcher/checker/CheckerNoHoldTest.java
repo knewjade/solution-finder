@@ -17,6 +17,7 @@ import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
+import module.LongTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.common.validator.PerfectValidator;
@@ -277,7 +278,7 @@ class CheckerNoHoldTest {
     }
 
     @Test
-    @Tag("long")
+    @LongTest
     void testCaseList() throws Exception {
         String resultPath = ClassLoader.getSystemResource("perfects/checker_avoidhold.txt").getPath();
         List<Pair<Pieces, Boolean>> testCases = Files.lines(Paths.get(resultPath))

@@ -19,6 +19,7 @@ import core.srs.MinoRotation;
 import core.srs.Rotate;
 import exceptions.FinderParseException;
 import lib.Randoms;
+import module.LongTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.pack.InOutPairField;
@@ -444,7 +445,7 @@ class TetfuTest {
     }
 
     @Test
-    @Tag("long")
+    @LongTest
     void random() throws Exception {
         // Initialize
         Randoms randoms = new Randoms();

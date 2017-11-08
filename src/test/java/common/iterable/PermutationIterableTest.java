@@ -4,6 +4,7 @@ import com.google.common.collect.Iterables;
 import common.datastore.blocks.LongPieces;
 import core.mino.Piece;
 import lib.Randoms;
+import module.LongTest;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -67,7 +68,7 @@ class PermutationIterableTest {
     }
 
     @Test
-    @Tag("long")
+    @LongTest
     void iteratorRandomBlock() throws Exception {
         Randoms randoms = new Randoms();
         ArrayList<Piece> allPieces = Lists.newArrayList(Iterables.concat(Piece.valueList(), Piece.valueList()));

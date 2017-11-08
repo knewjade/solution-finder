@@ -13,6 +13,7 @@ import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
+import module.LongTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.common.validator.PerfectValidator;
@@ -146,7 +147,7 @@ class CheckerUsingHoldCountTest {
     }
 
     @Test
-    @Tag("long")
+    @LongTest
     void testAfter4Line() throws Exception {
         // Invoker
         List<Piece> pieces = Arrays.asList(I, T, S, Z, J, L, O);
@@ -184,7 +185,7 @@ class CheckerUsingHoldCountTest {
     }
 
     @Test
-    @Tag("long")
+    @LongTest
     void testBT4_5() throws Exception {
         // Invoker
         List<Piece> pieces = Arrays.asList(I, T, S, Z, J, L, O);

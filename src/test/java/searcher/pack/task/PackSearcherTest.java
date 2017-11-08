@@ -23,6 +23,7 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import lib.Randoms;
+import module.LongTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -202,7 +203,7 @@ class PackSearcherTest {
         }
 
         @Test
-        @Tag("long")
+        @LongTest
         void packSRSCandidate1() throws ExecutionException, InterruptedException {
             // SRS: SizedBit=3x4, TaskResultHelper=4x10, BasicSolutions=Mapped
             int width = 3;
@@ -233,7 +234,7 @@ class PackSearcherTest {
         }
 
         @Test
-        @Tag("long")
+        @LongTest
         void packSRSCandidate3() throws ExecutionException, InterruptedException {
             // SRS: SizedBit=2x4, TaskResultHelper=Basic, BasicSolutions=Mapped
             int width = 2;
