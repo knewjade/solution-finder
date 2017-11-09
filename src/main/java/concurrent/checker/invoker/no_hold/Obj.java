@@ -1,18 +1,18 @@
 package concurrent.checker.invoker.no_hold;
 
+import common.datastore.action.Action;
 import core.action.candidate.Candidate;
 import core.field.Field;
 import searcher.checker.Checker;
-import common.datastore.action.Action;
 
 class Obj {
     final Field field;
     final int maxClearLine;
     final int maxDepth;
-    final ThreadLocal<Candidate<Action>> candidateThreadLocal;
-    final ThreadLocal<Checker<Action>> checkerThreadLocal;
+    final ThreadLocal<Candidate<? extends Action>> candidateThreadLocal;
+    final ThreadLocal<Checker> checkerThreadLocal;
 
-    Obj(Field field, int maxClearLine, int maxDepth, ThreadLocal<Candidate<Action>> candidateThreadLocal, ThreadLocal<Checker<Action>> checkerThreadLocal) {
+    Obj(Field field, int maxClearLine, int maxDepth, ThreadLocal<Candidate<? extends Action>> candidateThreadLocal, ThreadLocal<Checker> checkerThreadLocal) {
         this.field = field;
         this.maxClearLine = maxClearLine;
         this.maxDepth = maxDepth;

@@ -7,7 +7,6 @@ import core.srs.Rotate;
 import java.util.HashSet;
 import java.util.Set;
 
-// TODO: write unittest
 public class OriginalPieceFactory {
     private static final int FIELD_WIDTH = 10;
 

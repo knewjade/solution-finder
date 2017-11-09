@@ -5,8 +5,8 @@ import common.datastore.order.NormalOrder;
 import common.datastore.order.Order;
 import core.action.candidate.Candidate;
 import core.field.Field;
-import core.mino.Piece;
 import core.mino.MinoFactory;
+import core.mino.Piece;
 import searcher.checkmate.CheckmateDataPool;
 import searcher.common.validator.Validator;
 import searcher.core.SimpleSearcherCore;
@@ -16,11 +16,11 @@ import java.util.TreeSet;
 
 public class PutterUsingHold<T extends Action> {
     private final CheckmateDataPool dataPool;
-    private final SimpleSearcherCore<T> searcherCore;
+    private final SimpleSearcherCore searcherCore;
 
     public PutterUsingHold(MinoFactory minoFactory, Validator validator) {
         this.dataPool = new CheckmateDataPool();
-        this.searcherCore = new SimpleSearcherCore<>(minoFactory, validator, dataPool);
+        this.searcherCore = new SimpleSearcherCore(minoFactory, validator, dataPool);
     }
 
     public TreeSet<Order> first(Field initField, List<Piece> headPieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {

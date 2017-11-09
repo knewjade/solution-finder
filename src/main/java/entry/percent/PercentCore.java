@@ -25,13 +25,13 @@ class PercentCore {
     private AnalyzeTree resultTree;
     private List<Pair<Pieces, Boolean>> resultPairs;
 
-    PercentCore(ExecutorService executorService, ThreadLocal<Candidate<Action>> candidateThreadLocal, boolean isUsingHold) {
+    PercentCore(ExecutorService executorService, ThreadLocal<Candidate<? extends Action>> candidateThreadLocal, boolean isUsingHold) {
         this.invoker = createConcurrentCheckerInvoker(executorService, candidateThreadLocal, isUsingHold);
     }
 
-    private ConcurrentCheckerInvoker createConcurrentCheckerInvoker(ExecutorService executorService, ThreadLocal<Candidate<Action>> candidateThreadLocal, boolean isUsingHold) {
+    private ConcurrentCheckerInvoker createConcurrentCheckerInvoker(ExecutorService executorService, ThreadLocal<Candidate<? extends Action>> candidateThreadLocal, boolean isUsingHold) {
         if (isUsingHold) {
-            CheckerUsingHoldThreadLocal<Action> checkerThreadLocal = new CheckerUsingHoldThreadLocal<>();
+            CheckerUsingHoldThreadLocal checkerThreadLocal = new CheckerUsingHoldThreadLocal();
             return new ConcurrentCheckerUsingHoldInvoker(executorService, candidateThreadLocal, checkerThreadLocal);
         } else {
             CheckerNoHoldThreadLocal<Action> checkerThreadLocal = new CheckerNoHoldThreadLocal<>();

@@ -7,26 +7,31 @@ import common.datastore.order.NormalOrder;
 import common.datastore.order.Order;
 import core.action.candidate.Candidate;
 import core.field.Field;
-import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
+import core.mino.Piece;
+import lib.Stopwatch;
 import searcher.common.DataPool;
 import searcher.common.validator.Validator;
 
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
-public class SimpleSearcherCore<T extends Action> {
+public class SimpleSearcherCore {
     private final MinoFactory minoFactory;
     private final Validator validator;
     private final DataPool dataPool;
+    private final Stopwatch stopwatch;
 
     public SimpleSearcherCore(MinoFactory minoFactory, Validator validator, DataPool dataPool) {
         this.minoFactory = minoFactory;
         this.validator = validator;
         this.dataPool = dataPool;
+        stopwatch = Stopwatch.createStartedStopwatch();
+
     }
 
-    public void stepWithNext(Candidate<T> candidate, Piece drawn, Order order, boolean isLast) {
+    public void stepWithNext(Candidate<? extends Action> candidate, Piece drawn, Order order, boolean isLast) {
         Piece hold = order.getHold();
         step(candidate, drawn, hold, order, isLast);
 
@@ -36,22 +41,24 @@ public class SimpleSearcherCore<T extends Action> {
         }
     }
 
-    public void stepWithNextNoHold(Candidate<T> candidate, Piece drawn, Order order, boolean isLast) {
+    public void stepWithNextNoHold(Candidate<? extends Action> candidate, Piece drawn, Order order, boolean isLast) {
         step(candidate, drawn, order.getHold(), order, isLast);
     }
 
-    public void stepWhenNoNext(Candidate<T> candidate, Order order, boolean isLast) {
+    public void stepWhenNoNext(Candidate<? extends Action> candidate, Order order, boolean isLast) {
         Piece hold = order.getHold();
         step(candidate, hold, null, order, isLast);
     }
 
-    private void step(Candidate<T> candidate, Piece drawn, Piece nextHold, Order order, boolean isLast) {
+    private void step(Candidate<? extends Action> candidate, Piece drawn, Piece nextHold, Order order, boolean isLast) {
         Field currentField = order.getField();
         int max = order.getMaxClearLine();
-        Set<T> candidateList = candidate.search(currentField, drawn, max);
+        stopwatch.start();
+        Set<? extends Action> candidateList = candidate.search(currentField, drawn, max);
+        stopwatch.stop();
 
         OperationHistory history = order.getHistory();
-        for (T action : candidateList) {
+        for (Action action : candidateList) {
             Field field = currentField.freeze(max);
             Mino mino = minoFactory.create(drawn, action.getRotate());
             field.put(mino, action.getX(), action.getY());
@@ -74,5 +81,6 @@ public class SimpleSearcherCore<T extends Action> {
             Order nextOrder = new NormalOrder(field, nextHold, maxClearLine, nextHistory);
             dataPool.addOrder(nextOrder);
         }
+        System.out.println(stopwatch.toMessage(TimeUnit.MICROSECONDS));
     }
 }

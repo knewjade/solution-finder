@@ -1,9 +1,12 @@
 package core.neighbor;
 
+import common.datastore.action.Action;
+import core.srs.Rotate;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class Neighbor {
+public class Neighbor implements Action {
     public static final Neighbor EMPTY_NEIGHBOR = new Neighbor(OriginalPiece.EMPTY_COLLIDER_PIECE);
 
     private boolean isValid(Neighbor neighbor) {
@@ -17,27 +20,37 @@ public class Neighbor {
     private final List<Neighbor> nextLeftRotateDestinations = new ArrayList<>();
     private final List<Neighbor> nextRightRotateDestinations = new ArrayList<>();
 
+    private Neighbor up = EMPTY_NEIGHBOR;
+    private Neighbor left = EMPTY_NEIGHBOR;
+    private Neighbor right = EMPTY_NEIGHBOR;
+
     Neighbor(OriginalPiece piece) {
         this.piece = piece;
     }
 
-    public OriginalPiece getPiece() {
+    public OriginalPiece getOriginalPiece() {
         return piece;
     }
 
     void updateUp(Neighbor neighbor) {
-        if (isValid(neighbor))
+        if (isValid(neighbor)) {
             nextMovesSources.add(neighbor);
+            this.up = neighbor;
+        }
     }
 
     void updateLeft(Neighbor neighbor) {
-        if (isValid(neighbor))
+        if (isValid(neighbor)) {
             nextMovesSources.add(neighbor);
+            this.left = neighbor;
+        }
     }
 
     void updateRight(Neighbor neighbor) {
-        if (isValid(neighbor))
+        if (isValid(neighbor)) {
             nextMovesSources.add(neighbor);
+            this.right = neighbor;
+        }
     }
 
     void updateLeftRotateDestination(List<Neighbor> destinations) {
@@ -64,24 +77,16 @@ public class Neighbor {
                 nextRightRotateSources.add(neighbor);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Neighbor neighbor = (Neighbor) o;
-        return piece.equals(neighbor.piece);
+    public Neighbor getLeft() {
+        return left;
     }
 
-    @Override
-    public int hashCode() {
-        return piece.hashCode();
+    public Neighbor getRight() {
+        return right;
     }
 
-    @Override
-    public String toString() {
-        return "Neighbor{" +
-                "piece=" + piece +
-                '}';
+    public Neighbor getUp() {
+        return up;
     }
 
     public List<Neighbor> getNextMovesSources() {
@@ -102,5 +107,41 @@ public class Neighbor {
 
     public List<Neighbor> getNextRightRotateDestinations() {
         return nextRightRotateDestinations;
+    }
+
+    @Override
+    public int getX() {
+        return piece.getX();
+    }
+
+    @Override
+    public int getY() {
+        return piece.getY();
+    }
+
+    @Override
+    public Rotate getRotate() {
+        return piece.getRotate();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Action)) return false;
+        return Action.defaultEquals(this, (Action) o);
+    }
+
+    @Override
+    public int hashCode() {
+        return Action.defaultHashCode(getX(), getY(), getRotate());
+    }
+
+    @Override
+    public String toString() {
+        return "Neighbor{" +
+                "x=" + getX() +
+                ", y=" + getY() +
+                ", rotate=" + getRotate() +
+                '}';
     }
 }

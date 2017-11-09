@@ -41,7 +41,7 @@ class LockedNeighborCandidateTest {
         MinoShifter minoShifter = injector.getInstance(MinoShifter.class);
         MinoRotation minoRotation = injector.getInstance(MinoRotation.class);
         OriginalPieceFactory pieceFactory = new OriginalPieceFactory(maxClearLine + 3);
-        return new LockedNeighborCandidate(minoFactory, minoShifter, minoRotation, pieceFactory);
+        return new LockedNeighborCandidate(minoFactory, minoRotation, pieceFactory);
     }
 
     private MinimalAction createMinimalAction(OriginalPiece piece) {
@@ -109,7 +109,7 @@ class LockedNeighborCandidateTest {
         // LockedNeighborCandidate
         Set<Neighbor> neighbors = candidate2.search(field, piece, maxClearLine);
         Set<Action> search2 = neighbors.stream()
-                .map(Neighbor::getPiece)
+                .map(Neighbor::getOriginalPiece)
                 .map(this::createMinimalAction)
                 .map(action -> minoShifter.createTransformedAction(piece, action))
                 .collect(Collectors.toSet());
@@ -121,7 +121,7 @@ class LockedNeighborCandidateTest {
     void random() {
         Injector injector = Guice.createInjector(new BasicModule());
 
-        int maxClearLine = 3;
+        int maxClearLine = 4;
         LockedCandidate candidate1 = createLockedCandidate(injector, maxClearLine);
         LockedNeighborCandidate candidate2 = createLockedNeighborCandidate(injector, maxClearLine);
         MinoShifter minoShifter = injector.getInstance(MinoShifter.class);
@@ -130,8 +130,8 @@ class LockedNeighborCandidateTest {
         Stopwatch stopwatch2 = Stopwatch.createStartedStopwatch();
 
         Randoms randoms = new Randoms();
-        for (int count = 0; count < 10000; count++) {
-            Field field = randoms.field(maxClearLine, 7);
+        for (int count = 0; count < 30000; count++) {
+            Field field = randoms.field(maxClearLine, 6);
             for (Piece piece : Piece.values()) {
                 // LockedCandidate
                 stopwatch1.start();
@@ -143,7 +143,7 @@ class LockedNeighborCandidateTest {
                 Set<Neighbor> neighbors = candidate2.search(field, piece, maxClearLine);
                 stopwatch2.stop();
                 Set<Action> search2 = neighbors.stream()
-                        .map(Neighbor::getPiece)
+                        .map(Neighbor::getOriginalPiece)
                         .map(this::createMinimalAction)
                         .map(action -> minoShifter.createTransformedAction(piece, action))
                         .collect(Collectors.toSet());
@@ -155,4 +155,37 @@ class LockedNeighborCandidateTest {
         System.out.println(stopwatch1.toMessage(TimeUnit.NANOSECONDS));
         System.out.println(stopwatch2.toMessage(TimeUnit.NANOSECONDS));
     }
+
+    @Test
+    void test() {
+        Injector injector = Guice.createInjector(new BasicModule());
+
+        int maxClearLine = 4;
+        LockedCandidate candidate1 = createLockedCandidate(injector, maxClearLine);
+        LockedNeighborCandidate candidate2 = createLockedNeighborCandidate(injector, maxClearLine);
+        MinoShifter minoShifter = injector.getInstance(MinoShifter.class);
+
+        Stopwatch stopwatch1 = Stopwatch.createStartedStopwatch();
+        Stopwatch stopwatch2 = Stopwatch.createStartedStopwatch();
+
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 100000; count++) {
+            Field field = randoms.field(maxClearLine, 6);
+            for (Piece piece : Piece.values()) {
+                // LockedCandidate
+                stopwatch1.start();
+                Set<Action> search1 = candidate1.search(field, piece, maxClearLine);
+                stopwatch1.stop();
+
+                // LockedNeighborCandidate
+                stopwatch2.start();
+                Set<Neighbor> neighbors = candidate2.search(field, piece, maxClearLine);
+                stopwatch2.stop();
+            }
+        }
+
+        System.out.println(stopwatch1.toMessage(TimeUnit.NANOSECONDS));
+        System.out.println(stopwatch2.toMessage(TimeUnit.NANOSECONDS));
+    }
+
 }

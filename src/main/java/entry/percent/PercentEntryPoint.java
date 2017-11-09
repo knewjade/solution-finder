@@ -1,15 +1,14 @@
 package entry.percent;
 
-import common.SyntaxException;
 import common.datastore.Pair;
 import common.datastore.action.Action;
 import common.datastore.blocks.LongPieces;
 import common.datastore.blocks.Pieces;
-import common.pattern.LoadedPatternGenerator;
 import common.pattern.PatternGenerator;
 import common.tree.AnalyzeTree;
 import concurrent.HarddropCandidateThreadLocal;
 import concurrent.LockedCandidateThreadLocal;
+import concurrent.LockedNeighborCandidateThreadLocal;
 import core.FinderConstant;
 import core.action.candidate.Candidate;
 import core.field.Field;
@@ -143,7 +142,7 @@ public class PercentEntryPoint implements EntryPoint {
         output("  -> Stopwatch start");
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
-        ThreadLocal<Candidate<Action>> candidateThreadLocal = createCandidateThreadLocal(settings.getDropType(), maxClearLine);
+        ThreadLocal<Candidate<? extends Action>> candidateThreadLocal = createCandidateThreadLocal(settings.getDropType(), maxClearLine);
         PercentCore percentCore = new PercentCore(executorService, candidateThreadLocal, settings.isUsingHold());
         try {
             percentCore.run(field, searchingPieces, maxClearLine, maxDepth);
@@ -207,20 +206,11 @@ public class PercentEntryPoint implements EntryPoint {
         output("done");
     }
 
-    private PatternGenerator createBlockGenerator(List<String> patterns) throws FinderInitializeException, FinderExecuteException {
-        try {
-            return new LoadedPatternGenerator(patterns);
-        } catch (SyntaxException e) {
-            output("Pattern syntax error");
-            output(e.getMessage());
-            throw new FinderInitializeException("Pattern syntax error", e);
-        }
-    }
-
-    private ThreadLocal<Candidate<Action>> createCandidateThreadLocal(DropType dropType, int maxClearLine) throws FinderInitializeException {
+    private ThreadLocal<Candidate<? extends Action>> createCandidateThreadLocal(DropType dropType, int maxClearLine) throws FinderInitializeException {
         switch (dropType) {
             case Softdrop:
-                return new LockedCandidateThreadLocal(maxClearLine);
+//                return new LockedCandidateThreadLocal(maxClearLine);
+                return new LockedNeighborCandidateThreadLocal(maxClearLine);
             case Harddrop:
                 return new HarddropCandidateThreadLocal();
         }

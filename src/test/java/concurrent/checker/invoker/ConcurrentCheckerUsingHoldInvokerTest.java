@@ -8,6 +8,7 @@ import common.pattern.LoadedPatternGenerator;
 import common.pattern.PatternGenerator;
 import common.tree.AnalyzeTree;
 import concurrent.LockedCandidateThreadLocal;
+import concurrent.LockedNeighborCandidateThreadLocal;
 import concurrent.checker.CheckerUsingHoldThreadLocal;
 import concurrent.checker.invoker.using_hold.ConcurrentCheckerUsingHoldInvoker;
 import core.action.candidate.Candidate;
@@ -19,7 +20,6 @@ import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import lib.Randoms;
 import module.LongTest;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.checker.CheckerUsingHold;
 import searcher.common.validator.PerfectValidator;
@@ -42,9 +42,11 @@ class ConcurrentCheckerUsingHoldInvokerTest {
     private AnalyzeTree runTestCase(Field field, List<Pieces> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
         int core = Runtime.getRuntime().availableProcessors();
         ExecutorService executorService = Executors.newFixedThreadPool(core);
-        CheckerUsingHoldThreadLocal<Action> checkerThreadLocal = new CheckerUsingHoldThreadLocal<>();
+        CheckerUsingHoldThreadLocal checkerThreadLocal = new CheckerUsingHoldThreadLocal();
         LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
-        ConcurrentCheckerUsingHoldInvoker invoker = new ConcurrentCheckerUsingHoldInvoker(executorService, candidateThreadLocal, checkerThreadLocal);
+        LockedNeighborCandidateThreadLocal candidateThreadLocal2 = new LockedNeighborCandidateThreadLocal(maxClearLine);
+
+        ConcurrentCheckerUsingHoldInvoker invoker = new ConcurrentCheckerUsingHoldInvoker(executorService, candidateThreadLocal2, checkerThreadLocal);
 
         List<Pair<Pieces, Boolean>> resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
 
@@ -286,7 +288,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
         MinoRotation minoRotation = new MinoRotation();
 
         PerfectValidator validator = new PerfectValidator();
-        CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
+        CheckerUsingHold checker = new CheckerUsingHold(minoFactory, validator);
 
         for (int count = 0; count < 20; count++) {
             int maxClearLine = randoms.nextInt(3, 6);

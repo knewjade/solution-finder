@@ -20,8 +20,8 @@ class Task implements Callable<Pair<Pieces, Boolean>> {
     @Override
     public Pair<Pieces, Boolean> call() throws Exception {
         // 探索
-        Checker<Action> checker = obj.checkerThreadLocal.get();
-        Candidate<Action> candidate = obj.candidateThreadLocal.get();
+        Checker checker = obj.checkerThreadLocal.get();
+        Candidate<? extends Action> candidate = obj.candidateThreadLocal.get();
         boolean checkResult = checker.check(obj.field, target.getPieces(), candidate, obj.maxClearLine, obj.maxDepth);
         return new Pair<>(target, checkResult);
     }

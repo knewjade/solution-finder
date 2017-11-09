@@ -26,7 +26,7 @@ class NeighborsTest {
         Neighbors neighbors = createNeighbors(injector);
 
         Neighbor neighbor = neighbors.get(Piece.O, Rotate.Spawn, 1, 0);
-        assertThat(neighbor.getPiece())
+        assertThat(neighbor.getOriginalPiece())
                 .returns(Piece.O, OriginalPiece::getPiece)
                 .returns(Rotate.Spawn, OriginalPiece::getRotate)
                 .returns(1, OriginalPiece::getX)
@@ -39,7 +39,7 @@ class NeighborsTest {
         Neighbors neighbors = createNeighbors(injector);
 
         Neighbor neighbor = neighbors.get(Piece.J, Rotate.Left, 3, 2);
-        assertThat(neighbor.getPiece())
+        assertThat(neighbor.getOriginalPiece())
                 .returns(Piece.J, OriginalPiece::getPiece)
                 .returns(Rotate.Left, OriginalPiece::getRotate)
                 .returns(3, OriginalPiece::getX)
@@ -52,7 +52,7 @@ class NeighborsTest {
         Neighbors neighbors = createNeighbors(injector);
 
         Neighbor neighbor = neighbors.get(Piece.S, Rotate.Reverse, 8, 3);
-        assertThat(neighbor.getPiece())
+        assertThat(neighbor.getOriginalPiece())
                 .returns(Piece.S, OriginalPiece::getPiece)
                 .returns(Rotate.Reverse, OriginalPiece::getRotate)
                 .returns(8, OriginalPiece::getX)

@@ -14,13 +14,12 @@ import core.action.candidate.LockedCandidate;
 import core.action.reachable.LockedReachable;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import core.mino.Piece;
 import core.srs.MinoRotation;
 import lib.Randoms;
 import module.LongTest;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.common.validator.PerfectValidator;
 
@@ -38,7 +37,7 @@ class CheckerUsingHoldTest {
     private final MinoShifter minoShifter = new MinoShifter();
     private final MinoRotation minoRotation = new MinoRotation();
     private final PerfectValidator validator = new PerfectValidator();
-    private final CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
+    private final CheckerUsingHold checker = new CheckerUsingHold(minoFactory, validator);
 
     private List<Piece> parseToBlocks(Result result) {
         return ResultHelper.createOperationStream(result)

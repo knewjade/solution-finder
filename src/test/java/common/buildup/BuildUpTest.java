@@ -11,18 +11,18 @@ import concurrent.LockedReachableThreadLocal;
 import core.action.candidate.Candidate;
 import core.action.candidate.LockedCandidate;
 import core.action.reachable.LockedReachable;
+import core.action.reachable.Reachable;
 import core.column_field.ColumnField;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
-import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import core.mino.Piece;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
 import lib.Randoms;
 import module.LongTest;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.checker.CheckerUsingHold;
 import searcher.common.validator.PerfectValidator;
@@ -86,7 +86,7 @@ class BuildUpTest {
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = new MinoRotation();
         PerfectValidator validator = new PerfectValidator();
-        CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
+        CheckerUsingHold checker = new CheckerUsingHold(minoFactory, validator);
 
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
@@ -127,7 +127,7 @@ class BuildUpTest {
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = new MinoRotation();
         PerfectValidator validator = new PerfectValidator();
-        CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
+        CheckerUsingHold checker = new CheckerUsingHold(minoFactory, validator);
 
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
@@ -244,7 +244,7 @@ class BuildUpTest {
                         .map(SeparableMino::toMinoOperationWithKey)
                         .collect(Collectors.toCollection(LinkedList::new));
 
-                LockedReachable reachable = lockedReachableThreadLocal.get();
+                Reachable reachable = lockedReachableThreadLocal.get();
                 boolean exists = BuildUp.existsValidBuildPattern(field, operationWithKeys, height, reachable);
 
                 if (exists) {
@@ -328,7 +328,7 @@ class BuildUpTest {
                         .map(SeparableMino::toMinoOperationWithKey)
                         .collect(Collectors.toCollection(LinkedList::new));
 
-                LockedReachable reachable = lockedReachableThreadLocal.get();
+                Reachable reachable = lockedReachableThreadLocal.get();
                 boolean exists = BuildUp.existsValidBuildPattern(field, operationWithKeys, height, reachable);
 
                 if (exists) {

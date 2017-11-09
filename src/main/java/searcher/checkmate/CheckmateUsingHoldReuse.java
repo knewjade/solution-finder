@@ -20,7 +20,7 @@ import java.util.TreeSet;
 
 public class CheckmateUsingHoldReuse<T extends Action> implements Checkmate<T> {
     private final CheckmateDataPool dataPool;
-    private final SimpleSearcherCore<T> searcherCore;
+    private final SimpleSearcherCore searcherCore;
     private final Comparator<Field> fieldComparator = new FieldComparator();
 
     private List<TreeSet<Order>> memento = null;
@@ -29,7 +29,7 @@ public class CheckmateUsingHoldReuse<T extends Action> implements Checkmate<T> {
 
     public CheckmateUsingHoldReuse(MinoFactory minoFactory, Validator validator) {
         this.dataPool = new CheckmateDataPool();
-        this.searcherCore = new SimpleSearcherCore<T>(minoFactory, validator, dataPool);
+        this.searcherCore = new SimpleSearcherCore(minoFactory, validator, dataPool);
     }
 
     @Override

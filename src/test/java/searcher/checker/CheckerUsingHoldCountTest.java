@@ -33,7 +33,7 @@ class CheckerUsingHoldCountTest {
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = new MinoRotation();
         PerfectValidator validator = new PerfectValidator();
-        CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
+        CheckerUsingHold checker = new CheckerUsingHold(minoFactory, validator);
 
         // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
@@ -92,7 +92,7 @@ class CheckerUsingHoldCountTest {
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = new MinoRotation();
         PerfectValidator validator = new PerfectValidator();
-        CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
+        CheckerUsingHold checker = new CheckerUsingHold(minoFactory, validator);
 
         // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
@@ -128,7 +128,7 @@ class CheckerUsingHoldCountTest {
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = new MinoRotation();
         PerfectValidator validator = new PerfectValidator();
-        CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
+        CheckerUsingHold checker = new CheckerUsingHold(minoFactory, validator);
 
         // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
@@ -169,7 +169,7 @@ class CheckerUsingHoldCountTest {
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = new MinoRotation();
         PerfectValidator validator = new PerfectValidator();
-        CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
+        CheckerUsingHold checker = new CheckerUsingHold(minoFactory, validator);
 
         // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
@@ -209,7 +209,7 @@ class CheckerUsingHoldCountTest {
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = new MinoRotation();
         PerfectValidator validator = new PerfectValidator();
-        CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
+        CheckerUsingHold checker = new CheckerUsingHold(minoFactory, validator);
 
         // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);

@@ -17,7 +17,7 @@ class NeighborTest {
     void getPiece() {
         OriginalPiece piece = new OriginalPiece(new Mino(Piece.T, Rotate.Spawn), 1, 0, 4);
         Neighbor neighbor = new Neighbor(piece);
-        assertThat(piece).isEqualTo(neighbor.getPiece());
+        assertThat(piece).isEqualTo(neighbor.getOriginalPiece());
     }
 
     @Test

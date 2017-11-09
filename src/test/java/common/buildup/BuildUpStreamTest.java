@@ -8,17 +8,17 @@ import common.parser.OperationInterpreter;
 import common.parser.OperationTransform;
 import concurrent.LockedReachableThreadLocal;
 import core.action.reachable.LockedReachable;
+import core.action.reachable.Reachable;
 import core.column_field.ColumnField;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
-import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import core.mino.Piece;
 import core.srs.MinoRotation;
 import lib.Randoms;
 import module.LongTest;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
@@ -151,7 +151,7 @@ class BuildUpStreamTest {
                         .collect(Collectors.toCollection(LinkedList::new));
 
                 // Create Pieces
-                LockedReachable reachable = lockedReachableThreadLocal.get();
+                Reachable reachable = lockedReachableThreadLocal.get();
                 Set<List<MinoOperationWithKey>> valid = new BuildUpStream(reachable, height)
                         .existsValidBuildPattern(field, operationWithKeys)
                         .collect(Collectors.toSet());
@@ -219,7 +219,7 @@ class BuildUpStreamTest {
                         .collect(Collectors.toCollection(LinkedList::new));
 
                 // Create Pieces
-                LockedReachable reachable = lockedReachableThreadLocal.get();
+                Reachable reachable = lockedReachableThreadLocal.get();
                 Set<List<MinoOperationWithKey>> valid = new BuildUpStream(reachable, height)
                         .existsValidBuildPattern(field, operationWithKeys)
                         .collect(Collectors.toSet());

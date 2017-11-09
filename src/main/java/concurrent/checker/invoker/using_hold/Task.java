@@ -35,8 +35,8 @@ class Task implements Callable<Pair<Pieces, Boolean>> {
             return new Pair<>(target, succeed == VisitedTree.SUCCEED);
 
         // 探索準備
-        Checker<Action> checker = obj.checkerThreadLocal.get();
-        Candidate<Action> candidate = obj.candidateThreadLocal.get();
+        Checker checker = obj.checkerThreadLocal.get();
+        Candidate<? extends Action> candidate = obj.candidateThreadLocal.get();
 
         // 探索
         boolean checkResult = checker.check(obj.field, pieceList, candidate, obj.maxClearLine, obj.maxDepth);

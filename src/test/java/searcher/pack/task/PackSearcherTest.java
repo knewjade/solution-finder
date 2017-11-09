@@ -320,7 +320,7 @@ class PackSearcherTest {
 
             // Checker
             PerfectValidator validator = new PerfectValidator();
-            CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
+            CheckerNoHold checker = new CheckerNoHold(minoFactory, validator);
 
             // Assert generator
             PatternGenerator generator = createPiecesGenerator(maxDepth);
@@ -335,7 +335,7 @@ class PackSearcherTest {
         }
     }
 
-    void assertHeight5(SizedBit sizedBit, int maxCount, BiFunction<Field, SolutionFilter, BasicSolutions> basicSolutionSupplier) throws ExecutionException, InterruptedException, SyntaxException {
+    private void assertHeight5(SizedBit sizedBit, int maxCount, BiFunction<Field, SolutionFilter, BasicSolutions> basicSolutionSupplier) throws ExecutionException, InterruptedException, SyntaxException {
         assert sizedBit.getWidth() == 2;
         assert sizedBit.getHeight() == 5;
 
@@ -378,7 +378,7 @@ class PackSearcherTest {
 
             // Checker
             PerfectValidator validator = new PerfectValidator();
-            CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
+            CheckerNoHold checker = new CheckerNoHold(minoFactory, validator);
 
             // Assert generator
             PatternGenerator generator = createPiecesGenerator(maxDepth);

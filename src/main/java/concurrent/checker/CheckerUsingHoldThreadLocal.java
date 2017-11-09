@@ -6,11 +6,11 @@ import searcher.checker.Checker;
 import common.datastore.action.Action;
 import searcher.common.validator.PerfectValidator;
 
-public class CheckerUsingHoldThreadLocal<T extends Action> extends ThreadLocal<Checker<T>> {
+public class CheckerUsingHoldThreadLocal extends ThreadLocal<Checker> {
     @Override
-    protected Checker<T> initialValue() {
+    protected Checker initialValue() {
         MinoFactory minoFactory = new MinoFactory();
         PerfectValidator validator = new PerfectValidator();
-        return new CheckerUsingHold<>(minoFactory, validator);
+        return new CheckerUsingHold(minoFactory, validator);
     }
 }

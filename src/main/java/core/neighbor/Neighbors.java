@@ -10,9 +10,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class Neighbors {
+    public static final int MAX_PIECE = Piece.values().length;
     private static final int FIELD_WIDTH = 10;
+    public static final int MAX_ROTATE = Rotate.values().length;
 
-    private final Neighbor[][][][] neighbors;
+    private final Neighbor[] neighbors;
     private final int maxHeight;
 
     public Neighbors(MinoFactory minoFactory, MinoRotation minoRotation, OriginalPieceFactory pieceFactory) {
@@ -22,34 +24,37 @@ public class Neighbors {
         updateNeighbors(minoFactory, minoRotation);
     }
 
-    private Neighbor[][][][] createNeighbors(OriginalPieceFactory pieceFactory, int maxHeight) {
-        int maxBlock = Piece.values().length;
-        int maxRotate = Rotate.values().length;
-        Neighbor[][][][] neighbors = new Neighbor[maxBlock][maxRotate][maxHeight][FIELD_WIDTH];
+    private Neighbor[] createNeighbors(OriginalPieceFactory pieceFactory, int maxHeight) {
+        Neighbor[] neighbors = new Neighbor[MAX_PIECE * MAX_ROTATE * maxHeight * FIELD_WIDTH];
         Collection<OriginalPiece> pieces = pieceFactory.create();
-        for (OriginalPiece piece : pieces) {
-            Mino mino = piece.getMino();
-            Piece block = mino.getPiece();
+        for (OriginalPiece originalPiece : pieces) {
+            Mino mino = originalPiece.getMino();
+            Piece piece = mino.getPiece();
             Rotate rotate = mino.getRotate();
-            int x = piece.getX();
-            int y = piece.getY();
-            Neighbor neighbor = new Neighbor(piece);
-            neighbors[block.getNumber()][rotate.getNumber()][y][x] = neighbor;
+            int x = originalPiece.getX();
+            int y = originalPiece.getY();
+            Neighbor neighbor = new Neighbor(originalPiece);
+            neighbors[to(piece, rotate, x, y)] = neighbor;
         }
         return neighbors;
     }
 
+    private int to(Piece piece, Rotate rotate, int x, int y) {
+        int index = piece.getNumber();
+        index = index * MAX_PIECE + rotate.getNumber();
+        index = index * MAX_ROTATE + x;
+        index = index * FIELD_WIDTH + y;
+        return index;
+    }
+
     private void updateNeighbors(MinoFactory minoFactory, MinoRotation minoRotation) {
-        for (Neighbor[][][] eachBlocks : neighbors)
-            for (Neighbor[][] eachRotate : eachBlocks)
-                for (Neighbor[] eachY : eachRotate)
-                    for (Neighbor current : eachY)
-                        if (current != null)
-                            updateNeighbor(minoFactory, minoRotation, current);
+        for (Neighbor current : neighbors)
+            if (current != null)
+                updateNeighbor(minoFactory, minoRotation, current);
     }
 
     private void updateNeighbor(MinoFactory minoFactory, MinoRotation minoRotation, Neighbor current) {
-        OriginalPiece piece = current.getPiece();
+        OriginalPiece piece = current.getOriginalPiece();
         Mino mino = piece.getMino();
         int x = piece.getX();
         int y = piece.getY();
@@ -109,13 +114,13 @@ public class Neighbors {
     private Neighbor getNeighbor(Piece piece, Rotate rotate, int x, int y) {
         if (x < 0 || FIELD_WIDTH <= x || y < 0 || maxHeight <= y)
             return Neighbor.EMPTY_NEIGHBOR;
-        Neighbor neighbor = neighbors[piece.getNumber()][rotate.getNumber()][y][x];
+        Neighbor neighbor = neighbors[to(piece, rotate, x, y)];
         return neighbor != null ? neighbor : Neighbor.EMPTY_NEIGHBOR;
     }
 
     public Neighbor get(Piece piece, Rotate rotate, int x, int y) {
-        Neighbor neighbor = neighbors[piece.getNumber()][rotate.getNumber()][y][x];
-        assert neighbor != null;
+        Neighbor neighbor = neighbors[to(piece, rotate, x, y)];
+        assert neighbor != null : String.format("%s,%s,%d,%d", piece, rotate, x, y);
         return neighbor;
     }
 

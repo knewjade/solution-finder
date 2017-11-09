@@ -38,7 +38,7 @@ class CheckerNoHoldTest {
     private final MinoShifter minoShifter = new MinoShifter();
     private final MinoRotation minoRotation = new MinoRotation();
     private final PerfectValidator validator = new PerfectValidator();
-    private final CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
+    private final CheckerNoHold checker = new CheckerNoHold(minoFactory, validator);
 
     private List<Piece> parseToBlocks(Result result) {
         return ResultHelper.createOperationStream(result)

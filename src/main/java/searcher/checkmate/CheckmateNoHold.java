@@ -16,11 +16,11 @@ import java.util.TreeSet;
 
 public class CheckmateNoHold<T extends Action> implements Checkmate<T> {
     private final CheckmateDataPool dataPool;
-    private final SimpleSearcherCore<T> searcherCore;
+    private final SimpleSearcherCore searcherCore;
 
     public CheckmateNoHold(MinoFactory minoFactory, Validator validator) {
         this.dataPool = new CheckmateDataPool();
-        this.searcherCore = new SimpleSearcherCore<T>(minoFactory, validator, dataPool);
+        this.searcherCore = new SimpleSearcherCore(minoFactory, validator, dataPool);
     }
 
     @Override

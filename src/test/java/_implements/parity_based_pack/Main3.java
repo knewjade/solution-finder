@@ -317,7 +317,7 @@ public class Main3 {
                 .collect(Collectors.toList());
     }
 
-    private static final Comparator<OperationWithKey> OPERATION_WITH_KEY_COMPARATOR = new OperationWithKeyComparator();
+    private static final Comparator<OperationWithKey> OPERATION_WITH_KEY_COMPARATOR = new OperationWithKeyComparator<>();
 
     private static class Obj implements Comparable<Obj> {
         private final List<Piece> pieces;

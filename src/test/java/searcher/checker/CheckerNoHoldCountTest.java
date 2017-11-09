@@ -31,7 +31,7 @@ class CheckerNoHoldCountTest {
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = new MinoRotation();
         PerfectValidator validator = new PerfectValidator();
-        CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
+        CheckerNoHold checker = new CheckerNoHold(minoFactory, validator);
 
         // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);

@@ -1,11 +1,12 @@
 package concurrent;
 
 import core.action.reachable.LockedReachable;
+import core.action.reachable.Reachable;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 
-public class LockedReachableThreadLocal extends ThreadLocal<LockedReachable> {
+public class LockedReachableThreadLocal extends ThreadLocal<Reachable> {
     private final MinoFactory minoFactory;
     private final MinoShifter minoShifter;
     private final MinoRotation minoRotation;

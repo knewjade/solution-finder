@@ -11,9 +11,7 @@ import core.neighbor.Neighbors;
 import core.neighbor.OriginalPiece;
 import core.srs.Rotate;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * マルチスレッド非対応
@@ -65,7 +63,7 @@ public class LockedNeighborReachable implements Reachable {
 
     private boolean check(Neighbor neighbor) {
         // harddropでたどりつけるとき
-        OriginalPiece originalPiece = neighbor.getPiece();
+        OriginalPiece originalPiece = neighbor.getOriginalPiece();
         if (field.canReachOnHarddrop(originalPiece))
             return true;
 
@@ -81,7 +79,7 @@ public class LockedNeighborReachable implements Reachable {
         // 上左右に移動
         List<Neighbor> moves = neighbor.getNextMovesSources();
         for (Neighbor move : moves)
-            if (field.canPut(move.getPiece()) && check(move))
+            if (field.canPut(move.getOriginalPiece()) && check(move))
                 return true;
 
         // 左回転でくる可能性がある場所を移動
@@ -98,7 +96,7 @@ public class LockedNeighborReachable implements Reachable {
     private boolean checkLeftRotation(Neighbor current) {
         List<Neighbor> sources = current.getNextLeftRotateSources();
         for (Neighbor source : sources) {
-            if (!field.canPut(source.getPiece()))
+            if (!field.canPut(source.getOriginalPiece()))
                 continue;
 
             // もう一度回して戻ってくるか
@@ -114,7 +112,7 @@ public class LockedNeighborReachable implements Reachable {
     private boolean checkRightRotation(Neighbor current) {
         List<Neighbor> sources = current.getNextRightRotateSources();
         for (Neighbor source : sources) {
-            if (!field.canPut(source.getPiece()))
+            if (!field.canPut(source.getOriginalPiece()))
                 continue;
 
             // もう一度回して戻ってくるか
@@ -129,7 +127,7 @@ public class LockedNeighborReachable implements Reachable {
 
     private Neighbor getDestination(List<Neighbor> destinations) {
         for (Neighbor destination : destinations)
-            if (field.canPut(destination.getPiece()))
+            if (field.canPut(destination.getOriginalPiece()))
                 return destination;
         return Neighbor.EMPTY_NEIGHBOR;
     }

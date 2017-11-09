@@ -1,5 +1,8 @@
 package concurrent.checker.invoker;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
 import common.SyntaxException;
 import common.datastore.Pair;
 import common.datastore.action.Action;
@@ -8,6 +11,7 @@ import common.pattern.LoadedPatternGenerator;
 import common.pattern.PatternGenerator;
 import common.tree.AnalyzeTree;
 import concurrent.LockedCandidateThreadLocal;
+import concurrent.LockedNeighborCandidateThreadLocal;
 import concurrent.checker.CheckerNoHoldThreadLocal;
 import concurrent.checker.invoker.no_hold.ConcurrentCheckerNoHoldInvoker;
 import core.action.candidate.Candidate;
@@ -18,6 +22,7 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import lib.Randoms;
+import module.BasicModule;
 import module.LongTest;
 import org.junit.jupiter.api.Test;
 import searcher.checker.CheckerNoHold;
@@ -41,9 +46,13 @@ class ConcurrentCheckerNoHoldInvokerTest {
     private AnalyzeTree runTestCase(Field field, List<Pieces> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
         int core = Runtime.getRuntime().availableProcessors();
         ExecutorService executorService = Executors.newFixedThreadPool(core);
+
+        Injector injector = Guice.createInjector(new BasicModule());
         CheckerNoHoldThreadLocal<Action> checkerThreadLocal = new CheckerNoHoldThreadLocal<>();
         LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
-        ConcurrentCheckerNoHoldInvoker invoker = new ConcurrentCheckerNoHoldInvoker(executorService, candidateThreadLocal, checkerThreadLocal);
+        LockedNeighborCandidateThreadLocal candidateThreadLocal2 = new LockedNeighborCandidateThreadLocal(maxClearLine);
+
+        ConcurrentCheckerNoHoldInvoker invoker = new ConcurrentCheckerNoHoldInvoker(executorService, candidateThreadLocal2, checkerThreadLocal);
 
         List<Pair<Pieces, Boolean>> resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
 
@@ -351,7 +360,7 @@ class ConcurrentCheckerNoHoldInvokerTest {
         MinoRotation minoRotation = new MinoRotation();
 
         PerfectValidator validator = new PerfectValidator();
-        CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
+        CheckerNoHold checker = new CheckerNoHold(minoFactory, validator);
 
         for (int count = 0; count < 40; count++) {
             int maxClearLine = randoms.nextInt(3, 6);

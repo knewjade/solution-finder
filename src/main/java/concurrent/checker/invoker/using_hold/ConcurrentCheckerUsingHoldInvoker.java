@@ -18,10 +18,10 @@ import java.util.concurrent.Future;
 
 public class ConcurrentCheckerUsingHoldInvoker implements ConcurrentCheckerInvoker {
     private final ExecutorService executorService;
-    private final ThreadLocal<Candidate<Action>> candidateThreadLocal;
-    private final ThreadLocal<Checker<Action>> checkerThreadLocal;
+    private final ThreadLocal<Candidate<? extends Action>> candidateThreadLocal;
+    private final ThreadLocal<Checker> checkerThreadLocal;
 
-    public ConcurrentCheckerUsingHoldInvoker(ExecutorService executorService, ThreadLocal<Candidate<Action>> candidateThreadLocal, CheckerUsingHoldThreadLocal<Action> checkerThreadLocal) {
+    public ConcurrentCheckerUsingHoldInvoker(ExecutorService executorService, ThreadLocal<Candidate<? extends Action>> candidateThreadLocal, CheckerUsingHoldThreadLocal checkerThreadLocal) {
         this.executorService = executorService;
         this.candidateThreadLocal = candidateThreadLocal;
         this.checkerThreadLocal = checkerThreadLocal;

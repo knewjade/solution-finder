@@ -10,7 +10,9 @@ public class DevMain {
     public static void main(String[] args) throws Exception {
 //        String command = "path -f csv -k p -t v115@9gF8DeF8DeF8DeF8NeAgH -p T,*p4";
 
-        String command = "setup -t v115@Pg1hDe1hBeB8FtCeA8FtB8AeB8EtA8BeD8CtA8CeE8?AtB8AeI8AeG8JeAgH -p *p7 -m i -f z";
+//        String command = "setup -t v115@Pg1hDe1hBeB8FtCeA8FtB8AeB8EtA8BeD8CtA8CeE8?AtB8AeI8AeG8JeAgH -p *p7 -m i -f z";
+        String command = "percent -t v115@9gD8FeD8FeD8FeD8PeAgH -p *p7 -td 1";
+
         int returnCode = EntryPointMain.main(command.split(" "));
         System.exit(returnCode);
 

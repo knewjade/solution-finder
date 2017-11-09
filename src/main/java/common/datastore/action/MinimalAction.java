@@ -21,33 +21,28 @@ public class MinimalAction implements Action, Comparable<Action> {
         this.rotate = rotate;
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public Rotate getRotate() {
+        return rotate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MinimalAction action = (MinimalAction) o;
-        return x == action.x && y == action.y && rotate == action.rotate;
+        if (!(o instanceof Action)) return false;
+        return Action.defaultEquals(this, (Action) o);
     }
 
     @Override
     public int hashCode() {
-        int result = x;
-        result = 24 * result + y;
-        result = 4 * result + rotate.getNumber();
-        return result;
-    }
-
-    @Override
-    public int compareTo(Action o) {
-        int rotateCompare = rotate.compareTo(o.getRotate());
-        if (rotateCompare != 0)
-            return rotateCompare;
-
-        int xCompare = x - o.getX();
-        if (xCompare != 0)
-            return xCompare;
-
-        return y - o.getY();
+        return Action.defaultHashCode(x, y, rotate);
     }
 
     @Override
@@ -59,15 +54,8 @@ public class MinimalAction implements Action, Comparable<Action> {
                 '}';
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public Rotate getRotate() {
-        return rotate;
+    @Override
+    public int compareTo(Action o) {
+        return Action.defaultCompareTo(this, o);
     }
 }
