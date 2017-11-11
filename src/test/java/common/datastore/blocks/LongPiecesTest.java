@@ -41,6 +41,12 @@ class LongPiecesTest {
     }
 
     @Test
+    void checkPieceArray() throws Exception {
+        Pieces pieces = new LongPieces(Arrays.asList(Piece.S, Piece.I, Piece.J, Piece.T, Piece.L, Piece.O, Piece.Z));
+        assertThat(pieces.getPieceArray()).containsExactly(Piece.S, Piece.I, Piece.J, Piece.T, Piece.L, Piece.O, Piece.Z);
+    }
+
+    @Test
     void checkEquals() throws Exception {
         Piece piece = Piece.getBlock(0);
         Pieces pieces1 = new LongPieces(Arrays.asList(piece, piece, piece));

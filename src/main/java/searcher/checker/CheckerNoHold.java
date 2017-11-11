@@ -2,6 +2,7 @@ package searcher.checker;
 
 import common.datastore.Result;
 import common.datastore.action.Action;
+import common.datastore.blocks.Pieces;
 import common.datastore.order.DepthOrder;
 import common.datastore.order.Order;
 import core.action.candidate.Candidate;
@@ -20,6 +21,11 @@ public class CheckerNoHold<T extends Action> implements Checker<T> {
     public CheckerNoHold(MinoFactory minoFactory, Validator validator) {
         this.dataPool = new CheckerDataPool();
         this.searcherCore = new SimpleSearcherCore<>(minoFactory, validator, dataPool);
+    }
+
+    @Override
+    public boolean check(Field initField, Pieces pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
+        return check(initField, pieces.getPieceArray(), candidate, maxClearLine, maxDepth);
     }
 
     @Override

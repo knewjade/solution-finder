@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public interface Pieces {
+    Piece[] getPieceArray();
+
     List<Piece> getPieces();
 
     Stream<Piece> blockStream();

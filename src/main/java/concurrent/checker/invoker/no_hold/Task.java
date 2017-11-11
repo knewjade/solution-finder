@@ -5,6 +5,7 @@ import common.buildup.BuildUpStream;
 import common.datastore.*;
 import common.datastore.action.Action;
 import common.datastore.blocks.Pieces;
+import common.datastore.blocks.ReadOnlyListPieces;
 import common.parser.OperationTransform;
 import common.tree.VisitedTree;
 import concurrent.checker.invoker.CheckerCommonObj;
@@ -41,7 +42,7 @@ class Task implements Callable<Pair<Pieces, Boolean>> {
         Candidate<Action> candidate = commonObj.candidateThreadLocal.get();
 
         // 探索
-        boolean checkResult = checker.check(obj.field, pieceList, candidate, obj.maxClearLine, obj.maxDepth);
+        boolean checkResult = checker.check(obj.field, target, candidate, obj.maxClearLine, obj.maxDepth);
         obj.visitedTree.set(checkResult, pieceList);
 
         // もし探索に成功した場合

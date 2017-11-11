@@ -300,7 +300,7 @@ class CheckerNoHoldTest {
         List<Piece> piecesList = pieces.getPieces();
 
         // Execute
-        boolean isSucceed = checker.check(field, piecesList, candidate, maxClearLine, maxDepth);
+        boolean isSucceed = checker.check(field, pieces, candidate, maxClearLine, maxDepth);
         assertThat(isSucceed).isEqualTo(expectedCount);
 
         // Check result

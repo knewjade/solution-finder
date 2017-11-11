@@ -90,6 +90,17 @@ public class LongPieces implements Pieces, Comparable<LongPieces> {
         assert this.max <= 22;
     }
 
+    public long getPiecesValue() {
+        return pieces;
+    }
+
+    // TODO: write unittest
+    public Piece getLastBlock() {
+        assert 1 <= max : max;
+        long value = pieces / SCALE[max - 1];
+        return Piece.getBlock((int) (value % 7));
+    }
+
     @Override
     public List<Piece> getPieces() {
         ArrayList<Piece> pieces = new ArrayList<>();
@@ -114,6 +125,19 @@ public class LongPieces implements Pieces, Comparable<LongPieces> {
         }
         assert value == 0;
         return builder.build();
+    }
+
+    @Override
+    public Piece[] getPieceArray() {
+        Piece[] pieces = new Piece[max];
+        long value = this.pieces;
+        for (int index = 0; index < max; index++) {
+            Piece piece = Piece.getBlock((int) (value % 7));
+            pieces[index] = piece;
+            value = value / 7;
+        }
+        assert value == 0;
+        return pieces;
     }
 
     @Override

@@ -15,6 +15,12 @@ public class ReadOnlyListPieces implements Pieces, Comparable<Pieces> {
     }
 
     @Override
+    public Piece[] getPieceArray() {
+        Piece[] array = new Piece[pieces.size()];
+        return pieces.toArray(array);
+    }
+
+    @Override
     public List<Piece> getPieces() {
         return pieces;
     }
