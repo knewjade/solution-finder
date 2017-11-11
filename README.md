@@ -46,8 +46,26 @@ solution-finderは、探索ツールとして次の特徴を持っています�
 * util: solution-finderの機能を補助するユーティリティ
    - fig: テト譜をもとに画像を生成
 
+
 # ドキュメント
 
 詳細は、以下のドキュメントをご参照ください。
 
 http://sfinder.s3-website-ap-northeast-1.amazonaws.com/index.html
+
+
+# ライセンス
+
+Copyright 2017 newjade
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
