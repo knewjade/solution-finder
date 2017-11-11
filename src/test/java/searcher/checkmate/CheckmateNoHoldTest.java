@@ -13,15 +13,20 @@ import core.action.candidate.LockedCandidate;
 import core.action.reachable.LockedReachable;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import core.mino.Piece;
 import core.srs.MinoRotation;
 import module.LongTest;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import searcher.common.validator.PerfectValidator;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -34,7 +39,6 @@ import java.util.stream.Stream;
 import static core.mino.Piece.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-// TODO: Check time
 class CheckmateNoHoldTest {
     private final MinoFactory minoFactory = new MinoFactory();
     private final MinoShifter minoShifter = new MinoShifter();
@@ -261,24 +265,10 @@ class CheckmateNoHoldTest {
             assertResult(result, field, maxClearLine, reachable, pieces);
     }
 
-    @Test
+    @ParameterizedTest
+    @ArgumentsSource(TestCase.class)
     @LongTest
-    void testCaseList() throws Exception {
-        String resultPath = ClassLoader.getSystemResource("perfects/checkmate_nohold.txt").getPath();
-        List<Pair<Pieces, Integer>> testCases = Files.lines(Paths.get(resultPath))
-                .map(line -> line.split("//")[0])
-                .map(String::trim)
-                .filter(line -> !line.isEmpty())
-                .map(line -> line.split("="))
-                .map(split -> {
-                    Stream<Piece> blocks = BlockInterpreter.parse(split[0]);
-                    LongPieces pieces = new LongPieces(blocks);
-                    int count = Integer.valueOf(split[1]);
-                    return new Pair<Pieces, Integer>(pieces, count);
-                })
-                .collect(Collectors.toList());
-        Collections.shuffle(testCases);
-
+    void testCaseList(Pieces pieces, int expectedCount) {
         // Field
         int maxClearLine = 4;
         int maxDepth = 10;
@@ -289,21 +279,48 @@ class CheckmateNoHoldTest {
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         // Assertion
-        for (Pair<Pieces, Integer> testCase : testCases.subList(0, 40)) {
-            // Set test case
-            List<Piece> pieces = testCase.getKey().getPieces();
-            int expectedCount = testCase.getValue();
-            System.out.println(pieces);
+        // Set test case
+        List<Piece> piecesList = pieces.getPieces();
+        System.out.println(piecesList);
 
-            // Execute
-            List<Result> results = checkmate.search(field, pieces, candidate, maxClearLine, maxDepth);
-            assertThat(results)
-                    .as(pieces.toString())
-                    .hasSize(expectedCount);
+        // Execute
+        List<Result> results = checkmate.search(field, piecesList, candidate, maxClearLine, maxDepth);
+        assertThat(results)
+                .as(piecesList.toString())
+                .hasSize(expectedCount);
 
-            // Check result
-            for (Result result : results)
-                assertResult(result, field, maxClearLine, reachable, pieces);
+        // Check result
+        for (Result result : results)
+            assertResult(result, field, maxClearLine, reachable, piecesList);
+    }
+
+    private static class TestCase implements ArgumentsProvider {
+        @Override
+        public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws IOException {
+            List<Pair<Pieces, Integer>> testCases = loadTestCases();
+            return testCases.stream().map(this::toArguments).limit(40L);
+        }
+
+        private List<Pair<Pieces, Integer>> loadTestCases() throws IOException {
+            String resultPath = ClassLoader.getSystemResource("perfects/checkmate_nohold.txt").getPath();
+            List<Pair<Pieces, Integer>> testCases = Files.lines(Paths.get(resultPath))
+                    .map(line -> line.split("//")[0])
+                    .map(String::trim)
+                    .filter(line -> !line.isEmpty())
+                    .map(line -> line.split("="))
+                    .map(split -> {
+                        Stream<Piece> blocks = BlockInterpreter.parse(split[0]);
+                        LongPieces pieces = new LongPieces(blocks);
+                        int count = Integer.valueOf(split[1]);
+                        return new Pair<Pieces, Integer>(pieces, count);
+                    })
+                    .collect(Collectors.toList());
+            Collections.shuffle(testCases);
+            return testCases;
+        }
+
+        private Arguments toArguments(Pair<?, ?> pair) {
+            return Arguments.of(pair.getKey(), pair.getValue());
         }
     }
 }

@@ -17,9 +17,11 @@ import lib.Randoms;
 import lib.Stopwatch;
 import module.BasicModule;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -46,75 +48,6 @@ class LockedNeighborCandidateTest {
 
     private MinimalAction createMinimalAction(OriginalPiece piece) {
         return MinimalAction.create(piece.getX(), piece.getY(), piece.getMino().getRotate());
-    }
-
-    private static Stream<Arguments> createFieldTestCase() {
-        Arguments arguments1 = Arguments.of(FieldFactory.createSmallField("" +
-                "X________X" +
-                "________XX" +
-                "__XXXXXXXX" +
-                "__________" +
-                ""
-        ), Piece.T);
-        Arguments arguments2 = Arguments.of(FieldFactory.createSmallField("" +
-                "XXXXXX__XX" +
-                "_________X" +
-                "_______XXX" +
-                "__________" +
-                ""
-        ), Piece.T);
-        Arguments arguments3 = Arguments.of(FieldFactory.createSmallField("" +
-                "X________X" +
-                "________XX" +
-                "XXXXXXX__X" +
-                "__________" +
-                ""
-        ), Piece.T);
-        Arguments arguments4 = Arguments.of(FieldFactory.createSmallField("" +
-                "XXXXXX_XXX" +
-                "_________X" +
-                "__________" +
-                "X________X" +
-                ""
-        ), Piece.S);
-        Arguments arguments5 = Arguments.of(FieldFactory.createSmallField("" +
-                "_________X" +
-                "XX______XX" +
-                "XXXXX____X" +
-                "_________X" +
-                ""
-        ), Piece.I);
-        return Stream.of(
-                arguments1,
-                arguments2,
-                arguments3,
-                arguments4,
-                arguments5
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("createFieldTestCase")
-    void testField(Field field, Piece piece) {
-        Injector injector = Guice.createInjector(new BasicModule());
-
-        int maxClearLine = 4;
-        LockedCandidate candidate1 = createLockedCandidate(injector, maxClearLine);
-        LockedNeighborCandidate candidate2 = createLockedNeighborCandidate(injector, maxClearLine);
-        MinoShifter minoShifter = injector.getInstance(MinoShifter.class);
-
-        // LockedCandidate
-        Set<Action> search1 = candidate1.search(field, piece, maxClearLine);
-
-        // LockedNeighborCandidate
-        Set<Neighbor> neighbors = candidate2.search(field, piece, maxClearLine);
-        Set<Action> search2 = neighbors.stream()
-                .map(Neighbor::getPiece)
-                .map(this::createMinimalAction)
-                .map(action -> minoShifter.createTransformedAction(piece, action))
-                .collect(Collectors.toSet());
-
-        assertThat(search2).isEqualTo(search1);
     }
 
     @Test
@@ -154,5 +87,77 @@ class LockedNeighborCandidateTest {
 
         System.out.println(stopwatch1.toMessage(TimeUnit.NANOSECONDS));
         System.out.println(stopwatch2.toMessage(TimeUnit.NANOSECONDS));
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(FieldTestCase.class)
+    void testField(Field field, Piece piece) {
+        Injector injector = Guice.createInjector(new BasicModule());
+
+        int maxClearLine = 4;
+        LockedCandidate candidate1 = createLockedCandidate(injector, maxClearLine);
+        LockedNeighborCandidate candidate2 = createLockedNeighborCandidate(injector, maxClearLine);
+        MinoShifter minoShifter = injector.getInstance(MinoShifter.class);
+
+        // LockedCandidate
+        Set<Action> search1 = candidate1.search(field, piece, maxClearLine);
+
+        // LockedNeighborCandidate
+        Set<Neighbor> neighbors = candidate2.search(field, piece, maxClearLine);
+        Set<Action> search2 = neighbors.stream()
+                .map(Neighbor::getPiece)
+                .map(this::createMinimalAction)
+                .map(action -> minoShifter.createTransformedAction(piece, action))
+                .collect(Collectors.toSet());
+
+        assertThat(search2).isEqualTo(search1);
+    }
+
+    private static class FieldTestCase implements ArgumentsProvider {
+        @Override
+        public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+            Arguments arguments1 = Arguments.of(FieldFactory.createSmallField("" +
+                    "X________X" +
+                    "________XX" +
+                    "__XXXXXXXX" +
+                    "__________" +
+                    ""
+            ), Piece.T);
+            Arguments arguments2 = Arguments.of(FieldFactory.createSmallField("" +
+                    "XXXXXX__XX" +
+                    "_________X" +
+                    "_______XXX" +
+                    "__________" +
+                    ""
+            ), Piece.T);
+            Arguments arguments3 = Arguments.of(FieldFactory.createSmallField("" +
+                    "X________X" +
+                    "________XX" +
+                    "XXXXXXX__X" +
+                    "__________" +
+                    ""
+            ), Piece.T);
+            Arguments arguments4 = Arguments.of(FieldFactory.createSmallField("" +
+                    "XXXXXX_XXX" +
+                    "_________X" +
+                    "__________" +
+                    "X________X" +
+                    ""
+            ), Piece.S);
+            Arguments arguments5 = Arguments.of(FieldFactory.createSmallField("" +
+                    "_________X" +
+                    "XX______XX" +
+                    "XXXXX____X" +
+                    "_________X" +
+                    ""
+            ), Piece.I);
+            return Stream.of(
+                    arguments1,
+                    arguments2,
+                    arguments3,
+                    arguments4,
+                    arguments5
+            );
+        }
     }
 }

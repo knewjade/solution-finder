@@ -15,5 +15,4 @@ public interface Pieces {
     Pieces addAndReturnNew(Piece piece);
 
     Pieces addAndReturnNew(Stream<Piece> blocks);
-
 }

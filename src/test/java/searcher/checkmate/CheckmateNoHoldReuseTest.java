@@ -5,14 +5,13 @@ import common.datastore.action.Action;
 import core.action.candidate.Candidate;
 import core.action.candidate.LockedCandidate;
 import core.field.Field;
-import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import core.mino.Piece;
 import core.srs.MinoRotation;
 import lib.Randoms;
 import lib.Stopwatch;
 import module.LongTest;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.common.validator.PerfectValidator;
 
@@ -156,7 +155,7 @@ class CheckmateNoHoldReuseTest {
                         .containsAll(result1);
             }
 
-            assertThat(stopwatchReuse.getNanoAverageTime()).isLessThan(stopwatchNoUse.getNanoAverageTime());
+//            assertThat(stopwatchReuse.getNanoAverageTime()).isLessThan(stopwatchNoUse.getNanoAverageTime());
         }
     }
 

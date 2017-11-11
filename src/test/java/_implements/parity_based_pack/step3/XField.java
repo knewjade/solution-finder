@@ -2,7 +2,6 @@ package _implements.parity_based_pack.step3;
 
 import core.field.Field;
 
-// TODO: ブロック別のフィールドにしてそれをもとにSetにする
 public  class XField {
     static XField createFirst(Field field, int max) {
         return new XField(field, new XHistory(max));

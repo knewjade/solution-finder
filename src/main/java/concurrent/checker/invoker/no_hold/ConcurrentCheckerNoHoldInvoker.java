@@ -1,13 +1,11 @@
 package concurrent.checker.invoker.no_hold;
 
-import common.datastore.blocks.Pieces;
-import core.action.candidate.Candidate;
-import concurrent.checker.CheckerNoHoldThreadLocal;
-import concurrent.checker.invoker.ConcurrentCheckerInvoker;
 import common.datastore.Pair;
+import common.datastore.blocks.Pieces;
+import common.tree.ConcurrentVisitedTree;
+import concurrent.checker.invoker.CheckerCommonObj;
+import concurrent.checker.invoker.ConcurrentCheckerInvoker;
 import core.field.Field;
-import searcher.checker.Checker;
-import common.datastore.action.Action;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,21 +15,21 @@ import java.util.concurrent.Future;
 
 public class ConcurrentCheckerNoHoldInvoker implements ConcurrentCheckerInvoker {
     private final ExecutorService executorService;
-    private final ThreadLocal<Candidate<Action>> candidateThreadLocal;
-    private final ThreadLocal<Checker<Action>> checkerThreadLocal;
+    private final CheckerCommonObj commonObj;
 
-    public ConcurrentCheckerNoHoldInvoker(ExecutorService executorService, ThreadLocal<Candidate<Action>> candidateThreadLocal, CheckerNoHoldThreadLocal<Action> checkerThreadLocal) {
+    public ConcurrentCheckerNoHoldInvoker(ExecutorService executorService, CheckerCommonObj commonObj) {
         this.executorService = executorService;
-        this.candidateThreadLocal = candidateThreadLocal;
-        this.checkerThreadLocal = checkerThreadLocal;
+        this.commonObj = commonObj;
     }
 
     @Override
     public List<Pair<Pieces, Boolean>> search(Field field, List<Pieces> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
-        Obj obj = new Obj(field, maxClearLine, maxDepth, candidateThreadLocal, checkerThreadLocal);
+        ConcurrentVisitedTree visitedTree = new ConcurrentVisitedTree();
+
+        Obj obj = new Obj(field, maxClearLine, maxDepth, visitedTree);
         ArrayList<Task> tasks = new ArrayList<>();
         for (Pieces target : searchingPieces)
-            tasks.add(new Task(obj, target));
+            tasks.add(new Task(obj, commonObj, target));
 
         List<Future<Pair<Pieces, Boolean>>> futureResults = executorService.invokeAll(tasks);
 

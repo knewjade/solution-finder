@@ -1,5 +1,9 @@
 package concurrent.checker.invoker;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 import common.SyntaxException;
 import common.datastore.Pair;
 import common.datastore.action.Action;
@@ -8,6 +12,7 @@ import common.pattern.LoadedPatternGenerator;
 import common.pattern.PatternGenerator;
 import common.tree.AnalyzeTree;
 import concurrent.LockedCandidateThreadLocal;
+import concurrent.LockedReachableThreadLocal;
 import concurrent.checker.CheckerUsingHoldThreadLocal;
 import concurrent.checker.invoker.using_hold.ConcurrentCheckerUsingHoldInvoker;
 import core.action.candidate.Candidate;
@@ -18,8 +23,8 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import lib.Randoms;
+import module.BasicModule;
 import module.LongTest;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.checker.CheckerUsingHold;
 import searcher.common.validator.PerfectValidator;
@@ -27,25 +32,30 @@ import searcher.common.validator.PerfectValidator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ConcurrentCheckerUsingHoldInvokerTest {
-    private AnalyzeTree runTestCase(String marks, PatternGenerator blocksGenerator, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
-        Field field = FieldFactory.createField(marks);
-        List<Pieces> searchingPieces = blocksGenerator.blocksStream().collect(Collectors.toList());
-        return runTestCase(field, searchingPieces, maxClearLine, maxDepth);
+    private ConcurrentCheckerUsingHoldInvoker createConcurrentCheckerUsingHoldInvoker(Injector injector, ExecutorService executorService, int patternDepth) {
+        MinoFactory minoFactory = injector.getInstance(MinoFactory.class);
+        LockedCandidateThreadLocal candidateThreadLocal = injector.getInstance(LockedCandidateThreadLocal.class);
+        CheckerUsingHoldThreadLocal<Action> checkerThreadLocal = injector.getInstance(Key.get(new TypeLiteral<CheckerUsingHoldThreadLocal<Action>>() {
+        }));
+        LockedReachableThreadLocal reachableThreadLocal = injector.getInstance(LockedReachableThreadLocal.class);
+        CheckerCommonObj commonObj = new CheckerCommonObj(minoFactory, candidateThreadLocal, checkerThreadLocal, reachableThreadLocal);
+        return new ConcurrentCheckerUsingHoldInvoker(executorService, commonObj, patternDepth);
     }
 
-    private AnalyzeTree runTestCase(Field field, List<Pieces> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
-        int core = Runtime.getRuntime().availableProcessors();
-        ExecutorService executorService = Executors.newFixedThreadPool(core);
-        CheckerUsingHoldThreadLocal<Action> checkerThreadLocal = new CheckerUsingHoldThreadLocal<>();
-        LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
-        ConcurrentCheckerUsingHoldInvoker invoker = new ConcurrentCheckerUsingHoldInvoker(executorService, candidateThreadLocal, checkerThreadLocal);
+    private AnalyzeTree runTestCase(String marks, PatternGenerator blocksGenerator, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
+        Injector injector = Guice.createInjector(new BasicModule(maxClearLine));
 
+        ExecutorService executorService = injector.getInstance(ExecutorService.class);
+        int patternDepth = blocksGenerator.getDepth();
+        ConcurrentCheckerUsingHoldInvoker invoker = createConcurrentCheckerUsingHoldInvoker(injector, executorService, patternDepth);
+
+        List<Pieces> searchingPieces = blocksGenerator.blocksStream().collect(Collectors.toList());
+        Field field = FieldFactory.createField(marks);
         List<Pair<Pieces, Boolean>> resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
 
         // 結果を集計する
@@ -110,7 +120,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
     void testSearch3() throws Exception {
         PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p7");
         int maxClearLine = 4;
-        int maxDepth = 7;
+        int maxDepth = 6;
 
         String marks = "" +
                 "X_________" +
@@ -296,7 +306,25 @@ class ConcurrentCheckerUsingHoldInvokerTest {
 
             PatternGenerator blocksGenerator = createPiecesGenerator(maxDepth);
             List<Pieces> searchingPieces = blocksGenerator.blocksStream().collect(Collectors.toList());
-            AnalyzeTree tree = runTestCase(field, searchingPieces, maxClearLine, maxDepth);
+            Injector injector = Guice.createInjector(new BasicModule(maxClearLine));
+
+            ExecutorService executorService = injector.getInstance(ExecutorService.class);
+            int patternDepth = (int) searchingPieces.get(0).blockStream().count();
+            ConcurrentCheckerUsingHoldInvoker invoker = createConcurrentCheckerUsingHoldInvoker(injector, executorService, patternDepth);
+            List<Pair<Pieces, Boolean>> resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
+
+            // 結果を集計する
+            AnalyzeTree tree1 = new AnalyzeTree();
+            for (Pair<Pieces, Boolean> resultPair : resultPairs) {
+                Pieces pieces1 = resultPair.getKey();
+                Boolean result = resultPair.getValue();
+                tree1.set(result, pieces1);
+            }
+
+            System.out.println(tree1.show());
+            executorService.shutdown();
+
+            AnalyzeTree tree = tree1;
 
             for (Pieces pieces : searchingPieces) {
                 boolean check = checker.check(field, pieces.getPieces(), candidate, maxClearLine, maxDepth);

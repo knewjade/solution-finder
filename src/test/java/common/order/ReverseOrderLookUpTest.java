@@ -17,6 +17,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ReverseOrderLookUpTest {
     @Test
+    void sample1() {
+        ReverseOrderLookUp lookUp = new ReverseOrderLookUp(2, 3);
+        assertThat(lookUp.parse(Arrays.asList(Piece.I, Piece.T)).map(pieceStream -> pieceStream.collect(Collectors.toList())).collect(Collectors.toList()))
+                .contains(Arrays.asList(Piece.I, Piece.T, null))
+                .contains(Arrays.asList(Piece.I, null, Piece.T))
+                .contains(Arrays.asList(null, Piece.I, Piece.T))
+                .contains(Arrays.asList(Piece.T, Piece.I, null));
+    }
+
+    @Test
     void parseJustBlocksCount() throws Exception {
         List<Piece> pieceList = Piece.valueList();
         int toDepth = pieceList.size();

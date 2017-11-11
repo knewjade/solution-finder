@@ -1,5 +1,9 @@
 package concurrent.checker.invoker;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 import common.SyntaxException;
 import common.datastore.Pair;
 import common.datastore.action.Action;
@@ -8,6 +12,7 @@ import common.pattern.LoadedPatternGenerator;
 import common.pattern.PatternGenerator;
 import common.tree.AnalyzeTree;
 import concurrent.LockedCandidateThreadLocal;
+import concurrent.LockedReachableThreadLocal;
 import concurrent.checker.CheckerNoHoldThreadLocal;
 import concurrent.checker.invoker.no_hold.ConcurrentCheckerNoHoldInvoker;
 import core.action.candidate.Candidate;
@@ -18,6 +23,7 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import lib.Randoms;
+import module.BasicModule;
 import module.LongTest;
 import org.junit.jupiter.api.Test;
 import searcher.checker.CheckerNoHold;
@@ -26,7 +32,6 @@ import searcher.common.validator.PerfectValidator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,11 +44,10 @@ class ConcurrentCheckerNoHoldInvokerTest {
     }
 
     private AnalyzeTree runTestCase(Field field, List<Pieces> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
-        int core = Runtime.getRuntime().availableProcessors();
-        ExecutorService executorService = Executors.newFixedThreadPool(core);
-        CheckerNoHoldThreadLocal<Action> checkerThreadLocal = new CheckerNoHoldThreadLocal<>();
-        LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
-        ConcurrentCheckerNoHoldInvoker invoker = new ConcurrentCheckerNoHoldInvoker(executorService, candidateThreadLocal, checkerThreadLocal);
+        Injector injector = Guice.createInjector(new BasicModule());
+        ExecutorService executorService = injector.getInstance(ExecutorService.class);
+
+        ConcurrentCheckerNoHoldInvoker invoker = createConcurrentCheckerNoHoldInvoker(injector, executorService);
 
         List<Pair<Pieces, Boolean>> resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
 
@@ -59,6 +63,17 @@ class ConcurrentCheckerNoHoldInvokerTest {
         executorService.shutdown();
 
         return tree;
+    }
+
+    private ConcurrentCheckerNoHoldInvoker createConcurrentCheckerNoHoldInvoker(Injector injector, ExecutorService executorService) {
+        MinoFactory minoFactory = injector.getInstance(MinoFactory.class);
+        CheckerNoHoldThreadLocal<Action> checkerThreadLocal = injector.getInstance(Key.get(new TypeLiteral<CheckerNoHoldThreadLocal<Action>>() {
+        }));
+        LockedCandidateThreadLocal candidateThreadLocal = injector.getInstance(LockedCandidateThreadLocal.class);
+        LockedReachableThreadLocal reachableThreadLocal = injector.getInstance(LockedReachableThreadLocal.class);
+
+        CheckerCommonObj commonObj = new CheckerCommonObj(minoFactory, candidateThreadLocal, checkerThreadLocal, reachableThreadLocal);
+        return new ConcurrentCheckerNoHoldInvoker(executorService, commonObj);
     }
 
     @Test

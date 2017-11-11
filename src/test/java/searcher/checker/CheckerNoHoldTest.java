@@ -13,19 +13,25 @@ import core.action.candidate.LockedCandidate;
 import core.action.reachable.LockedReachable;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import core.mino.Piece;
 import core.srs.MinoRotation;
 import module.LongTest;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import searcher.common.validator.PerfectValidator;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -277,21 +283,10 @@ class CheckerNoHoldTest {
         }
     }
 
-    @Test
+    @ParameterizedTest
+    @ArgumentsSource(TestCase.class)
     @LongTest
-    void testCaseList() throws Exception {
-        String resultPath = ClassLoader.getSystemResource("perfects/checker_avoidhold.txt").getPath();
-        List<Pair<Pieces, Boolean>> testCases = Files.lines(Paths.get(resultPath))
-                .filter(line -> !line.startsWith("//"))
-                .map(line -> line.split("="))
-                .map(split -> {
-                    Stream<Piece> blocks = BlockInterpreter.parse(split[0]);
-                    LongPieces pieces = new LongPieces(blocks);
-                    boolean isSucceed = "o".equals(split[1]);
-                    return new Pair<Pieces, Boolean>(pieces, isSucceed);
-                })
-                .collect(Collectors.toList());
-
+    void testCaseList(Pieces pieces, boolean expectedCount) throws Exception {
         int maxDepth = 10;
         int maxClearLine = 4;
         Field field = FieldFactory.createField(maxClearLine);
@@ -301,18 +296,43 @@ class CheckerNoHoldTest {
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         // Assertion
-        for (Pair<Pieces, Boolean> testCase : testCases) {
-            // Set test case
-            List<Piece> pieces = testCase.getKey().getPieces();
-            Boolean expectedCount = testCase.getValue();
+        // Set test case
+        List<Piece> piecesList = pieces.getPieces();
 
-            // Execute
-            boolean isSucceed = checker.check(field, pieces, candidate, maxClearLine, maxDepth);
-            assertThat(isSucceed).isEqualTo(expectedCount);
+        // Execute
+        boolean isSucceed = checker.check(field, piecesList, candidate, maxClearLine, maxDepth);
+        assertThat(isSucceed).isEqualTo(expectedCount);
 
-            // Check result
-            if (isSucceed)
-                assertResult(field, maxClearLine, reachable, pieces);
+        // Check result
+        if (isSucceed)
+            assertResult(field, maxClearLine, reachable, piecesList);
+    }
+
+    private static class TestCase implements ArgumentsProvider {
+        @Override
+        public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws IOException {
+            List<Pair<Pieces, Boolean>> testCases = loadTestCases();
+            return testCases.stream().map(this::toArguments);
+        }
+
+        private List<Pair<Pieces, Boolean>> loadTestCases() throws IOException {
+            String resultPath = ClassLoader.getSystemResource("perfects/checker_avoidhold.txt").getPath();
+            List<Pair<Pieces, Boolean>> testCases = Files.lines(Paths.get(resultPath))
+                    .filter(line -> !line.startsWith("//"))
+                    .map(line -> line.split("="))
+                    .map(split -> {
+                        Stream<Piece> blocks = BlockInterpreter.parse(split[0]);
+                        LongPieces pieces = new LongPieces(blocks);
+                        boolean isSucceed = "o".equals(split[1]);
+                        return new Pair<Pieces, Boolean>(pieces, isSucceed);
+                    })
+                    .collect(Collectors.toList());
+            Collections.shuffle(testCases);
+            return testCases;
+        }
+
+        private Arguments toArguments(Pair<?, ?> pair) {
+            return Arguments.of(pair.getKey(), pair.getValue());
         }
     }
 }

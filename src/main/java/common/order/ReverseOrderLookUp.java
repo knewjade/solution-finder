@@ -8,10 +8,14 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-// 他のミノ列からホールドを利用して指定したミノ列にできるとき、その他のミノ列をすべて逆算して列挙
+// 「あるミノ列」からホールドを利用して指定したミノ列にできるとき、その「あるミノ列」をすべて逆算して列挙
 public class ReverseOrderLookUp {
     private final List<List<Integer>> indexesList;
 
+    /**
+     * @param toDepth ホールドした後のミノ列の長さ
+     * @param fromDepth 元のミノ列の長さ（ホールド前のミノ列）
+     */
     public ReverseOrderLookUp(int toDepth, int fromDepth) {
         this.indexesList = reverse(toDepth, fromDepth);
     }

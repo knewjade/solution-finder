@@ -1,19 +1,21 @@
 package entry.percent;
 
-import common.SyntaxException;
 import common.datastore.Pair;
 import common.datastore.action.Action;
 import common.datastore.blocks.LongPieces;
 import common.datastore.blocks.Pieces;
-import common.pattern.LoadedPatternGenerator;
 import common.pattern.PatternGenerator;
 import common.tree.AnalyzeTree;
 import concurrent.HarddropCandidateThreadLocal;
+import concurrent.HarddropReachableThreadLocal;
 import concurrent.LockedCandidateThreadLocal;
+import concurrent.LockedReachableThreadLocal;
 import core.FinderConstant;
 import core.action.candidate.Candidate;
+import core.action.reachable.Reachable;
 import core.field.Field;
 import core.field.FieldView;
+import core.mino.MinoFactory;
 import entry.DropType;
 import entry.EntryPoint;
 import entry.Verify;
@@ -144,7 +146,9 @@ public class PercentEntryPoint implements EntryPoint {
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
         ThreadLocal<Candidate<Action>> candidateThreadLocal = createCandidateThreadLocal(settings.getDropType(), maxClearLine);
-        PercentCore percentCore = new PercentCore(executorService, candidateThreadLocal, settings.isUsingHold());
+        ThreadLocal<? extends Reachable> reachableThreadLocal = createReachableThreadLocal(settings.getDropType(), maxClearLine);
+        MinoFactory minoFactory = new MinoFactory();
+        PercentCore percentCore = new PercentCore(executorService, candidateThreadLocal, settings.isUsingHold(), reachableThreadLocal, minoFactory, generator.getDepth());
         try {
             percentCore.run(field, searchingPieces, maxClearLine, maxDepth);
         } catch (ExecutionException | InterruptedException e) {
@@ -207,22 +211,22 @@ public class PercentEntryPoint implements EntryPoint {
         output("done");
     }
 
-    private PatternGenerator createBlockGenerator(List<String> patterns) throws FinderInitializeException, FinderExecuteException {
-        try {
-            return new LoadedPatternGenerator(patterns);
-        } catch (SyntaxException e) {
-            output("Pattern syntax error");
-            output(e.getMessage());
-            throw new FinderInitializeException("Pattern syntax error", e);
-        }
-    }
-
     private ThreadLocal<Candidate<Action>> createCandidateThreadLocal(DropType dropType, int maxClearLine) throws FinderInitializeException {
         switch (dropType) {
             case Softdrop:
                 return new LockedCandidateThreadLocal(maxClearLine);
             case Harddrop:
                 return new HarddropCandidateThreadLocal();
+        }
+        throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
+    }
+
+    private ThreadLocal<? extends Reachable> createReachableThreadLocal(DropType dropType, int maxClearLine) throws FinderInitializeException {
+        switch (dropType) {
+            case Softdrop:
+                return new LockedReachableThreadLocal(maxClearLine);
+            case Harddrop:
+                return new HarddropReachableThreadLocal(maxClearLine);
         }
         throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
     }

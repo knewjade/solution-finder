@@ -1,13 +1,13 @@
 package concurrent.checker.invoker.using_hold;
 
 import common.ResultHelper;
-import common.datastore.Operation;
-import common.datastore.Pair;
-import common.datastore.Result;
+import common.buildup.BuildUpStream;
+import common.datastore.*;
 import common.datastore.action.Action;
 import common.datastore.blocks.Pieces;
-import common.order.OrderLookup;
+import common.parser.OperationTransform;
 import common.tree.VisitedTree;
+import concurrent.checker.invoker.CheckerCommonObj;
 import core.action.candidate.Candidate;
 import core.mino.Piece;
 import searcher.checker.Checker;
@@ -18,10 +18,12 @@ import java.util.stream.Collectors;
 
 class Task implements Callable<Pair<Pieces, Boolean>> {
     private final Obj obj;
+    private final CheckerCommonObj commonObj;
     private final Pieces target;
 
-    Task(Obj obj, Pieces target) {
+    Task(Obj obj, CheckerCommonObj commonObj, Pieces target) {
         this.obj = obj;
+        this.commonObj = commonObj;
         this.target = target;
     }
 
@@ -35,8 +37,8 @@ class Task implements Callable<Pair<Pieces, Boolean>> {
             return new Pair<>(target, succeed == VisitedTree.SUCCEED);
 
         // 探索準備
-        Checker<Action> checker = obj.checkerThreadLocal.get();
-        Candidate<Action> candidate = obj.candidateThreadLocal.get();
+        Checker<Action> checker = commonObj.checkerThreadLocal.get();
+        Candidate<Action> candidate = commonObj.candidateThreadLocal.get();
 
         // 探索
         boolean checkResult = checker.check(obj.field, pieceList, candidate, obj.maxClearLine, obj.maxDepth);
@@ -46,13 +48,16 @@ class Task implements Callable<Pair<Pieces, Boolean>> {
         // パフェが見つかったツモ順(≠探索時のツモ順)へと、ホールドを使ってできるパターンを逆算
         if (checkResult) {
             Result result = checker.getResult();
-            List<Piece> resultPieceList = ResultHelper.createOperationStream(result)
-                    .map(Operation::getPiece)
-                    .collect(Collectors.toList());
 
-            int reverseMaxDepth = result.getLastHold() != null ? resultPieceList.size() + 1 : resultPieceList.size();
-            OrderLookup.reverseBlocks(resultPieceList, reverseMaxDepth)
-                    .forEach(piece -> obj.visitedTree.set(true, piece.toList()));
+            Operations operations = new Operations(ResultHelper.createOperationStream(result));
+            List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(obj.field, operations, commonObj.minoFactory, obj.maxClearLine);
+
+            BuildUpStream buildUpStream = new BuildUpStream(commonObj.reachableThreadLocal.get(), obj.maxClearLine);
+            buildUpStream.existsValidBuildPattern(obj.field, operationWithKeys)
+                    .forEach(minoOperationWithKeys -> {
+                        obj.lookUp.parse(minoOperationWithKeys.stream().map(OperationWithKey::getPiece).collect(Collectors.toList()))
+                                .forEach(piece -> obj.visitedTree.set(true, piece.collect(Collectors.toList())));
+                    });
         }
 
         return new Pair<>(target, checkResult);
