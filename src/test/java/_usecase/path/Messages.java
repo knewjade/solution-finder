@@ -9,6 +9,10 @@ class Messages {
         return String.format("Found path [minimal] = %d", count);
     }
 
+    static String pathCount(int count) {
+        return String.format("Found path = %d", count);
+    }
+
     static String minimalCount() {
         return "Found path [minimal]";
     }

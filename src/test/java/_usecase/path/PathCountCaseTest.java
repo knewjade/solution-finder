@@ -3,24 +3,12 @@ package _usecase.path;
 import _usecase.Log;
 import _usecase.RunnerHelper;
 import entry.EntryPointMain;
-import lib.BooleanWalker;
 import module.LongTest;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PathCountCaseTest extends PathUseCaseBaseTest {
-    @Override
-    @BeforeEach
-    void setUp() throws IOException {
-        super.setUp();
-    }
-
     @Test
     void pattern1WithoutHold() throws Exception {
             /*

@@ -27,10 +27,12 @@ public class Randoms {
     }
 
     public int nextInt(int bound) {
+        assert 0 < bound;
         return random.nextInt(bound);
     }
 
     public int nextInt(int origin, int bound) {
+        assert origin < bound;
         int size = bound - origin;
         return origin + random.nextInt(size);
     }
