@@ -1,6 +1,6 @@
 package searcher.pack.mino_field;
 
-import common.datastore.BlockCounter;
+import common.datastore.PieceCounter;
 import common.datastore.OperationWithKey;
 import core.column_field.ColumnField;
 import searcher.pack.MinoFieldComparator;
@@ -14,14 +14,14 @@ public class RecursiveMinoField implements MinoField {
     private final SeparableMino separableMino;
     private final RecursiveMinoField minoField;
     private final ColumnField outerField;
-    private final BlockCounter blockCounter;
+    private final PieceCounter pieceCounter;
     private final int maxIndex;
 
     public RecursiveMinoField(SeparableMino separableMino, ColumnField outerField, SeparableMinos separableMinos) {
         this.separableMino = separableMino;
         this.minoField = null;
         this.outerField = outerField;
-        this.blockCounter = new BlockCounter(Collections.singletonList(separableMino.getMino().getBlock()));
+        this.pieceCounter = new PieceCounter(Collections.singletonList(separableMino.toMinoOperationWithKey().getPiece()));
         this.maxIndex = separableMinos.toIndex(separableMino);
     }
 
@@ -29,14 +29,14 @@ public class RecursiveMinoField implements MinoField {
         this.separableMino = separableMino;
         this.minoField = minoField;
         this.outerField = outerField;
-        this.blockCounter = addToBlockCounter(minoField.getBlockCounter(), separableMino);
+        this.pieceCounter = addToBlockCounter(minoField.getPieceCounter(), separableMino);
         int index = separableMinos.toIndex(separableMino);
         int maxIndex = minoField.getMaxIndex();
         this.maxIndex = maxIndex < index ? index : maxIndex;
     }
 
-    private BlockCounter addToBlockCounter(BlockCounter blockCounter, SeparableMino separableMino) {
-        return blockCounter.addAndReturnNew(Collections.singletonList(separableMino.getMino().getBlock()));
+    private PieceCounter addToBlockCounter(PieceCounter pieceCounter, SeparableMino separableMino) {
+        return pieceCounter.addAndReturnNew(Collections.singletonList(separableMino.toMinoOperationWithKey().getPiece()));
     }
 
     @Override
@@ -46,23 +46,28 @@ public class RecursiveMinoField implements MinoField {
 
     @Override
     public Stream<OperationWithKey> getOperationsStream() {
-        Stream.Builder<OperationWithKey> builder = Stream.builder();
-        RecursiveMinoField current = this;
-        do {
-            builder.accept(current.separableMino.toOperation());
-            current = current.minoField;
-        } while (current != null);
-        return builder.build();
+        return getSeparableMinoStream().map(SeparableMino::toMinoOperationWithKey);
     }
 
     @Override
-    public BlockCounter getBlockCounter() {
-        return blockCounter;
+    public PieceCounter getPieceCounter() {
+        return pieceCounter;
     }
 
     @Override
     public int getMaxIndex() {
         return maxIndex;
+    }
+
+    @Override
+    public Stream<SeparableMino> getSeparableMinoStream() {
+        Stream.Builder<SeparableMino> builder = Stream.builder();
+        RecursiveMinoField current = this;
+        do {
+            builder.accept(current.separableMino);
+            current = current.minoField;
+        } while (current != null);
+        return builder.build();
     }
 
     @Override

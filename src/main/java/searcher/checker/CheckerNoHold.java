@@ -2,11 +2,12 @@ package searcher.checker;
 
 import common.datastore.Result;
 import common.datastore.action.Action;
+import common.datastore.blocks.Pieces;
 import common.datastore.order.DepthOrder;
 import common.datastore.order.Order;
 import core.action.candidate.Candidate;
 import core.field.Field;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.MinoFactory;
 import searcher.common.validator.Validator;
 import searcher.core.SimpleSearcherCore;
@@ -23,13 +24,18 @@ public class CheckerNoHold<T extends Action> implements Checker<T> {
     }
 
     @Override
-    public boolean check(Field initField, List<Block> pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
-        Block[] blocks = new Block[pieces.size()];
+    public boolean check(Field initField, Pieces pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
+        return check(initField, pieces.getPieceArray(), candidate, maxClearLine, maxDepth);
+    }
+
+    @Override
+    public boolean check(Field initField, List<Piece> pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
+        Piece[] blocks = new Piece[pieces.size()];
         return check(initField, pieces.toArray(blocks), candidate, maxClearLine, maxDepth);
     }
 
     @Override
-    public boolean check(Field initField, Block[] pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
+    public boolean check(Field initField, Piece[] pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
         Field freeze = initField.freeze(maxClearLine);
         int deleteLine = freeze.clearLine();
 

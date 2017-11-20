@@ -8,7 +8,7 @@ import core.srs.Rotate;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static core.mino.Block.*;
+import static core.mino.Piece.*;
 import static core.srs.Rotate.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,16 +22,16 @@ class LockedReachableTest {
         return new LockedReachable(minoFactory, minoShifter, minoRotation, 8);
     }
 
-    private void success(String marks, Block block, Rotate rotate, int x, int y) {
+    private void success(String marks, Piece piece, Rotate rotate, int x, int y) {
         Field field = FieldFactory.createField(marks);
-        Mino mino = new Mino(block, rotate);
+        Mino mino = new Mino(piece, rotate);
         assert field.canPut(mino, x, y);
         assertThat(reachable.checks(field, mino, x, y, 8)).isTrue();
     }
 
-    private void fail(String marks, Block block, Rotate rotate, int x, int y) {
+    private void fail(String marks, Piece piece, Rotate rotate, int x, int y) {
         Field field = FieldFactory.createField(marks);
-        Mino mino = new Mino(block, rotate);
+        Mino mino = new Mino(piece, rotate);
         assert field.canPut(mino, x, y);
         assertThat(reachable.checks(field, mino, x, y, 8)).isFalse();
     }

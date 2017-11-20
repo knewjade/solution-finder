@@ -1,9 +1,9 @@
 package entry.searching_pieces;
 
-import common.datastore.pieces.Blocks;
-import common.datastore.pieces.LongBlocks;
+import common.datastore.blocks.LongPieces;
+import common.datastore.blocks.Pieces;
 import common.order.ForwardOrderLookUp;
-import common.pattern.IBlocksGenerator;
+import common.pattern.PatternGenerator;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -15,53 +15,53 @@ import java.util.stream.Collectors;
  * ホールドありの組み合わせから複数のホールドなしの組み合わせに分解し、重複を取り除く
  */
 public class HoldBreakEnumeratePieces implements EnumeratePiecesCore {
-    private final IBlocksGenerator generator;
+    private final PatternGenerator generator;
     private final int maxDepth;
     private int counter = -1;
 
-    HoldBreakEnumeratePieces(IBlocksGenerator generator, int maxDepth) {
+    HoldBreakEnumeratePieces(PatternGenerator generator, int maxDepth) {
         assert maxDepth <= generator.getDepth();
         this.generator = generator;
         this.maxDepth = maxDepth;
     }
 
     @Override
-    public Set<LongBlocks> enumerate() throws IOException {
+    public Set<LongPieces> enumerate() throws IOException {
         assert counter == -1;
 
         int depth = generator.getDepth();
         ForwardOrderLookUp forwardOrderLookUp = new ForwardOrderLookUp(maxDepth, depth);
 
         AtomicInteger counter = new AtomicInteger();
-        HashSet<LongBlocks> searchingPieces = create(depth, forwardOrderLookUp, counter);
+        HashSet<LongPieces> searchingPieces = create(depth, forwardOrderLookUp, counter);
 
         this.counter = counter.get();
         return searchingPieces;
     }
 
-    private HashSet<LongBlocks> create(int depth, ForwardOrderLookUp forwardOrderLookUp, AtomicInteger counter) {
+    private HashSet<LongPieces> create(int depth, ForwardOrderLookUp forwardOrderLookUp, AtomicInteger counter) {
         if (maxDepth < depth)
             return createOverMinos(forwardOrderLookUp, counter);
         else
             return createJustMinos(forwardOrderLookUp, counter);
     }
 
-    private HashSet<LongBlocks> createJustMinos(ForwardOrderLookUp forwardOrderLookUp, AtomicInteger counter) {
+    private HashSet<LongPieces> createJustMinos(ForwardOrderLookUp forwardOrderLookUp, AtomicInteger counter) {
         return generator.blocksStream()
                 .peek(pieces -> counter.incrementAndGet())
-                .map(Blocks::getBlocks)
+                .map(Pieces::getPieces)
                 .flatMap(forwardOrderLookUp::parse)
-                .map(LongBlocks::new)
+                .map(LongPieces::new)
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
-    private HashSet<LongBlocks> createOverMinos(ForwardOrderLookUp forwardOrderLookUp, AtomicInteger counter) {
+    private HashSet<LongPieces> createOverMinos(ForwardOrderLookUp forwardOrderLookUp, AtomicInteger counter) {
         return generator.blocksStream()
                 .peek(pieces -> counter.incrementAndGet())
-                .map(Blocks::getBlocks)
+                .map(Pieces::getPieces)
                 .map(blocks -> blocks.subList(0, maxDepth + 1))  // ホールドありなので+1ミノ分使用する
                 .flatMap(forwardOrderLookUp::parse)
-                .map(LongBlocks::new)
+                .map(LongPieces::new)
                 .collect(Collectors.toCollection(HashSet::new));
     }
 

@@ -2,14 +2,14 @@ package searcher.checker;
 
 import common.SyntaxException;
 import common.datastore.action.Action;
-import common.pattern.BlocksGenerator;
-import common.pattern.IBlocksGenerator;
+import common.pattern.LoadedPatternGenerator;
+import common.pattern.PatternGenerator;
 import common.tree.AnalyzeTree;
 import core.action.candidate.Candidate;
 import core.action.candidate.LockedCandidate;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
@@ -23,7 +23,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CheckerNoHoldCountTest {
-    private AnalyzeTree runTestCase(IBlocksGenerator blocksGenerator, int maxClearLine, int maxDepth, String marks) {
+    private AnalyzeTree runTestCase(PatternGenerator blocksGenerator, int maxClearLine, int maxDepth, String marks) {
         Field field = FieldFactory.createField(marks);
 
         // Initialize
@@ -39,9 +39,9 @@ class CheckerNoHoldCountTest {
 
         blocksGenerator.blocksStream()
                 .forEach(blocks -> {
-                    List<Block> blockList = blocks.getBlocks();
-                    boolean result = checker.check(field, blockList, candidate, maxClearLine, maxDepth);
-                    tree.set(result, blockList);
+                    List<Piece> pieceList = blocks.getPieces();
+                    boolean result = checker.check(field, pieceList, candidate, maxClearLine, maxDepth);
+                    tree.set(result, pieceList);
                 });
 
         return tree;
@@ -50,7 +50,7 @@ class CheckerNoHoldCountTest {
     @Test
     void testCase1() throws Exception {
         // Invoker
-        IBlocksGenerator blocksGenerator = new BlocksGenerator("*p7");
+        PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p7");
         int maxClearLine = 4;
         int maxDepth = 6;
 
@@ -71,7 +71,7 @@ class CheckerNoHoldCountTest {
     @Test
     void testCase2() throws Exception {
         // Invoker
-        IBlocksGenerator blocksGenerator = new BlocksGenerator("*p4");
+        PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p4");
         int maxClearLine = 5;
         int maxDepth = 4;
 
@@ -92,7 +92,7 @@ class CheckerNoHoldCountTest {
     @Test
     void testCase3() throws Exception {
         // Invoker
-        IBlocksGenerator blocksGenerator = new BlocksGenerator("*p7");
+        PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p7");
         int maxClearLine = 4;
         int maxDepth = 6;
 
@@ -112,7 +112,7 @@ class CheckerNoHoldCountTest {
     @Test
     void testCase4() throws Exception {
         // Invoker
-        IBlocksGenerator blocksGenerator = new BlocksGenerator("*p7");
+        PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p7");
         int maxClearLine = 4;
         int maxDepth = 6;
 
@@ -134,11 +134,11 @@ class CheckerNoHoldCountTest {
         private final int maxClearLine = 4;
         private final int maxDepth = 6;
         private final String pattern = "*p7";
-        private IBlocksGenerator blocksGenerator;
+        private PatternGenerator blocksGenerator;
 
         @BeforeEach
         void setUp() throws SyntaxException {
-            this.blocksGenerator = new BlocksGenerator(pattern);
+            this.blocksGenerator = new LoadedPatternGenerator(pattern);
         }
 
         @Test

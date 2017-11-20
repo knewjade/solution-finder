@@ -1,22 +1,22 @@
 package _implements.parity_based_pack.step1;
 
-import core.mino.Block;
+import core.mino.Piece;
 
 public class DeltaLimitedMino {
-    private final Block block;
+    private final Piece piece;
     private final DeltaLimit deltaLimit;
 
-    public static DeltaLimitedMino create(Block block, DeltaLimit deltaLimit) {
-        return new DeltaLimitedMino(block, deltaLimit);
+    public static DeltaLimitedMino create(Piece piece, DeltaLimit deltaLimit) {
+        return new DeltaLimitedMino(piece, deltaLimit);
     }
 
-    private DeltaLimitedMino(Block block, DeltaLimit deltaLimit) {
-        this.block = block;
+    private DeltaLimitedMino(Piece piece, DeltaLimit deltaLimit) {
+        this.piece = piece;
         this.deltaLimit = deltaLimit;
     }
 
-    public Block getBlock() {
-        return block;
+    public Piece getPiece() {
+        return piece;
     }
 
     public DeltaLimit getDeltaLimit() {
@@ -26,7 +26,7 @@ public class DeltaLimitedMino {
     @Override
     public String toString() {
         return "DeltaLimitedMino{" +
-                "block=" + block +
+                "piece=" + piece +
                 ", deltaLimit=" + deltaLimit +
                 '}';
     }

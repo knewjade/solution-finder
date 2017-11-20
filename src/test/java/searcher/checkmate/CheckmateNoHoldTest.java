@@ -4,8 +4,8 @@ import common.ResultHelper;
 import common.buildup.BuildUp;
 import common.datastore.*;
 import common.datastore.action.Action;
-import common.datastore.pieces.Blocks;
-import common.datastore.pieces.LongBlocks;
+import common.datastore.blocks.LongPieces;
+import common.datastore.blocks.Pieces;
 import common.parser.BlockInterpreter;
 import common.parser.OperationTransform;
 import core.action.candidate.Candidate;
@@ -13,14 +13,20 @@ import core.action.candidate.LockedCandidate;
 import core.action.reachable.LockedReachable;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Block;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import core.mino.Piece;
 import core.srs.MinoRotation;
-import org.junit.jupiter.api.Tag;
+import module.LongTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import searcher.common.validator.PerfectValidator;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -30,10 +36,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static core.mino.Block.*;
+import static core.mino.Piece.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-// TODO: Check time
 class CheckmateNoHoldTest {
     private final MinoFactory minoFactory = new MinoFactory();
     private final MinoShifter minoShifter = new MinoShifter();
@@ -41,9 +46,9 @@ class CheckmateNoHoldTest {
     private final PerfectValidator validator = new PerfectValidator();
     private final Checkmate<Action> checkmate = new CheckmateNoHold<>(minoFactory, validator);
 
-    private List<Block> parseToBlocks(Result result) {
+    private List<Piece> parseToBlocks(Result result) {
         return ResultHelper.createOperationStream(result)
-                .map(Operation::getBlock)
+                .map(Operation::getPiece)
                 .collect(Collectors.toList());
     }
 
@@ -51,21 +56,21 @@ class CheckmateNoHoldTest {
         return new Operations(ResultHelper.createOperationStream(result));
     }
 
-    private void assertResult(Result result, Field field, int maxClearLine, LockedReachable reachable, List<Block> blocks) {
-        // Check blocks is same
-        List<Block> resultBlocks = parseToBlocks(result);
-        assertThat(resultBlocks).isEqualTo(blocks.subList(0, resultBlocks.size()));
+    private void assertResult(Result result, Field field, int maxClearLine, LockedReachable reachable, List<Piece> pieces) {
+        // Check pieces is same
+        List<Piece> resultPieces = parseToBlocks(result);
+        assertThat(resultPieces).isEqualTo(pieces.subList(0, resultPieces.size()));
 
         // Check can build result
         Operations operations = parseToOperations(result);
-        List<OperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, maxClearLine);
+        List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, maxClearLine);
         boolean cansBuild = BuildUp.cansBuild(field, operationWithKeys, maxClearLine, reachable);
         assertThat(cansBuild).isTrue();
     }
 
     @Test
     void testLong9() throws Exception {
-        List<Pair<List<Block>, Integer>> testCases = new ArrayList<Pair<List<Block>, Integer>>() {
+        List<Pair<List<Piece>, Integer>> testCases = new ArrayList<Pair<List<Piece>, Integer>>() {
             {
                 add(new Pair<>(Arrays.asList(I, S, Z, T, J, I, S, Z, S, Z), 0));
                 add(new Pair<>(Arrays.asList(T, S, L, I, Z, J, L, O, O, S), 5));
@@ -96,27 +101,27 @@ class CheckmateNoHoldTest {
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         // Assertion
-        for (Pair<List<Block>, Integer> testCase : testCases) {
+        for (Pair<List<Piece>, Integer> testCase : testCases) {
             // Set test case
-            List<Block> blocks = testCase.getKey();
+            List<Piece> pieces = testCase.getKey();
             int expectedCount = testCase.getValue();
 
             // Execute
-            List<Result> results = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
+            List<Result> results = checkmate.search(field, pieces, candidate, maxClearLine, maxDepth);
             assertThat(results)
-                    .as(blocks.toString())
+                    .as(pieces.toString())
                     .hasSize(expectedCount);
 
             // Check result
             for (Result result : results)
-                assertResult(result, field, maxClearLine, reachable, blocks);
+                assertResult(result, field, maxClearLine, reachable, pieces);
         }
     }
 
     @Test
-    @Tag("long")
+    @LongTest
     void testLong10() throws Exception {
-        List<Pair<List<Block>, Integer>> testCases = new ArrayList<Pair<List<Block>, Integer>>() {
+        List<Pair<List<Piece>, Integer>> testCases = new ArrayList<Pair<List<Piece>, Integer>>() {
             {
                 add(new Pair<>(Arrays.asList(I, S, Z, T, J, I, S, Z, S, Z, T), 3));
                 add(new Pair<>(Arrays.asList(S, Z, T, L, J, I, O, S, Z, T, L), 6));
@@ -143,20 +148,20 @@ class CheckmateNoHoldTest {
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         // Assertion
-        for (Pair<List<Block>, Integer> testCase : testCases) {
+        for (Pair<List<Piece>, Integer> testCase : testCases) {
             // Set test case
-            List<Block> blocks = testCase.getKey();
+            List<Piece> pieces = testCase.getKey();
             int expectedCount = testCase.getValue();
 
             // Execute
-            List<Result> results = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
+            List<Result> results = checkmate.search(field, pieces, candidate, maxClearLine, maxDepth);
             assertThat(results)
-                    .as(blocks.toString())
+                    .as(pieces.toString())
                     .hasSize(expectedCount);
 
             // Check result
             for (Result result : results)
-                assertResult(result, field, maxClearLine, reachable, blocks);
+                assertResult(result, field, maxClearLine, reachable, pieces);
         }
     }
 
@@ -178,18 +183,18 @@ class CheckmateNoHoldTest {
 
         // Assertion
         // Set test case
-        List<Block> blocks = Arrays.asList(J, L, S, Z);
+        List<Piece> pieces = Arrays.asList(J, L, S, Z);
         int expectedCount = 2;
 
         // Execute
-        List<Result> results = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
+        List<Result> results = checkmate.search(field, pieces, candidate, maxClearLine, maxDepth);
         assertThat(results)
-                .as(blocks.toString())
+                .as(pieces.toString())
                 .hasSize(expectedCount);
 
         // Check result
         for (Result result : results)
-            assertResult(result, field, maxClearLine, reachable, blocks);
+            assertResult(result, field, maxClearLine, reachable, pieces);
     }
 
     @Test
@@ -212,18 +217,18 @@ class CheckmateNoHoldTest {
 
         // Assertion
         // Set test case
-        List<Block> blocks = Arrays.asList(S, Z, O);
+        List<Piece> pieces = Arrays.asList(S, Z, O);
         int expectedCount = 1;
 
         // Execute
-        List<Result> results = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
+        List<Result> results = checkmate.search(field, pieces, candidate, maxClearLine, maxDepth);
         assertThat(results)
-                .as(blocks.toString())
+                .as(pieces.toString())
                 .hasSize(expectedCount);
 
         // Check result
         for (Result result : results)
-            assertResult(result, field, maxClearLine, reachable, blocks);
+            assertResult(result, field, maxClearLine, reachable, pieces);
     }
 
     @Test
@@ -246,38 +251,24 @@ class CheckmateNoHoldTest {
 
         // Assertion
         // Set test case
-        List<Block> blocks = Arrays.asList(I, Z, L, I);
+        List<Piece> pieces = Arrays.asList(I, Z, L, I);
         int expectedCount = 1;
 
         // Execute
-        List<Result> results = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
+        List<Result> results = checkmate.search(field, pieces, candidate, maxClearLine, maxDepth);
         assertThat(results)
-                .as(blocks.toString())
+                .as(pieces.toString())
                 .hasSize(expectedCount);
 
         // Check result
         for (Result result : results)
-            assertResult(result, field, maxClearLine, reachable, blocks);
+            assertResult(result, field, maxClearLine, reachable, pieces);
     }
 
-    @Test
-    @Tag("long")
-    void testCaseList() throws Exception {
-        String resultPath = ClassLoader.getSystemResource("perfects/checkmate_nohold.txt").getPath();
-        List<Pair<Blocks, Integer>> testCases = Files.lines(Paths.get(resultPath))
-                .map(line -> line.split("//")[0])
-                .map(String::trim)
-                .filter(line -> !line.isEmpty())
-                .map(line -> line.split("="))
-                .map(split -> {
-                    Stream<Block> blocks = BlockInterpreter.parse(split[0]);
-                    LongBlocks pieces = new LongBlocks(blocks);
-                    int count = Integer.valueOf(split[1]);
-                    return new Pair<Blocks, Integer>(pieces, count);
-                })
-                .collect(Collectors.toList());
-        Collections.shuffle(testCases);
-
+    @ParameterizedTest
+    @ArgumentsSource(TestCase.class)
+    @LongTest
+    void testCaseList(Pieces pieces, int expectedCount) {
         // Field
         int maxClearLine = 4;
         int maxDepth = 10;
@@ -288,21 +279,48 @@ class CheckmateNoHoldTest {
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         // Assertion
-        for (Pair<Blocks, Integer> testCase : testCases.subList(0, 40)) {
-            // Set test case
-            List<Block> blocks = testCase.getKey().getBlocks();
-            int expectedCount = testCase.getValue();
-            System.out.println(blocks);
+        // Set test case
+        List<Piece> piecesList = pieces.getPieces();
+        System.out.println(piecesList);
 
-            // Execute
-            List<Result> results = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
-            assertThat(results)
-                    .as(blocks.toString())
-                    .hasSize(expectedCount);
+        // Execute
+        List<Result> results = checkmate.search(field, piecesList, candidate, maxClearLine, maxDepth);
+        assertThat(results)
+                .as(piecesList.toString())
+                .hasSize(expectedCount);
 
-            // Check result
-            for (Result result : results)
-                assertResult(result, field, maxClearLine, reachable, blocks);
+        // Check result
+        for (Result result : results)
+            assertResult(result, field, maxClearLine, reachable, piecesList);
+    }
+
+    private static class TestCase implements ArgumentsProvider {
+        @Override
+        public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws IOException {
+            List<Pair<Pieces, Integer>> testCases = loadTestCases();
+            return testCases.stream().map(this::toArguments).limit(40L);
+        }
+
+        private List<Pair<Pieces, Integer>> loadTestCases() throws IOException {
+            String resultPath = ClassLoader.getSystemResource("perfects/checkmate_nohold.txt").getPath();
+            List<Pair<Pieces, Integer>> testCases = Files.lines(Paths.get(resultPath))
+                    .map(line -> line.split("//")[0])
+                    .map(String::trim)
+                    .filter(line -> !line.isEmpty())
+                    .map(line -> line.split("="))
+                    .map(split -> {
+                        Stream<Piece> blocks = BlockInterpreter.parse(split[0]);
+                        LongPieces pieces = new LongPieces(blocks);
+                        int count = Integer.valueOf(split[1]);
+                        return new Pair<Pieces, Integer>(pieces, count);
+                    })
+                    .collect(Collectors.toList());
+            Collections.shuffle(testCases);
+            return testCases;
+        }
+
+        private Arguments toArguments(Pair<?, ?> pair) {
+            return Arguments.of(pair.getKey(), pair.getValue());
         }
     }
 }

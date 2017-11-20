@@ -2,16 +2,14 @@ package helper;
 
 import common.buildup.BuildUpStream;
 import common.datastore.OperationWithKey;
-import common.datastore.pieces.LongBlocks;
+import common.datastore.blocks.LongPieces;
 import concurrent.LockedReachableThreadLocal;
 import core.column_field.ColumnField;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Block;
-import core.mino.Mino;
+import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
-import core.srs.MinoRotation;
 import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
@@ -19,6 +17,7 @@ import searcher.pack.calculator.BasicSolutions;
 import searcher.pack.memento.SRSValidSolutionFilter;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.mino_fields.RecursiveMinoFields;
+import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.solutions.BasicSolutionsCalculator;
 import searcher.pack.solutions.MappedBasicSolutions;
 import searcher.pack.task.Field4x10MinoPackingHelper;
@@ -37,7 +36,6 @@ public class EasyPath {
     private final EasyPool easyPool;
     private final MinoFactory minoFactory;
     private final MinoShifter minoShifter;
-    private final MinoRotation minoRotation;
 
     public EasyPath() {
         this(new EasyPool());
@@ -47,7 +45,6 @@ public class EasyPath {
         this.easyPool = easyPool;
         this.minoFactory = easyPool.getMinoFactory();
         this.minoShifter = easyPool.getMinoShifter();
-        this.minoRotation = easyPool.getMinoRotation();
     }
 
     public List<Result> calculate(Field initField, int width, int height) throws ExecutionException, InterruptedException {
@@ -100,7 +97,7 @@ public class EasyPath {
         return searcher.toList();
     }
 
-    public Set<LongBlocks> buildUp(String goalFieldMarks, Field initField, int width, int height) throws ExecutionException, InterruptedException {
+    public Set<LongPieces> buildUp(String goalFieldMarks, Field initField, int width, int height) throws ExecutionException, InterruptedException {
         assert !initField.existsAbove(height);
 
         SizedBit sizedBit = new SizedBit(width, height);
@@ -121,15 +118,17 @@ public class EasyPath {
         List<Result> results = searcher.toList();
         return results.stream()
                 .map(Result::getMemento)
-                .map(memento -> memento.getOperationsStream(width))
-                .map(operationsStream -> operationsStream.collect(Collectors.toList()))
+                .map(memento -> {
+                    return memento.getSeparableMinoStream(width)
+                            .map(SeparableMino::toMinoOperationWithKey)
+                            .collect(Collectors.toList());
+                })
                 .map(operations -> new BuildUpStream(reachableThreadLocal.get(), height).existsValidBuildPattern(initField, operations))
                 .flatMap(listStream -> {
                     return listStream.map(operationWithKeys -> {
-                        Stream<Block> blocks = operationWithKeys.stream()
-                                .map(OperationWithKey::getMino)
-                                .map(Mino::getBlock);
-                        return new LongBlocks(blocks);
+                        Stream<Piece> blocks = operationWithKeys.stream()
+                                .map(OperationWithKey::getPiece);
+                        return new LongPieces(blocks);
                     });
                 })
                 .collect(Collectors.toSet());

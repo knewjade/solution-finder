@@ -1,15 +1,15 @@
 package searcher.pack.task;
 
-import common.datastore.BlockCounter;
-import common.datastore.pieces.Blocks;
-import common.datastore.pieces.LongBlocks;
+import common.datastore.PieceCounter;
+import common.datastore.blocks.LongPieces;
+import common.datastore.blocks.Pieces;
 import common.iterable.CombinationIterable;
 import common.parser.BlockInterpreter;
 import concurrent.LockedReachableThreadLocal;
 import core.column_field.ColumnField;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import org.junit.jupiter.api.Test;
@@ -20,8 +20,6 @@ import searcher.pack.calculator.BasicSolutions;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.memento.UsingBlockAndValidKeySolutionFilter;
 import searcher.pack.mino_fields.RecursiveMinoFields;
-import searcher.pack.separable_mino.SeparableMino;
-import searcher.pack.separable_mino.SeparableMinoFactory;
 import searcher.pack.solutions.BasicSolutionsCalculator;
 import searcher.pack.solutions.MappedBasicSolutions;
 
@@ -36,16 +34,16 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 class PackSearcherComparingParityBasedTest {
     private static class TestData {
-        private final Blocks blocks;
+        private final Pieces pieces;
         private final long count;
 
-        private TestData(Blocks blocks, long count) {
-            this.blocks = blocks;
+        private TestData(Pieces pieces, long count) {
+            this.pieces = pieces;
             this.count = count;
         }
 
-        public List<Block> getBlocks() {
-            return blocks.getBlocks();
+        public List<Piece> getPieces() {
+            return pieces.getPieces();
         }
 
         public long getCount() {
@@ -68,8 +66,8 @@ class PackSearcherComparingParityBasedTest {
                 .filter(line -> !line.isEmpty())
                 .map(line -> line.split("="))
                 .map(split -> {
-                    Stream<Block> blocks = BlockInterpreter.parse(split[0]);
-                    LongBlocks pieces = new LongBlocks(blocks);
+                    Stream<Piece> blocks = BlockInterpreter.parse(split[0]);
+                    LongPieces pieces = new LongPieces(blocks);
                     int count = Integer.valueOf(split[1]);
                     return new TestData(pieces, count);
                 })
@@ -91,8 +89,8 @@ class PackSearcherComparingParityBasedTest {
                 .filter(line -> !line.isEmpty())
                 .map(line -> line.split("="))
                 .map(split -> {
-                    Stream<Block> blocks = BlockInterpreter.parse(split[0]);
-                    LongBlocks pieces = new LongBlocks(blocks);
+                    Stream<Piece> blocks = BlockInterpreter.parse(split[0]);
+                    LongPieces pieces = new LongPieces(blocks);
                     int count = Integer.valueOf(split[1]);
                     return new TestData(pieces, count);
                 })
@@ -114,8 +112,8 @@ class PackSearcherComparingParityBasedTest {
                 .filter(line -> !line.isEmpty())
                 .map(line -> line.split("="))
                 .map(split -> {
-                    Stream<Block> blocks = BlockInterpreter.parse(split[0]);
-                    LongBlocks pieces = new LongBlocks(blocks);
+                    Stream<Piece> blocks = BlockInterpreter.parse(split[0]);
+                    LongPieces pieces = new LongPieces(blocks);
                     int count = Integer.valueOf(split[1]);
                     return new TestData(pieces, count);
                 })
@@ -132,17 +130,17 @@ class PackSearcherComparingParityBasedTest {
 
         for (TestData data : testDataList) {
             // 準備
-            List<Block> usingBlocks = data.getBlocks();
-            int popCount = usingBlocks.size();
+            List<Piece> usingPieces = data.getPieces();
+            int popCount = usingPieces.size();
             Field initField = createSquareEmptyField(height, popCount);
 
             // packで探索
-            Set<BlockCounter> blockCounters = Collections.singleton(new BlockCounter(usingBlocks));
-            SolutionFilter solutionFilter = createUsingBlockAndValidKeyMementoFilter(initField, sizedBit, blockCounters);
+            Set<PieceCounter> pieceCounters = Collections.singleton(new PieceCounter(usingPieces));
+            SolutionFilter solutionFilter = createUsingBlockAndValidKeyMementoFilter(initField, sizedBit, pieceCounters);
             BasicSolutions basicSolutions = new MappedBasicSolutions(calculate, solutionFilter);
             long packCounter = calculateSRSValidCount(sizedBit, basicSolutions, initField, solutionFilter);
 
-            System.out.println(usingBlocks);
+            System.out.println(usingPieces);
 
             assertThat(packCounter).isEqualTo(data.getCount());
         }
@@ -175,15 +173,15 @@ class PackSearcherComparingParityBasedTest {
     }
 
     // パフェするまでに有効なブロック数を列挙する
-    private SolutionFilter createUsingBlockAndValidKeyMementoFilter(Field initField, SizedBit sizedBit, Set<BlockCounter> counters) {
+    private SolutionFilter createUsingBlockAndValidKeyMementoFilter(Field initField, SizedBit sizedBit, Set<PieceCounter> counters) {
         HashSet<Long> validBlockCounters = new HashSet<>();
 
-        for (BlockCounter counter : counters) {
-            List<Block> usingBlocks = counter.getBlocks();
-            for (int size = 1; size <= usingBlocks.size(); size++) {
-                CombinationIterable<Block> combinationIterable = new CombinationIterable<>(usingBlocks, size);
-                for (List<Block> blocks : combinationIterable) {
-                    BlockCounter newCounter = new BlockCounter(blocks);
+        for (PieceCounter counter : counters) {
+            List<Piece> usingPieces = counter.getBlocks();
+            for (int size = 1; size <= usingPieces.size(); size++) {
+                CombinationIterable<Piece> combinationIterable = new CombinationIterable<>(usingPieces, size);
+                for (List<Piece> pieces : combinationIterable) {
+                    PieceCounter newCounter = new PieceCounter(pieces);
                     validBlockCounters.add(newCounter.getCounter());
                 }
             }

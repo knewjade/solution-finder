@@ -1,6 +1,6 @@
 package common.order;
 
-import core.mino.Block;
+import core.mino.Piece;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,10 +8,14 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-// 他のミノ列からホールドを利用して指定したミノ列にできるとき、その他のミノ列をすべて逆算して列挙
+// 「あるミノ列」からホールドを利用して指定したミノ列にできるとき、その「あるミノ列」をすべて逆算して列挙
 public class ReverseOrderLookUp {
     private final List<List<Integer>> indexesList;
 
+    /**
+     * @param toDepth ホールドした後のミノ列の長さ
+     * @param fromDepth 元のミノ列の長さ（ホールド前のミノ列）
+     */
     public ReverseOrderLookUp(int toDepth, int fromDepth) {
         this.indexesList = reverse(toDepth, fromDepth);
     }
@@ -49,9 +53,9 @@ public class ReverseOrderLookUp {
                 .collect(Collectors.toList());
     }
 
-    public Stream<Stream<Block>> parse(List<Block> blocks) {
-        assert blocks.size() <= indexesList.get(0).size();
+    public Stream<Stream<Piece>> parse(List<Piece> pieces) {
+        assert pieces.size() <= indexesList.get(0).size();
         return indexesList.stream()
-                .map(indexes -> indexes.stream().map(index -> index != -1 ? blocks.get(index) : null));
+                .map(indexes -> indexes.stream().map(index -> index != -1 ? pieces.get(index) : null));
     }
 }

@@ -5,18 +5,16 @@ import core.column_field.ColumnFieldFactory;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import lib.Stopwatch;
+import module.LongTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.calculator.BasicSolutions;
 import searcher.pack.mino_fields.MinoFields;
-import searcher.pack.separable_mino.SeparableMino;
-import searcher.pack.separable_mino.SeparableMinoFactory;
 
 import java.io.IOException;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
@@ -67,7 +65,7 @@ class OnDemandBasicSolutionsFactoryTest {
     }
 
     @Test
-    @Tag("long")
+    @LongTest
     void create2x6() throws Exception {
         SizedBit sizedBit = new SizedBit(2, 6);
         int expectedSolutions = 3490;

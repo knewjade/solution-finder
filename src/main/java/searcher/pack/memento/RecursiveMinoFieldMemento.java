@@ -1,19 +1,20 @@
 package searcher.pack.memento;
 
-import common.datastore.BlockCounter;
+import common.datastore.PieceCounter;
 import common.datastore.OperationWithKey;
 import searcher.pack.mino_field.MinoField;
-import searcher.pack.SlideXOperationWithKey;
+import searcher.pack.separable_mino.SeparableMino;
+import searcher.pack.separable_mino.SlideXSeparableMino;
 
 import java.util.stream.Stream;
 
 public class RecursiveMinoFieldMemento implements MinoFieldMemento {
     private final MinoField current;
     private final RecursiveMinoFieldMemento parent;
-    private final Boolean isConcat;  // null=0, false=1, true=2<=
+    private final Boolean isConcat;  // null=0, false=1, true=2
     private final int size;
 
-    public RecursiveMinoFieldMemento(MinoField current, RecursiveMinoFieldMemento parent, Boolean isConcat, int size) {
+    RecursiveMinoFieldMemento(MinoField current, RecursiveMinoFieldMemento parent, Boolean isConcat, int size) {
         this.isConcat = isConcat;
         this.size = size;
         this.current = current;
@@ -38,15 +39,15 @@ public class RecursiveMinoFieldMemento implements MinoFieldMemento {
     }
 
     @Override
-    public BlockCounter getSumBlockCounter() {
+    public PieceCounter getSumBlockCounter() {
         long sum = 0L;
         RecursiveMinoFieldMemento target = this;
         do {
             if (target.current != null)
-                sum += target.current.getBlockCounter().getCounter();
+                sum += target.current.getPieceCounter().getCounter();
             target = target.parent;
         } while (target != null);
-        return new BlockCounter(sum);
+        return new PieceCounter(sum);
     }
 
     @Override
@@ -68,23 +69,28 @@ public class RecursiveMinoFieldMemento implements MinoFieldMemento {
 
     @Override
     public Stream<OperationWithKey> getOperationsStream(int width) {
-        Stream<OperationWithKey> operations = Stream.empty();
+        return getSeparableMinoStream(width).map(SeparableMino::toMinoOperationWithKey);
+    }
+
+    @Override
+    public Stream<SeparableMino> getSeparableMinoStream(int width) {
+        Stream<SeparableMino> operations = Stream.empty();
         RecursiveMinoFieldMemento target = this;
         int depth = size - 1;
         do {
             if (target.current != null)
-                operations = Stream.concat(operations, addSlideX(target.current.getOperationsStream(), width * depth));
+                operations = Stream.concat(operations, addSlideX(target.current.getSeparableMinoStream(), width * depth));
             target = target.parent;
             depth--;
         } while (target != null);
         return operations;
     }
-    
-    private Stream<OperationWithKey> addSlideX(Stream<OperationWithKey> operations, int slideX) {
-        return operations.map(operationWithKey -> toSlideWrapper(operationWithKey, slideX));
+
+    private Stream<SeparableMino> addSlideX(Stream<SeparableMino> separableMinos, int slideX) {
+        return separableMinos.map(separableMino -> toSlideWrapper(separableMino, slideX));
     }
 
-    private OperationWithKey toSlideWrapper(OperationWithKey operationWithKey, int slideX) {
-        return new SlideXOperationWithKey(operationWithKey, slideX);
+    private SeparableMino toSlideWrapper(SeparableMino separableMino, int slideX) {
+        return new SlideXSeparableMino(separableMino, slideX);
     }
 }

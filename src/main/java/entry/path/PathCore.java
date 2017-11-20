@@ -3,20 +3,22 @@ package entry.path;
 import common.SyntaxException;
 import common.buildup.BuildUpStream;
 import common.datastore.BlockField;
+import common.datastore.MinoOperationWithKey;
 import common.datastore.OperationWithKey;
-import common.datastore.pieces.Blocks;
-import common.datastore.pieces.LongBlocks;
+import common.datastore.blocks.LongPieces;
+import common.datastore.blocks.Pieces;
 import common.order.OrderLookup;
 import common.order.ReverseOrderLookUp;
 import common.order.StackOrder;
-import common.pattern.BlocksGenerator;
-import common.pattern.IBlocksGenerator;
+import common.pattern.LoadedPatternGenerator;
+import common.pattern.PatternGenerator;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import entry.path.output.FumenParser;
 import searcher.pack.SizedBit;
+import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.task.PerfectPackSearcher;
 import searcher.pack.task.Result;
 
@@ -32,14 +34,14 @@ class PathCore {
     private final boolean isHoldReduced;
     private final boolean isUsingHold;
     private final int maxDepth;
-    private final HashSet<LongBlocks> validPieces;
-    private final HashSet<LongBlocks> allPieces;
+    private final HashSet<LongPieces> validPieces;
+    private final HashSet<LongPieces> allPieces;
 
     PathCore(List<String> patterns, PerfectPackSearcher searcher, int maxDepth, boolean isUsingHold, FumenParser fumenParser, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal) throws SyntaxException {
         this.searcher = searcher;
         this.fumenParser = fumenParser;
         this.buildUpStreamThreadLocal = buildUpStreamThreadLocal;
-        IBlocksGenerator blocksGenerator = new BlocksGenerator(patterns);
+        PatternGenerator blocksGenerator = new LoadedPatternGenerator(patterns);
         this.isHoldReduced = isHoldReducedPieces(blocksGenerator, maxDepth, isUsingHold);
         this.isUsingHold = isUsingHold;
         this.maxDepth = maxDepth;
@@ -47,11 +49,11 @@ class PathCore {
         this.validPieces = getValidPieces(blocksGenerator, allPieces, maxDepth, isHoldReduced);
     }
 
-    private boolean isHoldReducedPieces(IBlocksGenerator blocksGenerator, int maxDepth, boolean isUsingHold) {
+    private boolean isHoldReducedPieces(PatternGenerator blocksGenerator, int maxDepth, boolean isUsingHold) {
         return isUsingHold && maxDepth < blocksGenerator.getDepth();
     }
 
-    private HashSet<LongBlocks> getAllPieces(IBlocksGenerator blocksGenerator, int maxDepth, boolean isUsingHold) {
+    private HashSet<LongPieces> getAllPieces(PatternGenerator blocksGenerator, int maxDepth, boolean isUsingHold) {
         if (isUsingHold) {
             // ホールドあり
             if (maxDepth < blocksGenerator.getDepth()) {
@@ -73,7 +75,7 @@ class PathCore {
         }
     }
 
-    private HashSet<LongBlocks> getValidPieces(IBlocksGenerator blocksGenerator, HashSet<LongBlocks> allPieces, int maxDepth, boolean isHoldReduced) {
+    private HashSet<LongPieces> getValidPieces(PatternGenerator blocksGenerator, HashSet<LongPieces> allPieces, int maxDepth, boolean isHoldReduced) {
         if (isHoldReduced) {
             // パフェ時に使用ミノが少なくなるケースのため改めて専用のSetを作る
             return toReducedHashSetWithHold(blocksGenerator.blocksStream(), maxDepth);
@@ -82,30 +84,30 @@ class PathCore {
         }
     }
 
-    private HashSet<LongBlocks> toReducedHashSetWithHold(Stream<? extends Blocks> blocksStream, int maxDepth) {
+    private HashSet<LongPieces> toReducedHashSetWithHold(Stream<? extends Pieces> blocksStream, int maxDepth) {
         return blocksStream.parallel()
-                .map(Blocks::getBlocks)
+                .map(Pieces::getPieces)
                 .flatMap(blocks -> OrderLookup.forwardBlocks(blocks, maxDepth).stream())
                 .collect(Collectors.toCollection(HashSet::new))
                 .parallelStream()
                 .map(StackOrder::toList)
                 .map(blocks -> blocks.subList(0, maxDepth))
-                .map(LongBlocks::new)
+                .map(LongPieces::new)
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
-    private HashSet<LongBlocks> toReducedHashSetWithoutHold(Stream<? extends Blocks> blocksStream, int maxDepth) {
+    private HashSet<LongPieces> toReducedHashSetWithoutHold(Stream<? extends Pieces> blocksStream, int maxDepth) {
         return blocksStream.parallel()
-                .map(Blocks::getBlocks)
+                .map(Pieces::getPieces)
                 .map(blocks -> blocks.subList(0, maxDepth))
-                .map(LongBlocks::new)
+                .map(LongPieces::new)
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
-    private HashSet<LongBlocks> toDirectHashSet(Stream<? extends Blocks> blocksStream) {
+    private HashSet<LongPieces> toDirectHashSet(Stream<? extends Pieces> blocksStream) {
         return blocksStream.parallel()
-                .map(Blocks::getBlocks)
-                .map(LongBlocks::new)
+                .map(Pieces::getPieces)
+                .map(LongPieces::new)
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
@@ -114,11 +116,14 @@ class PathCore {
         int maxClearLine = sizedBit.getHeight();
         return candidates.parallelStream()
                 .map(result -> {
-                    LinkedList<OperationWithKey> operations = result.getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toCollection(LinkedList::new));
+                    LinkedList<MinoOperationWithKey> operations = result.getMemento()
+                            .getSeparableMinoStream(sizedBit.getWidth())
+                            .map(SeparableMino::toMinoOperationWithKey)
+                            .collect(Collectors.toCollection(LinkedList::new));
 
                     // 地形の中で組むことができるoperationsを一つ作成
                     BuildUpStream buildUpStream = buildUpStreamThreadLocal.get();
-                    List<OperationWithKey> sampleOperations = buildUpStream.existsValidBuildPatternDirectly(field, operations)
+                    List<MinoOperationWithKey> sampleOperations = buildUpStream.existsValidBuildPatternDirectly(field, operations)
                             .findFirst()
                             .orElse(Collections.emptyList());
 
@@ -127,17 +132,16 @@ class PathCore {
                         return PathPair.EMPTY_PAIR;
 
                     // 地形の中で組むことができるSetを作成
-                    HashSet<LongBlocks> piecesSolution = buildUpStream.existsValidBuildPatternDirectly(field, operations)
+                    HashSet<LongPieces> piecesSolution = buildUpStream.existsValidBuildPatternDirectly(field, operations)
                             .map(operationWithKeys -> operationWithKeys.stream()
-                                    .map(OperationWithKey::getMino)
-                                    .map(Mino::getBlock)
+                                    .map(OperationWithKey::getPiece)
                                     .collect(Collectors.toList())
                             )
-                            .map(LongBlocks::new)
+                            .map(LongPieces::new)
                             .collect(Collectors.toCollection(HashSet::new));
 
                     // 探索シーケンスの中で組むことができるSetを作成
-                    HashSet<LongBlocks> piecesPattern = getPiecesPattern(piecesSolution);
+                    HashSet<LongPieces> piecesPattern = getPiecesPattern(piecesSolution);
 
                     // 探索シーケンスの中で組むことができるものがないときはスキップ
                     if (piecesPattern.isEmpty())
@@ -158,14 +162,15 @@ class PathCore {
         List<Result> candidates = searcher.stream(resultStream -> {
             return resultStream
                     .filter(result -> {
-                        LinkedList<OperationWithKey> operations = result.getMemento()
-                                .getOperationsStream(sizedBit.getWidth())
+                        LinkedList<MinoOperationWithKey> operations = result.getMemento()
+                                .getSeparableMinoStream(sizedBit.getWidth())
+                                .map(SeparableMino::toMinoOperationWithKey)
                                 .collect(Collectors.toCollection(LinkedList::new));
 
                         BlockField mergedField = new BlockField(maxClearLine);
                         operations.forEach(operation -> {
                             Field operationField = createField(operation, maxClearLine);
-                            mergedField.merge(operationField, operation.getMino().getBlock());
+                            mergedField.merge(operationField, operation.getPiece());
                         });
 
                         return mergedField.containsAll(blockField);
@@ -175,11 +180,14 @@ class PathCore {
 
         return candidates.stream()
                 .map(result -> {
-                    LinkedList<OperationWithKey> operations = result.getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toCollection(LinkedList::new));
+                    LinkedList<MinoOperationWithKey> operations = result.getMemento()
+                            .getSeparableMinoStream(sizedBit.getWidth())
+                            .map(SeparableMino::toMinoOperationWithKey)
+                            .collect(Collectors.toCollection(LinkedList::new));
 
                     // 地形の中で組むことができるoperationsを一つ作成
                     BuildUpStream buildUpStream = buildUpStreamThreadLocal.get();
-                    List<OperationWithKey> sampleOperations = buildUpStream.existsValidBuildPatternDirectly(field, operations)
+                    List<MinoOperationWithKey> sampleOperations = buildUpStream.existsValidBuildPatternDirectly(field, operations)
                             .findFirst()
                             .orElse(Collections.emptyList());
 
@@ -188,17 +196,16 @@ class PathCore {
                         return PathPair.EMPTY_PAIR;
 
                     // 地形の中で組むことができるSetを作成
-                    HashSet<LongBlocks> piecesSolution = buildUpStream.existsValidBuildPatternDirectly(field, operations)
+                    HashSet<LongPieces> piecesSolution = buildUpStream.existsValidBuildPatternDirectly(field, operations)
                             .map(operationWithKeys -> operationWithKeys.stream()
-                                    .map(OperationWithKey::getMino)
-                                    .map(Mino::getBlock)
+                                    .map(OperationWithKey::getPiece)
                                     .collect(Collectors.toList())
                             )
-                            .map(LongBlocks::new)
+                            .map(LongPieces::new)
                             .collect(Collectors.toCollection(HashSet::new));
 
                     // 探索シーケンスの中で組むことができるSetを作成
-                    HashSet<LongBlocks> piecesPattern = getPiecesPattern(piecesSolution);
+                    HashSet<LongPieces> piecesPattern = getPiecesPattern(piecesSolution);
 
                     // 探索シーケンスの中で組むことができるものがないときはスキップ
                     if (piecesPattern.isEmpty())
@@ -213,7 +220,7 @@ class PathCore {
                 .collect(Collectors.toList());
     }
 
-    private Field createField(OperationWithKey key, int maxClearLine) {
+    private Field createField(MinoOperationWithKey key, int maxClearLine) {
         Mino mino = key.getMino();
         Field test = FieldFactory.createField(maxClearLine);
         test.put(mino, key.getX(), key.getY());
@@ -221,7 +228,7 @@ class PathCore {
         return test;
     }
 
-    private HashSet<LongBlocks> getPiecesPattern(HashSet<LongBlocks> piecesSolution) {
+    private HashSet<LongPieces> getPiecesPattern(HashSet<LongPieces> piecesSolution) {
         if (isHoldReduced) {
             // allとvalidが異なる
             ReverseOrderLookUp reverseOrderLookUp = new ReverseOrderLookUp(maxDepth, maxDepth + 1);
@@ -229,17 +236,17 @@ class PathCore {
             return piecesSolution.stream()
                     .filter(validPieces::contains)
                     .flatMap(blocks -> {
-                        return reverseOrderLookUp.parse(blocks.getBlocks())
+                        return reverseOrderLookUp.parse(blocks.getPieces())
                                 .map(stream -> stream.collect(Collectors.toCollection(ArrayList::new)))
                                 .flatMap(blocksWithHold -> {
                                     int nullIndex = blocksWithHold.indexOf(null);
                                     if (nullIndex < 0)
-                                        return Stream.of(new LongBlocks(blocksWithHold));
+                                        return Stream.of(new LongPieces(blocksWithHold));
 
-                                    Stream.Builder<LongBlocks> builder = Stream.builder();
-                                    for (Block block : Block.values()) {
-                                        blocksWithHold.set(nullIndex, block);
-                                        builder.accept(new LongBlocks(blocksWithHold));
+                                    Stream.Builder<LongPieces> builder = Stream.builder();
+                                    for (Piece piece : Piece.values()) {
+                                        blocksWithHold.set(nullIndex, piece);
+                                        builder.accept(new LongPieces(blocksWithHold));
                                     }
                                     return builder.build();
                                 });
@@ -253,17 +260,17 @@ class PathCore {
             return piecesSolution.stream()
                     .filter(validPieces::contains)
                     .flatMap(blocks -> {
-                        return reverseOrderLookUp.parse(blocks.getBlocks())
+                        return reverseOrderLookUp.parse(blocks.getPieces())
                                 .map(stream -> stream.collect(Collectors.toCollection(ArrayList::new)))
                                 .flatMap(blocksWithHold -> {
                                     int nullIndex = blocksWithHold.indexOf(null);
                                     if (nullIndex < 0)
-                                        return Stream.of(new LongBlocks(blocksWithHold));
+                                        return Stream.of(new LongPieces(blocksWithHold));
 
-                                    Stream.Builder<LongBlocks> builder = Stream.builder();
-                                    for (Block block : Block.values()) {
-                                        blocksWithHold.set(nullIndex, block);
-                                        builder.accept(new LongBlocks(blocksWithHold));
+                                    Stream.Builder<LongPieces> builder = Stream.builder();
+                                    for (Piece piece : Piece.values()) {
+                                        blocksWithHold.set(nullIndex, piece);
+                                        builder.accept(new LongPieces(blocksWithHold));
                                     }
                                     return builder.build();
                                 });

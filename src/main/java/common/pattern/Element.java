@@ -1,14 +1,14 @@
 package common.pattern;
 
-import common.datastore.BlockCounter;
-import common.datastore.pieces.Blocks;
+import common.datastore.PieceCounter;
+import common.datastore.blocks.Pieces;
 
 import java.util.List;
 
 public interface Element {
     int getPopCount();
 
-    List<Blocks> getPermutationBlocks();
+    List<Pieces> getPermutationBlocks();
 
-    List<BlockCounter> getBlockCounters();
+    List<PieceCounter> getPieceCounters();
 }

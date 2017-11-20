@@ -1,0 +1,301 @@
+// sfinder.jar Version: 0.47
+"path -t v115@HhA8GeB8IeB8HeA8JeAgH -c 3 -p Z,Z,T,L,Z,S,Z -f csv -k pattern",0,0,1
+"path -t v115@fgA8EeD8BeI8BeI8CeE8IeC8GeD8DeC8JeAgH -c 7 -p Z,I,T,Z,J,Z,S,L,T -f csv -k pattern",1,1,1
+"path -t v115@9gB8GeB8GeB8HeC8FeC8JeAgH -c 4 -p J,I,O,*p5 -f csv -k pattern",832,2361,2520
+"path -t v115@fgC8BeH8EeG8BeG8CeE8GeF8BeC8GeC8JeAgH -c 7 -p O,L,L,O,S,J,O,I -f csv -k pattern",0,0,1
+"path -t v115@fgE8CeD8DeH8DeC8DeF8DeF8CeG8BeG8JeAgH -c 7 -p I,L,*p5 -f csv -k pattern",97,1881,2520
+"path -t v115@OhC8JeA8GeB8JeAgH -c 3 -p Z,T,S,T,*p2 --hold no -f csv -k pattern",1,1,42
+"path -t v115@VgC8BeH8CeE8CeG8BeG8FeH8BeF8CeE8GeC8JeAgH -c 8 -p T,T,S,I,J,J,Z --hold no -f csv -k pattern",0,0,1
+"path -t v115@EhD8HeC8GeC8FeB8JeAgH -c 4 -p O,L,S,T,T,Z,L,Z -f csv -k pattern",8,1,1
+"path -t v115@9gA8GeC8FeD8FeC8IeA8JeAgH -c 4 -p Z,I,L,Z,O,*p3 -f csv -k pattern",38,113,210
+"path -t v115@9gE8CeE8FeA8SeA8JeAgH -c 4 -p S,J,S,T,J,T,S,T -f csv -k pattern",1,1,1
+"path -t v115@9gC8DeD8GeB8HeB8IeA8JeAgH -c 4 -p O,L,O,*p4 --hold no -f csv -k pattern",71,136,840
+"path -t v115@9gB8FeB8HeB8GeI8CeA8JeAgH -c 4 -p L,J,L,T,I,*p1 --hold no -f csv -k pattern",1,1,7
+"path -t v115@HhA8HeB8HeC8DeD8JeAgH -c 3 -p J,O,O,O,I,Z -f csv -k pattern",0,0,1
+"path -t v115@ZgF8IeG8BeH8AeI8BeE8DeE8BeF8DeF8JeAgH -c 8 -p L,S,L,T,I,T,T,Z -f csv -k pattern",0,0,1
+"path -t v115@GhB8GeD8EeC8GeC8JeAgH -c 4 -p T,T,Z,J,L,O,T --hold no -f csv -k pattern",0,0,1
+"path -t v115@fgD8AeI8BeG8EeB8FeG8BeH8CeD8IeA8JeAgH -c 7 -p T,J,T,T,O,J,T,*p1 -f csv -k pattern",0,0,7
+"path -t v115@VgF8BeG8BeF8CeO8FeG8CeE8FeG8BeC8JeAgH -c 8 -p T,L,L,I,I,O,*p1 -f csv -k pattern",0,0,7
+"path -t v115@bgI8CeH8CeG8BeE8DeD8FeD8BeH8BeG8JeAgH -c 8 -p L,I,T,J,Z,T,*p2 -f csv -k pattern",0,0,42
+"path -t v115@9gE8AeD8GeC8IeB8GeB8JeAgH -c 4 -p Z,L,Z,I,*p3 -f csv -k pattern",0,0,210
+"path -t v115@pgA8CeI8DeF8DeH8CeE8EeB8IeA8JeAgH -c 6 -p T,O,J,L,T,O,T,*p1 -f csv -k pattern",0,0,7
+"path -t v115@VgE8BeD8FeD8EeE8FeF8AeH8BeH8CeE8CeG8JeAgH -c 8 -p O,L,O,O,T,S,I --hold no -f csv -k pattern",0,0,1
+"path -t v115@HhB8FeB8IeA8IeA8JeAgH -c 3 -p Z,O,I,Z,*p2 --hold no -f csv -k pattern",0,0,42
+"path -t v115@HhA8HeA8HeB8HeB8JeAgH -c 3 -p T,T,Z,T,T,L --hold no -f csv -k pattern",0,0,1
+"path -t v115@ugF8EeI8AeH8EeA8EeE8CeG8JeAgH -c 6 -p I,O,Z,L,T,*p2 -f csv -k pattern",0,0,42
+"path -t v115@bgF8CeF8BeG8EeF8BeI8FeC8DeE8DeF8JeAgH -c 8 -p O,S,Z,S,J,Z,I,T --hold no -f csv -k pattern",0,0,1
+"path -t v115@zgA8GeD8FeH8CeC8FeD8BeF8JeAgH -c 5 -p I,T,Z,*p3 --hold no -f csv -k pattern",26,38,210
+"path -t v115@fgC8FeB8EeG8AeI8BeG8EeD8DeE8EeE8JeAgH -c 7 -p I,S,O,L,L,T,Z --hold no -f csv -k pattern",0,0,1
+"path -t v115@vgF8GeD8FeD8CeF8EeD8EeD8JeAgH -c 6 -p Z,J,T,T,*p4 --hold no -f csv -k pattern",16,32,840
+"path -t v115@fgC8FeF8BeE8GeA8EeG8CeI8CeD8FeC8JeAgH -c 7 -p L,Z,T,I,T,L,L,L --hold no -f csv -k pattern",0,0,1
+"path -t v115@fgD8BeG8FeC8BeH8AeI8CeE8CeI8GeA8JeAgH -c 7 -p S,I,*p5 -f csv -k pattern",0,0,2520
+"path -t v115@pgA8HeE8CeE8CeF8FeC8FeD8FeD8JeAgH -c 6 -p T,T,I,O,Z,S,Z,S --hold no -f csv -k pattern",0,0,1
+"path -t v115@fgG8AeD8FeB8DeH8CeH8BeH8EeC8CeF8JeAgH -c 7 -p S,Z,*p4 --hold no -f csv -k pattern",0,0,840
+"path -t v115@fgA8HeF8AeH8CeH8BeF8FeD8CeF8EeC8JeAgH -c 7 -p J,O,T,*p5 -f csv -k pattern",0,0,2520
+"path -t v115@HhA8HeA8HeC8HeA8JeAgH -c 3 -p J,I,T,S,O,J,S -f csv -k pattern",9,1,1
+"path -t v115@VgE8DeD8EeF8EeF8BeH8DeE8BeI8DeA8FeD8JeAgH -c 8 -p T,S,O,O,I,L,I,S --hold no -f csv -k pattern",0,0,1
+"path -t v115@ChE8JeC8DeC8IeA8JeAgH -c 4 -p S,S,L,Z,*p3 --hold no -f csv -k pattern",1,2,210
+"path -t v115@HhA8GeB8IeA8HeB8JeAgH -c 3 -p L,I,L,S,S,J,L -f csv -k pattern",2,1,1
+"path -t v115@9gB8FeB8HeD8GeB8GeB8JeAgH -c 4 -p S,J,Z,S,O,J,Z,L -f csv -k pattern",2,1,1
+"path -t v115@9gB8FeH8CeB8GeC8HeA8JeAgH -c 4 -p J,J,J,T,I,L,Z -f csv -k pattern",3,1,1
+"path -t v115@pgB8FeD8DeI8CeD8DeE8FeC8IeA8JeAgH -c 6 -p T,O,Z,Z,L,O,O,S --hold no -f csv -k pattern",0,0,1
+"path -t v115@HhB8GeC8FeD8GeA8JeAgH -c 3 -p I,Z,L,*p2 --hold no -f csv -k pattern",2,3,42
+"path -t v115@9gA8HeC8GeA8EeF8HeA8JeAgH -c 4 -p J,L,L,L,S,L,Z --hold no -f csv -k pattern",0,0,1
+"path -t v115@pgB8DeI8CeF8DeG8CeE8FeA8DeF8JeAgH -c 6 -p L,J,Z,Z,*p2 --hold no -f csv -k pattern",0,0,42
+"path -t v115@XgH8BeI8BeG8DeI8CeE8HeA8EeE8FeD8JeAgH -c 8 -p T,L,I,*p5 --hold no -f csv -k pattern",0,0,2520
+"path -t v115@HhA8GeD8GeD8FeA8JeAgH -c 3 -p L,Z,J,I,*p1 --hold no -f csv -k pattern",1,1,7
+"path -t v115@pgB8CeE8IeC8EeF8EeD8CeE8GeC8JeAgH -c 6 -p O,Z,S,Z,J,J,L,I,L -f csv -k pattern",0,0,1
+"path -t v115@VgA8EeE8CeH8CeG8AeH8CeH8EeE8FeH8BeB8JeAgH -c 8 -p Z,O,T,O,J,Z,J,*p1 -f csv -k pattern",0,0,7
+"path -t v115@DhE8HeB8FeD8HeA8JeAgH -c 4 -p O,*p6 --hold no -f csv -k pattern",42,578,5040
+"path -t v115@4gF8CeI8FeA8EeG8EeC8JeAgH -c 5 -p I,L,S,L,L,O --hold no -f csv -k pattern",0,0,1
+"path -t v115@pgC8EeB8HeC8GeB8CeH8BeH8GeB8JeAgH -c 6 -p J,Z,I,Z,I,L,T,I,T -f csv -k pattern",5,1,1
+"path -t v115@PhF8DeB8HeB8JeAgH -c 3 -p S,O,T,J,S --hold no -f csv -k pattern",0,0,1
+"path -t v115@VgB8EeH8AeE8FeG8DeE8DeE8EeD8BeH8EeD8JeAgH -c 8 -p Z,T,S,O,O,*p3 --hold no -f csv -k pattern",0,0,210
+"path -t v115@fgD8CeH8DeF8DeD8EeG8CeG8CeC8FeC8JeAgH -c 7 -p T,L,Z,J,Z,T,O --hold no -f csv -k pattern",0,0,1
+"path -t v115@9gD8EeC8GeD8FeB8FeC8JeAgH -c 4 -p S,O,T,*p3 --hold no -f csv -k pattern",1,2,210
+"path -t v115@VgD8DeI8BeG8CeC8GeC8FeC8EeF8BeH8CeE8JeAgH -c 8 -p Z,S,O,L,*p5 -f csv -k pattern",0,0,2520
+"path -t v115@fgE8DeD8FeC8EeG8EeH8BeI8AeA8IeA8JeAgH -c 7 -p T,O,*p7 -f csv -k pattern",21,1249,5040
+"path -t v115@HhA8GeB8QeC8JeAgH -c 3 -p I,S,L,O,*p3 -f csv -k pattern",55,131,210
+"path -t v115@zgB8CeG8GeB8EeD8EeE8HeB8JeAgH -c 5 -p T,O,O,L,I,T,Z --hold no -f csv -k pattern",0,0,1
+"path -t v115@pgB8DeE8EeF8BeI8CeE8HeC8FeB8JeAgH -c 6 -p I,T,Z,O,J,L,T --hold no -f csv -k pattern",0,0,1
+"path -t v115@fgP8CeF8BeC8GeD8DeE8IeD8CeD8JeAgH -c 7 -p I,*p6 --hold no -f csv -k pattern",0,0,5040
+"path -t v115@PhB8FeD8FeD8JeAgH -c 3 -p J,I,I,Z,L --hold no -f csv -k pattern",0,0,1
+"path -t v115@hgH8EeG8EeI8AeE8EeD8DeH8BeE8JeAgH -c 7 -p S,Z,*p5 -f csv -k pattern",0,0,2520
+"path -t v115@3gG8HeA8BeI8GeD8CeE8JeAgH -c 5 -p L,*p5 --hold no -f csv -k pattern",0,0,2520
+"path -t v115@pgG8AeE8FeC8FeC8GeE8EeB8GeC8JeAgH -c 6 -p S,T,O,T,Z,S,L,T --hold no -f csv -k pattern",0,0,1
+"path -t v115@9gA8GeB8FeD8HeB8GeC8JeAgH -c 4 -p S,S,J,S,J,J,T --hold no -f csv -k pattern",0,0,1
+"path -t v115@fgG8BeB8GeG8BeH8CeG8BeD8FeF8FeA8JeAgH -c 7 -p T,I,T,O,*p4 -f csv -k pattern",0,0,840
+"path -t v115@7gB8EeH8FeB8FeC8GeC8JeAgH -c 5 -p I,S,*p6 --hold no -f csv -k pattern",21,106,5040
+"path -t v115@VgA8FeC8BeI8AeH8FeD8CeG8CeG8BeH8EeE8JeAgH -c 8 -p J,O,T,O,I,*p2 --hold no -f csv -k pattern",0,0,42
+"path -t v115@PhB8DeG8HeA8JeAgH -c 3 -p S,Z,*p4 -f csv -k pattern",9,96,840
+"path -t v115@zgA8GeE8EeB8EeE8IeB8BeG8JeAgH -c 5 -p O,S,O,S,O,L,L,*p1 -f csv -k pattern",0,0,7
+"path -t v115@ogA8BeI8FeE8AeH8FeD8EeE8CeF8JeAgH -c 7 -p L,L,L,I,J,Z,O,J,O -f csv -k pattern",0,0,1
+"path -t v115@fgD8EeD8FeE8EeF8CeG8CeD8EeD8EeD8JeAgH -c 7 -p J,I,O,J,O,I,S,T --hold no -f csv -k pattern",0,0,1
+"path -t v115@HhA8GeD8GeA8TeAgH -c 3 -p S,T,Z,I,*p3 -f csv -k pattern",35,127,210
+"path -t v115@FhC8HeB8EeD8GeC8JeAgH -c 4 -p J,T,L,Z,L,Z,T,*p1 -f csv -k pattern",70,7,7
+"path -t v115@ChH8FeA8FeD8GeC8JeAgH -c 4 -p S,Z,*p5 -f csv -k pattern",15,155,2520
+"path -t v115@kgE8CeG8EeE8AeI8EeF8FeE8GeA8JeAgH -c 7 -p T,Z,O,L,Z,J,O,*p2 -f csv -k pattern",7,7,42
+"path -t v115@pgC8BeF8CeI8DeH8CeD8GeA8IeA8JeAgH -c 6 -p I,T,J,L,J,I,T --hold no -f csv -k pattern",0,0,1
+"path -t v115@9gD8EeF8DeA8HeD8GeA8JeAgH -c 4 -p I,S,T,T,I,T,S -f csv -k pattern",0,0,1
+"path -t v115@HhA8GeB8IeB8HeA8JeAgH -c 3 -p J,J,J,Z,O,T,*p1 -f csv -k pattern",12,7,7
+"path -t v115@zgD8DeC8FeD8GeB8HeB8GeC8JeAgH -c 5 -p I,L,I,L,I,J,T,*p2 -f csv -k pattern",266,42,42
+"path -t v115@VgB8EeG8BeE8DeE8DeF8CeH8EeI8BeH8CeB8JeAgH -c 8 -p T,L,S,I,J,Z,L,Z -f csv -k pattern",0,0,1
+"path -t v115@zgB8FeC8EeI8CeB8IeA8IeA8JeAgH -c 5 -p J,S,L,S,I,Z,L,O --hold no -f csv -k pattern",0,0,1
+"path -t v115@zgC8BeE8IeE8BeD8IeH8BeA8JeAgH -c 5 -p S,I,*p4 --hold no -f csv -k pattern",0,0,840
+"path -t v115@fgC8CeG8FeD8DeE8BeI8BeG8BeG8EeD8JeAgH -c 7 -p J,T,S,*p3 --hold no -f csv -k pattern",0,0,210
+"path -t v115@HhA8HeC8FeB8FeD8JeAgH -c 3 -p I,L,O,Z,J,I -f csv -k pattern",0,0,1
+"path -t v115@QhC8EeC8TeAgH -c 3 -p J,T,J,O,Z,S --hold no -f csv -k pattern",0,0,1
+"path -t v115@VgF8AeG8DeE8CeF8CeR8CeD8FeF8DeD8JeAgH -c 8 -p L,J,J,O,*p2 --hold no -f csv -k pattern",0,0,42
+"path -t v115@HhA8FeC8GeC8GeC8JeAgH -c 3 -p S,L,T,S,Z,I -f csv -k pattern",0,0,1
+"path -t v115@pgB8FeE8EeG8CeG8DeD8CeE8CeF8JeAgH -c 6 -p I,T,L,*p4 -f csv -k pattern",55,485,840
+"path -t v115@pgG8BeA8HeD8FeE8CeD8EeF8HeA8JeAgH -c 6 -p Z,S,L,J,T,L,Z,J,J -f csv -k pattern",3,1,1
+"path -t v115@FhB8IeB8GeE8DeC8JeAgH -c 4 -p T,L,L,O,T,S,Z --hold no -f csv -k pattern",0,0,1
+"path -t v115@zgE8DeB8FeC8EeH8DeG8EeA8JeAgH -c 5 -p I,J,J,I,J,J,T -f csv -k pattern",0,0,1
+"path -t v115@fgC8FeD8DeC8FeH8DeH8BeE8FeC8DeD8JeAgH -c 7 -p Z,J,J,L,O,J,I,S --hold no -f csv -k pattern",0,0,1
+"path -t v115@vgF8BeH8EeI8CeF8CeE8EeB8JeAgH -c 6 -p L,T,I,I,I,J,I -f csv -k pattern",0,0,1
+"path -t v115@9gE8DeB8HeD8EeB8GeC8JeAgH -c 4 -p T,O,T,S,L,I,L -f csv -k pattern",0,0,1
+"path -t v115@ygA8FeG8DeC8GeD8EeI8AeD8JeAgH -c 6 -p T,Z,L,J,Z,J,I,J,S -f csv -k pattern",6,1,1
+"path -t v115@LhH8FeB8TeAgH -c 3 -p O,J,S,*p2 --hold no -f csv -k pattern",0,0,42
+"path -t v115@VgE8DeH8BeE8DeI8BeG8BeC8FeI8BeC8FeC8JeAgH -c 8 -p O,L,T,T,I,*p3 -f csv -k pattern",0,0,210
+"path -t v115@9gA8HeC8GeA8FeF8GeA8JeAgH -c 4 -p L,Z,T,I,S,Z,S,Z -f csv -k pattern",4,1,1
+"path -t v115@PhB8GeC8IeA8JeAgH -c 3 -p O,S,O,J,J,*p1 --hold no -f csv -k pattern",0,0,7
+"path -t v115@HhA8HeA8GeC8EeE8JeAgH -c 3 -p T,L,O,T,Z --hold no -f csv -k pattern",0,0,1
+"path -t v115@OhF8EeC8HeA8JeAgH -c 3 -p Z,S,*p3 --hold no -f csv -k pattern",5,10,210
+"path -t v115@HhA8GeB8IeA8HeB8JeAgH -c 3 -p T,T,I,S,*p2 --hold no -f csv -k pattern",5,2,42
+"path -t v115@fgC8EeB8EeG8BeI8CeH8BeI8CeF8DeB8JeAgH -c 7 -p S,O,L,Z,Z,I,Z -f csv -k pattern",0,0,1
+"path -t v115@pgA8CeF8GeG8EeC8GeA8FeI8DeA8JeAgH -c 6 -p I,I,Z,*p5 --hold no -f csv -k pattern",1,2,2520
+"path -t v115@HhA8EeE8FeE8GeA8JeAgH -c 4 -p Z,Z,S,I,T,S,*p2 -f csv -k pattern",24,32,42
+"path -t v115@pgA8EeG8EeE8BeH8EeH8BeD8EeC8JeAgH -c 6 -p O,T,J,L,I,S --hold no -f csv -k pattern",0,0,1
+"path -t v115@zgA8GeD8GeD8FeD8EeC8GeB8JeAgH -c 5 -p J,I,J,J,O,L,O,T,L -f csv -k pattern",49,1,1
+"path -t v115@VgC8DeH8AeF8EeC8EeF8AeH8FeF8DeI8BeC8JeAgH -c 8 -p J,O,O,L,T,Z,L --hold no -f csv -k pattern",0,0,1
+"path -t v115@VgB8AeG8IeD8AeI8BeG8BeI8DeC8HeF8EeA8JeAgH -c 8 -p S,T,I,Z,T,O,L,I,S -f csv -k pattern",0,0,1
+"path -t v115@6gC8EeE8IeG8BeB8IeA8JeAgH -c 5 -p I,Z,O,L,T,O,S,J --hold no -f csv -k pattern",0,0,1
+"path -t v115@4gE8DeH8EeC8EeE8EeE8JeAgH -c 5 -p Z,I,J,T,J,J --hold no -f csv -k pattern",1,1,1
+"path -t v115@HhB8GeA8HeC8EeD8JeAgH -c 3 -p J,T,I,*p2 --hold no -f csv -k pattern",2,3,42
+"path -t v115@VgB8CeF8DeF8EeD8DeF8DeG8EeE8AeH8FeD8JeAgH -c 8 -p T,Z,J,J,T,J,Z,J --hold no -f csv -k pattern",0,0,1
+"path -t v115@ZgF8DeH8FeF8DeH8CeH8AeI8BeA8HeB8JeAgH -c 8 -p L,J,O,L,L,S,S,L --hold no -f csv -k pattern",0,0,1
+"path -t v115@zgC8EeB8DeI8FeA8GeC8FeD8JeAgH -c 5 -p Z,T,I,I,J,*p2 --hold no -f csv -k pattern",0,0,42
+"path -t v115@HhA8FeC8IeB8EeD8JeAgH -c 3 -p J,O,J,T,*p2 -f csv -k pattern",34,42,42
+"path -t v115@EhF8FeA8EeH8FeA8JeAgH -c 4 -p L,T,*p5 -f csv -k pattern",6,58,2520
+"path -t v115@jgF8GeC8FeH8EeF8CeH8BeE8EeB8JeAgH -c 7 -p T,L,S,T,J,T,I,T --hold no -f csv -k pattern",0,0,1
+"path -t v115@9gA8HeI8AeB8HeB8GeB8JeAgH -c 4 -p O,Z,L,*p3 --hold no -f csv -k pattern",0,0,210
+"path -t v115@9gA8HeC8GeC8FeF8CeC8JeAgH -c 4 -p S,O,S,S,*p3 -f csv -k pattern",9,29,210
+"path -t v115@zgD8DeB8GeD8GeD8BeH8DeD8JeAgH -c 5 -p S,O,T,J,T,L --hold no -f csv -k pattern",0,0,1
+"path -t v115@VgD8BeH8BeG8FeC8EeG8DeD8DeG8AeG8DeE8JeAgH -c 8 -p Z,Z,O,L,O,*p2 --hold no -f csv -k pattern",0,0,42
+"path -t v115@FhB8EeH8FeD8EeB8JeAgH -c 4 -p L,T,*p5 -f csv -k pattern",138,1922,2520
+"path -t v115@GhB8FeI8BeC8GeB8JeAgH -c 4 -p I,I,J,T,I,J,*p1 -f csv -k pattern",5,7,7
+"path -t v115@pgB8FeE8FeC8CeG8GeB8EeG8EeB8JeAgH -c 6 -p T,S,*p7 -f csv -k pattern",408,4994,5040
+"path -t v115@fgE8DeG8AeG8CeD8HeH8BeD8EeB8IeA8JeAgH -c 7 -p O,J,J,L,J,O,T,I --hold no -f csv -k pattern",0,0,1
+"path -t v115@NhD8IeA8IeA8JeAgH -c 3 -p S,I,L,S,I,I,T -f csv -k pattern",1,1,1
+"path -t v115@9gA8HeB8EeD8HeB8GeC8JeAgH -c 4 -p Z,*p6 --hold no -f csv -k pattern",77,484,5040
+"path -t v115@pgC8DeF8FeA8GeC8CeI8FeD8BeF8JeAgH -c 6 -p S,T,*p5 --hold no -f csv -k pattern",0,0,2520
+"path -t v115@vgG8DeG8AeE8HeC8BeG8CeG8JeAgH -c 6 -p L,J,S,J,L,J,*p1 -f csv -k pattern",0,0,7
+"path -t v115@VgE8AeH8EeF8CeG8AeG8DeI8BeF8DeG8DeA8JeAgH -c 8 -p T,Z,*p5 -f csv -k pattern",0,0,2520
+"path -t v115@VgF8BeI8AeI8BeI8AeF8DeD8DeC8EeF8EeD8JeAgH -c 8 -p Z,O,J,J,O,T,J -f csv -k pattern",0,0,1
+"path -t v115@pgB8FeE8BeH8DeD8EeE8GeC8HeA8JeAgH -c 6 -p L,T,T,*p6 -f csv -k pattern",935,5026,5040
+"path -t v115@fgC8FeB8EeD8HeD8BeI8AeG8FeC8DeF8JeAgH -c 7 -p L,Z,S,T,O,I,Z,J,T -f csv -k pattern",0,0,1
+"path -t v115@9gE8CeB8HeD8FeB8GeC8JeAgH -c 4 -p T,S,*p5 -f csv -k pattern",78,1250,2520
+"path -t v115@zgA8DeF8GeF8CeG8DeD8FeB8JeAgH -c 5 -p L,I,I,I,S,L --hold no -f csv -k pattern",0,0,1
+"path -t v115@zgA8GeC8CeG8CeF8GeD8DeE8JeAgH -c 5 -p Z,T,L,I,I,T,L -f csv -k pattern",6,1,1
+"path -t v115@VgG8AeG8CeF8CeF8BeE8DeG8DeG8BeG8EeD8JeAgH -c 8 -p Z,*p5 --hold no -f csv -k pattern",0,0,2520
+"path -t v115@fgA8HeF8BeG8BeG8BeE8DeG8BeI8DeD8JeAgH -c 7 -p L,I,J,I,Z,T,O -f csv -k pattern",0,0,1
+"path -t v115@fgC8EeE8FeA8FeD8HeH8CeG8BeI8BeA8JeAgH -c 7 -p T,T,I,Z,J,J,T,*p2 -f csv -k pattern",0,0,42
+"path -t v115@bgG8EeF8DeG8AeG8EeE8AeG8CeG8GeB8JeAgH -c 8 -p Z,S,*p6 --hold no -f csv -k pattern",0,0,5040
+"path -t v115@VgD8BeD8IeK8CeG8EeF8DeE8CeG8FeD8JeAgH -c 8 -p T,S,S,Z,S,T,I,O --hold no -f csv -k pattern",0,0,1
+"path -t v115@HhA8FeE8FeC8HeA8JeAgH -c 3 -p O,J,I,L,S,Z -f csv -k pattern",0,0,1
+"path -t v115@6gE8FeF8CeE8GeD8EeB8JeAgH -c 5 -p Z,S,S,I,J,L,L,T -f csv -k pattern",5,1,1
+"path -t v115@pgB8DeD8HeB8CeG8CeI8CeI8CeC8JeAgH -c 6 -p I,L,O,I,Z,I,L -f csv -k pattern",0,0,1
+"path -t v115@VgE8DeC8FeC8GeD8DeF8BeH8BeI8BeH8EeB8JeAgH -c 8 -p I,*p7 --hold no -f csv -k pattern",50,983,5040
+"path -t v115@HhA8GeB8IeB8HeA8JeAgH -c 3 -p T,I,*p4 --hold no -f csv -k pattern",53,198,840
+"path -t v115@kgG8BeI8FeC8CeI8BeE8GeE8CeD8JeAgH -c 7 -p S,T,L,J,O,I,L --hold no -f csv -k pattern",0,0,1
+"path -t v115@HhB8GeA8IeB8HeA8JeAgH -c 3 -p S,J,I,T,*p3 -f csv -k pattern",81,189,210
+"path -t v115@HhA8GeB8JeB8GeA8JeAgH -c 3 -p J,I,J,*p4 -f csv -k pattern",70,558,840
+"path -t v115@VgH8AeI8AeH8BeH8AeG8DeD8FeG8BeC8GeB8JeAgH -c 8 -p I,T,I,*p3 --hold no -f csv -k pattern",0,0,210
+"path -t v115@fgB8CeF8BeI8EeC8FeF8FeI8AeF8EeA8JeAgH -c 7 -p J,T,Z,T,I,*p3 -f csv -k pattern",0,0,210
+"path -t v115@fgB8BeH8EeG8DeG8CeB8JeG8BeC8FeB8JeAgH -c 7 -p T,J,L,Z,L,*p4 -f csv -k pattern",0,0,840
+"path -t v115@1gI8GeB8HeB8IeB8FeC8JeAgH -c 5 -p T,I,T,L,O,O,S,*p1 --hold no -f csv -k pattern",0,0,7
+"path -t v115@zgC8FeA8GeF8CeE8HeA8DeF8JeAgH -c 5 -p Z,S,O,Z,L,T,T,J -f csv -k pattern",0,0,1
+"path -t v115@pgB8FeB8EeG8FeE8DeE8CeI8DeB8JeAgH -c 6 -p I,I,L,T,T,L,S,*p1 -f csv -k pattern",13,7,7
+"path -t v115@VgB8FeE8EeE8AeH8EeF8DeI8CeC8EeD8CeF8JeAgH -c 8 -p L,Z,L,I,S,Z,Z,J,I -f csv -k pattern",0,0,1
+"path -t v115@zgQ8BeA8IeE8DeB8IeA8JeAgH -c 5 -p J,*p5 --hold no -f csv -k pattern",5,23,2520
+"path -t v115@QhA8GeD8DeE8JeAgH -c 3 -p I,J,L,I,S,*p1 -f csv -k pattern",10,3,7
+"path -t v115@9gB8GeA8FeF8FeF8EeA8JeAgH -c 4 -p T,T,O,*p3 --hold no -f csv -k pattern",1,3,210
+"path -t v115@fgD8BeD8FeG8BeI8CeG8AeI8AeE8IeA8JeAgH -c 7 -p J,I,Z,T,J,*p1 --hold no -f csv -k pattern",0,0,7
+"path -t v115@VgC8EeG8BeH8AeF8GeA8DeH8BeF8GeC8DeF8JeAgH -c 8 -p S,Z,Z,S,*p5 -f csv -k pattern",0,0,2520
+"path -t v115@PhC8EeE8GeB8JeAgH -c 3 -p O,L,*p3 --hold no -f csv -k pattern",12,29,210
+"path -t v115@VgD8CeC8EeI8AeI8EeA8EeH8BeG8GeK8JeAgH -c 8 -p Z,T,S,L,J,J,*p1 --hold no -f csv -k pattern",0,0,7
+"path -t v115@pgA8DeE8GeF8FeF8DeC8EeF8BeE8JeAgH -c 6 -p O,Z,L,*p5 -f csv -k pattern",19,692,2520
+"path -t v115@zgA8EeG8CeG8CeF8DeD8IeA8JeAgH -c 5 -p J,O,I,O,S,J,J -f csv -k pattern",0,0,1
+"path -t v115@pgB8DeD8FeE8HeC8EeE8EeD8DeE8JeAgH -c 6 -p L,L,S,Z,J,Z,L,O,T -f csv -k pattern",1,1,1
+"path -t v115@fgD8CeI8BeF8DeD8DeF8FeF8CeF8BeE8JeAgH -c 7 -p Z,L,T,O,O,J,*p1 -f csv -k pattern",0,0,7
+"path -t v115@pgB8DeG8CeE8DeF8EeH8BeG8FeA8JeAgH -c 6 -p Z,J,*p4 --hold no -f csv -k pattern",5,10,840
+"path -t v115@zgD8CeG8EeB8GeB8FeG8CeD8JeAgH -c 5 -p S,Z,J,J,*p2 --hold no -f csv -k pattern",0,0,42
+"path -t v115@7gC8CeI8FeB8HeA8CeG8JeAgH -c 5 -p J,I,L,T,S,I,I,S -f csv -k pattern",0,0,1
+"path -t v115@fgB8GeD8AeI8CeF8FeH8CeH8AeG8CeB8JeAgH -c 7 -p J,L,S,Z,Z,S,T -f csv -k pattern",0,0,1
+"path -t v115@zgE8CeB8GeH8CeC8EeE8FeC8JeAgH -c 5 -p L,I,T,L,I,O --hold no -f csv -k pattern",0,0,1
+"path -t v115@FhG8CeD8GeA8TeAgH -c 4 -p L,Z,I,S,L,T,S,Z -f csv -k pattern",1,1,1
+"path -t v115@GhA8EeE8FeE8HeA8JeAgH -c 4 -p O,S,L,I,L,O,Z --hold no -f csv -k pattern",0,0,1
+"path -t v115@vgI8AeG8DeD8EeE8CeF8EeE8JeAgH -c 6 -p J,O,Z,S,S,Z,L -f csv -k pattern",0,0,1
+"path -t v115@pgB8FeE8FeB8FeF8FeE8AeF8GeB8JeAgH -c 6 -p T,J,L,*p5 --hold no -f csv -k pattern",100,374,2520
+"path -t v115@7gB8DeH8GeB8FeC8GeC8JeAgH -c 5 -p I,T,L,O,O,T,*p3 -f csv -k pattern",405,208,210
+"path -t v115@GhA8FeF8EeD8HeA8JeAgH -c 4 -p I,T,*p6 -f csv -k pattern",247,5019,5040
+"path -t v115@VgD8BeF8CeF8EeD8BeI8EeF8FeH8CeG8BeB8JeAgH -c 8 -p Z,Z,L,Z,T,L,*p1 --hold no -f csv -k pattern",0,0,7
+"path -t v115@9gA8EeF8FeB8FeD8GeC8JeAgH -c 4 -p Z,J,S,*p4 -f csv -k pattern",46,245,840
+"path -t v115@HhA8EeD8IeD8FeA8JeAgH -c 3 -p S,S,Z,L,*p2 -f csv -k pattern",2,3,42
+"path -t v115@OhC8FeE8GeB8JeAgH -c 3 -p S,I,O,L,I --hold no -f csv -k pattern",0,0,1
+"path -t v115@HhA8HeC8FeD8FeB8JeAgH -c 3 -p O,L,L,L,I,T -f csv -k pattern",1,1,1
+"path -t v115@fgF8BeE8EeC8GeC8DeI8CeI8AeI8BeB8JeAgH -c 7 -p I,I,T,I,Z,O,I -f csv -k pattern",1,1,1
+"path -t v115@mgD8BeH8GeE8DeD8DeF8CeF8EeE8JeAgH -c 7 -p S,O,J,L,O,J,*p2 --hold no -f csv -k pattern",0,0,42
+"path -t v115@tgG8AeH8FeD8EeE8CeH8EeD8JeAgH -c 6 -p O,L,S,Z,T,*p2 -f csv -k pattern",0,0,42
+"path -t v115@fgA8BeG8FeG8AeF8HeB8CeG8GeD8EeD8JeAgH -c 7 -p S,O,O,J,Z,L,L,S --hold no -f csv -k pattern",0,0,1
+"path -t v115@pgD8CeE8CeG8GeF8DeE8BeE8EeD8JeAgH -c 6 -p S,Z,S,S,S,T,I -f csv -k pattern",0,0,1
+"path -t v115@zgA8FeG8EeA8IeG8CeC8EeC8JeAgH -c 5 -p Z,O,Z,Z,S,J,I,*p1 -f csv -k pattern",0,0,7
+"path -t v115@VgD8AeI8AeI8EeB8DeF8BeI8EeD8EeF8AeG8JeAgH -c 8 -p S,S,Z,*p3 --hold no -f csv -k pattern",0,0,210
+"path -t v115@9gA8DeG8DeD8IeB8GeB8JeAgH -c 4 -p O,S,L,S,I,*p2 -f csv -k pattern",2,3,42
+"path -t v115@pgA8EeI8DeE8DeB8IeA8HeB8BeH8JeAgH -c 6 -p Z,O,Z,T,I,J,J,L,T -f csv -k pattern",0,0,1
+"path -t v115@fgB8FeF8DeB8EeH8CeE8FeD8DeO8JeAgH -c 7 -p I,J,*p6 -f csv -k pattern",50,2034,5040
+"path -t v115@9gA8GeB8EeF8FeE8FeB8JeAgH -c 4 -p L,T,J,O,Z,O --hold no -f csv -k pattern",0,0,1
+"path -t v115@zgB8EeD8HeA8FeG8EeB8HeB8JeAgH -c 5 -p J,I,*p7 -f csv -k pattern",213,4487,5040
+"path -t v115@VgG8BeG8CeG8CeD8EeE8AeI8DeF8DeE8BeF8JeAgH -c 8 -p I,L,Z,L,O,I,L -f csv -k pattern",0,0,1
+"path -t v115@HhA8FeE8FeB8HeB8JeAgH -c 3 -p S,L,I,Z,O --hold no -f csv -k pattern",0,0,1
+"path -t v115@EhE8FeD8GeE8DeB8JeAgH -c 4 -p J,S,T,S,J,L --hold no -f csv -k pattern",2,1,1
+"path -t v115@PhC8EeF8GeA8JeAgH -c 3 -p Z,*p4 --hold no -f csv -k pattern",13,49,840
+"path -t v115@FhF8CeC8JeB8GeA8JeAgH -c 4 -p L,T,S,I,I,J,O,Z -f csv -k pattern",6,1,1
+"path -t v115@pgA8DeF8HeD8AeF8GeE8BeF8FeD8JeAgH -c 6 -p L,Z,I,L,S,J,L,T -f csv -k pattern",0,0,1
+"path -t v115@vgH8EeE8EeI8AeF8DeA8GeC8JeAgH -c 6 -p J,O,Z,O,O,L,L,L -f csv -k pattern",0,0,1
+"path -t v115@HhC8EeC8HeB8GeB8JeAgH -c 3 -p S,*p4 --hold no -f csv -k pattern",16,90,840
+"path -t v115@XhE8HeA8JeAgH -c 3 -p J,O,I,J,Z,S,J -f csv -k pattern",0,0,1
+"path -t v115@HhC8FeE8DeB8TeAgH -c 3 -p J,S,Z,*p2 --hold no -f csv -k pattern",0,0,42
+"path -t v115@fgB8DeH8BeE8EeG8DeD8EeH8BeH8BeD8JeAgH -c 7 -p S,Z,Z,L,J,O --hold no -f csv -k pattern",0,0,1
+"path -t v115@VgF8AeC8IeI8AeF8DeC8DeF8CeG8CeH8CeD8JeAgH -c 8 -p Z,J,J,J,S,*p3 -f csv -k pattern",0,0,210
+"path -t v115@9gA8GeD8GeA8GeC8GeC8JeAgH -c 4 -p J,I,L,S,T,S,*p1 --hold no -f csv -k pattern",4,2,7
+"path -t v115@ChE8IeA8HeC8FeC8JeAgH -c 4 -p O,I,L,O,O,L,Z --hold no -f csv -k pattern",0,0,1
+"path -t v115@zgB8DeH8EeF8CeB8HeG8DeA8JeAgH -c 5 -p T,Z,S,Z,J,T --hold no -f csv -k pattern",0,0,1
+"path -t v115@pgE8CeD8FeD8DeI8DeE8EeA8FeD8JeAgH -c 6 -p T,J,I,*p5 -f csv -k pattern",9,413,2520
+"path -t v115@fgA8GeG8DeB8EeI8CeD8EeF8FeG8BeB8JeAgH -c 7 -p J,Z,I,L,T,Z,Z,L --hold no -f csv -k pattern",0,0,1
+"path -t v115@9gC8DeC8GeC8IeF8DeA8JeAgH -c 4 -p I,J,Z,O,T,S --hold no -f csv -k pattern",0,0,1
+"path -t v115@pgD8DeC8EeD8CeG8DeF8CeG8EeE8JeAgH -c 6 -p T,L,T,T,I,S --hold no -f csv -k pattern",0,0,1
+"path -t v115@3gI8DeC8GeD8DeE8EeE8JeAgH -c 5 -p L,O,J,I,J,T --hold no -f csv -k pattern",0,0,1
+"path -t v115@pgD8EeC8CeG8EeC8JeB8CeI8BeD8JeAgH -c 6 -p Z,Z,J,I,I,J,I --hold no -f csv -k pattern",0,0,1
+"path -t v115@agF8AeI8DeS8DeG8CeC8HeG8CeA8JeAgH -c 8 -p I,T,Z,L,I,Z,O --hold no -f csv -k pattern",0,0,1
+"path -t v115@zgF8CeD8FeA8HeB8DeF8CeG8JeAgH -c 5 -p I,S,L,*p3 --hold no -f csv -k pattern",2,5,210
+"path -t v115@igQ8IeB8CeH8EeC8CeH8AeH8JeAgH -c 7 -p L,I,J,T,*p2 --hold no -f csv -k pattern",1,1,42
+"path -t v115@VgD8DeQ8BeI8CeC8FeB8CeH8BeG8DeF8JeAgH -c 8 -p O,S,*p5 -f csv -k pattern",0,0,2520
+"path -t v115@9gF8BeD8FeB8JeC8FeA8JeAgH -c 4 -p I,I,O,T,Z,J,O -f csv -k pattern",0,0,1
+"path -t v115@OhC8HeB8IeA8JeAgH -c 3 -p L,Z,S,I,I,Z --hold no -f csv -k pattern",0,0,1
+"path -t v115@9gB8GeC8GeA8GeC8GeC8JeAgH -c 4 -p I,*p6 --hold no -f csv -k pattern",81,1047,5040
+"path -t v115@pgB8GeA8EeH8CeE8CeI8CeI8CeB8JeAgH -c 6 -p S,O,*p5 -f csv -k pattern",0,0,2520
+"path -t v115@fgC8DeF8DeE8DeF8FeB8EeG8CeH8FeA8JeAgH -c 7 -p L,I,O,O,J,O,Z,J --hold no -f csv -k pattern",0,0,1
+"path -t v115@HhE8CeC8HeA8IeA8JeAgH -c 3 -p T,J,I,S,L --hold no -f csv -k pattern",0,0,1
+"path -t v115@fgB8GeC8BeF8DeH8DeH8AeH8FeA8DeF8JeAgH -c 7 -p T,J,I,J,Z,J,*p1 --hold no -f csv -k pattern",0,0,7
+"path -t v115@pgC8EeB8HeC8EeG8BeI8EeC8CeE8JeAgH -c 6 -p J,T,T,S,*p4 -f csv -k pattern",21,122,840
+"path -t v115@ugF8HeB8GeI8BeF8DeB8FeC8JeAgH -c 6 -p L,Z,O,Z,Z,I,I,T,J -f csv -k pattern",0,0,1
+"path -t v115@6gE8FeG8DeA8FeD8IeA8JeAgH -c 5 -p I,O,S,*p5 --hold no -f csv -k pattern",4,10,2520
+"path -t v115@9gB8GeE8CeD8EeD8IeA8JeAgH -c 4 -p O,S,O,L,T,*p2 -f csv -k pattern",1,1,42
+"path -t v115@pgB8CeF8FeG8EeC8DeG8EeE8AeF8JeAgH -c 6 -p Z,S,S,J,O,I,O -f csv -k pattern",0,0,1
+"path -t v115@agG8CeG8DeE8BeH8EeG8CeE8FeC8DeF8JeAgH -c 8 -p I,O,O,J,T,Z,Z,Z --hold no -f csv -k pattern",0,0,1
+"path -t v115@9gC8FeB8FeD8GeB8IeA8JeAgH -c 4 -p Z,J,O,I,I,I,T --hold no -f csv -k pattern",0,0,1
+"path -t v115@VgC8FeC8CeF8EeH8CeS8AeH8DeA8TeAgH -c 8 -p T,T,I,S,*p5 -f csv -k pattern",0,0,2520
+"path -t v115@zgA8FeC8IeA8DeH8DeE8EeD8JeAgH -c 5 -p Z,J,O,O,*p3 --hold no -f csv -k pattern",19,20,210
+"path -t v115@fgA8BeI8GeB8CeG8GeF8BeH8BeI8AeD8JeAgH -c 7 -p I,O,S,S,L,O,O -f csv -k pattern",0,0,1
+"path -t v115@fgB8GeC8CeI8BeF8GeF8DeC8FeE8CeD8JeAgH -c 7 -p T,S,L,S,O,Z,J,L,L -f csv -k pattern",3,1,1
+"path -t v115@fgE8BeG8CeE8GeG8CeF8CeB8HeF8BeD8JeAgH -c 7 -p L,T,L,Z,Z,I,O --hold no -f csv -k pattern",0,0,1
+"path -t v115@9gC8FeB8HeD8EeD8EeC8JeAgH -c 4 -p O,J,Z,S,*p3 -f csv -k pattern",45,108,210
+"path -t v115@VgG8BeH8BeE8EeG8AeI8BeD8EeD8CeG8DeE8JeAgH -c 8 -p I,T,I,O,I,Z,*p1 -f csv -k pattern",0,0,7
+"path -t v115@9gA8GeD8FeB8GeG8DeB8JeAgH -c 4 -p T,T,J,J,T,*p2 -f csv -k pattern",6,13,42
+"path -t v115@OhC8HeB8EeE8JeAgH -c 3 -p Z,O,O,T,*p2 -f csv -k pattern",11,19,42
+"path -t v115@VgL8FeF8DeD8CeH8AeI8FeG8CeD8EeB8JeAgH -c 8 -p S,J,T,S,*p3 --hold no -f csv -k pattern",0,0,210
+"path -t v115@VgF8BeF8CeD8EeD8BeH8EeH8DeG8CeM8JeAgH -c 8 -p Z,Z,T,*p4 -f csv -k pattern",0,0,840
+"path -t v115@kgE8CeI8CeH8DeI8BeI8BeD8EeB8JeAgH -c 7 -p T,Z,L,Z,Z,T --hold no -f csv -k pattern",0,0,1
+"path -t v115@HhA8HeA8GeE8EeC8JeAgH -c 3 -p L,S,Z,*p2 --hold no -f csv -k pattern",5,5,42
+"path -t v115@xgB8EeF8BeG8EeG8GeE8EeA8JeAgH -c 6 -p T,T,T,S,J,T,O,Z,J -f csv -k pattern",0,0,1
+"path -t v115@pgD8BeF8DeF8GeD8EeD8GeC8CeE8JeAgH -c 6 -p T,O,Z,Z,J,J,I,L -f csv -k pattern",1,1,1
+"path -t v115@VgF8CeE8CeH8AeD8FeG8EeN8DeF8BeF8JeAgH -c 8 -p J,Z,Z,Z,Z,O,I -f csv -k pattern",0,0,1
+"path -t v115@HhA8HeA8HeB8HeB8JeAgH -c 3 -p O,L,J,S,L,I --hold no -f csv -k pattern",0,0,1
+"path -t v115@9gC8FeA8HeB8HeD8FeB8JeAgH -c 4 -p S,Z,*p5 --hold no -f csv -k pattern",26,112,2520
+"path -t v115@fgD8EeG8CeE8CeI8BeD8FeC8EeD8HeB8JeAgH -c 7 -p J,T,*p6 --hold no -f csv -k pattern",1,2,5040
+"path -t v115@pgC8DeC8DeG8FeC8BeI8DeF8DeE8JeAgH -c 6 -p O,O,Z,Z,T,*p2 -f csv -k pattern",0,0,42
+"path -t v115@pgA8GeB8FeF8DeH8EeD8FeC8DeD8JeAgH -c 6 -p T,I,S,O,O,*p3 --hold no -f csv -k pattern",4,5,210
+"path -t v115@fgB8BeI8CeE8EeD8CeG8EeH8EeG8AeD8JeAgH -c 7 -p I,J,S,S,I,T --hold no -f csv -k pattern",0,0,1
+"path -t v115@6gE8FeE8EeF8DeB8FeD8JeAgH -c 5 -p J,Z,Z,L,J,S,J,S -f csv -k pattern",3,1,1
+"path -t v115@igI8DeG8AeH8BeI8DeD8HeD8BeE8JeAgH -c 7 -p T,O,*p5 -f csv -k pattern",0,0,2520
+"path -t v115@pgD8DeB8EeH8EeF8EeE8EeD8DeC8JeAgH -c 6 -p Z,I,I,O,O,Z,Z --hold no -f csv -k pattern",0,0,1
+"path -t v115@9gC8FeB8HeB8FeH8DeA8JeAgH -c 4 -p J,Z,*p4 --hold no -f csv -k pattern",12,34,840
+"path -t v115@HhB8EeC8IeD8FeA8JeAgH -c 3 -p S,T,Z,J,I --hold no -f csv -k pattern",0,0,1
+"path -t v115@9gD8EeE8DeB8GeD8HeA8JeAgH -c 4 -p J,S,T,O,Z,L,T -f csv -k pattern",0,0,1
+"path -t v115@pgD8BeH8CeD8HeA8BeH8DeH8EeC8JeAgH -c 6 -p I,T,O,*p3 --hold no -f csv -k pattern",0,0,210
+"path -t v115@VgA8AeH8DeF8BeH8CeH8BeI8BeG8HeC8BeF8JeAgH -c 8 -p Z,Z,S,I,*p3 -f csv -k pattern",0,0,210
+"path -t v115@VgE8BeE8DeD8CeH8BeI8AeH8DeH8DeC8DeF8JeAgH -c 8 -p J,T,T,T,O,J,O -f csv -k pattern",0,0,1
+"path -t v115@jgF8DeF8DeH8EeH8CeH8CeC8EeC8JeAgH -c 7 -p T,O,I,*p4 --hold no -f csv -k pattern",0,0,840
+"path -t v115@fgD8EeC8EeE8BeG8EeD8CeG8CeH8AeH8JeAgH -c 7 -p Z,Z,T,I,L,T --hold no -f csv -k pattern",0,0,1
+"path -t v115@QhA8GeG8DeB8JeAgH -c 3 -p J,J,O,O,L --hold no -f csv -k pattern",1,1,1
+"path -t v115@pgA8CeG8EeD8CeH8GeC8DeE8BeH8JeAgH -c 6 -p S,O,*p5 -f csv -k pattern",1,66,2520
+"path -t v115@fgD8EeA8EeF8CeH8BeG8CeH8EeI8AeC8JeAgH -c 7 -p O,S,T,L,O,L,L -f csv -k pattern",0,0,1
+"path -t v115@pgG8BeE8EeF8BeC8HeF8EeD8FeA8JeAgH -c 6 -p O,I,I,I,Z,Z,T,O -f csv -k pattern",0,0,1
+"path -t v115@fgE8CeF8BeH8CeE8FeD8EeF8EeL8JeAgH -c 7 -p L,O,I,J,L,T,Z -f csv -k pattern",1,1,1
+"path -t v115@MhE8SeA8JeAgH -c 3 -p O,S,O,S,L,Z,Z -f csv -k pattern",0,0,1
+"path -t v115@zgF8CeD8FeA8IeA8HeB8FeD8JeAgH -c 5 -p L,S,T,S,I,T,Z,T,L -f csv -k pattern",3,1,1
+"path -t v115@FhB8IeC8GeD8DeC8JeAgH -c 4 -p O,I,L,T,Z,L,I --hold no -f csv -k pattern",1,1,1
+"path -t v115@QhC8GeF8DeA8JeAgH -c 3 -p O,T,L,L,T --hold no -f csv -k pattern",0,0,1
+"path -t v115@ygA8FeD8DeQ8EeE8DeE8JeAgH -c 6 -p I,I,L,T,I,S,T --hold no -f csv -k pattern",1,1,1
+"path -t v115@zgD8BeD8JeA8EeE8GeB8HeB8JeAgH -c 5 -p O,J,O,I,L,S,J,Z,*p1 -f csv -k pattern",36,7,7
+"path -t v115@5gE8GeB8FeD8HeB8EeE8JeAgH -c 5 -p S,S,T,T,O,I,S,J,O -f csv -k pattern",0,0,1
+"path -t v115@YgH8DeI8BeE8GeD8DeF8DeG8AeH8GeA8JeAgH -c 8 -p S,T,Z,O,T,S,S,Z --hold no -f csv -k pattern",0,0,1
+"path -t v115@VgG8BeI8AeF8DeF8DeG8AeH8BeG8CeD8GeB8JeAgH -c 8 -p L,S,J,L,Z,T --hold no -f csv -k pattern",0,0,1
+"path -t v115@QhA8HeD8CeE8JeAgH -c 3 -p I,J,S,J,L,Z -f csv -k pattern",1,1,1
+"path -t v115@pgA8HeD8CeI8CeB8GeG8DeH8CeA8JeAgH -c 6 -p Z,O,J,S,O,J,O,T -f csv -k pattern",0,0,1
+"path -t v115@fgA8FeE8EeF8BeI8DeF8DeD8EeH8BeC8JeAgH -c 7 -p T,O,T,T,L,L,I --hold no -f csv -k pattern",0,0,1
+"path -t v115@fgA8EeD8GeE8BeI8CeG8AeH8CeH8CeD8JeAgH -c 7 -p S,Z,T,L,L,L,L -f csv -k pattern",2,1,1
+"path -t v115@zgC8DeD8DeH8FeD8CeI8AeD8JeAgH -c 6 -p Z,O,*p6 -f csv -k pattern",1,4,5040
+"path -t v115@HhA8GeC8GeC8FeC8JeAgH -c 3 -p J,O,O,S,L,T -f csv -k pattern",0,0,1
+"path -t v115@zgB8DeD8FeG8EeF8EeE8DeB8JeAgH -c 5 -p O,O,S,*p4 -f csv -k pattern",2,16,840
+"path -t v115@9gE8DeC8FeC8HeD8FeA8JeAgH -c 4 -p I,T,L,O,Z,Z --hold no -f csv -k pattern",0,0,1
+"path -t v115@xgD8GeD8CeQ8EeF8EeA8JeAgH -c 6 -p L,J,T,Z,J,*p2 --hold no -f csv -k pattern",33,25,42
+"path -t v115@RhC8FeB8HeA8JeAgH -c 3 -p L,I,S,L,T,Z,*p1 -f csv -k pattern",28,7,7
+"path -t v115@zgB8EeC8GeD8AeI8GeE8DeC8JeAgH -c 5 -p O,T,S,S,O,L --hold no -f csv -k pattern",0,0,1
+"path -t v115@zgD8EeD8DeC8JeE8DeF8AeD8JeAgH -c 5 -p I,L,T,I,L,T --hold no -f csv -k pattern",2,1,1
+"path -t v115@9gA8GeB8GeE8EeF8EeB8JeAgH -c 4 -p O,S,T,S,I,L,Z -f csv -k pattern",0,0,1
+"path -t v115@fgD8DeF8CeF8FeC8DeE8FeI8BeG8CeB8JeAgH -c 7 -p O,J,I,O,O,L,T --hold no -f csv -k pattern",0,0,1
+"path -t v115@pgE8DeC8DeH8EeE8EeB8DeE8FeD8JeAgH -c 6 -p J,S,O,S,I,J,I,I -f csv -k pattern",0,0,1
+"path -t v115@VgC8DeG8EeC8CeF8CeG8CeF8EeE8DeF8AeI8JeAgH -c 8 -p I,O,L,S,J,S,Z,Z -f csv -k pattern",0,0,1
+"path -t v115@8gF8BeF8DeC8JeA8GeB8JeAgH -c 5 -p J,J,O,T,L,J,O,S,T -f csv -k pattern",3,1,1

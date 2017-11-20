@@ -1,6 +1,6 @@
 package _implements.parity_based_pack.step1;
 
-import core.mino.Block;
+import core.mino.Piece;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,15 +15,15 @@ class EstimateFactory {
 
         // S
         for (int count = 0; count < countS; count++)
-            minos.add(DeltaLimitedMino.create(Block.S, DeltaLimit.Flat));
+            minos.add(DeltaLimitedMino.create(Piece.S, DeltaLimit.Flat));
 
         // Z
         for (int count = 0; count < countZ; count++)
-            minos.add(DeltaLimitedMino.create(Block.Z, DeltaLimit.Flat));
+            minos.add(DeltaLimitedMino.create(Piece.Z, DeltaLimit.Flat));
 
         // O
         for (int count = 0; count < countO; count++)
-            minos.add(DeltaLimitedMino.create(Block.O, DeltaLimit.Flat));
+            minos.add(DeltaLimitedMino.create(Piece.O, DeltaLimit.Flat));
 
         return Collections.singletonList(minos);
     }
@@ -48,10 +48,10 @@ class EstimateFactory {
         List<DeltaLimitedMino> minos = new ArrayList<>();
 
         for (int count = 0; count < countL; count++)
-            minos.add(DeltaLimitedMino.create(Block.L, deltaLimit));
+            minos.add(DeltaLimitedMino.create(Piece.L, deltaLimit));
 
         for (int count = 0; count < countJ; count++)
-            minos.add(DeltaLimitedMino.create(Block.J, deltaLimit));
+            minos.add(DeltaLimitedMino.create(Piece.J, deltaLimit));
 
         return Collections.singletonList(minos);
     }
@@ -120,16 +120,16 @@ class EstimateFactory {
         List<DeltaLimitedMino> minos = new ArrayList<>();
 
         for (int count = 0; count < evenCountL; count++)
-            minos.add(DeltaLimitedMino.create(Block.L, DeltaLimit.EvenUp));
+            minos.add(DeltaLimitedMino.create(Piece.L, DeltaLimit.EvenUp));
 
         for (int count = 0; count < oddCountL; count++)
-            minos.add(DeltaLimitedMino.create(Block.L, DeltaLimit.OddUp));
+            minos.add(DeltaLimitedMino.create(Piece.L, DeltaLimit.OddUp));
 
         for (int count = 0; count < evenCountJ; count++)
-            minos.add(DeltaLimitedMino.create(Block.J, DeltaLimit.EvenUp));
+            minos.add(DeltaLimitedMino.create(Piece.J, DeltaLimit.EvenUp));
 
         for (int count = 0; count < oddCountJ; count++)
-            minos.add(DeltaLimitedMino.create(Block.J, DeltaLimit.OddUp));
+            minos.add(DeltaLimitedMino.create(Piece.J, DeltaLimit.OddUp));
 
         return minos;
     }
@@ -147,7 +147,7 @@ class EstimateFactory {
         // odd T
         List<DeltaLimitedMino> withOddUp = new ArrayList<>();
         for (int count = 0; count < oddCountT; count++)
-            withOddUp.add(DeltaLimitedMino.create(Block.T, DeltaLimit.OddUp));
+            withOddUp.add(DeltaLimitedMino.create(Piece.T, DeltaLimit.OddUp));
 
         // flat
         List<List<DeltaLimitedMino>> withFlat = new ArrayList<>();
@@ -166,7 +166,7 @@ class EstimateFactory {
         // even T
         List<DeltaLimitedMino> withEvenUp = new ArrayList<>();
         for (int count = 0; count < evenCountT; count++)
-            withEvenUp.add(DeltaLimitedMino.create(Block.T, DeltaLimit.EvenUp));
+            withEvenUp.add(DeltaLimitedMino.create(Piece.T, DeltaLimit.EvenUp));
 
         // flat
         List<List<DeltaLimitedMino>> withFlat = new ArrayList<>();
@@ -185,12 +185,12 @@ class EstimateFactory {
         List<DeltaLimitedMino> minos = new ArrayList<>();
 
         for (int count = 0; count < sideCountT / 2; count++) {
-            minos.add(DeltaLimitedMino.create(Block.T, DeltaLimit.OddUp));
-            minos.add(DeltaLimitedMino.create(Block.T, DeltaLimit.EvenUp));
+            minos.add(DeltaLimitedMino.create(Piece.T, DeltaLimit.OddUp));
+            minos.add(DeltaLimitedMino.create(Piece.T, DeltaLimit.EvenUp));
         }
 
         for (int count = 0; count < countT - sideCountT; count++)
-            minos.add(DeltaLimitedMino.create(Block.T, DeltaLimit.Flat));
+            minos.add(DeltaLimitedMino.create(Piece.T, DeltaLimit.Flat));
 
         return minos;
     }
@@ -208,7 +208,7 @@ class EstimateFactory {
         // odd I
         List<DeltaLimitedMino> withOddUp = new ArrayList<>();
         for (int count = 0; count < oddCountI; count++)
-            withOddUp.add(DeltaLimitedMino.create(Block.I, DeltaLimit.OddUp));
+            withOddUp.add(DeltaLimitedMino.create(Piece.I, DeltaLimit.OddUp));
 
         // flat
         List<List<DeltaLimitedMino>> withFlat = new ArrayList<>();
@@ -227,7 +227,7 @@ class EstimateFactory {
         // even I
         List<DeltaLimitedMino> withEvenUp = new ArrayList<>();
         for (int count = 0; count < evenCountI; count++)
-            withEvenUp.add(DeltaLimitedMino.create(Block.I, DeltaLimit.EvenUp));
+            withEvenUp.add(DeltaLimitedMino.create(Piece.I, DeltaLimit.EvenUp));
 
         // flat
         List<List<DeltaLimitedMino>> withFlat = new ArrayList<>();
@@ -246,12 +246,12 @@ class EstimateFactory {
         List<DeltaLimitedMino> minos = new ArrayList<>();
 
         for (int count = 0; count < sideCountI / 2; count++) {
-            minos.add(DeltaLimitedMino.create(Block.I, DeltaLimit.OddUp));
-            minos.add(DeltaLimitedMino.create(Block.I, DeltaLimit.EvenUp));
+            minos.add(DeltaLimitedMino.create(Piece.I, DeltaLimit.OddUp));
+            minos.add(DeltaLimitedMino.create(Piece.I, DeltaLimit.EvenUp));
         }
 
         for (int count = 0; count < countI - sideCountI; count++)
-            minos.add(DeltaLimitedMino.create(Block.I, DeltaLimit.Flat));
+            minos.add(DeltaLimitedMino.create(Piece.I, DeltaLimit.Flat));
 
         return minos;
     }

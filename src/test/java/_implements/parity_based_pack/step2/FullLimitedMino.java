@@ -103,7 +103,7 @@ public class FullLimitedMino implements Comparable<FullLimitedMino> {
     @Override
     public String toString() {
         return "FullLimitedMino{" +
-                "mino=" + mino.getBlock() + "-" + mino.getRotate() + ":" + deleteKey +
+                "mino=" + mino.getPiece() + "-" + mino.getRotate() + ":" + deleteKey +
                 ",pos=" + positionLimit +
                 '}';
     }
@@ -124,7 +124,7 @@ public class FullLimitedMino implements Comparable<FullLimitedMino> {
 
     @Override
     public int compareTo(FullLimitedMino o) {
-        int block = mino.getBlock().compareTo(o.mino.getBlock());
+        int block = mino.getPiece().compareTo(o.mino.getPiece());
         if (block != 0)
             return block;
 

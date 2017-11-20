@@ -1,6 +1,6 @@
 package common.tree;
 
-import core.mino.Block;
+import core.mino.Piece;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -11,19 +11,19 @@ public class ConcurrentVisitedTree {
     public static final short FAILED = 1;
 
     private static class Element {
-        private final EnumMap<Block, Element> current = new EnumMap<>(Block.class);
+        private final EnumMap<Piece, Element> current = new EnumMap<>(Piece.class);
         private int isSucceed = NO_RESULT;
 
-        private void success(List<Block> blocks, int depth) {
-            if (depth < blocks.size()) {
-                Block currentBlock = blocks.get(depth);
-                if (currentBlock != null) {
-                    Element element = current.computeIfAbsent(currentBlock, k -> new Element());
-                    element.success(blocks, depth + 1);
+        private void success(List<Piece> pieces, int depth) {
+            if (depth < pieces.size()) {
+                Piece currentPiece = pieces.get(depth);
+                if (currentPiece != null) {
+                    Element element = current.computeIfAbsent(currentPiece, k -> new Element());
+                    element.success(pieces, depth + 1);
                 } else {
-                    for (Block block : Block.values()) {
-                        Element element = current.computeIfAbsent(block, k -> new Element());
-                        element.success(blocks, depth + 1);
+                    for (Piece piece : Piece.values()) {
+                        Element element = current.computeIfAbsent(piece, k -> new Element());
+                        element.success(pieces, depth + 1);
                     }
                 }
             } else {
@@ -31,16 +31,16 @@ public class ConcurrentVisitedTree {
             }
         }
 
-        private void fail(List<Block> blocks, int depth) {
-            if (depth < blocks.size()) {
-                Block currentBlock = blocks.get(depth);
-                if (currentBlock != null) {
-                    Element element = current.computeIfAbsent(currentBlock, k -> new Element());
-                    element.fail(blocks, depth + 1);
+        private void fail(List<Piece> pieces, int depth) {
+            if (depth < pieces.size()) {
+                Piece currentPiece = pieces.get(depth);
+                if (currentPiece != null) {
+                    Element element = current.computeIfAbsent(currentPiece, k -> new Element());
+                    element.fail(pieces, depth + 1);
                 } else {
-                    for (Block block : Block.values()) {
-                        Element element = current.computeIfAbsent(block, k -> new Element());
-                        element.fail(blocks, depth + 1);
+                    for (Piece piece : Piece.values()) {
+                        Element element = current.computeIfAbsent(piece, k -> new Element());
+                        element.fail(pieces, depth + 1);
                     }
                 }
             } else {
@@ -48,51 +48,51 @@ public class ConcurrentVisitedTree {
             }
         }
 
-        private boolean isVisited(List<Block> blocks, int depth) {
-            Block block = blocks.get(depth);
-            if (depth + 1 < blocks.size()) {
-                return current.containsKey(block) && current.get(block).isVisited(blocks, depth + 1);
+        private boolean isVisited(List<Piece> pieces, int depth) {
+            Piece piece = pieces.get(depth);
+            if (depth + 1 < pieces.size()) {
+                return current.containsKey(piece) && current.get(piece).isVisited(pieces, depth + 1);
             } else {
-                return current.containsKey(block);
+                return current.containsKey(piece);
             }
         }
 
-        private int isSucceed(List<Block> blocks, int depth) {
-            if (blocks.size() <= depth)
+        private int isSucceed(List<Piece> pieces, int depth) {
+            if (pieces.size() <= depth)
                 return isSucceed;
 
-            Block block = blocks.get(depth);
-            if (!current.containsKey(block))
+            Piece piece = pieces.get(depth);
+            if (!current.containsKey(piece))
                 return NO_RESULT;
 
-            return current.get(block).isSucceed(blocks, depth + 1);
+            return current.get(piece).isSucceed(pieces, depth + 1);
         }
     }
 
     private final Element rootElement = new Element();
 
-    public void success(List<Block> blocks) {
+    public void success(List<Piece> pieces) {
         synchronized (rootElement) {
-            rootElement.success(blocks, 0);
+            rootElement.success(pieces, 0);
         }
     }
 
-    public void fail(List<Block> blocks) {
+    public void fail(List<Piece> pieces) {
         synchronized (rootElement) {
-            rootElement.fail(blocks, 0);
+            rootElement.fail(pieces, 0);
         }
     }
 
-    public void set(boolean result, List<Block> blocks) {
+    public void set(boolean result, List<Piece> pieces) {
         if (result)
-            success(blocks);
+            success(pieces);
         else
-            fail(blocks);
+            fail(pieces);
     }
 
-    public int isSucceed(List<Block> blocks) {
+    public int isSucceed(List<Piece> pieces) {
         synchronized (rootElement) {
-            return rootElement.isSucceed(blocks, 0);
+            return rootElement.isSucceed(pieces, 0);
         }
     }
 }

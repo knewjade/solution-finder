@@ -1,12 +1,17 @@
 package entry.percent;
 
-import common.datastore.pieces.LongBlocks;
-import common.pattern.BlocksGenerator;
-import common.pattern.IBlocksGenerator;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import common.datastore.blocks.LongPieces;
+import common.pattern.LoadedPatternGenerator;
+import common.pattern.PatternGenerator;
 import concurrent.LockedCandidateThreadLocal;
+import concurrent.LockedReachableThreadLocal;
 import core.field.Field;
 import core.field.FieldFactory;
+import core.mino.MinoFactory;
 import entry.searching_pieces.NormalEnumeratePieces;
+import module.BasicModule;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -40,17 +45,22 @@ class PercentCoreTest {
     }
 
     private void assertPercentCore(Obj obj, double successPercent) throws Exception {
-        int core = Runtime.getRuntime().availableProcessors();
-        ExecutorService executorService = Executors.newFixedThreadPool(core);
-        LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(obj.maxClearLine);
-        PercentCore percentCore = new PercentCore(executorService, candidateThreadLocal, obj.isUsingHold);
+        PatternGenerator generator = new LoadedPatternGenerator(obj.patterns);
+        NormalEnumeratePieces enumeratePieces = new NormalEnumeratePieces(generator, obj.maxDepth, obj.isUsingHold);
+        Set<LongPieces> blocks = enumeratePieces.enumerate();
 
+        Injector injector = Guice.createInjector(new BasicModule(obj.maxClearLine));
+        ExecutorService executorService = injector.getInstance(ExecutorService.class);
+        LockedCandidateThreadLocal candidateThreadLocal = injector.getInstance(LockedCandidateThreadLocal.class);
+        LockedReachableThreadLocal reachableThreadLocal = injector.getInstance(LockedReachableThreadLocal.class);
+        MinoFactory minoFactory = injector.getInstance(MinoFactory.class);
+
+        PercentCore percentCore = new PercentCore(executorService, candidateThreadLocal, obj.isUsingHold, reachableThreadLocal, minoFactory, generator.getDepth());
         Field field = FieldFactory.createField(obj.marks);
 
-        IBlocksGenerator generator = new BlocksGenerator(obj.patterns);
-        NormalEnumeratePieces enumeratePieces = new NormalEnumeratePieces(generator, obj.maxDepth, obj.isUsingHold);
-        Set<LongBlocks> blocks = enumeratePieces.enumerate();
         percentCore.run(field, blocks, obj.maxClearLine, obj.maxDepth);
+
+        executorService.shutdown();
 
         assertThat(percentCore.getResultTree().getSuccessPercent()).isEqualTo(successPercent);
     }

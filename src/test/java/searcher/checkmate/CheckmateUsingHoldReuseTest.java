@@ -5,12 +5,13 @@ import common.datastore.action.Action;
 import core.action.candidate.Candidate;
 import core.action.candidate.LockedCandidate;
 import core.field.Field;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import lib.Randoms;
 import lib.Stopwatch;
+import module.LongTest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ class CheckmateUsingHoldReuseTest {
     private final CheckmateUsingHoldReuse<Action> checkmateReuse = new CheckmateUsingHoldReuse<>(minoFactory, validator);
 
     @Test
-    @Tag("long")
+    @LongTest
     void randomCheckmateWithJustBlock() {
         Randoms randoms = new Randoms();
 
@@ -37,7 +38,7 @@ class CheckmateUsingHoldReuseTest {
             int maxClearLine = randoms.nextInt(3, 8);
 
             int maxDepth = randoms.nextIntClosed(5, 7);
-            List<Block> blocks = randoms.blocks(maxDepth);
+            List<Piece> pieces = randoms.blocks(maxDepth);
 
             Field field = randoms.field(maxClearLine, maxDepth);
 
@@ -47,16 +48,16 @@ class CheckmateUsingHoldReuseTest {
             Stopwatch stopwatchReuse = Stopwatch.createStoppedStopwatch();
 
             for (int swap = 0; swap < 250; swap++) {
-                int index = randoms.nextInt(3, blocks.size());
-                Block pop = blocks.remove(index);
-                blocks.add(pop);
+                int index = randoms.nextInt(3, pieces.size());
+                Piece pop = pieces.remove(index);
+                pieces.add(pop);
 
                 stopwatchNoUse.start();
-                List<Result> result1 = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
+                List<Result> result1 = checkmate.search(field, pieces, candidate, maxClearLine, maxDepth);
                 stopwatchNoUse.stop();
 
                 stopwatchReuse.start();
-                List<Result> result2 = checkmateReuse.search(field, blocks, candidate, maxClearLine, maxDepth);
+                List<Result> result2 = checkmateReuse.search(field, pieces, candidate, maxClearLine, maxDepth);
                 stopwatchReuse.stop();
 
                 assertThat(result2)
@@ -77,7 +78,7 @@ class CheckmateUsingHoldReuseTest {
             int maxClearLine = randoms.nextInt(3, 8);
 
             int maxDepth = randoms.nextIntClosed(5, 7);
-            List<Block> blocks = randoms.blocks(maxDepth);
+            List<Piece> pieces = randoms.blocks(maxDepth);
 
             Field field = randoms.field(maxClearLine, maxDepth);
 
@@ -88,16 +89,16 @@ class CheckmateUsingHoldReuseTest {
             Stopwatch stopwatchReuse2 = Stopwatch.createStoppedStopwatch();
 
             for (int swap = 0; swap < 250; swap++) {
-                int index = randoms.nextInt(3, blocks.size());
-                Block pop = blocks.remove(index);
-                blocks.add(pop);
+                int index = randoms.nextInt(3, pieces.size());
+                Piece pop = pieces.remove(index);
+                pieces.add(pop);
 
                 stopwatchNoUse.start();
-                List<Result> result1 = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
+                List<Result> result1 = checkmate.search(field, pieces, candidate, maxClearLine, maxDepth);
                 stopwatchNoUse.stop();
 
                 stopwatchReuse1.start();
-                List<Result> result2 = checkmateReuse.search(field, blocks, candidate, maxClearLine, maxDepth);
+                List<Result> result2 = checkmateReuse.search(field, pieces, candidate, maxClearLine, maxDepth);
                 stopwatchReuse1.stop();
 
                 assertThat(result2)
@@ -105,7 +106,7 @@ class CheckmateUsingHoldReuseTest {
                         .containsAll(result1);
 
                 stopwatchReuse2.start();
-                List<Result> result3 = checkmateReuse.search(field, blocks, candidate, maxClearLine, maxDepth);
+                List<Result> result3 = checkmateReuse.search(field, pieces, candidate, maxClearLine, maxDepth);
                 stopwatchReuse2.stop();
 
                 assertThat(result3)
@@ -119,7 +120,7 @@ class CheckmateUsingHoldReuseTest {
     }
 
     @Test
-    @Tag("long")
+    @LongTest
     void randomCheckmateOverBlock() {
         Randoms randoms = new Randoms();
 
@@ -127,7 +128,7 @@ class CheckmateUsingHoldReuseTest {
             int maxClearLine = randoms.nextInt(3, 8);
 
             int maxDepth = randoms.nextIntClosed(5, 7);
-            List<Block> blocks = randoms.blocks(maxDepth + 1);
+            List<Piece> pieces = randoms.blocks(maxDepth + 1);
 
             Field field = randoms.field(maxClearLine, maxDepth);
 
@@ -137,16 +138,16 @@ class CheckmateUsingHoldReuseTest {
             Stopwatch stopwatchReuse = Stopwatch.createStoppedStopwatch();
 
             for (int swap = 0; swap < 250; swap++) {
-                int index = randoms.nextInt(3, blocks.size());
-                Block pop = blocks.remove(index);
-                blocks.add(pop);
+                int index = randoms.nextInt(3, pieces.size());
+                Piece pop = pieces.remove(index);
+                pieces.add(pop);
 
                 stopwatchNoUse.start();
-                List<Result> result1 = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
+                List<Result> result1 = checkmate.search(field, pieces, candidate, maxClearLine, maxDepth);
                 stopwatchNoUse.stop();
 
                 stopwatchReuse.start();
-                List<Result> result2 = checkmateReuse.search(field, blocks, candidate, maxClearLine, maxDepth);
+                List<Result> result2 = checkmateReuse.search(field, pieces, candidate, maxClearLine, maxDepth);
                 stopwatchReuse.stop();
 
                 assertThat(result2)
@@ -159,7 +160,7 @@ class CheckmateUsingHoldReuseTest {
     }
 
     @Test
-    @Tag("long")
+    @LongTest
     void randomCheckmateOverMoreBlock() {
         Randoms randoms = new Randoms();
 
@@ -167,7 +168,7 @@ class CheckmateUsingHoldReuseTest {
             int maxClearLine = randoms.nextInt(3, 8);
 
             int maxDepth = randoms.nextIntClosed(5, 7);
-            List<Block> blocks = randoms.blocks(maxDepth + 10);
+            List<Piece> pieces = randoms.blocks(maxDepth + 10);
 
             Field field = randoms.field(maxClearLine, maxDepth);
 
@@ -177,16 +178,16 @@ class CheckmateUsingHoldReuseTest {
             Stopwatch stopwatchReuse = Stopwatch.createStoppedStopwatch();
 
             for (int swap = 0; swap < 250; swap++) {
-                int index = randoms.nextInt(3, blocks.size());
-                Block pop = blocks.remove(index);
-                blocks.add(pop);
+                int index = randoms.nextInt(3, pieces.size());
+                Piece pop = pieces.remove(index);
+                pieces.add(pop);
 
                 stopwatchNoUse.start();
-                List<Result> result1 = checkmate.search(field, blocks, candidate, maxClearLine, maxDepth);
+                List<Result> result1 = checkmate.search(field, pieces, candidate, maxClearLine, maxDepth);
                 stopwatchNoUse.stop();
 
                 stopwatchReuse.start();
-                List<Result> result2 = checkmateReuse.search(field, blocks, candidate, maxClearLine, maxDepth);
+                List<Result> result2 = checkmateReuse.search(field, pieces, candidate, maxClearLine, maxDepth);
                 stopwatchReuse.stop();
 
                 assertThat(result2)

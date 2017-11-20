@@ -1,6 +1,6 @@
 package core.action.cache;
 
-import core.mino.piece.Neighbor;
+import core.neighbor.Neighbor;
 
 import java.util.HashSet;
 

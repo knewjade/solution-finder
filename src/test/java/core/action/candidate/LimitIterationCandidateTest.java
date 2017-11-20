@@ -5,12 +5,13 @@ import common.datastore.action.MinimalAction;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
 import lib.Randoms;
+import module.LongTest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ class LimitIterationCandidateTest {
                 "____X_____";
         Field field = FieldFactory.createField(marks);
 
-        Set<Action> actions = candidate.search(field, Block.T, 4);
+        Set<Action> actions = candidate.search(field, Piece.T, 4);
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Spawn)).hasSize(8);
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Right)).hasSize(9);
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Reverse)).hasSize(8);
@@ -54,7 +55,7 @@ class LimitIterationCandidateTest {
                 "XX_XX_____";
         Field field = FieldFactory.createField(marks);
 
-        Set<Action> actions = candidate.search(field, Block.T, 4);
+        Set<Action> actions = candidate.search(field, Piece.T, 4);
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Spawn)).hasSize(3);
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Right)).hasSize(4);
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Reverse)).hasSize(4);
@@ -75,7 +76,7 @@ class LimitIterationCandidateTest {
                 "XX_X______";
         Field field = FieldFactory.createField(marks);
 
-        Set<Action> actions = candidate.search(field, Block.T, 4);
+        Set<Action> actions = candidate.search(field, Piece.T, 4);
         assertThat(actions)
                 .hasSize(9)
                 .contains(MinimalAction.create(8, 0, Rotate.Spawn))
@@ -103,7 +104,7 @@ class LimitIterationCandidateTest {
                 "XX_X______";
         Field field = FieldFactory.createField(marks);
 
-        Set<Action> actions = candidate.search(field, Block.T, 4);
+        Set<Action> actions = candidate.search(field, Piece.T, 4);
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Spawn))
                 .hasSize(3)
                 .contains(MinimalAction.create(8, 0, Rotate.Spawn))
@@ -126,7 +127,7 @@ class LimitIterationCandidateTest {
                 "";
         Field field = FieldFactory.createField(marks);
 
-        Set<Action> actions = candidate.search(field, Block.T, 3);
+        Set<Action> actions = candidate.search(field, Piece.T, 3);
         assertThat(actions)
                 .hasSize(5)
                 .contains(MinimalAction.create(6, 1, Rotate.Spawn))
@@ -152,17 +153,17 @@ class LimitIterationCandidateTest {
             Field field = randoms.field(randomHeight, numOfMinos);
             int clearLine = field.clearLine();
             int height = randomHeight - clearLine;
-            Block block = randoms.block();
+            Piece piece = randoms.block();
 
-            Set<Action> actions1 = harddropCandidate.search(field, block, height);
-            Set<Action> actions2 = limitIterationCandidate.search(field, block, height);
+            Set<Action> actions1 = harddropCandidate.search(field, piece, height);
+            Set<Action> actions2 = limitIterationCandidate.search(field, piece, height);
             assertThat(actions2).isEqualTo(actions1);
         }
     }
 
     @Disabled
     @Test
-    @Tag("long")
+    @LongTest
     // TODO: mesure time, 移動回数をチェックしていないためテストに失敗することがある
     void testRandomLocked() {
         Randoms randoms = new Randoms();
@@ -178,13 +179,13 @@ class LimitIterationCandidateTest {
             Field field = randoms.field(randomHeight, numOfMinos);
             int clearLine = field.clearLine();
             int height = randomHeight - clearLine;
-            Block block = randoms.block();
+            Piece piece = randoms.block();
 
-            String description = FieldView.toString(field, height) + block;
-            Set<Action> actions1 = limitIterationCandidate.search(field, block, height);
+            String description = FieldView.toString(field, height) + piece;
+            Set<Action> actions1 = limitIterationCandidate.search(field, piece, height);
 
             LockedCandidate lockedCandidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
-            Set<Action> actions2 = lockedCandidate.search(field, block, height);
+            Set<Action> actions2 = lockedCandidate.search(field, piece, height);
             assertThat(actions2)
                     .as(description)
                     .isEqualTo(actions1);

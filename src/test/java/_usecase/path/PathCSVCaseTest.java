@@ -6,7 +6,7 @@ import common.datastore.Operations;
 import common.datastore.SimpleOperation;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.srs.Rotate;
 import entry.EntryPointMain;
@@ -70,7 +70,7 @@ class PathCSVCaseTest extends PathUseCaseBaseTest {
                 .map(operations -> {
                     Field freeze = field.freeze(height);
                     for (Operation operation : operations.getOperations()) {
-                        freeze.put(new Mino(operation.getBlock(), operation.getRotate()), operation.getX(), operation.getY());
+                        freeze.put(new Mino(operation.getPiece(), operation.getRotate()), operation.getX(), operation.getY());
                         freeze.clearLine();
                     }
                     return freeze;
@@ -84,7 +84,7 @@ class PathCSVCaseTest extends PathUseCaseBaseTest {
                 .map(operations -> {
                     Field freeze = field.freeze(height);
                     for (Operation operation : operations.getOperations()) {
-                        freeze.put(new Mino(operation.getBlock(), operation.getRotate()), operation.getX(), operation.getY());
+                        freeze.put(new Mino(operation.getPiece(), operation.getRotate()), operation.getX(), operation.getY());
                         freeze.clearLine();
                     }
                     return freeze;
@@ -130,8 +130,8 @@ class PathCSVCaseTest extends PathUseCaseBaseTest {
                 .hasSize(1)
                 .element(0)
                 .isEqualTo(Arrays.<Operation>asList(
-                        new SimpleOperation(Block.I, Rotate.Left, 9, 1),
-                        new SimpleOperation(Block.O, Rotate.Spawn, 0, 0)
+                        new SimpleOperation(Piece.I, Rotate.Left, 9, 1),
+                        new SimpleOperation(Piece.O, Rotate.Spawn, 0, 0)
                 ));
     }
 

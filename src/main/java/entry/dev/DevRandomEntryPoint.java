@@ -1,9 +1,9 @@
 package entry.dev;
 
 import common.SyntaxException;
-import common.datastore.pieces.Blocks;
-import common.pattern.BlocksGenerator;
-import common.pattern.IBlocksGenerator;
+import common.datastore.blocks.Pieces;
+import common.pattern.LoadedPatternGenerator;
+import common.pattern.PatternGenerator;
 import common.tetfu.Tetfu;
 import common.tetfu.TetfuElement;
 import common.tetfu.TetfuPage;
@@ -40,11 +40,11 @@ public class DevRandomEntryPoint implements EntryPoint {
 
     @Override
     public void run() throws FinderException {
-        IBlocksGenerator generator = createBlockGenerator(pattern);
-        List<Blocks> blocks = generator.blocksStream().collect(Collectors.toList());
+        PatternGenerator generator = createBlockGenerator(pattern);
+        List<Pieces> blocks = generator.blocksStream().collect(Collectors.toList());
         int index = new Random().nextInt(blocks.size());
-        Blocks selected = blocks.get(index);
-        String quiz = Tetfu.encodeForQuiz(selected.getBlocks());
+        Pieces selected = blocks.get(index);
+        String quiz = Tetfu.encodeForQuiz(selected.getPieces());
 
         MinoFactory minoFactory = new MinoFactory();
         ColorConverter converter = new ColorConverter();
@@ -59,9 +59,9 @@ public class DevRandomEntryPoint implements EntryPoint {
         System.out.println("v115@" + encode);
     }
 
-    private IBlocksGenerator createBlockGenerator(String pattern) throws FinderInitializeException, FinderExecuteException {
+    private PatternGenerator createBlockGenerator(String pattern) throws FinderInitializeException, FinderExecuteException {
         try {
-            return new BlocksGenerator(pattern);
+            return new LoadedPatternGenerator(pattern);
         } catch (SyntaxException e) {
             throw new FinderInitializeException("Pattern syntax error", e);
         }

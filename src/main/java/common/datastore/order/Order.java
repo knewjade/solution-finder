@@ -1,11 +1,11 @@
 package common.datastore.order;
 
 import core.field.Field;
-import core.mino.Block;
+import core.mino.Piece;
 import common.OperationHistory;
 
 public interface Order extends Comparable<Order> {
-    Block getHold();
+    Piece getHold();
 
     Field getField();
 

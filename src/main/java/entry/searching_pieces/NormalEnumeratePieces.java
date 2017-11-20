@@ -1,8 +1,8 @@
 package entry.searching_pieces;
 
-import common.datastore.pieces.LongBlocks;
-import common.datastore.pieces.Blocks;
-import common.pattern.IBlocksGenerator;
+import common.datastore.blocks.LongPieces;
+import common.datastore.blocks.Pieces;
+import common.pattern.PatternGenerator;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,49 +14,49 @@ import java.util.stream.Collectors;
  * PiecesGeneratorから重複を取り除く
  */
 public class NormalEnumeratePieces implements EnumeratePiecesCore {
-    private final IBlocksGenerator generator;
+    private final PatternGenerator generator;
     private final int maxDepth;
     private int counter = -1;
 
-    public NormalEnumeratePieces(IBlocksGenerator generator, int maxDepth, boolean isUsingHold) {
+    public NormalEnumeratePieces(PatternGenerator generator, int maxDepth, boolean isUsingHold) {
         this.generator = generator;
         this.maxDepth = isUsingHold ? maxDepth + 1 : maxDepth;
     }
 
     @Override
-    public Set<LongBlocks> enumerate() {
+    public Set<LongPieces> enumerate() {
         assert counter == -1;
 
         int depth = generator.getDepth();
 
         AtomicInteger counter = new AtomicInteger();
-        HashSet<LongBlocks> searchingPieces = create(depth, counter);
+        HashSet<LongPieces> searchingPieces = create(depth, counter);
 
         this.counter = counter.get();
         return searchingPieces;
     }
 
-    private HashSet<LongBlocks> create(int depth, AtomicInteger counter) {
+    private HashSet<LongPieces> create(int depth, AtomicInteger counter) {
         if (maxDepth < depth)
             return createOverMinos(counter);
         else
             return createJustMinos(counter);
     }
 
-    private HashSet<LongBlocks> createJustMinos(AtomicInteger counter) {
+    private HashSet<LongPieces> createJustMinos(AtomicInteger counter) {
         return generator.blocksStream()
                 .peek(pieces -> counter.incrementAndGet())
-                .map(Blocks::blockStream)
-                .map(LongBlocks::new)
+                .map(Pieces::blockStream)
+                .map(LongPieces::new)
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
-    private HashSet<LongBlocks> createOverMinos(AtomicInteger counter) {
+    private HashSet<LongPieces> createOverMinos(AtomicInteger counter) {
         return generator.blocksStream()
                 .peek(pieces -> counter.incrementAndGet())
-                .map(Blocks::blockStream)
+                .map(Pieces::blockStream)
                 .map(stream -> stream.limit(maxDepth))
-                .map(LongBlocks::new)
+                .map(LongPieces::new)
                 .collect(Collectors.toCollection(HashSet::new));
     }
 

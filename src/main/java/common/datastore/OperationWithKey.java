@@ -1,14 +1,6 @@
 package common.datastore;
 
-import core.mino.Mino;
-
-public interface OperationWithKey {
-    Mino getMino();
-
-    int getX();
-
-    int getY();
-
+public interface OperationWithKey extends Operation {
     long getNeedDeletedKey();
 
     long getUsingKey();

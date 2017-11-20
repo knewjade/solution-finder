@@ -11,7 +11,7 @@ import common.tetfu.encorder.CommentEncoder;
 import common.tetfu.encorder.FieldEncoder;
 import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
@@ -60,24 +60,24 @@ public class Tetfu {
         return null;
     }
 
-    public static String encodeForQuiz(List<Block> orders) {
+    public static String encodeForQuiz(List<Piece> orders) {
         return encodeForQuiz(orders, orders.get(0));
     }
 
     // 入力フィールドの高さは23, 幅は10
-    public static String encodeForQuiz(List<Block> orders, Block firstBlock) {
-        List<Block> minos = new ArrayList<>(orders);
+    public static String encodeForQuiz(List<Piece> orders, Piece firstPiece) {
+        List<Piece> minos = new ArrayList<>(orders);
 
         // 最初のツモを決める
-        Block hold = null;
-        if (minos.get(0) != firstBlock)
+        Piece hold = null;
+        if (minos.get(0) != firstPiece)
             hold = minos.remove(0);
 
-        Block current = minos.get(0);
+        Piece current = minos.get(0);
         minos = minos.subList(1, minos.size());
 
         // 文字列に変換
-        String names = minos.stream().map(Block::getName).collect(Collectors.joining());
+        String names = minos.stream().map(Piece::getName).collect(Collectors.joining());
         return String.format("#Q=[%s](%s)%s", hold != null ? hold.getName() : "", current.getName(), names);
     }
 
@@ -113,8 +113,8 @@ public class Tetfu {
             ColorType colorType = element.getColorType();
             if (flags.isLock) {
                 if (ColorType.isMinoBlock(colorType)) {
-                    Block block = converter.parseToBlock(colorType);
-                    Mino mino = minoFactory.create(block, element.getRotate());
+                    Piece piece = converter.parseToBlock(colorType);
+                    Mino mino = minoFactory.create(piece, element.getRotate());
                     field.putMino(mino, element.getX(), element.getY());
                 }
 
@@ -258,8 +258,8 @@ public class Tetfu {
                     Rotate rotate = actionDecoder.rotate;
                     Coordinate coordinate = actionDecoder.coordinate;
 
-                    Block block = converter.parseToBlock(colorType);
-                    Mino mino = minoFactory.create(block, rotate);
+                    Piece piece = converter.parseToBlock(colorType);
+                    Mino mino = minoFactory.create(piece, rotate);
 
                     currentField.putMino(mino, coordinate.x, coordinate.y);
                 }

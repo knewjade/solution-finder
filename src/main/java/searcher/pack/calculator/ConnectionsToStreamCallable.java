@@ -94,7 +94,7 @@ public class ConnectionsToStreamCallable implements Callable<Stream<RecursiveMin
                     if (!lastOuterField.canMerge(outerColumnField))
                         return null;
 
-                    OperationWithKey currentOperations = currentMino.toOperation();
+                    OperationWithKey currentOperations = currentMino.toMinoOperationWithKey();
                     long currentDeleteKey = currentOperations.getNeedDeletedKey();
                     long currentUsingKey = currentOperations.getUsingKey();
 

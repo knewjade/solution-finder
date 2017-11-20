@@ -2,17 +2,18 @@ package searcher.checker;
 
 import common.datastore.action.Action;
 import common.iterable.PermutationIterable;
-import common.pattern.BlocksGenerator;
-import common.pattern.IBlocksGenerator;
+import common.pattern.LoadedPatternGenerator;
+import common.pattern.PatternGenerator;
 import common.tree.AnalyzeTree;
 import core.action.candidate.Candidate;
 import core.action.candidate.LockedCandidate;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
+import module.LongTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.common.validator.PerfectValidator;
@@ -20,11 +21,11 @@ import searcher.common.validator.PerfectValidator;
 import java.util.Arrays;
 import java.util.List;
 
-import static core.mino.Block.*;
+import static core.mino.Piece.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CheckerUsingHoldCountTest {
-    private AnalyzeTree runTestCase(List<Block> blocks, int popCount, int maxClearLine, int maxDepth, String marks) {
+    private AnalyzeTree runTestCase(List<Piece> pieces, int popCount, int maxClearLine, int maxDepth, String marks) {
         Field field = FieldFactory.createField(marks);
 
         // Initialize
@@ -38,9 +39,9 @@ class CheckerUsingHoldCountTest {
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
         AnalyzeTree tree = new AnalyzeTree();
 
-        Iterable<List<Block>> combinations = new PermutationIterable<>(blocks, popCount);
-        for (List<Block> combination : combinations) {
-            combination.add(0, Block.T);  // Hold分の追加
+        Iterable<List<Piece>> combinations = new PermutationIterable<>(pieces, popCount);
+        for (List<Piece> combination : combinations) {
+            combination.add(0, Piece.T);  // Hold分の追加
             boolean result = checker.check(field, combination, candidate, maxClearLine, maxDepth);
             tree.set(result, combination);
         }
@@ -50,7 +51,7 @@ class CheckerUsingHoldCountTest {
     @Test
     void testGraceSystem() throws Exception {
         // Invoker
-        List<Block> blocks = Arrays.asList(I, T, S, Z, J, L, O);
+        List<Piece> pieces = Arrays.asList(I, T, S, Z, J, L, O);
         int popCount = 4;
         int maxClearLine = 4;
         int maxDepth = 4;
@@ -63,7 +64,7 @@ class CheckerUsingHoldCountTest {
                 "XXXXXX____" +
                 "";
 
-        AnalyzeTree tree = runTestCase(blocks, popCount, maxClearLine, maxDepth, marks);
+        AnalyzeTree tree = runTestCase(pieces, popCount, maxClearLine, maxDepth, marks);
 
         // Source: Nilgiri: https://docs.google.com/spreadsheets/d/1bVY3t_X96xRmUL0qdgB9tViSIGenu6RMKX4RW7qWg8Y/edit#gid=0
         assertThat(tree.getSuccessPercent()).isEqualTo(744 / 840.0);
@@ -72,7 +73,7 @@ class CheckerUsingHoldCountTest {
     @Test
     void testTemplate() throws Exception {
         // Invoker
-        List<Block> blocks = Arrays.asList(I, T, S, Z, J, L, O);
+        List<Piece> pieces = Arrays.asList(I, T, S, Z, J, L, O);
         int popCount = 4;
         int maxClearLine = 4;
         int maxDepth = 3;
@@ -96,8 +97,8 @@ class CheckerUsingHoldCountTest {
         // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
         AnalyzeTree tree = new AnalyzeTree();
-        Iterable<List<Block>> combinations = new PermutationIterable<>(blocks, popCount);
-        for (List<Block> combination : combinations) {
+        Iterable<List<Piece>> combinations = new PermutationIterable<>(pieces, popCount);
+        for (List<Piece> combination : combinations) {
             boolean result = checker.check(field, combination, candidate, maxClearLine, maxDepth);
             tree.set(result, combination);
         }
@@ -133,12 +134,12 @@ class CheckerUsingHoldCountTest {
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
         AnalyzeTree tree = new AnalyzeTree();
 
-        IBlocksGenerator generator = new BlocksGenerator(pattern);
+        PatternGenerator generator = new LoadedPatternGenerator(pattern);
         generator.blocksStream()
                 .forEach(blocks -> {
-                    List<Block> blockList = blocks.getBlocks();
-                    boolean result = checker.check(field, blockList, candidate, maxClearLine, maxDepth);
-                    tree.set(result, blockList);
+                    List<Piece> pieceList = blocks.getPieces();
+                    boolean result = checker.check(field, pieceList, candidate, maxClearLine, maxDepth);
+                    tree.set(result, pieceList);
                 });
 
         // Source: Nilgiri: https://docs.google.com/spreadsheets/d/1bVY3t_X96xRmUL0qdgB9tViSIGenu6RMKX4RW7qWg8Y/edit#gid=0
@@ -146,10 +147,10 @@ class CheckerUsingHoldCountTest {
     }
 
     @Test
-    @Tag("long")
+    @LongTest
     void testAfter4Line() throws Exception {
         // Invoker
-        List<Block> blocks = Arrays.asList(I, T, S, Z, J, L, O);
+        List<Piece> pieces = Arrays.asList(I, T, S, Z, J, L, O);
         int popCount = 7;
         int maxClearLine = 4;
         int maxDepth = 6;
@@ -173,8 +174,8 @@ class CheckerUsingHoldCountTest {
         // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
         AnalyzeTree tree = new AnalyzeTree();
-        Iterable<List<Block>> combinations = new PermutationIterable<>(blocks, popCount);
-        for (List<Block> combination : combinations) {
+        Iterable<List<Piece>> combinations = new PermutationIterable<>(pieces, popCount);
+        for (List<Piece> combination : combinations) {
             boolean result = checker.check(field, combination, candidate, maxClearLine, maxDepth);
             tree.set(result, combination);
         }
@@ -184,10 +185,10 @@ class CheckerUsingHoldCountTest {
     }
 
     @Test
-    @Tag("long")
+    @LongTest
     void testBT4_5() throws Exception {
         // Invoker
-        List<Block> blocks = Arrays.asList(I, T, S, Z, J, L, O);
+        List<Piece> pieces = Arrays.asList(I, T, S, Z, J, L, O);
         int popCount = 7;
         int maxClearLine = 6;
         int maxDepth = 7;
@@ -213,8 +214,8 @@ class CheckerUsingHoldCountTest {
         // Measure
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
         AnalyzeTree tree = new AnalyzeTree();
-        Iterable<List<Block>> combinations = new PermutationIterable<>(blocks, popCount);
-        for (List<Block> combination : combinations) {
+        Iterable<List<Piece>> combinations = new PermutationIterable<>(pieces, popCount);
+        for (List<Piece> combination : combinations) {
             boolean result = checker.check(field, combination, candidate, maxClearLine, maxDepth);
             tree.set(result, combination);
         }

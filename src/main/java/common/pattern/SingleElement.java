@@ -1,19 +1,19 @@
 package common.pattern;
 
-import common.datastore.BlockCounter;
-import common.datastore.pieces.Blocks;
-import common.datastore.pieces.LongBlocks;
-import core.mino.Block;
+import common.datastore.PieceCounter;
+import common.datastore.blocks.LongPieces;
+import common.datastore.blocks.Pieces;
+import core.mino.Piece;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
 class SingleElement implements Element {
-    private final Block block;
+    private final Piece piece;
 
-    SingleElement(Block block) {
-        this.block = block;
+    SingleElement(Piece piece) {
+        this.piece = piece;
     }
 
     @Override
@@ -22,13 +22,13 @@ class SingleElement implements Element {
     }
 
     @Override
-    public List<Blocks> getPermutationBlocks() {
-        LongBlocks blocks = new LongBlocks(Stream.of(block));
+    public List<Pieces> getPermutationBlocks() {
+        LongPieces blocks = new LongPieces(Stream.of(piece));
         return Collections.singletonList(blocks);
     }
 
     @Override
-    public List<BlockCounter> getBlockCounters() {
-        return Collections.singletonList(new BlockCounter(Stream.of(block)));
+    public List<PieceCounter> getPieceCounters() {
+        return Collections.singletonList(new PieceCounter(Stream.of(piece)));
     }
 }

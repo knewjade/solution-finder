@@ -2,7 +2,7 @@ package common.datastore.action;
 
 import core.srs.Rotate;
 
-public interface Action extends Comparable<Action> {
+public interface Action {
     int getX();
 
     int getY();

@@ -1,17 +1,14 @@
 package entry.setup;
 
 import common.buildup.BuildUpStream;
-import common.datastore.BlockField;
-import common.datastore.Operation;
-import common.datastore.OperationWithKey;
-import common.datastore.Operations;
+import common.datastore.*;
 import common.parser.OperationTransform;
-import common.pattern.IBlocksGenerator;
+import common.pattern.PatternGenerator;
 import common.tetfu.common.ColorConverter;
 import core.FinderConstant;
 import core.column_field.ColumnField;
 import core.field.Field;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
@@ -34,6 +31,7 @@ import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.calculator.BasicSolutions;
 import searcher.pack.memento.SolutionFilter;
+import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.solutions.OnDemandBasicSolutions;
 import searcher.pack.task.BasicMinoPackingHelper;
 import searcher.pack.task.Result;
@@ -143,7 +141,7 @@ public class SetupEntryPoint implements EntryPoint {
 
         // Setup patterns
         List<String> patterns = settings.getPatterns();
-        IBlocksGenerator generator = Verify.patterns(patterns, minDepth);
+        PatternGenerator generator = Verify.patterns(patterns, minDepth);
 
         // Output patterns
         for (String pattern : patterns)
@@ -218,12 +216,16 @@ public class SetupEntryPoint implements EntryPoint {
 
         results.parallelStream()
                 .forEach(result -> {
-                    List<OperationWithKey> operationWithKeys = result.getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toList());
+                    List<MinoOperationWithKey> operationWithKeys = result.getMemento()
+                            .getSeparableMinoStream(sizedBit.getWidth())
+                            .map(SeparableMino::toMinoOperationWithKey)
+                            .collect(Collectors.toList());
+
                     Field allField = initField.freeze(maxHeight);
                     Operations operations = OperationTransform.parseToOperations(allField, operationWithKeys, sizedBit.getHeight());
                     List<? extends Operation> operationList = operations.getOperations();
                     for (Operation operation : operationList) {
-                        Mino mino = minoFactory.create(operation.getBlock(), operation.getRotate());
+                        Mino mino = minoFactory.create(operation.getPiece(), operation.getRotate());
                         int x = operation.getX();
                         int y = operation.getY();
                         allField.put(mino, x, y);
@@ -232,7 +234,7 @@ public class SetupEntryPoint implements EntryPoint {
                     // 譜面の作成
                     String encode = fumenParser.parse(operationWithKeys, initField, maxHeight);
 
-                    String name = operationWithKeys.stream().map(OperationWithKey::getMino).map(Mino::getBlock).map(Block::getName).collect(Collectors.joining());
+                    String name = operationWithKeys.stream().map(OperationWithKey::getPiece).map(Piece::getName).collect(Collectors.joining());
                     String link = String.format("<a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a>", encode, name);
                     String line = String.format("<div>%s</div>", link);
                     htmlBuilder.addColumn(new FieldHTMLColumn(allField, maxHeight), line);
@@ -269,11 +271,14 @@ public class SetupEntryPoint implements EntryPoint {
             List<Result> candidates = searcher.toList();
             return candidates.parallelStream()
                     .filter(result -> {
-                        LinkedList<OperationWithKey> operations = result.getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toCollection(LinkedList::new));
+                        LinkedList<MinoOperationWithKey> operationWithKeys = result.getMemento()
+                                .getSeparableMinoStream(sizedBit.getWidth())
+                                .map(SeparableMino::toMinoOperationWithKey)
+                                .collect(Collectors.toCollection(LinkedList::new));
 
                         // 地形の中で組むことができるoperationsを一つ作成
                         BuildUpStream buildUpStream = buildUpStreamThreadLocal.get();
-                        List<OperationWithKey> sampleOperations = buildUpStream.existsValidBuildPatternDirectly(initField, operations)
+                        List<MinoOperationWithKey> sampleOperations = buildUpStream.existsValidBuildPatternDirectly(initField, operationWithKeys)
                                 .findFirst()
                                 .orElse(Collections.emptyList());
 

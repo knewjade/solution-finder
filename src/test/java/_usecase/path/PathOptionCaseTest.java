@@ -1,20 +1,11 @@
 package _usecase.path;
 
 import _usecase.*;
-import common.datastore.Operation;
-import common.datastore.Operations;
-import common.datastore.SimpleOperation;
-import core.field.Field;
-import core.field.FieldFactory;
-import core.mino.Block;
-import core.mino.Mino;
-import core.srs.Rotate;
 import entry.EntryPointMain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

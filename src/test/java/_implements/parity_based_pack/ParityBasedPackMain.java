@@ -2,9 +2,8 @@ package _implements.parity_based_pack;
 
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Block;
+import core.mino.Piece;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class ParityBasedPackMain {
@@ -17,10 +16,10 @@ public class ParityBasedPackMain {
         );
         int maxClearLine = 4;
 
-        List<Block> usingBlocks = Block.valueList();
+        List<Piece> usingPieces = Piece.valueList();
 
         ParityBasedPackSearcher searcher = new ParityBasedPackSearcher(field, maxClearLine);
-        long count = searcher.search(usingBlocks).count();
+        long count = searcher.search(usingPieces).count();
         System.out.println(count);
     }
 }

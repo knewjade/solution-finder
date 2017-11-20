@@ -1,6 +1,6 @@
 package common.tetfu.field;
 
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
@@ -43,8 +43,8 @@ public class ArrayColoredField implements ColoredField {
 
     @Override
     public void putMino(Mino mino, int x, int y) {
-        Block block = mino.getBlock();
-        ColorType type = converter.parseToColorType(block);
+        Piece piece = mino.getPiece();
+        ColorType type = converter.parseToColorType(piece);
         for (int[] positions : mino.getPositions())
             setColorType(type, x + positions[0], y + positions[1]);
     }

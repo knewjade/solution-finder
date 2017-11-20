@@ -27,7 +27,7 @@ class DeepdropCandidateTest {
                 "____X_____";
         Field field = FieldFactory.createField(marks);
 
-        Set<Action> actions = candidate.search(field, Block.T, 4);
+        Set<Action> actions = candidate.search(field, Piece.T, 4);
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Spawn)).hasSize(8);
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Right)).hasSize(9);
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Reverse)).hasSize(8);
@@ -67,7 +67,7 @@ class DeepdropCandidateTest {
                 "XX_XX_____";
         Field field = FieldFactory.createField(marks);
 
-        Set<Action> actions = candidate.search(field, Block.T, 4);
+        Set<Action> actions = candidate.search(field, Piece.T, 4);
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Spawn)).hasSize(3);
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Right)).hasSize(4);
         assertThat(actions.stream().filter((e) -> e.getRotate() == Rotate.Reverse)).hasSize(5);
@@ -95,17 +95,17 @@ class DeepdropCandidateTest {
             int numOfMinos = randoms.nextIntClosed(4, height * 10 / 4 - 1);
             Field field = randoms.field(height, numOfMinos);
             height -= field.clearLine();
-            Block block = randoms.block();
+            Piece piece = randoms.block();
 
-            Set<Action> actions = candidate.search(field, block, height);
+            Set<Action> actions = candidate.search(field, piece, height);
 
             for (Rotate rotate : Rotate.values()) {
-                Coordinates.walk(minoFactory.create(block, rotate), height)
+                Coordinates.walk(minoFactory.create(piece, rotate), height)
                         .map(coordinate -> MinimalAction.create(coordinate.x, coordinate.y, rotate))
                         .forEach(action -> {
                             int x = action.getX();
                             int y = action.getY();
-                            Mino mino = minoFactory.create(block, action.getRotate());
+                            Mino mino = minoFactory.create(piece, action.getRotate());
 
                             if (actions.contains(action)) {
                                 // おける

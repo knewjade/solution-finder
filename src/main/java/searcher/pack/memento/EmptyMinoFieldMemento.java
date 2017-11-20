@@ -1,8 +1,9 @@
 package searcher.pack.memento;
 
-import common.datastore.BlockCounter;
+import common.datastore.PieceCounter;
 import common.datastore.OperationWithKey;
 import searcher.pack.mino_field.MinoField;
+import searcher.pack.separable_mino.SeparableMino;
 
 import java.util.stream.Stream;
 
@@ -18,8 +19,8 @@ public class EmptyMinoFieldMemento implements MinoFieldMemento {
     }
 
     @Override
-    public BlockCounter getSumBlockCounter() {
-        return BlockCounter.EMPTY;
+    public PieceCounter getSumBlockCounter() {
+        return PieceCounter.EMPTY;
     }
 
     @Override
@@ -34,6 +35,11 @@ public class EmptyMinoFieldMemento implements MinoFieldMemento {
 
     @Override
     public Stream<OperationWithKey> getOperationsStream(int width) {
+        return Stream.empty();
+    }
+
+    @Override
+    public Stream<SeparableMino> getSeparableMinoStream(int width) {
         return Stream.empty();
     }
 }

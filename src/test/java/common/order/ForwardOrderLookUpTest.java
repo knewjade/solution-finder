@@ -1,8 +1,8 @@
 package common.order;
 
 import common.comparator.PiecesNumberComparator;
-import common.datastore.pieces.LongBlocks;
-import core.mino.Block;
+import common.datastore.blocks.LongPieces;
+import core.mino.Piece;
 import lib.Randoms;
 import org.junit.jupiter.api.Test;
 
@@ -17,12 +17,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ForwardOrderLookUpTest {
     @Test
     void parseJustBlocksCount() throws Exception {
-        List<Block> blockList = Block.valueList();
-        int toDepth = blockList.size();
+        List<Piece> pieceList = Piece.valueList();
+        int toDepth = pieceList.size();
 
-        ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth, blockList.size());
-        HashSet<LongBlocks> forward = lookUp.parse(blockList)
-                .map(LongBlocks::new)
+        ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth, pieceList.size());
+        HashSet<LongPieces> forward = lookUp.parse(pieceList)
+                .map(LongPieces::new)
                 .collect(Collectors.toCollection(HashSet::new));
 
         assertThat(forward).hasSize(64);
@@ -30,12 +30,12 @@ class ForwardOrderLookUpTest {
 
     @Test
     void parseOverBlocksCount() throws Exception {
-        List<Block> blockList = Block.valueList();
-        int toDepth = blockList.size() - 1;
+        List<Piece> pieceList = Piece.valueList();
+        int toDepth = pieceList.size() - 1;
 
-        ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth, blockList.size());
-        HashSet<LongBlocks> forward = lookUp.parse(blockList)
-                .map(LongBlocks::new)
+        ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth, pieceList.size());
+        HashSet<LongPieces> forward = lookUp.parse(pieceList)
+                .map(LongPieces::new)
                 .collect(Collectors.toCollection(HashSet::new));
 
         assertThat(forward).hasSize(64);
@@ -43,20 +43,20 @@ class ForwardOrderLookUpTest {
 
     @Test
     void parseJustBlocks() throws Exception {
-        List<Block> blockList = Arrays.asList(Block.I, Block.T, Block.Z, Block.O, Block.I, Block.L);
-        int toDepth = blockList.size();
+        List<Piece> pieceList = Arrays.asList(Piece.I, Piece.T, Piece.Z, Piece.O, Piece.I, Piece.L);
+        int toDepth = pieceList.size();
 
         PiecesNumberComparator comparator = new PiecesNumberComparator();
-        List<LongBlocks> forward1 = OrderLookup.forwardBlocks(blockList, toDepth).stream()
+        List<LongPieces> forward1 = OrderLookup.forwardBlocks(pieceList, toDepth).stream()
                 .map(StackOrder::toList)
-                .map(LongBlocks::new)
+                .map(LongPieces::new)
                 .sorted(comparator)
                 .collect(Collectors.toList());
 
-        ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth, blockList.size());
-        List<LongBlocks> forward2 = lookUp.parse(blockList)
+        ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth, pieceList.size());
+        List<LongPieces> forward2 = lookUp.parse(pieceList)
                 .map(blockStream -> blockStream.collect(Collectors.toList()))
-                .map(LongBlocks::new)
+                .map(LongPieces::new)
                 .sorted(comparator)
                 .collect(Collectors.toList());
 
@@ -65,20 +65,20 @@ class ForwardOrderLookUpTest {
 
     @Test
     void parseOverBlocks() throws Exception {
-        List<Block> blockList = Arrays.asList(Block.I, Block.T, Block.Z, Block.O, Block.I, Block.L);
-        int toDepth = blockList.size() - 1;
+        List<Piece> pieceList = Arrays.asList(Piece.I, Piece.T, Piece.Z, Piece.O, Piece.I, Piece.L);
+        int toDepth = pieceList.size() - 1;
 
         PiecesNumberComparator comparator = new PiecesNumberComparator();
-        List<LongBlocks> forward1 = OrderLookup.forwardBlocks(blockList, toDepth).stream()
+        List<LongPieces> forward1 = OrderLookup.forwardBlocks(pieceList, toDepth).stream()
                 .map(StackOrder::toList)
-                .map(LongBlocks::new)
+                .map(LongPieces::new)
                 .sorted(comparator)
                 .collect(Collectors.toList());
 
-        ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth, blockList.size());
-        List<LongBlocks> forward2 = lookUp.parse(blockList)
+        ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth, pieceList.size());
+        List<LongPieces> forward2 = lookUp.parse(pieceList)
                 .map(blockStream -> blockStream.collect(Collectors.toList()))
-                .map(LongBlocks::new)
+                .map(LongPieces::new)
                 .sorted(comparator)
                 .collect(Collectors.toList());
 
@@ -89,32 +89,32 @@ class ForwardOrderLookUpTest {
     void parseJustBlocksRandom() throws Exception {
         Randoms randoms = new Randoms();
         for (int size = 2; size <= 15; size++) {
-            List<Block> blocks = randoms.blocks(size);
-            int toDepth = blocks.size();
+            List<Piece> pieces = randoms.blocks(size);
+            int toDepth = pieces.size();
 
-            ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth, blocks.size());
-            HashSet<LongBlocks> forward = lookUp.parse(blocks)
-                    .map(LongBlocks::new)
+            ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth, pieces.size());
+            HashSet<LongPieces> forward = lookUp.parse(pieces)
+                    .map(LongPieces::new)
                     .collect(Collectors.toCollection(HashSet::new));
 
             for (int count = 0; count < 10000; count++) {
-                ArrayList<Block> sample = new ArrayList<>();
+                ArrayList<Piece> sample = new ArrayList<>();
                 int holdIndex = 0;
                 for (int index = 1; index < size; index++) {
                     if (randoms.nextBoolean(0.3)) {
                         // そのまま追加
-                        sample.add(blocks.get(index));
+                        sample.add(pieces.get(index));
                     } else {
                         // ホールドを追加
-                        sample.add(blocks.get(holdIndex));
+                        sample.add(pieces.get(holdIndex));
                         holdIndex = index;
                     }
                 }
 
                 // ホールドを追加
-                sample.add(blocks.get(holdIndex));
+                sample.add(pieces.get(holdIndex));
 
-                assertThat(new LongBlocks(sample)).isIn(forward);
+                assertThat(new LongPieces(sample)).isIn(forward);
             }
         }
     }
@@ -123,29 +123,29 @@ class ForwardOrderLookUpTest {
     void parseOverBlocksRandom() throws Exception {
         Randoms randoms = new Randoms();
         for (int size = 3; size <= 15; size++) {
-            List<Block> blocks = randoms.blocks(size);
-            int toDepth = blocks.size();
+            List<Piece> pieces = randoms.blocks(size);
+            int toDepth = pieces.size();
 
-            ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth - 1, blocks.size());
-            HashSet<LongBlocks> forward = lookUp.parse(blocks)
-                    .map(LongBlocks::new)
+            ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth - 1, pieces.size());
+            HashSet<LongPieces> forward = lookUp.parse(pieces)
+                    .map(LongPieces::new)
                     .collect(Collectors.toCollection(HashSet::new));
 
             for (int count = 0; count < 10000; count++) {
-                ArrayList<Block> sample = new ArrayList<>();
+                ArrayList<Piece> sample = new ArrayList<>();
                 int holdIndex = 0;
                 for (int index = 1; index < size; index++) {
                     if (randoms.nextBoolean(0.3)) {
                         // そのまま追加
-                        sample.add(blocks.get(index));
+                        sample.add(pieces.get(index));
                     } else {
                         // ホールドを追加
-                        sample.add(blocks.get(holdIndex));
+                        sample.add(pieces.get(holdIndex));
                         holdIndex = index;
                     }
                 }
 
-                assertThat(new LongBlocks(sample)).isIn(forward);
+                assertThat(new LongPieces(sample)).isIn(forward);
             }
         }
     }
@@ -154,29 +154,29 @@ class ForwardOrderLookUpTest {
     void parseOver2BlocksRandom() throws Exception {
         Randoms randoms = new Randoms();
         for (int size = 4; size <= 15; size++) {
-            List<Block> blocks = randoms.blocks(size);
-            int toDepth = blocks.size();
+            List<Piece> pieces = randoms.blocks(size);
+            int toDepth = pieces.size();
 
-            ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth - 2, blocks.size());
-            HashSet<LongBlocks> forward = lookUp.parse(blocks)
-                    .map(LongBlocks::new)
+            ForwardOrderLookUp lookUp = new ForwardOrderLookUp(toDepth - 2, pieces.size());
+            HashSet<LongPieces> forward = lookUp.parse(pieces)
+                    .map(LongPieces::new)
                     .collect(Collectors.toCollection(HashSet::new));
 
             for (int count = 0; count < 10000; count++) {
-                ArrayList<Block> sample = new ArrayList<>();
+                ArrayList<Piece> sample = new ArrayList<>();
                 int holdIndex = 0;
                 for (int index = 1; index < size - 1; index++) {
                     if (randoms.nextBoolean(0.3)) {
                         // そのまま追加
-                        sample.add(blocks.get(index));
+                        sample.add(pieces.get(index));
                     } else {
                         // ホールドを追加
-                        sample.add(blocks.get(holdIndex));
+                        sample.add(pieces.get(holdIndex));
                         holdIndex = index;
                     }
                 }
 
-                assertThat(new LongBlocks(sample)).isIn(forward);
+                assertThat(new LongPieces(sample)).isIn(forward);
             }
         }
     }

@@ -3,7 +3,7 @@ package searcher.checkmate;
 import core.action.candidate.Candidate;
 import core.field.Field;
 import core.field.SmallField;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.MinoFactory;
 import common.comparator.FieldComparator;
 import common.datastore.Result;
@@ -24,7 +24,7 @@ public class CheckmateNoHoldReuse<T extends Action> implements Checkmate<T> {
     private final Comparator<Field> fieldComparator = new FieldComparator();
 
     private List<TreeSet<Order>> memento = null;
-    private Block[] lastBlocks = null;
+    private Piece[] lastPieces = null;
     private Field lastField = new SmallField();
 
     public CheckmateNoHoldReuse(MinoFactory minoFactory, Validator validator) {
@@ -33,13 +33,13 @@ public class CheckmateNoHoldReuse<T extends Action> implements Checkmate<T> {
     }
 
     @Override
-    public List<Result> search(Field initField, List<Block> pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
-        Block[] blocks = new Block[pieces.size()];
+    public List<Result> search(Field initField, List<Piece> pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
+        Piece[] blocks = new Piece[pieces.size()];
         return search(initField, pieces.toArray(blocks), candidate, maxClearLine, maxDepth);
     }
 
     @Override
-    public List<Result> search(Field initFieldOrigin, Block[] pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
+    public List<Result> search(Field initFieldOrigin, Piece[] pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
         Field initField = initFieldOrigin.freeze(maxClearLine);
         int deleteLine = initField.clearLine();
         int height = maxClearLine - deleteLine;
@@ -48,7 +48,7 @@ public class CheckmateNoHoldReuse<T extends Action> implements Checkmate<T> {
 
         // 最初の探索開始depthとordersを調整
         int startDepth;
-        if (!equalsField(lastField, initField) || lastBlocks == null) {
+        if (!equalsField(lastField, initField) || lastPieces == null) {
             // mementoの初期化
             // 初めから
             memento = new ArrayList<>();
@@ -58,7 +58,7 @@ public class CheckmateNoHoldReuse<T extends Action> implements Checkmate<T> {
         } else {
             int reuseIndex = -1;
             for (int index = 0; index < maxDepth; index++) {
-                if (lastBlocks[index] == pieces[index])
+                if (lastPieces[index] == pieces[index])
                     reuseIndex = index;
                 else
                     break;
@@ -95,7 +95,7 @@ public class CheckmateNoHoldReuse<T extends Action> implements Checkmate<T> {
             memento.add(new TreeSet<>(orders));
         }
 
-        lastBlocks = pieces;
+        lastPieces = pieces;
         lastField = initField;
 
         return dataPool.getResults();

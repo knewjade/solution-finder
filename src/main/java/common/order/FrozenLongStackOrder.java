@@ -1,14 +1,14 @@
 package common.order;
 
 import common.comparator.StackOrderComparator;
-import core.mino.Block;
+import core.mino.Piece;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
 // max <= 21であること
-public class FrozenLongStackOrder implements StackOrder<Block> {
+public class FrozenLongStackOrder implements StackOrder<Piece> {
     private static final long[] SCALE = new long[21];
     private static final int KIND_TYPE = 8;
 
@@ -30,49 +30,49 @@ public class FrozenLongStackOrder implements StackOrder<Block> {
     }
 
     @Override
-    public void addLast(Block block) {
+    public void addLast(Piece piece) {
         throw new UnsupportedOperationException("this is frozen");
     }
 
     @Override
-    public void addLastTwo(Block block) {
+    public void addLastTwo(Piece piece) {
         throw new UnsupportedOperationException("this is frozen");
     }
 
     @Override
-    public void addLastTwoAndRemoveLast(Block block) {
+    public void addLastTwoAndRemoveLast(Piece piece) {
         throw new UnsupportedOperationException("this is frozen");
     }
 
     @Override
-    public void stock(Block block) {
+    public void stock(Piece piece) {
         throw new UnsupportedOperationException("this is frozen");
     }
 
     @Override
-    public List<Block> toList() {
-        ArrayList<Block> blocks = new ArrayList<>();
-        long value = pieces;
+    public List<Piece> toList() {
+        ArrayList<Piece> pieces = new ArrayList<>();
+        long value = this.pieces;
         for (int count = 0; count < max; count++) {
-            Block block = getBlock((int) (value % KIND_TYPE));
-            blocks.add(block);
+            Piece piece = getBlock((int) (value % KIND_TYPE));
+            pieces.add(piece);
             value = value / KIND_TYPE;
         }
         assert value == 0 : max;
-        return blocks;
+        return pieces;
     }
 
-    private Block getBlock(int number) {
-        return number != KIND_TYPE - 1 ? Block.getBlock(number) : null;
+    private Piece getBlock(int number) {
+        return number != KIND_TYPE - 1 ? Piece.getBlock(number) : null;
     }
 
     @Override
-    public Stream<Block> toStream() {
-        Stream.Builder<Block> builder = Stream.builder();
+    public Stream<Piece> toStream() {
+        Stream.Builder<Piece> builder = Stream.builder();
         long value = pieces;
         for (int count = 0; count < max; count++) {
-            Block block = getBlock((int) (value % KIND_TYPE));
-            builder.accept(block);
+            Piece piece = getBlock((int) (value % KIND_TYPE));
+            builder.accept(piece);
             value = value / KIND_TYPE;
         }
         assert value == 0;
@@ -80,12 +80,12 @@ public class FrozenLongStackOrder implements StackOrder<Block> {
     }
 
     @Override
-    public StackOrder<Block> freeze() {
+    public StackOrder<Piece> freeze() {
         throw new UnsupportedOperationException("this is frozen");
     }
 
     @Override
-    public StackOrder<Block> fix() {
+    public StackOrder<Piece> fix() {
         return this;
     }
 

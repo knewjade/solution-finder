@@ -4,19 +4,19 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import lib.Randoms;
 import org.junit.jupiter.api.Test;
+import searcher.pack.separable_mino.AllSeparableMinoFactory;
 import searcher.pack.separable_mino.SeparableMino;
-import searcher.pack.separable_mino.SeparableMinoFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class SeparableMinosTest {
-    private final List<SeparableMino> minos = createSeparableMinoList();
+    private final Set<SeparableMino> minos = createSeparableMinoSet();
 
-    private List<SeparableMino> createSeparableMinoList() {
+    private Set<SeparableMino> createSeparableMinoSet() {
         Randoms randoms = new Randoms();
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
@@ -25,7 +25,7 @@ class SeparableMinosTest {
         int fieldWidth = randoms.nextIntClosed(1, 4);
         SizedBit sizedBit = new SizedBit(fieldWidth, fieldHeight);
 
-        SeparableMinoFactory separableMinoFactory = new SeparableMinoFactory(minoFactory, minoShifter, sizedBit.getWidth(), sizedBit.getHeight(), sizedBit.getFillBoard());
+        AllSeparableMinoFactory separableMinoFactory = new AllSeparableMinoFactory(minoFactory, minoShifter, sizedBit.getWidth(), sizedBit.getHeight(), sizedBit.getFillBoard());
         return separableMinoFactory.create();
     }
 

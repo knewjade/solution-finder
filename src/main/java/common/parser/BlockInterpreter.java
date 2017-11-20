@@ -1,49 +1,49 @@
 package common.parser;
 
-import core.mino.Block;
+import core.mino.Piece;
 
 import java.util.stream.Stream;
 
-import static common.parser.StringEnumTransform.toBlock;
+import static common.parser.StringEnumTransform.toPiece;
 
 public class BlockInterpreter {
-    public static Stream<Block> parse10(String a) {
+    public static Stream<Piece> parse10(String a) {
         return Stream.of(
-                toBlock(a.charAt(0)),
-                toBlock(a.charAt(1)),
-                toBlock(a.charAt(2)),
-                toBlock(a.charAt(3)),
-                toBlock(a.charAt(4)),
-                toBlock(a.charAt(5)),
-                toBlock(a.charAt(6)),
-                toBlock(a.charAt(7)),
-                toBlock(a.charAt(8)),
-                toBlock(a.charAt(9))
+                toPiece(a.charAt(0)),
+                toPiece(a.charAt(1)),
+                toPiece(a.charAt(2)),
+                toPiece(a.charAt(3)),
+                toPiece(a.charAt(4)),
+                toPiece(a.charAt(5)),
+                toPiece(a.charAt(6)),
+                toPiece(a.charAt(7)),
+                toPiece(a.charAt(8)),
+                toPiece(a.charAt(9))
         );
     }
 
-    public static Stream<Block> parse11(String a) {
+    public static Stream<Piece> parse11(String a) {
         return Stream.of(
-                toBlock(a.charAt(0)),
-                toBlock(a.charAt(1)),
-                toBlock(a.charAt(2)),
-                toBlock(a.charAt(3)),
-                toBlock(a.charAt(4)),
-                toBlock(a.charAt(5)),
-                toBlock(a.charAt(6)),
-                toBlock(a.charAt(7)),
-                toBlock(a.charAt(8)),
-                toBlock(a.charAt(9)),
-                toBlock(a.charAt(10))
+                toPiece(a.charAt(0)),
+                toPiece(a.charAt(1)),
+                toPiece(a.charAt(2)),
+                toPiece(a.charAt(3)),
+                toPiece(a.charAt(4)),
+                toPiece(a.charAt(5)),
+                toPiece(a.charAt(6)),
+                toPiece(a.charAt(7)),
+                toPiece(a.charAt(8)),
+                toPiece(a.charAt(9)),
+                toPiece(a.charAt(10))
         );
     }
 
-    public static Stream<Block> parse(String str) {
-        Stream.Builder<Block> builder = Stream.builder();
+    public static Stream<Piece> parse(String str) {
+        Stream.Builder<Piece> builder = Stream.builder();
         for (int index = 0; index < str.length(); index++) {
             char c = str.charAt(index);
-            Block block = StringEnumTransform.toBlock(c);
-            builder.accept(block);
+            Piece piece = StringEnumTransform.toPiece(c);
+            builder.accept(piece);
         }
         return builder.build();
     }

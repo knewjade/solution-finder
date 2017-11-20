@@ -2,7 +2,7 @@ package searcher.checkmate;
 
 import core.action.candidate.Candidate;
 import core.field.Field;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.MinoFactory;
 import common.datastore.Result;
 import searcher.core.SimpleSearcherCore;
@@ -24,13 +24,13 @@ public class CheckmateNoHold<T extends Action> implements Checkmate<T> {
     }
 
     @Override
-    public List<Result> search(Field initField, List<Block> pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
-        Block[] blocks = new Block[pieces.size()];
+    public List<Result> search(Field initField, List<Piece> pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
+        Piece[] blocks = new Piece[pieces.size()];
         return search(initField, pieces.toArray(blocks), candidate, maxClearLine, maxDepth);
     }
 
     @Override
-    public List<Result> search(Field initField, Block[] pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
+    public List<Result> search(Field initField, Piece[] pieces, Candidate<T> candidate, int maxClearLine, int maxDepth) {
         Field freeze = initField.freeze(maxClearLine);
         int deleteLine = freeze.clearLine();
 

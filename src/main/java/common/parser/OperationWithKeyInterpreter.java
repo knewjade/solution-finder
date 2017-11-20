@@ -1,8 +1,9 @@
 package common.parser;
 
+import common.datastore.MinoOperationWithKey;
 import common.datastore.OperationWithKey;
-import common.datastore.SimpleOperationWithKey;
-import core.mino.Block;
+import common.datastore.FullOperationWithKey;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
@@ -24,10 +25,9 @@ public class OperationWithKeyInterpreter {
     }
 
     private static String parseToString(OperationWithKey operation) {
-        Mino mino = operation.getMino();
         return String.format("%s,%s,%d,%d,%d,%d",
-                mino.getBlock().getName(),
-                StringEnumTransform.toString(mino.getRotate()),
+                operation.getPiece().getName(),
+                StringEnumTransform.toString(operation.getRotate()),
                 operation.getX(),
                 operation.getY(),
                 operation.getNeedDeletedKey(),
@@ -35,22 +35,22 @@ public class OperationWithKeyInterpreter {
         );
     }
 
-    public static List<OperationWithKey> parseToList(String operations, MinoFactory minoFactory) {
+    public static List<MinoOperationWithKey> parseToList(String operations, MinoFactory minoFactory) {
         return parseToStream(operations, minoFactory).collect(Collectors.toList());
     }
 
-    public static Stream<OperationWithKey> parseToStream(String operations, MinoFactory minoFactory) {
+    public static Stream<MinoOperationWithKey> parseToStream(String operations, MinoFactory minoFactory) {
         return Arrays.stream(operations.split(";"))
                 .map(s -> s.split(","))
                 .map(strings -> {
-                    Block block = StringEnumTransform.toBlock(strings[0]);
+                    Piece piece = StringEnumTransform.toPiece(strings[0]);
                     Rotate rotate = StringEnumTransform.toRotate(strings[1]);
-                    Mino mino = minoFactory.create(block, rotate);
+                    Mino mino = minoFactory.create(piece, rotate);
                     int x = Integer.valueOf(strings[2]);
                     int y = Integer.valueOf(strings[3]);
                     long deleteKey = Long.valueOf(strings[4]);
                     long usingKey = Long.valueOf(strings[5]);
-                    return new SimpleOperationWithKey(mino, x, y, deleteKey, usingKey);
+                    return new FullOperationWithKey(mino, x, y, deleteKey, usingKey);
                 });
     }
 }

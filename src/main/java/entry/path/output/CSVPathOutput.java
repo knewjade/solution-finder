@@ -1,9 +1,9 @@
 package entry.path.output;
 
 import common.buildup.BuildUpStream;
-import common.datastore.OperationWithKey;
+import common.datastore.MinoOperationWithKey;
 import common.datastore.Operations;
-import common.datastore.pieces.LongBlocks;
+import common.datastore.blocks.LongPieces;
 import common.parser.OperationInterpreter;
 import common.parser.OperationTransform;
 import core.field.Field;
@@ -11,6 +11,7 @@ import entry.path.*;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
 import searcher.pack.SizedBit;
+import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.task.Result;
 
 import java.io.BufferedWriter;
@@ -85,7 +86,7 @@ public class CSVPathOutput implements PathOutput {
 
         // 少ないパターンでカバーできるパスを出力
         if (pathLayer.contains(PathLayer.Minimal)) {
-            Selector<PathPair, LongBlocks> selector = new Selector<>(pathPairs);
+            Selector<PathPair, LongPieces> selector = new Selector<>(pathPairs);
             List<PathPair> minimal = selector.select();
             outputLog("Found path [minimal] = " + minimal.size());
             outputOperationsToCSV(field, outputMinimalFile, minimal, sizedBit);
@@ -98,10 +99,13 @@ public class CSVPathOutput implements PathOutput {
 
     private void outputOperationsToCSV(Field field, MyFile file, List<PathPair> pathPairs, SizedBit sizedBit) throws FinderExecuteException {
         LockedBuildUpListUpThreadLocal threadLocal = new LockedBuildUpListUpThreadLocal(sizedBit.getHeight());
-        List<List<OperationWithKey>> samples = pathPairs.parallelStream()
+        List<List<MinoOperationWithKey>> samples = pathPairs.parallelStream()
                 .map(resultPair -> {
                     Result result = resultPair.getResult();
-                    LinkedList<OperationWithKey> operations = result.getMemento().getOperationsStream(sizedBit.getWidth()).collect(Collectors.toCollection(LinkedList::new));
+                    LinkedList<MinoOperationWithKey> operations = result.getMemento()
+                            .getSeparableMinoStream(sizedBit.getWidth())
+                            .map(SeparableMino::toMinoOperationWithKey)
+                            .collect(Collectors.toCollection(LinkedList::new));
 
                     BuildUpStream buildUpStream = threadLocal.get();
 
@@ -112,7 +116,7 @@ public class CSVPathOutput implements PathOutput {
                 .collect(Collectors.toList());
 
         try (BufferedWriter writer = file.newBufferedWriter()) {
-            for (List<OperationWithKey> operationWithKeys : samples) {
+            for (List<MinoOperationWithKey> operationWithKeys : samples) {
                 Operations operations = OperationTransform.parseToOperations(field, operationWithKeys, sizedBit.getHeight());
                 String operationLine = OperationInterpreter.parseToString(operations);
                 writer.write(operationLine);

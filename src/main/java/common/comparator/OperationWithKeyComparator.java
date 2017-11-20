@@ -1,20 +1,16 @@
 package common.comparator;
 
 import common.datastore.OperationWithKey;
-import core.mino.Mino;
 
 import java.util.Comparator;
 
-public class OperationWithKeyComparator implements Comparator<OperationWithKey> {
+public class OperationWithKeyComparator<T extends OperationWithKey> implements Comparator<T> {
     public static int compareOperationWithKey(OperationWithKey o1, OperationWithKey o2) {
-        Mino mino1 = o1.getMino();
-        Mino mino2 = o2.getMino();
-
-        int compareBlock = mino1.getBlock().compareTo(mino2.getBlock());
+        int compareBlock = o1.getPiece().compareTo(o2.getPiece());
         if (compareBlock != 0)
             return compareBlock;
 
-        int compareRotate = mino1.getRotate().compareTo(mino2.getRotate());
+        int compareRotate = o1.getRotate().compareTo(o2.getRotate());
         if (compareRotate != 0)
             return compareRotate;
 
@@ -30,7 +26,7 @@ public class OperationWithKeyComparator implements Comparator<OperationWithKey> 
     }
 
     @Override
-    public int compare(OperationWithKey o1, OperationWithKey o2) {
+    public int compare(T o1, T o2) {
         return compareOperationWithKey(o1, o2);
     }
 }

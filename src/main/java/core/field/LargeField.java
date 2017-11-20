@@ -1,7 +1,7 @@
 package core.field;
 
 import core.mino.Mino;
-import core.mino.piece.Piece;
+import core.neighbor.OriginalPiece;
 
 // TODO: 実装する
 public class LargeField implements Field {
@@ -26,12 +26,12 @@ public class LargeField implements Field {
     }
 
     @Override
-    public void put(Piece piece) {
+    public void put(OriginalPiece piece) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean canPut(Piece piece) {
+    public boolean canPut(OriginalPiece piece) {
         throw new UnsupportedOperationException();
     }
 
@@ -41,7 +41,7 @@ public class LargeField implements Field {
     }
 
     @Override
-    public void remove(Piece piece) {
+    public void remove(OriginalPiece piece) {
         throw new UnsupportedOperationException();
     }
 
@@ -56,7 +56,7 @@ public class LargeField implements Field {
     }
 
     @Override
-    public boolean canReachOnHarddrop(Piece piece) {
+    public boolean canReachOnHarddrop(OriginalPiece piece) {
         throw new UnsupportedOperationException();
     }
 

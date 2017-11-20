@@ -17,13 +17,13 @@ class PassedMinoShifterTest {
         PassedMinoShifter minoShifter = new PassedMinoShifter();
 
         for (int count = 0; count < 10000; count++) {
-            Block block = randoms.block();
+            Piece piece = randoms.block();
             Rotate rotate = randoms.rotate();
             int x = randoms.nextInt(10);
             int y = randoms.nextInt(0, 12);
             MinimalAction action = MinimalAction.create(x, y, rotate);
 
-            Action actualAction = minoShifter.createTransformedAction(block, action);
+            Action actualAction = minoShifter.createTransformedAction(piece, action);
 
             assertThat(actualAction).isEqualTo(action);
         }
@@ -35,10 +35,10 @@ class PassedMinoShifterTest {
         PassedMinoShifter minoShifter = new PassedMinoShifter();
 
         for (int count = 0; count < 10000; count++) {
-            Block block = randoms.block();
+            Piece piece = randoms.block();
             Rotate rotate = randoms.rotate();
 
-            Rotate actualRotate = minoShifter.createTransformedRotate(block, rotate);
+            Rotate actualRotate = minoShifter.createTransformedRotate(piece, rotate);
 
             assertThat(actualRotate).isEqualTo(rotate);
         }
@@ -50,12 +50,12 @@ class PassedMinoShifterTest {
         PassedMinoShifter minoShifter = new PassedMinoShifter();
 
         for (int count = 0; count < 10000; count++) {
-            Block block = randoms.block();
+            Piece piece = randoms.block();
             Rotate rotate = randoms.rotate();
             int x = randoms.nextInt(10);
             int y = randoms.nextInt(0, 12);
 
-            List<Action> actions = minoShifter.enumerateSameOtherActions(block, rotate, x, y);
+            List<Action> actions = minoShifter.enumerateSameOtherActions(piece, rotate, x, y);
             assertThat(actions).isEmpty();
         }
     }

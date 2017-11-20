@@ -10,9 +10,9 @@ import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Block;
 import core.mino.Mino;
 import core.mino.MinoFactory;
+import core.mino.Piece;
 import core.srs.Rotate;
 
 import java.util.Collections;
@@ -31,22 +31,22 @@ public class EasyTetfu {
         this.colorConverter = easyPool.getColorConverter();
     }
 
-    public String encode(Field initField, List<OperationWithKey> operationWithKeys, int height) {
+    public <T extends OperationWithKey> String encodeUrl(Field initField, List<T> operationWithKeys, int height) {
         Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
         BlockField blockField = createBlockField(operationWithKeys, height);
         TetfuElement elementOnePage = parseBlockFieldToTetfuElement(initField, colorConverter, blockField, "");
         return "http://fumen.zui.jp/?v115@" + tetfu.encode(Collections.singletonList(elementOnePage));
     }
 
-    private static BlockField createBlockField(List<OperationWithKey> operationWithKeys, int height) {
+    private <T extends OperationWithKey> BlockField createBlockField(List<T> operationWithKeys, int height) {
         BlockField blockField = new BlockField(height);
         operationWithKeys
                 .forEach(key -> {
                     Field test = FieldFactory.createField(height);
-                    Mino mino = key.getMino();
+                    Mino mino = minoFactory.create(key.getPiece(), key.getRotate());
                     test.put(mino, key.getX(), key.getY());
                     test.insertWhiteLineWithKey(key.getNeedDeletedKey());
-                    blockField.merge(test, mino.getBlock());
+                    blockField.merge(test, mino.getPiece());
                 });
         return blockField;
     }
@@ -54,9 +54,9 @@ public class EasyTetfu {
     private TetfuElement parseBlockFieldToTetfuElement(Field initField, ColorConverter colorConverter, BlockField blockField, String comment) {
         ColoredField coloredField = ColoredFieldFactory.createGrayField(initField);
 
-        for (Block block : Block.values()) {
-            Field target = blockField.get(block);
-            ColorType colorType = colorConverter.parseToColorType(block);
+        for (Piece piece : Piece.values()) {
+            Field target = blockField.get(piece);
+            ColorType colorType = colorConverter.parseToColorType(piece);
             fillInField(coloredField, colorType, target);
         }
 
@@ -70,5 +70,11 @@ public class EasyTetfu {
                     coloredField.setColorType(colorType, x, y);
             }
         }
+    }
+
+    public String encodeUrl(Field initField, BlockField blockField) {
+        Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
+        TetfuElement elementOnePage = parseBlockFieldToTetfuElement(initField, colorConverter, blockField, "");
+        return "http://fumen.zui.jp/?v115@" + tetfu.encode(Collections.singletonList(elementOnePage));
     }
 }

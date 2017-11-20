@@ -1,16 +1,15 @@
 package entry.path.output;
 
-import common.datastore.BlockCounter;
+import common.datastore.PieceCounter;
 import common.datastore.OperationWithKey;
-import common.datastore.pieces.LongBlocks;
-import common.pattern.IBlocksGenerator;
+import common.datastore.blocks.LongPieces;
+import common.pattern.PatternGenerator;
 import core.field.Field;
-import core.mino.Block;
-import core.mino.Mino;
+import core.mino.Piece;
 import entry.path.PathEntryPoint;
 import entry.path.PathPair;
 import entry.path.PathSettings;
-import entry.path.ReduceBlocksGenerator;
+import entry.path.ReducePatternGenerator;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
 import lib.AsyncBufferedFileWriter;
@@ -28,10 +27,10 @@ public class UseCSVPathOutput implements PathOutput {
     private final PathEntryPoint pathEntryPoint;
 
     private final MyFile outputBaseFile;
-    private final ReduceBlocksGenerator generator;
+    private final ReducePatternGenerator generator;
     private Exception lastException = null;
 
-    public UseCSVPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings, IBlocksGenerator generator, int maxDepth) throws FinderInitializeException {
+    public UseCSVPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings, PatternGenerator generator, int maxDepth) throws FinderInitializeException {
         // 出力ファイルが正しく出力できるか確認
         String outputBaseFilePath = pathSettings.getOutputBaseFilePath();
         String namePath = getRemoveExtensionFromPath(outputBaseFilePath);
@@ -49,7 +48,7 @@ public class UseCSVPathOutput implements PathOutput {
         // 保存
         this.pathEntryPoint = pathEntryPoint;
         this.outputBaseFile = base;
-        this.generator = new ReduceBlocksGenerator(generator, maxDepth);
+        this.generator = new ReducePatternGenerator(generator, maxDepth);
     }
 
     private String getRemoveExtensionFromPath(String path) throws FinderInitializeException {
@@ -72,10 +71,10 @@ public class UseCSVPathOutput implements PathOutput {
 
         AtomicInteger allCounter = new AtomicInteger();
 
-        Map<BlockCounter, List<PathPair>> groupingByClockCounter = pathPairs.parallelStream()
+        Map<PieceCounter, List<PathPair>> groupingByClockCounter = pathPairs.parallelStream()
                 .collect(Collectors.groupingBy(pathPair -> {
                     List<OperationWithKey> operations = pathPair.getSampleOperations();
-                    return new BlockCounter(operations.stream().map(OperationWithKey::getMino).map(Mino::getBlock));
+                    return new PieceCounter(operations.stream().map(OperationWithKey::getPiece));
                 }));
 
         List<PathPair> emptyValidList = Collections.emptyList();
@@ -89,7 +88,7 @@ public class UseCSVPathOutput implements PathOutput {
 
                         // 組み合わせ名を取得
                         String blockCounterName = blockCounter.getBlockStream()
-                                .map(Block::getName)
+                                .map(Piece::getName)
                                 .collect(Collectors.joining());
 
                         // パフェ可能な地形を抽出
@@ -105,7 +104,7 @@ public class UseCSVPathOutput implements PathOutput {
                                 .collect(Collectors.joining(";"));
 
                         // 対応できるパターンを重複なく抽出
-                        Set<LongBlocks> possiblePatternSet = valid.stream()
+                        Set<LongPieces> possiblePatternSet = valid.stream()
                                 .flatMap(PathPair::blocksStreamForPattern)
                                 .collect(Collectors.toSet());
 
@@ -114,8 +113,8 @@ public class UseCSVPathOutput implements PathOutput {
 
                         // パターンを連結
                         String patterns = possiblePatternSet.stream()
-                                .map(LongBlocks::getBlocks)
-                                .map(blocks -> blocks.stream().map(Block::getName).collect(Collectors.joining("")))
+                                .map(LongPieces::getPieces)
+                                .map(blocks -> blocks.stream().map(Piece::getName).collect(Collectors.joining("")))
                                 .collect(Collectors.joining(";"));
 
                         return String.format("%s,%d,%d,%s,%s", blockCounterName, possibleSize, possiblePatternSize, fumens, patterns);

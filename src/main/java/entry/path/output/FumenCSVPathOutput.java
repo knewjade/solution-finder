@@ -1,8 +1,8 @@
 package entry.path.output;
 
-import common.datastore.pieces.LongBlocks;
+import common.datastore.blocks.LongPieces;
 import core.field.Field;
-import core.mino.Block;
+import core.mino.Piece;
 import entry.path.PathEntryPoint;
 import entry.path.PathPair;
 import entry.path.PathSettings;
@@ -72,7 +72,7 @@ public class FumenCSVPathOutput implements PathOutput {
                         String encode = pathPair.getFumen();
 
                         // パターンに対する有効なミノ順をまとめる
-                        List<LongBlocks> patternBuildBlocks = pathPair.blocksStreamForPattern().collect(Collectors.toList());
+                        List<LongPieces> patternBuildBlocks = pathPair.blocksStreamForPattern().collect(Collectors.toList());
 
                         // 対応ツモ数 (対パターン)
                         int pattern = patternBuildBlocks.size();
@@ -82,13 +82,13 @@ public class FumenCSVPathOutput implements PathOutput {
 
                         // パターンに対する有効なミノ順をまとめる
                         String validOrdersPattern = patternBuildBlocks.stream()
-                                .map(longBlocks -> longBlocks.blockStream().map(Block::getName).collect(Collectors.joining()))
+                                .map(longBlocks -> longBlocks.blockStream().map(Piece::getName).collect(Collectors.joining()))
                                 .collect(Collectors.joining(";"));
 
                         // 地形に対する有効なミノ順をまとめる
-                        HashSet<LongBlocks> solutionBuildBlocks = pathPair.blocksHashSetForSolution();
+                        HashSet<LongPieces> solutionBuildBlocks = pathPair.blocksHashSetForSolution();
                         String validOrdersSolution = solutionBuildBlocks.stream()
-                                .map(longBlocks -> longBlocks.blockStream().map(Block::getName).collect(Collectors.joining()))
+                                .map(longBlocks -> longBlocks.blockStream().map(Piece::getName).collect(Collectors.joining()))
                                 .collect(Collectors.joining(";"));
 
                         // 対応ツモ数 (対地形)

@@ -1,9 +1,9 @@
 package entry.path;
 
 import common.buildup.BuildUp;
-import common.datastore.BlockCounter;
+import common.datastore.PieceCounter;
 import common.datastore.OperationWithKey;
-import common.pattern.IBlocksGenerator;
+import common.pattern.PatternGenerator;
 import searcher.pack.memento.MinoFieldMemento;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.mino_field.MinoField;
@@ -13,12 +13,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ForPathSolutionFilter implements SolutionFilter {
-    private final List<BlockCounter> validBlockCounters;
+    private final List<PieceCounter> validPieceCounters;
     private final int height;
 
-    public ForPathSolutionFilter(IBlocksGenerator generator, int height) {
+    public ForPathSolutionFilter(PatternGenerator generator, int height) {
         this.height = height;
-        this.validBlockCounters = generator.blockCountersStream()
+        this.validPieceCounters = generator.blockCountersStream()
                 .distinct()
                 .collect(Collectors.toList());
     }
@@ -38,8 +38,8 @@ public class ForPathSolutionFilter implements SolutionFilter {
         return BuildUp.checksKeyDirectly(rawOperations, 0L, height);
     }
 
-    private boolean checksValidCounter(BlockCounter counter) {
-        return validBlockCounters.stream()
+    private boolean checksValidCounter(PieceCounter counter) {
+        return validPieceCounters.stream()
                 .anyMatch(blockCounter -> blockCounter.containsAll(counter));
     }
 
@@ -57,6 +57,6 @@ public class ForPathSolutionFilter implements SolutionFilter {
 
     @Override
     public boolean testMinoField(MinoField minoField) {
-        return checksValidCounter(minoField.getBlockCounter());
+        return checksValidCounter(minoField.getPieceCounter());
     }
 }

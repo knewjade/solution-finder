@@ -1,6 +1,6 @@
 package _implements.parity_based_pack.step2;
 
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class PositionLimitParser {
     private final MinoFactory minoFactory;
     private final DeleteKeyParser deleteKeyParser;
-    private final EnumMap<Block, EnumMap<DeltaLimit, List<FullLimitedMino>>> maps;
+    private final EnumMap<Piece, EnumMap<DeltaLimit, List<FullLimitedMino>>> maps;
 
     public PositionLimitParser(MinoFactory minoFactory, int maxClearLine) {
         this.minoFactory = minoFactory;
@@ -24,8 +24,8 @@ public class PositionLimitParser {
         this.maps = initialMap();
     }
 
-    private EnumMap<Block, EnumMap<DeltaLimit, List<FullLimitedMino>>> initialMap() {
-        EnumMap<Block, EnumMap<DeltaLimit, List<FullLimitedMino>>> maps = new EnumMap<>(Block.class);
+    private EnumMap<Piece, EnumMap<DeltaLimit, List<FullLimitedMino>>> initialMap() {
+        EnumMap<Piece, EnumMap<DeltaLimit, List<FullLimitedMino>>> maps = new EnumMap<>(Piece.class);
         initialMapSZ(maps);
         initialMapO(maps);
         initialMapLJ(maps);
@@ -34,20 +34,20 @@ public class PositionLimitParser {
         return maps;
     }
 
-    private void initialMapSZ(EnumMap<Block, EnumMap<DeltaLimit, List<FullLimitedMino>>> maps) {
-        for (Block block : Arrays.asList(Block.S, Block.Z)) {
-            Rotate side = block == Block.S ? Rotate.Left : Rotate.Right;
+    private void initialMapSZ(EnumMap<Piece, EnumMap<DeltaLimit, List<FullLimitedMino>>> maps) {
+        for (Piece piece : Arrays.asList(Piece.S, Piece.Z)) {
+            Rotate side = piece == Piece.S ? Rotate.Left : Rotate.Right;
             List<PositionLimitedMino> minos = Arrays.asList(
-                    PositionLimitedMino.create(minoFactory.create(block, Rotate.Spawn), PositionLimit.OddX),
-                    PositionLimitedMino.create(minoFactory.create(block, Rotate.Spawn), PositionLimit.EvenX),
-                    PositionLimitedMino.create(minoFactory.create(block, side), PositionLimit.OddX),
-                    PositionLimitedMino.create(minoFactory.create(block, side), PositionLimit.EvenX)
+                    PositionLimitedMino.create(minoFactory.create(piece, Rotate.Spawn), PositionLimit.OddX),
+                    PositionLimitedMino.create(minoFactory.create(piece, Rotate.Spawn), PositionLimit.EvenX),
+                    PositionLimitedMino.create(minoFactory.create(piece, side), PositionLimit.OddX),
+                    PositionLimitedMino.create(minoFactory.create(piece, side), PositionLimit.EvenX)
             );
-            registerToMap(maps, block, minos, DeltaLimit.Flat);
+            registerToMap(maps, piece, minos, DeltaLimit.Flat);
         }
     }
 
-    private void registerToMap(EnumMap<Block, EnumMap<DeltaLimit, List<FullLimitedMino>>> maps, Block block, List<PositionLimitedMino> minos, DeltaLimit deltaLimit) {
+    private void registerToMap(EnumMap<Piece, EnumMap<DeltaLimit, List<FullLimitedMino>>> maps, Piece piece, List<PositionLimitedMino> minos, DeltaLimit deltaLimit) {
         List<FullLimitedMino> limitedMinos = minos.stream()
                 .flatMap(positionLimitedMino -> {
                     Mino mino = positionLimitedMino.getMino();
@@ -58,33 +58,33 @@ public class PositionLimitParser {
                 })
                 .collect(Collectors.toList());
 
-        EnumMap<DeltaLimit, List<FullLimitedMino>> deltaMap = maps.computeIfAbsent(block, blk -> new EnumMap<>(DeltaLimit.class));
+        EnumMap<DeltaLimit, List<FullLimitedMino>> deltaMap = maps.computeIfAbsent(piece, blk -> new EnumMap<>(DeltaLimit.class));
         deltaMap.put(deltaLimit, limitedMinos);
     }
 
-    private void initialMapO(EnumMap<Block, EnumMap<DeltaLimit, List<FullLimitedMino>>> maps) {
+    private void initialMapO(EnumMap<Piece, EnumMap<DeltaLimit, List<FullLimitedMino>>> maps) {
         List<PositionLimitedMino> minos = Arrays.asList(
-                PositionLimitedMino.create(minoFactory.create(Block.O, Rotate.Spawn), PositionLimit.OddX),
-                PositionLimitedMino.create(minoFactory.create(Block.O, Rotate.Spawn), PositionLimit.EvenX)
+                PositionLimitedMino.create(minoFactory.create(Piece.O, Rotate.Spawn), PositionLimit.OddX),
+                PositionLimitedMino.create(minoFactory.create(Piece.O, Rotate.Spawn), PositionLimit.EvenX)
         );
-        registerToMap(maps, Block.O, minos, DeltaLimit.Flat);
+        registerToMap(maps, Piece.O, minos, DeltaLimit.Flat);
 
     }
 
-    private void initialMapLJ(EnumMap<Block, EnumMap<DeltaLimit, List<FullLimitedMino>>> maps) {
-        for (Block block : Arrays.asList(Block.L, Block.J)) {
+    private void initialMapLJ(EnumMap<Piece, EnumMap<DeltaLimit, List<FullLimitedMino>>> maps) {
+        for (Piece piece : Arrays.asList(Piece.L, Piece.J)) {
             for (DeltaLimit deltaLimit : Arrays.asList(DeltaLimit.EvenUp, DeltaLimit.OddUp)) {
-                List<PositionLimitedMino> minos = createLJ(block, deltaLimit);
-                registerToMap(maps, block, minos, deltaLimit);
+                List<PositionLimitedMino> minos = createLJ(piece, deltaLimit);
+                registerToMap(maps, piece, minos, deltaLimit);
             }
         }
     }
 
-    private List<PositionLimitedMino> createLJ(Block block, DeltaLimit delta) {
-        Mino spawn = minoFactory.create(block, Rotate.Spawn);
-        Mino reverse = minoFactory.create(block, Rotate.Reverse);
-        Mino left = minoFactory.create(block, Rotate.Left);
-        Mino right = minoFactory.create(block, Rotate.Right);
+    private List<PositionLimitedMino> createLJ(Piece piece, DeltaLimit delta) {
+        Mino spawn = minoFactory.create(piece, Rotate.Spawn);
+        Mino reverse = minoFactory.create(piece, Rotate.Reverse);
+        Mino left = minoFactory.create(piece, Rotate.Left);
+        Mino right = minoFactory.create(piece, Rotate.Right);
 
         switch (delta) {
             case OddUp:
@@ -105,18 +105,18 @@ public class PositionLimitParser {
         throw new IllegalStateException("No reachable");
     }
 
-    private void initialMapT(EnumMap<Block, EnumMap<DeltaLimit, List<FullLimitedMino>>> maps) {
+    private void initialMapT(EnumMap<Piece, EnumMap<DeltaLimit, List<FullLimitedMino>>> maps) {
         for (DeltaLimit deltaLimit : Arrays.asList(DeltaLimit.EvenUp, DeltaLimit.OddUp, DeltaLimit.Flat)) {
             List<PositionLimitedMino> minos = createT(deltaLimit);
-            registerToMap(maps, Block.T, minos, deltaLimit);
+            registerToMap(maps, Piece.T, minos, deltaLimit);
         }
     }
 
     private List<PositionLimitedMino> createT(DeltaLimit delta) {
-        Mino spawn = minoFactory.create(Block.T, Rotate.Spawn);
-        Mino reverse = minoFactory.create(Block.T, Rotate.Reverse);
-        Mino left = minoFactory.create(Block.T, Rotate.Left);
-        Mino right = minoFactory.create(Block.T, Rotate.Right);
+        Mino spawn = minoFactory.create(Piece.T, Rotate.Spawn);
+        Mino reverse = minoFactory.create(Piece.T, Rotate.Reverse);
+        Mino left = minoFactory.create(Piece.T, Rotate.Left);
+        Mino right = minoFactory.create(Piece.T, Rotate.Right);
 
         switch (delta) {
             case OddUp:
@@ -140,16 +140,16 @@ public class PositionLimitParser {
         throw new IllegalStateException("No reachable");
     }
 
-    private void initialMapI(EnumMap<Block, EnumMap<DeltaLimit, List<FullLimitedMino>>> maps) {
+    private void initialMapI(EnumMap<Piece, EnumMap<DeltaLimit, List<FullLimitedMino>>> maps) {
         for (DeltaLimit deltaLimit : Arrays.asList(DeltaLimit.EvenUp, DeltaLimit.OddUp, DeltaLimit.Flat)) {
             List<PositionLimitedMino> minos = createI(deltaLimit);
-            registerToMap(maps, Block.I, minos, deltaLimit);
+            registerToMap(maps, Piece.I, minos, deltaLimit);
         }
     }
 
     private List<PositionLimitedMino> createI(DeltaLimit delta) {
-        Mino spawn = minoFactory.create(Block.I, Rotate.Spawn);
-        Mino left = minoFactory.create(Block.I, Rotate.Left);
+        Mino spawn = minoFactory.create(Piece.I, Rotate.Spawn);
+        Mino left = minoFactory.create(Piece.I, Rotate.Left);
 
         switch (delta) {
             case OddUp:
@@ -167,6 +167,6 @@ public class PositionLimitParser {
     }
 
     public List<FullLimitedMino> parse(DeltaLimitedMino deltaLimitedMino) {
-        return maps.get(deltaLimitedMino.getBlock()).get(deltaLimitedMino.getDeltaLimit());
+        return maps.get(deltaLimitedMino.getPiece()).get(deltaLimitedMino.getDeltaLimit());
     }
 }

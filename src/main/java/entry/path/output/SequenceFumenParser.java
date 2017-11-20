@@ -1,7 +1,7 @@
 package entry.path.output;
 
+import common.datastore.MinoOperationWithKey;
 import common.datastore.Operation;
-import common.datastore.OperationWithKey;
 import common.datastore.Operations;
 import common.parser.OperationTransform;
 import common.tetfu.Tetfu;
@@ -11,7 +11,7 @@ import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
 import core.field.Field;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.MinoFactory;
 
 import java.util.ArrayList;
@@ -28,22 +28,22 @@ public class SequenceFumenParser implements FumenParser {
     }
 
     @Override
-    public String parse(List<OperationWithKey> operations, Field field, int maxClearLine) {
+    public String parse(List<MinoOperationWithKey> operations, Field field, int maxClearLine) {
         Operations operations2 = OperationTransform.parseToOperations(field, operations, maxClearLine);
         List<? extends Operation> operationsList = operations2.getOperations();
 
         // ブロック順に変換
-        List<Block> blockList = operationsList.stream()
-                .map(Operation::getBlock)
+        List<Piece> pieceList = operationsList.stream()
+                .map(Operation::getPiece)
                 .collect(Collectors.toList());
 
         // テト譜を作成
-        String quiz = Tetfu.encodeForQuiz(blockList);
+        String quiz = Tetfu.encodeForQuiz(pieceList);
         ArrayList<TetfuElement> tetfuElements = new ArrayList<>();
 
         // 最初のelement
         Operation firstKey = operationsList.get(0);
-        ColorType colorType1 = colorConverter.parseToColorType(firstKey.getBlock());
+        ColorType colorType1 = colorConverter.parseToColorType(firstKey.getPiece());
         ColoredField coloredField = createInitColoredField(field, maxClearLine);
         TetfuElement firstElement = new TetfuElement(coloredField, colorType1, firstKey.getRotate(), firstKey.getX(), firstKey.getY(), quiz);
         tetfuElements.add(firstElement);
@@ -52,15 +52,14 @@ public class SequenceFumenParser implements FumenParser {
         if (1 < operationsList.size()) {
             operationsList.subList(1, operationsList.size()).stream()
                     .map(operation -> {
-                        ColorType colorType = colorConverter.parseToColorType(operation.getBlock());
+                        ColorType colorType = colorConverter.parseToColorType(operation.getPiece());
                         return new TetfuElement(colorType, operation.getRotate(), operation.getX(), operation.getY(), quiz);
                     })
                     .forEach(tetfuElements::add);
         }
 
         Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
-        String encode = tetfu.encode(tetfuElements);
-        return encode;
+        return tetfu.encode(tetfuElements);
     }
 
     private ColoredField createInitColoredField(Field initField, int maxClearLine) {

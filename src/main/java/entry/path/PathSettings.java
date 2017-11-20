@@ -6,7 +6,7 @@ import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Block;
+import core.mino.Piece;
 import entry.DropType;
 import exceptions.FinderParseException;
 
@@ -122,8 +122,8 @@ public class PathSettings {
                         field.setBlock(x, y);
                         break;
                     default:
-                        Block block = colorConverter.parseToBlock(colorType);
-                        blockField.setBlock(block, x, y);
+                        Piece piece = colorConverter.parseToBlock(colorType);
+                        blockField.setBlock(piece, x, y);
                         break;
                 }
             }

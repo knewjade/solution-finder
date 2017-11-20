@@ -3,14 +3,14 @@ package core.action.candidate;
 import common.datastore.action.Action;
 import core.action.cache.LockedNeighborCache;
 import core.field.Field;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
-import core.mino.piece.Neighbor;
-import core.mino.piece.Neighbors;
-import core.mino.piece.Piece;
-import core.mino.piece.PieceFactory;
+import core.neighbor.OriginalPiece;
+import core.neighbor.Neighbor;
+import core.neighbor.Neighbors;
+import core.neighbor.OriginalPieceFactory;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
 
@@ -33,7 +33,7 @@ public class LockedNeighborCandidate implements Candidate<Neighbor> {
     private Field field = null;
     private final LockedNeighborCache cache;
 
-    public LockedNeighborCandidate(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, PieceFactory pieceFactory) {
+    public LockedNeighborCandidate(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, OriginalPieceFactory pieceFactory) {
         this.minoFactory = minoFactory;
         this.minoShifter = minoShifter;
         this.neighbors = new Neighbors(minoFactory, minoRotation, pieceFactory);
@@ -41,20 +41,20 @@ public class LockedNeighborCandidate implements Candidate<Neighbor> {
     }
 
     @Override
-    public Set<Neighbor> search(Field field, Block block, int appearY) {
+    public Set<Neighbor> search(Field field, Piece piece, int appearY) {
         this.field = field;
 
         HashSet<Neighbor> results = new HashSet<>();
 
         cache.clear();
 
-        Set<Rotate> uniqueRotates = minoShifter.getUniqueRotates(block);
+        Set<Rotate> uniqueRotates = minoShifter.getUniqueRotates(piece);
 
         for (Rotate rotate : uniqueRotates) {
-            Mino mino = minoFactory.create(block, rotate);
+            Mino mino = minoFactory.create(piece, rotate);
             for (int x = -mino.getMinX(); x < FIELD_WIDTH - mino.getMaxX(); x++) {
                 for (int y = -mino.getMinY(); y < appearY - mino.getMaxY(); y++) {
-                    Neighbor neighbor = neighbors.get(block, rotate, x, y);
+                    Neighbor neighbor = neighbors.get(piece, rotate, x, y);
                     if (field.canPut(neighbor.getPiece()) && field.isOnGround(mino, x, y)) {
                         loop(results, neighbor);
                     }
@@ -71,9 +71,9 @@ public class LockedNeighborCandidate implements Candidate<Neighbor> {
         if (check(neighbor)) {
             results.add(neighbor);
         } else {
-            Piece piece = neighbor.getPiece();
+            OriginalPiece piece = neighbor.getPiece();
             Mino mino = piece.getMino();
-            Block block = mino.getBlock();
+            Piece block = mino.getPiece();
             List<Action> actions = minoShifter.enumerateSameOtherActions(block, mino.getRotate(), piece.getX(), piece.getY());
             for (Action action : actions) {
                 Neighbor similar = neighbors.get(block, action.getRotate(), action.getX(), action.getY());
@@ -84,7 +84,7 @@ public class LockedNeighborCandidate implements Candidate<Neighbor> {
     }
 
     private boolean check(Neighbor current) {
-        Piece piece = current.getPiece();
+        OriginalPiece piece = current.getPiece();
 
         // ハードドロップで到達できるとき
         if (field.canReachOnHarddrop(piece))
@@ -103,7 +103,7 @@ public class LockedNeighborCandidate implements Candidate<Neighbor> {
         // 上と左右に移動
         List<Neighbor> nextMovesSources = current.getNextMovesSources();
         for (Neighbor next : nextMovesSources) {
-            Piece nextPiece = next.getPiece();
+            OriginalPiece nextPiece = next.getPiece();
             if (field.canPut(nextPiece) && check(next)) {
                 cache.found(current);
                 return true;
@@ -111,6 +111,17 @@ public class LockedNeighborCandidate implements Candidate<Neighbor> {
         }
 
         // 左回転でくる可能性がある場所を移動
+        if (checkLeftRotation(current))
+            return true;
+
+        // 右回転でくる可能性がある場所を移動
+        if (checkRightRotation(current))
+            return true;
+
+        return false;
+    }
+
+    private boolean checkLeftRotation(Neighbor current) {
         List<Neighbor> nextLeftRotateSources = current.getNextLeftRotateSources();
         for (Neighbor source : nextLeftRotateSources) {
             if (!field.canPut(source.getPiece()))
@@ -124,8 +135,10 @@ public class LockedNeighborCandidate implements Candidate<Neighbor> {
                 return true;
             }
         }
+        return false;
+    }
 
-        // 右回転でくる可能性がある場所を移動
+    private boolean checkRightRotation(Neighbor current) {
         List<Neighbor> nextRightRotateSources = current.getNextRightRotateSources();
         for (Neighbor source : nextRightRotateSources) {
             if (!field.canPut(source.getPiece()))
@@ -139,7 +152,6 @@ public class LockedNeighborCandidate implements Candidate<Neighbor> {
                 return true;
             }
         }
-
         return false;
     }
 

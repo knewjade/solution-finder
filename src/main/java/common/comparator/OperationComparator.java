@@ -6,7 +6,7 @@ import java.util.Comparator;
 
 public class OperationComparator implements Comparator<Operation> {
     public static int compareOperation(Operation o1, Operation o2) {
-        int blockCompare = o1.getBlock().compareTo(o2.getBlock());
+        int blockCompare = o1.getPiece().compareTo(o2.getPiece());
         if (blockCompare != 0)
             return blockCompare;
 

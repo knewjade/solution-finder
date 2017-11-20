@@ -2,13 +2,14 @@ package searcher.pack.task;
 
 import common.SyntaxException;
 import common.buildup.BuildUpStream;
+import common.datastore.MinoOperationWithKey;
 import common.datastore.OperationWithKey;
 import common.datastore.Pair;
 import common.datastore.action.Action;
-import common.datastore.pieces.Blocks;
-import common.datastore.pieces.LongBlocks;
-import common.pattern.BlocksGenerator;
-import common.pattern.IBlocksGenerator;
+import common.datastore.blocks.LongPieces;
+import common.datastore.blocks.Pieces;
+import common.pattern.LoadedPatternGenerator;
+import common.pattern.PatternGenerator;
 import concurrent.LockedReachableThreadLocal;
 import core.action.candidate.Candidate;
 import core.action.candidate.LockedCandidate;
@@ -17,12 +18,12 @@ import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Block;
-import core.mino.Mino;
+import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import lib.Randoms;
+import module.LongTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,7 @@ import searcher.pack.memento.AllPassedSolutionFilter;
 import searcher.pack.memento.SRSValidSolutionFilter;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.mino_fields.RecursiveMinoFields;
+import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.solutions.BasicSolutionsCalculator;
 import searcher.pack.solutions.FilterOnDemandBasicSolutions;
 import searcher.pack.solutions.MappedBasicSolutions;
@@ -201,7 +203,7 @@ class PackSearcherTest {
         }
 
         @Test
-        @Tag("long")
+        @LongTest
         void packSRSCandidate1() throws ExecutionException, InterruptedException {
             // SRS: SizedBit=3x4, TaskResultHelper=4x10, BasicSolutions=Mapped
             int width = 3;
@@ -232,7 +234,7 @@ class PackSearcherTest {
         }
 
         @Test
-        @Tag("long")
+        @LongTest
         void packSRSCandidate3() throws ExecutionException, InterruptedException {
             // SRS: SizedBit=2x4, TaskResultHelper=Basic, BasicSolutions=Mapped
             int width = 2;
@@ -261,16 +263,16 @@ class PackSearcherTest {
         }
     }
 
-    private IBlocksGenerator createPiecesGenerator(int maxDepth) throws SyntaxException {
+    private PatternGenerator createPiecesGenerator(int maxDepth) throws SyntaxException {
         switch (maxDepth) {
             case 3:
-                return new BlocksGenerator("*, *p2");
+                return new LoadedPatternGenerator("*, *p2");
             case 4:
-                return new BlocksGenerator("*, *p3");
+                return new LoadedPatternGenerator("*, *p3");
             case 5:
-                return new BlocksGenerator("*, *p4");
+                return new LoadedPatternGenerator("*, *p4");
             case 6:
-                return new BlocksGenerator("*, *p5");
+                return new LoadedPatternGenerator("*, *p5");
         }
         throw new UnsupportedOperationException();
     }
@@ -301,13 +303,17 @@ class PackSearcherTest {
             List<Result> results = searcher.toList();
 
             // Possible
-            HashSet<Blocks> possiblePieces = new HashSet<>();
+            HashSet<Pieces> possiblePieces = new HashSet<>();
             for (Result result : results) {
                 // result to possible pieces
-                List<OperationWithKey> operationWithKeys = result.getMemento().getOperationsStream(width).collect(Collectors.toList());
-                Set<LongBlocks> sets = new BuildUpStream(reachable, height).existsValidBuildPattern(initField, operationWithKeys)
-                        .map(keys -> keys.stream().map(OperationWithKey::getMino).map(Mino::getBlock))
-                        .map(LongBlocks::new)
+                List<MinoOperationWithKey> operationWithKeys = result.getMemento()
+                        .getSeparableMinoStream(width)
+                        .map(SeparableMino::toMinoOperationWithKey)
+                        .collect(Collectors.toList());
+
+                Set<LongPieces> sets = new BuildUpStream(reachable, height).existsValidBuildPattern(initField, operationWithKeys)
+                        .map(keys -> keys.stream().map(OperationWithKey::getPiece))
+                        .map(LongPieces::new)
                         .collect(Collectors.toSet());
                 possiblePieces.addAll(sets);
             }
@@ -317,13 +323,13 @@ class PackSearcherTest {
             CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
 
             // Assert generator
-            IBlocksGenerator generator = createPiecesGenerator(maxDepth);
+            PatternGenerator generator = createPiecesGenerator(maxDepth);
             generator.blocksStream()
                     .forEach(blocks -> {
-                        List<Block> blockList = blocks.getBlocks();
-                        boolean check = checker.check(initField, blockList, candidate, height, maxDepth);
+                        List<Piece> pieceList = blocks.getPieces();
+                        boolean check = checker.check(initField, pieceList, candidate, height, maxDepth);
                         assertThat(possiblePieces.contains(blocks))
-                                .as(blockList.toString())
+                                .as(pieceList.toString())
                                 .isEqualTo(check);
                     });
         }
@@ -355,13 +361,17 @@ class PackSearcherTest {
             List<Result> results = searcher.toList();
 
             // Possible
-            HashSet<Blocks> possiblePieces = new HashSet<>();
+            HashSet<Pieces> possiblePieces = new HashSet<>();
             for (Result result : results) {
                 // result to possible pieces
-                List<OperationWithKey> operationWithKeys = result.getMemento().getOperationsStream(width).collect(Collectors.toList());
-                Set<LongBlocks> sets = new BuildUpStream(reachable, height).existsValidBuildPattern(initField, operationWithKeys)
-                        .map(keys -> keys.stream().map(OperationWithKey::getMino).map(Mino::getBlock))
-                        .map(LongBlocks::new)
+                List<MinoOperationWithKey> operationWithKeys = result.getMemento()
+                        .getSeparableMinoStream(width)
+                        .map(SeparableMino::toMinoOperationWithKey)
+                        .collect(Collectors.toList());
+
+                Set<LongPieces> sets = new BuildUpStream(reachable, height).existsValidBuildPattern(initField, operationWithKeys)
+                        .map(keys -> keys.stream().map(OperationWithKey::getPiece))
+                        .map(LongPieces::new)
                         .collect(Collectors.toSet());
                 possiblePieces.addAll(sets);
             }
@@ -371,13 +381,13 @@ class PackSearcherTest {
             CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
 
             // Assert generator
-            IBlocksGenerator generator = createPiecesGenerator(maxDepth);
+            PatternGenerator generator = createPiecesGenerator(maxDepth);
             generator.blocksStream()
                     .forEach(blocks -> {
-                        List<Block> blockList = blocks.getBlocks();
-                        boolean check = checker.check(initField, blockList, candidate, height, maxDepth);
+                        List<Piece> pieceList = blocks.getPieces();
+                        boolean check = checker.check(initField, pieceList, candidate, height, maxDepth);
                         assertThat(possiblePieces.contains(blocks))
-                                .as(blockList.toString())
+                                .as(pieceList.toString())
                                 .isEqualTo(check);
                     });
         }

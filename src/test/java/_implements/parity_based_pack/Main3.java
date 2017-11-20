@@ -6,13 +6,11 @@ import _implements.parity_based_pack.step1.EstimateBuilder;
 import _implements.parity_based_pack.step2.FullLimitedMino;
 import _implements.parity_based_pack.step2.PositionLimitParser;
 import _implements.parity_based_pack.step3.CrossBuilder;
-import common.datastore.BlockCounter;
-import common.parser.OperationWithKeyInterpreter;
-import lib.Stopwatch;
 import common.buildup.BuildUp;
-import common.datastore.BlockField;
-import common.datastore.OperationWithKey;
+import common.comparator.OperationWithKeyComparator;
+import common.datastore.*;
 import common.iterable.CombinationIterable;
+import common.parser.OperationWithKeyInterpreter;
 import common.tetfu.Tetfu;
 import common.tetfu.TetfuElement;
 import common.tetfu.common.ColorConverter;
@@ -23,10 +21,11 @@ import concurrent.LockedReachableThreadLocal;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
+import lib.Stopwatch;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -50,39 +49,39 @@ public class Main3 {
         Stopwatch stopwatch = Stopwatch.createStoppedStopwatch();
         stopwatch.start();
 
-        Set<List<Block>> sets = new HashSet<>();
-        List<Block> allBlocks = Block.valueList();
-        List<Block> blocks = new ArrayList<>();
-        blocks.addAll(allBlocks);
+        Set<List<Piece>> sets = new HashSet<>();
+        List<Piece> allPieces = Piece.valueList();
+        List<Piece> pieces = new ArrayList<>();
+        pieces.addAll(allPieces);
         int popCount = (maxClearLine * 10 - field.getNumOfAllBlocks()) / 4;
-        CombinationIterable<Block> combinationIterable = new CombinationIterable<>(blocks, popCount);
-        for (List<Block> blockList : combinationIterable) {
-            blockList.sort(Comparator.comparingInt(allBlocks::indexOf));
-            sets.add(blockList);
+        CombinationIterable<Piece> combinationIterable = new CombinationIterable<>(pieces, popCount);
+        for (List<Piece> pieceList : combinationIterable) {
+            pieceList.sort(Comparator.comparingInt(allPieces::indexOf));
+            sets.add(pieceList);
         }
 
         TreeSet<Obj> allObjSet = new TreeSet<>();
         int counter = 0;
-        for (List<Block> usedBlocks : sets) {
+        for (List<Piece> usedPieces : sets) {
             counter++;
-            System.out.println(usedBlocks);
+            System.out.println(usedPieces);
             System.out.println(counter + " / " + sets.size());
-            List<List<OperationWithKey>> operationsWithKey = search(usedBlocks, field, maxClearLine, verifyField);
+            List<List<MinoOperationWithKey>> operationsWithKey = search(usedPieces, field, maxClearLine, verifyField);
             List<Obj> objs = operationsWithKey.stream()
                     .map(operationWithKeys -> {
                         boolean isDeleted = false;
                         BlockField blockField = new BlockField(maxClearLine);
-                        for (OperationWithKey key : operationWithKeys) {
+                        for (MinoOperationWithKey key : operationWithKeys) {
                             Field test = FieldFactory.createField(maxClearLine);
                             Mino mino = key.getMino();
                             test.put(mino, key.getX(), key.getY());
                             test.insertWhiteLineWithKey(key.getNeedDeletedKey());
-                            blockField.merge(test, mino.getBlock());
+                            blockField.merge(test, mino.getPiece());
 
                             if (key.getNeedDeletedKey() != 0L)
                                 isDeleted = true;
                         }
-                        return new Obj(usedBlocks, blockField, isDeleted, operationWithKeys);
+                        return new Obj(usedPieces, blockField, isDeleted, operationWithKeys);
                     })
                     .collect(Collectors.toList());
 
@@ -126,16 +125,16 @@ public class Main3 {
 
 
 //        List<List<FullLimitedMino>> lists = Arrays.asList(
-//                singletonList(create(minoFactory, Block.I, Rotate.Left, PositionLimit.OddX, 0L, 0, 3)),
-//                singletonList(create(minoFactory, Block.O, Rotate.Spawn, PositionLimit.OddX, 0L, 0, 1)),
-//                singletonList(create(minoFactory, Block.O, Rotate.Spawn, PositionLimit.OddX, 0L, 2, 3)),
-//                singletonList(create(minoFactory, Block.L, Rotate.Reverse, PositionLimit.OddX, 0L, 0, 1)),
-//                singletonList(create(minoFactory, Block.J, Rotate.Reverse, PositionLimit.OddX, 0L, 0, 1)),
-//                singletonList(create(minoFactory, Block.Z, Rotate.Spawn, PositionLimit.EvenX, 0L, 2, 3)),
-//                singletonList(create(minoFactory, Block.S, Rotate.Left, PositionLimit.OddX, 1024L, 0, 3)),
-//                singletonList(create(minoFactory, Block.Z, Rotate.Left, PositionLimit.EvenX, 1024L, 0, 3)),
-//                singletonList(create(minoFactory, Block.T, Rotate.Spawn, PositionLimit.OddX, 0L, 0, 1)),
-//                singletonList(create(minoFactory, Block.T, Rotate.Reverse, PositionLimit.EvenX, 0L, 2, 3))
+//                singletonList(create(minoFactory, Piece.I, Rotate.Left, PositionLimit.OddX, 0L, 0, 3)),
+//                singletonList(create(minoFactory, Piece.O, Rotate.Spawn, PositionLimit.OddX, 0L, 0, 1)),
+//                singletonList(create(minoFactory, Piece.O, Rotate.Spawn, PositionLimit.OddX, 0L, 2, 3)),
+//                singletonList(create(minoFactory, Piece.L, Rotate.Reverse, PositionLimit.OddX, 0L, 0, 1)),
+//                singletonList(create(minoFactory, Piece.J, Rotate.Reverse, PositionLimit.OddX, 0L, 0, 1)),
+//                singletonList(create(minoFactory, Piece.Z, Rotate.Spawn, PositionLimit.EvenX, 0L, 2, 3)),
+//                singletonList(create(minoFactory, Piece.S, Rotate.Left, PositionLimit.OddX, 1024L, 0, 3)),
+//                singletonList(create(minoFactory, Piece.Z, Rotate.Left, PositionLimit.EvenX, 1024L, 0, 3)),
+//                singletonList(create(minoFactory, Piece.T, Rotate.Spawn, PositionLimit.OddX, 0L, 0, 1)),
+//                singletonList(create(minoFactory, Piece.T, Rotate.Reverse, PositionLimit.EvenX, 0L, 2, 3))
 //        );
 //        CrossBuilder crossBuilder = new CrossBuilder(lists, FieldFactory.createField(maxClearLine), maxClearLine);
 //        List<List<OperationWithKey>> lists1 = crossBuilder.create();
@@ -143,15 +142,15 @@ public class Main3 {
 
 
 //        List<List<OperationWithKey>> search = new Search(FieldFactory.createField(4), Arrays.asList(
-//                create(minoFactory, Block.O, Rotate.Spawn, PositionLimit.NoLimit, 0L, 0, 1),
-//                create(minoFactory, Block.O, Rotate.Spawn, PositionLimit.NoLimit, 0L, 2, 3),
-//                create(minoFactory, Block.I, Rotate.Right, PositionLimit.NoLimit, 0L, 0, 3),
-//                create(minoFactory, Block.L, Rotate.Reverse, PositionLimit.NoLimit, 0L, 0, 1),
-//                create(minoFactory, Block.J, Rotate.Reverse, PositionLimit.NoLimit, 0L, 0, 1),
-//                create(minoFactory, Block.T, Rotate.Spawn, PositionLimit.NoLimit, 0L, 0, 1),
-//                create(minoFactory, Block.T, Rotate.Reverse, PositionLimit.NoLimit, 0L, 2, 3),
-//                create(minoFactory, Block.Z, Rotate.Right, PositionLimit.NoLimit, 0x400L, 0, 3),
-//                create(minoFactory, Block.S, Rotate.Right, PositionLimit.NoLimit, 0x400L, 0, 3)
+//                create(minoFactory, Piece.O, Rotate.Spawn, PositionLimit.NoLimit, 0L, 0, 1),
+//                create(minoFactory, Piece.O, Rotate.Spawn, PositionLimit.NoLimit, 0L, 2, 3),
+//                create(minoFactory, Piece.I, Rotate.Right, PositionLimit.NoLimit, 0L, 0, 3),
+//                create(minoFactory, Piece.L, Rotate.Reverse, PositionLimit.NoLimit, 0L, 0, 1),
+//                create(minoFactory, Piece.J, Rotate.Reverse, PositionLimit.NoLimit, 0L, 0, 1),
+//                create(minoFactory, Piece.T, Rotate.Spawn, PositionLimit.NoLimit, 0L, 0, 1),
+//                create(minoFactory, Piece.T, Rotate.Reverse, PositionLimit.NoLimit, 0L, 2, 3),
+//                create(minoFactory, Piece.Z, Rotate.Right, PositionLimit.NoLimit, 0x400L, 0, 3),
+//                create(minoFactory, Piece.S, Rotate.Right, PositionLimit.NoLimit, 0x400L, 0, 3)
 //        ), maxClearLine).search();
 //        System.out.println("--");
 //        for (List<OperationWithKey> operationWithKeys : search) {
@@ -160,8 +159,8 @@ public class Main3 {
 
 //        MinoFactory minoFactory = new MinoFactory();
 //        List<List<FullLimitedMino>> lists = Arrays.asList(
-//                singletonList(create(minoFactory, Block.J, Rotate.Right, PositionLimit.OddX, 0L, 0, 2)),
-//                singletonList(create(minoFactory, Block.L, Rotate.Left, PositionLimit.EvenX, 1048576, 0, 4))
+//                singletonList(create(minoFactory, Piece.J, Rotate.Right, PositionLimit.OddX, 0L, 0, 2)),
+//                singletonList(create(minoFactory, Piece.L, Rotate.Left, PositionLimit.EvenX, 1048576, 0, 4))
 //        );
 //        CrossBuilder crossBuilder = new CrossBuilder(lists, FieldFactory.createField("" +
 //                "__XXXXXXXX" +
@@ -182,8 +181,8 @@ public class Main3 {
     }
 
     private static int blockListComparator(Obj o1, Obj o2) {
-        List<Block> blocks1 = o1.blocks;
-        List<Block> blocks2 = o2.blocks;
+        List<Piece> blocks1 = o1.pieces;
+        List<Piece> blocks2 = o2.pieces;
         int size1 = blocks1.size();
         int size2 = blocks2.size();
         int minSize = size1 < size2 ? size1 : size2;
@@ -207,7 +206,7 @@ public class Main3 {
             if (!add) {
                 SortedSet<Obj> objs = treeSet.tailSet(obj);
                 Obj same = objs.first();
-                assert same.blocks.equals(obj.blocks);
+                assert same.pieces.equals(obj.pieces);
                 same.duplicate += 1;
             }
         }
@@ -244,13 +243,13 @@ public class Main3 {
         fillInField(coloredField, ColorType.Gray, initField);
 
         BlockField blockField = obj.blockField;
-        for (Block block : Block.values()) {
-            Field target = blockField.get(block);
-            ColorType colorType = colorConverter.parseToColorType(block);
+        for (Piece piece : Piece.values()) {
+            Field target = blockField.get(piece);
+            ColorType colorType = colorConverter.parseToColorType(piece);
             fillInField(coloredField, colorType, target);
         }
 
-        String blocks = obj.blocks.toString();
+        String blocks = obj.pieces.toString();
         if (0 < obj.duplicate)
             blocks += " 他 " + obj.duplicate + "pattern";
         return new TetfuElement(coloredField, ColorType.Empty, Rotate.Reverse, 0, 0, blocks);
@@ -265,17 +264,17 @@ public class Main3 {
         }
     }
 
-    public static List<List<OperationWithKey>> search(List<Block> usedBlocks, Field field, int maxClearLine, Field verifyField) {
+    public static List<List<MinoOperationWithKey>> search(List<Piece> usedPieces, Field field, int maxClearLine, Field verifyField) {
         MinoFactory minoFactory = new MinoFactory();
         PositionLimitParser positionLimitParser = new PositionLimitParser(minoFactory, maxClearLine);
         LockedReachableThreadLocal threadLocal = new LockedReachableThreadLocal(maxClearLine);
 
         ParityField parityField = new ParityField(field);
-        BlockCounter blockCounter = new BlockCounter(usedBlocks);
-        ColumnParityLimitation limitation = new ColumnParityLimitation(blockCounter, parityField, maxClearLine);
+        PieceCounter pieceCounter = new PieceCounter(usedPieces);
+        ColumnParityLimitation limitation = new ColumnParityLimitation(pieceCounter, parityField, maxClearLine);
 
 //        System.out.println(parityField);
-//        System.out.println(blockCounter);
+//        System.out.println(pieceCounter);
 
         return limitation.enumerate().parallelStream()
                 .map(EstimateBuilder::create)
@@ -288,14 +287,14 @@ public class Main3 {
                             .collect(Collectors.toList());
 
                     // 候補数が小さい順  // 同種のブロックを固めるため
-                    List<Block> priority = collect.stream()
+                    List<Piece> priority = collect.stream()
                             .sorted(Comparator.comparingInt(List::size))
-                            .map(fullLimitedMinos -> fullLimitedMinos.get(0).getMino().getBlock())
+                            .map(fullLimitedMinos -> fullLimitedMinos.get(0).getMino().getPiece())
                             .collect(Collectors.toList());
 
                     // ソートする
                     collect.sort((o1, o2) -> {
-                        int compare = Integer.compare(priority.indexOf(o1.get(0).getMino().getBlock()), priority.indexOf(o2.get(0).getMino().getBlock()));
+                        int compare = Integer.compare(priority.indexOf(o1.get(0).getMino().getPiece()), priority.indexOf(o2.get(0).getMino().getPiece()));
                         if (compare != 0)
                             return compare;
                         return -Integer.compare(o1.size(), o2.size());
@@ -318,49 +317,28 @@ public class Main3 {
                 .collect(Collectors.toList());
     }
 
-    private static final Comparator<OperationWithKey> OPERATION_WITH_KEY_COMPARATOR = (o1, o2) -> {
-        Mino mino1 = o1.getMino();
-        Mino mino2 = o2.getMino();
-
-        int compareBlock = mino1.getBlock().compareTo(mino2.getBlock());
-        if (compareBlock != 0)
-            return compareBlock;
-
-        int compareRotate = mino1.getRotate().compareTo(mino2.getRotate());
-        if (compareRotate != 0)
-            return compareRotate;
-
-        int compareX = Integer.compare(o1.getX(), o2.getX());
-        if (compareX != 0)
-            return compareX;
-
-        int compareY = Integer.compare(o1.getY(), o2.getY());
-        if (compareY != 0)
-            return compareY;
-
-        return Long.compare(o1.getNeedDeletedKey(), o2.getNeedDeletedKey());
-    };
+    private static final Comparator<OperationWithKey> OPERATION_WITH_KEY_COMPARATOR = new OperationWithKeyComparator();
 
     private static class Obj implements Comparable<Obj> {
-        private final List<Block> blocks;
+        private final List<Piece> pieces;
         private final BlockField blockField;
         private final boolean isDeleted;
-        private final List<OperationWithKey> operations;
+        private final List<MinoOperationWithKey> operations;
         private final boolean isDouble;
         private int duplicate = 0;
 
-        public Obj(List<Block> blocks, BlockField blockField, boolean isDeleted, List<OperationWithKey> operations) {
+        private Obj(List<Piece> pieces, BlockField blockField, boolean isDeleted, List<MinoOperationWithKey> operations) {
             operations.sort(OPERATION_WITH_KEY_COMPARATOR);
-            this.blocks = blocks;
+            this.pieces = pieces;
             this.blockField = blockField;
             this.isDeleted = isDeleted;
             this.operations = operations;
 
-            BlockCounter blockCounter = new BlockCounter(blocks);
-            EnumMap<Block, Integer> map = blockCounter.getEnumMap();
+            PieceCounter pieceCounter = new PieceCounter(pieces);
+            EnumMap<Piece, Integer> map = pieceCounter.getEnumMap();
             boolean isDouble = false;
-            for (Block block : Block.values()) {
-                if (2 <= map.getOrDefault(block, 0))
+            for (Piece piece : Piece.values()) {
+                if (2 <= map.getOrDefault(piece, 0))
                     isDouble = true;
             }
             this.isDouble = isDouble;

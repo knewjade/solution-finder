@@ -2,7 +2,7 @@ package common;
 
 import common.datastore.Operation;
 import common.datastore.action.Action;
-import core.mino.Block;
+import core.mino.Piece;
 
 import java.util.Arrays;
 import java.util.stream.Stream;
@@ -21,8 +21,8 @@ public class OperationHistory {
         this.nextIndex = nextIndex;
     }
 
-    public OperationHistory recordAndReturnNew(Block block, Action action) {
-        return recordAndReturnNew(ActionParser.parseToInt(block, action));
+    public OperationHistory recordAndReturnNew(Piece piece, Action action) {
+        return recordAndReturnNew(ActionParser.parseToInt(piece, action));
     }
 
     private OperationHistory recordAndReturnNew(int value) {

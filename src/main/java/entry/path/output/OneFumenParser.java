@@ -1,6 +1,7 @@
 package entry.path.output;
 
 import common.datastore.BlockField;
+import common.datastore.MinoOperationWithKey;
 import common.datastore.OperationWithKey;
 import common.tetfu.Tetfu;
 import common.tetfu.TetfuElement;
@@ -10,7 +11,7 @@ import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
@@ -29,15 +30,14 @@ public class OneFumenParser implements FumenParser {
     }
 
     @Override
-    public String parse(List<OperationWithKey> operations, Field field, int maxClearLine) {
+    public String parse(List<MinoOperationWithKey> operations, Field field, int maxClearLine) {
         // BlockField を生成
         BlockField blockField = createBlockField(operations, maxClearLine);
 
         // パターンを表す名前 を生成
         String blocksName = operations.stream()
-                .map(OperationWithKey::getMino)
-                .map(Mino::getBlock)
-                .map(Block::getName)
+                .map(OperationWithKey::getPiece)
+                .map(Piece::getName)
                 .collect(Collectors.joining());
 
         // テト譜1ページを作成
@@ -47,19 +47,19 @@ public class OneFumenParser implements FumenParser {
         return tetfu.encode(Collections.singletonList(tetfuElement));
     }
 
-    private BlockField createBlockField(List<OperationWithKey> operations, int maxClearLine) {
+    private BlockField createBlockField(List<MinoOperationWithKey> operations, int maxClearLine) {
         BlockField blockField = new BlockField(maxClearLine);
 
-        for (OperationWithKey key : operations) {
+        for (MinoOperationWithKey key : operations) {
             Field test = createField(key, maxClearLine);
             Mino mino = key.getMino();
-            blockField.merge(test, mino.getBlock());
+            blockField.merge(test, mino.getPiece());
         }
 
         return blockField;
     }
 
-    private Field createField(OperationWithKey key, int maxClearLine) {
+    private Field createField(MinoOperationWithKey key, int maxClearLine) {
         Mino mino = key.getMino();
         Field test = FieldFactory.createField(maxClearLine);
         test.put(mino, key.getX(), key.getY());
@@ -70,9 +70,9 @@ public class OneFumenParser implements FumenParser {
     private TetfuElement createTetfuElement(Field initField, BlockField blockField, String comment, int maxClearLine) {
         ColoredField coloredField = createInitColoredField(initField, maxClearLine);
 
-        for (Block block : Block.values()) {
-            Field target = blockField.get(block);
-            ColorType colorType = this.colorConverter.parseToColorType(block);
+        for (Piece piece : Piece.values()) {
+            Field target = blockField.get(piece);
+            ColorType colorType = this.colorConverter.parseToColorType(piece);
             fillInField(coloredField, colorType, target, maxClearLine);
         }
 

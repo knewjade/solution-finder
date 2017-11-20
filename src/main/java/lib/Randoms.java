@@ -2,7 +2,7 @@ package lib;
 
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Block;
+import core.mino.Piece;
 import core.srs.Rotate;
 
 import java.util.*;
@@ -27,10 +27,12 @@ public class Randoms {
     }
 
     public int nextInt(int bound) {
+        assert 0 < bound;
         return random.nextInt(bound);
     }
 
     public int nextInt(int origin, int bound) {
+        assert origin < bound;
         int size = bound - origin;
         return origin + random.nextInt(size);
     }
@@ -39,13 +41,13 @@ public class Randoms {
         return nextInt(origin, boundClosed + 1);
     }
 
-    public Block block() {
-        return Block.getBlock(random.nextInt(Block.getSize()));
+    public Piece block() {
+        return Piece.getBlock(random.nextInt(Piece.getSize()));
     }
 
-    public List<Block> blocks(int size) {
-        return random.ints(size, 0, Block.getSize())
-                .mapToObj(Block::getBlock)
+    public List<Piece> blocks(int size) {
+        return random.ints(size, 0, Piece.getSize())
+                .mapToObj(Piece::getBlock)
                 .collect(Collectors.toList());
     }
 
@@ -220,16 +222,16 @@ public class Randoms {
         return random.nextDouble();
     }
 
-    public List<Block> block11InCycle(int cycle) {
+    public List<Piece> block11InCycle(int cycle) {
         assert 0 <= cycle;
-        ArrayList<Block> blocks = new ArrayList<>();
-        ArrayList<Block> allBlocks = new ArrayList<>(Block.valueList());
+        ArrayList<Piece> pieces = new ArrayList<>();
+        ArrayList<Piece> allPieces = new ArrayList<>(Piece.valueList());
         List<Integer> cycleCounts = get11CycleCounts(cycle);
         for (int count : cycleCounts) {
-            Collections.shuffle(allBlocks);
-            blocks.addAll(allBlocks.subList(0, count));
+            Collections.shuffle(allPieces);
+            pieces.addAll(allPieces.subList(0, count));
         }
-        return blocks;
+        return pieces;
     }
 
     private List<Integer> get11CycleCounts(int cycle) {
@@ -247,16 +249,16 @@ public class Randoms {
         }
     }
 
-    public List<Block> block10InCycle(int cycle) {
+    public List<Piece> block10InCycle(int cycle) {
         assert 0 <= cycle;
-        ArrayList<Block> blocks = new ArrayList<>();
-        ArrayList<Block> allBlocks = new ArrayList<>(Block.valueList());
+        ArrayList<Piece> pieces = new ArrayList<>();
+        ArrayList<Piece> allPieces = new ArrayList<>(Piece.valueList());
         List<Integer> cycleCounts = get10CycleCounts(cycle);
         for (int count : cycleCounts) {
-            Collections.shuffle(allBlocks);
-            blocks.addAll(allBlocks.subList(0, count));
+            Collections.shuffle(allPieces);
+            pieces.addAll(allPieces.subList(0, count));
         }
-        return blocks;
+        return pieces;
     }
 
     private List<Integer> get10CycleCounts(int cycle) {

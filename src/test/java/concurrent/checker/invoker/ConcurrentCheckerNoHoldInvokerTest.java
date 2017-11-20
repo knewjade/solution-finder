@@ -1,13 +1,18 @@
 package concurrent.checker.invoker;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 import common.SyntaxException;
 import common.datastore.Pair;
 import common.datastore.action.Action;
-import common.datastore.pieces.Blocks;
-import common.pattern.BlocksGenerator;
-import common.pattern.IBlocksGenerator;
+import common.datastore.blocks.Pieces;
+import common.pattern.LoadedPatternGenerator;
+import common.pattern.PatternGenerator;
 import common.tree.AnalyzeTree;
 import concurrent.LockedCandidateThreadLocal;
+import concurrent.LockedReachableThreadLocal;
 import concurrent.checker.CheckerNoHoldThreadLocal;
 import concurrent.checker.invoker.no_hold.ConcurrentCheckerNoHoldInvoker;
 import core.action.candidate.Candidate;
@@ -18,7 +23,8 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import lib.Randoms;
-import org.junit.jupiter.api.Tag;
+import module.BasicModule;
+import module.LongTest;
 import org.junit.jupiter.api.Test;
 import searcher.checker.CheckerNoHold;
 import searcher.common.validator.PerfectValidator;
@@ -26,31 +32,29 @@ import searcher.common.validator.PerfectValidator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ConcurrentCheckerNoHoldInvokerTest {
-    private AnalyzeTree runTestCase(String marks, IBlocksGenerator blocksGenerator, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
+    private AnalyzeTree runTestCase(String marks, PatternGenerator blocksGenerator, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
         Field field = FieldFactory.createField(marks);
-        List<Blocks> searchingPieces = blocksGenerator.blocksStream().collect(Collectors.toList());
+        List<Pieces> searchingPieces = blocksGenerator.blocksStream().collect(Collectors.toList());
         return runTestCase(field, searchingPieces, maxClearLine, maxDepth);
     }
 
-    private AnalyzeTree runTestCase(Field field, List<Blocks> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
-        int core = Runtime.getRuntime().availableProcessors();
-        ExecutorService executorService = Executors.newFixedThreadPool(core);
-        CheckerNoHoldThreadLocal<Action> checkerThreadLocal = new CheckerNoHoldThreadLocal<>();
-        LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
-        ConcurrentCheckerNoHoldInvoker invoker = new ConcurrentCheckerNoHoldInvoker(executorService, candidateThreadLocal, checkerThreadLocal);
+    private AnalyzeTree runTestCase(Field field, List<Pieces> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
+        Injector injector = Guice.createInjector(new BasicModule());
+        ExecutorService executorService = injector.getInstance(ExecutorService.class);
 
-        List<Pair<Blocks, Boolean>> resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
+        ConcurrentCheckerNoHoldInvoker invoker = createConcurrentCheckerNoHoldInvoker(injector, executorService);
+
+        List<Pair<Pieces, Boolean>> resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
 
         // 結果を集計する
         AnalyzeTree tree = new AnalyzeTree();
-        for (Pair<Blocks, Boolean> resultPair : resultPairs) {
-            Blocks pieces = resultPair.getKey();
+        for (Pair<Pieces, Boolean> resultPair : resultPairs) {
+            Pieces pieces = resultPair.getKey();
             Boolean result = resultPair.getValue();
             tree.set(result, pieces);
         }
@@ -61,9 +65,20 @@ class ConcurrentCheckerNoHoldInvokerTest {
         return tree;
     }
 
+    private ConcurrentCheckerNoHoldInvoker createConcurrentCheckerNoHoldInvoker(Injector injector, ExecutorService executorService) {
+        MinoFactory minoFactory = injector.getInstance(MinoFactory.class);
+        CheckerNoHoldThreadLocal<Action> checkerThreadLocal = injector.getInstance(Key.get(new TypeLiteral<CheckerNoHoldThreadLocal<Action>>() {
+        }));
+        LockedCandidateThreadLocal candidateThreadLocal = injector.getInstance(LockedCandidateThreadLocal.class);
+        LockedReachableThreadLocal reachableThreadLocal = injector.getInstance(LockedReachableThreadLocal.class);
+
+        CheckerCommonObj commonObj = new CheckerCommonObj(minoFactory, candidateThreadLocal, checkerThreadLocal, reachableThreadLocal);
+        return new ConcurrentCheckerNoHoldInvoker(executorService, commonObj);
+    }
+
     @Test
     void testSearch1() throws Exception {
-        IBlocksGenerator blocksGenerator = new BlocksGenerator("*p7");
+        PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p7");
         int maxClearLine = 8;
         int maxDepth = 7;
 
@@ -87,7 +102,7 @@ class ConcurrentCheckerNoHoldInvokerTest {
 
     @Test
     void testSearch2BT4_5() throws Exception {
-        IBlocksGenerator blocksGenerator = new BlocksGenerator("*p7");
+        PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p7");
         int maxClearLine = 6;
         int maxDepth = 7;
 
@@ -109,7 +124,7 @@ class ConcurrentCheckerNoHoldInvokerTest {
 
     @Test
     void testSearch3() throws Exception {
-        IBlocksGenerator blocksGenerator = new BlocksGenerator("*p7");
+        PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p7");
         int maxClearLine = 4;
         int maxDepth = 7;
 
@@ -129,7 +144,7 @@ class ConcurrentCheckerNoHoldInvokerTest {
 
     @Test
     void testSearch4() throws Exception {
-        IBlocksGenerator blocksGenerator = new BlocksGenerator("*p4");
+        PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p4");
         int maxClearLine = 3;
         int maxDepth = 3;
 
@@ -147,7 +162,7 @@ class ConcurrentCheckerNoHoldInvokerTest {
 
     @Test
     void testSearch5() throws Exception {
-        IBlocksGenerator blocksGenerator = new BlocksGenerator("J, I, Z, *p4");
+        PatternGenerator blocksGenerator = new LoadedPatternGenerator("J, I, Z, *p4");
         int maxClearLine = 4;
         int maxDepth = 6;
 
@@ -166,7 +181,7 @@ class ConcurrentCheckerNoHoldInvokerTest {
 
     @Test
     void testSearch6() throws Exception {
-        IBlocksGenerator blocksGenerator = new BlocksGenerator("*p5");
+        PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p5");
         int maxClearLine = 4;
         int maxDepth = 4;
 
@@ -185,7 +200,7 @@ class ConcurrentCheckerNoHoldInvokerTest {
 
     @Test
     void testSearch7() throws Exception {
-        IBlocksGenerator blocksGenerator = new BlocksGenerator("*p5");
+        PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p5");
         int maxClearLine = 4;
         int maxDepth = 4;
 
@@ -204,7 +219,7 @@ class ConcurrentCheckerNoHoldInvokerTest {
 
     @Test
     void testSearch8() throws Exception {
-        IBlocksGenerator blocksGenerator = new BlocksGenerator("*p5");
+        PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p5");
         int maxClearLine = 4;
         int maxDepth = 4;
 
@@ -223,7 +238,7 @@ class ConcurrentCheckerNoHoldInvokerTest {
 
     @Test
     void testSearch9() throws Exception {
-        IBlocksGenerator blocksGenerator = new BlocksGenerator("*p5");
+        PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p5");
         int maxClearLine = 4;
         int maxDepth = 4;
 
@@ -242,7 +257,7 @@ class ConcurrentCheckerNoHoldInvokerTest {
 
     @Test
     void testSearch10() throws Exception {
-        IBlocksGenerator blocksGenerator = new BlocksGenerator("*p7");
+        PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p7");
         int maxClearLine = 4;
         int maxDepth = 6;
 
@@ -263,7 +278,7 @@ class ConcurrentCheckerNoHoldInvokerTest {
     @Test
     void testCase11() throws Exception {
         // Invoker
-        IBlocksGenerator blocksGenerator = new BlocksGenerator("*p4");
+        PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p4");
         int maxClearLine = 5;
         int maxDepth = 4;
 
@@ -284,7 +299,7 @@ class ConcurrentCheckerNoHoldInvokerTest {
     @Test
     void testCase12() throws Exception {
         // Invoker
-        IBlocksGenerator blocksGenerator = new BlocksGenerator("*p7");
+        PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p7");
         int maxClearLine = 4;
         int maxDepth = 6;
 
@@ -304,7 +319,7 @@ class ConcurrentCheckerNoHoldInvokerTest {
     @Test
     void testCase13() throws Exception {
         // Invoker
-        IBlocksGenerator blocksGenerator = new BlocksGenerator("*p7");
+        PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p7");
         int maxClearLine = 4;
         int maxDepth = 6;
 
@@ -324,7 +339,7 @@ class ConcurrentCheckerNoHoldInvokerTest {
     @Test
     void testCase14() throws Exception {
         // Invoker
-        IBlocksGenerator blocksGenerator = new BlocksGenerator("*p5");
+        PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p5");
         int maxClearLine = 4;
         int maxDepth = 4;
 
@@ -342,7 +357,7 @@ class ConcurrentCheckerNoHoldInvokerTest {
     }
 
     @Test
-    @Tag("long")
+    @LongTest
     void random() throws ExecutionException, InterruptedException, SyntaxException {
         Randoms randoms = new Randoms();
 
@@ -359,27 +374,27 @@ class ConcurrentCheckerNoHoldInvokerTest {
             Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
             Field field = randoms.field(maxClearLine, maxDepth);
 
-            IBlocksGenerator blocksGenerator = createPiecesGenerator(maxDepth);
-            List<Blocks> searchingPieces = blocksGenerator.blocksStream().collect(Collectors.toList());
+            PatternGenerator blocksGenerator = createPiecesGenerator(maxDepth);
+            List<Pieces> searchingPieces = blocksGenerator.blocksStream().collect(Collectors.toList());
             AnalyzeTree tree = runTestCase(field, searchingPieces, maxClearLine, maxDepth);
 
-            for (Blocks pieces : searchingPieces) {
-                boolean check = checker.check(field, pieces.getBlocks(), candidate, maxClearLine, maxDepth);
+            for (Pieces pieces : searchingPieces) {
+                boolean check = checker.check(field, pieces.getPieces(), candidate, maxClearLine, maxDepth);
                 assertThat(tree.isSucceed(pieces)).isEqualTo(check);
             }
         }
     }
 
-    private IBlocksGenerator createPiecesGenerator(int maxDepth) throws SyntaxException {
+    private PatternGenerator createPiecesGenerator(int maxDepth) throws SyntaxException {
         switch (maxDepth) {
             case 3:
-                return new BlocksGenerator("*, *p3");
+                return new LoadedPatternGenerator("*, *p3");
             case 4:
-                return new BlocksGenerator("*, *p4");
+                return new LoadedPatternGenerator("*, *p4");
             case 5:
-                return new BlocksGenerator("*, *p5");
+                return new LoadedPatternGenerator("*, *p5");
             case 6:
-                return new BlocksGenerator("*, *p6");
+                return new LoadedPatternGenerator("*, *p6");
         }
         throw new UnsupportedOperationException();
     }

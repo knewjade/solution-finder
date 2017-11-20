@@ -1,8 +1,8 @@
 package common.pattern;
 
-import common.datastore.BlockCounter;
-import common.datastore.pieces.Blocks;
-import common.datastore.pieces.LongBlocks;
+import common.datastore.PieceCounter;
+import common.datastore.blocks.LongPieces;
+import common.datastore.blocks.Pieces;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,52 +17,52 @@ class PiecesStreamBuilder {
         this.lastIndex = elements.size() - 1;
     }
 
-    Stream<Blocks> blocksStream() {
-        List<List<Blocks>> combinations = createPermutations();
-        Stream.Builder<Blocks> builder = Stream.builder();
+    Stream<Pieces> blocksStream() {
+        List<List<Pieces>> combinations = createPermutations();
+        Stream.Builder<Pieces> builder = Stream.builder();
         if (!combinations.isEmpty())
-            enumerate(combinations, builder, new LongBlocks(), 0);
+            enumerate(combinations, builder, new LongPieces(), 0);
         return builder.build();
     }
 
-    private List<List<Blocks>> createPermutations() {
+    private List<List<Pieces>> createPermutations() {
         return elements.stream()
                 .map(Element::getPermutationBlocks)
                 .collect(Collectors.toList());
     }
 
-    private void enumerate(List<List<Blocks>> combinations, Stream.Builder<Blocks> builder, Blocks blocks, int index) {
-        for (Blocks combination : combinations.get(index)) {
-            Blocks newBlocks = blocks.addAndReturnNew(combination.blockStream());
+    private void enumerate(List<List<Pieces>> combinations, Stream.Builder<Pieces> builder, Pieces pieces, int index) {
+        for (Pieces combination : combinations.get(index)) {
+            Pieces newPieces = pieces.addAndReturnNew(combination.blockStream());
             if (index == lastIndex) {
-                builder.accept(newBlocks);
+                builder.accept(newPieces);
             } else {
-                enumerate(combinations, builder, newBlocks, index + 1);
+                enumerate(combinations, builder, newPieces, index + 1);
             }
         }
     }
 
-    public Stream<BlockCounter> blockCountersStream() {
-        List<List<BlockCounter>> blockCounters = createBlockCounters();
-        Stream.Builder<BlockCounter> builder = Stream.builder();
+    public Stream<PieceCounter> blockCountersStream() {
+        List<List<PieceCounter>> blockCounters = createBlockCounters();
+        Stream.Builder<PieceCounter> builder = Stream.builder();
         if (!blockCounters.isEmpty())
-            enumerate(blockCounters, builder, new BlockCounter(), 0);
+            enumerate(blockCounters, builder, new PieceCounter(), 0);
         return builder.build();
     }
 
-    private List<List<BlockCounter>> createBlockCounters() {
+    private List<List<PieceCounter>> createBlockCounters() {
         return elements.stream()
-                .map(Element::getBlockCounters)
+                .map(Element::getPieceCounters)
                 .collect(Collectors.toList());
     }
 
-    private void enumerate(List<List<BlockCounter>> blockCounters, Stream.Builder<BlockCounter> builder, BlockCounter accumulate, int index) {
-        for (BlockCounter blockCounter : blockCounters.get(index)) {
-            BlockCounter newBlockCounter = accumulate.addAndReturnNew(blockCounter);
+    private void enumerate(List<List<PieceCounter>> blockCounters, Stream.Builder<PieceCounter> builder, PieceCounter accumulate, int index) {
+        for (PieceCounter pieceCounter : blockCounters.get(index)) {
+            PieceCounter newPieceCounter = accumulate.addAndReturnNew(pieceCounter);
             if (index == lastIndex) {
-                builder.accept(newBlockCounter);
+                builder.accept(newPieceCounter);
             } else {
-                enumerate(blockCounters, builder, newBlockCounter, index + 1);
+                enumerate(blockCounters, builder, newPieceCounter, index + 1);
             }
         }
     }

@@ -2,8 +2,8 @@ package entry;
 
 import common.SyntaxException;
 import common.datastore.BlockField;
-import common.pattern.BlocksGenerator;
-import common.pattern.IBlocksGenerator;
+import common.pattern.LoadedPatternGenerator;
+import common.pattern.PatternGenerator;
 import core.field.Field;
 import exceptions.FinderInitializeException;
 
@@ -37,11 +37,11 @@ public class Verify {
             throw new FinderInitializeException("Invalid reserved blocks");
     }
 
-    public static IBlocksGenerator patterns(List<String> patterns, int depth) throws FinderInitializeException {
+    public static PatternGenerator patterns(List<String> patterns, int depth) throws FinderInitializeException {
         if (patterns.isEmpty())
             throw new FinderInitializeException("Should specify patterns, not allow empty");
 
-        IBlocksGenerator generator = createBlocksGenerator(patterns);
+        PatternGenerator generator = createBlocksGenerator(patterns);
 
         int piecesDepth = generator.getDepth();
         if (piecesDepth < depth)
@@ -50,9 +50,9 @@ public class Verify {
         return generator;
     }
 
-    private static IBlocksGenerator createBlocksGenerator(List<String> patterns) throws FinderInitializeException {
+    private static PatternGenerator createBlocksGenerator(List<String> patterns) throws FinderInitializeException {
         try {
-            return new BlocksGenerator(patterns);
+            return new LoadedPatternGenerator(patterns);
         } catch (SyntaxException e) {
             throw new FinderInitializeException("Pattern syntax error", e);
         }

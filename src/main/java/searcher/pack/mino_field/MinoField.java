@@ -1,11 +1,10 @@
 package searcher.pack.mino_field;
 
-import common.datastore.BlockCounter;
-import common.datastore.BlockField;
+import common.datastore.PieceCounter;
 import common.datastore.OperationWithKey;
 import core.column_field.ColumnField;
+import searcher.pack.separable_mino.SeparableMino;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 public interface MinoField {
@@ -13,7 +12,10 @@ public interface MinoField {
 
     Stream<OperationWithKey> getOperationsStream();
 
-    BlockCounter getBlockCounter();
+    PieceCounter getPieceCounter();
 
     int getMaxIndex();
+
+    Stream<SeparableMino> getSeparableMinoStream();
+
 }

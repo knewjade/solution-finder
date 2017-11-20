@@ -3,7 +3,7 @@ package _implements.parity_based_pack.step4;
 import common.datastore.OperationWithKey;
 import core.field.Field;
 import core.mino.Mino;
-import common.datastore.SimpleOperationWithKey;
+import common.datastore.FullOperationWithKey;
 import _implements.parity_based_pack.step2.FullLimitedMino;
 import _implements.parity_based_pack.step2.FullLimitedMinos;
 import searcher.pack.separable_mino.mask.MinoMask;
@@ -55,7 +55,7 @@ public class Search {
                 long deleteKey = limitedMino.getDeleteKey();
                 long usingKey = limitedMino.getUsingKey();
                 int lowerY = limitedMino.getLowerY();
-                OperationWithKey withKey = new SimpleOperationWithKey(mino, x, deleteKey, usingKey, lowerY);
+                OperationWithKey withKey = new FullOperationWithKey(mino, x, deleteKey, usingKey, lowerY);
                 result.add(withKey);
             }
             results.add(result);

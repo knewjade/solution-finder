@@ -1,6 +1,6 @@
 package common.order;
 
-import core.mino.Block;
+import core.mino.Piece;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -12,26 +12,26 @@ class LongStackOrderTest {
     @Test
     void add() throws Exception {
         LongStackOrder stackOrder = new LongStackOrder();
-        stackOrder.addLast(Block.S);
-        stackOrder.addLast(Block.Z);
-        stackOrder.addLast(Block.O);
-        stackOrder.addLastTwo(Block.I);
+        stackOrder.addLast(Piece.S);
+        stackOrder.addLast(Piece.Z);
+        stackOrder.addLast(Piece.O);
+        stackOrder.addLastTwo(Piece.I);
 
-        List<Block> blocks = stackOrder.toList();
-        assertThat(blocks).isEqualTo(Arrays.asList(Block.S, Block.Z, Block.I, Block.O));
+        List<Piece> pieces = stackOrder.toList();
+        assertThat(pieces).isEqualTo(Arrays.asList(Piece.S, Piece.Z, Piece.I, Piece.O));
     }
 
     @Test
     void stock() throws Exception {
         LongStackOrder stackOrder = new LongStackOrder();
-        stackOrder.addLast(Block.S);
-        stackOrder.stock(Block.T);  // to head and memory TS*
-        stackOrder.addLast(Block.Z);
-        stackOrder.addLastTwo(Block.O);
-        stackOrder.stock(Block.I);
+        stackOrder.addLast(Piece.S);
+        stackOrder.stock(Piece.T);  // to head and memory TS*
+        stackOrder.addLast(Piece.Z);
+        stackOrder.addLastTwo(Piece.O);
+        stackOrder.stock(Piece.I);
         stackOrder.stock(null);
 
-        List<Block> blocks = stackOrder.toList();
-        assertThat(blocks).isEqualTo(Arrays.asList(Block.T, Block.S, Block.I, Block.O, Block.Z, null));
+        List<Piece> pieces = stackOrder.toList();
+        assertThat(pieces).isEqualTo(Arrays.asList(Piece.T, Piece.S, Piece.I, Piece.O, Piece.Z, null));
     }
 }

@@ -6,7 +6,7 @@ import _usecase.OutputFileHelper;
 import common.tetfu.Tetfu;
 import common.tetfu.common.ColorConverter;
 import common.tetfu.field.ColoredField;
-import core.mino.Block;
+import core.mino.Piece;
 import core.mino.Mino;
 import exceptions.FinderParseException;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,8 +50,8 @@ abstract class PathUseCaseBaseTest {
                         return field;
 
                     ColorConverter converter = easyPool.getColorConverter();
-                    Block block = converter.parseToBlock(page.getColorType());
-                    field.putMino(new Mino(block, page.getRotate()), page.getX(), page.getY());
+                    Piece piece = converter.parseToBlock(page.getColorType());
+                    field.putMino(new Mino(piece, page.getRotate()), page.getX(), page.getY());
                     return field;
                 })
                 .collect(Collectors.toList());

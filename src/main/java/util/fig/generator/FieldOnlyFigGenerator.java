@@ -1,5 +1,6 @@
 package util.fig.generator;
 
+import core.mino.Piece;
 import util.fig.FigColor;
 import util.fig.FigSetting;
 import util.fig.Rectangle;
@@ -8,7 +9,6 @@ import util.fig.position.PositionDecider;
 import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
-import core.mino.Block;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
@@ -72,8 +72,8 @@ public class FieldOnlyFigGenerator implements FigGenerator {
 
     @Override
     public void updateMino(ColorType colorType, Rotate rotate, int xIndex, int yIndex) {
-        Block block = colorConverter.parseToBlock(colorType);
-        Mino mino = minoFactory.create(block, rotate);
+        Piece piece = colorConverter.parseToBlock(colorType);
+        Mino mino = minoFactory.create(piece, rotate);
         FigColor figColor = FigColor.parse(colorType);
         Color color = figColor.getStrongColor();
         graphics.setColor(color);
@@ -84,12 +84,12 @@ public class FieldOnlyFigGenerator implements FigGenerator {
     }
 
     @Override
-    public void updateNext(List<Block> blocks) {
+    public void updateNext(List<Piece> pieces) {
         // do nothing
     }
 
     @Override
-    public void updateHold(Block block) {
+    public void updateHold(Piece piece) {
         // do nothing
     }
 

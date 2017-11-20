@@ -1,12 +1,11 @@
 package entry.path.output;
 
-import common.datastore.OperationWithKey;
-import common.datastore.pieces.LongBlocks;
+import common.datastore.blocks.LongPieces;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
 import core.field.Field;
-import core.mino.Block;
+import core.mino.Piece;
 import entry.path.*;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
@@ -85,7 +84,7 @@ public class LinkPathOutput implements PathOutput {
 
         // 少ないパターンでカバーできるパスを出力
         if (pathLayer.contains(PathLayer.Minimal)) {
-            Selector<PathPair, LongBlocks> selector = new Selector<>(pathPairs);
+            Selector<PathPair, LongPieces> selector = new Selector<>(pathPairs);
             List<PathPair> minimal = selector.select();
             outputLog("Found path [minimal] = " + minimal.size());
             outputOperationsToSimpleHTML(field, outputMinimalFile, minimal, sizedBit);
@@ -144,8 +143,7 @@ public class LinkPathOutput implements PathOutput {
     private String createALink(PathPair pathPair) {
         // パターンを表す名前 を生成
         String linkText = pathPair.getSampleOperations().stream()
-                .map(OperationWithKey::getMino)
-                .map(mino -> mino.getBlock().getName() + "-" + mino.getRotate().name())
+                .map(operationWithKey -> operationWithKey.getPiece().getName() + "-" + operationWithKey.getRotate().name())
                 .collect(Collectors.joining(" "));
 
         // テト譜に変換
@@ -153,7 +151,7 @@ public class LinkPathOutput implements PathOutput {
 
         // 有効なミノ順をまとめる
         String validOrders = pathPair.blocksStreamForSolution()
-                .map(longBlocks -> longBlocks.blockStream().map(Block::getName).collect(Collectors.joining()))
+                .map(longBlocks -> longBlocks.blockStream().map(Piece::getName).collect(Collectors.joining()))
                 .collect(Collectors.joining(", "));
 
         // 出力

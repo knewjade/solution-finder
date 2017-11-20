@@ -1,19 +1,21 @@
 package entry.percent;
 
-import common.SyntaxException;
 import common.datastore.Pair;
 import common.datastore.action.Action;
-import common.datastore.pieces.Blocks;
-import common.datastore.pieces.LongBlocks;
-import common.pattern.BlocksGenerator;
-import common.pattern.IBlocksGenerator;
+import common.datastore.blocks.LongPieces;
+import common.datastore.blocks.Pieces;
+import common.pattern.PatternGenerator;
 import common.tree.AnalyzeTree;
 import concurrent.HarddropCandidateThreadLocal;
+import concurrent.HarddropReachableThreadLocal;
 import concurrent.LockedCandidateThreadLocal;
+import concurrent.LockedReachableThreadLocal;
 import core.FinderConstant;
 import core.action.candidate.Candidate;
+import core.action.reachable.Reachable;
 import core.field.Field;
 import core.field.FieldView;
+import core.mino.MinoFactory;
 import entry.DropType;
 import entry.EntryPoint;
 import entry.Verify;
@@ -89,7 +91,7 @@ public class PercentEntryPoint implements EntryPoint {
 
         // Setup patterns
         List<String> patterns = settings.getPatterns();
-        IBlocksGenerator generator = Verify.patterns(patterns, maxDepth);
+        PatternGenerator generator = Verify.patterns(patterns, maxDepth);
 
         // Output patterns
         for (String pattern : patterns)
@@ -120,7 +122,7 @@ public class PercentEntryPoint implements EntryPoint {
         if (popCount < piecesDepth) {
             output();
             output("####################################################################");
-            output("WARNING: Inputted pieces is more than 'necessary pieces'.");
+            output("WARNING: Inputted pieces is more than 'necessary blocks'.");
             output("         Because reduce unnecessary pieces,");
             output("         there is a possibility of getting no expected percentages.");
             output("####################################################################");
@@ -129,7 +131,7 @@ public class PercentEntryPoint implements EntryPoint {
 
         // 探索パターンの列挙
         NormalEnumeratePieces normalEnumeratePieces = new NormalEnumeratePieces(generator, maxDepth, settings.isUsingHold());
-        Set<LongBlocks> searchingPieces = normalEnumeratePieces.enumerate();
+        Set<LongPieces> searchingPieces = normalEnumeratePieces.enumerate();
 
         output("Searching pattern size (duplicate) = " + normalEnumeratePieces.getCounter());
         output("Searching pattern size ( no dup. ) = " + searchingPieces.size());
@@ -144,7 +146,9 @@ public class PercentEntryPoint implements EntryPoint {
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
         ThreadLocal<Candidate<Action>> candidateThreadLocal = createCandidateThreadLocal(settings.getDropType(), maxClearLine);
-        PercentCore percentCore = new PercentCore(executorService, candidateThreadLocal, settings.isUsingHold());
+        ThreadLocal<? extends Reachable> reachableThreadLocal = createReachableThreadLocal(settings.getDropType(), maxClearLine);
+        MinoFactory minoFactory = new MinoFactory();
+        PercentCore percentCore = new PercentCore(executorService, candidateThreadLocal, settings.isUsingHold(), reachableThreadLocal, minoFactory, generator.getDepth());
         try {
             percentCore.run(field, searchingPieces, maxClearLine, maxDepth);
         } catch (ExecutionException | InterruptedException e) {
@@ -152,7 +156,7 @@ public class PercentEntryPoint implements EntryPoint {
         }
 
         AnalyzeTree tree = percentCore.getResultTree();
-        List<Pair<Blocks, Boolean>> resultPairs = percentCore.getResultPairs();
+        List<Pair<Pieces, Boolean>> resultPairs = percentCore.getResultPairs();
 
         stopwatch.stop();
         output("  -> Stopwatch stop : " + stopwatch.toMessage(TimeUnit.MILLISECONDS));
@@ -182,7 +186,7 @@ public class PercentEntryPoint implements EntryPoint {
         if (0 < failedMaxCount) {
             output(String.format("Fail pattern (max. %d)", failedMaxCount));
 
-            List<Pair<Blocks, Boolean>> failedPairs = resultPairs.stream()
+            List<Pair<Pieces, Boolean>> failedPairs = resultPairs.stream()
                     .filter(pair -> !pair.getValue())
                     .limit(failedMaxCount)
                     .collect(Collectors.toList());
@@ -191,7 +195,7 @@ public class PercentEntryPoint implements EntryPoint {
         } else if (failedMaxCount < 0) {
             output("Fail pattern (all)");
 
-            List<Pair<Blocks, Boolean>> failedPairs = resultPairs.stream()
+            List<Pair<Pieces, Boolean>> failedPairs = resultPairs.stream()
                     .filter(pair -> !pair.getValue())
                     .collect(Collectors.toList());
 
@@ -207,16 +211,6 @@ public class PercentEntryPoint implements EntryPoint {
         output("done");
     }
 
-    private IBlocksGenerator createBlockGenerator(List<String> patterns) throws FinderInitializeException, FinderExecuteException {
-        try {
-            return new BlocksGenerator(patterns);
-        } catch (SyntaxException e) {
-            output("Pattern syntax error");
-            output(e.getMessage());
-            throw new FinderInitializeException("Pattern syntax error", e);
-        }
-    }
-
     private ThreadLocal<Candidate<Action>> createCandidateThreadLocal(DropType dropType, int maxClearLine) throws FinderInitializeException {
         switch (dropType) {
             case Softdrop:
@@ -227,9 +221,19 @@ public class PercentEntryPoint implements EntryPoint {
         throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
     }
 
-    private void outputFailedPatterns(List<Pair<Blocks, Boolean>> failedPairs) throws FinderExecuteException {
-        for (Pair<Blocks, Boolean> resultPair : failedPairs)
-            output(resultPair.getKey().getBlocks().toString());
+    private ThreadLocal<? extends Reachable> createReachableThreadLocal(DropType dropType, int maxClearLine) throws FinderInitializeException {
+        switch (dropType) {
+            case Softdrop:
+                return new LockedReachableThreadLocal(maxClearLine);
+            case Harddrop:
+                return new HarddropReachableThreadLocal(maxClearLine);
+        }
+        throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
+    }
+
+    private void outputFailedPatterns(List<Pair<Pieces, Boolean>> failedPairs) throws FinderExecuteException {
+        for (Pair<Pieces, Boolean> resultPair : failedPairs)
+            output(resultPair.getKey().getPieces().toString());
 
         if (failedPairs.isEmpty())
             output("nothing");

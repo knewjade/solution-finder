@@ -1,8 +1,9 @@
 package common.parser;
 
+import common.datastore.MinoOperationWithKey;
 import common.datastore.OperationWithKey;
-import common.datastore.SimpleOperationWithKey;
-import core.mino.Block;
+import common.datastore.FullOperationWithKey;
+import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.srs.Rotate;
 import lib.Randoms;
@@ -19,7 +20,7 @@ class OperationWithKeyInterpreterTest {
     void parseToOperationWithKey() throws Exception {
         String base = "J,0,1,0,0,1025;I,0,1,2,0,1048576;L,L,3,1,1048576,1073742849;J,0,1,3,0,1100585369600";
         MinoFactory minoFactory = new MinoFactory();
-        List<OperationWithKey> operationWithKeys = OperationWithKeyInterpreter.parseToList(base, minoFactory);
+        List<MinoOperationWithKey> operationWithKeys = OperationWithKeyInterpreter.parseToList(base, minoFactory);
         String line = OperationWithKeyInterpreter.parseToString(operationWithKeys);
 
         assertThat(line).isEqualTo(base);
@@ -31,17 +32,17 @@ class OperationWithKeyInterpreterTest {
         MinoFactory minoFactory = new MinoFactory();
         for (int size = 1; size < 20; size++) {
             List<OperationWithKey> operations = Stream.generate(() -> {
-                Block block = randoms.block();
+                Piece piece = randoms.block();
                 Rotate rotate = randoms.rotate();
                 int x = randoms.nextInt(10);
                 int y = randoms.nextInt(4);
                 long deleteKey = randoms.key();
                 long usingKey = randoms.key();
-                return new SimpleOperationWithKey(minoFactory.create(block, rotate), x, y, deleteKey, usingKey);
+                return new FullOperationWithKey(minoFactory.create(piece, rotate), x, y, deleteKey, usingKey);
             }).limit(size).collect(Collectors.toList());
 
             String str = OperationWithKeyInterpreter.parseToString(operations);
-            List<OperationWithKey> actual = OperationWithKeyInterpreter.parseToList(str, minoFactory);
+            List<MinoOperationWithKey> actual = OperationWithKeyInterpreter.parseToList(str, minoFactory);
 
             assertThat(actual).isEqualTo(operations);
         }
