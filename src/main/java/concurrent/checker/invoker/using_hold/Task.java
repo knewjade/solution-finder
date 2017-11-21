@@ -5,6 +5,7 @@ import common.buildup.BuildUpStream;
 import common.datastore.*;
 import common.datastore.action.Action;
 import common.datastore.blocks.Pieces;
+import common.order.OrderLookup;
 import common.parser.OperationTransform;
 import common.tree.VisitedTree;
 import concurrent.checker.invoker.CheckerCommonObj;
@@ -48,16 +49,13 @@ class Task implements Callable<Pair<Pieces, Boolean>> {
         // パフェが見つかったツモ順(≠探索時のツモ順)へと、ホールドを使ってできるパターンを逆算
         if (checkResult) {
             Result result = checker.getResult();
+            List<Piece> resultPieceList = ResultHelper.createOperationStream(result)
+                    .map(Operation::getPiece)
+                    .collect(Collectors.toList());
 
-            Operations operations = new Operations(ResultHelper.createOperationStream(result));
-            List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(obj.field, operations, commonObj.minoFactory, obj.maxClearLine);
-
-            BuildUpStream buildUpStream = new BuildUpStream(commonObj.reachableThreadLocal.get(), obj.maxClearLine);
-            buildUpStream.existsValidBuildPattern(obj.field, operationWithKeys)
-                    .forEach(minoOperationWithKeys -> {
-                        obj.lookUp.parse(minoOperationWithKeys.stream().map(OperationWithKey::getPiece).collect(Collectors.toList()))
-                                .forEach(piece -> obj.visitedTree.set(true, piece.collect(Collectors.toList())));
-                    });
+            int reverseMaxDepth = result.getLastHold() != null ? resultPieceList.size() + 1 : resultPieceList.size();
+            OrderLookup.reverseBlocks(resultPieceList, reverseMaxDepth)
+                    .forEach(piece -> obj.visitedTree.set(true, piece.toList()));
         }
 
         return new Pair<>(target, checkResult);
