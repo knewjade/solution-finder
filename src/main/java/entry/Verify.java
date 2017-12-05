@@ -37,11 +37,14 @@ public class Verify {
             throw new FinderInitializeException("Invalid reserved blocks");
     }
 
-    public static PatternGenerator patterns(List<String> patterns, int depth) throws FinderInitializeException {
+    public static PatternGenerator patterns(List<String> patterns) throws FinderInitializeException {
         if (patterns.isEmpty())
             throw new FinderInitializeException("Should specify patterns, not allow empty");
+        return createBlocksGenerator(patterns);
+    }
 
-        PatternGenerator generator = createBlocksGenerator(patterns);
+    public static PatternGenerator patterns(List<String> patterns, int depth) throws FinderInitializeException {
+        PatternGenerator generator = patterns(patterns);
 
         int piecesDepth = generator.getDepth();
         if (piecesDepth < depth)

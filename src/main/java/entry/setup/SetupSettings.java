@@ -192,6 +192,10 @@ public class SetupSettings {
             case "red":
             case "re":
                 return ColorType.Z;
+            case "x":
+            case "g":
+            case "gray":
+                return null;
             case "none":
             case "null":
             case "empty":

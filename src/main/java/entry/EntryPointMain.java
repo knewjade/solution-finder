@@ -2,6 +2,9 @@ package entry;
 
 import core.FinderConstant;
 import entry.dev.DevRandomEntryPoint;
+import entry.move.MoveEntryPoint;
+import entry.move.MoveSettingParser;
+import entry.move.MoveSettings;
 import entry.path.PathEntryPoint;
 import entry.path.PathSettingParser;
 import entry.path.PathSettings;
@@ -24,13 +27,25 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class EntryPointMain {
+    private static String[] COMMANDS = {
+            "percent",
+            "path",
+            "setup",
+            "move",
+            "util fig",
+    };
+
     public static int main(String[] args) {
-        if (args.length < 1)
-            throw new IllegalArgumentException("No command: Use percent, path");
+        if (args.length < 1) {
+            String commands = Arrays.stream(COMMANDS).collect(Collectors.joining(","));
+            throw new IllegalArgumentException("No command: Use " + commands);
+        }
 
         if (args[0].equals("-h")) {
             System.out.println("Usage: <command> [options]");
-            System.out.println("  command: percent, path, util fig");
+            System.out.println("  <command>:");
+            for (String command : COMMANDS)
+                System.out.println("    - " + command);
             return 0;
         }
 
@@ -167,6 +182,8 @@ public class EntryPointMain {
                 return getUtilEntryPoint(commands);
             case "setup":
                 return getSetupEntryPoint(commands);
+            case "move":
+                return getMoveEntryPoint(commands);
             case "dev":
                 return getDevEntryPoint(commands);
             default:
@@ -218,6 +235,17 @@ public class EntryPointMain {
         if (settingsOptional.isPresent()) {
             SetupSettings settings = settingsOptional.get();
             return Optional.of(new SetupEntryPoint(settings));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    private static Optional<EntryPoint> getMoveEntryPoint(List<String> commands) throws FinderParseException, FinderInitializeException {
+        MoveSettingParser settingParser = new MoveSettingParser(commands);
+        Optional<MoveSettings> settingsOptional = settingParser.parse();
+        if (settingsOptional.isPresent()) {
+            MoveSettings settings = settingsOptional.get();
+            return Optional.of(new MoveEntryPoint(settings));
         } else {
             return Optional.empty();
         }

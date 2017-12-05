@@ -5,8 +5,8 @@ import common.datastore.order.NormalOrder;
 import common.datastore.order.Order;
 import core.action.candidate.Candidate;
 import core.field.Field;
-import core.mino.Piece;
 import core.mino.MinoFactory;
+import core.mino.Piece;
 import searcher.checkmate.CheckmateDataPool;
 import searcher.common.validator.Validator;
 import searcher.core.SimpleSearcherCore;
@@ -14,11 +14,11 @@ import searcher.core.SimpleSearcherCore;
 import java.util.List;
 import java.util.TreeSet;
 
-public class PutterUsingHold<T extends Action> {
+public class PutterNoHold<T extends Action> {
     private final CheckmateDataPool dataPool;
     private final SimpleSearcherCore<T> searcherCore;
 
-    public PutterUsingHold(MinoFactory minoFactory, Validator validator) {
+    public PutterNoHold(MinoFactory minoFactory, Validator validator) {
         this.dataPool = new CheckmateDataPool();
         this.searcherCore = new SimpleSearcherCore<>(minoFactory, validator, dataPool);
     }
@@ -32,28 +32,18 @@ public class PutterUsingHold<T extends Action> {
         Field freeze = initField.freeze(maxClearLine);
         int deleteLine = freeze.clearLine();
 
-        dataPool.initFirst(new NormalOrder(freeze, headPieces[0], maxClearLine - deleteLine, maxDepth));
+        dataPool.initFirst(new NormalOrder(freeze, null, maxClearLine - deleteLine, maxDepth));
 
-        int firstMaxDepth = headPieces.length;
-        for (int depth = 1; depth <= firstMaxDepth; depth++) {
+        for (int depth = 0; depth < headPieces.length; depth++) {
             TreeSet<Order> orders = dataPool.getNexts();
 
             dataPool.initEachDepth();
 
-            boolean isLast = depth == maxDepth;
+            boolean isLast = depth == maxDepth - 1;
 
-            if (depth < headPieces.length) {
-                Piece drawn = headPieces[depth];
-
-                for (int count = 0, size = orders.size(); count < size; count++) {
-                    Order order = orders.pollFirst();
-                    searcherCore.stepWithNext(candidate, drawn, order, isLast);
-                }
-            } else {
-                for (int count = 0, size = orders.size(); count < size; count++) {
-                    Order order = orders.pollFirst();
-                    searcherCore.stepWhenNoNext(candidate, order, isLast);
-                }
+            for (int count = 0, size = orders.size(); count < size; count++) {
+                Order order = orders.pollFirst();
+                searcherCore.stepWithNextNoHold(candidate, headPieces[depth], order, isLast);
             }
         }
 

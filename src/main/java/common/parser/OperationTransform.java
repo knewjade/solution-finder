@@ -72,4 +72,17 @@ public class OperationTransform {
 
         return new Operations(operations);
     }
+
+    public static <T extends OperationWithKey> BlockField parseToBlockField(List<T> operationWithKeys, MinoFactory minoFactory, int height) {
+        BlockField blockField = new BlockField(height);
+        operationWithKeys
+                .forEach(key -> {
+                    Field test = FieldFactory.createField(height);
+                    Mino mino = minoFactory.create(key.getPiece(), key.getRotate());
+                    test.put(mino, key.getX(), key.getY());
+                    test.insertWhiteLineWithKey(key.getNeedDeletedKey());
+                    blockField.merge(test, mino.getPiece());
+                });
+        return blockField;
+    }
 }

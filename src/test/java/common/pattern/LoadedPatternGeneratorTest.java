@@ -132,6 +132,12 @@ class LoadedPatternGeneratorTest {
         }
 
         @Test
+        void countDoubleAsterisk() throws SyntaxException {
+            PatternGenerator generator = new LoadedPatternGenerator("*!*!");
+            assertThat(generator.blocksStream().count()).isEqualTo(25401600);
+        }
+
+        @Test
         void toListSelector() throws SyntaxException {
             PatternGenerator generator = new LoadedPatternGenerator("[TSZ]");
             assertThat(generator.getDepth()).isEqualTo(1);
