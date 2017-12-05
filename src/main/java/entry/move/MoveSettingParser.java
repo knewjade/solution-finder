@@ -66,7 +66,7 @@ public class MoveSettingParser {
 
             String encoded = Tetfu.removeDomainData(tetfuData.get());
             wrapper = loadTetfu(encoded, parser, options, wrapper, settings);
-        } else {
+        } else if (wrapper.hasOption("field-path")) {
             // フィールドファイルから
             Optional<String> fieldPathOption = wrapper.getStringOption("field-path");
             String fieldPath = fieldPathOption.orElse(DEFAULT_FIELD_TXT);
@@ -175,6 +175,16 @@ public class MoveSettingParser {
                 .build();
         options.addOption(tetfuPageOption);
 
+        Option fieldFileOption = Option.builder("fp")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("file-path")
+                .longOpt("field-path")
+                .desc("File path of field definition")
+                .build();
+        options.addOption(fieldFileOption);
+
         Option patternOption = Option.builder("p")
                 .optionalArg(true)
                 .hasArg()
@@ -184,6 +194,16 @@ public class MoveSettingParser {
                 .desc("Specify pattern definition, directly")
                 .build();
         options.addOption(patternOption);
+
+        Option patternFileOption = Option.builder("pp")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("file-path")
+                .longOpt("patterns-path")
+                .desc("File path of pattern definition")
+                .build();
+        options.addOption(patternFileOption);
 
         Option logFileOption = Option.builder("lp")
                 .optionalArg(true)
