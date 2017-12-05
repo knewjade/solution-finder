@@ -99,8 +99,7 @@ public class MoveSettingParser {
                 }
             } catch (NumberFormatException e) {
                 throw new FinderParseException("Cannot read clear-line from " + fieldPath);
-            } catch (IOException e) {
-                throw new FinderParseException("Cannot open field file", e);
+            } catch (IOException ignored) {
             }
         }
 
