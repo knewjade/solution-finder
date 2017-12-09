@@ -3,7 +3,6 @@ version '0.503'
 
 apply plugin: 'java'
 apply plugin: 'idea'
-apply plugin: 'application'
 apply plugin: 'org.junit.platform.gradle.plugin'
 
 archivesBaseName = 'solution-finder'
@@ -134,18 +133,6 @@ task releaseWithBianry(type: Zip) {
 
     from releaseDir
     classifier = "GUI"
-}
-
-// gradle run -Pargs="arg1 args2 ..."
-run {
-    mainClassName = 'Main'
-    if (project.hasProperty('args')) {
-        String str = project.args
-        def list = Arrays.asList str.split('\\s+')
-        mainClassName = list[0]
-        if (1 < list.size())
-            args = list[1..(list.size() - 1)]  // set args in run task
-    }
 }
 
 junitPlatform {
