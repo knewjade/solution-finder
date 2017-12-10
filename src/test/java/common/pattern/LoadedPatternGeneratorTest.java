@@ -237,6 +237,12 @@ class LoadedPatternGeneratorTest {
         }
 
         @Test
+        void toListNotSelector() throws SyntaxException {
+            PatternGenerator generator = new LoadedPatternGenerator("[^IOSZJL]");
+            assertSame(generator, new LoadedPatternGenerator("T"));
+        }
+
+        @Test
         void toMultiList1() throws SyntaxException {
             List<String> patterns = Arrays.asList("I#comment", "T", "# comment");
             PatternGenerator generator = new LoadedPatternGenerator(patterns);

@@ -17,31 +17,10 @@ public class BracketElement implements Element {
     private final List<Pieces> permutationBlocks;
     private final List<PieceCounter> pieceCounters;
 
-    BracketElement(Token token, int size) throws SyntaxException {
-        HashSet<Piece> pieceSet = parseBlockSet(token);
-
-        if (pieceSet.isEmpty())
-            throw new SyntaxException("Empty in []", token.getLastIndex());
-
-        if (size <= 0)
-            throw new SyntaxException("no pop", token.getLastIndex());
-        else if (pieceSet.size() < size)
-            throw new SyntaxException("over pop", token.getLastIndex());
-
+    BracketElement(HashSet<Piece> pieceSet, int size) {
         this.size = size;
         this.permutationBlocks = createPermutationBlocks(pieceSet, size);
         this.pieceCounters = createBlockCounters(pieceSet, size);
-    }
-
-    private HashSet<Piece> parseBlockSet(Token token) throws SyntaxException {
-        HashSet<Piece> pieces = new HashSet<>();
-        while (token.isContinue()) {
-            Piece piece = token.nextBlock();
-            if (pieces.contains(piece))
-                throw new SyntaxException(String.format("Duplicate '%s' pieces in []", piece.getName()), token.getLastIndex());
-            pieces.add(piece);
-        }
-        return pieces;
     }
 
     private ArrayList<Pieces> createPermutationBlocks(HashSet<Piece> pieceList, int size) {

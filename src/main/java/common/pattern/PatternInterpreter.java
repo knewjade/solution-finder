@@ -3,16 +3,13 @@ package common.pattern;
 import common.SyntaxException;
 import core.mino.Piece;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class PatternInterpreter {
     private final ArrayList<Element> elements = new ArrayList<>();
     private final Token token;
 
-    public PatternInterpreter(String pattern) throws SyntaxException {
+    PatternInterpreter(String pattern) throws SyntaxException {
         List<String> tokenList = Arrays.asList(pattern.split(""));
         this.token = Token.createToken(tokenList);
         while (token.isContinue()) {
@@ -79,10 +76,15 @@ public class PatternInterpreter {
         }
     }
 
-    private BracketElement combination() throws SyntaxException {
+    private Element combination() throws SyntaxException {
         int lastIndex = token.getLastIndex();
         LinkedList<String> combinationTokenList = getCombinationTokenList();
         Token subToken = Token.createSubToken(combinationTokenList, lastIndex);
+        HashSet<Piece> pieceSet = parseBlockSet(subToken);
+
+        if (pieceSet.isEmpty())
+            throw new SyntaxException("Empty in []", token.getLastIndex());
+
         boolean blankNext = token.isBlankNext();
         switch (token.check()) {
             case "P":
@@ -90,15 +92,48 @@ public class PatternInterpreter {
                     throw new SyntaxException("Contains invalid character between [] and p", token.getLastIndex());
                 this.token.skip();
                 int size = this.token.nextInt();
-                return new BracketElement(subToken, size);
+
+                if (pieceSet.size() <= 0)
+                    throw new SyntaxException("no pop", token.getLastIndex());
+                else if (pieceSet.size() < size)
+                    throw new SyntaxException("over pop", token.getLastIndex());
+
+                return new BracketElement(pieceSet, size);
             case "!":
                 if (blankNext)
                     throw new SyntaxException("Contains invalid character between [] and !", token.getLastIndex());
                 this.token.skip();
-                return new BracketElement(subToken, combinationTokenList.size());
+                return new BracketElement(pieceSet, pieceSet.size());
             default:
-                return new BracketElement(subToken, 1);
+                return new BracketElement(pieceSet, 1);
         }
+    }
+
+    private HashSet<Piece> parseBlockSet(Token token) throws SyntaxException {
+        if ("^".equals(token.check())) {
+            token.skip();
+            return parseNotBlockSet(token);
+        } else {
+            return parseNormalBlockSet(token);
+        }
+    }
+
+    private HashSet<Piece> parseNotBlockSet(Token token) throws SyntaxException {
+        HashSet<Piece> allPieces = new HashSet<>(Piece.valueList());
+        HashSet<Piece> notPieces = parseNormalBlockSet(token);
+        allPieces.removeAll(notPieces);
+        return allPieces;
+    }
+
+    private HashSet<Piece> parseNormalBlockSet(Token token) throws SyntaxException {
+        HashSet<Piece> pieces = new HashSet<>();
+        while (token.isContinue()) {
+            Piece piece = token.nextBlock();
+            if (pieces.contains(piece))
+                throw new SyntaxException(String.format("Duplicate '%s' pieces in []", piece.getName()), token.getLastIndex());
+            pieces.add(piece);
+        }
+        return pieces;
     }
 
     private LinkedList<String> getCombinationTokenList() throws SyntaxException {
