@@ -49,7 +49,8 @@ public class MoveSettings {
     }
 
     void setField(ColoredField coloredField) {
-        int height = coloredField.getUsingHeight();
+        int usingHeight = coloredField.getUsingHeight();
+        int height = maxClearLine < usingHeight ? usingHeight : maxClearLine;
         Field field = FieldFactory.createField(height);
         for (int y = 0; y < height; y++)
             for (int x = 0; x < 10; x++)
