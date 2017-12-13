@@ -37,22 +37,21 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ConcurrentCheckerUsingHoldInvokerTest {
-    private ConcurrentCheckerUsingHoldInvoker createConcurrentCheckerUsingHoldInvoker(Injector injector, ExecutorService executorService, int patternDepth) {
+    private ConcurrentCheckerUsingHoldInvoker createConcurrentCheckerUsingHoldInvoker(Injector injector, ExecutorService executorService) {
         MinoFactory minoFactory = injector.getInstance(MinoFactory.class);
         LockedCandidateThreadLocal candidateThreadLocal = injector.getInstance(LockedCandidateThreadLocal.class);
         CheckerUsingHoldThreadLocal<Action> checkerThreadLocal = injector.getInstance(Key.get(new TypeLiteral<CheckerUsingHoldThreadLocal<Action>>() {
         }));
         LockedReachableThreadLocal reachableThreadLocal = injector.getInstance(LockedReachableThreadLocal.class);
         CheckerCommonObj commonObj = new CheckerCommonObj(minoFactory, candidateThreadLocal, checkerThreadLocal, reachableThreadLocal);
-        return new ConcurrentCheckerUsingHoldInvoker(executorService, commonObj, patternDepth);
+        return new ConcurrentCheckerUsingHoldInvoker(executorService, commonObj);
     }
 
     private AnalyzeTree runTestCase(String marks, PatternGenerator blocksGenerator, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
         Injector injector = Guice.createInjector(new BasicModule(maxClearLine));
 
         ExecutorService executorService = injector.getInstance(ExecutorService.class);
-        int patternDepth = blocksGenerator.getDepth();
-        ConcurrentCheckerUsingHoldInvoker invoker = createConcurrentCheckerUsingHoldInvoker(injector, executorService, patternDepth);
+        ConcurrentCheckerUsingHoldInvoker invoker = createConcurrentCheckerUsingHoldInvoker(injector, executorService);
 
         List<Pieces> searchingPieces = blocksGenerator.blocksStream().collect(Collectors.toList());
         Field field = FieldFactory.createField(marks);
@@ -310,7 +309,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
 
             ExecutorService executorService = injector.getInstance(ExecutorService.class);
             int patternDepth = (int) searchingPieces.get(0).blockStream().count();
-            ConcurrentCheckerUsingHoldInvoker invoker = createConcurrentCheckerUsingHoldInvoker(injector, executorService, patternDepth);
+            ConcurrentCheckerUsingHoldInvoker invoker = createConcurrentCheckerUsingHoldInvoker(injector, executorService);
             List<Pair<Pieces, Boolean>> resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
 
             // 結果を集計する

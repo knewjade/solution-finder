@@ -148,7 +148,7 @@ public class PercentEntryPoint implements EntryPoint {
         ThreadLocal<Candidate<Action>> candidateThreadLocal = createCandidateThreadLocal(settings.getDropType(), maxClearLine);
         ThreadLocal<? extends Reachable> reachableThreadLocal = createReachableThreadLocal(settings.getDropType(), maxClearLine);
         MinoFactory minoFactory = new MinoFactory();
-        PercentCore percentCore = new PercentCore(executorService, candidateThreadLocal, settings.isUsingHold(), reachableThreadLocal, minoFactory, generator.getDepth());
+        PercentCore percentCore = new PercentCore(executorService, candidateThreadLocal, settings.isUsingHold(), reachableThreadLocal, minoFactory);
         try {
             percentCore.run(field, searchingPieces, maxClearLine, maxDepth);
         } catch (ExecutionException | InterruptedException e) {

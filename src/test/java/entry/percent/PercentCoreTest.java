@@ -55,7 +55,7 @@ class PercentCoreTest {
         LockedReachableThreadLocal reachableThreadLocal = injector.getInstance(LockedReachableThreadLocal.class);
         MinoFactory minoFactory = injector.getInstance(MinoFactory.class);
 
-        PercentCore percentCore = new PercentCore(executorService, candidateThreadLocal, obj.isUsingHold, reachableThreadLocal, minoFactory, generator.getDepth());
+        PercentCore percentCore = new PercentCore(executorService, candidateThreadLocal, obj.isUsingHold, reachableThreadLocal, minoFactory);
         Field field = FieldFactory.createField(obj.marks);
 
         percentCore.run(field, blocks, obj.maxClearLine, obj.maxDepth);

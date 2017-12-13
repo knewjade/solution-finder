@@ -28,15 +28,15 @@ class PercentCore {
     private AnalyzeTree resultTree;
     private List<Pair<Pieces, Boolean>> resultPairs;
 
-    PercentCore(ExecutorService executorService, ThreadLocal<Candidate<Action>> candidateThreadLocal, boolean isUsingHold, ThreadLocal<? extends Reachable> reachableThreadLocal, MinoFactory minoFactory, int fromDepth) {
-        this.invoker = createConcurrentCheckerInvoker(executorService, candidateThreadLocal, isUsingHold, reachableThreadLocal, minoFactory, fromDepth);
+    PercentCore(ExecutorService executorService, ThreadLocal<Candidate<Action>> candidateThreadLocal, boolean isUsingHold, ThreadLocal<? extends Reachable> reachableThreadLocal, MinoFactory minoFactory) {
+        this.invoker = createConcurrentCheckerInvoker(executorService, candidateThreadLocal, isUsingHold, reachableThreadLocal, minoFactory);
     }
 
-    private ConcurrentCheckerInvoker createConcurrentCheckerInvoker(ExecutorService executorService, ThreadLocal<Candidate<Action>> candidateThreadLocal, boolean isUsingHold, ThreadLocal<? extends Reachable> reachableThreadLocal, MinoFactory minoFactory, int fromDepth) {
+    private ConcurrentCheckerInvoker createConcurrentCheckerInvoker(ExecutorService executorService, ThreadLocal<Candidate<Action>> candidateThreadLocal, boolean isUsingHold, ThreadLocal<? extends Reachable> reachableThreadLocal, MinoFactory minoFactory) {
         if (isUsingHold) {
             CheckerUsingHoldThreadLocal<Action> checkerThreadLocal = new CheckerUsingHoldThreadLocal<>();
             CheckerCommonObj commonObj = new CheckerCommonObj(minoFactory, candidateThreadLocal, checkerThreadLocal, reachableThreadLocal);
-            return new ConcurrentCheckerUsingHoldInvoker(executorService, commonObj, fromDepth);
+            return new ConcurrentCheckerUsingHoldInvoker(executorService, commonObj);
         } else {
             CheckerNoHoldThreadLocal<Action> checkerThreadLocal = new CheckerNoHoldThreadLocal<>();
             CheckerCommonObj commonObj = new CheckerCommonObj(minoFactory, candidateThreadLocal, checkerThreadLocal, reachableThreadLocal);

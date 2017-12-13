@@ -17,20 +17,17 @@ import java.util.concurrent.Future;
 public class ConcurrentCheckerUsingHoldInvoker implements ConcurrentCheckerInvoker {
     private final ExecutorService executorService;
     private final CheckerCommonObj commonObj;
-    private final int fromDepth;
 
-    public ConcurrentCheckerUsingHoldInvoker(ExecutorService executorService, CheckerCommonObj commonObj, int fromDepth) {
+    public ConcurrentCheckerUsingHoldInvoker(ExecutorService executorService, CheckerCommonObj commonObj) {
         this.executorService = executorService;
         this.commonObj = commonObj;
-        this.fromDepth = fromDepth;
     }
 
     @Override
     public List<Pair<Pieces, Boolean>> search(Field field, List<Pieces> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
         ConcurrentVisitedTree visitedTree = new ConcurrentVisitedTree();
-        ReverseOrderLookUp lookUp = new ReverseOrderLookUp(maxDepth, fromDepth);
 
-        Obj obj = new Obj(field, maxClearLine, maxDepth, visitedTree, lookUp);
+        Obj obj = new Obj(field, maxClearLine, maxDepth, visitedTree);
         ArrayList<Task> tasks = new ArrayList<>();
         for (Pieces target : searchingPieces)
             tasks.add(new Task(obj, commonObj, target));
