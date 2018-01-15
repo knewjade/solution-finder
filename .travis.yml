@@ -18,6 +18,6 @@ matrix:
         skip-cleanup: true
         github-token: ${GITHUB_TOKEN}
         keep-history: true
-        repo: knewjade/
+        repo: knewjade/sfinder-manual
         local-dir: build/html/
         target-branch: master
