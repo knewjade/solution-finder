@@ -1,1 +1,24 @@
-language: java
+matrix:
+  include:
+    - language: python
+      python:
+        - 3.6
+      before_script:
+        - cd docs
+      script:
+        - pwd
+        - make html
+      before_deploy:
+        - touch build/html/.nojekyll
+      deploy:
+        provider: pages
+        skip-cleanup: true
+        github-token: ${GITHUB_TOKEN}
+        keep-history: true
+        repo: knewjade/
+        local-dir: build/html/
+        target-branch: master
+
+    - language: java
+      script:
+        - travis_wait 20 ./gradlew check
