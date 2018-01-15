@@ -1,8 +1,12 @@
 matrix:
   include:
+    - language: java
+      jdk: oraclejdk8
+      script:
+        - travis_wait 20 ./gradlew check
+
     - language: python
-      python:
-        - 3.6
+      python: 3.6
       before_script:
         - cd docs
       script:
@@ -18,7 +22,3 @@ matrix:
         repo: knewjade/
         local-dir: build/html/
         target-branch: master
-
-    - language: java
-      script:
-        - travis_wait 20 ./gradlew check
