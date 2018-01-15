@@ -7,10 +7,9 @@ matrix:
 
     - language: python
       python: 3.6
-      before_script:
+      before_install:
         - cd docs
       script:
-        - pwd
         - make html
       before_deploy:
         - touch build/html/.nojekyll
