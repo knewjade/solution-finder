@@ -95,6 +95,8 @@ html_theme_options = {
     'collapse_navigation': False,
     'display_version': False,
     'navigation_depth': 4,
+    'canonical_url': 'https://github.com/knewjade/solution-finder/latest/',
+    'analytics_id': 'UA-93540402-4',
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
