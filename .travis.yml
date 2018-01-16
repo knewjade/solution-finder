@@ -12,6 +12,7 @@ matrix:
       script:
         - make html
       before_deploy:
+        - sphinx-versioning build docs build/html -w "master"
         - touch build/html/.nojekyll
       deploy:
         provider: pages
