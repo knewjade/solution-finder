@@ -68,16 +68,16 @@ solution-finderを操作しやすくするGUIを `@kitsune_fuchi (twitter) <http
    :maxdepth: 2
    :caption: 目次
 
-   quick_start
-   field
-   patterns
-   command
-   percent/main
-   path/main
-   setup/main
-   util/main
-   caution
-   contact
+   contents/quick_start
+   contents/field
+   contents/patterns
+   contents/command
+   contents/percent/main
+   contents/path/main
+   contents/setup/main
+   contents/util/main
+   contents/caution
+   contents/contact
 
 
 .. * :ref:`genindex`
