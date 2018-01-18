@@ -22,3 +22,12 @@ matrix:
         repo: knewjade/sfinder-manual
         local-dir: build/html/
         target-branch: master
+
+# to see: https://docs.travis-ci.com/user/deployment/custom/
+after_success:
+  - eval "$(ssh-agent -s)"
+  - chmod 600 .travis/deploy_key.pem
+  - ssh-add .travis/deploy_key.pem
+  - git checkout master
+  - git tag --force latest
+  - git push --force deploy latest
