@@ -11,7 +11,12 @@ matrix:
         - cd docs
       script:
         - make html
-      before_deploy:
+      before_deploy:  # to see: https://docs.travis-ci.com/user/deployment/custom/
+        - eval "$(ssh-agent -s)"
+        - chmod 600 .travis/deploy_key.pem
+        - ssh-add .travis/deploy_key.pem
+        - git tag --force latest `git log --source master -n 1 --format=%H`
+        - git push --force deploy latest
         - sphinx-versioning build docs build/html -r latest -w "nobranch"
         - touch build/html/.nojekyll
       deploy:
@@ -22,12 +27,3 @@ matrix:
         repo: knewjade/sfinder-manual
         local-dir: build/html/
         target-branch: master
-
-# to see: https://docs.travis-ci.com/user/deployment/custom/
-after_success:
-  - eval "$(ssh-agent -s)"
-  - chmod 600 .travis/deploy_key.pem
-  - ssh-add .travis/deploy_key.pem
-  - git checkout master
-  - git tag --force latest
-  - git push --force deploy latest
