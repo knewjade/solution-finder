@@ -10,11 +10,14 @@ matrix:
       before_install:
         - cd docs
       script:
+        - pwd
+        - ls ../
+        - ls ~/
         - make html
       before_deploy:  # to see: https://docs.travis-ci.com/user/deployment/custom/
         - eval "$(ssh-agent -s)"
-        - chmod 600 .travis/deploy_key.pem
-        - ssh-add .travis/deploy_key.pem
+        - chmod 600 ../.travis/deploy_key.pem
+        - ssh-add ../.travis/deploy_key.pem
         - git tag --force latest `git log --source master -n 1 --format=%H`
         - git push --force deploy latest
         - sphinx-versioning build docs build/html -r latest -w "nobranch"
