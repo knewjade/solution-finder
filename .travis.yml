@@ -13,7 +13,7 @@ matrix:
         - make html
       before_deploy:
         - export TAG_SHA=`git log --source master -n 1 --format=%H`
-        - curl -H "Authorization: token $GITHUB_TOKEN" -X PATCH https://api.github.com/repos/knewjade/solution-finder/git/refs/tags/latest --data "{\"sha\":\"$TAG_SHA\", \"force\":true}"
+        - curl -H "Authorization: token $GITHUB_TOKEN" -X PATCH https://api.github.com/
         - sphinx-versioning build docs build/html -r latest -w "nobranch"
         - touch build/html/.nojekyll
       deploy:
