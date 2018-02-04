@@ -22,6 +22,7 @@ import core.field.FieldFactory;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
+import exceptions.FinderExecuteException;
 import lib.Randoms;
 import module.BasicModule;
 import module.LongTest;
@@ -30,7 +31,6 @@ import searcher.checker.CheckerUsingHold;
 import searcher.common.validator.PerfectValidator;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
@@ -47,7 +47,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
         return new ConcurrentCheckerUsingHoldInvoker(executorService, commonObj);
     }
 
-    private AnalyzeTree runTestCase(String marks, PatternGenerator blocksGenerator, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
+    private AnalyzeTree runTestCase(String marks, PatternGenerator blocksGenerator, int maxClearLine, int maxDepth) throws FinderExecuteException {
         Injector injector = Guice.createInjector(new BasicModule(maxClearLine));
 
         ExecutorService executorService = injector.getInstance(ExecutorService.class);
@@ -287,7 +287,7 @@ class ConcurrentCheckerUsingHoldInvokerTest {
 
     @Test
     @LongTest
-    void random() throws ExecutionException, InterruptedException, SyntaxException {
+    void random() throws FinderExecuteException, SyntaxException {
         Randoms randoms = new Randoms();
 
         MinoFactory minoFactory = new MinoFactory();
@@ -308,7 +308,6 @@ class ConcurrentCheckerUsingHoldInvokerTest {
             Injector injector = Guice.createInjector(new BasicModule(maxClearLine));
 
             ExecutorService executorService = injector.getInstance(ExecutorService.class);
-            int patternDepth = (int) searchingPieces.get(0).blockStream().count();
             ConcurrentCheckerUsingHoldInvoker invoker = createConcurrentCheckerUsingHoldInvoker(injector, executorService);
             List<Pair<Pieces, Boolean>> resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
 

@@ -51,8 +51,7 @@ public class Main3 {
 
         Set<List<Piece>> sets = new HashSet<>();
         List<Piece> allPieces = Piece.valueList();
-        List<Piece> pieces = new ArrayList<>();
-        pieces.addAll(allPieces);
+        List<Piece> pieces = new ArrayList<>(allPieces);
         int popCount = (maxClearLine * 10 - field.getNumOfAllBlocks()) / 4;
         CombinationIterable<Piece> combinationIterable = new CombinationIterable<>(pieces, popCount);
         for (List<Piece> pieceList : combinationIterable) {
@@ -317,7 +316,7 @@ public class Main3 {
                 .collect(Collectors.toList());
     }
 
-    private static final Comparator<OperationWithKey> OPERATION_WITH_KEY_COMPARATOR = new OperationWithKeyComparator();
+    private static final Comparator<OperationWithKey> OPERATION_WITH_KEY_COMPARATOR = new OperationWithKeyComparator<>();
 
     private static class Obj implements Comparable<Obj> {
         private final List<Piece> pieces;

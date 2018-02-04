@@ -22,6 +22,7 @@ import core.field.FieldFactory;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
+import exceptions.FinderExecuteException;
 import lib.Randoms;
 import module.BasicModule;
 import module.LongTest;
@@ -30,20 +31,19 @@ import searcher.checker.CheckerNoHold;
 import searcher.common.validator.PerfectValidator;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ConcurrentCheckerNoHoldInvokerTest {
-    private AnalyzeTree runTestCase(String marks, PatternGenerator blocksGenerator, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
+    private AnalyzeTree runTestCase(String marks, PatternGenerator blocksGenerator, int maxClearLine, int maxDepth) throws FinderExecuteException {
         Field field = FieldFactory.createField(marks);
         List<Pieces> searchingPieces = blocksGenerator.blocksStream().collect(Collectors.toList());
         return runTestCase(field, searchingPieces, maxClearLine, maxDepth);
     }
 
-    private AnalyzeTree runTestCase(Field field, List<Pieces> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
+    private AnalyzeTree runTestCase(Field field, List<Pieces> searchingPieces, int maxClearLine, int maxDepth) throws FinderExecuteException {
         Injector injector = Guice.createInjector(new BasicModule());
         ExecutorService executorService = injector.getInstance(ExecutorService.class);
 
@@ -358,7 +358,7 @@ class ConcurrentCheckerNoHoldInvokerTest {
 
     @Test
     @LongTest
-    void random() throws ExecutionException, InterruptedException, SyntaxException {
+    void random() throws FinderExecuteException, SyntaxException {
         Randoms randoms = new Randoms();
 
         MinoFactory minoFactory = new MinoFactory();

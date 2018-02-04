@@ -31,7 +31,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -149,11 +148,7 @@ public class PercentEntryPoint implements EntryPoint {
         ThreadLocal<? extends Reachable> reachableThreadLocal = createReachableThreadLocal(settings.getDropType(), maxClearLine);
         MinoFactory minoFactory = new MinoFactory();
         PercentCore percentCore = new PercentCore(executorService, candidateThreadLocal, settings.isUsingHold(), reachableThreadLocal, minoFactory);
-        try {
-            percentCore.run(field, searchingPieces, maxClearLine, maxDepth);
-        } catch (ExecutionException | InterruptedException e) {
-            throw new FinderExecuteException(e);
-        }
+        percentCore.run(field, searchingPieces, maxClearLine, maxDepth);
 
         AnalyzeTree tree = percentCore.getResultTree();
         List<Pair<Pieces, Boolean>> resultPairs = percentCore.getResultPairs();

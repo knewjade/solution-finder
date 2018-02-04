@@ -15,6 +15,7 @@ import core.action.candidate.Candidate;
 import core.action.reachable.Reachable;
 import core.field.Field;
 import core.mino.MinoFactory;
+import exceptions.FinderExecuteException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +45,7 @@ class PercentCore {
         }
     }
 
-    void run(Field field, Set<LongPieces> searchingPiecesSet, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
+    void run(Field field, Set<LongPieces> searchingPiecesSet, int maxClearLine, int maxDepth) throws FinderExecuteException {
         List<Pieces> searchingPieces = new ArrayList<>(searchingPiecesSet);
 
         this.resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
