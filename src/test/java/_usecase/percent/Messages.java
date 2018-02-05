@@ -53,4 +53,8 @@ class Messages {
     static String softdrop() {
         return "Drop: softdrop";
     }
+
+    static String singleThread() {
+        return "Threads = 1";
+    }
 }

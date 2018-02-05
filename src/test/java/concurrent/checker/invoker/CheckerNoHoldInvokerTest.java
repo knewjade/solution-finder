@@ -15,6 +15,7 @@ import concurrent.LockedCandidateThreadLocal;
 import concurrent.LockedReachableThreadLocal;
 import concurrent.checker.CheckerNoHoldThreadLocal;
 import concurrent.checker.invoker.no_hold.ConcurrentCheckerNoHoldInvoker;
+import concurrent.checker.invoker.no_hold.SingleCheckerNoHoldInvoker;
 import core.action.candidate.Candidate;
 import core.action.candidate.LockedCandidate;
 import core.field.Field;
@@ -22,33 +23,36 @@ import core.field.FieldFactory;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
+import exceptions.FinderExecuteException;
 import lib.Randoms;
 import module.BasicModule;
 import module.LongTest;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import searcher.checker.CheckerNoHold;
 import searcher.common.validator.PerfectValidator;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.IntFunction;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ConcurrentCheckerNoHoldInvokerTest {
-    private AnalyzeTree runTestCase(String marks, PatternGenerator blocksGenerator, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
+class CheckerNoHoldInvokerTest {
+    private AnalyzeTree runTestCase(ConcurrentCheckerInvoker invoker, String marks, PatternGenerator blocksGenerator, int maxClearLine, int maxDepth) throws FinderExecuteException {
         Field field = FieldFactory.createField(marks);
         List<Pieces> searchingPieces = blocksGenerator.blocksStream().collect(Collectors.toList());
-        return runTestCase(field, searchingPieces, maxClearLine, maxDepth);
+        return runTestCase(invoker, field, searchingPieces, maxClearLine, maxDepth);
     }
 
-    private AnalyzeTree runTestCase(Field field, List<Pieces> searchingPieces, int maxClearLine, int maxDepth) throws ExecutionException, InterruptedException {
-        Injector injector = Guice.createInjector(new BasicModule());
-        ExecutorService executorService = injector.getInstance(ExecutorService.class);
-
-        ConcurrentCheckerNoHoldInvoker invoker = createConcurrentCheckerNoHoldInvoker(injector, executorService);
-
+    private AnalyzeTree runTestCase(ConcurrentCheckerInvoker invoker, Field field, List<Pieces> searchingPieces, int maxClearLine, int maxDepth) throws FinderExecuteException {
         List<Pair<Pieces, Boolean>> resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
 
         // 結果を集計する
@@ -60,24 +64,25 @@ class ConcurrentCheckerNoHoldInvokerTest {
         }
 
         System.out.println(tree.show());
-        executorService.shutdown();
 
         return tree;
     }
 
-    private ConcurrentCheckerNoHoldInvoker createConcurrentCheckerNoHoldInvoker(Injector injector, ExecutorService executorService) {
-        MinoFactory minoFactory = injector.getInstance(MinoFactory.class);
-        CheckerNoHoldThreadLocal<Action> checkerThreadLocal = injector.getInstance(Key.get(new TypeLiteral<CheckerNoHoldThreadLocal<Action>>() {
-        }));
-        LockedCandidateThreadLocal candidateThreadLocal = injector.getInstance(LockedCandidateThreadLocal.class);
-        LockedReachableThreadLocal reachableThreadLocal = injector.getInstance(LockedReachableThreadLocal.class);
+    private static final ExecutorService executorService;
 
-        CheckerCommonObj commonObj = new CheckerCommonObj(minoFactory, candidateThreadLocal, checkerThreadLocal, reachableThreadLocal);
-        return new ConcurrentCheckerNoHoldInvoker(executorService, commonObj);
+    static {
+        int core = Runtime.getRuntime().availableProcessors();
+        executorService = Executors.newFixedThreadPool(core);
     }
 
-    @Test
-    void testSearch1() throws Exception {
+    @AfterAll
+    static void tearDownAll() {
+        executorService.shutdown();
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(InvokerTestCase.class)
+    void testSearch1(IntFunction<ConcurrentCheckerInvoker> invokerGenerator) throws Exception {
         PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p7");
         int maxClearLine = 8;
         int maxDepth = 7;
@@ -94,14 +99,16 @@ class ConcurrentCheckerNoHoldInvokerTest {
                 "";
 
         // 結果を集計する
-        AnalyzeTree tree = runTestCase(marks, blocksGenerator, maxClearLine, maxDepth);
+        ConcurrentCheckerInvoker invoker = invokerGenerator.apply(maxClearLine);
+        AnalyzeTree tree = runTestCase(invoker, marks, blocksGenerator, maxClearLine, maxDepth);
 
         // Source: myself 20170616
         assertThat(tree.getSuccessPercent()).isEqualTo(1719 / 5040.0);
     }
 
-    @Test
-    void testSearch2BT4_5() throws Exception {
+    @ParameterizedTest
+    @ArgumentsSource(InvokerTestCase.class)
+    void testSearch2BT4_5(IntFunction<ConcurrentCheckerInvoker> invokerGenerator) throws Exception {
         PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p7");
         int maxClearLine = 6;
         int maxDepth = 7;
@@ -116,14 +123,16 @@ class ConcurrentCheckerNoHoldInvokerTest {
                 "";
 
         // 結果を集計する
-        AnalyzeTree tree = runTestCase(marks, blocksGenerator, maxClearLine, maxDepth);
+        ConcurrentCheckerInvoker invoker = invokerGenerator.apply(maxClearLine);
+        AnalyzeTree tree = runTestCase(invoker, marks, blocksGenerator, maxClearLine, maxDepth);
 
         // Source: myself 20170616
         assertThat(tree.getSuccessPercent()).isEqualTo(2228 / 5040.0);
     }
 
-    @Test
-    void testSearch3() throws Exception {
+    @ParameterizedTest
+    @ArgumentsSource(InvokerTestCase.class)
+    void testSearch3(IntFunction<ConcurrentCheckerInvoker> invokerGenerator) throws Exception {
         PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p7");
         int maxClearLine = 4;
         int maxDepth = 7;
@@ -136,14 +145,16 @@ class ConcurrentCheckerNoHoldInvokerTest {
                 "";
 
         // 結果を集計する
-        AnalyzeTree tree = runTestCase(marks, blocksGenerator, maxClearLine, maxDepth);
+        ConcurrentCheckerInvoker invoker = invokerGenerator.apply(maxClearLine);
+        AnalyzeTree tree = runTestCase(invoker, marks, blocksGenerator, maxClearLine, maxDepth);
 
         // Source: myself 20170415
         assertThat(tree.getSuccessPercent()).isEqualTo(727 / 5040.0);
     }
 
-    @Test
-    void testSearch4() throws Exception {
+    @ParameterizedTest
+    @ArgumentsSource(InvokerTestCase.class)
+    void testSearch4(IntFunction<ConcurrentCheckerInvoker> invokerGenerator) throws Exception {
         PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p4");
         int maxClearLine = 3;
         int maxDepth = 3;
@@ -154,14 +165,16 @@ class ConcurrentCheckerNoHoldInvokerTest {
                 "XXXX___XXX" +
                 "";
 
-        AnalyzeTree tree = runTestCase(marks, blocksGenerator, maxClearLine, maxDepth);
+        ConcurrentCheckerInvoker invoker = invokerGenerator.apply(maxClearLine);
+        AnalyzeTree tree = runTestCase(invoker, marks, blocksGenerator, maxClearLine, maxDepth);
 
         // Source: myself 20170415
         assertThat(tree.getSuccessPercent()).isEqualTo(120 / 840.0);
     }
 
-    @Test
-    void testSearch5() throws Exception {
+    @ParameterizedTest
+    @ArgumentsSource(InvokerTestCase.class)
+    void testSearch5(IntFunction<ConcurrentCheckerInvoker> invokerGenerator) throws Exception {
         PatternGenerator blocksGenerator = new LoadedPatternGenerator("J, I, Z, *p4");
         int maxClearLine = 4;
         int maxDepth = 6;
@@ -173,14 +186,16 @@ class ConcurrentCheckerNoHoldInvokerTest {
                 "XXX______X" +
                 "";
 
-        AnalyzeTree tree = runTestCase(marks, blocksGenerator, maxClearLine, maxDepth);
+        ConcurrentCheckerInvoker invoker = invokerGenerator.apply(maxClearLine);
+        AnalyzeTree tree = runTestCase(invoker, marks, blocksGenerator, maxClearLine, maxDepth);
 
         // Source: myself 20170415
         assertThat(tree.getSuccessPercent()).isEqualTo(180 / 840.0);
     }
 
-    @Test
-    void testSearch6() throws Exception {
+    @ParameterizedTest
+    @ArgumentsSource(InvokerTestCase.class)
+    void testSearch6(IntFunction<ConcurrentCheckerInvoker> invokerGenerator) throws Exception {
         PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p5");
         int maxClearLine = 4;
         int maxDepth = 4;
@@ -192,14 +207,16 @@ class ConcurrentCheckerNoHoldInvokerTest {
                 "XXXXXX____" +
                 "";
 
-        AnalyzeTree tree = runTestCase(marks, blocksGenerator, maxClearLine, maxDepth);
+        ConcurrentCheckerInvoker invoker = invokerGenerator.apply(maxClearLine);
+        AnalyzeTree tree = runTestCase(invoker, marks, blocksGenerator, maxClearLine, maxDepth);
 
         // Source: twitter by @???
         assertThat(tree.getSuccessPercent()).isEqualTo(516 / 2520.0);
     }
 
-    @Test
-    void testSearch7() throws Exception {
+    @ParameterizedTest
+    @ArgumentsSource(InvokerTestCase.class)
+    void testSearch7(IntFunction<ConcurrentCheckerInvoker> invokerGenerator) throws Exception {
         PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p5");
         int maxClearLine = 4;
         int maxDepth = 4;
@@ -211,14 +228,16 @@ class ConcurrentCheckerNoHoldInvokerTest {
                 "XXXXXX____" +
                 "";
 
-        AnalyzeTree tree = runTestCase(marks, blocksGenerator, maxClearLine, maxDepth);
+        ConcurrentCheckerInvoker invoker = invokerGenerator.apply(maxClearLine);
+        AnalyzeTree tree = runTestCase(invoker, marks, blocksGenerator, maxClearLine, maxDepth);
 
         // Source: twitter by @???
         assertThat(tree.getSuccessPercent()).isEqualTo(396 / 2520.0);
     }
 
-    @Test
-    void testSearch8() throws Exception {
+    @ParameterizedTest
+    @ArgumentsSource(InvokerTestCase.class)
+    void testSearch8(IntFunction<ConcurrentCheckerInvoker> invokerGenerator) throws Exception {
         PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p5");
         int maxClearLine = 4;
         int maxDepth = 4;
@@ -230,14 +249,16 @@ class ConcurrentCheckerNoHoldInvokerTest {
                 "XXXXXXX___" +
                 "";
 
-        AnalyzeTree tree = runTestCase(marks, blocksGenerator, maxClearLine, maxDepth);
+        ConcurrentCheckerInvoker invoker = invokerGenerator.apply(maxClearLine);
+        AnalyzeTree tree = runTestCase(invoker, marks, blocksGenerator, maxClearLine, maxDepth);
 
         // Source: twitter by @???
         assertThat(tree.getSuccessPercent()).isEqualTo(609 / 2520.0);
     }
 
-    @Test
-    void testSearch9() throws Exception {
+    @ParameterizedTest
+    @ArgumentsSource(InvokerTestCase.class)
+    void testSearch9(IntFunction<ConcurrentCheckerInvoker> invokerGenerator) throws Exception {
         PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p5");
         int maxClearLine = 4;
         int maxDepth = 4;
@@ -249,14 +270,16 @@ class ConcurrentCheckerNoHoldInvokerTest {
                 "XXXXXX____" +
                 "";
 
-        AnalyzeTree tree = runTestCase(marks, blocksGenerator, maxClearLine, maxDepth);
+        ConcurrentCheckerInvoker invoker = invokerGenerator.apply(maxClearLine);
+        AnalyzeTree tree = runTestCase(invoker, marks, blocksGenerator, maxClearLine, maxDepth);
 
         // Source: twitter by @???
         assertThat(tree.getSuccessPercent()).isEqualTo(324 / 2520.0);
     }
 
-    @Test
-    void testSearch10() throws Exception {
+    @ParameterizedTest
+    @ArgumentsSource(InvokerTestCase.class)
+    void testSearch10(IntFunction<ConcurrentCheckerInvoker> invokerGenerator) throws Exception {
         PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p7");
         int maxClearLine = 4;
         int maxDepth = 6;
@@ -269,14 +292,16 @@ class ConcurrentCheckerNoHoldInvokerTest {
                 "XXXXXX__XX" +
                 "";
 
-        AnalyzeTree tree = runTestCase(marks, blocksGenerator, maxClearLine, maxDepth);
+        ConcurrentCheckerInvoker invoker = invokerGenerator.apply(maxClearLine);
+        AnalyzeTree tree = runTestCase(invoker, marks, blocksGenerator, maxClearLine, maxDepth);
 
         // Source: reply in twitter from @fullfool_14
         assertThat(tree.getSuccessPercent()).isEqualTo(1439 / 5040.0);
     }
 
-    @Test
-    void testCase11() throws Exception {
+    @ParameterizedTest
+    @ArgumentsSource(InvokerTestCase.class)
+    void testCase11(IntFunction<ConcurrentCheckerInvoker> invokerGenerator) throws Exception {
         // Invoker
         PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p4");
         int maxClearLine = 5;
@@ -290,14 +315,17 @@ class ConcurrentCheckerNoHoldInvokerTest {
                 "__XXXXXXXX" +
                 "___XXXXXXX" +
                 "";
-        AnalyzeTree tree = runTestCase(marks, blocksGenerator, maxClearLine, maxDepth);
+
+        ConcurrentCheckerInvoker invoker = invokerGenerator.apply(maxClearLine);
+        AnalyzeTree tree = runTestCase(invoker, marks, blocksGenerator, maxClearLine, maxDepth);
 
         // Source: reply in twitter from @fullfool_14
         assertThat(tree.getSuccessPercent()).isEqualTo(477 / 2520.0);
     }
 
-    @Test
-    void testCase12() throws Exception {
+    @ParameterizedTest
+    @ArgumentsSource(InvokerTestCase.class)
+    void testCase12(IntFunction<ConcurrentCheckerInvoker> invokerGenerator) throws Exception {
         // Invoker
         PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p7");
         int maxClearLine = 4;
@@ -310,14 +338,17 @@ class ConcurrentCheckerNoHoldInvokerTest {
                 "XXXXXXX___" +
                 "XXXXXX____" +
                 "";
-        AnalyzeTree tree = runTestCase(marks, blocksGenerator, maxClearLine, maxDepth);
+
+        ConcurrentCheckerInvoker invoker = invokerGenerator.apply(maxClearLine);
+        AnalyzeTree tree = runTestCase(invoker, marks, blocksGenerator, maxClearLine, maxDepth);
 
         // Source: reply in twitter from @fullfool_14
         assertThat(tree.getSuccessPercent()).isEqualTo(727 / 5040.0);
     }
 
-    @Test
-    void testCase13() throws Exception {
+    @ParameterizedTest
+    @ArgumentsSource(InvokerTestCase.class)
+    void testCase13(IntFunction<ConcurrentCheckerInvoker> invokerGenerator) throws Exception {
         // Invoker
         PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p7");
         int maxClearLine = 4;
@@ -330,14 +361,17 @@ class ConcurrentCheckerNoHoldInvokerTest {
                 "XXXX______" +
                 "XXXX______" +
                 "";
-        AnalyzeTree tree = runTestCase(marks, blocksGenerator, maxClearLine, maxDepth);
+
+        ConcurrentCheckerInvoker invoker = invokerGenerator.apply(maxClearLine);
+        AnalyzeTree tree = runTestCase(invoker, marks, blocksGenerator, maxClearLine, maxDepth);
 
         // Source: myself 20170415
         assertThat(tree.getSuccessPercent()).isEqualTo(1902 / 5040.0);
     }
 
-    @Test
-    void testCase14() throws Exception {
+    @ParameterizedTest
+    @ArgumentsSource(InvokerTestCase.class)
+    void testCase14(IntFunction<ConcurrentCheckerInvoker> invokerGenerator) throws Exception {
         // Invoker
         PatternGenerator blocksGenerator = new LoadedPatternGenerator("*p5");
         int maxClearLine = 4;
@@ -350,15 +384,18 @@ class ConcurrentCheckerNoHoldInvokerTest {
                 "XXXXXXXXXX" +
                 "XXXX_____X" +
                 "";
-        AnalyzeTree tree = runTestCase(marks, blocksGenerator, maxClearLine, maxDepth);
+
+        ConcurrentCheckerInvoker invoker = invokerGenerator.apply(maxClearLine);
+        AnalyzeTree tree = runTestCase(invoker, marks, blocksGenerator, maxClearLine, maxDepth);
 
         // Source: myself 20170415
         assertThat(tree.getSuccessPercent()).isEqualTo(309 / 2520.0);
     }
 
-    @Test
     @LongTest
-    void random() throws ExecutionException, InterruptedException, SyntaxException {
+    @ParameterizedTest
+    @ArgumentsSource(InvokerTestCase.class)
+    void random(IntFunction<ConcurrentCheckerInvoker> invokerGenerator) throws FinderExecuteException, SyntaxException {
         Randoms randoms = new Randoms();
 
         MinoFactory minoFactory = new MinoFactory();
@@ -376,12 +413,45 @@ class ConcurrentCheckerNoHoldInvokerTest {
 
             PatternGenerator blocksGenerator = createPiecesGenerator(maxDepth);
             List<Pieces> searchingPieces = blocksGenerator.blocksStream().collect(Collectors.toList());
-            AnalyzeTree tree = runTestCase(field, searchingPieces, maxClearLine, maxDepth);
+
+            ConcurrentCheckerInvoker invoker = invokerGenerator.apply(maxClearLine);
+            AnalyzeTree tree = runTestCase(invoker, field, searchingPieces, maxClearLine, maxDepth);
 
             for (Pieces pieces : searchingPieces) {
                 boolean check = checker.check(field, pieces.getPieces(), candidate, maxClearLine, maxDepth);
                 assertThat(tree.isSucceed(pieces)).isEqualTo(check);
             }
+        }
+    }
+
+    private static class InvokerTestCase implements ArgumentsProvider {
+        @Override
+        public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+            IntFunction<ConcurrentCheckerInvoker> concurrentGenerator = this::createConcurrentCheckerUsingHoldInvoker;
+            IntFunction<ConcurrentCheckerInvoker> singleGenerator = this::createSingleCheckerNoHoldInvoker;
+            return Stream.of(Arguments.of(concurrentGenerator), Arguments.of(singleGenerator));
+        }
+
+        private ConcurrentCheckerInvoker createConcurrentCheckerUsingHoldInvoker(int maxClearLine) {
+            Injector injector = Guice.createInjector(new BasicModule(maxClearLine));
+            MinoFactory minoFactory = injector.getInstance(MinoFactory.class);
+            CheckerNoHoldThreadLocal<Action> checkerThreadLocal = injector.getInstance(Key.get(new TypeLiteral<CheckerNoHoldThreadLocal<Action>>() {
+            }));
+            LockedCandidateThreadLocal candidateThreadLocal = injector.getInstance(LockedCandidateThreadLocal.class);
+            LockedReachableThreadLocal reachableThreadLocal = injector.getInstance(LockedReachableThreadLocal.class);
+            CheckerCommonObj commonObj = new CheckerCommonObj(minoFactory, candidateThreadLocal, checkerThreadLocal, reachableThreadLocal);
+            return new ConcurrentCheckerNoHoldInvoker(executorService, commonObj);
+        }
+
+        private ConcurrentCheckerInvoker createSingleCheckerNoHoldInvoker(int maxClearLine) {
+            Injector injector = Guice.createInjector(new BasicModule(maxClearLine));
+            MinoFactory minoFactory = injector.getInstance(MinoFactory.class);
+            CheckerNoHoldThreadLocal<Action> checkerThreadLocal = injector.getInstance(Key.get(new TypeLiteral<CheckerNoHoldThreadLocal<Action>>() {
+            }));
+            LockedCandidateThreadLocal candidateThreadLocal = injector.getInstance(LockedCandidateThreadLocal.class);
+            LockedReachableThreadLocal reachableThreadLocal = injector.getInstance(LockedReachableThreadLocal.class);
+            CheckerCommonObj commonObj = new CheckerCommonObj(minoFactory, candidateThreadLocal, checkerThreadLocal, reachableThreadLocal);
+            return new SingleCheckerNoHoldInvoker(commonObj);
         }
     }
 

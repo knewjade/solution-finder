@@ -26,14 +26,20 @@ public class PerfectPackSearcher implements PackSearcher {
     private final int lastIndex;
     private final SolutionFilter solutionFilter;
     private final TaskResultHelper taskResultHelper;
+    private final boolean isParallel;
 
     public PerfectPackSearcher(List<InOutPairField> inOutPairFields, BasicSolutions solutions, SizedBit sizedBit, SolutionFilter solutionFilter, TaskResultHelper taskResultHelper) {
+        this(inOutPairFields, solutions, sizedBit, solutionFilter, taskResultHelper, true);
+    }
+
+    public PerfectPackSearcher(List<InOutPairField> inOutPairFields, BasicSolutions solutions, SizedBit sizedBit, SolutionFilter solutionFilter, TaskResultHelper taskResultHelper, boolean isParallel) {
         this.inOutPairFields = inOutPairFields;
         this.solutions = solutions;
         this.sizedBit = sizedBit;
         this.lastIndex = inOutPairFields.size() - 1;
         this.solutionFilter = solutionFilter;
         this.taskResultHelper = taskResultHelper;
+        this.isParallel = isParallel;
     }
 
     public List<Result> toList() throws InterruptedException, ExecutionException {
@@ -49,7 +55,8 @@ public class PerfectPackSearcher implements PackSearcher {
             // Streamは終端操作を実行するまで実際には計算を行わない
             // そのため、終端操作をPool内でしなければ、Pool外のスレッド場で動くため注意が必要
             // (終端操作をしなかった場合、Pool内ではStream自体の作成をして終了する)
-            return task.compute().parallel().collect(Collectors.toList());
+            Stream<Result> compute = toStream(task);
+            return compute.collect(Collectors.toList());
         });
 
         // 結果を取得するまで待つ
@@ -59,6 +66,13 @@ public class PerfectPackSearcher implements PackSearcher {
         forkJoinPool.shutdown();
 
         return results;
+    }
+
+    private Stream<Result> toStream(PackingTask task) {
+        Stream<Result> compute = task.compute();
+        if (isParallel)
+            compute = compute.parallel();
+        return compute;
     }
 
     private PackingTask createPackingTask(SizedBit sizedBit, MinoFieldMemento emptyMemento, ColumnField innerField) {
@@ -84,7 +98,8 @@ public class PerfectPackSearcher implements PackSearcher {
             // Streamは終端操作を実行するまで実際には計算を行わない
             // そのため、終端操作をPool内でしなければ、Pool外のスレッド場で動くため注意が必要
             // (終端操作をしなかった場合、Pool内ではStream自体の作成をして終了する)
-            task.compute().parallel().forEach(callback);
+            Stream<Result> compute = toStream(task);
+            compute.forEach(callback);
 
             // 計算を最後まで行ったことを伝えるため true を返却
             return true;
@@ -111,8 +126,8 @@ public class PerfectPackSearcher implements PackSearcher {
             // Streamは終端操作を実行するまで実際には計算を行わない
             // そのため、終端操作をPool内でしなければ、Pool外のスレッド場で動くため注意が必要
             // (終端操作をしなかった場合、Pool内ではStream自体の作成をして終了する)
-
-            return task.compute().parallel().collect(callback);
+            Stream<Result> compute = toStream(task);
+            return compute.collect(callback);
         });
 
         // 結果を取得するまで待つ
@@ -138,8 +153,8 @@ public class PerfectPackSearcher implements PackSearcher {
             // Streamは終端操作を実行するまで実際には計算を行わない
             // そのため、終端操作をPool内でしなければ、Pool外のスレッド場で動くため注意が必要
             // (終端操作をしなかった場合、Pool内ではStream自体の作成をして終了する)
-
-            return task.compute().parallel().findAny();
+            Stream<Result> compute = toStream(task);
+            return compute.findAny();
         });
 
         // 結果を取得するまで待つ
@@ -165,8 +180,8 @@ public class PerfectPackSearcher implements PackSearcher {
             // Streamは終端操作を実行するまで実際には計算を行わない
             // そのため、終端操作をPool内でしなければ、Pool外のスレッド場で動くため注意が必要
             // (終端操作をしなかった場合、Pool内ではStream自体の作成をして終了する)
-
-            return callback.apply(task.compute().parallel());
+            Stream<Result> compute = toStream(task);
+            return callback.apply(compute);
         });
 
         // 結果を取得するまで待つ
@@ -192,9 +207,8 @@ public class PerfectPackSearcher implements PackSearcher {
             // Streamは終端操作を実行するまで実際には計算を行わない
             // そのため、終端操作をPool内でしなければ、Pool外のスレッド場で動くため注意が必要
             // (終端操作をしなかった場合、Pool内ではStream自体の作成をして終了する)
-
-            return task.compute().parallel()
-                    .count();
+            Stream<Result> compute = toStream(task);
+            return compute.count();
         });
 
         // 結果を取得するまで待つ

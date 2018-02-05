@@ -123,11 +123,12 @@ public class PathEntryPoint implements EntryPoint {
 
         // Setup core
         output("# Initialize / System");
-        int core = Runtime.getRuntime().availableProcessors();
+
+        int threadCount = getThreadCount();
 
         // Output system-defined
         output("Version = " + FinderConstant.VERSION);
-        output("Available processors = " + core);
+        output("Threads = " + threadCount);
         output("Need Pieces = " + maxDepth);
 
         output();
@@ -170,7 +171,7 @@ public class PathEntryPoint implements EntryPoint {
         output("     ... searching");
 
         Stopwatch stopwatch2 = Stopwatch.createStartedStopwatch();
-        PathCore pathCore = createPathCore(field, maxClearLine, maxDepth, patterns, minoFactory, colorConverter, sizedBit, solutionFilter, isUsingHold, basicSolutions);
+        PathCore pathCore = createPathCore(field, maxClearLine, maxDepth, patterns, minoFactory, colorConverter, sizedBit, solutionFilter, isUsingHold, basicSolutions, threadCount);
         List<PathPair> pathPairs = run(pathCore, field, sizedBit, reservedBlocks);
         stopwatch2.stop();
 
@@ -192,6 +193,13 @@ public class PathEntryPoint implements EntryPoint {
 
         output("# Finalize");
         output("done");
+    }
+
+    private int getThreadCount() {
+        int threadCount = settings.getThreadCount();
+        if (threadCount <= 0)
+            return Runtime.getRuntime().availableProcessors();
+        return threadCount;
     }
 
     private SizedBit decideSizedBitSolutionWidth(int maxClearLine) {
@@ -217,10 +225,11 @@ public class PathEntryPoint implements EntryPoint {
         throw new FinderInitializeException("Cached-min-bit should be 0 <= bit: bit=" + cachedMinBit);
     }
 
-    private PathCore createPathCore(Field field, int maxClearLine, int maxDepth, List<String> patterns, MinoFactory minoFactory, ColorConverter colorConverter, SizedBit sizedBit, SolutionFilter solutionFilter, boolean isUsingHold, BasicSolutions basicSolutions) throws FinderInitializeException, FinderExecuteException {
+    private PathCore createPathCore(Field field, int maxClearLine, int maxDepth, List<String> patterns, MinoFactory minoFactory, ColorConverter colorConverter, SizedBit sizedBit, SolutionFilter solutionFilter, boolean isUsingHold, BasicSolutions basicSolutions, int threadCount) throws FinderInitializeException, FinderExecuteException {
+        assert 1 <= threadCount;
         List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(sizedBit, field);
         TaskResultHelper taskResultHelper = createTaskResultHelper(maxClearLine);
-        PerfectPackSearcher searcher = new PerfectPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper);
+        PerfectPackSearcher searcher = new PerfectPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper, threadCount != 1);
         FumenParser fumenParser = createFumenParser(settings.isTetfuSplit(), minoFactory, colorConverter);
         ThreadLocal<BuildUpStream> threadLocalBuildUpStream = createBuildUpStreamThreadLocal(settings.getDropType(), maxClearLine);
         try {
