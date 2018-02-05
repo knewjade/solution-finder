@@ -146,6 +146,47 @@ class PercentOptionCaseTest extends PercentUseCaseBaseTest {
 
         assertThat(log.getOutput())
                 .contains(Messages.useHold())
+                .doesNotContain(Messages.singleThread())
+                .contains(Messages.success(4716, 5040))
+                .contains("*!")
+                .contains(Messages.clearLine(4))
+                .contains(Messages.patternSize(5040))
+                .contains(Messages.treeHeadSize(3))
+                .contains(Messages.tree("*", 93.57))
+                .contains(Messages.failPatternAllSize())
+                .contains("[J, L, S, Z, O, I, T]")
+                .contains("[S, I, J, L, Z, T, O]")
+                .contains("[L, S, O, Z, J, I, T]")
+                .contains("[J, T, L, S, Z, I, O]")
+                .contains("[S, L, I, O, Z, J, T]")
+                .contains("[L, I, S, O, Z, J, T]")
+                .contains("[S, T, Z, I, L, J, O]")
+                .contains("[T, S, Z, I, L, J, O]")
+                .contains("[J, I, S, Z, L, T, O]")
+                .contains("[S, J, L, O, I, Z, T]");
+
+        assertThat(log.getError()).isEmpty();
+    }
+
+    @Test
+    void singleThread() throws Exception {
+        // ページの指定
+
+            /*
+            comment: 4 -p *!
+            XXX_______
+            XX________
+            XX______XX
+            XXXXX___XX
+             */
+        String tetfu = "v115@9gC8GeB8HeB8FeC8GeB8JeRPYNA0no2ANI98AQf78A?RAAAA";
+
+        String command = String.format("percent -t %s -fc -1 -th 1", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getOutput())
+                .contains(Messages.useHold())
+                .contains(Messages.singleThread())
                 .contains(Messages.success(4716, 5040))
                 .contains("*!")
                 .contains(Messages.clearLine(4))

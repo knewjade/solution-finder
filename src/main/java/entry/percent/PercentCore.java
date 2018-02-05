@@ -10,7 +10,9 @@ import concurrent.checker.CheckerUsingHoldThreadLocal;
 import concurrent.checker.invoker.CheckerCommonObj;
 import concurrent.checker.invoker.ConcurrentCheckerInvoker;
 import concurrent.checker.invoker.no_hold.ConcurrentCheckerNoHoldInvoker;
+import concurrent.checker.invoker.no_hold.SingleCheckerNoHoldInvoker;
 import concurrent.checker.invoker.using_hold.ConcurrentCheckerUsingHoldInvoker;
+import concurrent.checker.invoker.using_hold.SingleCheckerUsingHoldInvoker;
 import core.action.candidate.Candidate;
 import core.action.reachable.Reachable;
 import core.field.Field;
@@ -20,7 +22,6 @@ import exceptions.FinderExecuteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 
 class PercentCore {
@@ -29,18 +30,29 @@ class PercentCore {
     private AnalyzeTree resultTree;
     private List<Pair<Pieces, Boolean>> resultPairs;
 
+    PercentCore(ThreadLocal<Candidate<Action>> candidateThreadLocal, boolean isUsingHold, ThreadLocal<? extends Reachable> reachableThreadLocal, MinoFactory minoFactory) {
+        this.invoker = createConcurrentCheckerInvoker(null, candidateThreadLocal, isUsingHold, reachableThreadLocal, minoFactory);
+    }
+
     PercentCore(ExecutorService executorService, ThreadLocal<Candidate<Action>> candidateThreadLocal, boolean isUsingHold, ThreadLocal<? extends Reachable> reachableThreadLocal, MinoFactory minoFactory) {
         this.invoker = createConcurrentCheckerInvoker(executorService, candidateThreadLocal, isUsingHold, reachableThreadLocal, minoFactory);
     }
 
+    /**
+     * Pass null to ExecutorService if executing on single thread
+     */
     private ConcurrentCheckerInvoker createConcurrentCheckerInvoker(ExecutorService executorService, ThreadLocal<Candidate<Action>> candidateThreadLocal, boolean isUsingHold, ThreadLocal<? extends Reachable> reachableThreadLocal, MinoFactory minoFactory) {
         if (isUsingHold) {
             CheckerUsingHoldThreadLocal<Action> checkerThreadLocal = new CheckerUsingHoldThreadLocal<>();
             CheckerCommonObj commonObj = new CheckerCommonObj(minoFactory, candidateThreadLocal, checkerThreadLocal, reachableThreadLocal);
+            if (executorService == null)
+                return new SingleCheckerUsingHoldInvoker(commonObj);
             return new ConcurrentCheckerUsingHoldInvoker(executorService, commonObj);
         } else {
             CheckerNoHoldThreadLocal<Action> checkerThreadLocal = new CheckerNoHoldThreadLocal<>();
             CheckerCommonObj commonObj = new CheckerCommonObj(minoFactory, candidateThreadLocal, checkerThreadLocal, reachableThreadLocal);
+            if (executorService == null)
+                return new SingleCheckerNoHoldInvoker(commonObj);
             return new ConcurrentCheckerNoHoldInvoker(executorService, commonObj);
         }
     }

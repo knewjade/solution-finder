@@ -102,11 +102,10 @@ public class PercentEntryPoint implements EntryPoint {
 
         // Setup core
         output("# Initialize / System");
-        int core = Runtime.getRuntime().availableProcessors();
-        ExecutorService executorService = Executors.newFixedThreadPool(core);
+
+        ExecutorService executorService = createExecutorService();
 
         output("Version = " + FinderConstant.VERSION);
-        output("Available processors = " + core);
         output("Necessary Pieces = " + maxDepth);
 
         output();
@@ -202,8 +201,28 @@ public class PercentEntryPoint implements EntryPoint {
         // ========================================
 
         output("# Finalize");
-        executorService.shutdown();
+        if (executorService != null)
+            executorService.shutdown();
+
         output("done");
+    }
+
+    private ExecutorService createExecutorService() throws FinderExecuteException {
+        int threadCount = settings.getThreadCount();
+        if (threadCount == 1) {
+            // single thread
+            output("Threads = 1");
+            return null;
+        } else if (1 < threadCount) {
+            // Specified thread count
+            output("Threads = " + threadCount);
+            return Executors.newFixedThreadPool(threadCount);
+        } else {
+            // NOT specified thread count
+            int core = Runtime.getRuntime().availableProcessors();
+            output("Threads = " + core);
+            return Executors.newFixedThreadPool(threadCount);
+        }
     }
 
     private ThreadLocal<Candidate<Action>> createCandidateThreadLocal(DropType dropType, int maxClearLine) throws FinderInitializeException {

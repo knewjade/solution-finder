@@ -14,12 +14,8 @@ import entry.searching_pieces.NormalEnumeratePieces;
 import module.BasicModule;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,17 +26,27 @@ class PercentCoreTest {
         private int maxDepth;
         private boolean isUsingHold;
         private List<String> patterns;
+        private final boolean isSingleThread;
 
         private Obj(String marks, int maxClearLine, int maxDepth, boolean isUsingHold, String pattern) {
-            this(marks, maxClearLine, maxDepth, isUsingHold, Collections.singletonList(pattern));
+            this(marks, maxClearLine, maxDepth, isUsingHold, Collections.singletonList(pattern), false);
+        }
+
+        private Obj(String marks, int maxClearLine, int maxDepth, boolean isUsingHold, String pattern, boolean isSingleThread) {
+            this(marks, maxClearLine, maxDepth, isUsingHold, Collections.singletonList(pattern), isSingleThread);
         }
 
         private Obj(String marks, int maxClearLine, int maxDepth, boolean isUsingHold, List<String> patterns) {
+            this(marks, maxClearLine, maxDepth, isUsingHold, patterns, false);
+        }
+
+        private Obj(String marks, int maxClearLine, int maxDepth, boolean isUsingHold, List<String> patterns, boolean isSingleThread) {
             this.marks = marks;
             this.maxClearLine = maxClearLine;
             this.maxDepth = maxDepth;
             this.isUsingHold = isUsingHold;
             this.patterns = patterns;
+            this.isSingleThread = isSingleThread;
         }
     }
 
@@ -50,19 +56,25 @@ class PercentCoreTest {
         Set<LongPieces> blocks = enumeratePieces.enumerate();
 
         Injector injector = Guice.createInjector(new BasicModule(obj.maxClearLine));
-        ExecutorService executorService = injector.getInstance(ExecutorService.class);
+        Optional<ExecutorService> executorService = obj.isSingleThread ? Optional.empty() : Optional.of(injector.getInstance(ExecutorService.class));
         LockedCandidateThreadLocal candidateThreadLocal = injector.getInstance(LockedCandidateThreadLocal.class);
         LockedReachableThreadLocal reachableThreadLocal = injector.getInstance(LockedReachableThreadLocal.class);
         MinoFactory minoFactory = injector.getInstance(MinoFactory.class);
 
-        PercentCore percentCore = new PercentCore(executorService, candidateThreadLocal, obj.isUsingHold, reachableThreadLocal, minoFactory);
+        PercentCore percentCore = getPercentCore(obj, executorService.orElse(null), candidateThreadLocal, reachableThreadLocal, minoFactory);
         Field field = FieldFactory.createField(obj.marks);
 
         percentCore.run(field, blocks, obj.maxClearLine, obj.maxDepth);
 
-        executorService.shutdown();
+        executorService.ifPresent(ExecutorService::shutdown);
 
         assertThat(percentCore.getResultTree().getSuccessPercent()).isEqualTo(successPercent);
+    }
+
+    private PercentCore getPercentCore(Obj obj, ExecutorService executorService, LockedCandidateThreadLocal candidateThreadLocal, LockedReachableThreadLocal reachableThreadLocal, MinoFactory minoFactory) {
+        if (executorService == null)
+            return new PercentCore(candidateThreadLocal, obj.isUsingHold, reachableThreadLocal, minoFactory);
+        return new PercentCore(executorService, candidateThreadLocal, obj.isUsingHold, reachableThreadLocal, minoFactory);
     }
 
     @Test
@@ -166,7 +178,7 @@ class PercentCoreTest {
 
         // 指定した探索は8個だが、必要以上に入れたミノは無視する
         // 警告を表示する代わりに、これは仕様とする
-        Obj obj = new Obj(marks, maxClearLine, maxDepth, isUsingHold, patterns);
+        Obj obj = new Obj(marks, maxClearLine, maxDepth, isUsingHold, patterns, false);
         assertPercentCore(obj, 1 / 2.0);
     }
 }

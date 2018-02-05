@@ -21,6 +21,7 @@ public class PercentSettings {
     private List<String> patterns = new ArrayList<>();
     private int treeDepth = 3;
     private int failedCount = 100;
+    private int threadCount = -1;
     private DropType dropType = DropType.Softdrop;
 
     // ********* Getter ************
@@ -60,6 +61,10 @@ public class PercentSettings {
         return dropType;
     }
 
+    int getThreadCount() {
+        return threadCount;
+    }
+
     // ********* Setter ************
     public void setMaxClearLine(int maxClearLine) {
         this.maxClearLine = maxClearLine;
@@ -96,6 +101,10 @@ public class PercentSettings {
 
     void setFailedCount(int maxCount) {
         this.failedCount = maxCount;
+    }
+
+    void setThreadCount(int thread) {
+        this.threadCount = thread;
     }
 
     void setDropType(String type) throws FinderParseException {

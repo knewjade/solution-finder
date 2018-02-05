@@ -148,6 +148,10 @@ public class PercentSettingParser {
         Optional<String> logFilePath = wrapper.getStringOption("log-path");
         logFilePath.ifPresent(settings::setLogFilePath);
 
+        // スレッド数の設定
+        Optional<Integer> threadCount = wrapper.getIntegerOption("threads");
+        threadCount.ifPresent(settings::setThreadCount);
+
         // 探索パターンの設定
         if (wrapper.hasOption("patterns")) {
             // パターン定義から
@@ -292,6 +296,16 @@ public class PercentSettingParser {
                 .desc("Specify drop")
                 .build();
         options.addOption(dropOption);
+
+        Option threadOption = Option.builder("th")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("thread-count")
+                .longOpt("threads")
+                .desc("Specify num of used thread")
+                .build();
+        options.addOption(threadOption);
 
         return options;
     }
