@@ -25,5 +25,5 @@ matrix:
       github-token: ${GITHUB_TOKEN}
       keep-history: true
       repo: knewjade/sfinder-manual
-      local-dir: build/html/
+      local-dir: docs/build/html/
       target-branch: master
