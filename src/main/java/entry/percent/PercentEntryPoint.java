@@ -221,7 +221,7 @@ public class PercentEntryPoint implements EntryPoint {
             // NOT specified thread count
             int core = Runtime.getRuntime().availableProcessors();
             output("Threads = " + core);
-            return Executors.newFixedThreadPool(threadCount);
+            return Executors.newFixedThreadPool(core);
         }
     }
 
