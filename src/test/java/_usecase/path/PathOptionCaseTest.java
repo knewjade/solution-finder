@@ -1,6 +1,9 @@
 package _usecase.path;
 
-import _usecase.*;
+import _usecase.ConfigFileHelper;
+import _usecase.Log;
+import _usecase.OutputFileHelper;
+import _usecase.RunnerHelper;
 import entry.EntryPointMain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -92,6 +95,8 @@ class PathOptionCaseTest extends PathUseCaseBaseTest {
 
     @Test
     void noClearLineOptionValue() throws Exception {
+        assert 1 < Runtime.getRuntime().availableProcessors();
+
         // オプションの指定値がない: クリアライン
         //    -> デフォルト値が使用される
 
@@ -112,9 +117,39 @@ class PathOptionCaseTest extends PathUseCaseBaseTest {
 
         assertThat(log.getOutput())
                 .contains("*p7")
+                .doesNotContain(Messages.singleThread())
                 .contains(Messages.clearLine(4))
                 .contains(Messages.uniqueCount(68))
                 .contains(Messages.minimalCount(45))
+                .contains(Messages.useHold());
+    }
+
+    @Test
+    void singleThread() throws Exception {
+        // オプションの指定値がない: クリアライン
+        //    -> デフォルト値が使用される
+
+            /*
+            comment: <Empty>
+            ZZ________
+            LZZ_T_____
+            LZZTT_____
+            LLZZT_____
+             */
+
+        String tetfu = "v115@vhDKJJUqB0fBdrB";
+
+        String command = String.format("path -p T,*p6 -c -P 4 -t %s -th 1", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getReturnCode()).isEqualTo(0);
+
+        assertThat(log.getOutput())
+                .contains("T,*p6")
+                .contains(Messages.singleThread())
+                .contains(Messages.clearLine(4))
+                .contains(Messages.uniqueCount(186))
+                .contains(Messages.minimalCount(144))
                 .contains(Messages.useHold());
     }
 }

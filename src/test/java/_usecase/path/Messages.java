@@ -41,4 +41,8 @@ class Messages {
         double percent = successCount * 100.0 / allCount;
         return String.format("success = %.2f%% (%d/%d)", percent, successCount, allCount);
     }
+
+    static String singleThread() {
+        return "Threads = 1";
+    }
 }

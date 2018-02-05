@@ -130,6 +130,8 @@ class PercentOptionCaseTest extends PercentUseCaseBaseTest {
 
     @Test
     void failedCount() throws Exception {
+        assert 1 < Runtime.getRuntime().availableProcessors();
+
         // ページの指定
 
             /*
@@ -181,29 +183,17 @@ class PercentOptionCaseTest extends PercentUseCaseBaseTest {
              */
         String tetfu = "v115@9gC8GeB8HeB8FeC8GeB8JeRPYNA0no2ANI98AQf78A?RAAAA";
 
-        String command = String.format("percent -t %s -fc -1 -th 1", tetfu);
+        String command = String.format("percent -t %s -p T,*p6 -fc -1 -th 1", tetfu);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
         assertThat(log.getOutput())
                 .contains(Messages.useHold())
                 .contains(Messages.singleThread())
-                .contains(Messages.success(4716, 5040))
-                .contains("*!")
+                .contains(Messages.success(4759, 5040))
+                .contains("T,*p6")
                 .contains(Messages.clearLine(4))
                 .contains(Messages.patternSize(5040))
-                .contains(Messages.treeHeadSize(3))
-                .contains(Messages.tree("*", 93.57))
-                .contains(Messages.failPatternAllSize())
-                .contains("[J, L, S, Z, O, I, T]")
-                .contains("[S, I, J, L, Z, T, O]")
-                .contains("[L, S, O, Z, J, I, T]")
-                .contains("[J, T, L, S, Z, I, O]")
-                .contains("[S, L, I, O, Z, J, T]")
-                .contains("[L, I, S, O, Z, J, T]")
-                .contains("[S, T, Z, I, L, J, O]")
-                .contains("[T, S, Z, I, L, J, O]")
-                .contains("[J, I, S, Z, L, T, O]")
-                .contains("[S, J, L, O, I, Z, T]");
+                .contains(Messages.tree("T", 94.42));
 
         assertThat(log.getError()).isEmpty();
     }

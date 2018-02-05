@@ -30,6 +30,7 @@ public class PathSettings {
     private BlockField reservedBlock = null;
     private boolean isReserved = false;
     private DropType dropType = DropType.Softdrop;
+    private int threadCount = -1;
 
     // ********* Getter ************
     public boolean isUsingHold() {
@@ -82,6 +83,10 @@ public class PathSettings {
 
     boolean isReserved() {
         return isReserved;
+    }
+
+    int getThreadCount() {
+        return threadCount;
     }
 
     DropType getDropType() {
@@ -197,6 +202,10 @@ public class PathSettings {
 
     void setReserved(Boolean isReversed) {
         this.isReserved = isReversed;
+    }
+
+    void setThreadCount(int threadCount) {
+        this.threadCount = threadCount;
     }
 
     void setDropType(String type) throws FinderParseException {
