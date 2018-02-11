@@ -48,7 +48,7 @@ public class GifWriter implements FigWriter {
 
     @Override
     public void write(List<TetfuPage> tetfuPages) throws IOException {
-        boolean isInfiniteLoop2 = isInfiniteLoop;
+        boolean isLoop = isInfiniteLoop;
         try (ImageOutputStream imageOutputStream = ImageIO.createImageOutputStream(outputFile)) {
             // imageWriterの準備
             ImageWriter imageWriter = getGifImageWriter();
@@ -91,12 +91,12 @@ public class GifWriter implements FigWriter {
                 BufferedImage image = figGenerator.fix();
 
                 // メタデータの作成
-                IIOMetadata metadata = createMetadata(imageWriter, image, delay, isInfiniteLoop2);
+                IIOMetadata metadata = createMetadata(imageWriter, image, delay, isLoop);
                 IIOImage iioImage = new IIOImage(image, null, metadata);
                 imageWriter.writeToSequence(iioImage, null);
 
                 // 無限ループの設定は最大1度までで十分
-                isInfiniteLoop2 = false;
+                isLoop = false;
             }
 
             // imageWriterの終了処理

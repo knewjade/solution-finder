@@ -11,9 +11,9 @@ import common.tetfu.encorder.CommentEncoder;
 import common.tetfu.encorder.FieldEncoder;
 import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
-import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
+import core.mino.Piece;
 import core.srs.Rotate;
 import exceptions.FinderParseException;
 
@@ -249,7 +249,7 @@ public class Tetfu {
                 escapedComment = commentDecoder.getEscapedComment();
             }
 
-            TetfuPage tetfuPage = new TetfuPage(actionDecoder, escapedComment, currentField);
+            TetfuPage tetfuPage = new DecodedTetfuPage(actionDecoder, escapedComment, currentField);
             pages.add(tetfuPage);
 
             ColorType colorType = actionDecoder.colorType;
