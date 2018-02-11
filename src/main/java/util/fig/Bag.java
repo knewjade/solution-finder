@@ -2,10 +2,13 @@ package util.fig;
 
 import core.mino.Piece;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 public class Bag {
+    public static final Bag EMPTY = new Bag(Collections.emptyList(), null);
+
     private final LinkedList<Piece> pieces;
     private Piece hold;
 
