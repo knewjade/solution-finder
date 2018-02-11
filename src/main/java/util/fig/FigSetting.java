@@ -3,9 +3,6 @@ package util.fig;
 public class FigSetting {
     private final int fieldWidthBlock = 10;
 
-    private final int fieldBlockSize = 32;
-    private final int fieldBlockMargin = 2;
-
     private final int nextBoxSize = 47;
     private final int nextBoxMargin = 5;
 
@@ -16,10 +13,19 @@ public class FigSetting {
     private final int fieldHeightBlock;
     private final int nextBoxCount;
 
+    private final int fieldBlockSize;
+    private final int fieldBlockMargin;
+
     public FigSetting(FrameType frameType, int fieldHeightBlock, int nextBoxCount) {
+        this(frameType, fieldHeightBlock, nextBoxCount, 32, 2);
+    }
+
+    public FigSetting(FrameType frameType, int fieldHeightBlock, int nextBoxCount, int fieldBlockSize, int fieldBlockMargin) {
         this.frameType = frameType;
         this.fieldHeightBlock = fieldHeightBlock;
         this.nextBoxCount = nextBoxCount;
+        this.fieldBlockSize = fieldBlockSize;
+        this.fieldBlockMargin = fieldBlockMargin;
     }
 
     public int getScreenWidth() {
