@@ -1,7 +1,7 @@
 package entry.path;
 
-import common.datastore.PieceCounter;
 import common.datastore.OperationWithKey;
+import common.datastore.PieceCounter;
 import common.datastore.blocks.LongPieces;
 import core.mino.Piece;
 import searcher.pack.task.Result;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PathPair implements HaveSet<LongPieces> {
-    static final PathPair EMPTY_PAIR = new PathPair(null, new HashSet<>(), null, "", Collections.emptyList());
+    static final PathPair EMPTY_PAIR = new PathPair(null, new HashSet<>(), null, "", Collections.emptyList(), new HashSet<>());
 
     private final Result result;
     private final HashSet<LongPieces> piecesSolution;
@@ -22,14 +22,16 @@ public class PathPair implements HaveSet<LongPieces> {
     private final String fumen;
     private final List<OperationWithKey> sampleOperations;
     private final boolean deletedLine;
+    private final HashSet<LongPieces> validPieces;
 
-    public PathPair(Result result, HashSet<LongPieces> piecesSolution, HashSet<LongPieces> piecesPattern, String fumen, List<OperationWithKey> sampleOperations) {
+    public PathPair(Result result, HashSet<LongPieces> piecesSolution, HashSet<LongPieces> piecesPattern, String fumen, List<OperationWithKey> sampleOperations, HashSet<LongPieces> validPieces) {
         this.result = result;
         this.piecesSolution = piecesSolution;
         this.piecesPattern = piecesPattern;
         this.fumen = fumen;
         this.sampleOperations = sampleOperations;
         this.deletedLine = result != null && containsDeletedLine();
+        this.validPieces = validPieces;
     }
 
     private boolean containsDeletedLine() {
@@ -54,10 +56,16 @@ public class PathPair implements HaveSet<LongPieces> {
         return piecesPattern.stream();
     }
 
+    // パフェで使用するミノと同じ数 の すべてミノ順（パターンより少なくなる可能性がある）
     public Stream<LongPieces> blocksStreamForSolution() {
         return piecesSolution.stream();
     }
 
+    public Stream<LongPieces> blocksStreamForValidSolution() {
+        return piecesSolution.stream().filter(validPieces::contains);
+    }
+
+    // パターンで設定したミノと同じ数 の すべてミノ順
     public HashSet<LongPieces> blocksHashSetForPattern() {
         return piecesPattern;
     }

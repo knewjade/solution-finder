@@ -55,6 +55,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(uniqueHTML.noDeletedLineFumens())
                 .isEmpty();
 
+        System.out.println(uniqueHTML.getHtml());
         // ライン消去あり
         assertThat(uniqueHTML.deletedLineFumens())
                 .hasSize(35)
@@ -709,7 +710,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
                 .hasSize(3)
                 .contains("9gF8zhG8i0H8wwg0G8ywJeAgWDA0PdBA")
                 .contains("9gF8BthlG8BtglH8wwglG8ywJeAgWDA0XkBA")
-                .contains("9gF8zhG8ywH8wwglG8ilJeAgWDAsedBA");
+                .contains("9gF8zhG8ywH8wwglG8ilJeAgWDA0SdBA");
 
         // ライン消去あり
         assertThat(uniqueHTML.deletedLineFumens())
@@ -732,13 +733,13 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
                 .hasSize(3)
                 .contains("9gF8zhG8i0H8wwg0G8ywJeAgWDA0PdBA")
                 .contains("9gF8BthlG8BtglH8wwglG8ywJeAgWDA0XkBA")
-                .contains("9gF8zhG8ywH8wwglG8ilJeAgWDAsedBA");
+                .contains("9gF8zhG8ywH8wwglG8ilJeAgWDA0SdBA");
 
         // ライン消去あり
         assertThat(minimalHTML.deletedLineFumens())
                 .hasSize(5)
                 .contains("9gF8hlh0G8glg0wwH8xwG8glg0wwJeAgWDA0/jBA")
-                .contains("9gF8BtwwwhG8xwwhH8wwwhG8BtwhJeAgWDApuDCA");
+                .contains("9gF8BtwwwhG8xwwhH8wwwhG8BtwhJeAgWDAUeDCA");
 
         // すべての譜面
         assertThat(parseLastPageTetfu(minimalHTML.allFumens()))
@@ -774,13 +775,13 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // unique
         PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
         assertThat(uniqueHTML.getHtml())
-                .contains("I-Left S-Spawn Z-Spawn O-Spawn")
-                .contains("IOSZ", "OISZ", "ISOZ", "OSIZ", "ISZO", "IOZS", "OIZS", "OSZI");
+                .contains("I-Left O-Spawn S-Spawn Z-Spawn")
+                .contains("IOSZ");
 
         // ライン消去なし
         assertThat(uniqueHTML.noDeletedLineFumens())
                 .hasSize(1)
-                .contains("9gwhRpBtC8R4whRpA8BtA8R4A8whI8whI8JeAgWEAJ?trgC");
+                .contains("9gwhRpBtC8R4whRpA8BtA8R4A8whI8whI8JeAgWEAJ?3jFD");
 
         // ライン消去なし
         assertThat(uniqueHTML.deletedLineFumens()).isEmpty();
@@ -793,13 +794,13 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // minimal
         PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
         assertThat(minimalHTML.getHtml())
-                .contains("I-Left S-Spawn Z-Spawn O-Spawn")
-                .contains("IOSZ", "OISZ", "ISOZ", "OSIZ", "ISZO", "IOZS", "OIZS", "OSZI");
+                .contains("I-Left O-Spawn S-Spawn Z-Spawn")
+                .contains("IOSZ");
 
         // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens())
                 .hasSize(1)
-                .contains("9gwhRpBtC8R4whRpA8BtA8R4A8whI8whI8JeAgWEAJ?trgC");
+                .contains("9gwhRpBtC8R4whRpA8BtA8R4A8whI8whI8JeAgWEAJ?3jFD");
 
         // ライン消去あり
         assertThat(minimalHTML.deletedLineFumens()).isEmpty();
@@ -871,10 +872,9 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
                 .allMatch(coloredField -> isFilled(height, coloredField));
     }
 
-    @Disabled
     @Test
-    void pattern() throws Exception {
-        // パターン以上のパフェができていないかをチェック
+    void lastS() throws Exception {
+        // 入力パターン以上のミノ順でパフェができていないかをチェック
         // Issue #1
             /*
             comment: <Empty>
@@ -897,9 +897,41 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
                 .contains(Messages.useHold());
 
         // unique
-        // ライン消去なし
         PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
+        assertThat(uniqueHTML.getHtml())
+                .doesNotContain("SISJLO")
+                .contains("O-Spawn S-Spawn L-Spawn J-Spawn S-Spawn I-Spawn")
+                .contains("LSOISJ", "OSLIJS", "LOJSIS", "SOJLSI", "SJIOSL", "JSIOSL");
+
+        // ライン消去なし
         assertThat(uniqueHTML.noDeletedLineFumens())
-                .contains("9gC8GeB8HeB8GeF8BeC8JeXIYZAFLDmClcJSAVDEHB?EooRBToAVBJNUPCvAAAAvhEJnB/rBCoBGmBTqB");
+                .hasSize(3)
+                .contains("9gC8GeB8HeB8GeF8BeC8JeXIYZAFLDmClcJSAVDEHB?EooRBToAVBJHstCqAAAAvhEJnBTlBCjB/rBGrB")
+                .contains("9gC8GeB8HeB8GeF8BeC8JezLYZAFLDmClcJSAVDEHB?EooRBPoAVBzintCpAAAAvhEXtByvBWxB3qBxxB")
+                .contains("9gC8GeB8HeB8GeF8BeC8JeeMYZAFLDmClcJSAVDEHB?EooRBKoAVBpyytCzAAAAvhExvBqsBTtB3rB3qB");
+
+        // ライン消去あり
+        assertThat(uniqueHTML.deletedLineFumens())
+                .contains("9gC8GeB8HeB8GeF8BeC8JeXIYZAFLDmClcJSAVDEHB?EooRBToAVBp/rtCvAAAAvhExqBmmBCoB3lBzrB")
+                .contains("9gC8GeB8HeB8GeF8BeC8JeyLYZAFLDmClcJSAVDEHB?EooRBMoAVBKu7tCvAAAAvhEWoBxlBXoB3lBzrB");
+
+        // minimal
+        PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
+        assertThat(minimalHTML.getHtml())
+                .doesNotContain("SISJLO")
+                .contains("O-Spawn S-Spawn L-Spawn J-Spawn S-Spawn I-Spawn")
+                .contains("LSOISJ", "OSLIJS", "LOJSIS", "SOJLSI", "SJIOSL", "JSIOSL");
+
+        // ライン消去なし
+        assertThat(minimalHTML.noDeletedLineFumens())
+                .hasSize(3)
+                .contains("9gC8GeB8HeB8GeF8BeC8JeXIYZAFLDmClcJSAVDEHB?EooRBToAVBJHstCqAAAAvhEJnBTlBCjB/rBGrB")
+                .contains("9gC8GeB8HeB8GeF8BeC8JezLYZAFLDmClcJSAVDEHB?EooRBPoAVBzintCpAAAAvhEXtByvBWxB3qBxxB")
+                .contains("9gC8GeB8HeB8GeF8BeC8JeeMYZAFLDmClcJSAVDEHB?EooRBKoAVBpyytCzAAAAvhExvBqsBTtB3rB3qB");
+
+        // ライン消去あり
+        assertThat(minimalHTML.deletedLineFumens())
+                .contains("9gC8GeB8HeB8GeF8BeC8JezLYZAFLDmClcJSAVDEHB?EooRBPoAVBp/rtCzAAAAvhExsBmqBCnBXtB3qB")
+                .contains("9gC8GeB8HeB8GeF8BeC8JeyLYZAFLDmClcJSAVDEHB?EooRBMoAVBKu7tCvAAAAvhEWoBxlBXoB3lBzrB");
     }
 }

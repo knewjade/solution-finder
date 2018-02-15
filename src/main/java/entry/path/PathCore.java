@@ -4,6 +4,7 @@ import common.SyntaxException;
 import common.buildup.BuildUpStream;
 import common.datastore.BlockField;
 import common.datastore.MinoOperationWithKey;
+import common.datastore.Operation;
 import common.datastore.OperationWithKey;
 import common.datastore.blocks.LongPieces;
 import common.datastore.blocks.Pieces;
@@ -14,8 +15,8 @@ import common.pattern.LoadedPatternGenerator;
 import common.pattern.PatternGenerator;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Piece;
 import core.mino.Mino;
+import core.mino.Piece;
 import entry.path.output.FumenParser;
 import searcher.pack.SizedBit;
 import searcher.pack.separable_mino.SeparableMino;
@@ -121,21 +122,19 @@ class PathCore {
                             .map(SeparableMino::toMinoOperationWithKey)
                             .collect(Collectors.toCollection(LinkedList::new));
 
-                    // 地形の中で組むことができるoperationsを一つ作成
-                    BuildUpStream buildUpStream = buildUpStreamThreadLocal.get();
-                    List<MinoOperationWithKey> sampleOperations = buildUpStream.existsValidBuildPatternDirectly(field, operations)
-                            .findFirst()
-                            .orElse(Collections.emptyList());
+                    // 地形の中で組むことができるoperationsをすべてリスト化する
+                    BuildUpStream buildUpStream2 = buildUpStreamThreadLocal.get();
+                    List<List<MinoOperationWithKey>> validOperaions = buildUpStream2.existsValidBuildPatternDirectly(field, operations)
+                            .collect(Collectors.toList());
 
                     // 地形の中で組むことができるものがないときはスキップ
-                    if (sampleOperations.isEmpty())
+                    if (validOperaions.isEmpty())
                         return PathPair.EMPTY_PAIR;
 
                     // 地形の中で組むことができるSetを作成
-                    HashSet<LongPieces> piecesSolution = buildUpStream.existsValidBuildPatternDirectly(field, operations)
+                    HashSet<LongPieces> piecesSolution = validOperaions.stream()
                             .map(operationWithKeys -> operationWithKeys.stream()
                                     .map(OperationWithKey::getPiece)
-                                    .collect(Collectors.toList())
                             )
                             .map(LongPieces::new)
                             .collect(Collectors.toCollection(HashSet::new));
@@ -147,10 +146,16 @@ class PathCore {
                     if (piecesPattern.isEmpty())
                         return PathPair.EMPTY_PAIR;
 
-                    // 譜面の作成
-                    String fumen = fumenParser.parse(sampleOperations, field, maxClearLine);
+                    // 探索シーケンスの中でテト譜にするoperationsを選択する
+                    List<MinoOperationWithKey> operationsToUrl = validOperaions.stream()
+                            .filter(o -> validPieces.contains(new LongPieces(o.stream().map(Operation::getPiece))))
+                            .findFirst()
+                            .orElse(Collections.emptyList());
 
-                    return new PathPair(result, piecesSolution, piecesPattern, fumen, new ArrayList<>(sampleOperations));
+                    // 譜面の作成
+                    String fumen = fumenParser.parse(operationsToUrl, field, maxClearLine);
+
+                    return new PathPair(result, piecesSolution, piecesPattern, fumen, new ArrayList<>(operationsToUrl), validPieces);
                 })
                 .filter(pathPair -> pathPair != PathPair.EMPTY_PAIR)
                 .collect(Collectors.toList());
@@ -214,7 +219,7 @@ class PathCore {
                     // 譜面の作成
                     String fumen = fumenParser.parse(sampleOperations, field, maxClearLine);
 
-                    return new PathPair(result, piecesSolution, piecesPattern, fumen, new ArrayList<>(sampleOperations));
+                    return new PathPair(result, piecesSolution, piecesPattern, fumen, new ArrayList<>(sampleOperations), validPieces);
                 })
                 .filter(pathPair -> pathPair != PathPair.EMPTY_PAIR)
                 .collect(Collectors.toList());
