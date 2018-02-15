@@ -57,6 +57,19 @@ class OperationTransformTest {
     }
 
     @Test
+    void parseToOperationWithKeys2() throws Exception {
+        Field field = FieldFactory.createField(4);
+
+        String base = "T,2,5,1;I,0,2,0;I,0,7,0;I,L,0,1";
+        Operations operations = OperationInterpreter.parseToOperations(base);
+        MinoFactory minoFactory = new MinoFactory();
+        List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, 4);
+
+        String line = OperationWithKeyInterpreter.parseToString(operationWithKeys);
+        assertThat(line).isEqualTo("T,2,5,1,0,1025;I,0,2,0,0,1;I,0,7,0,0,1;I,L,0,1,0,1074791425");
+    }
+
+    @Test
     void parseToOperations() throws Exception {
         Field field = FieldFactory.createField("" +
                 "____XXXXXX" +

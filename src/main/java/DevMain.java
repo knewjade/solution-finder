@@ -14,7 +14,8 @@ public class DevMain {
 //        String command = "percent -t http://fumen.zui.jp/?v115@DhD8HeC8HeG8BeB8JeAgH -p L,L,S,J,J,T,O -fc 0 -td 1";
 //        String command = "percent -t v115@wgF8FeG8CeB8GeC8DeF8GeB8JeAgH -p L,L,Z,S,Z,I,J,I,Z,T,O -c 7 --hold no";
 //        String command = "move -t v115@9gA8IeA8IeA8IeA8SeAgH -p [TIO]p2";
-        String command = "move -p sz";
+        String command = "path -t v115@zgyhGexhHexhGeAtxhC8BeA8BtyhE8AtA8JeAgWBAV?AAAAvhAAAPBAUAAAA -P 2 -p [IJLOS]p5,S --split yes";
+//        String command = "path -t v115@9gB8HeC8GeE8EeF8NeAgWMA0no2ANI98AQPcQB";
         int returnCode = EntryPointMain.main(command.split(" "));
         System.exit(returnCode);
 

@@ -232,6 +232,7 @@ public class PathEntryPoint implements EntryPoint {
         PerfectPackSearcher searcher = new PerfectPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper, threadCount != 1);
         FumenParser fumenParser = createFumenParser(settings.isTetfuSplit(), minoFactory, colorConverter);
         ThreadLocal<BuildUpStream> threadLocalBuildUpStream = createBuildUpStreamThreadLocal(settings.getDropType(), maxClearLine);
+
         try {
             return new PathCore(patterns, searcher, maxDepth, isUsingHold, fumenParser, threadLocalBuildUpStream);
         } catch (SyntaxException e) {

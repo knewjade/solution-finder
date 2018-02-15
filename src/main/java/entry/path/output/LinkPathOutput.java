@@ -17,6 +17,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -150,7 +151,7 @@ public class LinkPathOutput implements PathOutput {
         String encode = pathPair.getFumen();
 
         // 有効なミノ順をまとめる
-        String validOrders = pathPair.blocksStreamForSolution()
+        String validOrders = pathPair.blocksStreamForValidSolution()
                 .map(longBlocks -> longBlocks.blockStream().map(Piece::getName).collect(Collectors.joining()))
                 .collect(Collectors.joining(", "));
 
