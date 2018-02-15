@@ -14,8 +14,8 @@ import common.pattern.LoadedPatternGenerator;
 import common.pattern.PatternGenerator;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Piece;
 import core.mino.Mino;
+import core.mino.Piece;
 import entry.path.output.FumenParser;
 import searcher.pack.SizedBit;
 import searcher.pack.separable_mino.SeparableMino;
@@ -114,7 +114,11 @@ class PathCore {
     List<PathPair> run(Field field, SizedBit sizedBit) throws ExecutionException, InterruptedException {
         List<Result> candidates = searcher.toList();
         int maxClearLine = sizedBit.getHeight();
-        return candidates.parallelStream()
+        return getPathPairs(field, sizedBit, maxClearLine, candidates);
+    }
+
+    private List<PathPair> getPathPairs(Field field, SizedBit sizedBit, int maxClearLine, List<Result> results) {
+        return results.parallelStream()
                 .map(result -> {
                     LinkedList<MinoOperationWithKey> operations = result.getMemento()
                             .getSeparableMinoStream(sizedBit.getWidth())
@@ -178,46 +182,7 @@ class PathCore {
                     .collect(Collectors.toList());
         });
 
-        return candidates.stream()
-                .map(result -> {
-                    LinkedList<MinoOperationWithKey> operations = result.getMemento()
-                            .getSeparableMinoStream(sizedBit.getWidth())
-                            .map(SeparableMino::toMinoOperationWithKey)
-                            .collect(Collectors.toCollection(LinkedList::new));
-
-                    // 地形の中で組むことができるoperationsを一つ作成
-                    BuildUpStream buildUpStream = buildUpStreamThreadLocal.get();
-                    List<MinoOperationWithKey> sampleOperations = buildUpStream.existsValidBuildPatternDirectly(field, operations)
-                            .findFirst()
-                            .orElse(Collections.emptyList());
-
-                    // 地形の中で組むことができるものがないときはスキップ
-                    if (sampleOperations.isEmpty())
-                        return PathPair.EMPTY_PAIR;
-
-                    // 地形の中で組むことができるSetを作成
-                    HashSet<LongPieces> piecesSolution = buildUpStream.existsValidBuildPatternDirectly(field, operations)
-                            .map(operationWithKeys -> operationWithKeys.stream()
-                                    .map(OperationWithKey::getPiece)
-                                    .collect(Collectors.toList())
-                            )
-                            .map(LongPieces::new)
-                            .collect(Collectors.toCollection(HashSet::new));
-
-                    // 探索シーケンスの中で組むことができるSetを作成
-                    HashSet<LongPieces> piecesPattern = getPiecesPattern(piecesSolution);
-
-                    // 探索シーケンスの中で組むことができるものがないときはスキップ
-                    if (piecesPattern.isEmpty())
-                        return PathPair.EMPTY_PAIR;
-
-                    // 譜面の作成
-                    String fumen = fumenParser.parse(sampleOperations, field, maxClearLine);
-
-                    return new PathPair(result, piecesSolution, piecesPattern, fumen, new ArrayList<>(sampleOperations));
-                })
-                .filter(pathPair -> pathPair != PathPair.EMPTY_PAIR)
-                .collect(Collectors.toList());
+        return getPathPairs(field, sizedBit, maxClearLine, candidates);
     }
 
     private Field createField(MinoOperationWithKey key, int maxClearLine) {
@@ -232,52 +197,11 @@ class PathCore {
         if (isHoldReduced) {
             // allとvalidが異なる
             ReverseOrderLookUp reverseOrderLookUp = new ReverseOrderLookUp(maxDepth, maxDepth + 1);
-
-            return piecesSolution.stream()
-                    .filter(validPieces::contains)
-                    .flatMap(blocks -> {
-                        return reverseOrderLookUp.parse(blocks.getPieces())
-                                .map(stream -> stream.collect(Collectors.toCollection(ArrayList::new)))
-                                .flatMap(blocksWithHold -> {
-                                    int nullIndex = blocksWithHold.indexOf(null);
-                                    if (nullIndex < 0)
-                                        return Stream.of(new LongPieces(blocksWithHold));
-
-                                    Stream.Builder<LongPieces> builder = Stream.builder();
-                                    for (Piece piece : Piece.values()) {
-                                        blocksWithHold.set(nullIndex, piece);
-                                        builder.accept(new LongPieces(blocksWithHold));
-                                    }
-                                    return builder.build();
-                                });
-                    })
-                    .filter(allPieces::contains)
-                    .collect(Collectors.toCollection(HashSet::new));
+            return getPiecesPattern(piecesSolution, reverseOrderLookUp);
         } else if (isUsingHold) {
             // allとvalidが同じだが、ホールドが使える
             ReverseOrderLookUp reverseOrderLookUp = new ReverseOrderLookUp(maxDepth, maxDepth);
-
-            return piecesSolution.stream()
-                    .filter(validPieces::contains)
-                    .flatMap(blocks -> {
-                        return reverseOrderLookUp.parse(blocks.getPieces())
-                                .map(stream -> stream.collect(Collectors.toCollection(ArrayList::new)))
-                                .flatMap(blocksWithHold -> {
-                                    int nullIndex = blocksWithHold.indexOf(null);
-                                    if (nullIndex < 0)
-                                        return Stream.of(new LongPieces(blocksWithHold));
-
-                                    Stream.Builder<LongPieces> builder = Stream.builder();
-                                    for (Piece piece : Piece.values()) {
-                                        blocksWithHold.set(nullIndex, piece);
-                                        builder.accept(new LongPieces(blocksWithHold));
-                                    }
-                                    return builder.build();
-                                });
-                    })
-                    .filter(allPieces::contains)
-                    .collect(Collectors.toCollection(HashSet::new));
-
+            return getPiecesPattern(piecesSolution, reverseOrderLookUp);
         } else {
             // allとvalidが同じで、ホールドも使えない
             // そのまま絞り込みだけ実施
@@ -285,6 +209,29 @@ class PathCore {
                     .filter(validPieces::contains)
                     .collect(Collectors.toCollection(HashSet::new));
         }
+    }
+
+    private HashSet<LongPieces> getPiecesPattern(HashSet<LongPieces> piecesSolution, ReverseOrderLookUp reverseOrderLookUp) {
+        return piecesSolution.stream()
+                .filter(validPieces::contains)
+                .flatMap(blocks -> {
+                    return reverseOrderLookUp.parse(blocks.getPieces())
+                            .map(stream -> stream.collect(Collectors.toCollection(ArrayList::new)))
+                            .flatMap(blocksWithHold -> {
+                                int nullIndex = blocksWithHold.indexOf(null);
+                                if (nullIndex < 0)
+                                    return Stream.of(new LongPieces(blocksWithHold));
+
+                                Stream.Builder<LongPieces> builder = Stream.builder();
+                                for (Piece piece : Piece.values()) {
+                                    blocksWithHold.set(nullIndex, piece);
+                                    builder.accept(new LongPieces(blocksWithHold));
+                                }
+                                return builder.build();
+                            });
+                })
+                .filter(allPieces::contains)
+                .collect(Collectors.toCollection(HashSet::new));
     }
 }
 
