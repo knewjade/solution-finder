@@ -7,6 +7,7 @@ import core.field.KeyOperators;
 import core.mino.Mino;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -15,6 +16,13 @@ import java.util.stream.Stream;
  * マルチスレッド非対応
  */
 public class BuildUpStream {
+    private static final Comparator<MinoOperationWithKey> KEY_COMPARATOR = (o1, o2) -> {
+        int compare = Integer.compare(o1.getY(), o2.getY());
+        if (compare != 0)
+            return compare;
+        return Long.compare(o1.getNeedDeletedKey(), o2.getNeedDeletedKey());
+    };
+
     private final Reachable reachable;
     private final int height;
     private LinkedList<MinoOperationWithKey> currentOperations = new LinkedList<>();
@@ -32,12 +40,7 @@ public class BuildUpStream {
     }
 
     public Stream<List<MinoOperationWithKey>> existsValidBuildPatternDirectly(Field fieldOrigin, LinkedList<MinoOperationWithKey> operationWithKeys) {
-        operationWithKeys.sort((o1, o2) -> {
-            int compare = Integer.compare(o1.getY(), o2.getY());
-            if (compare != 0)
-                return compare;
-            return Long.compare(o1.getNeedDeletedKey(), o2.getNeedDeletedKey());
-        });
+        operationWithKeys.sort(KEY_COMPARATOR);
         this.currentOperations = new LinkedList<>();
         this.solutions = Stream.builder();
         existsValidBuildPatternRecursive(fieldOrigin.freeze(height), operationWithKeys);
@@ -51,32 +54,29 @@ public class BuildUpStream {
             MinoOperationWithKey key = operationWithKeys.remove(index);
             this.currentOperations.addLast(key);
 
+            // 必要な列が消えているかチェック
             long needDeletedKey = key.getNeedDeletedKey();
-            if ((deleteKey & needDeletedKey) != needDeletedKey) {
-                // 必要な列が消えていない
-                this.currentOperations.removeLast();
-                operationWithKeys.add(index, key);
-                continue;
-            }
+            if ((deleteKey & needDeletedKey) == needDeletedKey) {
 
-            // すでに下のラインが消えているときは、その分スライドさせる
-            int originalY = key.getY();
-            int deletedLines = Long.bitCount(KeyOperators.getMaskForKeyBelowY(originalY) & deleteKey);
+                // すでに下のラインが消えているときは、その分スライドさせる
+                int originalY = key.getY();
+                int deletedLines = Long.bitCount(KeyOperators.getMaskForKeyBelowY(originalY) & deleteKey);
 
-            Mino mino = key.getMino();
-            int x = key.getX();
-            int y = originalY - deletedLines;
+                Mino mino = key.getMino();
+                int x = key.getX();
+                int y = originalY - deletedLines;
 
-            if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height)) {
-                if (operationWithKeys.isEmpty()) {
-                    // 解をみつけたとき
-                    solutions.accept(new ArrayList<>(currentOperations));
-                } else {
-                    Field nextField = field.freeze(height);
-                    nextField.put(mino, x, y);
-                    nextField.insertBlackLineWithKey(deleteKey);
+                if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height)) {
+                    if (operationWithKeys.isEmpty()) {
+                        // 解をみつけたとき
+                        solutions.accept(new ArrayList<>(currentOperations));
+                    } else {
+                        Field nextField = field.freeze(height);
+                        nextField.put(mino, x, y);
+                        nextField.insertBlackLineWithKey(deleteKey);
 
-                    existsValidBuildPatternRecursive(nextField, operationWithKeys);
+                        existsValidBuildPatternRecursive(nextField, operationWithKeys);
+                    }
                 }
             }
 
