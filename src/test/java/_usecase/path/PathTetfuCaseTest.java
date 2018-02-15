@@ -4,6 +4,7 @@ import _usecase.*;
 import core.field.FieldFactory;
 import entry.EntryPointMain;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -868,5 +869,37 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(parseLastPageTetfu(minimalHTML.allFumens()))
                 .hasSize(1)
                 .allMatch(coloredField -> isFilled(height, coloredField));
+    }
+
+    @Disabled
+    @Test
+    void pattern() throws Exception {
+        // パターン以上のパフェができていないかをチェック
+        // Issue #1
+            /*
+            comment: <Empty>
+            XXX_______
+            XX________
+            XX_______X
+            XXXXX__XXX
+             */
+
+        String tetfu = "v115@zgyhGexhHexhGeAtxhC8BeA8BtyhE8AtA8JeAgWBAV?AAAAvhAAAPBAUAAAA";
+
+        String command = String.format("path -t %s -P 2 -p [IJLOS]p5,S --split yes", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+        assertThat(log.getReturnCode()).isEqualTo(0);
+
+        assertThat(log.getOutput())
+                .contains("[IJLOS]p5,S")
+                .contains(Messages.uniqueCount(10))
+                .contains(Messages.minimalCount(9))
+                .contains(Messages.useHold());
+
+        // unique
+        // ライン消去なし
+        PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
+        assertThat(uniqueHTML.noDeletedLineFumens())
+                .contains("9gC8GeB8HeB8GeF8BeC8JeXIYZAFLDmClcJSAVDEHB?EooRBToAVBJNUPCvAAAAvhEJnB/rBCoBGmBTqB");
     }
 }

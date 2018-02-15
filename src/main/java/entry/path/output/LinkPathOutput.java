@@ -150,7 +150,7 @@ public class LinkPathOutput implements PathOutput {
         String encode = pathPair.getFumen();
 
         // 有効なミノ順をまとめる
-        String validOrders = pathPair.blocksStreamForSolution()
+        String validOrders = pathPair.blocksStreamForPattern()
                 .map(longBlocks -> longBlocks.blockStream().map(Piece::getName).collect(Collectors.joining()))
                 .collect(Collectors.joining(", "));
 
