@@ -37,19 +37,19 @@ public class DevMain {
 //        System.out.println(depth);
 //        generator.blocksStream().map(Pieces::getPieces).forEach(System.out::println);
 
-        HTMLBuilder<TestColumn> builder = new HTMLBuilder<>("hello");
-        builder.addColumn(TestColumn.SECTION1, "hello");
-        builder.addColumn(TestColumn.SECTION2, "test1");
-        builder.addColumn(TestColumn.SECTION1, "world");
-        builder.addColumn(TestColumn.SECTION2, "test2");
-        List<String> list = builder.toList(Arrays.asList(TestColumn.SECTION1, TestColumn.SECTION2), true);
-
-        StringBuilder builder1 = new StringBuilder();
-        String lineSeparator = System.lineSeparator();
-        for (String s : list) {
-            builder1.append(s).append(lineSeparator);
-        }
-        System.out.println(builder1.toString());
+//        HTMLBuilder<TestColumn> builder = new HTMLBuilder<>("hello");
+//        builder.addColumn(TestColumn.SECTION1, "hello");
+//        builder.addColumn(TestColumn.SECTION2, "test1");
+//        builder.addColumn(TestColumn.SECTION1, "world");
+//        builder.addColumn(TestColumn.SECTION2, "test2");
+//        List<String> list = builder.toList(Arrays.asList(TestColumn.SECTION1, TestColumn.SECTION2), true);
+//
+//        StringBuilder builder1 = new StringBuilder();
+//        String lineSeparator = System.lineSeparator();
+//        for (String s : list) {
+//            builder1.append(s).append(lineSeparator);
+//        }
+//        System.out.println(builder1.toString());
 
     }
 

@@ -1,5 +1,6 @@
 package entry.path.output;
 
+import common.datastore.Pair;
 import common.datastore.blocks.LongPieces;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
@@ -17,8 +18,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class LinkPathOutput implements PathOutput {
@@ -118,9 +119,9 @@ public class LinkPathOutput implements PathOutput {
         pathPairs.parallelStream()
                 .forEach(pathPair -> {
                     PathHTMLColumn htmlColumn = getHTMLColumn(pathPair);
-                    String link = createALink(pathPair);
-                    String line = String.format("<div>%s</div>", link);
-                    htmlBuilder.addColumn(htmlColumn, line);
+                    Pair<String, Integer> linkAndPriority = createALink(pathPair);
+                    String line = String.format("<div>%s</div>", linkAndPriority.getKey());
+                    htmlBuilder.addColumn(htmlColumn, line, -linkAndPriority.getValue());
                 });
 
         // 出力
@@ -141,7 +142,7 @@ public class LinkPathOutput implements PathOutput {
             return PathHTMLColumn.NotDeletedLine;
     }
 
-    private String createALink(PathPair pathPair) {
+    private Pair<String, Integer> createALink(PathPair pathPair) {
         // パターンを表す名前 を生成
         String linkText = pathPair.getSampleOperations().stream()
                 .map(operationWithKey -> operationWithKey.getPiece().getName() + "-" + operationWithKey.getRotate().name())
@@ -151,11 +152,13 @@ public class LinkPathOutput implements PathOutput {
         String encode = pathPair.getFumen();
 
         // 有効なミノ順をまとめる
+        AtomicInteger counter = new AtomicInteger();
         String validOrders = pathPair.blocksStreamForValidSolution()
                 .map(longBlocks -> longBlocks.blockStream().map(Piece::getName).collect(Collectors.joining()))
+                .peek(s -> counter.incrementAndGet())
                 .collect(Collectors.joining(", "));
 
         // 出力
-        return String.format("<a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a> [%s]", encode, linkText, validOrders);
+        return new Pair<>(String.format("<a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a> [%s]", encode, linkText, validOrders), counter.get());
     }
 }

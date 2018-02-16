@@ -1,14 +1,26 @@
 package output;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 // TODO: write unittest
 public class HTMLBuilder<T extends HTMLColumn> {
+    private class PriorityString {
+        private final int priority;
+        private final String string;
+
+        private PriorityString(int priority, String string) {
+            this.priority = priority;
+            this.string = string;
+        }
+
+        private String getLine() {
+            return this.string;
+        }
+    }
+
     private final List<String> header = new ArrayList<>();
-    private final HashMap<T, List<String>> maps = new HashMap<>();
+    private final HashMap<T, List<PriorityString>> maps = new HashMap<>();
     private final String pageTitle;
 
     public HTMLBuilder(String pageTitle) {
@@ -19,15 +31,19 @@ public class HTMLBuilder<T extends HTMLColumn> {
         header.add(line);
     }
 
-    public synchronized void addColumn(T column, String line) {
-        List<String> list = maps.computeIfAbsent(column, t -> new ArrayList<>());
-        list.add(line);
+    public void addColumn(T column, String line) {
+        int priority = 0;
+        addColumn(column, line, priority);
+    }
+
+    // 小さいほど優先度が高い
+    public synchronized void addColumn(T column, String line, int priority) {
+        List<PriorityString> list = maps.computeIfAbsent(column, t -> new ArrayList<>());
+        list.add(new PriorityString(priority, line));
     }
 
     public List<String> toList(List<T> columnPriorityList, boolean isNavigator) {
-        List<String> allLines = new ArrayList<>();
-
-        allLines.addAll(createHTMLHeader(pageTitle));
+        List<String> allLines = new ArrayList<>(createHTMLHeader(pageTitle));
 
         if (!header.isEmpty()) {
             ArrayList<String> lines = createSectionHeader();
@@ -91,10 +107,15 @@ public class HTMLBuilder<T extends HTMLColumn> {
 
         lines.add(String.format("<section id='%s'>", column.getId()));
         lines.add(String.format("<h2>%s</h2>", column.getTitle()));
-        column.getDescription().ifPresent(description -> {
-            lines.add(String.format("<p>%s</p>", description));
-        });
-        lines.addAll(maps.get(column));
+
+        column.getDescription().ifPresent(description -> lines.add(String.format("<p>%s</p>", description)));
+
+        List<String> addingLines = maps.get(column).stream()
+                .sorted(Comparator.comparingInt(o -> o.priority))
+                .map(PriorityString::getLine)
+                .collect(Collectors.toList());
+
+        lines.addAll(addingLines);
         lines.add("</section>");
         return lines;
     }
