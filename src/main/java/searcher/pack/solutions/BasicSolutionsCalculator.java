@@ -32,23 +32,25 @@ public class BasicSolutionsCalculator implements SolutionsCalculator {
     private final HashMap<ColumnField, RecursiveMinoFields> resultsMap = new HashMap<>();
     private final SmallField originWallField;
     private final Predicate<ColumnField> memorizedPredicate;
+    private final Field needFillField;
 
     public BasicSolutionsCalculator(SeparableMinos separableMinos, SizedBit sizedBit) {
         this(separableMinos, sizedBit, ColumnFieldFactory.createField(), columnField -> true);
     }
 
-    public BasicSolutionsCalculator(SeparableMinos separableMinos, SizedBit sizedBit, long needFillBoard) {
-        this(separableMinos, sizedBit, ColumnFieldFactory.createField(), columnField -> true, needFillBoard);
+    public BasicSolutionsCalculator(SeparableMinos separableMinos, SizedBit sizedBit, long needFillBoard, Field needFillField) {
+        this(separableMinos, sizedBit, ColumnFieldFactory.createField(), columnField -> true, needFillBoard, needFillField);
     }
 
     public BasicSolutionsCalculator(SeparableMinos separableMinos, SizedBit sizedBit, ColumnSmallField limitOuterField, Predicate<ColumnField> memorizedPredicate) {
-        this(separableMinos, sizedBit, limitOuterField, memorizedPredicate, sizedBit.getFillBoard());
+        this(separableMinos, sizedBit, limitOuterField, memorizedPredicate, sizedBit.getFillBoard(), sizedBit.getFillField());
     }
 
-    public BasicSolutionsCalculator(SeparableMinos separableMinos, SizedBit sizedBit, ColumnSmallField limitOuterField, Predicate<ColumnField> memorizedPredicate, long needFillBoard) {
+    public BasicSolutionsCalculator(SeparableMinos separableMinos, SizedBit sizedBit, ColumnSmallField limitOuterField, Predicate<ColumnField> memorizedPredicate, long needFillBoard, Field needFillField) {
         this.separableMinos = separableMinos;
         this.limitOuterField = limitOuterField;
         this.needFillBoard = needFillBoard;
+        this.needFillField = needFillField;
         assert sizedBit.getHeight() <= 10;
         this.sizedBit = sizedBit;
         this.reference = createBasicReference(sizedBit, separableMinos);
@@ -106,10 +108,10 @@ public class BasicSolutionsCalculator implements SolutionsCalculator {
 
     private RecursiveMinoFields createRecursiveMinoFields(ColumnSmallField columnField, ColumnField outerColumnField, Field wallField, boolean isMemorized) {
         if (isMemorized) {
-            ConnectionsToListCallable callable = new ConnectionsToListCallable(this, columnField, outerColumnField, wallField, limitOuterField);
+            ConnectionsToListCallable callable = new ConnectionsToListCallable(this, columnField, outerColumnField, wallField, limitOuterField, needFillField);
             return new MemorizedRecursiveMinoFields(callable);
         } else {
-            ConnectionsToStreamCallable callable = new ConnectionsToStreamCallable(this, columnField, outerColumnField, wallField, limitOuterField);
+            ConnectionsToStreamCallable callable = new ConnectionsToStreamCallable(this, columnField, outerColumnField, wallField, limitOuterField, needFillField);
             return new OnDemandRecursiveMinoFields(callable);
         }
     }
@@ -142,5 +144,10 @@ public class BasicSolutionsCalculator implements SolutionsCalculator {
     @Override
     public RecursiveMinoFields getRecursiveMinoFields(ColumnField columnField) {
         return resultsMap.getOrDefault(columnField, null);
+    }
+
+    @Override
+    public SizedBit getSizedBit() {
+        return this.sizedBit;
     }
 }

@@ -2,7 +2,7 @@ package searcher.pack.separable_mino;
 
 import common.datastore.MinoOperationWithKey;
 import core.column_field.ColumnField;
-import core.mino.Mino;
+import core.field.Field;
 import searcher.pack.SlideXOperationWithKey;
 
 public class SlideXSeparableMino implements SeparableMino {
@@ -20,12 +20,17 @@ public class SlideXSeparableMino implements SeparableMino {
     }
 
     @Override
-    public ColumnField getField() {
-        throw new UnsupportedOperationException("Cannot get slided field");
+    public ColumnField getColumnField() {
+        throw new UnsupportedOperationException("Cannot get slided column field");
     }
 
     @Override
     public MinoOperationWithKey toMinoOperationWithKey() {
         return new SlideXOperationWithKey(separableMino.toMinoOperationWithKey(), slideX);
+    }
+
+    @Override
+    public Field getField() {
+        throw new UnsupportedOperationException("Cannot get slided field");
     }
 }
