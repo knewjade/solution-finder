@@ -5,7 +5,7 @@
 
 現在の安定版は v0.510 となります。ダウンロードは以下のリンクからお願いします。
 (GUIが入っているパッケージは、[@kitsune_fuchi](https://twitter.com/kitsune_fuchi) さん作成の補助GUIが入っています)  
-https://github.com/knewjade/solution-finder/releases/tag/v0.501
+https://github.com/knewjade/solution-finder/releases/tag/v0.510
 
 ※ プログラムの実行には、Java8が実行できる環境が必要です
 
