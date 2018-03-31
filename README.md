@@ -56,7 +56,7 @@ http://sfinder.s3-website-ap-northeast-1.amazonaws.com/index.html
 
 # ライセンス
 
-Copyright 2017 newjade
+Copyright 2017-2018 newjade
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
