@@ -3,7 +3,9 @@ package searcher.pack.task;
 import core.column_field.ColumnField;
 import core.column_field.ColumnFieldFactory;
 import core.column_field.ColumnSmallField;
+import core.field.Field;
 import searcher.pack.InOutPairField;
+import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.memento.MinoFieldMemento;
 import searcher.pack.memento.SolutionFilter;
@@ -21,12 +23,20 @@ class MinoPackingTaskWidthForWidth3 implements PackingTask {
     private final ColumnField innerField;
     private final MinoFieldMemento memento;
     private final int index;
+    private final SeparableMinos separableMinos;
+    private final Field needFilledField;
 
     MinoPackingTaskWidthForWidth3(PackSearcher searcher, ColumnField innerField, MinoFieldMemento memento, int index) {
+        this(searcher, innerField, memento, index, null, null);
+    }
+
+    MinoPackingTaskWidthForWidth3(PackSearcher searcher, ColumnField innerField, MinoFieldMemento memento, int index, SeparableMinos separableMinos, Field needFilledField) {
         this.searcher = searcher;
         this.innerField = innerField;
         this.memento = memento;
         this.index = index;
+        this.separableMinos = separableMinos;
+        this.needFilledField = needFilledField;
     }
 
     @Override
@@ -67,7 +77,7 @@ class MinoPackingTaskWidthForWidth3 implements PackingTask {
     }
 
     private PackingTask createTask(PackSearcher searcher, ColumnField innerField, MinoFieldMemento memento, int index) {
-        return new MinoPackingTaskWidthForWidth3(searcher, innerField, memento, index);
+        return new MinoPackingTaskWidthForWidth3(searcher, innerField, memento, index, separableMinos, needFilledField);
     }
 
     private PackingTask split(MinoField minoField) {

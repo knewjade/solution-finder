@@ -7,6 +7,7 @@ import common.pattern.PatternGenerator;
 import common.tetfu.common.ColorConverter;
 import core.FinderConstant;
 import core.column_field.ColumnField;
+import core.column_field.ColumnFieldView;
 import core.field.Field;
 import core.mino.Piece;
 import core.mino.Mino;
@@ -193,13 +194,14 @@ public class SetupEntryPoint implements EntryPoint {
         // 絶対に置く必要があるブロック
         ArrayList<BasicSolutions> basicSolutions = new ArrayList<>();
         List<ColumnField> needFillFields = InOutPairField.createInnerFields(sizedBit, needFilledField);
+
         for (ColumnField innerField : needFillFields) {
             OnDemandBasicSolutions solutions = new OnDemandBasicSolutions(separableMinos, sizedBit, innerField.getBoard(0));
             basicSolutions.add(solutions);
         }
 
         // 探索
-        SetupPackSearcher searcher = new SetupPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper, needFillFields);
+        SetupPackSearcher searcher = new SetupPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper, needFillFields, separableMinos, needFilledField);
         List<Result> results = getResults(initField, sizedBit, buildUpStreamThreadLocal, searcher);
         output("     Found solution = " + results.size());
 

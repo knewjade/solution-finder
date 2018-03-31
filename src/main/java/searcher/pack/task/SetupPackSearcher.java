@@ -1,7 +1,9 @@
 package searcher.pack.task;
 
 import core.column_field.ColumnField;
+import core.field.Field;
 import searcher.pack.InOutPairField;
+import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.calculator.BasicSolutions;
 import searcher.pack.memento.MinoFieldMemento;
@@ -27,8 +29,11 @@ public class SetupPackSearcher implements PackSearcher {
     private final SolutionFilter solutionFilter;
     private final TaskResultHelper taskResultHelper;
     private final List<ColumnField> needFillFields;
+    private final Field needFilledField;
+    private final SeparableMinos separableMinos;
 
-    public SetupPackSearcher(List<InOutPairField> inOutPairFields, List<BasicSolutions> solutions, SizedBit sizedBit, SolutionFilter solutionFilter, TaskResultHelper taskResultHelper, List<ColumnField> needFillFields) {
+    public SetupPackSearcher(List<InOutPairField> inOutPairFields, List<BasicSolutions> solutions, SizedBit sizedBit, SolutionFilter solutionFilter, TaskResultHelper taskResultHelper, List<ColumnField> needFillFields, SeparableMinos separableMinos, Field needFilledField) {
+        this.needFilledField = needFilledField;
         assert inOutPairFields.size() + 1 == solutions.size();
         assert inOutPairFields.size() + 1 == needFillFields.size();
         this.inOutPairFields = inOutPairFields;
@@ -37,6 +42,7 @@ public class SetupPackSearcher implements PackSearcher {
         this.lastIndex = inOutPairFields.size() - 1;
         this.solutionFilter = solutionFilter;
         this.taskResultHelper = taskResultHelper;
+        this.separableMinos = separableMinos;
         this.needFillFields = needFillFields;
     }
 
@@ -68,9 +74,9 @@ public class SetupPackSearcher implements PackSearcher {
     private PackingTask createPackingTask(SizedBit sizedBit, MinoFieldMemento emptyMemento, ColumnField innerField) {
         switch (sizedBit.getWidth()) {
             case 2:
-                return new MinoPackingTaskWidthForWidth2(this, innerField, emptyMemento, 0);
+                return new MinoPackingTaskWidthForWidth2(this, innerField, emptyMemento, 0, separableMinos, needFilledField);
             case 3:
-                return new MinoPackingTaskWidthForWidth3(this, innerField, emptyMemento, 0);
+                return new MinoPackingTaskWidthForWidth3(this, innerField, emptyMemento, 0, separableMinos, needFilledField);
         }
         throw new UnsupportedOperationException("No support: should be width 2 or 3");
     }

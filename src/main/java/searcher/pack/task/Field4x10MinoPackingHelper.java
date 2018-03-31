@@ -7,6 +7,7 @@ import common.datastore.OperationWithKey;
 import core.column_field.ColumnField;
 import core.column_field.ColumnFieldFactory;
 import core.column_field.ColumnSmallField;
+import core.field.Field;
 import core.mino.Piece;
 import core.mino.Mino;
 import core.srs.Rotate;
@@ -32,7 +33,12 @@ public class Field4x10MinoPackingHelper implements TaskResultHelper {
             }
 
             @Override
-            public ColumnField getField() {
+            public ColumnField getColumnField() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public Field getField() {
                 throw new UnsupportedOperationException();
             }
 

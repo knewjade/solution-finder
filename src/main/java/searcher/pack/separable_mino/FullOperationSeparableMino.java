@@ -6,12 +6,13 @@ import core.column_field.ColumnField;
 import core.column_field.ColumnFieldFactory;
 import core.column_field.ColumnSmallField;
 import core.field.Field;
+import core.field.FieldFactory;
 import core.mino.Mino;
 import searcher.pack.separable_mino.mask.MinoMask;
 import searcher.pack.separable_mino.mask.MinoMaskFactory;
 
 public class FullOperationSeparableMino implements SeparableMino {
-    public static SeparableMino create(FullOperationWithKey operationWithKey, int upperY, int fieldHeight) {
+    public static FullOperationSeparableMino create(FullOperationWithKey operationWithKey, int upperY, int fieldHeight) {
         assert upperY <= 10 : upperY;
 
         Mino mino = operationWithKey.getMino();
@@ -23,25 +24,31 @@ public class FullOperationSeparableMino implements SeparableMino {
         Field mask = minoMask.getMinoMask(x);
 
         int lowerY = operationWithKey.getY() + operationWithKey.getMino().getMinY();
-        ColumnSmallField field = ColumnFieldFactory.createField();
+        ColumnSmallField columnSmallField = ColumnFieldFactory.createField();
         for (int ny = lowerY; ny <= upperY; ny++) {
             for (int nx = x + mino.getMinX(); nx <= x + mino.getMaxX(); nx++) {
                 if (!mask.isEmpty(nx, ny))
-                    field.setBlock(nx, ny, fieldHeight);
+                    columnSmallField.setBlock(nx, ny, fieldHeight);
             }
         }
 
-        return new FullOperationSeparableMino(operationWithKey, field);
+        Field field = FieldFactory.createField(fieldHeight);
+        field.put(operationWithKey.getMino(), operationWithKey.getX(), operationWithKey.getY());
+        field.insertWhiteLineWithKey(operationWithKey.getNeedDeletedKey());
+
+        return new FullOperationSeparableMino(operationWithKey, columnSmallField, field);
     }
 
     private final FullOperationWithKey operation;
-    private final ColumnField field;
+    private final ColumnField columnField;
     private final int lowerY;
+    private final Field field;
 
-    private FullOperationSeparableMino(FullOperationWithKey operationWithKey, ColumnField field) {
+    private FullOperationSeparableMino(FullOperationWithKey operationWithKey, ColumnField columnField, Field field) {
         this.operation = operationWithKey;
-        this.field = field;
+        this.columnField = columnField;
         this.lowerY = operationWithKey.getY() + operationWithKey.getMino().getMinY();
+        this.field = field;
         assert 0 <= lowerY : lowerY;
     }
 
@@ -51,7 +58,12 @@ public class FullOperationSeparableMino implements SeparableMino {
     }
 
     @Override
-    public ColumnField getField() {
+    public ColumnField getColumnField() {
+        return columnField;
+    }
+
+    @Override
+    public Field getField() {
         return field;
     }
 
