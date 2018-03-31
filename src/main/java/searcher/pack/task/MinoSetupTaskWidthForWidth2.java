@@ -6,11 +6,16 @@ import core.column_field.ColumnSmallField;
 import core.field.Field;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
+import searcher.pack.connections.StreamColumnFieldConnections;
 import searcher.pack.memento.MinoFieldMemento;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.mino_field.MinoField;
+import searcher.pack.mino_field.RecursiveMinoField;
+import searcher.pack.mino_field.WrappedMinoField;
 import searcher.pack.mino_fields.MinoFields;
+import searcher.pack.separable_mino.SeparableMino;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 // Width=2のBasicSolutionsのためのタスク
@@ -22,17 +27,21 @@ class MinoSetupTaskWidthForWidth2 implements PackingTask {
     private final ColumnField outerField;
     private final MinoFieldMemento memento;
     private final int index;
+    private final SeparableMinos separableMinos;
+    private final Field needFilledField;
 
     MinoSetupTaskWidthForWidth2(PackSearcher searcher, ColumnField innerField, MinoFieldMemento memento, int index, SeparableMinos separableMinos, Field needFilledField) {
-        this(searcher, innerField, searcher.getInOutPairFields().get(index).getOuterField(), memento, index);
+        this(searcher, innerField, searcher.getInOutPairFields().get(index).getOuterField(), memento, index, separableMinos, needFilledField);
     }
 
-    private MinoSetupTaskWidthForWidth2(PackSearcher searcher, ColumnField innerField, ColumnField outerField, MinoFieldMemento memento, int index) {
+    private MinoSetupTaskWidthForWidth2(PackSearcher searcher, ColumnField innerField, ColumnField outerField, MinoFieldMemento memento, int index, SeparableMinos separableMinos, Field needFilledField) {
         this.searcher = searcher;
         this.innerField = innerField;
         this.outerField = outerField;
         this.memento = memento;
         this.index = index;
+        this.separableMinos = separableMinos;
+        this.needFilledField = needFilledField;
     }
 
     @Override
@@ -47,9 +56,7 @@ class MinoSetupTaskWidthForWidth2 implements PackingTask {
                 return searcher.getTaskResultHelper().fixResult(searcher, innerFieldBoard, nextMemento);
             } else {
                 // 途中の計算  // 自分で計算する
-                MinoFieldMemento nextMemento = memento.skip();
-                long innerFieldBoard = outerField.getBoard(0) >> searcher.getSizedBit().getMaxBitDigit();
-                return createTask(searcher, innerFieldBoard, nextMemento, index + 1).compute();
+                return kakutei(null);
             }
         } else {
             MinoFields minoFields = searcher.getSolutions(index).parse(innerField);
@@ -62,43 +69,40 @@ class MinoSetupTaskWidthForWidth2 implements PackingTask {
             } else {
                 // 途中の計算
                 return minoFields.stream().parallel()
-                        .map(this::split)
-                        .filter(this::isValidTask)
-                        .flatMap(PackingTask::compute);
+                        .flatMap(this::split);
             }
         }
     }
 
     private PackingTask createTask(PackSearcher searcher, long innerFieldBoard, MinoFieldMemento memento, int index) {
-        long fillBoard = searcher.getSizedBit().getFillBoard();
+        SizedBit sizedBit = searcher.getSizedBit();
+        long fillBoard = sizedBit.getFillBoard();
         ColumnSmallField over = ColumnFieldFactory.createField(innerFieldBoard & ~fillBoard);
         ColumnField outerField = searcher.getInOutPairFields().get(index).getOuterField();
 
         if (over.canMerge(outerField)) {
             over.merge(outerField);
             ColumnSmallField innerField = ColumnFieldFactory.createField(innerFieldBoard & fillBoard);
-            return new MinoSetupTaskWidthForWidth2(searcher, innerField, over, memento, index);
+
+            // 必要なミノを左にずらす
+            Field freeze = needFilledField.freeze(sizedBit.getHeight());
+            freeze.slideLeft(sizedBit.getWidth());
+            return new MinoSetupTaskWidthForWidth2(searcher, innerField, over, memento, index, separableMinos, freeze);
         }
 
         return EMPTY_TASK;
     }
 
-    private PackingTask split(MinoField minoField) {
+    private Stream<Result> split(MinoField minoField) {
         ColumnField minoOuterField = minoField.getOuterField();
 
         // 注目範囲外outerで重なりがないか確認
         if (outerField.canMerge(minoOuterField)) {
             // 有効なおきかた
-            SizedBit sizedBit = searcher.getSizedBit();
-            ColumnField mergedOuterField = outerField.freeze(sizedBit.getHeight());
-            mergedOuterField.merge(minoOuterField);
-
-            long innerFieldBoard = mergedOuterField.getBoard(0) >> sizedBit.getMaxBitDigit();
-            MinoFieldMemento nextMemento = memento.concat(minoField);
-            return checkAndCreateTask(innerFieldBoard, nextMemento, index + 1);
+            return kakutei(minoField);
         }
 
-        return EMPTY_TASK;
+        return Stream.empty();
     }
 
     private PackingTask checkAndCreateTask(long innerFieldBoard, MinoFieldMemento memento, int index) {
@@ -124,6 +128,79 @@ class MinoSetupTaskWidthForWidth2 implements PackingTask {
         }
 
         return Stream.empty();
+    }
+
+    private Stream<Result> kakutei(MinoField minoField) {
+        SizedBit sizedBit = searcher.getSizedBit();
+        List<SeparableMino> allMinos = separableMinos.getMinos();
+
+        if (minoField != null) {
+            // innerFieldを再計算
+            ColumnField mergedInnerField = ColumnFieldFactory.createField();
+            minoField.getSeparableMinoStream().forEach(mino -> {
+                mergedInnerField.merge(mino.getColumnField());
+            });
+
+            // outerFieldの計算
+            ColumnField minoOuterField = minoField.getOuterField();
+            ColumnField mergedOuterField = outerField.freeze(sizedBit.getHeight());
+            mergedOuterField.merge(minoOuterField);
+
+            return kakutei4(minoField, mergedInnerField, mergedOuterField, sizedBit, allMinos);
+        } else {
+            return kakutei4(minoField, innerField, outerField, sizedBit, allMinos);
+        }
+    }
+
+    private Stream<Result> kakutei3(ColumnField outerField, MinoFieldMemento nextMemento, SizedBit sizedBit) {
+        long innerFieldBoard = outerField.getBoard(0) >> sizedBit.getMaxBitDigit();
+        PackingTask task = checkAndCreateTask(innerFieldBoard, nextMemento, index + 1);
+        if (!isValidTask(task)) {
+            return Stream.empty();
+        }
+        return task.compute();
+    }
+
+    private Stream<Result> kakutei4(MinoField minoField, ColumnField innerField, ColumnField outerField, SizedBit sizedBit, List<SeparableMino> minos) {
+        // ミノを追加フィールドをそのまま追加
+        MinoFieldMemento nextMemento;
+        if (minoField != null) {
+            nextMemento = memento.concat(minoField);
+        } else {
+            nextMemento = memento.skip();
+        }
+        Stream<Result> result = kakutei3(outerField, nextMemento, sizedBit);
+
+        StreamColumnFieldConnections connections = new StreamColumnFieldConnections(minos, innerField, sizedBit);
+        int height = sizedBit.getHeight();
+        Stream<Result> stream = connections.getConnectionStream()
+                .filter(connection -> {
+                    SeparableMino mino = connection.getMino();
+                    return outerField.canMerge(mino.getColumnField()) && !needFilledField.canMerge(mino.getField());
+                })
+                .flatMap(connection -> {
+                    // innerFieldの計算
+                    ColumnField mergedInnerField = connection.getInnerField();
+
+                    // outerFieldの計算
+                    ColumnField mergedOuterField = outerField.freeze(height);
+                    mergedOuterField.merge(connection.getOuterField());
+
+                    SeparableMino currentMino = connection.getMino();
+                    MinoField nextMinoField;
+                    if (minoField != null) {
+                        nextMinoField = new WrappedMinoField(currentMino, minoField, mergedOuterField, separableMinos);
+                    } else {
+                        nextMinoField = new RecursiveMinoField(currentMino, mergedOuterField, separableMinos);
+                    }
+
+                    List<SeparableMino> allMinos = separableMinos.getMinos();
+                    List<SeparableMino> minos2 = allMinos.subList(this.separableMinos.toIndex(currentMino) + 1, allMinos.size());
+
+                    return kakutei4(nextMinoField, mergedInnerField, mergedOuterField, sizedBit, minos2);
+                });
+
+        return Stream.concat(result, stream);
     }
 
     private boolean isValidTask(PackingTask task) {
