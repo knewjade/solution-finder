@@ -27,7 +27,6 @@ public class FilterOnDemandBasicSolutions implements BasicSolutions, SolutionsCa
     private final SmallField originWallField;
     private final Predicate<ColumnField> memorizedPredicate;
     private final ConcurrentHashMap<ColumnField, RecursiveMinoFields> resultsMap;
-    private final Field needFillField;
 
     public FilterOnDemandBasicSolutions(SeparableMinos separableMinos, SizedBit sizedBit, Predicate<ColumnField> memorizedPredicate, SolutionFilter solutionFilter) {
         this(separableMinos, sizedBit, ColumnFieldFactory.createField(), memorizedPredicate, solutionFilter);
@@ -37,7 +36,6 @@ public class FilterOnDemandBasicSolutions implements BasicSolutions, SolutionsCa
         this.separableMinos = separableMinos;
         this.initOuterField = initOuterField;
         this.solutionFilter = solutionFilter;
-        this.needFillField = sizedBit.getFillField();
         assert sizedBit.getHeight() <= 10;
         this.sizedBit = sizedBit;
         this.reference = createBasicReference(sizedBit, separableMinos);
@@ -93,10 +91,10 @@ public class FilterOnDemandBasicSolutions implements BasicSolutions, SolutionsCa
 
     private RecursiveMinoFields createRecursiveMinoFields(ColumnField columnField, ColumnField outerColumnField, Field wallField, boolean isMemorized) {
         if (isMemorized) {
-            ConnectionsToListCallable callable = new ConnectionsToListCallable(this, columnField, outerColumnField, wallField, initOuterField, needFillField);
+            ConnectionsToListCallable callable = new ConnectionsToListCallable(this, columnField, outerColumnField, wallField, initOuterField);
             return new MemorizedRecursiveMinoFields(callable);
         } else {
-            ConnectionsToStreamCallable callable = new ConnectionsToStreamCallable(this, columnField, outerColumnField, wallField, initOuterField, needFillField);
+            ConnectionsToStreamCallable callable = new ConnectionsToStreamCallable(this, columnField, outerColumnField, wallField, initOuterField);
             return new OnDemandRecursiveMinoFields(callable);
         }
     }
@@ -129,11 +127,6 @@ public class FilterOnDemandBasicSolutions implements BasicSolutions, SolutionsCa
     @Override
     public RecursiveMinoFields getRecursiveMinoFields(ColumnField columnField) {
         return resultsMap.computeIfAbsent(columnField, this::addColumnSmallField);
-    }
-
-    @Override
-    public SizedBit getSizedBit() {
-        return this.sizedBit;
     }
 
     public ConcurrentHashMap<ColumnField, RecursiveMinoFields> getSolutions() {

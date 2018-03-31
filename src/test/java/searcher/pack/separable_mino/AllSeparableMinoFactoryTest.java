@@ -42,7 +42,7 @@ class AllSeparableMinoFactoryTest {
 
         for (SeparableMino separableMino : minos) {
 
-            ColumnField field = separableMino.getColumnField();
+            ColumnField field = separableMino.getField();
             System.out.println(ColumnFieldView.toString(field, 5, 4));
             System.out.println("===");
         }

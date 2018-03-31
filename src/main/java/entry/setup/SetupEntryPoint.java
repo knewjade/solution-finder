@@ -8,10 +8,10 @@ import common.tetfu.common.ColorConverter;
 import core.FinderConstant;
 import core.column_field.ColumnField;
 import core.field.Field;
+import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
-import core.mino.Piece;
 import entry.DropType;
 import entry.EntryPoint;
 import entry.Verify;
@@ -193,24 +193,9 @@ public class SetupEntryPoint implements EntryPoint {
         // 絶対に置く必要があるブロック
         ArrayList<BasicSolutions> basicSolutions = new ArrayList<>();
         List<ColumnField> needFillFields = InOutPairField.createInnerFields(sizedBit, needFilledField);
-        {
-            Field freeze = needFilledField.freeze(sizedBit.getHeight());
-            for (ColumnField innerField : needFillFields) {
-                // 最小限の部分だけを抽出する
-                Field freeze1 = freeze.freeze(sizedBit.getHeight());
-                for (int y = 0; y < sizedBit.getHeight(); y++) {
-                    int width = sizedBit.getWidth();
-                    for (int x = 0; x < width; x++)
-                        freeze1.removeBlock(x, y);
-                    for (int x = width + 3; x < 10; x++)
-                        freeze1.removeBlock(x, y);
-                }
-
-                OnDemandBasicSolutions solutions = new OnDemandBasicSolutions(separableMinos, sizedBit, innerField.getBoard(0), freeze1);
-                basicSolutions.add(solutions);
-
-                freeze.slideLeft(sizedBit.getWidth());
-            }
+        for (ColumnField innerField : needFillFields) {
+            OnDemandBasicSolutions solutions = new OnDemandBasicSolutions(separableMinos, sizedBit, innerField.getBoard(0));
+            basicSolutions.add(solutions);
         }
 
         // 探索

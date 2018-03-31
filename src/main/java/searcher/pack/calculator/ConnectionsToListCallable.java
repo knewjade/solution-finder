@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
 public class ConnectionsToListCallable implements Callable<List<RecursiveMinoField>> {
     private final ConnectionsToStreamCallable callable;
 
-    public ConnectionsToListCallable(SolutionsCalculator calculator, ColumnField initColumnField, ColumnField outerColumnField, Field wallField, ColumnField limitOuterField, Field needFillField) {
-        this.callable = new ConnectionsToStreamCallable(calculator, initColumnField, outerColumnField, wallField, limitOuterField, needFillField);
+    public ConnectionsToListCallable(SolutionsCalculator calculator, ColumnField initColumnField, ColumnField outerColumnField, Field wallField, ColumnField limitOuterField) {
+        this.callable = new ConnectionsToStreamCallable(calculator, initColumnField, outerColumnField, wallField, limitOuterField);
     }
 
     @Override
-    public List<RecursiveMinoField> call() {
+    public List<RecursiveMinoField> call() throws Exception {
         return callable.call().collect(Collectors.toList());
     }
 }
