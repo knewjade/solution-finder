@@ -2,6 +2,7 @@ package searcher.pack.calculator;
 
 import core.column_field.ColumnField;
 import core.field.Field;
+import searcher.pack.SizedBit;
 import searcher.pack.connections.ColumnFieldConnections;
 import searcher.pack.SeparableMinos;
 import searcher.pack.mino_fields.RecursiveMinoFields;
@@ -18,4 +19,6 @@ public interface SolutionsCalculator {
     SeparableMinos getSeparableMinos();
 
     RecursiveMinoFields getRecursiveMinoFields(ColumnField columnField);
+
+    SizedBit getSizedBit();
 }
