@@ -3,6 +3,8 @@ package searcher.pack.task;
 import core.column_field.ColumnField;
 import core.column_field.ColumnFieldFactory;
 import core.column_field.ColumnSmallField;
+import core.field.Field;
+import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.memento.MinoFieldMemento;
 import searcher.pack.memento.SolutionFilter;
@@ -12,7 +14,7 @@ import searcher.pack.mino_fields.MinoFields;
 import java.util.stream.Stream;
 
 // Width=2のBasicSolutionsのためのタスク
-class MinoPackingTaskWidthForWidth2 implements PackingTask {
+class MinoSetupTaskWidthForWidth2 implements PackingTask {
     private static final PackingTask EMPTY_TASK = null;
 
     private final PackSearcher searcher;
@@ -21,11 +23,11 @@ class MinoPackingTaskWidthForWidth2 implements PackingTask {
     private final MinoFieldMemento memento;
     private final int index;
 
-    MinoPackingTaskWidthForWidth2(PackSearcher searcher, ColumnField innerField, MinoFieldMemento memento, int index) {
+    MinoSetupTaskWidthForWidth2(PackSearcher searcher, ColumnField innerField, MinoFieldMemento memento, int index, SeparableMinos separableMinos, Field needFilledField) {
         this(searcher, innerField, searcher.getInOutPairFields().get(index).getOuterField(), memento, index);
     }
 
-    private MinoPackingTaskWidthForWidth2(PackSearcher searcher, ColumnField innerField, ColumnField outerField, MinoFieldMemento memento, int index) {
+    private MinoSetupTaskWidthForWidth2(PackSearcher searcher, ColumnField innerField, ColumnField outerField, MinoFieldMemento memento, int index) {
         this.searcher = searcher;
         this.innerField = innerField;
         this.outerField = outerField;
@@ -75,7 +77,7 @@ class MinoPackingTaskWidthForWidth2 implements PackingTask {
         if (over.canMerge(outerField)) {
             over.merge(outerField);
             ColumnSmallField innerField = ColumnFieldFactory.createField(innerFieldBoard & fillBoard);
-            return new MinoPackingTaskWidthForWidth2(searcher, innerField, over, memento, index);
+            return new MinoSetupTaskWidthForWidth2(searcher, innerField, over, memento, index);
         }
 
         return EMPTY_TASK;

@@ -16,7 +16,7 @@ public class ConnectionsToListCallable implements Callable<List<RecursiveMinoFie
     }
 
     @Override
-    public List<RecursiveMinoField> call() throws Exception {
+    public List<RecursiveMinoField> call() {
         return callable.call().collect(Collectors.toList());
     }
 }

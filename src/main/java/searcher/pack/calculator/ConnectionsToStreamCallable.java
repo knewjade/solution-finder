@@ -30,7 +30,7 @@ public class ConnectionsToStreamCallable implements Callable<Stream<RecursiveMin
     }
 
     @Override
-    public Stream<RecursiveMinoField> call() throws Exception {
+    public Stream<RecursiveMinoField> call() {
         ColumnFieldConnections connections = calculator.getConnections(this.initColumnField);
         return connections.getConnectionStream().parallel()
                 .flatMap(this::parseConnectionToMinoField);
@@ -53,13 +53,13 @@ public class ConnectionsToStreamCallable implements Callable<Stream<RecursiveMin
         return Stream.empty();
     }
 
-    // columnField = inner + outer
+    // columnField = inner
     // outerColumnField = outer only
     private Stream<RecursiveMinoField> calculate(ColumnField columnField, ColumnField outerColumnField, Field wallField, SeparableMino currentMino) {
         // 最初の関数呼び出しで通ることはない
         // 全てが埋まったとき、それまでの手順を解とする
         if (calculator.isFilled(columnField))
-            return parseWhenFilled(outerColumnField, wallField, currentMino);
+            return parseWhenFilled(outerColumnField, currentMino);
 
         // 最初の関数呼び出しで通ることはない
         // すでに探索済みのフィールドなら、その情報を利用する
@@ -70,12 +70,7 @@ public class ConnectionsToStreamCallable implements Callable<Stream<RecursiveMin
         return parseWhenNext(outerColumnField, wallField, currentMino, minoFields);
     }
 
-    private Stream<RecursiveMinoField> parseWhenFilled(ColumnField outerColumnField, Field wallField, SeparableMino currentMino) {
-        // これからブロックをおく場所以外を、すでにブロックで埋めたフィールドを作成
-        Field freeze = wallField.freeze(calculator.getHeight());
-        Field invertedOuterField = calculator.parseInvertedOuterField(outerColumnField);
-        freeze.merge(invertedOuterField);
-
+    private Stream<RecursiveMinoField> parseWhenFilled(ColumnField outerColumnField, SeparableMino currentMino) {
         // 置くブロック以外がすでに埋まっていると仮定したとき、正しく接着できる順があるか確認
         SeparableMinos separableMinos = calculator.getSeparableMinos();
         RecursiveMinoField result = new RecursiveMinoField(currentMino, outerColumnField.freeze(calculator.getHeight()), separableMinos);

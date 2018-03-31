@@ -74,9 +74,9 @@ public class SetupPackSearcher implements PackSearcher {
     private PackingTask createPackingTask(SizedBit sizedBit, MinoFieldMemento emptyMemento, ColumnField innerField) {
         switch (sizedBit.getWidth()) {
             case 2:
-                return new MinoPackingTaskWidthForWidth2(this, innerField, emptyMemento, 0, separableMinos, needFilledField);
+                return new MinoSetupTaskWidthForWidth2(this, innerField, emptyMemento, 0, separableMinos, needFilledField);
             case 3:
-                return new MinoPackingTaskWidthForWidth3(this, innerField, emptyMemento, 0, separableMinos, needFilledField);
+                return new MinoSetupTaskWidthForWidth3(this, innerField, emptyMemento, 0, separableMinos, needFilledField);
         }
         throw new UnsupportedOperationException("No support: should be width 2 or 3");
     }
