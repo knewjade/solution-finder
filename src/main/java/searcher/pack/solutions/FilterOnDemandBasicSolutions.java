@@ -22,17 +22,12 @@ public class FilterOnDemandBasicSolutions implements BasicSolutions, SolutionsCa
     private final BasicReference reference;
     private final Predicate<ColumnField> memorizedPredicate;
     private final ConcurrentHashMap<ColumnField, RecursiveMinoFields> resultsMap;
-    private final long needFillBoard;
 
     public FilterOnDemandBasicSolutions(SeparableMinos separableMinos, SizedBit sizedBit, Predicate<ColumnField> memorizedPredicate, SolutionFilter solutionFilter) {
         this(separableMinos, sizedBit, ColumnFieldFactory.createField(), memorizedPredicate, solutionFilter);
     }
 
     public FilterOnDemandBasicSolutions(SeparableMinos separableMinos, SizedBit sizedBit, ColumnSmallField initOuterField, Predicate<ColumnField> memorizedPredicate, SolutionFilter solutionFilter) {
-        this(separableMinos, sizedBit, initOuterField, memorizedPredicate, solutionFilter, sizedBit.getFillBoard());
-    }
-
-    private FilterOnDemandBasicSolutions(SeparableMinos separableMinos, SizedBit sizedBit, ColumnSmallField initOuterField, Predicate<ColumnField> memorizedPredicate, SolutionFilter solutionFilter, long needFillBoard) {
         this.separableMinos = separableMinos;
         this.initOuterField = initOuterField;
         this.solutionFilter = solutionFilter;
@@ -41,7 +36,6 @@ public class FilterOnDemandBasicSolutions implements BasicSolutions, SolutionsCa
         this.reference = createBasicReference(sizedBit, separableMinos);
         this.memorizedPredicate = memorizedPredicate;
         this.resultsMap = new ConcurrentHashMap<>();
-        this.needFillBoard = needFillBoard;
     }
 
     private BasicReference createBasicReference(SizedBit sizedBit, SeparableMinos separableMinos) {
@@ -73,10 +67,10 @@ public class FilterOnDemandBasicSolutions implements BasicSolutions, SolutionsCa
 
     private RecursiveMinoFields createRecursiveMinoFields(ColumnField columnField, ColumnField outerColumnField, boolean isMemorized) {
         if (isMemorized) {
-            ConnectionsToListCallable callable = new ConnectionsToListCallable(this, columnField, outerColumnField, initOuterField, needFillBoard);
+            ConnectionsToListCallable callable = new ConnectionsToListCallable(this, columnField, outerColumnField, initOuterField);
             return new MemorizedRecursiveMinoFields(callable);
         } else {
-            ConnectionsToStreamCallable callable = new ConnectionsToStreamCallable(this, columnField, outerColumnField, initOuterField, needFillBoard);
+            ConnectionsToStreamCallable callable = new ConnectionsToStreamCallable(this, columnField, outerColumnField, initOuterField);
             return new OnDemandRecursiveMinoFields(callable);
         }
     }

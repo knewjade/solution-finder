@@ -78,10 +78,10 @@ public class BasicSolutionsCalculator implements SolutionsCalculator {
 
     private RecursiveMinoFields createRecursiveMinoFields(ColumnSmallField columnField, ColumnField outerColumnField, boolean isMemorized) {
         if (isMemorized) {
-            ConnectionsToListCallable callable = new ConnectionsToListCallable(this, columnField, outerColumnField, limitOuterField, needFillBoard);
+            ConnectionsToListCallable callable = new ConnectionsToListCallable(this, columnField, outerColumnField, limitOuterField);
             return new MemorizedRecursiveMinoFields(callable);
         } else {
-            ConnectionsToStreamCallable callable = new ConnectionsToStreamCallable(this, columnField, outerColumnField, limitOuterField, needFillBoard);
+            ConnectionsToStreamCallable callable = new ConnectionsToStreamCallable(this, columnField, outerColumnField, limitOuterField);
             return new OnDemandRecursiveMinoFields(callable);
         }
     }

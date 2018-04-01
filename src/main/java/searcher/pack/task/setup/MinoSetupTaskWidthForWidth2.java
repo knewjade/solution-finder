@@ -68,10 +68,18 @@ public class MinoSetupTaskWidthForWidth2 implements PackingTask {
             if (index == searcher.getLastIndex()) {
                 // 最後の計算
                 return minoFields.stream().parallel()
+                        .filter(minoField -> minoField.getSeparableMinoStream()
+                                .map(SeparableMino::getField)
+                                .noneMatch(needFilledField::canMerge)
+                        )
                         .flatMap(this::splitAndFixResult);
             } else {
                 // 途中の計算
                 return minoFields.stream().parallel()
+                        .filter(minoField -> minoField.getSeparableMinoStream()
+                                .map(SeparableMino::getField)
+                                .noneMatch(needFilledField::canMerge)
+                        )
                         .flatMap(this::split);
             }
         }
