@@ -13,9 +13,13 @@ public class DevMain {
 //        String command = "move -t v115@9gA8IeA8IeA8IeA8SeAgH -p [TIO]p2";
 //        String command = "path -t v115@zgyhGexhHexhGeAtxhC8BeA8BtyhE8AtA8JeAgWBAV?AAAAvhAAAPBAUAAAA -P 2 -p [IJLOS]p5,S --split yes";
 //        String command = "path -t v115@9gB8HeC8GeE8EeF8NeAgWMA0no2ANI98AQPcQB";
-         String command = "setup -p [^T]! --fill i --margin o -t v115@zgdpwhUpxhCe3hAe1hZpJeAgH";
+//         String command = "setup -p [^T]! --fill i --margin o -t v115@zgdpwhUpxhCe3hAe1hZpJeAgH";
 //        String command = "setup -p [^T]! --fill i --margin o -t v115@zgTpwhYpAeUpzhAe3hQpAeQpzhTpAeUpJeAgH";
 //        String command = "setup -p [^T]! --fill i --margin o -t v115@zgUpwhYpAeTp0hAe3hQpAeQpyhUpAeTpJeAgH";
+
+        String command = "setup -p [^SZT]! --fill i --margin o -t v115@zgTpwhQpDeTpAeQpDezhAewhDeyhQpAeQpwhCeTpAe?RpMeAgH";
+//        String command = "setup -p [^SZT]! --fill i --margin o -t v115@zgTpwhQpDeTpAeQpDezhAewhDeyhQpAexhCeTpAeRp?MeAgH";
+
         int returnCode = EntryPointMain.main(command.split(" "));
         System.exit(returnCode);
 

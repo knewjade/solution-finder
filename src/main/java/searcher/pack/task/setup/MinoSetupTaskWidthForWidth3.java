@@ -72,16 +72,16 @@ public class MinoSetupTaskWidthForWidth3 implements PackingTask {
                 // 最後の計算
                 return minoFields.stream().parallel()
                         .filter(minoField -> minoField.getSeparableMinoStream()
-                                .map(SeparableMino::getField)
-                                .noneMatch(needFilledField::canMerge)
+                                .map(SeparableMino::getColumnField)
+                                .allMatch(columnField -> searcher.contains(columnField, index))
                         )
                         .flatMap(this::splitAndFixResult);
             } else {
                 // 途中の計算
                 return minoFields.stream().parallel()
                         .filter(minoField -> minoField.getSeparableMinoStream()
-                                .map(SeparableMino::getField)
-                                .noneMatch(needFilledField::canMerge)
+                                .map(SeparableMino::getColumnField)
+                                .allMatch(columnField -> searcher.contains(columnField, index))
                         )
                         .flatMap(this::split);
             }
@@ -142,8 +142,9 @@ public class MinoSetupTaskWidthForWidth3 implements PackingTask {
 
         if (minoField != null) {
             // innerFieldを再計算
-            ColumnField mergedInnerField = ColumnFieldFactory.createField();
-            minoField.getSeparableMinoStream().forEach(mino -> mergedInnerField.merge(mino.getColumnField()));
+            ColumnField freezeInnderField = innerField.freeze(sizedBit.getHeight());
+            minoField.getSeparableMinoStream().forEach(mino -> freezeInnderField.merge(mino.getColumnField()));
+            ColumnField mergedInnerField = ColumnFieldFactory.createField(freezeInnderField.getBoard(0) & sizedBit.getFillBoard());
 
             // outerFieldの計算
             ColumnField minoOuterField = minoField.getOuterField();

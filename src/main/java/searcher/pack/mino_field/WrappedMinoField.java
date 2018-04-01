@@ -31,7 +31,7 @@ public class WrappedMinoField implements MinoField {
 
     @Override
     public Stream<OperationWithKey> getOperationsStream() {
-        return Stream.concat(minoField.getOperationsStream(), Stream.of(separableMino.toMinoOperationWithKey()));
+        return Stream.concat(Stream.of(separableMino.toMinoOperationWithKey()), minoField.getOperationsStream());
     }
 
     @Override
@@ -46,6 +46,6 @@ public class WrappedMinoField implements MinoField {
 
     @Override
     public Stream<SeparableMino> getSeparableMinoStream() {
-        return Stream.concat(minoField.getSeparableMinoStream(), Stream.of(separableMino));
+        return Stream.concat(Stream.of(separableMino), minoField.getSeparableMinoStream());
     }
 }

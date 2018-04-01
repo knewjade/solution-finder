@@ -257,4 +257,9 @@ public class PerfectPackSearcher implements PackSearcher {
     public boolean isFilled(ColumnField columnField, int index) {
         return columnField.getBoard(0) == sizedBit.getFillBoard();
     }
+
+    @Override
+    public boolean contains(ColumnField columnField, int index) {
+        return (columnField.getBoard(0) & sizedBit.getFillBoard()) != 0L;
+    }
 }

@@ -22,4 +22,6 @@ public interface PackSearcher {
     SolutionFilter getSolutionFilter();
 
     boolean isFilled(ColumnField columnField, int index);
+
+    boolean contains(ColumnField columnField, int index);
 }

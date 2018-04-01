@@ -255,4 +255,11 @@ public class SetupPackSearcher implements PackSearcher {
         long needFillBoard = innerField.getBoard(0);
         return (columnField.getBoard(0) & needFillBoard) == needFillBoard;
     }
+
+    @Override
+    public boolean contains(ColumnField columnField, int index) {
+        ColumnField innerField = needFillFields.get(index);
+        long needFillBoard = innerField.getBoard(0);
+        return (columnField.getBoard(0) & needFillBoard) != 0L;
+    }
 }
