@@ -1,3 +1,7 @@
+stages:
+  - test
+  - name: deploy
+    if: branch = master
 jobs:
   include:
   - stage: test
@@ -14,7 +18,7 @@ jobs:
     script:
     - make html
     before_deploy:
-    - sphinx-versioning build docs build/html -r v0.510 -w "nobranch"
+    - sphinx-versioning build docs build/html -r v0.511 -w "nobranch"
     - touch build/html/.nojekyll
     deploy:
       provider: pages
