@@ -4,7 +4,6 @@ import core.column_field.ColumnField;
 import core.column_field.ColumnFieldFactory;
 import core.column_field.ColumnSmallField;
 import core.field.Field;
-import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.connections.StreamColumnFieldConnections;
@@ -52,39 +51,15 @@ public class MinoSetupTaskWidthForWidth3 implements PackingTask {
     public Stream<Result> compute() {
         if (searcher.isFilled(innerField, index)) {
             // innerFieldが埋まっている
-            List<InOutPairField> inOutPairFields = searcher.getInOutPairFields();
-            if (index == searcher.getLastIndex()) {
-                // 最後の計算
-                SizedBit sizedBit = searcher.getSizedBit();
-                ColumnField lastOuterField = inOutPairFields.get(index).getOuterField();
-                long innerFieldBoard = lastOuterField.getBoard(0) >> sizedBit.getMaxBitDigit();
-                MinoFieldMemento nextMemento = memento.skip();
-                return searcher.getTaskResultHelper().fixResult(searcher, innerFieldBoard, nextMemento);
-            } else {
-                // 途中の計算  // 自分で計算する
-                return createNextTasks(null);
-            }
+            return createNextTasks(null);
         } else {
             MinoFields minoFields = searcher.getSolutions(index).parse(innerField);
-
-            // innerFieldが埋まっていない
-            if (index == searcher.getLastIndex()) {
-                // 最後の計算
-                return minoFields.stream().parallel()
-                        .filter(minoField -> minoField.getSeparableMinoStream()
-                                .map(SeparableMino::getColumnField)
-                                .allMatch(columnField -> searcher.contains(columnField, index))
-                        )
-                        .flatMap(this::splitAndFixResult);
-            } else {
-                // 途中の計算
-                return minoFields.stream().parallel()
-                        .filter(minoField -> minoField.getSeparableMinoStream()
-                                .map(SeparableMino::getColumnField)
-                                .allMatch(columnField -> searcher.contains(columnField, index))
-                        )
-                        .flatMap(this::split);
-            }
+            return minoFields.stream().parallel()
+                    .filter(minoField -> minoField.getSeparableMinoStream()
+                            .map(SeparableMino::getColumnField)
+                            .allMatch(columnField -> searcher.contains(columnField, index))
+                    )
+                    .flatMap(this::split);
         }
     }
 
@@ -115,25 +90,6 @@ public class MinoSetupTaskWidthForWidth3 implements PackingTask {
         if (solutionFilter.test(memento))
             return createTask(searcher, innerField, memento, index);
         return EMPTY_TASK;
-    }
-
-    private Stream<Result> splitAndFixResult(MinoField minoField) {
-        ColumnField outerField = searcher.getInOutPairFields().get(index).getOuterField();
-        ColumnField minoOuterField = minoField.getOuterField();
-
-        // 注目範囲外outerで重なりがないか確認
-        if (outerField.canMerge(minoOuterField)) {
-            // 有効なおきかた
-            SizedBit sizedBit = searcher.getSizedBit();
-            ColumnField mergedOuterField = outerField.freeze(searcher.getSizedBit().getHeight());
-            mergedOuterField.merge(minoOuterField);
-
-            long innerFieldBoard = mergedOuterField.getBoard(0) >> sizedBit.getMaxBitDigit();
-            MinoFieldMemento nextMemento = memento.concat(minoField);
-            return searcher.getTaskResultHelper().fixResult(searcher, innerFieldBoard, nextMemento);
-        }
-
-        return Stream.empty();
     }
 
     private Stream<Result> createNextTasks(MinoField minoField) {
@@ -203,6 +159,11 @@ public class MinoSetupTaskWidthForWidth3 implements PackingTask {
     private Stream<Result> checkAndCreateTaskToStream(ColumnField outerField, MinoFieldMemento nextMemento, SizedBit sizedBit) {
         long innerFieldBoard = outerField.getBoard(0) >> sizedBit.getMaxBitDigit();
         ColumnSmallField innerField = ColumnFieldFactory.createField(innerFieldBoard);
+
+        if (index == searcher.getLastIndex()) {
+            return searcher.getTaskResultHelper().fixResult(searcher, innerFieldBoard, nextMemento);
+        }
+
         PackingTask task = checkAndCreateTask(innerField, nextMemento, index + 1);
         if (!isValidTask(task)) {
             return Stream.empty();

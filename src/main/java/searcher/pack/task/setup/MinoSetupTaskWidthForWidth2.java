@@ -51,37 +51,16 @@ public class MinoSetupTaskWidthForWidth2 implements PackingTask {
     public Stream<Result> compute() {
         if (searcher.isFilled(innerField, index)) {
             // innerFieldが埋まっている
-            if (index == searcher.getLastIndex()) {
-                // 最後の計算
-                SizedBit sizedBit = searcher.getSizedBit();
-                long innerFieldBoard = outerField.getBoard(0) >> sizedBit.getMaxBitDigit();
-                MinoFieldMemento nextMemento = memento.skip();
-                return searcher.getTaskResultHelper().fixResult(searcher, innerFieldBoard, nextMemento);
-            } else {
-                // 途中の計算  // 自分で計算する
-                return createNextTasks(null);
-            }
+            return createNextTasks(null);
         } else {
-            MinoFields minoFields = searcher.getSolutions(index).parse(innerField);
-
             // innerFieldが埋まっていない
-            if (index == searcher.getLastIndex()) {
-                // 最後の計算
-                return minoFields.stream().parallel()
-                        .filter(minoField -> minoField.getSeparableMinoStream()
-                                .map(SeparableMino::getColumnField)
-                                .allMatch(columnField -> searcher.contains(columnField, index))
-                        )
-                        .flatMap(this::splitAndFixResult);
-            } else {
-                // 途中の計算
-                return minoFields.stream().parallel()
-                        .filter(minoField -> minoField.getSeparableMinoStream()
-                                .map(SeparableMino::getColumnField)
-                                .allMatch(columnField -> searcher.contains(columnField, index))
-                        )
-                        .flatMap(this::split);
-            }
+            MinoFields minoFields = searcher.getSolutions(index).parse(innerField);
+            return minoFields.stream().parallel()
+                    .filter(minoField -> minoField.getSeparableMinoStream()
+                            .map(SeparableMino::getColumnField)
+                            .allMatch(columnField -> searcher.contains(columnField, index))
+                    )
+                    .flatMap(this::split);
         }
     }
 
@@ -207,7 +186,12 @@ public class MinoSetupTaskWidthForWidth2 implements PackingTask {
 
     private Stream<Result> checkAndCreateTaskToStream(ColumnField outerField, MinoFieldMemento nextMemento, SizedBit sizedBit) {
         long innerFieldBoard = outerField.getBoard(0) >> sizedBit.getMaxBitDigit();
+        if (index == searcher.getLastIndex()) {
+            return searcher.getTaskResultHelper().fixResult(searcher, innerFieldBoard, nextMemento);
+        }
+
         PackingTask task = checkAndCreateTask(innerFieldBoard, nextMemento, index + 1);
+
         if (!isValidTask(task)) {
             return Stream.empty();
         }
