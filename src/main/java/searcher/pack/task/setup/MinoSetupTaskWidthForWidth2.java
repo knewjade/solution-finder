@@ -1,4 +1,4 @@
-package searcher.pack.task;
+package searcher.pack.task.setup;
 
 import core.column_field.ColumnField;
 import core.column_field.ColumnFieldFactory;
@@ -14,12 +14,15 @@ import searcher.pack.mino_field.RecursiveMinoField;
 import searcher.pack.mino_field.WrappedMinoField;
 import searcher.pack.mino_fields.MinoFields;
 import searcher.pack.separable_mino.SeparableMino;
+import searcher.pack.task.PackSearcher;
+import searcher.pack.task.PackingTask;
+import searcher.pack.task.Result;
 
 import java.util.List;
 import java.util.stream.Stream;
 
 // Width=2のBasicSolutionsのためのタスク
-class MinoSetupTaskWidthForWidth2 implements PackingTask {
+public class MinoSetupTaskWidthForWidth2 implements PackingTask {
     private static final PackingTask EMPTY_TASK = null;
 
     private final PackSearcher searcher;
@@ -30,7 +33,7 @@ class MinoSetupTaskWidthForWidth2 implements PackingTask {
     private final SeparableMinos separableMinos;
     private final Field needFilledField;
 
-    MinoSetupTaskWidthForWidth2(PackSearcher searcher, ColumnField innerField, MinoFieldMemento memento, int index, SeparableMinos separableMinos, Field needFilledField) {
+    public MinoSetupTaskWidthForWidth2(PackSearcher searcher, ColumnField innerField, MinoFieldMemento memento, int index, SeparableMinos separableMinos, Field needFilledField) {
         this(searcher, innerField, searcher.getInOutPairFields().get(index).getOuterField(), memento, index, separableMinos, needFilledField);
     }
 
@@ -56,7 +59,7 @@ class MinoSetupTaskWidthForWidth2 implements PackingTask {
                 return searcher.getTaskResultHelper().fixResult(searcher, innerFieldBoard, nextMemento);
             } else {
                 // 途中の計算  // 自分で計算する
-                return kakutei(null);
+                return createNextTasks(null);
             }
         } else {
             MinoFields minoFields = searcher.getSolutions(index).parse(innerField);
@@ -99,7 +102,7 @@ class MinoSetupTaskWidthForWidth2 implements PackingTask {
         // 注目範囲外outerで重なりがないか確認
         if (outerField.canMerge(minoOuterField)) {
             // 有効なおきかた
-            return kakutei(minoField);
+            return createNextTasks(minoField);
         }
 
         return Stream.empty();
@@ -130,38 +133,28 @@ class MinoSetupTaskWidthForWidth2 implements PackingTask {
         return Stream.empty();
     }
 
-    private Stream<Result> kakutei(MinoField minoField) {
+    private Stream<Result> createNextTasks(MinoField minoField) {
         SizedBit sizedBit = searcher.getSizedBit();
         List<SeparableMino> allMinos = separableMinos.getMinos();
 
         if (minoField != null) {
             // innerFieldを再計算
             ColumnField mergedInnerField = ColumnFieldFactory.createField();
-            minoField.getSeparableMinoStream().forEach(mino -> {
-                mergedInnerField.merge(mino.getColumnField());
-            });
+            minoField.getSeparableMinoStream().forEach(mino -> mergedInnerField.merge(mino.getColumnField()));
 
             // outerFieldの計算
             ColumnField minoOuterField = minoField.getOuterField();
             ColumnField mergedOuterField = outerField.freeze(sizedBit.getHeight());
             mergedOuterField.merge(minoOuterField);
 
-            return kakutei4(minoField, mergedInnerField, mergedOuterField, sizedBit, allMinos);
+            return createNextTasksAndPutMino(minoField, mergedInnerField, mergedOuterField, sizedBit, allMinos);
         } else {
-            return kakutei4(minoField, innerField, outerField, sizedBit, allMinos);
+            return createNextTasksAndPutMino(minoField, innerField, outerField, sizedBit, allMinos);
         }
     }
 
-    private Stream<Result> kakutei3(ColumnField outerField, MinoFieldMemento nextMemento, SizedBit sizedBit) {
-        long innerFieldBoard = outerField.getBoard(0) >> sizedBit.getMaxBitDigit();
-        PackingTask task = checkAndCreateTask(innerFieldBoard, nextMemento, index + 1);
-        if (!isValidTask(task)) {
-            return Stream.empty();
-        }
-        return task.compute();
-    }
-
-    private Stream<Result> kakutei4(MinoField minoField, ColumnField innerField, ColumnField outerField, SizedBit sizedBit, List<SeparableMino> minos) {
+    // 現在の結果を追加して、次のフィールドの必要な部分を埋めるパターンを探索
+    private Stream<Result> createNextTasksAndPutMino(MinoField minoField, ColumnField innerField, ColumnField outerField, SizedBit sizedBit, List<SeparableMino> minos) {
         // ミノを追加フィールドをそのまま追加
         MinoFieldMemento nextMemento;
         if (minoField != null) {
@@ -169,7 +162,7 @@ class MinoSetupTaskWidthForWidth2 implements PackingTask {
         } else {
             nextMemento = memento.skip();
         }
-        Stream<Result> result = kakutei3(outerField, nextMemento, sizedBit);
+        Stream<Result> result = checkAndCreateTaskToStream(outerField, nextMemento, sizedBit);
 
         StreamColumnFieldConnections connections = new StreamColumnFieldConnections(minos, innerField, sizedBit);
         int height = sizedBit.getHeight();
@@ -197,10 +190,19 @@ class MinoSetupTaskWidthForWidth2 implements PackingTask {
                     List<SeparableMino> allMinos = separableMinos.getMinos();
                     List<SeparableMino> minos2 = allMinos.subList(this.separableMinos.toIndex(currentMino) + 1, allMinos.size());
 
-                    return kakutei4(nextMinoField, mergedInnerField, mergedOuterField, sizedBit, minos2);
+                    return createNextTasksAndPutMino(nextMinoField, mergedInnerField, mergedOuterField, sizedBit, minos2);
                 });
 
         return Stream.concat(result, stream);
+    }
+
+    private Stream<Result> checkAndCreateTaskToStream(ColumnField outerField, MinoFieldMemento nextMemento, SizedBit sizedBit) {
+        long innerFieldBoard = outerField.getBoard(0) >> sizedBit.getMaxBitDigit();
+        PackingTask task = checkAndCreateTask(innerFieldBoard, nextMemento, index + 1);
+        if (!isValidTask(task)) {
+            return Stream.empty();
+        }
+        return task.compute();
     }
 
     private boolean isValidTask(PackingTask task) {

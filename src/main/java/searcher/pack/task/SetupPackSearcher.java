@@ -9,6 +9,8 @@ import searcher.pack.calculator.BasicSolutions;
 import searcher.pack.memento.MinoFieldMemento;
 import searcher.pack.memento.MinoFieldMementoFactory;
 import searcher.pack.memento.SolutionFilter;
+import searcher.pack.task.setup.MinoSetupTaskWidthForWidth2;
+import searcher.pack.task.setup.MinoSetupTaskWidthForWidth3;
 
 import java.util.List;
 import java.util.Optional;
