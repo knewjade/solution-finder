@@ -18,14 +18,12 @@ public class ConnectionsToStreamCallable implements Callable<Stream<RecursiveMin
     private final SolutionsCalculator calculator;
     private final ColumnField initColumnField;
     private final ColumnField outerColumnField;
-    private final Field wallField;
     private final ColumnField limitOuterField;
 
-    public ConnectionsToStreamCallable(SolutionsCalculator calculator, ColumnField initColumnField, ColumnField outerColumnField, Field wallField, ColumnField limitOuterField) {
+    public ConnectionsToStreamCallable(SolutionsCalculator calculator, ColumnField initColumnField, ColumnField outerColumnField, ColumnField limitOuterField) {
         this.calculator = calculator;
         this.initColumnField = initColumnField;
         this.outerColumnField = outerColumnField;
-        this.wallField = wallField;
         this.limitOuterField = limitOuterField;
     }
 
@@ -48,14 +46,14 @@ public class ConnectionsToStreamCallable implements Callable<Stream<RecursiveMin
 
             // 新しいフィールドを基に探索
             ColumnField innerField = connection.getInnerField();
-            return calculate(innerField, freeze, wallField, currentMino);
+            return calculate(innerField, freeze, currentMino);
         }
         return Stream.empty();
     }
 
     // columnField = inner
     // outerColumnField = outer only
-    private Stream<RecursiveMinoField> calculate(ColumnField columnField, ColumnField outerColumnField, Field wallField, SeparableMino currentMino) {
+    private Stream<RecursiveMinoField> calculate(ColumnField columnField, ColumnField outerColumnField, SeparableMino currentMino) {
         // 最初の関数呼び出しで通ることはない
         // 全てが埋まったとき、それまでの手順を解とする
         if (calculator.isFilled(columnField))
@@ -67,7 +65,7 @@ public class ConnectionsToStreamCallable implements Callable<Stream<RecursiveMin
         if (minoFields == null)
             return Stream.empty();
 
-        return parseWhenNext(outerColumnField, wallField, currentMino, minoFields);
+        return parseWhenNext(outerColumnField, currentMino, minoFields);
     }
 
     private Stream<RecursiveMinoField> parseWhenFilled(ColumnField outerColumnField, SeparableMino currentMino) {
@@ -77,7 +75,7 @@ public class ConnectionsToStreamCallable implements Callable<Stream<RecursiveMin
         return Stream.of(result);
     }
 
-    private Stream<RecursiveMinoField> parseWhenNext(ColumnField outerColumnField, Field wallField, SeparableMino currentMino, RecursiveMinoFields minoFields) {
+    private Stream<RecursiveMinoField> parseWhenNext(ColumnField outerColumnField, SeparableMino currentMino, RecursiveMinoFields minoFields) {
         SeparableMinos separableMinos = calculator.getSeparableMinos();
         int index = separableMinos.toIndex(currentMino);
 
@@ -108,11 +106,6 @@ public class ConnectionsToStreamCallable implements Callable<Stream<RecursiveMin
                     // 使用されるブロックを算出
                     ColumnField usingBlock = lastOuterField.freeze(calculator.getHeight());
                     usingBlock.merge(outerColumnField);
-
-                    // これからブロックをおく場所以外を、すでにブロックで埋めたフィールドを作成
-                    Field freeze = wallField.freeze(calculator.getHeight());
-                    Field invertedOuterField = calculator.parseInvertedOuterField(usingBlock);
-                    freeze.merge(invertedOuterField);
 
                     return new RecursiveMinoField(currentMino, minoField, usingBlock, separableMinos);
                 })
