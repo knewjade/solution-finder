@@ -2,6 +2,9 @@ package searcher.pack.calculator;
 
 import common.datastore.OperationWithKey;
 import core.column_field.ColumnField;
+import core.column_field.ColumnFieldFactory;
+import core.column_field.ColumnFieldView;
+import core.column_field.ColumnSmallField;
 import core.field.Field;
 import searcher.pack.SeparableMinos;
 import searcher.pack.connections.ColumnFieldConnection;
@@ -19,12 +22,14 @@ public class ConnectionsToStreamCallable implements Callable<Stream<RecursiveMin
     private final ColumnField initColumnField;
     private final ColumnField outerColumnField;
     private final ColumnField limitOuterField;
+    private final ColumnField needFillField;
 
-    public ConnectionsToStreamCallable(SolutionsCalculator calculator, ColumnField initColumnField, ColumnField outerColumnField, ColumnField limitOuterField) {
+    public ConnectionsToStreamCallable(SolutionsCalculator calculator, ColumnField initColumnField, ColumnField outerColumnField, ColumnField limitOuterField, long needFillBoard) {
         this.calculator = calculator;
         this.initColumnField = initColumnField;
         this.outerColumnField = outerColumnField;
         this.limitOuterField = limitOuterField;
+        this.needFillField = ColumnFieldFactory.createField(needFillBoard);
     }
 
     @Override
@@ -36,8 +41,9 @@ public class ConnectionsToStreamCallable implements Callable<Stream<RecursiveMin
 
     private Stream<? extends RecursiveMinoField> parseConnectionToMinoField(ColumnFieldConnection connection) {
         // outerで重なりがないか確認する
+        ColumnField usingMinoField = connection.getMino().getColumnField();
         ColumnField nextOuterField = connection.getOuterField();
-        if (nextOuterField.canMerge(limitOuterField) && nextOuterField.canMerge(outerColumnField)) {
+        if (!needFillField.canMerge(usingMinoField) && nextOuterField.canMerge(limitOuterField) && nextOuterField.canMerge(outerColumnField)) {
             ColumnField freeze = nextOuterField.freeze(calculator.getHeight());
 
             // フィールドとミノ順を進める

@@ -76,10 +76,10 @@ public class OnDemandBasicSolutions implements BasicSolutions, SolutionsCalculat
 
     private RecursiveMinoFields createRecursiveMinoFields(ColumnField columnField, ColumnField outerColumnField, boolean isMemorized) {
         if (isMemorized) {
-            ConnectionsToListCallable callable = new ConnectionsToListCallable(this, columnField, outerColumnField, limitOuterField);
+            ConnectionsToListCallable callable = new ConnectionsToListCallable(this, columnField, outerColumnField, limitOuterField, needFillBoard);
             return new MemorizedRecursiveMinoFields(callable);
         } else {
-            ConnectionsToStreamCallable callable = new ConnectionsToStreamCallable(this, columnField, outerColumnField, limitOuterField);
+            ConnectionsToStreamCallable callable = new ConnectionsToStreamCallable(this, columnField, outerColumnField, limitOuterField, needFillBoard);
             return new OnDemandRecursiveMinoFields(callable);
         }
     }
