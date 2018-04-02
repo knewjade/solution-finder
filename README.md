@@ -13,6 +13,16 @@ https://github.com/knewjade/solution-finder/releases/tag/v0.510
 もし最新版をダウンロードしたい方は、以下のリンクからお願いします。  
 https://github.com/knewjade/solution-finder/releases/latest
 
+----
+
+# Caution
+
+2018/04/02 21:30  
+v0.510にてsetupコマンドが正常に動かないとの報告をいただいています。  
+現在修正中のため、お手数おかけしますがご利用の際は参考程度に留めてください。
+
+----
+
 
 # 概要
 
