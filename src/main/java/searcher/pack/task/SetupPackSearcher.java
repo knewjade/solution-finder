@@ -1,12 +1,16 @@
 package searcher.pack.task;
 
 import core.column_field.ColumnField;
+import core.field.Field;
 import searcher.pack.InOutPairField;
+import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.calculator.BasicSolutions;
 import searcher.pack.memento.MinoFieldMemento;
 import searcher.pack.memento.MinoFieldMementoFactory;
 import searcher.pack.memento.SolutionFilter;
+import searcher.pack.task.setup.MinoSetupTaskWidthForWidth2;
+import searcher.pack.task.setup.MinoSetupTaskWidthForWidth3;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,8 +31,11 @@ public class SetupPackSearcher implements PackSearcher {
     private final SolutionFilter solutionFilter;
     private final TaskResultHelper taskResultHelper;
     private final List<ColumnField> needFillFields;
+    private final Field needFilledField;
+    private final SeparableMinos separableMinos;
 
-    public SetupPackSearcher(List<InOutPairField> inOutPairFields, List<BasicSolutions> solutions, SizedBit sizedBit, SolutionFilter solutionFilter, TaskResultHelper taskResultHelper, List<ColumnField> needFillFields) {
+    public SetupPackSearcher(List<InOutPairField> inOutPairFields, List<BasicSolutions> solutions, SizedBit sizedBit, SolutionFilter solutionFilter, TaskResultHelper taskResultHelper, List<ColumnField> needFillFields, SeparableMinos separableMinos, Field needFilledField) {
+        this.needFilledField = needFilledField;
         assert inOutPairFields.size() + 1 == solutions.size();
         assert inOutPairFields.size() + 1 == needFillFields.size();
         this.inOutPairFields = inOutPairFields;
@@ -37,6 +44,7 @@ public class SetupPackSearcher implements PackSearcher {
         this.lastIndex = inOutPairFields.size() - 1;
         this.solutionFilter = solutionFilter;
         this.taskResultHelper = taskResultHelper;
+        this.separableMinos = separableMinos;
         this.needFillFields = needFillFields;
     }
 
@@ -68,9 +76,9 @@ public class SetupPackSearcher implements PackSearcher {
     private PackingTask createPackingTask(SizedBit sizedBit, MinoFieldMemento emptyMemento, ColumnField innerField) {
         switch (sizedBit.getWidth()) {
             case 2:
-                return new MinoPackingTaskWidthForWidth2(this, innerField, emptyMemento, 0);
+                return new MinoSetupTaskWidthForWidth2(this, innerField, emptyMemento, 0, separableMinos, needFilledField);
             case 3:
-                return new MinoPackingTaskWidthForWidth3(this, innerField, emptyMemento, 0);
+                return new MinoSetupTaskWidthForWidth3(this, innerField, emptyMemento, 0, separableMinos, needFilledField);
         }
         throw new UnsupportedOperationException("No support: should be width 2 or 3");
     }
@@ -246,5 +254,12 @@ public class SetupPackSearcher implements PackSearcher {
         ColumnField innerField = needFillFields.get(index);
         long needFillBoard = innerField.getBoard(0);
         return (columnField.getBoard(0) & needFillBoard) == needFillBoard;
+    }
+
+    @Override
+    public boolean contains(ColumnField columnField, int index) {
+        ColumnField innerField = needFillFields.get(index);
+        long needFillBoard = innerField.getBoard(0);
+        return (columnField.getBoard(0) & needFillBoard) != 0L;
     }
 }

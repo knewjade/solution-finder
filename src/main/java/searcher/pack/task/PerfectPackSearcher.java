@@ -7,6 +7,8 @@ import searcher.pack.calculator.BasicSolutions;
 import searcher.pack.memento.MinoFieldMemento;
 import searcher.pack.memento.MinoFieldMementoFactory;
 import searcher.pack.memento.SolutionFilter;
+import searcher.pack.task.packing.MinoPackingTaskWidthForWidth2;
+import searcher.pack.task.packing.MinoPackingTaskWidthForWidth3;
 
 import java.util.List;
 import java.util.Optional;
@@ -254,5 +256,10 @@ public class PerfectPackSearcher implements PackSearcher {
     @Override
     public boolean isFilled(ColumnField columnField, int index) {
         return columnField.getBoard(0) == sizedBit.getFillBoard();
+    }
+
+    @Override
+    public boolean contains(ColumnField columnField, int index) {
+        return (columnField.getBoard(0) & sizedBit.getFillBoard()) != 0L;
     }
 }

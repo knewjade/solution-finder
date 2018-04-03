@@ -1,9 +1,6 @@
 import entry.EntryPointMain;
-import output.HTMLBuilder;
 import output.HTMLColumn;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 public class DevMain {
@@ -16,7 +13,22 @@ public class DevMain {
 //        String command = "move -t v115@9gA8IeA8IeA8IeA8SeAgH -p [TIO]p2";
 //        String command = "path -t v115@zgyhGexhHexhGeAtxhC8BeA8BtyhE8AtA8JeAgWBAV?AAAAvhAAAPBAUAAAA -P 2 -p [IJLOS]p5,S --split yes";
 //        String command = "path -t v115@9gB8HeC8GeE8EeF8NeAgWMA0no2ANI98AQPcQB";
-        String command = "setup -p [^T]! --fill i --margin o -t v115@zgcpwhVpyhCe3hAe0hZpJeAgH";
+
+//         String command = "setup -p [^T]! --fill i --margin o -t v115@zgdpwhUpxhCe3hAe1hZpJeAgH";  // 14
+//        String command = "setup -p [^T]! --fill i --margin o -t v115@zgTpwhYpAeUpzhAe3hQpAeQpzhTpAeUpJeAgH";  // 7
+//        String command = "setup -p [^T]! --fill i --margin o -t v115@zgUpwhYpAeTp0hAe3hQpAeQpyhUpAeTpJeAgH";  // 7
+
+//        String command = "setup -p [S]! --fill i --margin o -t v115@8gQpbexhGeQpwhKeAgH";  // -> S only = 1
+//        String command = "setup -p [I]! --fill i --margin o -t v115@8gQpIeQpIeQpIeQpIeQpJeAgH";  // -> Last I only = 1
+//        String command = "setup -p [I]! --fill i --margin o -t v115@8gQpIeQpIeQpIeQpIeQpJeAgH";  // -> all margin = error
+//        String command = "setup -p [I]! --fill i --margin o -t v115@8gQpIeQpIeQpIeQpIewhJeAgH";  // -> Last I only h5 = 1
+//        String command = "setup -p [I]! --fill i --margin o -t v115@GhQpIeQpIeQpIewhJeAgH";  // -> Last I only h4 = 1
+//        String command = "setup -p [I]! --fill i --margin o -t v115@FhQpIeQpIeQpIewhKeAgH";  // -> x8 I only h4 = 1
+        String command = "setup -p [I]! --fill i --margin o -t v115@6gQpIeQpIeQpIeQpIewhLeAgH";  // -> x7 I only h5 = 1
+
+//        String command = "setup -p [^SZT]! --fill i --margin o -t v115@zgTpwhQpDeTpAeQpDezhAewhDeyhQpAeQpwhCeTpAe?RpMeAgH";
+//        String command = "setup -p [^SZT]! --fill i --margin o -t v115@zgTpwhQpDeTpAeQpDezhAewhDeyhQpAexhCeTpAeRp?MeAgH";
+
         int returnCode = EntryPointMain.main(command.split(" "));
         System.exit(returnCode);
 

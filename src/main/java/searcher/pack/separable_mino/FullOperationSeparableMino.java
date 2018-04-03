@@ -12,7 +12,7 @@ import searcher.pack.separable_mino.mask.MinoMask;
 import searcher.pack.separable_mino.mask.MinoMaskFactory;
 
 public class FullOperationSeparableMino implements SeparableMino {
-    public static SeparableMino create(FullOperationWithKey operationWithKey, int upperY, int fieldHeight) {
+    public static FullOperationSeparableMino create(FullOperationWithKey operationWithKey, int upperY, int fieldHeight) {
         assert upperY <= 10 : upperY;
 
         Mino mino = operationWithKey.getMino();
@@ -24,30 +24,31 @@ public class FullOperationSeparableMino implements SeparableMino {
         Field mask = minoMask.getMinoMask(x);
 
         int lowerY = operationWithKey.getY() + operationWithKey.getMino().getMinY();
-        ColumnSmallField columnField = ColumnFieldFactory.createField();
+        ColumnSmallField columnSmallField = ColumnFieldFactory.createField();
         for (int ny = lowerY; ny <= upperY; ny++) {
             for (int nx = x + mino.getMinX(); nx <= x + mino.getMaxX(); nx++) {
                 if (!mask.isEmpty(nx, ny))
-                    columnField.setBlock(nx, ny, fieldHeight);
+                    columnSmallField.setBlock(nx, ny, fieldHeight);
             }
         }
 
         Field field = FieldFactory.createField(fieldHeight);
         field.put(operationWithKey.getMino(), operationWithKey.getX(), operationWithKey.getY());
         field.insertWhiteLineWithKey(operationWithKey.getNeedDeletedKey());
-        return new FullOperationSeparableMino(operationWithKey, columnField, field);
+
+        return new FullOperationSeparableMino(operationWithKey, columnSmallField, field);
     }
 
     private final FullOperationWithKey operation;
     private final ColumnField columnField;
-    private final Field field;
     private final int lowerY;
+    private final Field field;
 
     private FullOperationSeparableMino(FullOperationWithKey operationWithKey, ColumnField columnField, Field field) {
         this.operation = operationWithKey;
         this.columnField = columnField;
-        this.field = field;
         this.lowerY = operationWithKey.getY() + operationWithKey.getMino().getMinY();
+        this.field = field;
         assert 0 <= lowerY : lowerY;
     }
 

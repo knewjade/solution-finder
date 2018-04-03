@@ -45,6 +45,10 @@ public class PieceCounter {
         this.counter = counter + sum;
     }
 
+    public PieceCounter addAndReturnNew(Stream<Piece> pieces) {
+        return new PieceCounter(counter, pieces);
+    }
+
     public PieceCounter addAndReturnNew(List<Piece> pieces) {
         return new PieceCounter(counter, pieces);
     }
