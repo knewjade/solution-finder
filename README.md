@@ -13,6 +13,8 @@ https://github.com/knewjade/solution-finder/releases/tag/v0.511
 もし最新版をダウンロードしたい方は、以下のリンクからお願いします。  
 https://github.com/knewjade/solution-finder/releases/latest
 
+----
+
 
 # 概要
 
@@ -56,7 +58,7 @@ http://sfinder.s3-website-ap-northeast-1.amazonaws.com/index.html
 
 # ライセンス
 
-Copyright 2017 newjade
+Copyright 2017-2018 newjade
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
