@@ -12,15 +12,14 @@ import common.tetfu.field.ColoredFieldFactory;
 import concurrent.LockedReachableThreadLocal;
 import core.column_field.ColumnField;
 import core.field.Field;
-import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import core.mino.Piece;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
 import exceptions.FinderParseException;
 import lib.Randoms;
 import module.LongTest;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
@@ -231,6 +230,33 @@ class TetfuTest {
         assertThat(encode).isEqualTo("bhD8hlD8JeAgHbhD8h0D8JeAAA");
     }
 
+    @Test
+    void encode8() throws Exception {
+        List<TetfuElement> elements = Collections.singletonList(
+                new TetfuElement(ColorType.I, Rotate.Left, 0, 1)
+        );
+
+        MinoFactory factory = new MinoFactory();
+
+        ColorConverter converter = new ColorConverter();
+        Tetfu tetfu = new Tetfu(factory, converter);
+        String encode = tetfu.encode(elements);
+        assertThat(encode).isEqualTo("vhAZEJ");
+    }
+
+    @Test
+    void encode9() throws Exception {
+        List<TetfuElement> elements = Collections.singletonList(
+                new TetfuElement(ColorType.I, Rotate.Right, 0, 2)
+        );
+
+        MinoFactory factory = new MinoFactory();
+
+        ColorConverter converter = new ColorConverter();
+        Tetfu tetfu = new Tetfu(factory, converter);
+        String encode = tetfu.encode(elements);
+        assertThat(encode).isEqualTo("vhAJEJ");
+    }
 
     @Test
     void encodeQuiz1() throws Exception {
@@ -442,6 +468,40 @@ class TetfuTest {
         assertField(ColoredFieldFactory.createColoredField(
                 "XXXXJJXXXX"
         ), pages.get(1).getField());
+    }
+
+    @Test
+    void decode9() throws Exception {
+        // I-Leftを接着するパターン
+        String value = "vhAZEJ";
+
+        MinoFactory factory = new MinoFactory();
+        ColorConverter converter = new ColorConverter();
+        Tetfu tetfu = new Tetfu(factory, converter);
+        List<TetfuPage> pages = tetfu.decode(value);
+
+        assertThat(pages.get(0))
+                .returns(ColorType.I, TetfuPage::getColorType)
+                .returns(Rotate.Left, TetfuPage::getRotate)
+                .returns(0, TetfuPage::getX)
+                .returns(1, TetfuPage::getY);
+    }
+
+    @Test
+    void decode10() throws Exception {
+        // I-Rightを接着するパターン
+        String value = "vhAJEJ";
+
+        MinoFactory factory = new MinoFactory();
+        ColorConverter converter = new ColorConverter();
+        Tetfu tetfu = new Tetfu(factory, converter);
+        List<TetfuPage> pages = tetfu.decode(value);
+
+        assertThat(pages.get(0))
+                .returns(ColorType.I, TetfuPage::getColorType)
+                .returns(Rotate.Right, TetfuPage::getRotate)
+                .returns(0, TetfuPage::getX)
+                .returns(2, TetfuPage::getY);
     }
 
     @Test
