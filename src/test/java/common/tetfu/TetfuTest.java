@@ -135,7 +135,7 @@ class TetfuTest {
         List<TetfuElement> elements = Arrays.asList(
                 new TetfuElement(ColorType.L, Rotate.Spawn, 4, 0),
                 new TetfuElement(ColorType.J, Rotate.Spawn, 8, 0),
-                new TetfuElement(ColorType.I, Rotate.Left, 6, 1),
+                new TetfuElement(ColorType.I, Rotate.Right, 6, 2),
                 new TetfuElement(ColorType.S, Rotate.Spawn, 4, 1),
                 new TetfuElement(ColorType.Z, Rotate.Spawn, 8, 1),
                 new TetfuElement(ColorType.T, Rotate.Spawn, 4, 3),
