@@ -20,7 +20,7 @@ public class ActionDecoder {
     public ActionDecoder(int value) {
         colorType = parseBlock(value % 8);
         value /= 8;
-        rotate = parseRotate(value % 4, colorType);
+        rotate = parseRotate(value % 4);
         value /= 4;
         coordinate = parseCoordinate(value % TETFU_FIELD_BLOCKS, colorType, rotate);
         value /= TETFU_FIELD_BLOCKS;
@@ -44,16 +44,16 @@ public class ActionDecoder {
         return TetfuTable.parseColorType(value);
     }
 
-    private Rotate parseRotate(int value, ColorType type) {
+    private Rotate parseRotate(int value) {
         switch (value) {
             case 0:
                 return Rotate.Reverse;
             case 1:
-                return type != ColorType.I ? Rotate.Right : Rotate.Left;
+                return Rotate.Right;
             case 2:
                 return Rotate.Spawn;
             case 3:
-                return type != ColorType.I ? Rotate.Left : Rotate.Right;
+                return Rotate.Left;
         }
         throw new IllegalStateException("No reachable");
     }

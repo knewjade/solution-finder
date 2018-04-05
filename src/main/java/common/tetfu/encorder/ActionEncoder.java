@@ -88,11 +88,11 @@ public class ActionEncoder extends Encoder {
             case Reverse:
                 return 0;
             case Right:
-                return type != ColorType.I ? 1 : 3;
+                return 1;
             case Spawn:
                 return 2;
             case Left:
-                return type != ColorType.I ? 3 : 1;
+                return 3;
         }
 
         throw new IllegalStateException("No reachable");

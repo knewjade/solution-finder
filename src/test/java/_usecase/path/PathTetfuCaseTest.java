@@ -906,7 +906,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // ライン消去なし
         assertThat(uniqueHTML.noDeletedLineFumens())
                 .hasSize(3)
-                .contains("9gC8GeB8HeB8GeF8BeC8JeXIYZAFLDmClcJSAVDEHB?EooRBToAVBJHstCqAAAAvhEJnBTlBCjB/rBGrB")
+                .contains("9gC8GeB8HeB8GeF8BeC8JeXIYZAFLDmClcJSAVDEHB?EooRBToAVBJHstCqAAAAvhEZnBTlBCjB/rBGrB")
                 .contains("9gC8GeB8HeB8GeF8BeC8JezLYZAFLDmClcJSAVDEHB?EooRBPoAVBzintCpAAAAvhEXtByvBWxB3qBxxB")
                 .contains("9gC8GeB8HeB8GeF8BeC8JeeMYZAFLDmClcJSAVDEHB?EooRBKoAVBpyytCzAAAAvhExvBqsBTtB3rB3qB");
 
@@ -925,7 +925,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens())
                 .hasSize(3)
-                .contains("9gC8GeB8HeB8GeF8BeC8JeXIYZAFLDmClcJSAVDEHB?EooRBToAVBJHstCqAAAAvhEJnBTlBCjB/rBGrB")
+                .contains("9gC8GeB8HeB8GeF8BeC8JeXIYZAFLDmClcJSAVDEHB?EooRBToAVBJHstCqAAAAvhEZnBTlBCjB/rBGrB")
                 .contains("9gC8GeB8HeB8GeF8BeC8JezLYZAFLDmClcJSAVDEHB?EooRBPoAVBzintCpAAAAvhEXtByvBWxB3qBxxB")
                 .contains("9gC8GeB8HeB8GeF8BeC8JeeMYZAFLDmClcJSAVDEHB?EooRBKoAVBpyytCzAAAAvhExvBqsBTtB3rB3qB");
 
