@@ -14,6 +14,7 @@ import searcher.pack.mino_fields.RecursiveMinoFields;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
 /**
@@ -25,7 +26,7 @@ public class BasicSolutionsCalculator implements SolutionsCalculator {
     private final SeparableMinos separableMinos;
     private final ColumnSmallField limitOuterField;
     private final long needFillBoard;
-    private final HashMap<ColumnField, RecursiveMinoFields> resultsMap = new HashMap<>();
+    private final ConcurrentHashMap<ColumnField, RecursiveMinoFields> resultsMap = new ConcurrentHashMap<>();
     private final Predicate<ColumnField> memorizedPredicate;
 
     public BasicSolutionsCalculator(SeparableMinos separableMinos, SizedBit sizedBit) {

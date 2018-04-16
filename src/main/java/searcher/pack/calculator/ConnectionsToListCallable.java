@@ -5,7 +5,9 @@ import searcher.pack.mino_field.RecursiveMinoField;
 
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ConnectionsToListCallable implements Callable<List<RecursiveMinoField>> {
     private final ConnectionsToStreamCallable callable;
@@ -16,6 +18,10 @@ public class ConnectionsToListCallable implements Callable<List<RecursiveMinoFie
 
     @Override
     public List<RecursiveMinoField> call() {
-        return callable.call().collect(Collectors.toList());
+        Stream<RecursiveMinoField> call = callable.call();
+
+        List<RecursiveMinoField> list = call.collect(Collectors.toList());
+
+        return list;
     }
 }
