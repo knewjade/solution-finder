@@ -1,7 +1,7 @@
 package common.comparator;
 
 import common.order.StackOrder;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import common.NotImplementedException;
 
 import java.util.Comparator;
 

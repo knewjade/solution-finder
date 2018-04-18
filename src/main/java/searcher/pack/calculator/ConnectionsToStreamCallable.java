@@ -2,6 +2,7 @@ package searcher.pack.calculator;
 
 import common.datastore.OperationWithKey;
 import core.column_field.ColumnField;
+import core.column_field.ColumnFieldView;
 import searcher.pack.SeparableMinos;
 import searcher.pack.connections.ColumnFieldConnection;
 import searcher.pack.connections.ColumnFieldConnections;
@@ -11,6 +12,7 @@ import searcher.pack.separable_mino.SeparableMino;
 
 import java.util.Objects;
 import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 public class ConnectionsToStreamCallable implements Callable<Stream<RecursiveMinoField>> {
@@ -29,6 +31,7 @@ public class ConnectionsToStreamCallable implements Callable<Stream<RecursiveMin
     @Override
     public Stream<RecursiveMinoField> call() {
         ColumnFieldConnections connections = calculator.getConnections(this.initColumnField);
+
         return connections.getConnectionStream().parallel()
                 .flatMap(this::parseConnectionToMinoField);
     }
@@ -83,8 +86,9 @@ public class ConnectionsToStreamCallable implements Callable<Stream<RecursiveMin
                 .map(minoField -> {
                     // outerで、最終的に使用されるブロック と すでに使っているブロックが重ならないことを確認
                     ColumnField lastOuterField = minoField.getOuterField();
-                    if (!lastOuterField.canMerge(outerColumnField))
+                    if (!lastOuterField.canMerge(outerColumnField)) {
                         return null;
+                    }
 
                     OperationWithKey currentOperations = currentMino.toMinoOperationWithKey();
                     long currentDeleteKey = currentOperations.getNeedDeletedKey();
@@ -99,8 +103,9 @@ public class ConnectionsToStreamCallable implements Callable<Stream<RecursiveMin
                             });
 
                     // 矛盾があるときはスキップ
-                    if (isContradiction)
+                    if (isContradiction) {
                         return null;
+                    }
 
                     // 使用されるブロックを算出
                     ColumnField usingBlock = lastOuterField.freeze(calculator.getHeight());

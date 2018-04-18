@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 class UtilFigTetfuCaseTest extends UtilFigUseCaseBaseTest {
     private static final String LINE_SEPARATOR = System.lineSeparator();
@@ -175,10 +176,26 @@ class UtilFigTetfuCaseTest extends UtilFigUseCaseBaseTest {
                 .collect(Collectors.toList());
 
         // Assertion
-        List<ByteSource> expects = FigureFileHelper.loadResourcesByteSource(UtilFigResources.PngCase1);
-        assertThat(actuals).hasSameSizeAs(expects);
-        for (int index = 0; index < actuals.size(); index++)
-            assertThat(actuals.get(index).contentEquals(expects.get(index))).isTrue();
+        // Versionごとに出力される画像が変わる
+        String version = System.getProperty("java.specification.version");
+        switch (version) {
+            case "1.8": {
+                List<ByteSource> expects = FigureFileHelper.loadResourcesByteSource(UtilFigResources.PngCase1Java8);
+                assertThat(actuals).hasSameSizeAs(expects);
+                for (int index = 0; index < actuals.size(); index++)
+                    assertThat(actuals.get(index).contentEquals(expects.get(index))).isTrue();
+                break;
+            }
+            case "9": {
+                List<ByteSource> expects = FigureFileHelper.loadResourcesByteSource(UtilFigResources.PngCase1Java9);
+                assertThat(actuals).hasSameSizeAs(expects);
+                for (int index = 0; index < actuals.size(); index++)
+                    assertThat(actuals.get(index).contentEquals(expects.get(index))).isTrue();
+                break;
+            }
+            default:
+                fail("Test is not support this version: " + version);
+        }
 
         // 出力されたPNGを削除
         // noinspection ResultOfMethodCallIgnored
@@ -215,10 +232,26 @@ class UtilFigTetfuCaseTest extends UtilFigUseCaseBaseTest {
                 .collect(Collectors.toList());
 
         // Assertion
-        List<ByteSource> expects = FigureFileHelper.loadResourcesByteSource(UtilFigResources.PngCase2);
-        assertThat(actuals).hasSameSizeAs(expects);
-        for (int index = 0; index < actuals.size(); index++)
-            assertThat(actuals.get(index).contentEquals(expects.get(index))).isTrue();
+        // Versionごとに出力される画像が変わる
+        String version = System.getProperty("java.specification.version");
+        switch (version) {
+            case "1.8": {
+                List<ByteSource> expects = FigureFileHelper.loadResourcesByteSource(UtilFigResources.PngCase2Java8);
+                assertThat(actuals).hasSameSizeAs(expects);
+                for (int index = 0; index < actuals.size(); index++)
+                    assertThat(actuals.get(index).contentEquals(expects.get(index))).isTrue();
+                break;
+            }
+            case "9": {
+                List<ByteSource> expects = FigureFileHelper.loadResourcesByteSource(UtilFigResources.PngCase2Java9);
+                assertThat(actuals).hasSameSizeAs(expects);
+                for (int index = 0; index < actuals.size(); index++)
+                    assertThat(actuals.get(index).contentEquals(expects.get(index))).isTrue();
+                break;
+            }
+            default:
+                fail("Test is not support this version: " + version);
+        }
 
         // 出力されたPNGを削除
         // noinspection ResultOfMethodCallIgnored

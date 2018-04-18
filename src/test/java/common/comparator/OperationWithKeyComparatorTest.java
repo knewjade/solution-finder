@@ -25,7 +25,7 @@ class OperationWithKeyComparatorTest {
         Mino newMino = new MinoFactory().create(Piece.I, Rotate.Spawn);
         OperationWithKey operationWithKey2 = createNewOperationWithKey(newMino, x, y, deleteKey, usingKey);
 
-        OperationWithKeyComparator comparator = new OperationWithKeyComparator();
+        OperationWithKeyComparator<OperationWithKey> comparator = new OperationWithKeyComparator<>();
         assertThat(comparator.compare(operationWithKey1, operationWithKey2))
                 .as(operationWithKey1.toString())
                 .isEqualTo(0);
@@ -51,7 +51,7 @@ class OperationWithKeyComparatorTest {
         OperationWithKey operationWithKey2 = createNewOperationWithKey(newMino, newX, y, deleteKey, usingKey);
 
         // assert is not 0 & sign reversed
-        OperationWithKeyComparator comparator = new OperationWithKeyComparator();
+        OperationWithKeyComparator<OperationWithKey> comparator = new OperationWithKeyComparator<>();
         assertThat(comparator.compare(operationWithKey1, operationWithKey2) * comparator.compare(operationWithKey2, operationWithKey1))
                 .as(operationWithKey2.toString())
                 .isLessThan(0);
@@ -74,7 +74,7 @@ class OperationWithKeyComparatorTest {
         OperationWithKey operationWithKey2 = createNewOperationWithKey(newMino, x, newY, deleteKey, usingKey);
 
         // assert is not 0 & sign reversed
-        OperationWithKeyComparator comparator = new OperationWithKeyComparator();
+        OperationWithKeyComparator<OperationWithKey> comparator = new OperationWithKeyComparator<>();
         assertThat(comparator.compare(operationWithKey1, operationWithKey2) * comparator.compare(operationWithKey2, operationWithKey1))
                 .as(operationWithKey2.toString())
                 .isLessThan(0);
@@ -98,7 +98,7 @@ class OperationWithKeyComparatorTest {
         OperationWithKey operationWithKey2 = createNewOperationWithKey(newMino, x, y, choose, usingKey);
 
         // assert is not 0 & sign reversed
-        OperationWithKeyComparator comparator = new OperationWithKeyComparator();
+        OperationWithKeyComparator<OperationWithKey> comparator = new OperationWithKeyComparator<>();
         assertThat(comparator.compare(operationWithKey1, operationWithKey2) * comparator.compare(operationWithKey2, operationWithKey1))
                 .as(operationWithKey2.toString())
                 .isLessThan(0);

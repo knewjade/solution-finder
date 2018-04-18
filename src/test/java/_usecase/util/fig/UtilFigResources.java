@@ -11,8 +11,10 @@ public enum UtilFigResources {
     TetfuCase8("figs/tetfu_case8.gif"),
     FileCase1("figs/file_case1.gif"),
     FileCase2("figs/file_case2.gif"),
-    PngCase1("figs/png_case1/"),
-    PngCase2("figs/png_case2/"),
+    PngCase1Java8("figs/png_case1_java8/"),
+    PngCase1Java9("figs/png_case1_java9/"),
+    PngCase2Java8("figs/png_case2_java8/"),
+    PngCase2Java9("figs/png_case2_java9/"),
     ;
 
     private final String resourceName;

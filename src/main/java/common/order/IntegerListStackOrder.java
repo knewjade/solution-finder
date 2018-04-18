@@ -1,6 +1,6 @@
 package common.order;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import common.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.Collections;

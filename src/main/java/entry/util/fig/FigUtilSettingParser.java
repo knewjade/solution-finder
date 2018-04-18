@@ -1,5 +1,6 @@
 package entry.util.fig;
 
+import common.UnsupportedDataTypeException;
 import common.tetfu.Tetfu;
 import common.tetfu.TetfuPage;
 import common.tetfu.common.ColorConverter;
@@ -10,7 +11,6 @@ import exceptions.FinderParseException;
 import org.apache.commons.cli.*;
 import util.fig.FrameType;
 
-import javax.activation.UnsupportedDataTypeException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;

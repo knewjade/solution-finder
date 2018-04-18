@@ -1,19 +1,18 @@
 package searcher.pack.mino_fields;
 
+import searcher.pack.calculator.ConnectionsToListCallable;
 import searcher.pack.mino_field.MinoField;
 import searcher.pack.mino_field.RecursiveMinoField;
-import searcher.pack.calculator.ConnectionsToListCallable;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
 import java.util.stream.Stream;
 
 public class MemorizedRecursiveMinoFields implements RecursiveMinoFields {
-    private final FutureTask<List<RecursiveMinoField>> task;
+    private final ConnectionsToListCallable callable;
+    private List<RecursiveMinoField> result;
 
     public MemorizedRecursiveMinoFields(ConnectionsToListCallable callable) {
-        this.task = new FutureTask<>(callable);
+        this.callable = callable;
     }
 
     @Override
@@ -23,13 +22,9 @@ public class MemorizedRecursiveMinoFields implements RecursiveMinoFields {
 
     @Override
     public Stream<RecursiveMinoField> recursiveStream() {
-        task.run();
-        try {
-            List<RecursiveMinoField> recursiveMinoFields = task.get();
-            return recursiveMinoFields.stream();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            throw new IllegalStateException("internal error: task cannot execute");
+        if (result == null) {
+            result = callable.call();
         }
+        return result.stream();
     }
 }
