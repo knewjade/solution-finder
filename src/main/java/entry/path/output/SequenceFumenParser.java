@@ -11,8 +11,8 @@ import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
 import core.field.Field;
-import core.mino.Piece;
 import core.mino.MinoFactory;
+import core.mino.Piece;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +28,9 @@ public class SequenceFumenParser implements FumenParser {
     }
 
     @Override
-    public String parse(List<MinoOperationWithKey> operations, Field field, int maxClearLine) {
-        Operations operations2 = OperationTransform.parseToOperations(field, operations, maxClearLine);
-        List<? extends Operation> operationsList = operations2.getOperations();
+    public String parse(List<MinoOperationWithKey> operationsWithKey, Field field, int maxClearLine) {
+        Operations operations = OperationTransform.parseToOperations(field, operationsWithKey, maxClearLine);
+        List<? extends Operation> operationsList = operations.getOperations();
 
         // ブロック順に変換
         List<Piece> pieceList = operationsList.stream()
