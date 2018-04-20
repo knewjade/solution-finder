@@ -2,7 +2,7 @@ package _usecase.path;
 
 import helper.EasyPool;
 import _usecase.ConfigFileHelper;
-import _usecase.path.out.OutputFileHelper;
+import _usecase.path.files.OutputFileHelper;
 import common.tetfu.Tetfu;
 import common.tetfu.common.ColorConverter;
 import common.tetfu.field.ColoredField;

@@ -1,8 +1,8 @@
 package _usecase.path;
 
 import _usecase.*;
-import _usecase.path.out.OutputFileHelper;
-import _usecase.path.out.PathHTML;
+import _usecase.path.files.OutputFileHelper;
+import _usecase.path.files.PathHTML;
 import core.field.Field;
 import core.field.FieldFactory;
 import entry.EntryPointMain;

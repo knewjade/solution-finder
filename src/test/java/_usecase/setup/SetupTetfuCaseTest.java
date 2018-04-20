@@ -2,8 +2,8 @@ package _usecase.setup;
 
 import _usecase.Log;
 import _usecase.RunnerHelper;
-import _usecase.setup.out.OutputFileHelper;
-import _usecase.setup.out.SetupHTML;
+import _usecase.setup.files.OutputFileHelper;
+import _usecase.setup.files.SetupHTML;
 import entry.EntryPointMain;
 import module.LongTest;
 import org.junit.jupiter.api.BeforeEach;
