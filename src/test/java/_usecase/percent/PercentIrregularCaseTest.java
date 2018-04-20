@@ -2,7 +2,7 @@ package _usecase.percent;
 
 import _usecase.ConfigFileHelper;
 import _usecase.Log;
-import _usecase.OutputFileHelper;
+import _usecase.path.out.OutputFileHelper;
 import _usecase.RunnerHelper;
 import core.field.Field;
 import core.field.FieldFactory;

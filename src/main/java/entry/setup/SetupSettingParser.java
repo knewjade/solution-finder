@@ -115,6 +115,10 @@ public class SetupSettingParser {
             }
         }
 
+        // ミノの組み合わせ
+        Optional<Boolean> combination = wrapper.getBoolOption("combination");
+        combination.ifPresent(settings::setCombination);
+
         // ログファイルの設定
         Optional<String> logFilePath = wrapper.getStringOption("log-path");
         logFilePath.ifPresent(settings::setLogFilePath);
@@ -292,6 +296,16 @@ public class SetupSettingParser {
                 .desc("Max height line")
                 .build();
         options.addOption(maxHeightOption);
+
+        Option combinationOption = Option.builder("co")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("enable/disable")
+                .longOpt("combination")
+                .desc("If yes, `patterns` is interpreted as combinations of piece")
+                .build();
+        options.addOption(combinationOption);
 
 //        Option reservedOption = Option.builder("r")
 //                .optionalArg(true)

@@ -1,10 +1,11 @@
 package _usecase.path;
 
 import _usecase.*;
+import _usecase.path.out.OutputFileHelper;
+import _usecase.path.out.PathHTML;
 import core.field.FieldFactory;
 import entry.EntryPointMain;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -933,5 +934,55 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(minimalHTML.deletedLineFumens())
                 .contains("9gC8GeB8HeB8GeF8BeC8JezLYZAFLDmClcJSAVDEHB?EooRBPoAVBp/rtCzAAAAvhExsBmqBCnBXtB3qB")
                 .contains("9gC8GeB8HeB8GeF8BeC8JeyLYZAFLDmClcJSAVDEHB?EooRBMoAVBKu7tCvAAAAvhEWoBxlBXoB3lBzrB");
+    }
+
+    @Test
+    void splitWithFilledLine() throws Exception {
+        // 初めからラインが揃っている行がある
+        String tetfu = "v115@wghlwhHeglwhEeA8BtglwhA8DeB8BtwhT8JeAgH";
+
+        String command = String.format("path -s yes -c 6 -p [^IL]!,*p2 -t %s", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+        assertThat(log.getReturnCode()).isEqualTo(0);
+
+        assertThat(log.getOutput())
+                .contains("[^IL]!,*p2")
+                .contains(Messages.uniqueCount(215))
+                .contains(Messages.minimalCount(101))
+                .contains(Messages.useHold());
+
+        // unique
+        PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
+        assertThat(uniqueHTML.getHtml())
+                .doesNotContain("TJISZIO", "LJOTST")
+                .contains("O-Spawn S-Left T-Spawn Z-Spawn L-Left I-Spawn")
+                .contains("TJOSSO");
+
+        // ライン消去なし
+        assertThat(uniqueHTML.noDeletedLineFumens())
+                .hasSize(43)
+                .contains("wgC8HeB8EeF8DeY8JeTAYZAFLDmClcJSAVDEHBEooR?BPoAVBKtzFD0AAAAvhEOrB/pBUsB0pBlqB");
+
+        // ライン消去あり
+        assertThat(uniqueHTML.deletedLineFumens())
+                .hasSize(172)
+                .contains("wgC8HeB8EeF8DeY8JeTAYZAFLDmClcJSAVDEHBEooR?BPoAVBqHUxCqAAAAvhEOrBUiB3gBNkBupB");
+
+        // minimal
+        PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
+        assertThat(minimalHTML.getHtml())
+                .doesNotContain("TJISZIO", "LJOTST")
+                .contains("O-Spawn S-Left T-Spawn Z-Spawn L-Left I-Spawn")
+                .contains("TJOSSO");
+
+        // ライン消去なし
+        assertThat(minimalHTML.noDeletedLineFumens())
+                .hasSize(27)
+                .contains("wgC8HeB8EeF8DeY8JeTAYZAFLDmClcJSAVDEHBEooR?BPoAVBKtzFD0AAAAvhEOrB/pBUsB0pBlqB");
+
+        // ライン消去あり
+        assertThat(minimalHTML.deletedLineFumens())
+                .hasSize(74)
+                .contains("wgC8HeB8EeF8DeY8JeTAYZAFLDmClcJSAVDEHBEooR?BPoAVBqHUxCqAAAAvhEOrBUiB3gBNkBupB");
     }
 }

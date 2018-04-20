@@ -2,7 +2,7 @@ package _usecase.path;
 
 import _usecase.ConfigFileHelper;
 import _usecase.Log;
-import _usecase.OutputFileHelper;
+import _usecase.path.out.OutputFileHelper;
 import _usecase.RunnerHelper;
 import entry.EntryPointMain;
 import org.junit.jupiter.api.BeforeEach;

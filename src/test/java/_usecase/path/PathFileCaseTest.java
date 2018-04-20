@@ -1,6 +1,8 @@
 package _usecase.path;
 
 import _usecase.*;
+import _usecase.path.out.OutputFileHelper;
+import _usecase.path.out.PathHTML;
 import core.field.Field;
 import core.field.FieldFactory;
 import entry.EntryPointMain;
@@ -10,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
