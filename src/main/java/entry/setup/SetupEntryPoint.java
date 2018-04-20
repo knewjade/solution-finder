@@ -7,12 +7,11 @@ import common.pattern.PatternGenerator;
 import common.tetfu.common.ColorConverter;
 import core.FinderConstant;
 import core.column_field.ColumnField;
-import core.column_field.ColumnFieldView;
 import core.field.Field;
-import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import core.mino.Piece;
 import entry.DropType;
 import entry.EntryPoint;
 import entry.Verify;
@@ -88,7 +87,7 @@ public class SetupEntryPoint implements EntryPoint {
         int maxHeight = settings.getMaxHeight();
         Verify.maxClearLineUnder10(maxHeight);
 
-        // Setup reserved blocks
+        // Show input field
         BlockField reservedBlocks = settings.getReservedBlock();
         if (settings.isReserved()) {
             Verify.reservedBlocks(reservedBlocks);

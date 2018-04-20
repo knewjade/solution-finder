@@ -53,9 +53,8 @@ public class OperationTransform {
         ArrayList<Operation> operations = new ArrayList<>();
 
         Field field = fieldOrigin.freeze(height);
+        long deleteKey = 0L;
         for (MinoOperationWithKey operationWithKey : operationWithKeys) {
-            long deleteKey = field.clearLineReturnKey();
-
             // すでに下のラインが消えているときは、その分スライドさせる
             int originalY = operationWithKey.getY();
             int deletedLines = Long.bitCount(KeyOperators.getMaskForKeyBelowY(originalY) & deleteKey);
@@ -68,6 +67,8 @@ public class OperationTransform {
 
             field.put(mino, x, y);
             field.insertBlackLineWithKey(deleteKey);
+
+            deleteKey = field.clearLineReturnKey();
         }
 
         return new Operations(operations);
