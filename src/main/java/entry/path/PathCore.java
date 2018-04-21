@@ -7,10 +7,7 @@ import common.datastore.MinoOperationWithKey;
 import common.datastore.Operation;
 import common.datastore.OperationWithKey;
 import common.datastore.blocks.LongPieces;
-import common.datastore.blocks.Pieces;
-import common.order.OrderLookup;
 import common.order.ReverseOrderLookUp;
-import common.order.StackOrder;
 import common.pattern.LoadedPatternGenerator;
 import common.pattern.PatternGenerator;
 import core.field.Field;
@@ -32,84 +29,19 @@ class PathCore {
     private final PerfectPackSearcher searcher;
     private final FumenParser fumenParser;
     private final ThreadLocal<BuildUpStream> buildUpStreamThreadLocal;
-    private final boolean isHoldReduced;
     private final boolean isUsingHold;
     private final int maxDepth;
-    private final HashSet<LongPieces> validPieces;
-    private final HashSet<LongPieces> allPieces;
+    private final ValidPiecesPool piecesPool;
 
     PathCore(List<String> patterns, PerfectPackSearcher searcher, int maxDepth, boolean isUsingHold, FumenParser fumenParser, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal) throws SyntaxException {
         this.searcher = searcher;
         this.fumenParser = fumenParser;
         this.buildUpStreamThreadLocal = buildUpStreamThreadLocal;
-        PatternGenerator blocksGenerator = new LoadedPatternGenerator(patterns);
-        this.isHoldReduced = isHoldReducedPieces(blocksGenerator, maxDepth, isUsingHold);
         this.isUsingHold = isUsingHold;
         this.maxDepth = maxDepth;
-        this.allPieces = getAllPieces(blocksGenerator, maxDepth, isUsingHold);
-        this.validPieces = getValidPieces(blocksGenerator, allPieces, maxDepth, isHoldReduced);
-    }
 
-    private boolean isHoldReducedPieces(PatternGenerator blocksGenerator, int maxDepth, boolean isUsingHold) {
-        return isUsingHold && maxDepth < blocksGenerator.getDepth();
-    }
-
-    private HashSet<LongPieces> getAllPieces(PatternGenerator blocksGenerator, int maxDepth, boolean isUsingHold) {
-        if (isUsingHold) {
-            // ホールドあり
-            if (maxDepth < blocksGenerator.getDepth()) {
-                // Reduceあり  // isHoldReduceの対象
-                return toReducedHashSetWithHold(blocksGenerator.blocksStream(), maxDepth + 1);
-            } else {
-                // 場所の交換のみ
-                return toReducedHashSetWithHold(blocksGenerator.blocksStream(), maxDepth);
-            }
-        } else {
-            // ホールドなし
-            if (maxDepth < blocksGenerator.getDepth()) {
-                // Reduceあり
-                return toReducedHashSetWithoutHold(blocksGenerator.blocksStream(), maxDepth);
-            } else {
-                // そのまま
-                return toDirectHashSet(blocksGenerator.blocksStream());
-            }
-        }
-    }
-
-    private HashSet<LongPieces> getValidPieces(PatternGenerator blocksGenerator, HashSet<LongPieces> allPieces, int maxDepth, boolean isHoldReduced) {
-        if (isHoldReduced) {
-            // パフェ時に使用ミノが少なくなるケースのため改めて専用のSetを作る
-            return toReducedHashSetWithHold(blocksGenerator.blocksStream(), maxDepth);
-        } else {
-            return allPieces;
-        }
-    }
-
-    private HashSet<LongPieces> toReducedHashSetWithHold(Stream<? extends Pieces> blocksStream, int maxDepth) {
-        return blocksStream.parallel()
-                .map(Pieces::getPieces)
-                .flatMap(blocks -> OrderLookup.forwardBlocks(blocks, maxDepth).stream())
-                .collect(Collectors.toCollection(HashSet::new))
-                .parallelStream()
-                .map(StackOrder::toList)
-                .map(blocks -> blocks.subList(0, maxDepth))
-                .map(LongPieces::new)
-                .collect(Collectors.toCollection(HashSet::new));
-    }
-
-    private HashSet<LongPieces> toReducedHashSetWithoutHold(Stream<? extends Pieces> blocksStream, int maxDepth) {
-        return blocksStream.parallel()
-                .map(Pieces::getPieces)
-                .map(blocks -> blocks.subList(0, maxDepth))
-                .map(LongPieces::new)
-                .collect(Collectors.toCollection(HashSet::new));
-    }
-
-    private HashSet<LongPieces> toDirectHashSet(Stream<? extends Pieces> blocksStream) {
-        return blocksStream.parallel()
-                .map(Pieces::getPieces)
-                .map(LongPieces::new)
-                .collect(Collectors.toCollection(HashSet::new));
+        PatternGenerator blocksGenerator = new LoadedPatternGenerator(patterns);
+        this.piecesPool = new ValidPiecesPool(blocksGenerator, maxDepth, isUsingHold);
     }
 
     List<PathPair> run(Field field, SizedBit sizedBit) throws ExecutionException, InterruptedException {
@@ -147,8 +79,11 @@ class PathCore {
                         return PathPair.EMPTY_PAIR;
 
                     // 探索シーケンスの中でテト譜にするoperationsを選択する
+                    HashSet<LongPieces> validPieces = piecesPool.getValidPieces();
                     List<MinoOperationWithKey> operationsToUrl = validOperaions.stream()
-                            .filter(o -> validPieces.contains(new LongPieces(o.stream().map(Operation::getPiece))))
+                            .filter(o -> {
+                                return validPieces.contains(new LongPieces(o.stream().map(Operation::getPiece)));
+                            })
                             .findFirst()
                             .orElse(Collections.emptyList());
 
@@ -219,6 +154,7 @@ class PathCore {
                     // 譜面の作成
                     String fumen = fumenParser.parse(sampleOperations, field, maxClearLine);
 
+                    HashSet<LongPieces> validPieces = piecesPool.getValidPieces();
                     return new PathPair(result, piecesSolution, piecesPattern, fumen, new ArrayList<>(sampleOperations), validPieces);
                 })
                 .filter(pathPair -> pathPair != PathPair.EMPTY_PAIR)
@@ -234,7 +170,10 @@ class PathCore {
     }
 
     private HashSet<LongPieces> getPiecesPattern(HashSet<LongPieces> piecesSolution) {
-        if (isHoldReduced) {
+        HashSet<LongPieces> validPieces = piecesPool.getValidPieces();
+        HashSet<LongPieces> allPieces = piecesPool.getAllPieces();
+
+        if (piecesPool.isHoldReduced()) {
             // allとvalidが異なる
             ReverseOrderLookUp reverseOrderLookUp = new ReverseOrderLookUp(maxDepth, maxDepth + 1);
 
@@ -292,4 +231,3 @@ class PathCore {
         }
     }
 }
-

@@ -7,10 +7,8 @@ import common.datastore.Operation;
 import common.datastore.OperationWithKey;
 import common.datastore.blocks.LongPieces;
 import common.datastore.blocks.Pieces;
-import common.order.ForwardOrderLookUp;
 import common.pattern.PatternGenerator;
 import common.tetfu.common.ColorConverter;
-import common.tree.SuccessTreeHead;
 import core.FinderConstant;
 import core.column_field.ColumnField;
 import core.field.Field;
@@ -25,6 +23,7 @@ import entry.Verify;
 import entry.path.ForPathSolutionFilter;
 import entry.path.HarddropBuildUpListUpThreadLocal;
 import entry.path.LockedBuildUpListUpThreadLocal;
+import entry.path.ValidPiecesPool;
 import entry.path.output.MyFile;
 import entry.path.output.OneFumenParser;
 import exceptions.FinderException;
@@ -51,6 +50,7 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -136,7 +136,7 @@ public class SetupEntryPoint implements EntryPoint {
         }
 
         // Setup min depth
-        int minDepth = Verify.minDepth(needFilledField);  // 最低でも必要なミノ数
+        int minDepth = Verify.depth(needFilledField);  // 最低でも必要なミノ数
 
         output();
 
@@ -209,25 +209,22 @@ public class SetupEntryPoint implements EntryPoint {
             basicSolutions.add(solutions);
         }
 
-        // パターンツリーを作成
-        int depth = generator.getDepth();
-        ForwardOrderLookUp lookup = new ForwardOrderLookUp(depth, depth);
-        SuccessTreeHead head = new SuccessTreeHead();
-        generator.blocksStream()
-                .map(Pieces::getPieces)
-                .flatMap(lookup::parse)
-                .sequential()
-                .forEach(head::register);
+        // 有効ミノ順poolを作成
+        Field fieldForMaxDepth = FieldFactory.createField(maxHeight);
+        for (int y = 0; y < maxHeight; y++)
+            fieldForMaxDepth.fillLine(y);
+        fieldForMaxDepth.reduce(notFilledField);
+        int maxDepth = Verify.depth(fieldForMaxDepth);
+
+        ValidPiecesPool validPiecesPool = !settings.isCombination() ? new ValidPiecesPool(generator, maxDepth, settings.isUsingHold()) : null;
 
         // 解をフィルタリングする準備を行う
         // TODO: Excule with holes (merge)
         SetupSolutionFilter filter;
         if (settings.isCombination()) {
             filter = new CombinationFilter();
-        } else if (settings.isUsingHold()) {
-            filter = new OrderWithHoldFilter(head, sizedBit);
         } else {
-            filter = new OrderWithoutHoldFilter(head, sizedBit);
+            filter = new OrderFilter(validPiecesPool, sizedBit);
         }
 
         // ホールを取り除く
@@ -306,12 +303,18 @@ public class SetupEntryPoint implements EntryPoint {
             String encode = fumenParser.parse(operationWithKeys, initField, maxHeight);
 
             // 名前の作成
-            BuildUpStream buildUpStream = buildUpStreamThreadLocal.get();
-            LongPieces pieces = buildUpStream.existsValidBuildPattern(setupResult.getRawField(), operationWithKeys)
-                    .map(operations -> new LongPieces(operations.stream().map(MinoOperationWithKey::getPiece)))
-                    .filter(head::checksWithoutHold)
-                    .findFirst()
-                    .orElseGet(() -> new LongPieces(operationWithKeys.stream().map(MinoOperationWithKey::getPiece)));
+            LongPieces pieces = new LongPieces(operationWithKeys.stream().map(MinoOperationWithKey::getPiece));
+            if (validPiecesPool != null) {
+                HashSet<LongPieces> validPieces = validPiecesPool.getValidPieces();
+                BuildUpStream buildUpStream = buildUpStreamThreadLocal.get();
+                Optional<LongPieces> first = buildUpStream.existsValidBuildPattern(setupResult.getRawField(), operationWithKeys)
+                        .map(operations -> new LongPieces(operations.stream().map(MinoOperationWithKey::getPiece)))
+                        .filter(validPieces::contains)
+                        .findFirst();
+                if (first.isPresent()) {
+                    pieces = first.get();
+                }
+            }
 
             String name = pieces.blockStream()
                     .map(Piece::getName)
@@ -453,12 +456,12 @@ class CombinationFilter implements SetupSolutionFilter {
     }
 }
 
-class OrderWithHoldFilter implements SetupSolutionFilter {
-    private final SuccessTreeHead head;
+class OrderFilter implements SetupSolutionFilter {
+    private final ValidPiecesPool validPiecesPool;
     private final SizedBit sizedBit;
 
-    OrderWithHoldFilter(SuccessTreeHead head, SizedBit sizedBit) {
-        this.head = head;
+    OrderFilter(ValidPiecesPool validPiecesPool, SizedBit sizedBit) {
+        this.validPiecesPool = validPiecesPool;
         this.sizedBit = sizedBit;
     }
 
@@ -469,27 +472,7 @@ class OrderWithHoldFilter implements SetupSolutionFilter {
                 .map(SeparableMino::toMinoOperationWithKey)
                 .map(OperationWithKey::getPiece);
         Pieces pieces = new LongPieces(stream);
-        return head.checksWithHold(pieces);
-    }
-}
-
-class OrderWithoutHoldFilter implements SetupSolutionFilter {
-    private final SuccessTreeHead head;
-    private final SizedBit sizedBit;
-
-    OrderWithoutHoldFilter(SuccessTreeHead head, SizedBit sizedBit) {
-        this.head = head;
-        this.sizedBit = sizedBit;
-    }
-
-    @Override
-    public boolean test(SetupResult result) {
-        Stream<Piece> stream = result.getResult().getMemento()
-                .getSeparableMinoStream(sizedBit.getWidth())
-                .map(SeparableMino::toMinoOperationWithKey)
-                .map(OperationWithKey::getPiece);
-        Pieces pieces = new LongPieces(stream);
-        return head.checksWithoutHold(pieces);
+        return validPiecesPool.getValidPieces().contains(pieces);
     }
 }
 

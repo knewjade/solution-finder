@@ -26,7 +26,7 @@ class SetupTetfuCaseTest extends SetupUseCaseBaseTest {
         // Iがふたをする形
         String tetfu = "v115@zgcpwhVpyhCe3hAe0hZpJeAgH";
 
-        String command = String.format("setup -p [^T]! --fill i --margin o -t %s", tetfu);
+        String command = String.format("setup -p [^T]! --fill i --margin o -t %s --co yes", tetfu);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
         assertThat(log.getOutput()).contains(Messages.foundSolutions(24));
@@ -47,7 +47,7 @@ class SetupTetfuCaseTest extends SetupUseCaseBaseTest {
         // Iがふたをする形
         String tetfu = "v115@zgdpwhUpxhCe3hAe1hZpJeAgH";
 
-        String command = String.format("setup -p [^T]! --fill i --margin o -t %s", tetfu);
+        String command = String.format("setup -p [^T]! --fill i --margin o -t %s --co yes", tetfu);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
         assertThat(log.getOutput()).contains(Messages.foundSolutions(14));
@@ -60,7 +60,7 @@ class SetupTetfuCaseTest extends SetupUseCaseBaseTest {
         // case4の対称系
         String tetfu = "v115@zgTpwhYpAeUpzhAe3hQpAeQpzhTpAeUpJeAgH";
 
-        String command = String.format("setup -p [^T]! --fill i --margin o -t %s", tetfu);
+        String command = String.format("setup -p [^T]! --fill i --margin o -t %s --co yes", tetfu);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
         assertThat(log.getOutput()).contains(Messages.foundSolutions(7));
@@ -74,7 +74,7 @@ class SetupTetfuCaseTest extends SetupUseCaseBaseTest {
         // case3の対称系
         String tetfu = "v115@zgUpwhYpAeTp0hAe3hQpAeQpyhUpAeTpJeAgH";
 
-        String command = String.format("setup -p [^T]! --fill i --margin o -t %s", tetfu);
+        String command = String.format("setup -p [^T]! --fill i --margin o -t %s --co yes", tetfu);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
         assertThat(log.getOutput()).contains(Messages.foundSolutions(7));
@@ -87,7 +87,7 @@ class SetupTetfuCaseTest extends SetupUseCaseBaseTest {
         // 高さ4
         String tetfu = "v115@9gTpwhUpxhCe3hAe1hZpJeAgH";
 
-        String command = String.format("setup -p [^T]! --fill i --margin o -t %s", tetfu);
+        String command = String.format("setup -p [^T]! --fill i --margin o -t %s --co yes", tetfu);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
         assertThat(log.getOutput()).contains(Messages.foundSolutions(11));
@@ -100,7 +100,7 @@ class SetupTetfuCaseTest extends SetupUseCaseBaseTest {
         // 高さ3
         String tetfu = "v115@HhUpxhBeA81hCeA8yhD8AeB8JeAgH";
 
-        String command = String.format("setup --tetfu %s --patterns *! --fill i --margin o", tetfu);
+        String command = String.format("setup --tetfu %s --patterns *! --fill i --margin o --co yes", tetfu);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
         assertThat(log.getOutput()).contains(Messages.foundSolutions(13));
@@ -134,7 +134,7 @@ class SetupTetfuCaseTest extends SetupUseCaseBaseTest {
         // Harddrop is impossible
         String tetfu = "v115@zg0hEewhj0Eewhj0Eewhj0EewhzwOeAgH";
 
-        String command = String.format("setup -t %s -p *! -f t -m j --drop harddrop", tetfu);
+        String command = String.format("setup -t %s -p *! -f t -m j --drop harddrop --co yes", tetfu);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
         assertThat(log.getOutput()).contains(Messages.foundSolutions(0));
@@ -147,7 +147,7 @@ class SetupTetfuCaseTest extends SetupUseCaseBaseTest {
         // If `--line` is enable, Harddrop is possible
         String tetfu = "v115@zg0hEewhj0Eewhj0Eewhj0EewhzwOeAgH";
 
-        String command = String.format("setup -t %s -p *! -f t -m j --drop harddrop -l 4", tetfu);
+        String command = String.format("setup -t %s -p *! -f t -m j --drop harddrop -l 4 --co yes", tetfu);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
         assertThat(log.getOutput()).contains(Messages.foundSolutions(38));
@@ -163,7 +163,7 @@ class SetupTetfuCaseTest extends SetupUseCaseBaseTest {
 
         // Harddrop
         {
-            String command = String.format("setup -t %s -p *!,*! -co yes -f Z -m L --drop harddrop -l 4", tetfu);
+            String command = String.format("setup -t %s -p *!,*! -co yes -f Z -m L --drop harddrop -l 4 --co yes", tetfu);
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput()).contains(Messages.foundSolutions(6));
@@ -187,7 +187,7 @@ class SetupTetfuCaseTest extends SetupUseCaseBaseTest {
         // フィールドの大部分が埋まっている
         String tetfu = "v115@Bg0hEe0hEe0hEe0hEe78JeAgH";
 
-        String command = String.format("setup -t %s -p *! -f i", tetfu);
+        String command = String.format("setup -t %s -p *! -f i --co yes", tetfu);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
         assertThat(log.getOutput()).contains(Messages.foundSolutions(8));
@@ -207,7 +207,7 @@ class SetupTetfuCaseTest extends SetupUseCaseBaseTest {
         // 4x4
         String tetfu = "v115@9gTpFeTpFeTpFezhPeAgH";
 
-        String command = String.format("setup -t %s -p *! -f i -m o", tetfu);
+        String command = String.format("setup -t %s -p *! -f i -m o --co yes", tetfu);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
         assertThat(log.getOutput()).contains(Messages.foundSolutions(38));
@@ -226,11 +226,11 @@ class SetupTetfuCaseTest extends SetupUseCaseBaseTest {
     }
 
     @Test
-    void case12_without_holes() throws Exception {
+    void case12WithoutHoles() throws Exception {
         // 4x4
         String tetfu = "v115@9gTpFeTpFeTpFezhPeAgH";
 
-        String command = String.format("setup -t %s -p *! -f i -m o --holes avoid --drop hard", tetfu);
+        String command = String.format("setup -t %s -p *! -f i -m o --holes avoid --drop hard --co yes", tetfu);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
         assertThat(log.getOutput()).contains(Messages.foundSolutions(34));
@@ -253,7 +253,7 @@ class SetupTetfuCaseTest extends SetupUseCaseBaseTest {
         // 空中Tスピン  // アルバトロス
         String tetfu = "v115@9gQpBewhVpwhCe3hAe2hZpJeAgH";
 
-        String command = String.format("setup -t %s -p [^T]! -f i -m o", tetfu);
+        String command = String.format("setup -t %s -p [^T]! -f i -m o --co yes", tetfu);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
         assertThat(log.getOutput()).contains(Messages.foundSolutions(12));
@@ -267,5 +267,37 @@ class SetupTetfuCaseTest extends SetupUseCaseBaseTest {
         assertThat(html.getFumens())
                 .hasSize(12)
                 .contains("AhBtDewhQ4CeBti0whR4AeRpilg0whAeQ4AeRpglCe?whJeAgWGApvaFDMNBAA");
+    }
+
+    @Test
+    void case13WithoutHoles() throws Exception {
+        // 空中Tスピン  // アルバトロス
+        String tetfu = "v115@9gQpBewhVpwhCe3hAe2hZpJeAgH";
+
+        String command = String.format("setup -t %s -p [^T]! -f i -m o --holes avoid --co yes", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getOutput()).contains(Messages.foundSolutions(0));
+
+        assertThat(log.getError()).isEmpty();
+
+        SetupHTML html = OutputFileHelper.loadSetupHTML();
+        assertThat(html.getFumens()).hasSize(0);
+    }
+
+    @Test
+    void case13WithoutHolesAfterAddOperations() throws Exception {
+        // 空中Tスピン  // アルバトロス
+        String tetfu = "v115@9gQpBewhVpwhCe3hAe2hZpJeAgH";
+
+        String command = String.format("setup -t %s -p [^T]! -f i -m o --holes avoid --co yes", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getOutput()).contains(Messages.foundSolutions(-1));
+
+        assertThat(log.getError()).isEmpty();
+
+        SetupHTML html = OutputFileHelper.loadSetupHTML();
+        assertThat(html.getFumens()).hasSize(-1);
     }
 }
