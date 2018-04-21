@@ -111,8 +111,13 @@ class OperationTransformTest {
 
         for (int count = 0; count < 100; count++) {
             // Create field
-            int numOfMinos = randoms.nextInt(6, 10);
-            Field field = randoms.field(height, numOfMinos);
+//            int numOfMinos = randoms.nextInt(6, 10);
+//            Field field = randoms.field(height, numOfMinos);
+            int numOfMinos = 6;
+            Field field = FieldFactory.createField("_________X" +
+                    "_______XXX" +
+                    "________XX" +
+                    "XXXXXXXXXX");
 
             // Search
             List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(basicWidth, height, field);

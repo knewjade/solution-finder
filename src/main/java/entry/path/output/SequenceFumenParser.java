@@ -29,7 +29,7 @@ public class SequenceFumenParser implements FumenParser {
 
     @Override
     public String parse(List<MinoOperationWithKey> operationsWithKey, Field field, int maxClearLine) {
-        Operations operations = OperationTransform.parseToOperations(field, operationsWithKey, maxClearLine);
+        Operations operations = OperationTransform.parseToOperationsBeforeNoClearLine(field, operationsWithKey, maxClearLine);
         List<? extends Operation> operationsList = operations.getOperations();
 
         // ブロック順に変換
