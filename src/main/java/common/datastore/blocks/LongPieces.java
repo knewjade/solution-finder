@@ -4,6 +4,7 @@ import common.comparator.PiecesNumberComparator;
 import core.mino.Piece;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -14,6 +15,10 @@ public class LongPieces implements Pieces, Comparable<LongPieces> {
     static {
         for (int index = 0; index < SCALE.length; index++)
             SCALE[index] = pow(index);
+    }
+
+    public LongPieces(Piece... pieces) {
+        this(Arrays.asList(pieces));
     }
 
     public LongPieces(Pieces pieces) {
