@@ -181,6 +181,11 @@ public class LargeField implements Field {
     }
 
     @Override
+    public void slideDown() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public boolean contains(Field child) {
         throw new UnsupportedOperationException();
     }

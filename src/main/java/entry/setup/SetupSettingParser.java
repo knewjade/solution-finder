@@ -119,6 +119,10 @@ public class SetupSettingParser {
         Optional<Boolean> combination = wrapper.getBoolOption("combination");
         combination.ifPresent(settings::setCombination);
 
+        // ホール許可の設定
+        Optional<Boolean> holes = wrapper.getBoolOption("holes");
+        holes.ifPresent(settings::setHoles);
+
         // ログファイルの設定
         Optional<String> logFilePath = wrapper.getStringOption("log-path");
         logFilePath.ifPresent(settings::setLogFilePath);
@@ -346,6 +350,16 @@ public class SetupSettingParser {
                 .desc("Specify drop")
                 .build();
         options.addOption(dropOption);
+
+        Option holesOption = Option.builder("H")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("flag")
+                .longOpt("holes")
+                .desc("allow or avoid holes")
+                .build();
+        options.addOption(holesOption);
 
         return options;
     }

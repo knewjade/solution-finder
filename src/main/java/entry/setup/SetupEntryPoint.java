@@ -14,6 +14,7 @@ import core.FinderConstant;
 import core.column_field.ColumnField;
 import core.field.Field;
 import core.field.FieldFactory;
+import core.field.FieldView;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
@@ -49,6 +50,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -207,6 +209,7 @@ public class SetupEntryPoint implements EntryPoint {
         }
 
         // 解をフィルタリングする準備を行う
+        // TODO: Excule with holes (merge)
         SetupSolutionFilter filter;
         if (settings.isCombination()) {
             filter = new CombinationFilter();
@@ -216,13 +219,47 @@ public class SetupEntryPoint implements EntryPoint {
             filter = new OrderWithoutHoldFilter(generator, sizedBit);
         }
 
+        // ホールを取り除く
+        if (!settings.isAllowedHoles()) {
+            // TODO: softdropの時は複雑なものにしたい
+            filter = new SimpleHolesFilter(maxHeight).and(filter);
+        }
+
         // 探索
         SetupPackSearcher searcher = new SetupPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper, needFillFields, separableMinos, needFilledField);
-        List<Result> results = getResults(initField, sizedBit, buildUpStreamThreadLocal, searcher)
-                .stream()
-                .filter(filter::test)
+        List<Result> results = getResults(initField, sizedBit, buildUpStreamThreadLocal, searcher);
+
+        // TODO: 使っていないミノに対してローカルサーチする -> List<Result>
+
+        List<SetupResult> setupResults = results.stream()
+                .map(result -> {
+                    // 操作に変換
+                    List<MinoOperationWithKey> operationWithKeys = result.getMemento()
+                            .getSeparableMinoStream(sizedBit.getWidth())
+                            .map(SeparableMino::toMinoOperationWithKey)
+                            .collect(Collectors.toList());
+
+                    // フィールドに変換
+                    Field field = initField.freeze(maxHeight);
+                    for (OperationWithKey operation : operationWithKeys) {
+                        Field pieceField = FieldFactory.createField(maxHeight);
+                        Mino mino = minoFactory.create(operation.getPiece(), operation.getRotate());
+                        int x = operation.getX();
+                        int y = operation.getY();
+                        pieceField.put(mino, x, y);
+                        pieceField.insertWhiteLineWithKey(operation.getNeedDeletedKey());
+                        field.merge(pieceField);
+                    }
+
+                    // TODO: Add piece
+                    // TODO: Assume filled line
+
+                    return new SetupResult(result, field);
+                })
+                .filter(filter)
                 .collect(Collectors.toList());
-        output("     Found solution = " + results.size());
+
+        output("     Found solution = " + setupResults.size());
 
         stopwatch.stop();
         output("  -> Stopwatch stop : " + stopwatch.toMessage(TimeUnit.MILLISECONDS));
@@ -235,34 +272,25 @@ public class SetupEntryPoint implements EntryPoint {
 
         HTMLBuilder<FieldHTMLColumn> htmlBuilder = new HTMLBuilder<>("Setup result");
 
-        results.parallelStream()
-                .forEach(result -> {
-                    List<MinoOperationWithKey> operationWithKeys = result.getMemento()
-                            .getSeparableMinoStream(sizedBit.getWidth())
-                            .map(SeparableMino::toMinoOperationWithKey)
-                            .collect(Collectors.toList());
+        setupResults.forEach(setupResult -> {
+            Result result = setupResult.getResult();
 
-                    Field allField = initField.freeze(maxHeight);
-                    for (OperationWithKey operation : operationWithKeys) {
-                        Field pieceField = FieldFactory.createField(maxHeight);
-                        Mino mino = minoFactory.create(operation.getPiece(), operation.getRotate());
-                        int x = operation.getX();
-                        int y = operation.getY();
-                        pieceField.put(mino, x, y);
-                        pieceField.insertWhiteLineWithKey(operation.getNeedDeletedKey());
-                        allField.merge(pieceField);
-                    }
+            // 操作に変換
+            List<MinoOperationWithKey> operationWithKeys = result.getMemento()
+                    .getSeparableMinoStream(sizedBit.getWidth())
+                    .map(SeparableMino::toMinoOperationWithKey)
+                    .collect(Collectors.toList());
 
-                    // 譜面の作成
-                    String encode = fumenParser.parse(operationWithKeys, initField, maxHeight);
+            // 譜面の作成
+            String encode = fumenParser.parse(operationWithKeys, initField, maxHeight);
 
-                    String name = operationWithKeys.stream().map(OperationWithKey::getPiece).map(Piece::getName).collect(Collectors.joining());
-                    String link = String.format("<a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a>", encode, name);
-                    String line = String.format("<div>%s</div>", link);
+            String name = operationWithKeys.stream().map(OperationWithKey::getPiece).map(Piece::getName).collect(Collectors.joining());
+            String link = String.format("<a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a>", encode, name);
+            String line = String.format("<div>%s</div>", link);
 
-                    FieldHTMLColumn column = new FieldHTMLColumn(allField, maxHeight);
-                    htmlBuilder.addColumn(column, line);
-                });
+            FieldHTMLColumn column = new FieldHTMLColumn(setupResult.getRawField(), maxHeight);
+            htmlBuilder.addColumn(column, line);
+        });
 
         ArrayList<FieldHTMLColumn> columns = new ArrayList<>(htmlBuilder.getRegisteredColumns());
         columns.sort(Comparator.comparing(FieldHTMLColumn::getTitle).reversed());
@@ -363,13 +391,32 @@ public class SetupEntryPoint implements EntryPoint {
     }
 }
 
-interface SetupSolutionFilter {
-    boolean test(Result result);
+interface SetupSolutionFilter extends Predicate<SetupResult> {
+    default SetupSolutionFilter and(Predicate<? super SetupResult> other) {
+        Objects.requireNonNull(other);
+        return (t) -> test(t) && other.test(t);
+    }
+}
+
+class SimpleHolesFilter implements SetupSolutionFilter {
+    private final int maxHeight;
+
+    public SimpleHolesFilter(int maxHeight) {
+        this.maxHeight = maxHeight;
+    }
+
+    @Override
+    public boolean test(SetupResult result) {
+        Field field = result.getTestField();
+        Field freeze = field.freeze(maxHeight);
+        freeze.slideDown();
+        return field.contains(freeze);
+    }
 }
 
 class CombinationFilter implements SetupSolutionFilter {
     @Override
-    public boolean test(Result result) {
+    public boolean test(SetupResult result) {
         return true;
     }
 }
@@ -394,8 +441,8 @@ class OrderWithHoldFilter implements SetupSolutionFilter {
     }
 
     @Override
-    public boolean test(Result result) {
-        Stream<Piece> stream = result.getMemento()
+    public boolean test(SetupResult result) {
+        Stream<Piece> stream = result.getResult().getMemento()
                 .getSeparableMinoStream(sizedBit.getWidth())
                 .map(SeparableMino::toMinoOperationWithKey)
                 .map(OperationWithKey::getPiece);
@@ -424,12 +471,36 @@ class OrderWithoutHoldFilter implements SetupSolutionFilter {
     }
 
     @Override
-    public boolean test(Result result) {
-        Stream<Piece> stream = result.getMemento()
+    public boolean test(SetupResult result) {
+        Stream<Piece> stream = result.getResult().getMemento()
                 .getSeparableMinoStream(sizedBit.getWidth())
                 .map(SeparableMino::toMinoOperationWithKey)
                 .map(OperationWithKey::getPiece);
         Pieces pieces = new LongPieces(stream);
         return head.checksWithoutHold(pieces);
+    }
+}
+
+class SetupResult {
+    private final Result result;
+    private final Field rawField;
+    private final Field testField;
+
+    SetupResult(Result result, Field rawField) {
+        this.result = result;
+        this.rawField = rawField;
+        this.testField = rawField;
+    }
+
+    public Result getResult() {
+        return result;
+    }
+
+    public Field getRawField() {
+        return rawField;
+    }
+
+    public Field getTestField() {
+        return testField;
     }
 }

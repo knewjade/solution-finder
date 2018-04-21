@@ -116,6 +116,9 @@ public interface Field extends Comparable<Field> {
     // フィールドを右に指定したブロック分スライドさせる
     void slideRight(int slide);
 
+    // フィールドを下にスライドさせる
+    void slideDown();
+
     // childの全てのブロックが、フィールド内の同じ位置にブロックがあればtrue
     boolean contains(Field child);
 

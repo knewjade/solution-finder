@@ -51,6 +51,8 @@ public class NormalCommandLineWrapper implements CommandLineWrapper {
                 return Optional.of(false);
             case "use":
                 return Optional.of(true);
+            case "allow":
+                return Optional.of(true);
             case "avoid":
                 return Optional.of(false);
             case "enable":

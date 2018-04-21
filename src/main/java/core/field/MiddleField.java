@@ -428,6 +428,20 @@ public class MiddleField implements Field {
 
     // TODO: write unittest
     @Override
+    public void slideDown() {
+        long deleteKeyLow = KeyOperators.getDeleteBitKey(0);
+        long newXBoardLow = LongBoardMap.deleteLine(xBoardLow, deleteKeyLow);
+
+        long newXBoardHigh = xBoardHigh;
+
+        int deleteLineLow = 1;
+
+        this.xBoardLow = (newXBoardLow | (newXBoardHigh << (6 - deleteLineLow) * 10)) & VALID_BOARD_RANGE;
+        this.xBoardHigh = newXBoardHigh >>> deleteLineLow * 10;
+    }
+
+    // TODO: write unittest
+    @Override
     public boolean contains(Field child) {
         long childBoardLow = child.getBoard(0);
         long childBoardHigh = child.getBoard(1);

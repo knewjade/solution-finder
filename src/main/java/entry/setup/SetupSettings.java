@@ -20,6 +20,7 @@ public class SetupSettings {
     private boolean isReserved = false;
     private boolean isUsingHold = true;
     private boolean isCombination = false;
+    private boolean isHoles = true;
     private int maxHeight = -1;
     private List<String> patterns = new ArrayList<>();
     private Field initField = null;
@@ -46,6 +47,10 @@ public class SetupSettings {
 
     boolean isReserved() {
         return isReserved;
+    }
+
+    boolean isAllowedHoles() {
+        return isHoles;
     }
 
     boolean isCombination() {
@@ -107,6 +112,10 @@ public class SetupSettings {
 
     void setReserved(boolean isReserved) {
         this.isReserved = isReserved;
+    }
+
+    void setHoles(boolean isHoles) {
+        this.isHoles = isHoles;
     }
 
     void setCombination(boolean isCombination) {

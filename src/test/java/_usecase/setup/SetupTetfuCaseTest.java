@@ -201,4 +201,50 @@ class SetupTetfuCaseTest extends SetupUseCaseBaseTest {
                 .hasSize(8)
                 .contains("Bgg0zhEei0R4EeRpR4glEeRpilEe78JeAgWFAzyaPC?pAAAA");
     }
+
+    @Test
+    void case12() throws Exception {
+        // 4x4
+        String tetfu = "v115@9gTpFeTpFeTpFezhPeAgH";
+
+        String command = String.format("setup -t %s -p *! -f i -m o", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getOutput()).contains(Messages.foundSolutions(38));
+
+        assertThat(log.getError()).isEmpty();
+
+        SetupHTML html = OutputFileHelper.loadSetupHTML();
+        assertThat(html.getHtml())
+                .contains("3221000000")
+                .contains("2123000000");
+
+        assertThat(html.getFumens())
+                .hasSize(38)
+                .contains("Hhh0Heg0AewwGeg0ywPeAgWCAqOBAA")
+                .contains("JhhlFeg0BeglFei0glPeAgWCAs/AAA");
+    }
+
+    @Test
+    void case12_without_holes() throws Exception {
+        // 4x4
+        String tetfu = "v115@9gTpFeTpFeTpFezhPeAgH";
+
+        String command = String.format("setup -t %s -p *! -f i -m o --holes avoid --drop hard", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getOutput()).contains(Messages.foundSolutions(34));
+
+        assertThat(log.getError()).isEmpty();
+
+        SetupHTML html = OutputFileHelper.loadSetupHTML();
+        assertThat(html.getHtml())
+                .contains("3221000000")
+                .contains("2123000000");
+
+        assertThat(html.getFumens())
+                .hasSize(34)
+                .doesNotContain("Hhh0Heg0AewwGeg0ywPeAgWCAqOBAA")
+                .doesNotContain("JhhlFeg0BeglFei0glPeAgWCAs/AAA");
+    }
 }

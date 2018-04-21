@@ -251,6 +251,13 @@ public class SmallField implements Field {
 
     // TODO: write unittest
     @Override
+    public void slideDown() {
+        long deleteKey = KeyOperators.getDeleteBitKey(0);
+        this.xBoard = LongBoardMap.deleteLine(xBoard, deleteKey);
+    }
+
+    // TODO: write unittest
+    @Override
     public boolean contains(Field child) {
         long childBoard = child.getBoard(0);
         return (xBoard & childBoard) == childBoard;
