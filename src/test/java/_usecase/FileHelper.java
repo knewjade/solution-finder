@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-class FileHelper {
-    static void deleteFileAndClose(File file) {
+public class FileHelper {
+    public static void deleteFileAndClose(File file) {
         if (file.exists()) {
             // noinspection ResultOfMethodCallIgnored
             file.delete();
@@ -20,7 +20,7 @@ class FileHelper {
         }
     }
 
-    static String concatPath(String... names) {
+    public static String concatPath(String... names) {
         return Arrays.stream(names).collect(Collectors.joining(File.separator));
     }
 }

@@ -18,6 +18,7 @@ public class SetupSettings {
 
     private String logFilePath = DEFAULT_LOG_FILE_PATH;
     private boolean isReserved = false;
+    private boolean isCombination = false;
     private int maxHeight = -1;
     private List<String> patterns = new ArrayList<>();
     private Field initField = null;
@@ -41,6 +42,10 @@ public class SetupSettings {
 
     boolean isReserved() {
         return isReserved;
+    }
+
+    boolean isCombination() {
+        return isCombination;
     }
 
     int getMaxHeight() {
@@ -94,6 +99,10 @@ public class SetupSettings {
 
     void setReserved(boolean isReserved) {
         this.isReserved = isReserved;
+    }
+
+    void setCombination(boolean isCombination) {
+        this.isCombination = isCombination;
     }
 
     private void setMaxHeight(int maxHeight) {

@@ -22,7 +22,7 @@ public class FieldHTMLColumn implements HTMLColumn {
         StringBuilder builder = new StringBuilder();
         for (int x = 0; x < 10; x++) {
             int onX = field.getBlockCountBelowOnX(x, maxHeight);
-            builder.append(onX);
+            builder.append(onX < 10 ? onX : "+");
         }
         return builder.toString();
     }

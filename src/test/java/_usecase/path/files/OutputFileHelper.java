@@ -1,5 +1,6 @@
-package _usecase;
+package _usecase.path.files;
 
+import _usecase.FileHelper;
 import common.datastore.Operations;
 import common.parser.OperationInterpreter;
 import helper.CSVStore;

@@ -8,6 +8,7 @@ import common.tetfu.common.ColorConverter;
 import core.FinderConstant;
 import core.column_field.ColumnField;
 import core.field.Field;
+import core.field.FieldFactory;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
@@ -223,13 +224,14 @@ public class SetupEntryPoint implements EntryPoint {
                             .collect(Collectors.toList());
 
                     Field allField = initField.freeze(maxHeight);
-                    Operations operations = OperationTransform.parseToOperations(allField, operationWithKeys, sizedBit.getHeight());
-                    List<? extends Operation> operationList = operations.getOperations();
-                    for (Operation operation : operationList) {
+                    for (OperationWithKey operation : operationWithKeys) {
+                        Field pieceField = FieldFactory.createField(maxHeight);
                         Mino mino = minoFactory.create(operation.getPiece(), operation.getRotate());
                         int x = operation.getX();
                         int y = operation.getY();
-                        allField.put(mino, x, y);
+                        pieceField.put(mino, x, y);
+                        pieceField.insertWhiteLineWithKey(operation.getNeedDeletedKey());
+                        allField.merge(pieceField);
                     }
 
                     // 譜面の作成
@@ -238,7 +240,9 @@ public class SetupEntryPoint implements EntryPoint {
                     String name = operationWithKeys.stream().map(OperationWithKey::getPiece).map(Piece::getName).collect(Collectors.joining());
                     String link = String.format("<a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a>", encode, name);
                     String line = String.format("<div>%s</div>", link);
-                    htmlBuilder.addColumn(new FieldHTMLColumn(allField, maxHeight), line);
+
+                    FieldHTMLColumn column = new FieldHTMLColumn(allField, maxHeight);
+                    htmlBuilder.addColumn(column, line);
                 });
 
         ArrayList<FieldHTMLColumn> columns = new ArrayList<>(htmlBuilder.getRegisteredColumns());
