@@ -25,13 +25,13 @@ class SuccessTreeHeadTest {
 
     @Test
     void checksWithHold2() {
-        // Pieceが足りない
+        // Pieceが少ない
         SuccessTreeHead head = new SuccessTreeHead();
         head.register(pieces(Piece.I, Piece.O));
 
-        assertThat(head.checksWithHold(pieces())).isFalse();
-        assertThat(head.checksWithHold(pieces(Piece.I))).isFalse();
-        assertThat(head.checksWithHold(pieces(Piece.O))).isFalse();
+        assertThat(head.checksWithHold(pieces())).isTrue();
+        assertThat(head.checksWithHold(pieces(Piece.I))).isTrue();
+        assertThat(head.checksWithHold(pieces(Piece.O))).isTrue();
     }
 
     @Test
@@ -50,12 +50,12 @@ class SuccessTreeHeadTest {
 
     @Test
     void checksWithoutHold2() {
-        // Pieceが足りない
+        // Pieceが少ない
         SuccessTreeHead head = new SuccessTreeHead();
         head.register(pieces(Piece.I, Piece.O));
 
-        assertThat(head.checksWithoutHold(pieces())).isFalse();
-        assertThat(head.checksWithoutHold(pieces(Piece.I))).isFalse();
+        assertThat(head.checksWithoutHold(pieces())).isTrue();
+        assertThat(head.checksWithoutHold(pieces(Piece.I))).isTrue();
         assertThat(head.checksWithoutHold(pieces(Piece.O))).isFalse();
     }
 

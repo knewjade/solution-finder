@@ -4,8 +4,12 @@ import common.buildup.BuildUpStream;
 import common.datastore.BlockField;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.OperationWithKey;
+import common.datastore.blocks.LongPieces;
+import common.datastore.blocks.Pieces;
+import common.order.ForwardOrderLookUp;
 import common.pattern.PatternGenerator;
 import common.tetfu.common.ColorConverter;
+import common.tree.SuccessTreeHead;
 import core.FinderConstant;
 import core.column_field.ColumnField;
 import core.field.Field;
@@ -46,6 +50,7 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SetupEntryPoint implements EntryPoint {
     private static final String LINE_SEPARATOR = System.lineSeparator();
@@ -201,9 +206,22 @@ public class SetupEntryPoint implements EntryPoint {
             basicSolutions.add(solutions);
         }
 
+        // 解をフィルタリングする準備を行う
+        SetupSolutionFilter filter;
+        if (settings.isCombination()) {
+            filter = new CombinationFilter();
+        } else if (settings.isUsingHold()) {
+            filter = new OrderWithHoldFilter(generator, sizedBit);
+        } else {
+            filter = new OrderWithoutHoldFilter(generator, sizedBit);
+        }
+
         // 探索
         SetupPackSearcher searcher = new SetupPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper, needFillFields, separableMinos, needFilledField);
-        List<Result> results = getResults(initField, sizedBit, buildUpStreamThreadLocal, searcher);
+        List<Result> results = getResults(initField, sizedBit, buildUpStreamThreadLocal, searcher)
+                .stream()
+                .filter(filter::test)
+                .collect(Collectors.toList());
         output("     Found solution = " + results.size());
 
         stopwatch.stop();
@@ -342,5 +360,76 @@ public class SetupEntryPoint implements EntryPoint {
         } catch (IOException | FinderExecuteException e) {
             throw new FinderTerminateException(e);
         }
+    }
+}
+
+interface SetupSolutionFilter {
+    boolean test(Result result);
+}
+
+class CombinationFilter implements SetupSolutionFilter {
+    @Override
+    public boolean test(Result result) {
+        return true;
+    }
+}
+
+class OrderWithHoldFilter implements SetupSolutionFilter {
+    private final SuccessTreeHead head;
+    private final SizedBit sizedBit;
+
+    OrderWithHoldFilter(PatternGenerator generator, SizedBit sizedBit) {
+        // パターンツリーを作成
+        int depth = generator.getDepth();
+        ForwardOrderLookUp lookup = new ForwardOrderLookUp(depth, depth);
+        SuccessTreeHead head = new SuccessTreeHead();
+        generator.blocksStream()
+                .map(Pieces::getPieces)
+                .flatMap(lookup::parse)
+                .sequential()
+                .forEach(head::register);
+
+        this.head = head;
+        this.sizedBit = sizedBit;
+    }
+
+    @Override
+    public boolean test(Result result) {
+        Stream<Piece> stream = result.getMemento()
+                .getSeparableMinoStream(sizedBit.getWidth())
+                .map(SeparableMino::toMinoOperationWithKey)
+                .map(OperationWithKey::getPiece);
+        Pieces pieces = new LongPieces(stream);
+        return head.checksWithHold(pieces);
+    }
+}
+
+class OrderWithoutHoldFilter implements SetupSolutionFilter {
+    private final SuccessTreeHead head;
+    private final SizedBit sizedBit;
+
+    OrderWithoutHoldFilter(PatternGenerator generator, SizedBit sizedBit) {
+        // パターンツリーを作成
+        int depth = generator.getDepth();
+        ForwardOrderLookUp lookup = new ForwardOrderLookUp(depth, depth);
+        SuccessTreeHead head = new SuccessTreeHead();
+        generator.blocksStream()
+                .map(Pieces::getPieces)
+                .flatMap(lookup::parse)
+                .sequential()
+                .forEach(head::register);
+
+        this.head = head;
+        this.sizedBit = sizedBit;
+    }
+
+    @Override
+    public boolean test(Result result) {
+        Stream<Piece> stream = result.getMemento()
+                .getSeparableMinoStream(sizedBit.getWidth())
+                .map(SeparableMino::toMinoOperationWithKey)
+                .map(OperationWithKey::getPiece);
+        Pieces pieces = new LongPieces(stream);
+        return head.checksWithoutHold(pieces);
     }
 }

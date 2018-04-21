@@ -30,14 +30,12 @@ public class SuccessTreeHead {
 
     // ホールドありで成功か
     public boolean checksWithHold(Pieces pieces) {
-        assert 1 < pieces.blockStream().count();
         LinkedList<Piece> piecesList = pieces.blockStream().collect(Collectors.toCollection(LinkedList::new));
         return head.checksWithHold(piecesList);
     }
 
     // ホールドなしで成功か
     public boolean checksWithoutHold(Pieces pieces) {
-        assert 1 < pieces.blockStream().count();
         LinkedList<Piece> piecesList = pieces.blockStream().collect(Collectors.toCollection(LinkedList::new));
         return head.checksWithoutHold(piecesList);
     }

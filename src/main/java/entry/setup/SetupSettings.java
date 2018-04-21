@@ -18,6 +18,7 @@ public class SetupSettings {
 
     private String logFilePath = DEFAULT_LOG_FILE_PATH;
     private boolean isReserved = false;
+    private boolean isUsingHold = true;
     private boolean isCombination = false;
     private int maxHeight = -1;
     private List<String> patterns = new ArrayList<>();
@@ -31,6 +32,9 @@ public class SetupSettings {
     private String outputBaseFilePath = DEFAULT_OUTPUT_BASE_FILE_PATH;
 
     // ********* Getter ************
+    public boolean isUsingHold() {
+        return isUsingHold;
+    }
 
     String getLogFilePath() {
         return logFilePath;
@@ -89,6 +93,10 @@ public class SetupSettings {
     }
 
     // ********* Setter ************
+    void setUsingHold(Boolean isUsingHold) {
+        this.isUsingHold = isUsingHold;
+    }
+
     void setLogFilePath(String path) {
         this.logFilePath = path;
     }
