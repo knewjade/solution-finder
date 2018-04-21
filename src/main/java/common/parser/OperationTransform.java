@@ -49,7 +49,35 @@ public class OperationTransform {
 
     // List<Operation>に変換する。正しく組み立てられるかはチェックしない
     // operationWithKeysは組み立てられる順番に並んでいること
+    // 初めにライン消去を行う
     public static Operations parseToOperations(Field fieldOrigin, List<MinoOperationWithKey> operationWithKeys, int height) {
+        ArrayList<Operation> operations = new ArrayList<>();
+
+        Field field = fieldOrigin.freeze(height);
+        for (MinoOperationWithKey operationWithKey : operationWithKeys) {
+            long deleteKey = field.clearLineReturnKey();
+
+            // すでに下のラインが消えているときは、その分スライドさせる
+            int originalY = operationWithKey.getY();
+            int deletedLines = Long.bitCount(KeyOperators.getMaskForKeyBelowY(originalY) & deleteKey);
+
+            Mino mino = operationWithKey.getMino();
+            int x = operationWithKey.getX();
+            int y = originalY - deletedLines;
+
+            operations.add(new SimpleOperation(mino.getPiece(), mino.getRotate(), x, y));
+
+            field.put(mino, x, y);
+            field.insertBlackLineWithKey(deleteKey);
+        }
+
+        return new Operations(operations);
+    }
+
+    // List<Operation>に変換する。正しく組み立てられるかはチェックしない
+    // operationWithKeysは組み立てられる順番に並んでいること
+    // 初めにライン消去を行わない
+    public static Operations parseToOperationsBeforeNoClearLine(Field fieldOrigin, List<MinoOperationWithKey> operationWithKeys, int height) {
         ArrayList<Operation> operations = new ArrayList<>();
 
         Field field = fieldOrigin.freeze(height);
