@@ -3,6 +3,7 @@ package entry.setup;
 import common.buildup.BuildUpStream;
 import common.datastore.BlockField;
 import common.datastore.MinoOperationWithKey;
+import common.datastore.Operation;
 import common.datastore.OperationWithKey;
 import common.datastore.blocks.LongPieces;
 import common.datastore.blocks.Pieces;
@@ -14,7 +15,6 @@ import core.FinderConstant;
 import core.column_field.ColumnField;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.field.FieldView;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
@@ -56,6 +56,7 @@ import java.util.stream.Stream;
 
 public class SetupEntryPoint implements EntryPoint {
     private static final String LINE_SEPARATOR = System.lineSeparator();
+    private static final int FIELD_WIDTH = 10;
 
     private final SetupSettings settings;
     private final BufferedWriter logWriter;
@@ -208,15 +209,25 @@ public class SetupEntryPoint implements EntryPoint {
             basicSolutions.add(solutions);
         }
 
+        // パターンツリーを作成
+        int depth = generator.getDepth();
+        ForwardOrderLookUp lookup = new ForwardOrderLookUp(depth, depth);
+        SuccessTreeHead head = new SuccessTreeHead();
+        generator.blocksStream()
+                .map(Pieces::getPieces)
+                .flatMap(lookup::parse)
+                .sequential()
+                .forEach(head::register);
+
         // 解をフィルタリングする準備を行う
         // TODO: Excule with holes (merge)
         SetupSolutionFilter filter;
         if (settings.isCombination()) {
             filter = new CombinationFilter();
         } else if (settings.isUsingHold()) {
-            filter = new OrderWithHoldFilter(generator, sizedBit);
+            filter = new OrderWithHoldFilter(head, sizedBit);
         } else {
-            filter = new OrderWithoutHoldFilter(generator, sizedBit);
+            filter = new OrderWithoutHoldFilter(head, sizedBit);
         }
 
         // ホールを取り除く
@@ -251,10 +262,20 @@ public class SetupEntryPoint implements EntryPoint {
                         field.merge(pieceField);
                     }
 
-                    // TODO: Add piece
-                    // TODO: Assume filled line
+                    // テストフィールドに操作を加える
+                    Field testField = field.freeze(maxHeight);
+                    for (Operation operation : settings.getAddOperations())
+                        testField.put(minoFactory.create(operation.getPiece(), operation.getRotate()), operation.getX(), operation.getY());
 
-                    return new SetupResult(result, field);
+                    testField.clearLine();
+
+                    // テストフィールドがラインが揃っているとみなす
+                    for (Integer y : settings.getAssumeFilledLines())
+                        testField.fillLine(y);
+
+                    testField.clearLine();
+
+                    return new SetupResult(result, field, testField);
                 })
                 .filter(filter)
                 .collect(Collectors.toList());
@@ -284,7 +305,18 @@ public class SetupEntryPoint implements EntryPoint {
             // 譜面の作成
             String encode = fumenParser.parse(operationWithKeys, initField, maxHeight);
 
-            String name = operationWithKeys.stream().map(OperationWithKey::getPiece).map(Piece::getName).collect(Collectors.joining());
+            // 名前の作成
+            BuildUpStream buildUpStream = buildUpStreamThreadLocal.get();
+            LongPieces pieces = buildUpStream.existsValidBuildPattern(setupResult.getRawField(), operationWithKeys)
+                    .map(operations -> new LongPieces(operations.stream().map(MinoOperationWithKey::getPiece)))
+                    .filter(head::checksWithoutHold)
+                    .findFirst()
+                    .orElseGet(() -> new LongPieces(operationWithKeys.stream().map(MinoOperationWithKey::getPiece)));
+
+            String name = pieces.blockStream()
+                    .map(Piece::getName)
+                    .collect(Collectors.joining());
+
             String link = String.format("<a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a>", encode, name);
             String line = String.format("<div>%s</div>", link);
 
@@ -425,17 +457,7 @@ class OrderWithHoldFilter implements SetupSolutionFilter {
     private final SuccessTreeHead head;
     private final SizedBit sizedBit;
 
-    OrderWithHoldFilter(PatternGenerator generator, SizedBit sizedBit) {
-        // パターンツリーを作成
-        int depth = generator.getDepth();
-        ForwardOrderLookUp lookup = new ForwardOrderLookUp(depth, depth);
-        SuccessTreeHead head = new SuccessTreeHead();
-        generator.blocksStream()
-                .map(Pieces::getPieces)
-                .flatMap(lookup::parse)
-                .sequential()
-                .forEach(head::register);
-
+    OrderWithHoldFilter(SuccessTreeHead head, SizedBit sizedBit) {
         this.head = head;
         this.sizedBit = sizedBit;
     }
@@ -455,17 +477,7 @@ class OrderWithoutHoldFilter implements SetupSolutionFilter {
     private final SuccessTreeHead head;
     private final SizedBit sizedBit;
 
-    OrderWithoutHoldFilter(PatternGenerator generator, SizedBit sizedBit) {
-        // パターンツリーを作成
-        int depth = generator.getDepth();
-        ForwardOrderLookUp lookup = new ForwardOrderLookUp(depth, depth);
-        SuccessTreeHead head = new SuccessTreeHead();
-        generator.blocksStream()
-                .map(Pieces::getPieces)
-                .flatMap(lookup::parse)
-                .sequential()
-                .forEach(head::register);
-
+    OrderWithoutHoldFilter(SuccessTreeHead head, SizedBit sizedBit) {
         this.head = head;
         this.sizedBit = sizedBit;
     }
@@ -486,10 +498,10 @@ class SetupResult {
     private final Field rawField;
     private final Field testField;
 
-    SetupResult(Result result, Field rawField) {
+    SetupResult(Result result, Field rawField, Field testField) {
         this.result = result;
         this.rawField = rawField;
-        this.testField = rawField;
+        this.testField = testField;
     }
 
     public Result getResult() {

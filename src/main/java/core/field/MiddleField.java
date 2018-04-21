@@ -63,6 +63,10 @@ public class MiddleField implements Field {
         return 1L << x + y * FIELD_WIDTH;
     }
 
+    private long getLineMask(int y) {
+        return 0x3ffL << y * FIELD_WIDTH;
+    }
+
     @Override
     public void put(Mino mino, int x, int y) {
         // Lowの更新が必要
@@ -305,6 +309,15 @@ public class MiddleField implements Field {
 
         this.xBoardLow = newXBoardLow;
         this.xBoardHigh = newXBoardHigh & VALID_BOARD_RANGE;
+    }
+
+    // TODO: write unittest
+    @Override
+    public void fillLine(int y) {
+        if (y < FIELD_ROW_BOARDER_Y)
+            xBoardLow |= getLineMask(y);
+        else
+            xBoardHigh |= getLineMask(y - FIELD_ROW_BOARDER_Y);
     }
 
     @Override

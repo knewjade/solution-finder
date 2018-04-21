@@ -1,15 +1,18 @@
 package entry.setup;
 
 import common.datastore.BlockField;
+import common.datastore.Operation;
 import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import core.field.Field;
+import core.mino.Mino;
 import core.mino.Piece;
 import entry.DropType;
 import exceptions.FinderParseException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SetupSettings {
@@ -21,6 +24,8 @@ public class SetupSettings {
     private boolean isUsingHold = true;
     private boolean isCombination = false;
     private boolean isHoles = true;
+    private List<Operation> addOperations = Collections.emptyList();
+    private List<Integer> assumeFilledLines = Collections.emptyList();
     private int maxHeight = -1;
     private List<String> patterns = new ArrayList<>();
     private Field initField = null;
@@ -55,6 +60,14 @@ public class SetupSettings {
 
     boolean isCombination() {
         return isCombination;
+    }
+
+    List<Operation> getAddOperations() {
+        return addOperations;
+    }
+
+    List<Integer> getAssumeFilledLines() {
+        return assumeFilledLines;
     }
 
     int getMaxHeight() {

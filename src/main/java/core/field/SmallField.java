@@ -98,6 +98,10 @@ public class SmallField implements Field {
         return 1L << x + y * FIELD_WIDTH;
     }
 
+    private long getLineMask(int y) {
+        return 0x3ffL << y * FIELD_WIDTH;
+    }
+
     @Override
     public boolean isEmpty(int x, int y) {
         return (xBoard & getXMask(x, y)) == 0L;
@@ -182,6 +186,12 @@ public class SmallField implements Field {
     @Override
     public void insertWhiteLineWithKey(long deleteKey) {
         this.xBoard = LongBoardMap.insertWhiteLine(xBoard, deleteKey);
+    }
+
+    // TODO: write unittest
+    @Override
+    public void fillLine(int y) {
+        xBoard |= getLineMask(y);
     }
 
     @Override

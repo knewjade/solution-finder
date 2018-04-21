@@ -86,6 +86,9 @@ public interface Field extends Comparable<Field> {
     // ブロックがそろった行を空白の状態で復元する
     void insertWhiteLineWithKey(long deleteKey);
 
+    // y行上をブロックで塗りつぶす
+    void fillLine(int y);
+
     // 6列分のフィールドを表現するボードの個数を返却
     int getBoardCount();
 

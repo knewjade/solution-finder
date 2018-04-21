@@ -247,4 +247,25 @@ class SetupTetfuCaseTest extends SetupUseCaseBaseTest {
                 .doesNotContain("Hhh0Heg0AewwGeg0ywPeAgWCAqOBAA")
                 .doesNotContain("JhhlFeg0BeglFei0glPeAgWCAs/AAA");
     }
+
+    @Test
+    void case13() throws Exception {
+        // 空中Tスピン  // アルバトロス
+        String tetfu = "v115@9gQpBewhVpwhCe3hAe2hZpJeAgH";
+
+        String command = String.format("setup -t %s -p [^T]! -f i -m o", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getOutput()).contains(Messages.foundSolutions(12));
+
+        assertThat(log.getError()).isEmpty();
+
+        SetupHTML html = OutputFileHelper.loadSetupHTML();
+        assertThat(html.getHtml())
+                .contains("2203432224");
+
+        assertThat(html.getFumens())
+                .hasSize(12)
+                .contains("AhBtDewhQ4CeBti0whR4AeRpilg0whAeQ4AeRpglCe?whJeAgWGApvaFDMNBAA");
+    }
 }

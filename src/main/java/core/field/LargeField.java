@@ -131,6 +131,11 @@ public class LargeField implements Field {
     }
 
     @Override
+    public void fillLine(int y) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public int getBoardCount() {
         throw new UnsupportedOperationException();
     }
