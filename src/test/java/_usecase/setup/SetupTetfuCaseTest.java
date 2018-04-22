@@ -7,7 +7,6 @@ import _usecase.setup.files.SetupHTML;
 import entry.EntryPointMain;
 import module.LongTest;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -285,6 +284,26 @@ class SetupTetfuCaseTest {
             // HTML
             SetupHTML html = OutputFileHelper.loadSetupHTML();
             assertThat(html.getFumens()).hasSize(0);
+        }
+
+        @Test
+        void case13WithoutHolesAfterOperation() throws Exception {
+            // 空中Tスピン  // アルバトロス
+            // 操作した後、ホールを除外する
+            String fumen = "v115@9gQpBewhVpwhCe3hAe2hZpJeAgH";
+            String command = buildCommand(fumen, "-p [^T]! -f i -m o --add-piece T-Reverse(2,2) --exclude holes");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(2));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SetupHTML html = OutputFileHelper.loadSetupHTML();
+            assertThat(html.getFumens())
+                    .hasSize(2)
+                    .contains("AhBtDewhQ4CeBti0whR4AeRpilg0whAeQ4AeRpglCe?whJeAgWGApvaFDMNBAA")
+                    .contains("AhBtCeglAeQ4CeBtilg0R4AeRpzhg0AeQ4AeRpCeh0?JeAgWGAqyaFDJNBAA");
         }
     }
 }
