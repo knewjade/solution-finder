@@ -4,6 +4,7 @@ import exceptions.FinderParseException;
 import org.apache.commons.cli.CommandLine;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -91,6 +92,9 @@ public class NormalCommandLineWrapper implements CommandLineWrapper {
 
     @Override
     public List<String> getStringOptions(String name) {
-        return Arrays.asList(commandLine.getOptionValues(name));
+        String[] values = commandLine.getOptionValues(name);
+        if (values == null)
+            return Collections.emptyList();
+        return Arrays.asList(values);
     }
 }

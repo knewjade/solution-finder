@@ -1,8 +1,6 @@
 package entry.setup;
 
 import common.datastore.BlockField;
-import common.datastore.Operation;
-import common.datastore.SimpleOperation;
 import common.parser.StringEnumTransform;
 import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
@@ -11,6 +9,7 @@ import core.field.Field;
 import core.mino.Piece;
 import core.srs.Rotate;
 import entry.DropType;
+import entry.setup.operation.*;
 import exceptions.FinderParseException;
 
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ public class SetupSettings {
     private boolean isUsingHold = true;
     private boolean isCombination = false;
     private ExcludeType exclude = ExcludeType.None;
-    private List<Operation> addOperations = Collections.emptyList();
+    private List<FieldOperation> addOperations = Collections.emptyList();
     private List<Integer> assumeFilledLines = Collections.emptyList();
     private int maxHeight = -1;
     private List<String> patterns = new ArrayList<>();
@@ -66,7 +65,7 @@ public class SetupSettings {
         return isCombination;
     }
 
-    List<Operation> getAddOperations() {
+    List<FieldOperation> getAddOperations() {
         return addOperations;
     }
 
@@ -283,32 +282,78 @@ public class SetupSettings {
     }
 
     void setAddOperations(List<String> values) throws FinderParseException {
-        ArrayList<Operation> operations = new ArrayList<>();
+        ArrayList<FieldOperation> operations = new ArrayList<>();
 
-        Pattern pattern = Pattern.compile("(.*?)\\((\\d),(\\d)\\)");
+        Pattern pattern = Pattern.compile("(.*?)\\((.*?)\\)");
 
         for (String value : values) {
             value = value.trim().replace(" ", "");
 
             Matcher matcher = pattern.matcher(value);
             if (!matcher.find()) {
-                throw new FinderParseException("Unsupported piece: add-piece=" + value);
+                throw new FinderParseException("Unsupported operation / format: add=" + value);
             }
+            String command = matcher.group(1);
+            String args = matcher.group(2);
 
-            String pieceName = matcher.group(1);
-
-            Piece piece = StringEnumTransform.toPiece(pieceName.toUpperCase().charAt(0));
-            Rotate rotate = Rotate.Spawn;
-            if (pieceName.contains("-")) {
-                rotate = toRotate(pieceName.split("-")[1].toLowerCase());
+            try {
+                FieldOperation operation = createFieldOperation(command, args);
+                operations.add(operation);
+            } catch (Exception e) {
+                throw new FinderParseException("Unsupported operation / command: add=" + value, e);
             }
-
-            int x = Integer.valueOf(matcher.group(2));
-            int y = Integer.valueOf(matcher.group(3));
-            operations.add(new SimpleOperation(piece, rotate, x, y));
         }
 
         this.addOperations = operations;
+    }
+
+    private FieldOperation createFieldOperation(String command, String args) throws FinderParseException {
+        switch (command.toLowerCase()) {
+            case "row": {
+                int y = Integer.valueOf(args);
+                if (y < 0) {
+                    throw new FinderParseException("Unsupported operation / 0 <= y: y=" + y);
+                }
+                return new FilledFieldOperation(y);
+            }
+            case "clear": {
+                return new ClearFieldOperation();
+            }
+            case "block": {
+                String[] split = args.split(",");
+                int x = Integer.valueOf(split[0]);
+                if (x < 0 || 10 <= x) {
+                    throw new FinderParseException("Unsupported piece operation / 0 <= x < 10: args=" + args);
+                }
+
+                int y = Integer.valueOf(split[1]);
+                if (y < 0) {
+                    throw new FinderParseException("Unsupported piece operation / 0 <= y: args=" + args);
+                }
+                return new SetBlockFieldOperation(x, y);
+            }
+            default: {
+                Piece piece = StringEnumTransform.toPiece(command.toUpperCase().charAt(0));
+                if (!command.contains("-")) {
+                    throw new FinderParseException("Unsupported piece operation / no rotation: args=" + command);
+                }
+
+                Rotate rotate = toRotate(command.split("-")[1].toLowerCase());
+
+                String[] split = args.split(",");
+                int x = Integer.valueOf(split[0]);
+                if (x < 0 || 10 <= x) {
+                    throw new FinderParseException("Unsupported piece operation / 0 <= x < 10: args=" + args);
+                }
+
+                int y = Integer.valueOf(split[1]);
+                if (y < 0) {
+                    throw new FinderParseException("Unsupported piece operation / 0 <= y: args=" + args);
+                }
+
+                return new PutMinoOperation(piece, rotate, x, y);
+            }
+        }
     }
 
     private Rotate toRotate(String name) {
@@ -329,3 +374,4 @@ public class SetupSettings {
         throw new IllegalArgumentException("No reachable");
     }
 }
+

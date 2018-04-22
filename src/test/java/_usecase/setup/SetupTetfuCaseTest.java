@@ -250,7 +250,7 @@ class SetupTetfuCaseTest {
 
         @Test
         void case13() throws Exception {
-            // 空中Tスピン  // アルバトロス
+            // 空中TSD  // アルバトロス
             String fumen = "v115@9gQpBewhVpwhCe3hAe2hZpJeAgH";
             String command = buildCommand(fumen, "-p [^T]! -f i -m o");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
@@ -271,7 +271,7 @@ class SetupTetfuCaseTest {
 
         @Test
         void case13WithoutHoles() throws Exception {
-            // 空中Tスピン  // アルバトロス
+            // 空中TSD  // アルバトロス
             // ホールを除外する
             String fumen = "v115@9gQpBewhVpwhCe3hAe2hZpJeAgH";
             String command = buildCommand(fumen, "-p [^T]! -f i -m o --exclude holes");
@@ -288,10 +288,10 @@ class SetupTetfuCaseTest {
 
         @Test
         void case13WithoutHolesAfterOperation() throws Exception {
-            // 空中Tスピン  // アルバトロス
+            // 空中TSD  // アルバトロス
             // 操作した後、ホールを除外する
             String fumen = "v115@9gQpBewhVpwhCe3hAe2hZpJeAgH";
-            String command = buildCommand(fumen, "-p [^T]! -f i -m o --add-piece T-Reverse(2,2) --exclude holes");
+            String command = buildCommand(fumen, "-p [^T]! -f i -m o --operate T-Reverse(2,2) --exclude holes");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -304,6 +304,89 @@ class SetupTetfuCaseTest {
                     .hasSize(2)
                     .contains("AhBtDewhQ4CeBti0whR4AeRpilg0whAeQ4AeRpglCe?whJeAgWGApvaFDMNBAA")
                     .contains("AhBtCeglAeQ4CeBtilg0R4AeRpzhg0AeQ4AeRpCeh0?JeAgWGAqyaFDJNBAA");
+        }
+
+        @Test
+        void case14() throws Exception {
+            // 空中TSS
+            String fumen = "v115@2gQpFeSpwhBeWpCeTpzhAe0hA8RpB8UpJeAgl";
+            String command = buildCommand(fumen, "-p [^T]! -f i -m o");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(202));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SetupHTML html = OutputFileHelper.loadSetupHTML();
+            assertThat(html.getFumens())
+                    .hasSize(202)
+                    .contains("2gAtHeBtEewhRpAtDeglg0whRpR4Aeilg0whA8R4B8?Beh0whJeAgWGAp/TFDTHBAA");
+        }
+
+        @Test
+        void case14WithoutHolesAfterOperation() throws Exception {
+            // 空中TSS
+            // 操作した後、ホールを除外する
+            String fumen = "v115@2gQpFeSpwhBeWpCeTpzhAe0hA8RpB8UpJeAgl";
+            String command = buildCommand(fumen, "-p [^T]! -f i -m o -op T-2(4,2) -e holes");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+            System.out.println(log.getOutput());
+            System.out.println(log.getError());
+
+            // Log
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(7));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SetupHTML html = OutputFileHelper.loadSetupHTML();
+            assertThat(html.getFumens())
+                    .hasSize(7)
+                    .doesNotContain("2gAtHeBtEewhRpAtDeglg0whRpR4Aeilg0whA8R4B8?Beh0whJeAgWGAp/TFDTHBAA");
+        }
+
+        @Test
+        void case14WithoutHolesAfterOperationAndAssumeFilled() throws Exception {
+            // 空中TSS
+            // 操作した後、ラインが揃ったとみなして、ホールを除外する
+            String fumen = "v115@2gQpFeSpwhBeWpCeTpzhAe0hA8RpB8UpJeAgl";
+            String command = buildCommand(fumen, "-p [^T]! -f i -m o -op T-2(4,2) clear() row(1) -e holes");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+            System.out.println(log.getOutput());
+            System.out.println(log.getError());
+
+            // Log
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(39));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SetupHTML html = OutputFileHelper.loadSetupHTML();
+            assertThat(html.getFumens())
+                    .hasSize(39)
+                    .contains("2gAtFeglAeBtFeglAeAtFeg0hlR4Aezhg0A8R4B8Ce?h0JeAgWFAKeLuCsAAAA")
+                    .contains("2gAtHeBtEewhRpAtDeglg0whRpR4Aeilg0whA8R4B8?Beh0whJeAgWGAp/TFDTHBAA");
+        }
+
+        @Test
+        void case14WithoutHolesAfterOperationAndSetBlock() throws Exception {
+            // 空中TSS
+            // ミノを操作した後、1ブロック追加して、ホールを除外する
+            String fumen = "v115@2gQpFeSpwhBeWpCeTpzhAe0hA8RpB8UpJeAgl";
+            String command = buildCommand(fumen, "-p [^T]! -f i -m o -op T-2(4,2) block(6,2) -e holes");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+            System.out.println(log.getOutput());
+            System.out.println(log.getError());
+
+            // Log
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(7));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SetupHTML html = OutputFileHelper.loadSetupHTML();
+            assertThat(html.getFumens())
+                    .hasSize(7)
+                    .doesNotContain("2gAtFeglAeBtFeglAeAtFeg0hlR4Aezhg0A8R4B8Ce?h0JeAgWFAKeLuCsAAAA")
+                    .contains("2gAtHeBtEewhRpAtDeglg0whRpR4Aeilg0whA8R4B8?Beh0whJeAgWGAp/TFDTHBAA");
         }
     }
 }

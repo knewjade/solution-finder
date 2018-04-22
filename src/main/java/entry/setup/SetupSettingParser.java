@@ -135,8 +135,8 @@ public class SetupSettingParser {
         }
 
         // 除外前に加えるミノ
-        List<String> addPieces = wrapper.getStringOptions("add-pieces");
-        settings.setAddOperations(addPieces);
+        List<String> addOperations = wrapper.getStringOptions("operate");
+        settings.setAddOperations(addOperations);
 
         // ログファイルの設定
         Optional<String> logFilePath = wrapper.getStringOption("log-path");
@@ -376,14 +376,14 @@ public class SetupSettingParser {
                 .build();
         options.addOption(excludeOption);
 
-        Option addPieceOption = Option.builder("ap")
+        Option addPieceOption = Option.builder("op")
                 .optionalArg(true)
                 .hasArg()
                 .numberOfArgs(Integer.MAX_VALUE)
                 .valueSeparator(' ')
-                .argName("place")
-                .longOpt("add-pieces")
-                .desc("Add pieces to field before determining to exclude solutions")
+                .argName("operations...")
+                .longOpt("operate")
+                .desc("Operate field before determining to exclude solutions")
                 .build();
         options.addOption(addPieceOption);
 

@@ -27,6 +27,7 @@ import entry.setup.filters.SetupSolutionFilter;
 import entry.setup.filters.SimpleHolesFilter;
 import entry.setup.functions.CombinationFunctions;
 import entry.setup.functions.SetupFunctions;
+import entry.setup.operation.FieldOperation;
 import exceptions.FinderException;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
@@ -265,14 +266,8 @@ public class SetupEntryPoint implements EntryPoint {
 
                     // テストフィールドに操作を加える
                     Field testField = field.freeze(maxHeight);
-                    for (Operation operation : settings.getAddOperations())
-                        testField.put(minoFactory.create(operation.getPiece(), operation.getRotate()), operation.getX(), operation.getY());
-
-                    testField.clearLine();
-
-                    // テストフィールドがラインが揃っているとみなす
-                    for (Integer y : settings.getAssumeFilledLines())
-                        testField.fillLine(y);
+                    for (FieldOperation operation : settings.getAddOperations())
+                        operation.operate(testField);
 
                     testField.clearLine();
 
