@@ -16,9 +16,7 @@ import core.mino.Piece;
 import entry.DropType;
 import entry.EntryPoint;
 import entry.Verify;
-import entry.path.ForPathSolutionFilter;
-import entry.path.HarddropBuildUpListUpThreadLocal;
-import entry.path.LockedBuildUpListUpThreadLocal;
+import entry.path.*;
 import entry.path.output.MyFile;
 import entry.path.output.OneFumenParser;
 import entry.setup.filters.SetupResult;
@@ -26,6 +24,7 @@ import entry.setup.filters.SetupSolutionFilter;
 import entry.setup.filters.SetupTemp;
 import entry.setup.filters.SimpleHolesFilter;
 import entry.setup.functions.CombinationFunctions;
+import entry.setup.functions.OrderFunctions;
 import entry.setup.functions.SetupFunctions;
 import entry.setup.operation.FieldOperation;
 import exceptions.FinderException;
@@ -211,26 +210,30 @@ public class SetupEntryPoint implements EntryPoint {
             basicSolutions.add(solutions);
         }
 
-        // 有効ミノ順poolを作成
-        SetupFunctions data = new CombinationFunctions();
+        // ミノを置く最大個数を計算
+        boolean isLocalSearch = !settings.isCombination() || settings.getNumOfPieces() != Integer.MAX_VALUE;
+        int maxDepth = generator.getDepth();
 
+        {
+            // 実際における個数が少なかったら更新
+            Field fieldForMaxDepth = FieldFactory.createField(maxHeight);
+            for (int y = 0; y < maxHeight; y++)
+                fieldForMaxDepth.fillLine(y);
+            fieldForMaxDepth.reduce(notFilledField);
+            int fieldMaxDepth = Verify.depth(fieldForMaxDepth);
+            maxDepth = fieldMaxDepth < maxDepth ? fieldMaxDepth : maxDepth;
+        }
 
-//        Field fieldForMaxDepth = FieldFactory.createField(maxHeight);
-//        for (int y = 0; y < maxHeight; y++)
-//            fieldForMaxDepth.fillLine(y);
-//        fieldForMaxDepth.reduce(notFilledField);
-//        int maxDepth = Verify.depth(fieldForMaxDepth);
-//
-//        ValidPiecesPool validPiecesPool = !settings.isCombination() ? new ValidPiecesPool(generator, maxDepth, settings.isUsingHold()) : null;
+        {
+            // --n-piecesで指定があったらそれも考慮する
+            int numOfPieces = settings.getNumOfPieces();
+            if (numOfPieces < maxDepth) {
+                maxDepth = numOfPieces;
+            }
+        }
 
-        // 解をフィルタリングする準備を行う
-        // TODO: Excule with holes (merge)
-//        SetupSolutionFilter filter;
-//        if (settings.isCombination()) {
-//            filter = new CombinationFilter();
-//        } else {
-//            filter = new OrderFilter(validPiecesPool, sizedBit);
-//        }
+        // 組み合わせか順番かで処理を変更する
+        SetupFunctions data = createSetupFunctions(settings.isCombination(), generator, buildUpStreamThreadLocal, initField, maxDepth, settings.isUsingHold());
 
         // ホールを取り除く
         SetupSolutionFilter filter = data.getSetupSolutionFilter();
@@ -252,71 +255,11 @@ public class SetupEntryPoint implements EntryPoint {
                 .map(stream -> stream.map(SeparableMino::toMinoOperationWithKey).collect(Collectors.toList()))
                 .collect(Collectors.toList());
 
-        int numOfPieces = settings.getNumOfPieces();
-        List<SetupTemp> tempOperations;
-        if (numOfPieces != -1) {
-            // 使っていないミノに対してローカルサーチする
-            output("     Search sub solutions for '--n-pieces'");
+        // 必要があればローカルサーチをする
+        List<SetupTemp> tempOperations = localSearchIfNeed(notFilledField, maxHeight, generator, separableMinos, isLocalSearch, resultOperations, maxDepth);
 
-            // PieceごとのList<SeparableMino>を事前に計算しておく
-            EnumMap<Piece, List<SeparableMino>> separableMinoMap = new EnumMap<>(Piece.class);
-            for (Piece piece : Piece.values()) {
-                List<SeparableMino> minos = separableMinos.getMinos().stream()
-                        .filter(mino -> mino.toMinoOperationWithKey().getPiece() == piece)
-                        .collect(Collectors.toList());
-                separableMinoMap.put(piece, minos);
-            }
-
-            // 探索をさらに進める
-            tempOperations = resultOperations.stream()
-                    .flatMap((operationWithKeys) -> {
-                        PieceCounter pieceCounter = new PieceCounter(operationWithKeys.stream().map(MinoOperationWithKey::getPiece));
-                        int numOfUsedPieces = pieceCounter.getBlocks().size();
-
-                        // 必要な数以上使っている
-                        if (numOfPieces < numOfUsedPieces) {
-                            return Stream.empty();
-                        }
-
-                        // 必要な数だけ使っている
-                        if (numOfPieces == numOfUsedPieces) {
-                            return Stream.of(new SetupTemp(operationWithKeys, maxHeight));
-                        }
-
-                        // 必要な数を使っていない
-                        // フィールド作成  // おくことができない場所
-                        Field field = FieldFactory.createField(maxHeight);
-                        for (MinoOperationWithKey operation : operationWithKeys) {
-                            Field pieceField = FieldFactory.createField(maxHeight);
-                            pieceField.put(operation.getMino(), operation.getX(), operation.getY());
-                            pieceField.insertWhiteLineWithKey(operation.getNeedDeletedKey());
-                            field.merge(pieceField);
-                        }
-                        field.merge(notFilledField);
-
-                        // 探索する
-                        int needNumOfPieces = numOfPieces - numOfUsedPieces;
-                        return generator.blockCountersStream().flatMap((allUsablePieceCounter) -> {
-                            PieceCounter noUsedPieceCounter = allUsablePieceCounter.removeAndReturnNew(pieceCounter);
-
-                            // 使えるミノ組み合わせを列挙する
-                            HashSet<PieceCounter> usable = new HashSet<>();
-                            CombinationIterable<Piece> iterable = new CombinationIterable<>(noUsedPieceCounter.getBlocks(), needNumOfPieces);
-                            for (List<Piece> pieces : iterable)
-                                usable.add(new PieceCounter(pieces));
-
-                            return usable.stream()
-                                    .map(PieceCounter::getBlocks)
-                                    .map(LinkedList::new)
-                                    .flatMap(blocks -> localSearch(operationWithKeys, field, blocks, separableMinoMap, maxHeight));
-                        }).map((solution) -> new SetupTemp(operationWithKeys, solution, maxHeight));
-                    })
-                    .collect(Collectors.toList());
-        } else {
-            tempOperations = resultOperations.stream().map(o -> new SetupTemp(o, maxHeight)).collect(Collectors.toList());
-        }
-
-        SetupSolutionFilter filter1 = filter;
+        // 結果のフィルタリング
+        SetupSolutionFilter finalFilter = filter;
         Map<BlockField, List<SetupResult>> resultMap = new HashMap<>();
         tempOperations.stream()
                 .map(setupTemp -> {
@@ -344,14 +287,14 @@ public class SetupEntryPoint implements EntryPoint {
                     SetupResult setupResult = new SetupResult(solution, field, testField);
                     return new Pair<>(setupTemp.getKeyField(), setupResult);
                 })
-                .filter(pair -> filter1.test(pair.getValue()))
+                .filter(pair -> finalFilter.test(pair.getValue()))
                 .forEach((pair) -> {
                     List<SetupResult> setupResults = resultMap.computeIfAbsent(pair.getKey(), (v) -> new ArrayList<>());
                     setupResults.add(pair.getValue());
                 });
 
         output("     Found solutions = " + resultMap.size());
-        if (numOfPieces != -1) {
+        if (isLocalSearch) {
             output("     Found sub solutions = " + resultMap.values().stream().mapToInt(List::size).sum());
         }
 
@@ -414,6 +357,69 @@ public class SetupEntryPoint implements EntryPoint {
         output("done");
     }
 
+    private List<SetupTemp> localSearchIfNeed(Field notFilledField, int maxHeight, PatternGenerator generator, SeparableMinos separableMinos, boolean isLocalSearch, List<List<MinoOperationWithKey>> resultOperations, int numOfPieces) throws FinderExecuteException {
+        if (!isLocalSearch)
+            return resultOperations.stream().map(o -> new SetupTemp(o, maxHeight)).collect(Collectors.toList());
+
+        // 使っていないミノに対してローカルサーチする
+        output("     Search sub solutions for '--n-pieces'");
+
+        // PieceごとのList<SeparableMino>を事前に計算しておく
+        EnumMap<Piece, List<SeparableMino>> separableMinoMap = new EnumMap<>(Piece.class);
+        for (Piece piece : Piece.values()) {
+            List<SeparableMino> minos = separableMinos.getMinos().stream()
+                    .filter(mino -> mino.toMinoOperationWithKey().getPiece() == piece)
+                    .collect(Collectors.toList());
+            separableMinoMap.put(piece, minos);
+        }
+
+        // 探索をさらに進める
+        return resultOperations.stream()
+                .flatMap((operationWithKeys) -> {
+                    PieceCounter pieceCounter = new PieceCounter(operationWithKeys.stream().map(MinoOperationWithKey::getPiece));
+                    int numOfUsedPieces = pieceCounter.getBlocks().size();
+
+                    // 必要な数以上使っている
+                    if (numOfPieces < numOfUsedPieces) {
+                        return Stream.empty();
+                    }
+
+                    // 必要な数だけ使っている
+                    if (numOfPieces == numOfUsedPieces) {
+                        return Stream.of(new SetupTemp(operationWithKeys, maxHeight));
+                    }
+
+                    // 必要な数を使っていない
+                    // フィールド作成  // おくことができない場所
+                    Field field = FieldFactory.createField(maxHeight);
+                    for (MinoOperationWithKey operation : operationWithKeys) {
+                        Field pieceField = FieldFactory.createField(maxHeight);
+                        pieceField.put(operation.getMino(), operation.getX(), operation.getY());
+                        pieceField.insertWhiteLineWithKey(operation.getNeedDeletedKey());
+                        field.merge(pieceField);
+                    }
+                    field.merge(notFilledField);
+
+                    // 探索する
+                    int needNumOfPieces = numOfPieces - numOfUsedPieces;
+                    return generator.blockCountersStream().flatMap((allUsablePieceCounter) -> {
+                        PieceCounter noUsedPieceCounter = allUsablePieceCounter.removeAndReturnNew(pieceCounter);
+
+                        // 使えるミノ組み合わせを列挙する
+                        HashSet<PieceCounter> usable = new HashSet<>();
+                        CombinationIterable<Piece> iterable = new CombinationIterable<>(noUsedPieceCounter.getBlocks(), needNumOfPieces);
+                        for (List<Piece> pieces : iterable)
+                            usable.add(new PieceCounter(pieces));
+
+                        return usable.stream()
+                                .map(PieceCounter::getBlocks)
+                                .map(LinkedList::new)
+                                .flatMap(blocks -> localSearch(operationWithKeys, field, blocks, separableMinoMap, maxHeight));
+                    }).map((solution) -> new SetupTemp(operationWithKeys, solution, maxHeight));
+                })
+                .collect(Collectors.toList());
+    }
+
     private Stream<? extends List<MinoOperationWithKey>> localSearch(List<MinoOperationWithKey> operationWithKeys, Field field, LinkedList<Piece> pieces, EnumMap<Piece, List<SeparableMino>> separableMinoMap, int maxHeight) {
         Stream<? extends List<MinoOperationWithKey>> stream = Stream.empty();
 
@@ -441,6 +447,15 @@ public class SetupEntryPoint implements EntryPoint {
         pieces.addFirst(piece);
 
         return stream;
+    }
+
+    private SetupFunctions createSetupFunctions(boolean isCombination, PatternGenerator generator, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal, Field initField, int maxDepth, boolean isUsingHold) {
+        if (isCombination)
+            return new CombinationFunctions();
+
+        ReducePatternGenerator reduce = new ReducePatternGenerator(generator, maxDepth);
+        ValidPiecesPool piecesPool = new ValidPiecesPool(reduce, maxDepth, isUsingHold);
+        return new OrderFunctions(buildUpStreamThreadLocal, piecesPool, initField);
     }
 
     private long getDeleteKeyMask(Field notFilledField, int maxHeight) {
@@ -525,60 +540,3 @@ public class SetupEntryPoint implements EntryPoint {
         }
     }
 }
-
-
-//
-//class OrderFilter implements SetupSolutionFilter {
-//    private final ValidPiecesPool validPiecesPool;
-//    private final SizedBit sizedBit;
-//
-//    OrderFilter(ValidPiecesPool validPiecesPool, SizedBit sizedBit) {
-//        this.validPiecesPool = validPiecesPool;
-//        this.sizedBit = sizedBit;
-//    }
-//
-//    @Override
-//    public boolean test(SetupResult result) {
-//        Stream<Piece> stream = result.getResult().getMemento()
-//                .getSeparableMinoStream(sizedBit.getWidth())
-//                .map(SeparableMino::toMinoOperationWithKey)
-//                .map(OperationWithKey::getPiece);
-//        Pieces pieces = new LongPieces(stream);
-//        return validPiecesPool.getValidPieces().contains(pieces);
-//    }
-//}
-
-
-//
-//class OrderFunctions implements SetupFunctions {
-//    private final ThreadLocal<BuildUpStream> buildUpStreamThreadLocal;
-//    private final ValidPiecesPool validPiecesPool;
-//
-//    public OrderFunctions(ThreadLocal<BuildUpStream> buildUpStreamThreadLocal, ValidPiecesPool validPiecesPool) {
-//        this.buildUpStreamThreadLocal = buildUpStreamThreadLocal;
-//        this.validPiecesPool = validPiecesPool;
-//    }
-//
-//    @Override
-//    public SetupSolutionFilter getSetupSolutionFilter() {
-//        throw new UnsupportedOperationException();
-//    }
-//
-//    @Override
-//    public BiFunction<List<MinoOperationWithKey>, Field, String> getNaming() {
-//        return (operationWithKeys, field) -> {
-//            HashSet<LongPieces> validPieces = validPiecesPool.getValidPieces();
-//            BuildUpStream buildUpStream = buildUpStreamThreadLocal.get();
-//            Optional<LongPieces> sample = buildUpStream.existsValidBuildPattern(field, operationWithKeys)
-//                    .map(operations -> new LongPieces(operations.stream().map(MinoOperationWithKey::getPiece)))
-//                    .filter(validPieces::contains)
-//                    .findFirst();
-//
-//            LongPieces pieces = sample.orElseGet(() -> new LongPieces(operationWithKeys.stream().map(MinoOperationWithKey::getPiece)));
-//
-//            return pieces.blockStream()
-//                    .map(Piece::getName)
-//                    .collect(Collectors.joining());
-//        };
-//    }
-//}

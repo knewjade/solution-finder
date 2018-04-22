@@ -26,7 +26,7 @@ public class SetupSettings {
     private boolean isReserved = false;
     private boolean isUsingHold = true;
     private boolean isCombination = false;
-    private int numOfPieces = -1;
+    private int numOfPieces = Integer.MAX_VALUE;
     private ExcludeType exclude = ExcludeType.None;
     private List<FieldOperation> addOperations = Collections.emptyList();
     private List<Integer> assumeFilledLines = Collections.emptyList();
@@ -124,7 +124,7 @@ public class SetupSettings {
     }
 
     void setNumOfPieces(int numOfPieces) {
-        this.numOfPieces = numOfPieces;
+        this.numOfPieces = 0 < numOfPieces ? numOfPieces : Integer.MAX_VALUE;
     }
 
     void setLogFilePath(String path) {

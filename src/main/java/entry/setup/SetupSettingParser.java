@@ -115,6 +115,10 @@ public class SetupSettingParser {
             }
         }
 
+        // ホールドの設定
+        Optional<Boolean> isUsingHold = wrapper.getBoolOption("hold");
+        isUsingHold.ifPresent(settings::setUsingHold);
+
         // ミノの組み合わせ
         Optional<Boolean> combination = wrapper.getBoolOption("combination");
         combination.ifPresent(settings::setCombination);
@@ -330,15 +334,15 @@ public class SetupSettingParser {
                 .build();
         options.addOption(combinationOption);
 
-//        Option reservedOption = Option.builder("r")
-//                .optionalArg(true)
-//                .hasArg()
-//                .numberOfArgs(1)
-//                .argName("reserved-block")
-//                .longOpt("reserved")
-//                .desc("Specify reserved block")
-//                .build();
-//        options.addOption(reservedOption);
+        Option holdOption = Option.builder("H")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("use or avoid")
+                .longOpt("hold")
+                .desc("If use hold, set 'use'. If not use hold, set 'avoid'")
+                .build();
+        options.addOption(holdOption);
 
         Option marginColorOption = Option.builder("m")
                 .optionalArg(true)

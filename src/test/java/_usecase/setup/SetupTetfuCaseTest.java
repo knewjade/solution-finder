@@ -7,6 +7,7 @@ import _usecase.setup.files.SetupHTML;
 import entry.EntryPointMain;
 import module.LongTest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -427,6 +428,146 @@ class SetupTetfuCaseTest {
 
             assertThat(html.getFumens())
                     .hasSize(6888);
+        }
+    }
+
+    @Nested
+    class OrderTest extends SetupUseCaseBaseTest {
+        private String buildCommand(String fumen, String options) {
+            return String.format("setup -t %s %s", fumen, options);
+        }
+
+        @Override
+        @BeforeEach
+        void setUp() throws IOException {
+            super.setUp();
+        }
+
+        @Test
+        void case1WithHold() throws Exception {
+            // 4x4
+            String fumen = "v115@9gzhFezhFezhFezhPeAgH";
+            String command = buildCommand(fumen, "-p IOOI --fill i --hold yes");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+            System.out.println(log.getOutput());
+
+            // Log
+            assertThat(log.getOutput())
+                    .contains(Messages.foundSolutions(5))
+                    .contains(Messages.foundSolutions(5));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SetupHTML html = OutputFileHelper.loadSetupHTML();
+            assertThat(html.getHtml()).contains("4444000000");
+
+            assertThat(html.getFumens())
+                    .hasSize(5)
+                    .contains("9gzhFezhFeTpFeTpPeAgWEAPX1LC")
+                    .contains("9gxhRpFexhRpFexhRpFexhRpPeAgWEAPX1LC")
+                    .contains("9gzhFeTpFeTpFezhPeAgWEAPX1LC")
+                    .contains("9gwhRpwhFewhRpwhFewhRpwhFewhRpwhPeAgWEAJ3C?MC")
+                    .contains("9gRpxhFeRpxhFeRpxhFeRpxhPeAgWEAJ3CMC");
+        }
+
+        @Test
+        void case1WithoutHold() throws Exception {
+            // 4x4
+            String fumen = "v115@9gzhFezhFezhFezhPeAgH";
+            String command = buildCommand(fumen, "-p IOOI --fill i --hold no");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+            System.out.println(log.getOutput());
+
+            // Log
+            assertThat(log.getOutput())
+                    .contains(Messages.foundSolutions(4))
+                    .contains(Messages.foundSolutions(4));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SetupHTML html = OutputFileHelper.loadSetupHTML();
+            assertThat(html.getHtml()).contains("4444000000");
+
+            assertThat(html.getFumens())
+                    .hasSize(4)
+                    .doesNotContain("9gzhFezhFeTpFeTpPeAgWEAPX1LC")
+                    .contains("9gxhRpFexhRpFexhRpFexhRpPeAgWEAPX1LC")
+                    .contains("9gzhFeTpFeTpFezhPeAgWEAPX1LC")
+                    .contains("9gwhRpwhFewhRpwhFewhRpwhFewhRpwhPeAgWEAJ3C?MC")
+                    .contains("9gRpxhFeRpxhFeRpxhFeRpxhPeAgWEAJ3CMC");
+        }
+
+        @Test
+        void case1WithoutHoldN3() throws Exception {
+            // 4x4
+            String fumen = "v115@9gAtywFeAtywFeAtywFeAtywPeAgH";
+            String command = buildCommand(fumen, "-p JSOI,*! -f Z -m t --hold no -np 3");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput())
+                    .contains(Messages.foundSolutions(2))
+                    .contains(Messages.foundSubSolutions(3));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SetupHTML html = OutputFileHelper.loadSetupHTML();
+            assertThat(html.getHtml()).contains("4310000000");
+
+            assertThat(html.getFumens())
+                    .hasSize(3)
+                    .contains("9gRpHeRpQ4Geg0AeR4Fei0Q4PeAgWDAvvzBA")
+                    .contains("9gQ4IeR4RpFeg0Q4RpFei0QeAgWDAzvqBA")
+                    .contains("9gRpHeRpR4Feg0R4Gei0QeAgWDAvvzBA");
+        }
+
+        @Disabled
+        @Test
+        void case1WithoutHoldN3ExcludeStrictHoles() throws Exception {
+            // 4x4
+            String fumen = "v115@9gAtywFeAtywFeAtywFeAtywPeAgH";
+            String command = buildCommand(fumen, "-p JSOI,*! -f Z -m t --hold no -np 3 -e strict-holes");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput())
+                    .contains(Messages.foundSolutions(2))
+                    .contains(Messages.foundSubSolutions(2));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SetupHTML html = OutputFileHelper.loadSetupHTML();
+            assertThat(html.getHtml()).contains("4310000000");
+
+            assertThat(html.getFumens())
+                    .hasSize(2)
+                    .doesNotContain("9gRpHeRpQ4Geg0AeR4Fei0Q4PeAgWDAvvzBA")
+                    .contains("9gQ4IeR4RpFeg0Q4RpFei0QeAgWDAzvqBA")
+                    .contains("9gRpHeRpR4Feg0R4Gei0QeAgWDAvvzBA");
+        }
+    }
+
+    @Nested
+    class ErrorTest extends SetupUseCaseBaseTest {
+        private String buildCommand(String fumen, String options) {
+            return String.format("setup -t %s %s", fumen, options);
+        }
+
+        @Override
+        @BeforeEach
+        void setUp() throws IOException {
+            super.setUp();
+        }
+
+        @Test
+        void case1WithHold() throws Exception {
+            // 必要なミノが足りないケース
+            String fumen = "v115@9gzhFezhFezhFezhPeAgH";
+            String command = buildCommand(fumen, "-p IOT --fill i");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getError()).contains("Should specify equal to or more than 4 pieces");
         }
     }
 }
