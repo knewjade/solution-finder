@@ -385,14 +385,39 @@ class SetupTetfuCaseTest {
 
         @Test
         void case15() throws Exception {
-            // nミノ固定
+            // 4ミノ固定  // 空間がぴったり
             String fumen = "v115@9gTpFeTpFeTpFezhPeAgl";
+            String command = buildCommand(fumen, "-p *! -f i -m o --n-pieces 4");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput())
+                    .contains(Messages.foundSolutions(15))
+                    .contains(Messages.foundSubSolutions(24));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SetupHTML html = OutputFileHelper.loadSetupHTML();
+            assertThat(html.getHtml())
+                    .contains("1111000000")
+                    .doesNotContain("4444000000");
+
+            assertThat(html.getFumens())
+                    .hasSize(24);
+        }
+
+        @Test
+        void case16() throws Exception {
+            // 4ミノ固定  // 空間が広め
+            String fumen = "v115@9gwhVpCewhVpCewhVpCewhVpMeAgl";
             String command = buildCommand(fumen, "-p *! -f i -m o --n-pieces 4");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
             System.out.println(log.getOutput());
 
             // Log
-            assertThat(log.getOutput()).contains(Messages.foundSolutions(24));
+            assertThat(log.getOutput())
+                    .contains(Messages.foundSolutions(1828))
+                    .contains(Messages.foundSubSolutions(6888));
             assertThat(log.getError()).isEmpty();
 
             // HTML
@@ -401,7 +426,7 @@ class SetupTetfuCaseTest {
                     .contains("4444000000");
 
             assertThat(html.getFumens())
-                    .hasSize(24);
+                    .hasSize(6888);
         }
     }
 }

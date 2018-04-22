@@ -1,10 +1,7 @@
 package entry.setup;
 
 import common.buildup.BuildUpStream;
-import common.datastore.BlockField;
-import common.datastore.MinoOperationWithKey;
-import common.datastore.OperationWithKey;
-import common.datastore.PieceCounter;
+import common.datastore.*;
 import common.iterable.CombinationIterable;
 import common.pattern.PatternGenerator;
 import common.tetfu.common.ColorConverter;
@@ -26,6 +23,7 @@ import entry.path.output.MyFile;
 import entry.path.output.OneFumenParser;
 import entry.setup.filters.SetupResult;
 import entry.setup.filters.SetupSolutionFilter;
+import entry.setup.filters.SetupTemp;
 import entry.setup.filters.SimpleHolesFilter;
 import entry.setup.functions.CombinationFunctions;
 import entry.setup.functions.SetupFunctions;
@@ -36,6 +34,7 @@ import exceptions.FinderInitializeException;
 import exceptions.FinderTerminateException;
 import lib.Stopwatch;
 import output.HTMLBuilder;
+import output.HTMLColumn;
 import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
@@ -253,10 +252,11 @@ public class SetupEntryPoint implements EntryPoint {
                 .map(stream -> stream.map(SeparableMino::toMinoOperationWithKey).collect(Collectors.toList()))
                 .collect(Collectors.toList());
 
-        // 使っていないミノに対してローカルサーチする
         int numOfPieces = settings.getNumOfPieces();
+        List<SetupTemp> tempOperations;
         if (numOfPieces != -1) {
-            output("  -> local searching ... (--n-pieces)");
+            // 使っていないミノに対してローカルサーチする
+            output("     Search sub solutions for '--n-pieces'");
 
             // PieceごとのList<SeparableMino>を事前に計算しておく
             EnumMap<Piece, List<SeparableMino>> separableMinoMap = new EnumMap<>(Piece.class);
@@ -268,7 +268,7 @@ public class SetupEntryPoint implements EntryPoint {
             }
 
             // 探索をさらに進める
-            resultOperations = resultOperations.stream()
+            tempOperations = resultOperations.stream()
                     .flatMap((operationWithKeys) -> {
                         PieceCounter pieceCounter = new PieceCounter(operationWithKeys.stream().map(MinoOperationWithKey::getPiece));
                         int numOfUsedPieces = pieceCounter.getBlocks().size();
@@ -280,7 +280,7 @@ public class SetupEntryPoint implements EntryPoint {
 
                         // 必要な数だけ使っている
                         if (numOfPieces == numOfUsedPieces) {
-                            return Stream.of(operationWithKeys);
+                            return Stream.of(new SetupTemp(operationWithKeys, maxHeight));
                         }
 
                         // 必要な数を使っていない
@@ -309,16 +309,22 @@ public class SetupEntryPoint implements EntryPoint {
                                     .map(PieceCounter::getBlocks)
                                     .map(LinkedList::new)
                                     .flatMap(blocks -> localSearch(operationWithKeys, field, blocks, separableMinoMap, maxHeight));
-                        });
+                        }).map((solution) -> new SetupTemp(operationWithKeys, solution, maxHeight));
                     })
                     .collect(Collectors.toList());
+        } else {
+            tempOperations = resultOperations.stream().map(o -> new SetupTemp(o, maxHeight)).collect(Collectors.toList());
         }
 
-        List<SetupResult> setupResults = resultOperations.stream()
-                .map(operationWithKeys -> {
+        SetupSolutionFilter filter1 = filter;
+        Map<BlockField, List<SetupResult>> resultMap = new HashMap<>();
+        tempOperations.stream()
+                .map(setupTemp -> {
+                    List<MinoOperationWithKey> solution = setupTemp.getSolution();
+
                     // フィールドに変換
                     Field field = initField.freeze(maxHeight);
-                    for (OperationWithKey operation : operationWithKeys) {
+                    for (OperationWithKey operation : solution) {
                         Field pieceField = FieldFactory.createField(maxHeight);
                         Mino mino = minoFactory.create(operation.getPiece(), operation.getRotate());
                         int x = operation.getX();
@@ -335,12 +341,19 @@ public class SetupEntryPoint implements EntryPoint {
 
                     testField.clearLine();
 
-                    return new SetupResult(operationWithKeys, field, testField);
+                    SetupResult setupResult = new SetupResult(solution, field, testField);
+                    return new Pair<>(setupTemp.getKeyField(), setupResult);
                 })
-                .filter(filter)
-                .collect(Collectors.toList());
+                .filter(pair -> filter1.test(pair.getValue()))
+                .forEach((pair) -> {
+                    List<SetupResult> setupResults = resultMap.computeIfAbsent(pair.getKey(), (v) -> new ArrayList<>());
+                    setupResults.add(pair.getValue());
+                });
 
-        output("     Found solution = " + setupResults.size());
+        output("     Found solutions = " + resultMap.size());
+        if (numOfPieces != -1) {
+            output("     Found sub solutions = " + resultMap.values().stream().mapToInt(List::size).sum());
+        }
 
         stopwatch.stop();
         output("  -> Stopwatch stop : " + stopwatch.toMessage(TimeUnit.MILLISECONDS));
@@ -351,28 +364,38 @@ public class SetupEntryPoint implements EntryPoint {
 
         output("# Output file");
 
-        HTMLBuilder<FieldHTMLColumn> htmlBuilder = new HTMLBuilder<>("Setup result");
+        HTMLBuilder<HTMLColumn> htmlBuilder = new HTMLBuilder<>("Setup result");
         BiFunction<List<MinoOperationWithKey>, Field, String> naming = data.getNaming();
 
-        setupResults.forEach(setupResult -> {
-            // 操作に変換
-            List<MinoOperationWithKey> operationWithKeys = setupResult.getOperationWithKeys();
+        resultMap.forEach((keyField, setupResults) -> {
+            Field field = initField.freeze(maxHeight);
+            for (Piece piece : Piece.values())
+                field.merge(keyField.get(piece));
 
-            // 譜面の作成
-            String encode = fumenParser.parse(operationWithKeys, initField, maxHeight);
+            HTMLColumn column = new FieldHTMLColumn(field, maxHeight);
+            StringBuilder builder = new StringBuilder();
 
-            // 名前の作成
-            String name = naming.apply(operationWithKeys, setupResult.getRawField());
+            setupResults.forEach(setupResult -> {
+                // 操作に変換
+                List<MinoOperationWithKey> operationWithKeys = setupResult.getSolution();
 
-            String link = String.format("<a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a>", encode, name);
-            String line = String.format("<div>%s</div>", link);
+                // 譜面の作成
+                String encode = fumenParser.parse(operationWithKeys, initField, maxHeight);
 
-            FieldHTMLColumn column = new FieldHTMLColumn(setupResult.getRawField(), maxHeight);
-            htmlBuilder.addColumn(column, line);
+                // 名前の作成
+                String name = naming.apply(operationWithKeys, setupResult.getRawField());
+
+                String link = String.format("<a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a>", encode, name);
+                String line = String.format("<div>%s</div>", link);
+
+                builder.append(line);
+            });
+
+            htmlBuilder.addColumn(column, builder.toString());
         });
 
-        ArrayList<FieldHTMLColumn> columns = new ArrayList<>(htmlBuilder.getRegisteredColumns());
-        columns.sort(Comparator.comparing(FieldHTMLColumn::getTitle).reversed());
+        ArrayList<HTMLColumn> columns = new ArrayList<>(htmlBuilder.getRegisteredColumns());
+        columns.sort(Comparator.comparing(HTMLColumn::getTitle).reversed());
         try (BufferedWriter bufferedWriter = base.newBufferedWriter()) {
             for (String line : htmlBuilder.toList(columns, true)) {
                 bufferedWriter.write(line);
