@@ -5,7 +5,6 @@ import common.datastore.BlockField;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.Operation;
 import common.datastore.OperationWithKey;
-import common.datastore.blocks.LongPieces;
 import common.pattern.PatternGenerator;
 import common.tetfu.common.ColorConverter;
 import core.FinderConstant;
@@ -15,7 +14,6 @@ import core.field.FieldFactory;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
-import core.mino.Piece;
 import entry.DropType;
 import entry.EntryPoint;
 import entry.Verify;
@@ -24,6 +22,11 @@ import entry.path.HarddropBuildUpListUpThreadLocal;
 import entry.path.LockedBuildUpListUpThreadLocal;
 import entry.path.output.MyFile;
 import entry.path.output.OneFumenParser;
+import entry.setup.filters.SetupResult;
+import entry.setup.filters.SetupSolutionFilter;
+import entry.setup.filters.SimpleHolesFilter;
+import entry.setup.functions.CombinationFunctions;
+import entry.setup.functions.SetupFunctions;
 import exceptions.FinderException;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
@@ -48,12 +51,10 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class SetupEntryPoint implements EntryPoint {
     private static final String LINE_SEPARATOR = System.lineSeparator();
-    private static final int FIELD_WIDTH = 10;
 
     private final SetupSettings settings;
     private final BufferedWriter logWriter;
@@ -415,35 +416,7 @@ public class SetupEntryPoint implements EntryPoint {
     }
 }
 
-interface SetupSolutionFilter extends Predicate<SetupResult> {
-    default SetupSolutionFilter and(Predicate<? super SetupResult> other) {
-        Objects.requireNonNull(other);
-        return (t) -> test(t) && other.test(t);
-    }
-}
 
-class SimpleHolesFilter implements SetupSolutionFilter {
-    private final int maxHeight;
-
-    public SimpleHolesFilter(int maxHeight) {
-        this.maxHeight = maxHeight;
-    }
-
-    @Override
-    public boolean test(SetupResult result) {
-        Field field = result.getTestField();
-        Field freeze = field.freeze(maxHeight);
-        freeze.slideDown();
-        return field.contains(freeze);
-    }
-}
-
-class CombinationFilter implements SetupSolutionFilter {
-    @Override
-    public boolean test(SetupResult result) {
-        return true;
-    }
-}
 //
 //class OrderFilter implements SetupSolutionFilter {
 //    private final ValidPiecesPool validPiecesPool;
@@ -465,52 +438,7 @@ class CombinationFilter implements SetupSolutionFilter {
 //    }
 //}
 
-class SetupResult {
-    private final Result result;
-    private final Field rawField;
-    private final Field testField;
 
-    SetupResult(Result result, Field rawField, Field testField) {
-        this.result = result;
-        this.rawField = rawField;
-        this.testField = testField;
-    }
-
-    public Result getResult() {
-        return result;
-    }
-
-    public Field getRawField() {
-        return rawField;
-    }
-
-    public Field getTestField() {
-        return testField;
-    }
-}
-
-interface SetupFunctions {
-    SetupSolutionFilter getSetupSolutionFilter();
-
-    BiFunction<List<MinoOperationWithKey>, Field, String> getNaming();
-}
-
-class CombinationFunctions implements SetupFunctions {
-    @Override
-    public SetupSolutionFilter getSetupSolutionFilter() {
-        return new CombinationFilter();
-    }
-
-    @Override
-    public BiFunction<List<MinoOperationWithKey>, Field, String> getNaming() {
-        return (operationWithKeys, field) -> {
-            LongPieces pieces = new LongPieces(operationWithKeys.stream().map(MinoOperationWithKey::getPiece));
-            return pieces.blockStream()
-                    .map(Piece::getName)
-                    .collect(Collectors.joining());
-        };
-    }
-}
 //
 //class OrderFunctions implements SetupFunctions {
 //    private final ThreadLocal<BuildUpStream> buildUpStreamThreadLocal;
