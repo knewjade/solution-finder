@@ -134,6 +134,10 @@ public class SetupSettingParser {
             throw new FinderParseException("Unsupported format: exclude=" + excludeType.orElse("<empty>"));
         }
 
+        // 除外前に加えるミノ
+        List<String> addPieces = wrapper.getStringOptions("add-pieces");
+        settings.setAddOperations(addPieces);
+
         // ログファイルの設定
         Optional<String> logFilePath = wrapper.getStringOption("log-path");
         logFilePath.ifPresent(settings::setLogFilePath);
@@ -371,6 +375,17 @@ public class SetupSettingParser {
                 .desc("If specify holes, exclude solutions containing holes")
                 .build();
         options.addOption(excludeOption);
+
+        Option addPieceOption = Option.builder("ap")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(Integer.MAX_VALUE)
+                .valueSeparator(' ')
+                .argName("place")
+                .longOpt("add-pieces")
+                .desc("Add pieces to field before determining to exclude solutions")
+                .build();
+        options.addOption(addPieceOption);
 
         return options;
     }

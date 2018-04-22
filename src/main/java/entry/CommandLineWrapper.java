@@ -2,6 +2,7 @@ package entry;
 
 import exceptions.FinderParseException;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface CommandLineWrapper {
@@ -12,4 +13,6 @@ public interface CommandLineWrapper {
     Optional<String> getStringOption(String name);
 
     Optional<Integer> getIntegerOption(String name) throws FinderParseException;
+
+    List<String> getStringOptions(String name);
 }

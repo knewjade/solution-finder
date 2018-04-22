@@ -2,17 +2,22 @@ package entry.setup;
 
 import common.datastore.BlockField;
 import common.datastore.Operation;
+import common.datastore.SimpleOperation;
+import common.parser.StringEnumTransform;
 import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import core.field.Field;
 import core.mino.Piece;
+import core.srs.Rotate;
 import entry.DropType;
 import exceptions.FinderParseException;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SetupSettings {
     private static final String DEFAULT_LOG_FILE_PATH = "output/last_output.txt";
@@ -275,5 +280,52 @@ public class SetupSettings {
             default:
                 throw new FinderParseException("Unsupported droptype: type=" + type);
         }
+    }
+
+    void setAddOperations(List<String> values) throws FinderParseException {
+        ArrayList<Operation> operations = new ArrayList<>();
+
+        Pattern pattern = Pattern.compile("(.*?)\\((\\d),(\\d)\\)");
+
+        for (String value : values) {
+            value = value.trim().replace(" ", "");
+
+            Matcher matcher = pattern.matcher(value);
+            if (!matcher.find()) {
+                throw new FinderParseException("Unsupported piece: add-piece=" + value);
+            }
+
+            String pieceName = matcher.group(1);
+
+            Piece piece = StringEnumTransform.toPiece(pieceName.toUpperCase().charAt(0));
+            Rotate rotate = Rotate.Spawn;
+            if (pieceName.contains("-")) {
+                rotate = toRotate(pieceName.split("-")[1].toLowerCase());
+            }
+
+            int x = Integer.valueOf(matcher.group(2));
+            int y = Integer.valueOf(matcher.group(3));
+            operations.add(new SimpleOperation(piece, rotate, x, y));
+        }
+
+        this.addOperations = operations;
+    }
+
+    private Rotate toRotate(String name) {
+        switch (name) {
+            case "0":
+            case "spawn":
+                return Rotate.Spawn;
+            case "l":
+            case "left":
+                return Rotate.Left;
+            case "2":
+            case "reverse":
+                return Rotate.Reverse;
+            case "r":
+            case "right":
+                return Rotate.Right;
+        }
+        throw new IllegalArgumentException("No reachable");
     }
 }
