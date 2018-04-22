@@ -6,7 +6,6 @@ import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import core.field.Field;
-import core.mino.Mino;
 import core.mino.Piece;
 import entry.DropType;
 import exceptions.FinderParseException;
@@ -23,7 +22,7 @@ public class SetupSettings {
     private boolean isReserved = false;
     private boolean isUsingHold = true;
     private boolean isCombination = false;
-    private boolean isHoles = true;
+    private ExcludeType exclude = ExcludeType.None;
     private List<Operation> addOperations = Collections.emptyList();
     private List<Integer> assumeFilledLines = Collections.emptyList();
     private int maxHeight = -1;
@@ -54,8 +53,8 @@ public class SetupSettings {
         return isReserved;
     }
 
-    boolean isAllowedHoles() {
-        return isHoles;
+    ExcludeType getExcludeType() {
+        return exclude;
     }
 
     boolean isCombination() {
@@ -125,10 +124,6 @@ public class SetupSettings {
 
     void setReserved(boolean isReserved) {
         this.isReserved = isReserved;
-    }
-
-    void setHoles(boolean isHoles) {
-        this.isHoles = isHoles;
     }
 
     void setCombination(boolean isCombination) {
@@ -261,6 +256,21 @@ public class SetupSettings {
             case "hard":
             case "harddrop":
                 this.dropType = DropType.Harddrop;
+                return;
+            default:
+                throw new FinderParseException("Unsupported droptype: type=" + type);
+        }
+    }
+
+    void setExcludeType(String type) throws FinderParseException {
+        switch (type.trim().toLowerCase()) {
+            case "hole":
+            case "holes":
+                this.exclude = ExcludeType.Holes;
+                return;
+            case "none":
+            case "":
+                this.exclude = ExcludeType.None;
                 return;
             default:
                 throw new FinderParseException("Unsupported droptype: type=" + type);

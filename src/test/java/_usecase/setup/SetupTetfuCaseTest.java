@@ -230,7 +230,7 @@ class SetupTetfuCaseTest {
         void case12WithoutHoles() throws Exception {
             // 4x4
             String fumen = "v115@9gTpFeTpFeTpFezhPeAgH";
-            String command = buildCommand(fumen, "-p *! -f i -m o --holes avoid --drop hard");
+            String command = buildCommand(fumen, "-p *! -f i -m o --exclude holes --drop hard");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -275,7 +275,7 @@ class SetupTetfuCaseTest {
             // 空中Tスピン  // アルバトロス
             // ホールを除外する
             String fumen = "v115@9gQpBewhVpwhCe3hAe2hZpJeAgH";
-            String command = buildCommand(fumen, "-p [^T]! -f i -m o --holes avoid");
+            String command = buildCommand(fumen, "-p [^T]! -f i -m o --exclude holes");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log

@@ -119,9 +119,20 @@ public class SetupSettingParser {
         Optional<Boolean> combination = wrapper.getBoolOption("combination");
         combination.ifPresent(settings::setCombination);
 
-        // ホール許可の設定
-        Optional<Boolean> holes = wrapper.getBoolOption("holes");
-        holes.ifPresent(settings::setHoles);
+        // 除外の設定
+        Optional<String> excludeType = wrapper.getStringOption("exclude");
+        try {
+            excludeType.ifPresent(type -> {
+                String key = excludeType.orElse("none");
+                try {
+                    settings.setExcludeType(key);
+                } catch (FinderParseException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            throw new FinderParseException("Unsupported format: exclude=" + excludeType.orElse("<empty>"));
+        }
 
         // ログファイルの設定
         Optional<String> logFilePath = wrapper.getStringOption("log-path");
@@ -143,7 +154,7 @@ public class SetupSettingParser {
                 }
             });
         } catch (Exception e) {
-            throw new FinderParseException("Unsupported format: format=" + dropType.orElse("<empty>"));
+            throw new FinderParseException("Unsupported format: drop=" + dropType.orElse("<empty>"));
         }
 
         // 探索パターンの設定
@@ -351,15 +362,15 @@ public class SetupSettingParser {
                 .build();
         options.addOption(dropOption);
 
-        Option holesOption = Option.builder("H")
+        Option excludeOption = Option.builder("e")
                 .optionalArg(true)
                 .hasArg()
                 .numberOfArgs(1)
-                .argName("flag")
-                .longOpt("holes")
-                .desc("allow or avoid holes")
+                .argName("type")
+                .longOpt("exclude")
+                .desc("If specify holes, exclude solutions containing holes")
                 .build();
-        options.addOption(holesOption);
+        options.addOption(excludeOption);
 
         return options;
     }

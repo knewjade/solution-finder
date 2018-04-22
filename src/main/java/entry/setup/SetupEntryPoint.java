@@ -6,7 +6,6 @@ import common.datastore.MinoOperationWithKey;
 import common.datastore.Operation;
 import common.datastore.OperationWithKey;
 import common.datastore.blocks.LongPieces;
-import common.datastore.blocks.Pieces;
 import common.pattern.PatternGenerator;
 import common.tetfu.common.ColorConverter;
 import core.FinderConstant;
@@ -23,7 +22,6 @@ import entry.Verify;
 import entry.path.ForPathSolutionFilter;
 import entry.path.HarddropBuildUpListUpThreadLocal;
 import entry.path.LockedBuildUpListUpThreadLocal;
-import entry.path.ValidPiecesPool;
 import entry.path.output.MyFile;
 import entry.path.output.OneFumenParser;
 import exceptions.FinderException;
@@ -49,10 +47,9 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class SetupEntryPoint implements EntryPoint {
     private static final String LINE_SEPARATOR = System.lineSeparator();
@@ -210,27 +207,33 @@ public class SetupEntryPoint implements EntryPoint {
         }
 
         // 有効ミノ順poolを作成
-        Field fieldForMaxDepth = FieldFactory.createField(maxHeight);
-        for (int y = 0; y < maxHeight; y++)
-            fieldForMaxDepth.fillLine(y);
-        fieldForMaxDepth.reduce(notFilledField);
-        int maxDepth = Verify.depth(fieldForMaxDepth);
+        SetupFunctions data = new CombinationFunctions();
 
-        ValidPiecesPool validPiecesPool = !settings.isCombination() ? new ValidPiecesPool(generator, maxDepth, settings.isUsingHold()) : null;
+
+//        Field fieldForMaxDepth = FieldFactory.createField(maxHeight);
+//        for (int y = 0; y < maxHeight; y++)
+//            fieldForMaxDepth.fillLine(y);
+//        fieldForMaxDepth.reduce(notFilledField);
+//        int maxDepth = Verify.depth(fieldForMaxDepth);
+//
+//        ValidPiecesPool validPiecesPool = !settings.isCombination() ? new ValidPiecesPool(generator, maxDepth, settings.isUsingHold()) : null;
 
         // 解をフィルタリングする準備を行う
         // TODO: Excule with holes (merge)
-        SetupSolutionFilter filter;
-        if (settings.isCombination()) {
-            filter = new CombinationFilter();
-        } else {
-            filter = new OrderFilter(validPiecesPool, sizedBit);
-        }
+//        SetupSolutionFilter filter;
+//        if (settings.isCombination()) {
+//            filter = new CombinationFilter();
+//        } else {
+//            filter = new OrderFilter(validPiecesPool, sizedBit);
+//        }
 
         // ホールを取り除く
-        if (!settings.isAllowedHoles()) {
-            // TODO: softdropの時は複雑なものにしたい
-            filter = new SimpleHolesFilter(maxHeight).and(filter);
+        SetupSolutionFilter filter = data.getSetupSolutionFilter();
+        switch (settings.getExcludeType()) {
+            case Holes: {
+                filter = new SimpleHolesFilter(maxHeight).and(filter);
+                break;
+            }
         }
 
         // 探索
@@ -289,6 +292,7 @@ public class SetupEntryPoint implements EntryPoint {
         output("# Output file");
 
         HTMLBuilder<FieldHTMLColumn> htmlBuilder = new HTMLBuilder<>("Setup result");
+        BiFunction<List<MinoOperationWithKey>, Field, String> naming = data.getNaming();
 
         setupResults.forEach(setupResult -> {
             Result result = setupResult.getResult();
@@ -303,22 +307,7 @@ public class SetupEntryPoint implements EntryPoint {
             String encode = fumenParser.parse(operationWithKeys, initField, maxHeight);
 
             // 名前の作成
-            LongPieces pieces = new LongPieces(operationWithKeys.stream().map(MinoOperationWithKey::getPiece));
-            if (validPiecesPool != null) {
-                HashSet<LongPieces> validPieces = validPiecesPool.getValidPieces();
-                BuildUpStream buildUpStream = buildUpStreamThreadLocal.get();
-                Optional<LongPieces> first = buildUpStream.existsValidBuildPattern(setupResult.getRawField(), operationWithKeys)
-                        .map(operations -> new LongPieces(operations.stream().map(MinoOperationWithKey::getPiece)))
-                        .filter(validPieces::contains)
-                        .findFirst();
-                if (first.isPresent()) {
-                    pieces = first.get();
-                }
-            }
-
-            String name = pieces.blockStream()
-                    .map(Piece::getName)
-                    .collect(Collectors.joining());
+            String name = naming.apply(operationWithKeys, setupResult.getRawField());
 
             String link = String.format("<a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a>", encode, name);
             String line = String.format("<div>%s</div>", link);
@@ -455,26 +444,26 @@ class CombinationFilter implements SetupSolutionFilter {
         return true;
     }
 }
-
-class OrderFilter implements SetupSolutionFilter {
-    private final ValidPiecesPool validPiecesPool;
-    private final SizedBit sizedBit;
-
-    OrderFilter(ValidPiecesPool validPiecesPool, SizedBit sizedBit) {
-        this.validPiecesPool = validPiecesPool;
-        this.sizedBit = sizedBit;
-    }
-
-    @Override
-    public boolean test(SetupResult result) {
-        Stream<Piece> stream = result.getResult().getMemento()
-                .getSeparableMinoStream(sizedBit.getWidth())
-                .map(SeparableMino::toMinoOperationWithKey)
-                .map(OperationWithKey::getPiece);
-        Pieces pieces = new LongPieces(stream);
-        return validPiecesPool.getValidPieces().contains(pieces);
-    }
-}
+//
+//class OrderFilter implements SetupSolutionFilter {
+//    private final ValidPiecesPool validPiecesPool;
+//    private final SizedBit sizedBit;
+//
+//    OrderFilter(ValidPiecesPool validPiecesPool, SizedBit sizedBit) {
+//        this.validPiecesPool = validPiecesPool;
+//        this.sizedBit = sizedBit;
+//    }
+//
+//    @Override
+//    public boolean test(SetupResult result) {
+//        Stream<Piece> stream = result.getResult().getMemento()
+//                .getSeparableMinoStream(sizedBit.getWidth())
+//                .map(SeparableMino::toMinoOperationWithKey)
+//                .map(OperationWithKey::getPiece);
+//        Pieces pieces = new LongPieces(stream);
+//        return validPiecesPool.getValidPieces().contains(pieces);
+//    }
+//}
 
 class SetupResult {
     private final Result result;
@@ -499,3 +488,59 @@ class SetupResult {
         return testField;
     }
 }
+
+interface SetupFunctions {
+    SetupSolutionFilter getSetupSolutionFilter();
+
+    BiFunction<List<MinoOperationWithKey>, Field, String> getNaming();
+}
+
+class CombinationFunctions implements SetupFunctions {
+    @Override
+    public SetupSolutionFilter getSetupSolutionFilter() {
+        return new CombinationFilter();
+    }
+
+    @Override
+    public BiFunction<List<MinoOperationWithKey>, Field, String> getNaming() {
+        return (operationWithKeys, field) -> {
+            LongPieces pieces = new LongPieces(operationWithKeys.stream().map(MinoOperationWithKey::getPiece));
+            return pieces.blockStream()
+                    .map(Piece::getName)
+                    .collect(Collectors.joining());
+        };
+    }
+}
+//
+//class OrderFunctions implements SetupFunctions {
+//    private final ThreadLocal<BuildUpStream> buildUpStreamThreadLocal;
+//    private final ValidPiecesPool validPiecesPool;
+//
+//    public OrderFunctions(ThreadLocal<BuildUpStream> buildUpStreamThreadLocal, ValidPiecesPool validPiecesPool) {
+//        this.buildUpStreamThreadLocal = buildUpStreamThreadLocal;
+//        this.validPiecesPool = validPiecesPool;
+//    }
+//
+//    @Override
+//    public SetupSolutionFilter getSetupSolutionFilter() {
+//        throw new UnsupportedOperationException();
+//    }
+//
+//    @Override
+//    public BiFunction<List<MinoOperationWithKey>, Field, String> getNaming() {
+//        return (operationWithKeys, field) -> {
+//            HashSet<LongPieces> validPieces = validPiecesPool.getValidPieces();
+//            BuildUpStream buildUpStream = buildUpStreamThreadLocal.get();
+//            Optional<LongPieces> sample = buildUpStream.existsValidBuildPattern(field, operationWithKeys)
+//                    .map(operations -> new LongPieces(operations.stream().map(MinoOperationWithKey::getPiece)))
+//                    .filter(validPieces::contains)
+//                    .findFirst();
+//
+//            LongPieces pieces = sample.orElseGet(() -> new LongPieces(operationWithKeys.stream().map(MinoOperationWithKey::getPiece)));
+//
+//            return pieces.blockStream()
+//                    .map(Piece::getName)
+//                    .collect(Collectors.joining());
+//        };
+//    }
+//}
