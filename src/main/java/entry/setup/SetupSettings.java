@@ -1,10 +1,7 @@
 package entry.setup;
 
-import common.datastore.BlockField;
 import common.parser.StringEnumTransform;
-import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
-import common.tetfu.field.ColoredField;
 import core.field.Field;
 import core.mino.Piece;
 import core.srs.Rotate;
@@ -23,21 +20,20 @@ public class SetupSettings {
     private static final String DEFAULT_OUTPUT_BASE_FILE_PATH = "output/setup.html";
 
     private String logFilePath = DEFAULT_LOG_FILE_PATH;
-    private boolean isReserved = false;
     private boolean isUsingHold = true;
     private boolean isCombination = false;
     private int numOfPieces = Integer.MAX_VALUE;
-    private ExcludeType exclude = ExcludeType.None;
+    private ExcludeType exclude = ExcludeType.Holes;
     private List<FieldOperation> addOperations = Collections.emptyList();
-    private List<Integer> assumeFilledLines = Collections.emptyList();
     private int maxHeight = -1;
     private List<String> patterns = new ArrayList<>();
     private Field initField = null;
     private Field needFilledField = null;
     private Field notFilledField = null;
-    private BlockField reservedBlock = null;
+    private Field marginField = null;
     private ColorType marginColorType = null;
     private ColorType fillColorType = null;
+    private ColorType noHolesColorType = null;
     private DropType dropType = DropType.Softdrop;
     private String outputBaseFilePath = DEFAULT_OUTPUT_BASE_FILE_PATH;
 
@@ -54,10 +50,6 @@ public class SetupSettings {
         return outputBaseFilePath;
     }
 
-    boolean isReserved() {
-        return isReserved;
-    }
-
     ExcludeType getExcludeType() {
         return exclude;
     }
@@ -72,10 +64,6 @@ public class SetupSettings {
 
     List<FieldOperation> getAddOperations() {
         return addOperations;
-    }
-
-    List<Integer> getAssumeFilledLines() {
-        return assumeFilledLines;
     }
 
     int getMaxHeight() {
@@ -102,8 +90,8 @@ public class SetupSettings {
         return notFilledField;
     }
 
-    BlockField getReservedBlock() {
-        return reservedBlock;
+    Field getMarginField() {
+        return marginField;
     }
 
     ColorType getMarginColorType() {
@@ -112,6 +100,10 @@ public class SetupSettings {
 
     ColorType getFillColorType() {
         return fillColorType;
+    }
+
+    ColorType getNoHolesColorType() {
+        return noHolesColorType;
     }
 
     DropType getDropType() {
@@ -135,10 +127,6 @@ public class SetupSettings {
         this.outputBaseFilePath = path;
     }
 
-    void setReserved(boolean isReserved) {
-        this.isReserved = isReserved;
-    }
-
     void setCombination(boolean isCombination) {
         this.isCombination = isCombination;
     }
@@ -151,37 +139,12 @@ public class SetupSettings {
         this.patterns = patterns;
     }
 
-    void setFieldWithReserved(Field initField, Field needFilledField, Field notFilledField, ColoredField coloredField, int maxHeight) {
-        BlockField blockField = new BlockField(maxHeight);
-        for (int y = 0; y < maxHeight; y++) {
-            for (int x = 0; x < 10; x++) {
-                ColorConverter colorConverter = new ColorConverter();
-                ColorType colorType = colorConverter.parseToColorType(coloredField.getBlockNumber(x, y));
-                switch (colorType) {
-                    case Gray:
-                    case Empty:
-                        break;
-                    default:
-                        Piece piece = colorConverter.parseToBlock(colorType);
-                        blockField.setBlock(piece, x, y);
-                        break;
-                }
-            }
-        }
-
+    void setField(Field initField, Field needFilledField, Field notFilledField, Field marginField, int maxHeight) {
         setMaxHeight(maxHeight);
         setInitField(initField);
         setNeedFilledField(needFilledField);
         setNotFilledField(notFilledField);
-        setReservedBlock(blockField);
-    }
-
-    void setField(Field initField, Field needFilledField, Field notFilledField, int maxHeight) {
-        setMaxHeight(maxHeight);
-        setInitField(initField);
-        setNeedFilledField(needFilledField);
-        setNotFilledField(notFilledField);
-        setReservedBlock(null);
+        setMarginField(marginField);
     }
 
     private void setInitField(Field field) {
@@ -196,8 +159,8 @@ public class SetupSettings {
         this.notFilledField = field;
     }
 
-    private void setReservedBlock(BlockField reservedBlock) {
-        this.reservedBlock = reservedBlock;
+    private void setMarginField(Field field) {
+        this.marginField = field;
     }
 
     void setMarginColorType(String marginColor) throws FinderParseException {
@@ -260,6 +223,14 @@ public class SetupSettings {
         }
     }
 
+    void setNoHolesColorType(String noHolesColor) throws FinderParseException {
+        try {
+            this.noHolesColorType = parseToColor(noHolesColor);
+        } catch (IllegalArgumentException e) {
+            throw new FinderParseException("Unsupported no-holes color: value=" + noHolesColor);
+        }
+    }
+
     void setDropType(String type) throws FinderParseException {
         switch (type.trim().toLowerCase()) {
             case "soft":
@@ -281,15 +252,11 @@ public class SetupSettings {
             case "holes":
             case "all-hole":
             case "all-holes":
-                this.exclude = ExcludeType.AllHoles;
+                this.exclude = ExcludeType.Holes;
                 return;
             case "strict-hole":
             case "strict-holes":
                 this.exclude = ExcludeType.StrictHoles;
-                return;
-            case "none":
-            case "":
-                this.exclude = ExcludeType.None;
                 return;
             default:
                 throw new FinderParseException("Unsupported droptype: type=" + type);

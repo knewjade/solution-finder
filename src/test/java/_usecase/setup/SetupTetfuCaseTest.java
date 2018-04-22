@@ -229,7 +229,7 @@ class SetupTetfuCaseTest {
         void case12WithoutHoles() throws Exception {
             // 4x4
             String fumen = "v115@9gTpFeTpFeTpFezhPeAgH";
-            String command = buildCommand(fumen, "-p *! -f i -m o --exclude holes --drop hard");
+            String command = buildCommand(fumen, "-p *! -f i -nh o --exclude holes --drop hard");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -274,7 +274,7 @@ class SetupTetfuCaseTest {
             // 空中TSD  // アルバトロス
             // ホールを除外する
             String fumen = "v115@9gQpBewhVpwhCe3hAe2hZpJeAgH";
-            String command = buildCommand(fumen, "-p [^T]! -f i -m o --exclude holes");
+            String command = buildCommand(fumen, "-p [^T]! -f i -nh o --exclude holes");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -291,7 +291,7 @@ class SetupTetfuCaseTest {
             // 空中TSD  // アルバトロス
             // 操作した後、ホールを除外する
             String fumen = "v115@9gQpBewhVpwhCe3hAe2hZpJeAgH";
-            String command = buildCommand(fumen, "-p [^T]! -f i -m o --operate T-Reverse(2,2) --exclude holes");
+            String command = buildCommand(fumen, "-p [^T]! -f i -nh o --operate T-Reverse(2,2) --exclude holes");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -329,7 +329,7 @@ class SetupTetfuCaseTest {
             // 空中TSS
             // 操作した後、ホールを除外する
             String fumen = "v115@2gQpFeSpwhBeWpCeTpzhAe0hA8RpB8UpJeAgl";
-            String command = buildCommand(fumen, "-p [^T]! -f i -m o -op T-2(4,2) -e holes");
+            String command = buildCommand(fumen, "-p [^T]! -f i -nh o -op T-2(4,2) -e holes");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -350,7 +350,7 @@ class SetupTetfuCaseTest {
             // 空中TSS
             // 操作した後、ラインが揃ったとみなして、ホールを除外する
             String fumen = "v115@2gQpFeSpwhBeWpCeTpzhAe0hA8RpB8UpJeAgl";
-            String command = buildCommand(fumen, "-p [^T]! -f i -m o -op T-2(4,2) clear() row(1) -e holes");
+            String command = buildCommand(fumen, "-p [^T]! -f i -nh o -op T-2(4,2) clear() row(1) -e holes");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -370,7 +370,7 @@ class SetupTetfuCaseTest {
             // 空中TSS
             // ミノを操作した後、1ブロック追加して、ホールを除外する
             String fumen = "v115@2gQpFeSpwhBeWpCeTpzhAe0hA8RpB8UpJeAgl";
-            String command = buildCommand(fumen, "-p [^T]! -f i -m o -op T-2(4,2) block(6,2) -e holes");
+            String command = buildCommand(fumen, "-p [^T]! -f i -nh o -op T-2(4,2) block(6,2) -e holes");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -390,7 +390,7 @@ class SetupTetfuCaseTest {
             // 空中TSS
             // ミノを操作した後、厳密なホールを除外する
             String fumen = "v115@2gQpFeSpwhBeWpCeTpzhAe0hA8RpB8UpJeAgl";
-            String command = buildCommand(fumen, "-p [^T]! -f i -m o -op T-2(4,2) -e strict-holes");
+            String command = buildCommand(fumen, "-p [^T]! -f i -nh o -op T-2(4,2) -e strict-holes");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -548,7 +548,7 @@ class SetupTetfuCaseTest {
         void case1WithoutHoldN3ExcludeStrictHoles() throws Exception {
             // 4x4
             String fumen = "v115@9gAtywFeAtywFeAtywFeAtywPeAgH";
-            String command = buildCommand(fumen, "-p JSOI,*! -f Z -m t --hold no -np 3 -e strict-holes");
+            String command = buildCommand(fumen, "-p JSOI,*! -f Z -nh t --hold no -np 3 -e strict-holes");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -566,6 +566,75 @@ class SetupTetfuCaseTest {
                     .doesNotContain("9gRpHeRpQ4Geg0AeR4Fei0Q4PeAgWDAvvzBA")
                     .contains("9gQ4IeR4RpFeg0Q4RpFei0QeAgWDAzvqBA")
                     .contains("9gRpHeRpR4Feg0R4Gei0QeAgWDAvvzBA");
+        }
+
+        @Test
+        void case2() throws Exception {
+            // Margin color only
+            String fumen = "v115@9gTpFeTpFeTpFezhPeAgH";
+            String command = buildCommand(fumen, "-p *! -f I -m o -np 2");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput())
+                    .contains(Messages.foundSolutions(25))
+                    .contains(Messages.foundSubSolutions(67));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SetupHTML html = OutputFileHelper.loadSetupHTML();
+            assertThat(html.getFumens())
+                    .hasSize(67)
+                    .contains("Hhh0Heg0BeglFeg0ilPeAgWCAqCBAA")
+                    .contains("IhAtHeBtwwGeAtywPeAgWCA6OBAA")
+                    .contains("Hhh0Heg0AewwGeg0ywPeAgWCAqOBAA")
+                    .contains("9ghlIeglIeglHezhPeAgWCApCBAA");
+        }
+
+        @Test
+        void case2ExcludeHoles() throws Exception {
+            // No holes color & Exclude holes
+            String fumen = "v115@9gQpS4FeQpS4FeQpS4FezhPeAgH";
+            String command = buildCommand(fumen, "-p *! -f I -m o -nh S -np 2 -e holes");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput())
+                    .contains(Messages.foundSolutions(21))
+                    .contains(Messages.foundSubSolutions(39));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SetupHTML html = OutputFileHelper.loadSetupHTML();
+            assertThat(html.getFumens())
+                    .hasSize(39)
+                    .doesNotContain("Hhh0Heg0BeglFeg0ilPeAgWCAqCBAA")
+                    .contains("IhAtHeBtwwGeAtywPeAgWCA6OBAA")
+                    .doesNotContain("Hhh0Heg0AewwGeg0ywPeAgWCAqOBAA")
+                    .contains("9ghlIeglIeglHezhPeAgWCApCBAA");
+        }
+
+        @Test
+        void case2ExcludeStrictHoles() throws Exception {
+            // No holes color & Exclude strickt-holes
+            String fumen = "v115@9gQpS4FeQpS4FeQpS4FezhPeAgH";
+            String command = buildCommand(fumen, "-p *! -f I -m o -nh S -np 2 -e strict-holes");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput())
+                    .contains(Messages.foundSolutions(23))
+                    .contains(Messages.foundSubSolutions(64));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SetupHTML html = OutputFileHelper.loadSetupHTML();
+            assertThat(html.getFumens())
+                    .hasSize(64)
+                    .contains("Hhh0Heg0BeglFeg0ilPeAgWCAqCBAA")
+                    .contains("IhAtHeBtwwGeAtywPeAgWCA6OBAA")
+                    .doesNotContain("Hhh0Heg0AewwGeg0ywPeAgWCAqOBAA")
+                    .contains("9ghlIeglIeglHezhPeAgWCApCBAA");
         }
     }
 

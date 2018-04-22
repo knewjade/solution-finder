@@ -88,6 +88,9 @@ public class SetupEntryPoint implements EntryPoint {
         Field needFilledField = settings.getNeedFilledField();
         Verify.needFilledField(needFilledField);
 
+        // Setup margin field
+        Field marginField = settings.getMarginField();
+
         // Setup not filled field
         Field notFilledField = settings.getNotFilledField();
 
@@ -95,28 +98,9 @@ public class SetupEntryPoint implements EntryPoint {
         int maxHeight = settings.getMaxHeight();
         Verify.maxClearLineUnder10(maxHeight);
 
-        // Show input field
-        BlockField reservedBlocks = settings.getReservedBlock();
-        if (settings.isReserved()) {
-            Verify.reservedBlocks(reservedBlocks);
-
-            for (int y = maxHeight - 1; 0 <= y; y--) {
-                StringBuilder builder = new StringBuilder();
-                for (int x = 0; x < 10; x++) {
-                    if (reservedBlocks.getBlock(x, y) != null)
-                        builder.append(reservedBlocks.getBlock(x, y).getName());
-                    else if (!initField.isEmpty(x, y))
-                        builder.append('X');
-                    else if (!needFilledField.isEmpty(x, y))
-                        builder.append('*');
-                    else if (!notFilledField.isEmpty(x, y))
-                        builder.append('_');
-                    else
-                        builder.append('.');
-                }
-                output(builder.toString());
-            }
-        } else {
+        // Show input field & NoHoles is On?
+        boolean existsNoHolesMargin = false;
+        {
             for (int y = maxHeight - 1; 0 <= y; y--) {
                 StringBuilder builder = new StringBuilder();
                 for (int x = 0; x < 10; x++) {
@@ -124,10 +108,14 @@ public class SetupEntryPoint implements EntryPoint {
                         builder.append('X');
                     else if (!needFilledField.isEmpty(x, y))
                         builder.append('*');
+                    else if (!marginField.isEmpty(x, y))
+                        builder.append('.');
                     else if (!notFilledField.isEmpty(x, y))
                         builder.append('_');
-                    else
-                        builder.append('.');
+                    else {
+                        existsNoHolesMargin = true;
+                        builder.append('+');
+                    }
                 }
                 output(builder.toString());
             }
@@ -234,14 +222,23 @@ public class SetupEntryPoint implements EntryPoint {
 
         // ホールを取り除く
         SetupSolutionFilter filter = data.getSetupSolutionFilter();
-        switch (settings.getExcludeType()) {
-            case AllHoles: {
-                filter = new SimpleHolesFilter(maxHeight).and(filter);
-                break;
-            }
-            case StrictHoles: {
-                filter = new StrictHolesFilter(maxHeight).and(filter);
-                break;
+        if (existsNoHolesMargin) {
+            // ホールを持ってはいけないエリアがある場合は、新たにフィルターを追加する
+            switch (settings.getExcludeType()) {
+                case Holes: {
+                    if (marginField.isPerfect())
+                        filter = new SimpleHolesFilter(maxHeight).and(filter);
+                    else
+                        filter = new SimpleHolesWithMarginFilter(maxHeight, marginField).and(filter);
+                    break;
+                }
+                case StrictHoles: {
+                    if (marginField.isPerfect())
+                        filter = new StrictHolesFilter(maxHeight).and(filter);
+                    else
+                        filter = new StrictHolesWithMarginFilter(maxHeight, marginField).and(filter);
+                    break;
+                }
             }
         }
 
