@@ -19,10 +19,7 @@ import entry.Verify;
 import entry.path.*;
 import entry.path.output.MyFile;
 import entry.path.output.OneFumenParser;
-import entry.setup.filters.SetupResult;
-import entry.setup.filters.SetupSolutionFilter;
-import entry.setup.filters.SetupTemp;
-import entry.setup.filters.SimpleHolesFilter;
+import entry.setup.filters.*;
 import entry.setup.functions.CombinationFunctions;
 import entry.setup.functions.OrderFunctions;
 import entry.setup.functions.SetupFunctions;
@@ -238,8 +235,12 @@ public class SetupEntryPoint implements EntryPoint {
         // ホールを取り除く
         SetupSolutionFilter filter = data.getSetupSolutionFilter();
         switch (settings.getExcludeType()) {
-            case Holes: {
+            case AllHoles: {
                 filter = new SimpleHolesFilter(maxHeight).and(filter);
+                break;
+            }
+            case StrictHoles: {
+                filter = new StrictHolesFilter(maxHeight).and(filter);
                 break;
             }
         }

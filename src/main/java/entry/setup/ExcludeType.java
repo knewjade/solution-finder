@@ -2,5 +2,6 @@ package entry.setup;
 
 public enum ExcludeType {
     None,
-    Holes,
+    AllHoles,
+    StrictHoles,
 }

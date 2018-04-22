@@ -7,7 +7,6 @@ import _usecase.setup.files.SetupHTML;
 import entry.EntryPointMain;
 import module.LongTest;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -341,7 +340,9 @@ class SetupTetfuCaseTest {
             SetupHTML html = OutputFileHelper.loadSetupHTML();
             assertThat(html.getFumens())
                     .hasSize(7)
-                    .doesNotContain("2gAtHeBtEewhRpAtDeglg0whRpR4Aeilg0whA8R4B8?Beh0whJeAgWGAp/TFDTHBAA");
+                    .doesNotContain("2gAtFeglAeBtFeglAeAtFeg0hlR4Aezhg0A8R4B8Ce?h0JeAgWFAKeLuCsAAAA")
+                    .doesNotContain("2gAtHeBtEewhRpAtDeglg0whRpR4Aeilg0whA8R4B8?Beh0whJeAgWGAp/TFDTHBAA")
+                    .doesNotContain("2gAtFeglAeBtFeglAeAtGehlR4Aei0RpA8R4B8Beg0?RpJeAgWFAvfLuCsAAAA");
         }
 
         @Test
@@ -382,6 +383,29 @@ class SetupTetfuCaseTest {
                     .hasSize(7)
                     .doesNotContain("2gAtFeglAeBtFeglAeAtFeg0hlR4Aezhg0A8R4B8Ce?h0JeAgWFAKeLuCsAAAA")
                     .contains("2gAtHeBtEewhRpAtDeglg0whRpR4Aeilg0whA8R4B8?Beh0whJeAgWGAp/TFDTHBAA");
+        }
+
+        @Test
+        void case14WithoutStrictHolesAfterOperationAndSetBlock() throws Exception {
+            // 空中TSS
+            // ミノを操作した後、厳密なホールを除外する
+            String fumen = "v115@2gQpFeSpwhBeWpCeTpzhAe0hA8RpB8UpJeAgl";
+            String command = buildCommand(fumen, "-p [^T]! -f i -m o -op T-2(4,2) -e strict-holes");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(33));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SetupHTML html = OutputFileHelper.loadSetupHTML();
+            assertThat(html.getFumens())
+                    .hasSize(33)
+                    .doesNotContain("2gAtHeBtDeglCeAtCeR4glAezhAeR4g0hlA8BeB8Be?i0JeAgWFAsvjFDpAAAA")
+                    .contains("2gAtFeglAeBtFeglAeAtFeg0hlR4Aezhg0A8R4B8Ce?h0JeAgWFAKeLuCsAAAA")
+                    .contains("2gAtHeBtEewhRpAtDeglg0whRpR4Aeilg0whA8R4B8?Beh0whJeAgWGAp/TFDTHBAA")
+                    .contains("2gAtFeglAeBtFeglAeAtGehlR4Aei0RpA8R4B8Beg0?RpJeAgWFAvfLuCsAAAA")
+                    .contains("2gAtHeBtDeg0CeAtEeg0AezhAeRph0glA8BeB8Rpil?JeAgWFAsvaFDpAAAA");
         }
 
         @Test
@@ -476,7 +500,6 @@ class SetupTetfuCaseTest {
             String fumen = "v115@9gzhFezhFezhFezhPeAgH";
             String command = buildCommand(fumen, "-p IOOI --fill i --hold no");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
-            System.out.println(log.getOutput());
 
             // Log
             assertThat(log.getOutput())
@@ -521,7 +544,6 @@ class SetupTetfuCaseTest {
                     .contains("9gRpHeRpR4Feg0R4Gei0QeAgWDAvvzBA");
         }
 
-        @Disabled
         @Test
         void case1WithoutHoldN3ExcludeStrictHoles() throws Exception {
             // 4x4

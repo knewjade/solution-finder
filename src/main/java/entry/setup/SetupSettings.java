@@ -279,7 +279,13 @@ public class SetupSettings {
         switch (type.trim().toLowerCase()) {
             case "hole":
             case "holes":
-                this.exclude = ExcludeType.Holes;
+            case "all-hole":
+            case "all-holes":
+                this.exclude = ExcludeType.AllHoles;
+                return;
+            case "strict-hole":
+            case "strict-holes":
+                this.exclude = ExcludeType.StrictHoles;
                 return;
             case "none":
             case "":
