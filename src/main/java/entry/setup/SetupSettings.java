@@ -26,6 +26,7 @@ public class SetupSettings {
     private boolean isReserved = false;
     private boolean isUsingHold = true;
     private boolean isCombination = false;
+    private int numOfPieces = -1;
     private ExcludeType exclude = ExcludeType.None;
     private List<FieldOperation> addOperations = Collections.emptyList();
     private List<Integer> assumeFilledLines = Collections.emptyList();
@@ -59,6 +60,10 @@ public class SetupSettings {
 
     ExcludeType getExcludeType() {
         return exclude;
+    }
+
+    int getNumOfPieces() {
+        return numOfPieces;
     }
 
     boolean isCombination() {
@@ -116,6 +121,10 @@ public class SetupSettings {
     // ********* Setter ************
     void setUsingHold(Boolean isUsingHold) {
         this.isUsingHold = isUsingHold;
+    }
+
+    void setNumOfPieces(int numOfPieces) {
+        this.numOfPieces = numOfPieces;
     }
 
     void setLogFilePath(String path) {

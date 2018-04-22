@@ -331,8 +331,6 @@ class SetupTetfuCaseTest {
             String fumen = "v115@2gQpFeSpwhBeWpCeTpzhAe0hA8RpB8UpJeAgl";
             String command = buildCommand(fumen, "-p [^T]! -f i -m o -op T-2(4,2) -e holes");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
-            System.out.println(log.getOutput());
-            System.out.println(log.getError());
 
             // Log
             assertThat(log.getOutput()).contains(Messages.foundSolutions(7));
@@ -352,8 +350,6 @@ class SetupTetfuCaseTest {
             String fumen = "v115@2gQpFeSpwhBeWpCeTpzhAe0hA8RpB8UpJeAgl";
             String command = buildCommand(fumen, "-p [^T]! -f i -m o -op T-2(4,2) clear() row(1) -e holes");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
-            System.out.println(log.getOutput());
-            System.out.println(log.getError());
 
             // Log
             assertThat(log.getOutput()).contains(Messages.foundSolutions(39));
@@ -374,8 +370,6 @@ class SetupTetfuCaseTest {
             String fumen = "v115@2gQpFeSpwhBeWpCeTpzhAe0hA8RpB8UpJeAgl";
             String command = buildCommand(fumen, "-p [^T]! -f i -m o -op T-2(4,2) block(6,2) -e holes");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
-            System.out.println(log.getOutput());
-            System.out.println(log.getError());
 
             // Log
             assertThat(log.getOutput()).contains(Messages.foundSolutions(7));
@@ -387,6 +381,27 @@ class SetupTetfuCaseTest {
                     .hasSize(7)
                     .doesNotContain("2gAtFeglAeBtFeglAeAtFeg0hlR4Aezhg0A8R4B8Ce?h0JeAgWFAKeLuCsAAAA")
                     .contains("2gAtHeBtEewhRpAtDeglg0whRpR4Aeilg0whA8R4B8?Beh0whJeAgWGAp/TFDTHBAA");
+        }
+
+        @Test
+        void case15() throws Exception {
+            // nミノ固定
+            String fumen = "v115@9gTpFeTpFeTpFezhPeAgl";
+            String command = buildCommand(fumen, "-p *! -f i -m o --n-pieces 4");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+            System.out.println(log.getOutput());
+
+            // Log
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(24));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SetupHTML html = OutputFileHelper.loadSetupHTML();
+            assertThat(html.getHtml())
+                    .contains("4444000000");
+
+            assertThat(html.getFumens())
+                    .hasSize(24);
         }
     }
 }

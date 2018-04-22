@@ -3,8 +3,9 @@ package entry.setup;
 import common.buildup.BuildUpStream;
 import common.datastore.BlockField;
 import common.datastore.MinoOperationWithKey;
-import common.datastore.Operation;
 import common.datastore.OperationWithKey;
+import common.datastore.PieceCounter;
+import common.iterable.CombinationIterable;
 import common.pattern.PatternGenerator;
 import common.tetfu.common.ColorConverter;
 import core.FinderConstant;
@@ -14,6 +15,7 @@ import core.field.FieldFactory;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import core.mino.Piece;
 import entry.DropType;
 import entry.EntryPoint;
 import entry.Verify;
@@ -38,6 +40,7 @@ import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.calculator.BasicSolutions;
+import searcher.pack.memento.MinoFieldMemento;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.solutions.OnDemandBasicSolutions;
@@ -53,6 +56,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SetupEntryPoint implements EntryPoint {
     private static final String LINE_SEPARATOR = System.lineSeparator();
@@ -242,16 +246,76 @@ public class SetupEntryPoint implements EntryPoint {
         SetupPackSearcher searcher = new SetupPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper, needFillFields, separableMinos, needFilledField);
         List<Result> results = getResults(initField, sizedBit, buildUpStreamThreadLocal, searcher);
 
-        // TODO: 使っていないミノに対してローカルサーチする -> List<Result>
+        // 探索結果を操作に変換
+        List<List<MinoOperationWithKey>> resultOperations = results.stream()
+                .map(Result::getMemento)
+                .map(memento -> memento.getSeparableMinoStream(sizedBit.getWidth()))
+                .map(stream -> stream.map(SeparableMino::toMinoOperationWithKey).collect(Collectors.toList()))
+                .collect(Collectors.toList());
 
-        List<SetupResult> setupResults = results.stream()
-                .map(result -> {
-                    // 操作に変換
-                    List<MinoOperationWithKey> operationWithKeys = result.getMemento()
-                            .getSeparableMinoStream(sizedBit.getWidth())
-                            .map(SeparableMino::toMinoOperationWithKey)
-                            .collect(Collectors.toList());
+        // 使っていないミノに対してローカルサーチする
+        int numOfPieces = settings.getNumOfPieces();
+        if (numOfPieces != -1) {
+            output("  -> local searching ... (--n-pieces)");
 
+            // PieceごとのList<SeparableMino>を事前に計算しておく
+            EnumMap<Piece, List<SeparableMino>> separableMinoMap = new EnumMap<>(Piece.class);
+            for (Piece piece : Piece.values()) {
+                List<SeparableMino> minos = separableMinos.getMinos().stream()
+                        .filter(mino -> mino.toMinoOperationWithKey().getPiece() == piece)
+                        .collect(Collectors.toList());
+                separableMinoMap.put(piece, minos);
+            }
+
+            // 探索をさらに進める
+            resultOperations = resultOperations.stream()
+                    .flatMap((operationWithKeys) -> {
+                        PieceCounter pieceCounter = new PieceCounter(operationWithKeys.stream().map(MinoOperationWithKey::getPiece));
+                        int numOfUsedPieces = pieceCounter.getBlocks().size();
+
+                        // 必要な数以上使っている
+                        if (numOfPieces < numOfUsedPieces) {
+                            return Stream.empty();
+                        }
+
+                        // 必要な数だけ使っている
+                        if (numOfPieces == numOfUsedPieces) {
+                            return Stream.of(operationWithKeys);
+                        }
+
+                        // 必要な数を使っていない
+                        // フィールド作成  // おくことができない場所
+                        Field field = FieldFactory.createField(maxHeight);
+                        for (MinoOperationWithKey operation : operationWithKeys) {
+                            Field pieceField = FieldFactory.createField(maxHeight);
+                            pieceField.put(operation.getMino(), operation.getX(), operation.getY());
+                            pieceField.insertWhiteLineWithKey(operation.getNeedDeletedKey());
+                            field.merge(pieceField);
+                        }
+                        field.merge(notFilledField);
+
+                        // 探索する
+                        int needNumOfPieces = numOfPieces - numOfUsedPieces;
+                        return generator.blockCountersStream().flatMap((allUsablePieceCounter) -> {
+                            PieceCounter noUsedPieceCounter = allUsablePieceCounter.removeAndReturnNew(pieceCounter);
+
+                            // 使えるミノ組み合わせを列挙する
+                            HashSet<PieceCounter> usable = new HashSet<>();
+                            CombinationIterable<Piece> iterable = new CombinationIterable<>(noUsedPieceCounter.getBlocks(), needNumOfPieces);
+                            for (List<Piece> pieces : iterable)
+                                usable.add(new PieceCounter(pieces));
+
+                            return usable.stream()
+                                    .map(PieceCounter::getBlocks)
+                                    .map(LinkedList::new)
+                                    .flatMap(blocks -> localSearch(operationWithKeys, field, blocks, separableMinoMap, maxHeight));
+                        });
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        List<SetupResult> setupResults = resultOperations.stream()
+                .map(operationWithKeys -> {
                     // フィールドに変換
                     Field field = initField.freeze(maxHeight);
                     for (OperationWithKey operation : operationWithKeys) {
@@ -271,7 +335,7 @@ public class SetupEntryPoint implements EntryPoint {
 
                     testField.clearLine();
 
-                    return new SetupResult(result, field, testField);
+                    return new SetupResult(operationWithKeys, field, testField);
                 })
                 .filter(filter)
                 .collect(Collectors.toList());
@@ -291,13 +355,8 @@ public class SetupEntryPoint implements EntryPoint {
         BiFunction<List<MinoOperationWithKey>, Field, String> naming = data.getNaming();
 
         setupResults.forEach(setupResult -> {
-            Result result = setupResult.getResult();
-
             // 操作に変換
-            List<MinoOperationWithKey> operationWithKeys = result.getMemento()
-                    .getSeparableMinoStream(sizedBit.getWidth())
-                    .map(SeparableMino::toMinoOperationWithKey)
-                    .collect(Collectors.toList());
+            List<MinoOperationWithKey> operationWithKeys = setupResult.getOperationWithKeys();
 
             // 譜面の作成
             String encode = fumenParser.parse(operationWithKeys, initField, maxHeight);
@@ -330,6 +389,35 @@ public class SetupEntryPoint implements EntryPoint {
 
         output("# Finalize");
         output("done");
+    }
+
+    private Stream<? extends List<MinoOperationWithKey>> localSearch(List<MinoOperationWithKey> operationWithKeys, Field field, LinkedList<Piece> pieces, EnumMap<Piece, List<SeparableMino>> separableMinoMap, int maxHeight) {
+        Stream<? extends List<MinoOperationWithKey>> stream = Stream.empty();
+
+        Piece piece = pieces.pollFirst();
+        List<SeparableMino> separableMinos = separableMinoMap.get(piece);
+        for (SeparableMino mino : separableMinos) {
+            Field minoField = mino.getField();
+            if (field.canMerge(minoField)) {
+                // 次の手順
+                ArrayList<MinoOperationWithKey> newOperations = new ArrayList<>(operationWithKeys);
+                newOperations.add(mino.toMinoOperationWithKey());
+
+                if (pieces.isEmpty()) {
+                    // 全てのPieceを使った
+                    stream = Stream.concat(stream, Stream.of(newOperations));
+                } else {
+                    // 次のフィールド
+                    Field freeze = field.freeze(maxHeight);
+                    freeze.merge(minoField);
+
+                    stream = Stream.concat(stream, localSearch(newOperations, freeze, pieces, separableMinoMap, maxHeight));
+                }
+            }
+        }
+        pieces.addFirst(piece);
+
+        return stream;
     }
 
     private long getDeleteKeyMask(Field notFilledField, int maxHeight) {
@@ -375,6 +463,10 @@ public class SetupEntryPoint implements EntryPoint {
                 return new HarddropBuildUpListUpThreadLocal(maxClearLine);
         }
         throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
+    }
+
+    private Stream<MinoFieldMemento> concat(Stream<MinoFieldMemento> stream, Piece piece, SeparableMinos separableMinos, Map<Piece, List<SeparableMino>> map) {
+        return Stream.empty();
     }
 
     private void output() throws FinderExecuteException {

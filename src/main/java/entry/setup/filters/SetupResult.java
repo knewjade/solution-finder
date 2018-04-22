@@ -1,21 +1,19 @@
 package entry.setup.filters;
 
+import common.datastore.MinoOperationWithKey;
 import core.field.Field;
-import searcher.pack.task.Result;
+
+import java.util.List;
 
 public class SetupResult {
-    private final Result result;
+    private final List<MinoOperationWithKey> operationWithKeys;
     private final Field rawField;
     private final Field testField;
 
-    public SetupResult(Result result, Field rawField, Field testField) {
-        this.result = result;
+    public SetupResult(List<MinoOperationWithKey> operationWithKeys, Field rawField, Field testField) {
+        this.operationWithKeys = operationWithKeys;
         this.rawField = rawField;
         this.testField = testField;
-    }
-
-    public Result getResult() {
-        return result;
     }
 
     public Field getRawField() {
@@ -24,5 +22,9 @@ public class SetupResult {
 
     Field getTestField() {
         return testField;
+    }
+
+    public List<MinoOperationWithKey> getOperationWithKeys() {
+        return operationWithKeys;
     }
 }

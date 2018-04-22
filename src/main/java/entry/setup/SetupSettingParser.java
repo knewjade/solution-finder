@@ -138,6 +138,10 @@ public class SetupSettingParser {
         List<String> addOperations = wrapper.getStringOptions("operate");
         settings.setAddOperations(addOperations);
 
+        // 必ず使用するミノの数
+        Optional<Integer> numOfPieces = wrapper.getIntegerOption("n-pieces");
+        numOfPieces.ifPresent(settings::setNumOfPieces);
+
         // ログファイルの設定
         Optional<String> logFilePath = wrapper.getStringOption("log-path");
         logFilePath.ifPresent(settings::setLogFilePath);
@@ -386,6 +390,16 @@ public class SetupSettingParser {
                 .desc("Operate field before determining to exclude solutions")
                 .build();
         options.addOption(addPieceOption);
+
+        Option numOfPiecesOption = Option.builder("np")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("num")
+                .longOpt("n-pieces")
+                .desc("If specify N, must use N pieces")
+                .build();
+        options.addOption(numOfPiecesOption);
 
         return options;
     }
