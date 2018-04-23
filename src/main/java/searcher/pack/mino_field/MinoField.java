@@ -17,5 +17,4 @@ public interface MinoField {
     int getMaxIndex();
 
     Stream<SeparableMino> getSeparableMinoStream();
-
 }

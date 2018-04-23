@@ -1,33 +1,39 @@
 package entry.setup;
 
-import common.datastore.BlockField;
-import common.tetfu.common.ColorConverter;
+import common.parser.StringEnumTransform;
 import common.tetfu.common.ColorType;
-import common.tetfu.field.ColoredField;
 import core.field.Field;
 import core.mino.Piece;
+import core.srs.Rotate;
 import entry.DropType;
+import entry.setup.operation.*;
 import exceptions.FinderParseException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SetupSettings {
     private static final String DEFAULT_LOG_FILE_PATH = "output/last_output.txt";
     private static final String DEFAULT_OUTPUT_BASE_FILE_PATH = "output/setup.html";
 
     private String logFilePath = DEFAULT_LOG_FILE_PATH;
-    private boolean isReserved = false;
     private boolean isUsingHold = true;
     private boolean isCombination = false;
+    private int numOfPieces = Integer.MAX_VALUE;
+    private ExcludeType exclude = ExcludeType.None;
+    private List<FieldOperation> addOperations = Collections.emptyList();
     private int maxHeight = -1;
     private List<String> patterns = new ArrayList<>();
     private Field initField = null;
     private Field needFilledField = null;
     private Field notFilledField = null;
-    private BlockField reservedBlock = null;
+    private Field freeField = null;
     private ColorType marginColorType = null;
     private ColorType fillColorType = null;
+    private ColorType noHolesColorType = null;
     private DropType dropType = DropType.Softdrop;
     private String outputBaseFilePath = DEFAULT_OUTPUT_BASE_FILE_PATH;
 
@@ -44,12 +50,20 @@ public class SetupSettings {
         return outputBaseFilePath;
     }
 
-    boolean isReserved() {
-        return isReserved;
+    ExcludeType getExcludeType() {
+        return exclude;
+    }
+
+    int getNumOfPieces() {
+        return numOfPieces;
     }
 
     boolean isCombination() {
         return isCombination;
+    }
+
+    List<FieldOperation> getAddOperations() {
+        return addOperations;
     }
 
     int getMaxHeight() {
@@ -76,8 +90,8 @@ public class SetupSettings {
         return notFilledField;
     }
 
-    BlockField getReservedBlock() {
-        return reservedBlock;
+    Field getFreeField() {
+        return freeField;
     }
 
     ColorType getMarginColorType() {
@@ -86,6 +100,10 @@ public class SetupSettings {
 
     ColorType getFillColorType() {
         return fillColorType;
+    }
+
+    ColorType getFreeColorType() {
+        return noHolesColorType;
     }
 
     DropType getDropType() {
@@ -97,16 +115,16 @@ public class SetupSettings {
         this.isUsingHold = isUsingHold;
     }
 
+    void setNumOfPieces(int numOfPieces) {
+        this.numOfPieces = 0 < numOfPieces ? numOfPieces : Integer.MAX_VALUE;
+    }
+
     void setLogFilePath(String path) {
         this.logFilePath = path;
     }
 
     void setOutputBaseFilePath(String path) {
         this.outputBaseFilePath = path;
-    }
-
-    void setReserved(boolean isReserved) {
-        this.isReserved = isReserved;
     }
 
     void setCombination(boolean isCombination) {
@@ -121,37 +139,12 @@ public class SetupSettings {
         this.patterns = patterns;
     }
 
-    void setFieldWithReserved(Field initField, Field needFilledField, Field notFilledField, ColoredField coloredField, int maxHeight) {
-        BlockField blockField = new BlockField(maxHeight);
-        for (int y = 0; y < maxHeight; y++) {
-            for (int x = 0; x < 10; x++) {
-                ColorConverter colorConverter = new ColorConverter();
-                ColorType colorType = colorConverter.parseToColorType(coloredField.getBlockNumber(x, y));
-                switch (colorType) {
-                    case Gray:
-                    case Empty:
-                        break;
-                    default:
-                        Piece piece = colorConverter.parseToBlock(colorType);
-                        blockField.setBlock(piece, x, y);
-                        break;
-                }
-            }
-        }
-
+    void setField(Field initField, Field needFilledField, Field notFilledField, Field freeField, int maxHeight) {
         setMaxHeight(maxHeight);
         setInitField(initField);
         setNeedFilledField(needFilledField);
         setNotFilledField(notFilledField);
-        setReservedBlock(blockField);
-    }
-
-    void setField(Field initField, Field needFilledField, Field notFilledField, int maxHeight) {
-        setMaxHeight(maxHeight);
-        setInitField(initField);
-        setNeedFilledField(needFilledField);
-        setNotFilledField(notFilledField);
-        setReservedBlock(null);
+        setFreeField(freeField);
     }
 
     private void setInitField(Field field) {
@@ -166,8 +159,8 @@ public class SetupSettings {
         this.notFilledField = field;
     }
 
-    private void setReservedBlock(BlockField reservedBlock) {
-        this.reservedBlock = reservedBlock;
+    private void setFreeField(Field field) {
+        this.freeField = field;
     }
 
     void setMarginColorType(String marginColor) throws FinderParseException {
@@ -230,6 +223,14 @@ public class SetupSettings {
         }
     }
 
+    void setFreeColorType(String noHolesColor) throws FinderParseException {
+        try {
+            this.noHolesColorType = parseToColor(noHolesColor);
+        } catch (IllegalArgumentException e) {
+            throw new FinderParseException("Unsupported no-holes color: value=" + noHolesColor);
+        }
+    }
+
     void setDropType(String type) throws FinderParseException {
         switch (type.trim().toLowerCase()) {
             case "soft":
@@ -244,4 +245,118 @@ public class SetupSettings {
                 throw new FinderParseException("Unsupported droptype: type=" + type);
         }
     }
+
+    void setExcludeType(String type) throws FinderParseException {
+        switch (type.trim().toLowerCase()) {
+            case "hole":
+            case "holes":
+            case "all-hole":
+            case "all-holes":
+                this.exclude = ExcludeType.Holes;
+                return;
+            case "strict-hole":
+            case "strict-holes":
+                this.exclude = ExcludeType.StrictHoles;
+                return;
+            case "none":
+                this.exclude = ExcludeType.None;
+                return;
+            default:
+                throw new FinderParseException("Unsupported droptype: type=" + type);
+        }
+    }
+
+    void setAddOperations(List<String> values) throws FinderParseException {
+        ArrayList<FieldOperation> operations = new ArrayList<>();
+
+        Pattern pattern = Pattern.compile("(.*?)\\((.*?)\\)");
+
+        for (String value : values) {
+            value = value.trim().replace(" ", "");
+
+            Matcher matcher = pattern.matcher(value);
+            if (!matcher.find()) {
+                throw new FinderParseException("Unsupported operation / format: add=" + value);
+            }
+            String command = matcher.group(1);
+            String args = matcher.group(2);
+
+            try {
+                FieldOperation operation = createFieldOperation(command, args);
+                operations.add(operation);
+            } catch (Exception e) {
+                throw new FinderParseException("Unsupported operation / command: add=" + value, e);
+            }
+        }
+
+        this.addOperations = operations;
+    }
+
+    private FieldOperation createFieldOperation(String command, String args) throws FinderParseException {
+        switch (command.toLowerCase()) {
+            case "row": {
+                int y = Integer.valueOf(args);
+                if (y < 0) {
+                    throw new FinderParseException("Unsupported operation / 0 <= y: y=" + y);
+                }
+                return new FilledFieldOperation(y);
+            }
+            case "clear": {
+                return new ClearFieldOperation();
+            }
+            case "block": {
+                String[] split = args.split(",");
+                int x = Integer.valueOf(split[0]);
+                if (x < 0 || 10 <= x) {
+                    throw new FinderParseException("Unsupported piece operation / 0 <= x < 10: args=" + args);
+                }
+
+                int y = Integer.valueOf(split[1]);
+                if (y < 0) {
+                    throw new FinderParseException("Unsupported piece operation / 0 <= y: args=" + args);
+                }
+                return new SetBlockFieldOperation(x, y);
+            }
+            default: {
+                Piece piece = StringEnumTransform.toPiece(command.toUpperCase().charAt(0));
+                if (!command.contains("-")) {
+                    throw new FinderParseException("Unsupported piece operation / no rotation: args=" + command);
+                }
+
+                Rotate rotate = toRotate(command.split("-")[1].toLowerCase());
+
+                String[] split = args.split(",");
+                int x = Integer.valueOf(split[0]);
+                if (x < 0 || 10 <= x) {
+                    throw new FinderParseException("Unsupported piece operation / 0 <= x < 10: args=" + args);
+                }
+
+                int y = Integer.valueOf(split[1]);
+                if (y < 0) {
+                    throw new FinderParseException("Unsupported piece operation / 0 <= y: args=" + args);
+                }
+
+                return new PutMinoOperation(piece, rotate, x, y);
+            }
+        }
+    }
+
+    private Rotate toRotate(String name) {
+        switch (name) {
+            case "0":
+            case "spawn":
+                return Rotate.Spawn;
+            case "l":
+            case "left":
+                return Rotate.Left;
+            case "2":
+            case "reverse":
+                return Rotate.Reverse;
+            case "r":
+            case "right":
+                return Rotate.Right;
+        }
+        throw new IllegalArgumentException("No reachable");
+    }
 }
+

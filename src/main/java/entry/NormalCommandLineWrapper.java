@@ -3,6 +3,9 @@ package entry;
 import exceptions.FinderParseException;
 import org.apache.commons.cli.CommandLine;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 public class NormalCommandLineWrapper implements CommandLineWrapper {
@@ -51,6 +54,8 @@ public class NormalCommandLineWrapper implements CommandLineWrapper {
                 return Optional.of(false);
             case "use":
                 return Optional.of(true);
+            case "allow":
+                return Optional.of(true);
             case "avoid":
                 return Optional.of(false);
             case "enable":
@@ -83,5 +88,13 @@ public class NormalCommandLineWrapper implements CommandLineWrapper {
         } catch (NumberFormatException e) {
             throw new FinderParseException(String.format("Cannot parse %s option: value=%s", name, optionValue));
         }
+    }
+
+    @Override
+    public List<String> getStringOptions(String name) {
+        String[] values = commandLine.getOptionValues(name);
+        if (values == null)
+            return Collections.emptyList();
+        return Arrays.asList(values);
     }
 }

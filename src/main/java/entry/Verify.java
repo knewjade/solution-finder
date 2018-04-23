@@ -66,7 +66,7 @@ public class Verify {
         return emptyCount / 4;
     }
 
-    public static int minDepth(Field field) throws FinderInitializeException {
+    public static int depth(Field field) throws FinderInitializeException {
         return (int) Math.ceil(field.getNumOfAllBlocks() / 4.0);
     }
 

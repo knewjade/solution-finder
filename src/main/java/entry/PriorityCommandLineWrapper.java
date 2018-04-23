@@ -2,6 +2,7 @@ package entry;
 
 import exceptions.FinderParseException;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,5 +53,15 @@ public class PriorityCommandLineWrapper implements CommandLineWrapper {
                 return option;
         }
         return Optional.empty();
+    }
+
+    @Override
+    public List<String> getStringOptions(String name) {
+        for (CommandLineWrapper commandLine : commandLines) {
+            List<String> option = commandLine.getStringOptions(name);
+            if (!option.isEmpty())
+                return option;
+        }
+        return Collections.emptyList();
     }
 }

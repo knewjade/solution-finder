@@ -94,10 +94,6 @@ public class SetupSettingParser {
                     // テト譜から
                     wrapper = loadTetfu(removeDomainData, parser, options, wrapper, settings);
                 } else {
-                    // 固定ピースの指定があるか
-                    Optional<Boolean> reservedOption = wrapper.getBoolOption("reserved");
-                    reservedOption.ifPresent(settings::setReserved);
-
                     // 最大削除ラインの設定
                     int maxHeightForce = -1;
                     try {
@@ -115,9 +111,36 @@ public class SetupSettingParser {
             }
         }
 
+        // ホールドの設定
+        Optional<Boolean> isUsingHold = wrapper.getBoolOption("hold");
+        isUsingHold.ifPresent(settings::setUsingHold);
+
         // ミノの組み合わせ
         Optional<Boolean> combination = wrapper.getBoolOption("combination");
         combination.ifPresent(settings::setCombination);
+
+        // 除外の設定
+        Optional<String> excludeType = wrapper.getStringOption("exclude");
+        try {
+            excludeType.ifPresent(type -> {
+                String key = excludeType.orElse("none");
+                try {
+                    settings.setExcludeType(key);
+                } catch (FinderParseException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            throw new FinderParseException("Unsupported format: exclude=" + excludeType.orElse("<empty>"));
+        }
+
+        // 除外前に加えるミノ
+        List<String> addOperations = wrapper.getStringOptions("operate");
+        settings.setAddOperations(addOperations);
+
+        // 必ず使用するミノの数
+        Optional<Integer> numOfPieces = wrapper.getIntegerOption("n-pieces");
+        numOfPieces.ifPresent(settings::setNumOfPieces);
 
         // ログファイルの設定
         Optional<String> logFilePath = wrapper.getStringOption("log-path");
@@ -139,7 +162,7 @@ public class SetupSettingParser {
                 }
             });
         } catch (Exception e) {
-            throw new FinderParseException("Unsupported format: format=" + dropType.orElse("<empty>"));
+            throw new FinderParseException("Unsupported format: drop=" + dropType.orElse("<empty>"));
         }
 
         // 探索パターンの設定
@@ -173,11 +196,21 @@ public class SetupSettingParser {
         int maxHeight = maxHeightForce != -1 ? maxHeightForce : coloredField.getUsingHeight();
 
         // Load init field
-        String initFieldMarks = fieldMarks.replace(".", "_").replace("*", "_");
+        String initFieldMarks = fieldMarks
+                .replace(".", "_")
+                .replace("+", "_")
+                .replace("*", "_");
         Field initField = FieldFactory.createField(initFieldMarks);
         for (int y = maxHeight; y < initField.getMaxFieldHeight(); y++)
             for (int x = 0; x < 10; x++)
                 initField.removeBlock(x, y);
+
+        // Load free field
+        String freeFieldMarks = filterString(fieldMarks, '+', '_');
+        Field freeField = FieldFactory.createField(freeFieldMarks);
+        for (int y = maxHeight; y < freeField.getMaxFieldHeight(); y++)
+            for (int x = 0; x < 10; x++)
+                freeField.removeBlock(x, y);
 
         // Load need filled field
         String needFilledFieldMarks = filterString(fieldMarks, '*', '_');
@@ -192,11 +225,7 @@ public class SetupSettingParser {
             for (int x = 0; x < 10; x++)
                 notFilledField.removeBlock(x, y);
 
-        if (settings.isReserved()) {
-            settings.setFieldWithReserved(initField, needFilledField, notFilledField, coloredField, maxHeight);
-        } else {
-            settings.setField(initField, needFilledField, notFilledField, maxHeight);
-        }
+        settings.setField(initField, needFilledField, notFilledField, freeField, maxHeight);
     }
 
     private String filterString(String str, char allow, char notAllowTo) {
@@ -307,15 +336,15 @@ public class SetupSettingParser {
                 .build();
         options.addOption(combinationOption);
 
-//        Option reservedOption = Option.builder("r")
-//                .optionalArg(true)
-//                .hasArg()
-//                .numberOfArgs(1)
-//                .argName("reserved-block")
-//                .longOpt("reserved")
-//                .desc("Specify reserved block")
-//                .build();
-//        options.addOption(reservedOption);
+        Option holdOption = Option.builder("H")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("use or avoid")
+                .longOpt("hold")
+                .desc("If use hold, set 'use'. If not use hold, set 'avoid'")
+                .build();
+        options.addOption(holdOption);
 
         Option marginColorOption = Option.builder("m")
                 .optionalArg(true)
@@ -326,6 +355,16 @@ public class SetupSettingParser {
                 .desc("Specify margin color")
                 .build();
         options.addOption(marginColorOption);
+
+        Option noHolesColorOption = Option.builder("F")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("color")
+                .longOpt("free")
+                .desc("Specify free color")
+                .build();
+        options.addOption(noHolesColorOption);
 
         Option fillColorOption = Option.builder("f")
                 .optionalArg(true)
@@ -346,6 +385,37 @@ public class SetupSettingParser {
                 .desc("Specify drop")
                 .build();
         options.addOption(dropOption);
+
+        Option excludeOption = Option.builder("e")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("type")
+                .longOpt("exclude")
+                .desc("If specify holes, exclude solutions containing holes")
+                .build();
+        options.addOption(excludeOption);
+
+        Option addPieceOption = Option.builder("op")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(Integer.MAX_VALUE)
+                .valueSeparator(' ')
+                .argName("operations...")
+                .longOpt("operate")
+                .desc("Operate field before determining to exclude solutions")
+                .build();
+        options.addOption(addPieceOption);
+
+        Option numOfPiecesOption = Option.builder("np")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("num")
+                .longOpt("n-pieces")
+                .desc("If specify N, must use N pieces")
+                .build();
+        options.addOption(numOfPiecesOption);
 
         return options;
     }
@@ -385,17 +455,19 @@ public class SetupSettingParser {
         } catch (FinderParseException ignore) {
         }
 
-        // 固定ピースの指定があるか
-//        Optional<Boolean> reservedOption = wrapper.getBoolOption("reserved");
-//        reservedOption.ifPresent(settings::setReserved);
-
-        // マージン色の指定があるか
+        // 固定色の指定があるか
         Optional<String> fillColorOption = wrapper.getStringOption("fill");
         if (fillColorOption.isPresent()) {
             settings.setFillColorType(fillColorOption.get());
         }
 
-        // マージン色の指定があるか
+        // マージン色（穴あり）の指定があるか
+        Optional<String> freeColorOption = wrapper.getStringOption("free");
+        if (freeColorOption.isPresent()) {
+            settings.setFreeColorType(freeColorOption.get());
+        }
+
+        // マージン色（穴なし）の指定があるか
         Optional<String> marginColorOption = wrapper.getStringOption("margin");
         if (marginColorOption.isPresent()) {
             settings.setMarginColorType(marginColorOption.get());
@@ -418,73 +490,42 @@ public class SetupSettingParser {
         Optional<Integer> maxHeightOption = wrapper.getIntegerOption("line");
         int maxHeight = maxHeightOption.orElse(coloredField.getUsingHeight());
 
-        if (settings.isReserved()) {
-            Field initField = FieldFactory.createField(maxHeight);
-            Field needFilledField = FieldFactory.createField(maxHeight);
-            Field notFilledField = FieldFactory.createField(maxHeight);
+        // フィールドの設定
+        Field initField = FieldFactory.createField(maxHeight);
+        Field needFilledField = FieldFactory.createField(maxHeight);
+        Field notFilledField = FieldFactory.createField(maxHeight);
+        Field freeField = FieldFactory.createField(maxHeight);
 
-            ColorType marginColorType = settings.getMarginColorType();
-            ColorType fillColorType = settings.getFillColorType();
+        ColorType marginColorType = settings.getMarginColorType();
+        ColorType fillColorType = settings.getFillColorType();
+        ColorType freeColorType = settings.getFreeColorType();
 
-            for (int y = 0; y < maxHeight; y++) {
-                for (int x = 0; x < 10; x++) {
-                    ColorType colorType = coloredField.getColorType(x, y);
-                    if (colorType.equals(marginColorType)) {
-                        coloredField.setColorType(ColorType.Empty, x, y);
-                    } else if (colorType.equals(fillColorType)) {
-                        coloredField.setColorType(ColorType.Empty, x, y);
-                        needFilledField.setBlock(x, y);
-                    } else {
-                        switch (colorType) {
-                            case Gray:
-                                initField.setBlock(x, y);
-                                notFilledField.setBlock(x, y);
-                                coloredField.setColorType(ColorType.Empty, x, y);
-                                break;
-                            case Empty:
-                                notFilledField.setBlock(x, y);
-                                break;
-                            default:
-                                break;
-                        }
+        for (int y = 0; y < maxHeight; y++) {
+            for (int x = 0; x < 10; x++) {
+                ColorType colorType = coloredField.getColorType(x, y);
+
+                if (colorType.equals(freeColorType)) {
+                    freeField.setBlock(x, y);
+                } else if (colorType.equals(fillColorType)) {
+                    needFilledField.setBlock(x, y);
+                } else if (colorType.equals(marginColorType)) {
+                    // skip
+                } else {
+                    switch (colorType) {
+                        case Empty:
+                            notFilledField.setBlock(x, y);
+                            break;
+                        case Gray:
+                        default:
+                            initField.setBlock(x, y);
+                            notFilledField.setBlock(x, y);
+                            break;
                     }
                 }
             }
-
-            settings.setFieldWithReserved(initField, needFilledField, notFilledField, coloredField, maxHeight);
-        } else {
-            Field initField = FieldFactory.createField(maxHeight);
-            Field needFilledField = FieldFactory.createField(maxHeight);
-            Field notFilledField = FieldFactory.createField(maxHeight);
-
-            ColorType marginColorType = settings.getMarginColorType();
-            ColorType fillColorType = settings.getFillColorType();
-
-            for (int y = 0; y < maxHeight; y++) {
-                for (int x = 0; x < 10; x++) {
-                    ColorType colorType = coloredField.getColorType(x, y);
-
-                    if (colorType.equals(marginColorType)) {
-                        // skip
-                    } else if (colorType.equals(fillColorType)) {
-                        needFilledField.setBlock(x, y);
-                    } else {
-                        switch (colorType) {
-                            case Empty:
-                                notFilledField.setBlock(x, y);
-                                break;
-                            case Gray:
-                            default:
-                                initField.setBlock(x, y);
-                                notFilledField.setBlock(x, y);
-                                break;
-                        }
-                    }
-                }
-            }
-
-            settings.setField(initField, needFilledField, notFilledField, maxHeight);
         }
+
+        settings.setField(initField, needFilledField, notFilledField, freeField, maxHeight);
 
         return wrapper;
     }

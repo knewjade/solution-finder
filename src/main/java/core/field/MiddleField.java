@@ -63,6 +63,10 @@ public class MiddleField implements Field {
         return 1L << x + y * FIELD_WIDTH;
     }
 
+    private long getLineMask(int y) {
+        return 0x3ffL << y * FIELD_WIDTH;
+    }
+
     @Override
     public void put(Mino mino, int x, int y) {
         // Lowの更新が必要
@@ -307,6 +311,15 @@ public class MiddleField implements Field {
         this.xBoardHigh = newXBoardHigh & VALID_BOARD_RANGE;
     }
 
+    // TODO: write unittest
+    @Override
+    public void fillLine(int y) {
+        if (y < FIELD_ROW_BOARDER_Y)
+            xBoardLow |= getLineMask(y);
+        else
+            xBoardHigh |= getLineMask(y - FIELD_ROW_BOARDER_Y);
+    }
+
     @Override
     public int getBoardCount() {
         return 2;
@@ -424,6 +437,20 @@ public class MiddleField implements Field {
         long mask = BitOperators.getColumnMaskLeftX(FIELD_WIDTH - slide);
         xBoardLow = (xBoardLow & mask) << slide;
         xBoardHigh = (xBoardHigh & mask) << slide;
+    }
+
+    // TODO: write unittest
+    @Override
+    public void slideDown() {
+        long deleteKeyLow = KeyOperators.getDeleteBitKey(0);
+        long newXBoardLow = LongBoardMap.deleteLine(xBoardLow, deleteKeyLow);
+
+        long newXBoardHigh = xBoardHigh;
+
+        int deleteLineLow = 1;
+
+        this.xBoardLow = (newXBoardLow | (newXBoardHigh << (6 - deleteLineLow) * 10)) & VALID_BOARD_RANGE;
+        this.xBoardHigh = newXBoardHigh >>> deleteLineLow * 10;
     }
 
     // TODO: write unittest

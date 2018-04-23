@@ -98,6 +98,10 @@ public class SmallField implements Field {
         return 1L << x + y * FIELD_WIDTH;
     }
 
+    private long getLineMask(int y) {
+        return 0x3ffL << y * FIELD_WIDTH;
+    }
+
     @Override
     public boolean isEmpty(int x, int y) {
         return (xBoard & getXMask(x, y)) == 0L;
@@ -184,6 +188,12 @@ public class SmallField implements Field {
         this.xBoard = LongBoardMap.insertWhiteLine(xBoard, deleteKey);
     }
 
+    // TODO: write unittest
+    @Override
+    public void fillLine(int y) {
+        xBoard |= getLineMask(y);
+    }
+
     @Override
     public Field freeze(int maxHeight) {
         return new SmallField(this);
@@ -247,6 +257,13 @@ public class SmallField implements Field {
         assert 0 <= slide;
         long mask = BitOperators.getColumnMaskLeftX(FIELD_WIDTH - slide);
         xBoard = (xBoard & mask) << slide;
+    }
+
+    // TODO: write unittest
+    @Override
+    public void slideDown() {
+        long deleteKey = KeyOperators.getDeleteBitKey(0);
+        this.xBoard = LongBoardMap.deleteLine(xBoard, deleteKey);
     }
 
     // TODO: write unittest
