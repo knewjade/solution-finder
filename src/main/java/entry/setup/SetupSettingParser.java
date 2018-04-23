@@ -205,12 +205,12 @@ public class SetupSettingParser {
             for (int x = 0; x < 10; x++)
                 initField.removeBlock(x, y);
 
-        // Load margin field
-        String marginFieldMarks = filterString(fieldMarks, '.', '_');
-        Field marginField = FieldFactory.createField(marginFieldMarks);
-        for (int y = maxHeight; y < marginField.getMaxFieldHeight(); y++)
+        // Load free field
+        String freeFieldMarks = filterString(fieldMarks, '+', '_');
+        Field freeField = FieldFactory.createField(freeFieldMarks);
+        for (int y = maxHeight; y < freeField.getMaxFieldHeight(); y++)
             for (int x = 0; x < 10; x++)
-                marginField.removeBlock(x, y);
+                freeField.removeBlock(x, y);
 
         // Load need filled field
         String needFilledFieldMarks = filterString(fieldMarks, '*', '_');
@@ -225,7 +225,7 @@ public class SetupSettingParser {
             for (int x = 0; x < 10; x++)
                 notFilledField.removeBlock(x, y);
 
-        settings.setField(initField, needFilledField, notFilledField, marginField, maxHeight);
+        settings.setField(initField, needFilledField, notFilledField, freeField, maxHeight);
     }
 
     private String filterString(String str, char allow, char notAllowTo) {
@@ -356,13 +356,13 @@ public class SetupSettingParser {
                 .build();
         options.addOption(marginColorOption);
 
-        Option noHolesColorOption = Option.builder("nh")
+        Option noHolesColorOption = Option.builder("F")
                 .optionalArg(true)
                 .hasArg()
                 .numberOfArgs(1)
                 .argName("color")
-                .longOpt("no-holes")
-                .desc("Specify no-holes color")
+                .longOpt("free")
+                .desc("Specify free color")
                 .build();
         options.addOption(noHolesColorOption);
 
@@ -462,15 +462,15 @@ public class SetupSettingParser {
         }
 
         // マージン色（穴あり）の指定があるか
-        Optional<String> marginColorOption = wrapper.getStringOption("margin");
-        if (marginColorOption.isPresent()) {
-            settings.setMarginColorType(marginColorOption.get());
+        Optional<String> freeColorOption = wrapper.getStringOption("free");
+        if (freeColorOption.isPresent()) {
+            settings.setFreeColorType(freeColorOption.get());
         }
 
         // マージン色（穴なし）の指定があるか
-        Optional<String> noHolesColorOption = wrapper.getStringOption("no-holes");
-        if (noHolesColorOption.isPresent()) {
-            settings.setNoHolesColorType(noHolesColorOption.get());
+        Optional<String> marginColorOption = wrapper.getStringOption("margin");
+        if (marginColorOption.isPresent()) {
+            settings.setMarginColorType(marginColorOption.get());
         }
 
         // フィールドを設定
@@ -494,21 +494,21 @@ public class SetupSettingParser {
         Field initField = FieldFactory.createField(maxHeight);
         Field needFilledField = FieldFactory.createField(maxHeight);
         Field notFilledField = FieldFactory.createField(maxHeight);
-        Field marginField = FieldFactory.createField(maxHeight);
+        Field freeField = FieldFactory.createField(maxHeight);
 
         ColorType marginColorType = settings.getMarginColorType();
         ColorType fillColorType = settings.getFillColorType();
-        ColorType noHolesColorType = settings.getNoHolesColorType();
+        ColorType freeColorType = settings.getFreeColorType();
 
         for (int y = 0; y < maxHeight; y++) {
             for (int x = 0; x < 10; x++) {
                 ColorType colorType = coloredField.getColorType(x, y);
 
-                if (colorType.equals(marginColorType)) {
-                    marginField.setBlock(x, y);
+                if (colorType.equals(freeColorType)) {
+                    freeField.setBlock(x, y);
                 } else if (colorType.equals(fillColorType)) {
                     needFilledField.setBlock(x, y);
-                } else if (colorType.equals(noHolesColorType)) {
+                } else if (colorType.equals(marginColorType)) {
                     // skip
                 } else {
                     switch (colorType) {
@@ -525,7 +525,7 @@ public class SetupSettingParser {
             }
         }
 
-        settings.setField(initField, needFilledField, notFilledField, marginField, maxHeight);
+        settings.setField(initField, needFilledField, notFilledField, freeField, maxHeight);
 
         return wrapper;
     }

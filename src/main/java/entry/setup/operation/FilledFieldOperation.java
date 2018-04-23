@@ -13,4 +13,9 @@ public class FilledFieldOperation implements FieldOperation {
     public void operate(Field field) {
         field.fillLine(y);
     }
+
+    @Override
+    public String toName() {
+        return String.format("Row(%d)", this.y);
+    }
 }

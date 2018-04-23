@@ -88,8 +88,8 @@ public class SetupEntryPoint implements EntryPoint {
         Field needFilledField = settings.getNeedFilledField();
         Verify.needFilledField(needFilledField);
 
-        // Setup margin field
-        Field marginField = settings.getMarginField();
+        // Setup free field
+        Field freeField = settings.getFreeField();
 
         // Setup not filled field
         Field notFilledField = settings.getNotFilledField();
@@ -99,7 +99,6 @@ public class SetupEntryPoint implements EntryPoint {
         Verify.maxClearLineUnder10(maxHeight);
 
         // Show input field & NoHoles is On?
-        boolean existsNoHolesMargin = false;
         {
             for (int y = maxHeight - 1; 0 <= y; y--) {
                 StringBuilder builder = new StringBuilder();
@@ -108,13 +107,12 @@ public class SetupEntryPoint implements EntryPoint {
                         builder.append('X');
                     else if (!needFilledField.isEmpty(x, y))
                         builder.append('*');
-                    else if (!marginField.isEmpty(x, y))
-                        builder.append('.');
+                    else if (!freeField.isEmpty(x, y))
+                        builder.append('+');
                     else if (!notFilledField.isEmpty(x, y))
                         builder.append('_');
                     else {
-                        existsNoHolesMargin = true;
-                        builder.append('+');
+                        builder.append('.');
                     }
                 }
                 output(builder.toString());
@@ -123,6 +121,32 @@ public class SetupEntryPoint implements EntryPoint {
 
         // Setup min depth
         int minDepth = Verify.depth(needFilledField);  // 最低でも必要なミノ数
+
+        // Setup patterns
+        List<String> patterns = settings.getPatterns();
+        PatternGenerator generator = Verify.patterns(patterns, minDepth);
+
+        // ミノを置く最大個数を計算
+        boolean isLocalSearch = !settings.isCombination() || settings.getNumOfPieces() != Integer.MAX_VALUE;
+        int maxDepth = generator.getDepth();
+
+        {
+            // 実際における個数が少なかったら更新
+            Field fieldForMaxDepth = FieldFactory.createField(maxHeight);
+            for (int y = 0; y < maxHeight; y++)
+                fieldForMaxDepth.fillLine(y);
+            fieldForMaxDepth.reduce(notFilledField);
+            int fieldMaxDepth = Verify.depth(fieldForMaxDepth);
+            maxDepth = fieldMaxDepth < maxDepth ? fieldMaxDepth : maxDepth;
+        }
+
+        {
+            // --n-piecesで指定があったらそれも考慮する
+            int numOfPieces = settings.getNumOfPieces();
+            if (numOfPieces < maxDepth) {
+                maxDepth = numOfPieces;
+            }
+        }
 
         output();
 
@@ -133,13 +157,16 @@ public class SetupEntryPoint implements EntryPoint {
         output("# Initialize / User-defined");
         output("Max height: " + maxHeight);
         output("Drop: " + dropType.name().toLowerCase());
-        output("Searching patterns:");
+        output("Operations: " + settings.getAddOperations().stream().map(FieldOperation::toName).collect(Collectors.joining(" -> ")));
+        output("Exclude: " + settings.getExcludeType().name().toLowerCase());
+        output("Using N pieces:" + (isLocalSearch ? " == " : " <= ") + maxDepth);
 
-        // Setup patterns
-        List<String> patterns = settings.getPatterns();
-        PatternGenerator generator = Verify.patterns(patterns, minDepth);
+        if (!settings.isCombination())
+            output("Using hold: " + (settings.isUsingHold() ? "use" : "avoid"));
+
 
         // Output patterns
+        output("Searching patterns [" + (settings.isCombination() ? "combination" : "order") + "]:");
         for (String pattern : patterns)
             output("  " + pattern);
 
@@ -195,28 +222,6 @@ public class SetupEntryPoint implements EntryPoint {
             basicSolutions.add(solutions);
         }
 
-        // ミノを置く最大個数を計算
-        boolean isLocalSearch = !settings.isCombination() || settings.getNumOfPieces() != Integer.MAX_VALUE;
-        int maxDepth = generator.getDepth();
-
-        {
-            // 実際における個数が少なかったら更新
-            Field fieldForMaxDepth = FieldFactory.createField(maxHeight);
-            for (int y = 0; y < maxHeight; y++)
-                fieldForMaxDepth.fillLine(y);
-            fieldForMaxDepth.reduce(notFilledField);
-            int fieldMaxDepth = Verify.depth(fieldForMaxDepth);
-            maxDepth = fieldMaxDepth < maxDepth ? fieldMaxDepth : maxDepth;
-        }
-
-        {
-            // --n-piecesで指定があったらそれも考慮する
-            int numOfPieces = settings.getNumOfPieces();
-            if (numOfPieces < maxDepth) {
-                maxDepth = numOfPieces;
-            }
-        }
-
         // 組み合わせか順番かで処理を変更する
         SetupFunctions data = createSetupFunctions(settings.isCombination(), generator, buildUpStreamThreadLocal, initField, maxDepth, settings.isUsingHold());
 
@@ -225,17 +230,17 @@ public class SetupEntryPoint implements EntryPoint {
         // ホールを持ってはいけないエリアがある場合は、新たにフィルターを追加する
         switch (settings.getExcludeType()) {
             case Holes: {
-                if (marginField.isPerfect())
+                if (freeField.isPerfect())
                     filter = new SimpleHolesFilter(maxHeight).and(filter);
                 else
-                    filter = new SimpleHolesWithMarginFilter(maxHeight, marginField).and(filter);
+                    filter = new SimpleHolesWithFreeFilter(maxHeight, freeField).and(filter);
                 break;
             }
             case StrictHoles: {
-                if (marginField.isPerfect())
+                if (freeField.isPerfect())
                     filter = new StrictHolesFilter(maxHeight).and(filter);
                 else
-                    filter = new StrictHolesWithMarginFilter(maxHeight, marginField).and(filter);
+                    filter = new StrictHolesWithFreeFilter(maxHeight, freeField).and(filter);
                 break;
             }
             default: {

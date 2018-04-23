@@ -4,4 +4,6 @@ import core.field.Field;
 
 public interface FieldOperation {
     void operate(Field field);
+
+    String toName();
 }

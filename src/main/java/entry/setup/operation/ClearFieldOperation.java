@@ -10,4 +10,9 @@ public class ClearFieldOperation implements FieldOperation {
     public void operate(Field field) {
         field.clearLine();
     }
+
+    @Override
+    public String toName() {
+        return "Clear";
+    }
 }

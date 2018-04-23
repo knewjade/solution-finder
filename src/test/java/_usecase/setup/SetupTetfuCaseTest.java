@@ -229,7 +229,7 @@ class SetupTetfuCaseTest {
         void case12WithoutHoles() throws Exception {
             // 4x4
             String fumen = "v115@9gTpFeTpFeTpFezhPeAgH";
-            String command = buildCommand(fumen, "-p *! -f i -nh o --exclude holes --drop hard");
+            String command = buildCommand(fumen, "-p *! -f i -m o --exclude holes --drop hard");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -274,7 +274,7 @@ class SetupTetfuCaseTest {
             // 空中TSD  // アルバトロス
             // ホールを除外する
             String fumen = "v115@9gQpBewhVpwhCe3hAe2hZpJeAgH";
-            String command = buildCommand(fumen, "-p [^T]! -f i -nh o --exclude holes");
+            String command = buildCommand(fumen, "-p [^T]! -f i -m o --exclude holes");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -291,7 +291,7 @@ class SetupTetfuCaseTest {
             // 空中TSD  // アルバトロス
             // 操作した後、ホールを除外する
             String fumen = "v115@9gQpBewhVpwhCe3hAe2hZpJeAgH";
-            String command = buildCommand(fumen, "-p [^T]! -f i -nh o --operate T-Reverse(2,2) --exclude holes");
+            String command = buildCommand(fumen, "-p [^T]! -f i -m o --operate T-Reverse(2,2) --exclude holes");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -329,7 +329,7 @@ class SetupTetfuCaseTest {
             // 空中TSS
             // 操作した後、ホールを除外する
             String fumen = "v115@2gQpFeSpwhBeWpCeTpzhAe0hA8RpB8UpJeAgl";
-            String command = buildCommand(fumen, "-p [^T]! -f i -nh o -op T-2(4,2) -e holes");
+            String command = buildCommand(fumen, "-p [^T]! -f i -m o -op T-2(4,2) -e holes");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -350,7 +350,7 @@ class SetupTetfuCaseTest {
             // 空中TSS
             // 操作した後、ラインが揃ったとみなして、ホールを除外する
             String fumen = "v115@2gQpFeSpwhBeWpCeTpzhAe0hA8RpB8UpJeAgl";
-            String command = buildCommand(fumen, "-p [^T]! -f i -nh o -op T-2(4,2) clear() row(1) -e holes");
+            String command = buildCommand(fumen, "-p [^T]! -f i -m o -op T-2(4,2) clear() row(1) -e holes");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -370,7 +370,7 @@ class SetupTetfuCaseTest {
             // 空中TSS
             // ミノを操作した後、1ブロック追加して、ホールを除外する
             String fumen = "v115@2gQpFeSpwhBeWpCeTpzhAe0hA8RpB8UpJeAgl";
-            String command = buildCommand(fumen, "-p [^T]! -f i -nh o -op T-2(4,2) block(6,2) -e holes");
+            String command = buildCommand(fumen, "-p [^T]! -f i -m o -op T-2(4,2) block(6,2) -e holes");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -390,7 +390,7 @@ class SetupTetfuCaseTest {
             // 空中TSS
             // ミノを操作した後、厳密なホールを除外する
             String fumen = "v115@2gQpFeSpwhBeWpCeTpzhAe0hA8RpB8UpJeAgl";
-            String command = buildCommand(fumen, "-p [^T]! -f i -nh o -op T-2(4,2) -e strict-holes");
+            String command = buildCommand(fumen, "-p [^T]! -f i -m o -op T-2(4,2) -e strict-holes");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -437,7 +437,6 @@ class SetupTetfuCaseTest {
             String fumen = "v115@9gwhVpCewhVpCewhVpCewhVpMeAgl";
             String command = buildCommand(fumen, "-p *! -f i -m o --n-pieces 4");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
-            System.out.println(log.getOutput());
 
             // Log
             assertThat(log.getOutput())
@@ -548,7 +547,7 @@ class SetupTetfuCaseTest {
         void case1WithoutHoldN3ExcludeStrictHoles() throws Exception {
             // 4x4
             String fumen = "v115@9gAtywFeAtywFeAtywFeAtywPeAgH";
-            String command = buildCommand(fumen, "-p JSOI,*! -f Z -nh t --hold no -np 3 -e strict-holes");
+            String command = buildCommand(fumen, "-p JSOI,*! -f Z -m t --hold no -np 3 -e strict-holes");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -595,7 +594,7 @@ class SetupTetfuCaseTest {
         void case2ExcludeHoles() throws Exception {
             // No holes color & Exclude holes
             String fumen = "v115@9gQpS4FeQpS4FeQpS4FezhPeAgH";
-            String command = buildCommand(fumen, "-p *! -f I -m o -nh S -np 2 -e holes");
+            String command = buildCommand(fumen, "-p *! -f I -m S -F o -np 2 -e holes");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -615,11 +614,11 @@ class SetupTetfuCaseTest {
         }
 
         @Test
-        void case3() throws Exception {
+        void case3ExludeHoles() throws Exception {
             // Exists holes out of range
             // Exclude
             String fumen = "v115@HhyhCeD8TpAeE8TpPeAgH";
-            String command = buildCommand(fumen, "-p *p2 -f I -m o -op t-2(4,2)");
+            String command = buildCommand(fumen, "-p *p2 -f I --free o -op t-2(4,2) -e holes");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -639,7 +638,7 @@ class SetupTetfuCaseTest {
         void case3ExcludeNone() throws Exception {
             // Exists holes out of range to operate solution
             String fumen = "v115@HhyhCeD8TpAeE8TpPeAgH";
-            String command = buildCommand(fumen, "-p *p2 -f I -m o -op t-2(4,2) -e none");
+            String command = buildCommand(fumen, "-p *p2 -fill I -F o -op t-2(4,2) -e none");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log

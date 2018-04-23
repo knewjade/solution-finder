@@ -15,4 +15,9 @@ public class SetBlockFieldOperation implements FieldOperation {
     public void operate(Field field) {
         field.setBlock(x, y);
     }
+
+    @Override
+    public String toName() {
+        return String.format("Block(%d,%d)", x, y);
+    }
 }

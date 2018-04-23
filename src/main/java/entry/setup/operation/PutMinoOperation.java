@@ -22,4 +22,9 @@ public class PutMinoOperation implements FieldOperation {
     public void operate(Field field) {
         field.put(new Mino(piece, rotate), x, y);
     }
+
+    @Override
+    public String toName() {
+        return String.format("%s-%s(%d,%d)", this.piece.name().toUpperCase(), this.rotate.name().toUpperCase(), x, y);
+    }
 }

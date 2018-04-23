@@ -23,14 +23,14 @@ public class SetupSettings {
     private boolean isUsingHold = true;
     private boolean isCombination = false;
     private int numOfPieces = Integer.MAX_VALUE;
-    private ExcludeType exclude = ExcludeType.Holes;
+    private ExcludeType exclude = ExcludeType.None;
     private List<FieldOperation> addOperations = Collections.emptyList();
     private int maxHeight = -1;
     private List<String> patterns = new ArrayList<>();
     private Field initField = null;
     private Field needFilledField = null;
     private Field notFilledField = null;
-    private Field marginField = null;
+    private Field freeField = null;
     private ColorType marginColorType = null;
     private ColorType fillColorType = null;
     private ColorType noHolesColorType = null;
@@ -90,8 +90,8 @@ public class SetupSettings {
         return notFilledField;
     }
 
-    Field getMarginField() {
-        return marginField;
+    Field getFreeField() {
+        return freeField;
     }
 
     ColorType getMarginColorType() {
@@ -102,7 +102,7 @@ public class SetupSettings {
         return fillColorType;
     }
 
-    ColorType getNoHolesColorType() {
+    ColorType getFreeColorType() {
         return noHolesColorType;
     }
 
@@ -139,12 +139,12 @@ public class SetupSettings {
         this.patterns = patterns;
     }
 
-    void setField(Field initField, Field needFilledField, Field notFilledField, Field marginField, int maxHeight) {
+    void setField(Field initField, Field needFilledField, Field notFilledField, Field freeField, int maxHeight) {
         setMaxHeight(maxHeight);
         setInitField(initField);
         setNeedFilledField(needFilledField);
         setNotFilledField(notFilledField);
-        setMarginField(marginField);
+        setFreeField(freeField);
     }
 
     private void setInitField(Field field) {
@@ -159,8 +159,8 @@ public class SetupSettings {
         this.notFilledField = field;
     }
 
-    private void setMarginField(Field field) {
-        this.marginField = field;
+    private void setFreeField(Field field) {
+        this.freeField = field;
     }
 
     void setMarginColorType(String marginColor) throws FinderParseException {
@@ -223,7 +223,7 @@ public class SetupSettings {
         }
     }
 
-    void setNoHolesColorType(String noHolesColor) throws FinderParseException {
+    void setFreeColorType(String noHolesColor) throws FinderParseException {
         try {
             this.noHolesColorType = parseToColor(noHolesColor);
         } catch (IllegalArgumentException e) {

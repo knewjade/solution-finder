@@ -2,13 +2,13 @@ package entry.setup.filters;
 
 import core.field.Field;
 
-public class SimpleHolesWithMarginFilter implements SetupSolutionFilter {
+public class SimpleHolesWithFreeFilter implements SetupSolutionFilter {
     private final int maxHeight;
-    private final Field marginField;
+    private final Field freeField;
 
-    public SimpleHolesWithMarginFilter(int maxHeight, Field marginField) {
+    public SimpleHolesWithFreeFilter(int maxHeight, Field freeField) {
         this.maxHeight = maxHeight;
-        this.marginField = marginField;
+        this.freeField = freeField;
     }
 
     @Override
@@ -27,7 +27,7 @@ public class SimpleHolesWithMarginFilter implements SetupSolutionFilter {
         freeze.reduce(field);
 
         // ホールになっても良い部分を引く
-        freeze.reduce(marginField);
+        freeze.reduce(freeField);
 
         // ホールがまだ残っていたら除外
         return freeze.isPerfect();

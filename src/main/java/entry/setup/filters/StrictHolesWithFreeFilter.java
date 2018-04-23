@@ -3,15 +3,15 @@ package entry.setup.filters;
 import core.field.Field;
 import searcher.common.From;
 
-public class StrictHolesWithMarginFilter implements SetupSolutionFilter {
+public class StrictHolesWithFreeFilter implements SetupSolutionFilter {
     private static final int FIELD_WIDTH = 10;
 
     private final int maxHeight;
-    private final Field marginField;
+    private final Field freeField;
 
-    public StrictHolesWithMarginFilter(int maxHeight, Field marginField) {
+    public StrictHolesWithFreeFilter(int maxHeight, Field freeField) {
         this.maxHeight = maxHeight;
-        this.marginField = marginField;
+        this.freeField = freeField;
     }
 
     @Override
@@ -21,7 +21,7 @@ public class StrictHolesWithMarginFilter implements SetupSolutionFilter {
             putAndMove(freeze, x, maxHeight - 1, From.None);
 
         // マージン上で空白の部分（ホール）があれば塗りつぶす
-        freeze.merge(marginField);
+        freeze.merge(freeField);
 
         // すべてが塗りつぶされていないときは除外
         return freeze.getNumOfAllBlocks() == maxHeight * 10;
