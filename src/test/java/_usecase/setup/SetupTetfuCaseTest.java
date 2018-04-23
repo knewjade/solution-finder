@@ -615,26 +615,44 @@ class SetupTetfuCaseTest {
         }
 
         @Test
-        void case2ExcludeStrictHoles() throws Exception {
-            // No holes color & Exclude strickt-holes
-            String fumen = "v115@9gQpS4FeQpS4FeQpS4FezhPeAgH";
-            String command = buildCommand(fumen, "-p *! -f I -m o -nh S -np 2 -e strict-holes");
+        void case3() throws Exception {
+            // Exists holes out of range
+            // Exclude
+            String fumen = "v115@HhyhCeD8TpAeE8TpPeAgH";
+            String command = buildCommand(fumen, "-p *p2 -f I -m o -op t-2(4,2)");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
             assertThat(log.getOutput())
-                    .contains(Messages.foundSolutions(23))
-                    .contains(Messages.foundSubSolutions(64));
-            assertThat(log.getError()).isEmpty();
+                    .contains(Messages.foundSolutions(2))
+                    .contains(Messages.foundSubSolutions(2));
 
             // HTML
             SetupHTML html = OutputFileHelper.loadSetupHTML();
             assertThat(html.getFumens())
-                    .hasSize(64)
-                    .contains("Hhh0Heg0BeglFeg0ilPeAgWCAqCBAA")
-                    .contains("IhAtHeBtwwGeAtywPeAgWCA6OBAA")
-                    .doesNotContain("Hhh0Heg0AewwGeg0ywPeAgWCAqOBAA")
-                    .contains("9ghlIeglIeglHezhPeAgWCApCBAA");
+                    .hasSize(2)
+                    .doesNotContain("HhhlwwCeD8AeglxwAeE8AeglwwQeAgWCAsOBAA")
+                    .doesNotContain("HhhlQ4CeD8AeglR4AeE8AeglAeQ4PeAgWCAzCBAA");
+        }
+
+        @Test
+        void case3ExcludeNone() throws Exception {
+            // Exists holes out of range to operate solution
+            String fumen = "v115@HhyhCeD8TpAeE8TpPeAgH";
+            String command = buildCommand(fumen, "-p *p2 -f I -m o -op t-2(4,2) -e none");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput())
+                    .contains(Messages.foundSolutions(13))
+                    .contains(Messages.foundSubSolutions(13));
+
+            // HTML
+            SetupHTML html = OutputFileHelper.loadSetupHTML();
+            assertThat(html.getFumens())
+                    .hasSize(13)
+                    .contains("HhhlwwCeD8AeglxwAeE8AeglwwQeAgWCAsOBAA")
+                    .contains("HhhlQ4CeD8AeglR4AeE8AeglAeQ4PeAgWCAzCBAA");
         }
     }
 

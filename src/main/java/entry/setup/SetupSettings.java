@@ -258,6 +258,9 @@ public class SetupSettings {
             case "strict-holes":
                 this.exclude = ExcludeType.StrictHoles;
                 return;
+            case "none":
+                this.exclude = ExcludeType.None;
+                return;
             default:
                 throw new FinderParseException("Unsupported droptype: type=" + type);
         }

@@ -222,23 +222,24 @@ public class SetupEntryPoint implements EntryPoint {
 
         // ホールを取り除く
         SetupSolutionFilter filter = data.getSetupSolutionFilter();
-        if (existsNoHolesMargin) {
-            // ホールを持ってはいけないエリアがある場合は、新たにフィルターを追加する
-            switch (settings.getExcludeType()) {
-                case Holes: {
-                    if (marginField.isPerfect())
-                        filter = new SimpleHolesFilter(maxHeight).and(filter);
-                    else
-                        filter = new SimpleHolesWithMarginFilter(maxHeight, marginField).and(filter);
-                    break;
-                }
-                case StrictHoles: {
-                    if (marginField.isPerfect())
-                        filter = new StrictHolesFilter(maxHeight).and(filter);
-                    else
-                        filter = new StrictHolesWithMarginFilter(maxHeight, marginField).and(filter);
-                    break;
-                }
+        // ホールを持ってはいけないエリアがある場合は、新たにフィルターを追加する
+        switch (settings.getExcludeType()) {
+            case Holes: {
+                if (marginField.isPerfect())
+                    filter = new SimpleHolesFilter(maxHeight).and(filter);
+                else
+                    filter = new SimpleHolesWithMarginFilter(maxHeight, marginField).and(filter);
+                break;
+            }
+            case StrictHoles: {
+                if (marginField.isPerfect())
+                    filter = new StrictHolesFilter(maxHeight).and(filter);
+                else
+                    filter = new StrictHolesWithMarginFilter(maxHeight, marginField).and(filter);
+                break;
+            }
+            default: {
+                // noop
             }
         }
 
