@@ -364,9 +364,9 @@ v115のテト譜データにのみ対応。
 
   複数個の操作を指定した場合は、先頭の操作から順に行われます。
 
-  例）``--operate "L-Right(0,1)" "row(1)" "clear()" "block(1,1)"
+  例）--operate "L-Right(0,1)" "row(1)" "clear()" "block(1,1)"
 
-  `結果 <v115@vhAKJYYAF7IVCNbNyDIP98AYo78ADq78A5nY9ARhg0?I8TeAAPQAF7YVEvT98A4p78A5nY9AvhAAAPRAF7wiDs4DXE?FbuRAy178ASAAAAShA8beAAPWAF7YfDsng/DFbO6AFLn6AF?rwRASbAAARhg0Ieh0ReAAPGASY0hEM/BAA>`_：右回転Lを置く→2段目をすべて埋める→ライン消去を行う→(1,1)にブロックを置く
+  `結果 <http://fumen.zui.jp/?v115@vhAKJYYAF7IVCNbNyDIP98AYo78ADq78A5nY9ARhg0?I8TeAAPQAF7YVEvT98A4p78A5nY9AvhAAAPRAF7wiDs4DXE?FbuRAy178ASAAAAShA8beAAPWAF7YfDsng/DFbO6AFLn6AF?rwRASbAAARhg0Ieh0ReAAPGASY0hEM/BAA>`_：右回転Lを置く→2段目をすべて埋める→ライン消去を行う→(1,1)にブロックを置く
 
 
 ``-np``, ``--n-pieces`` [default: -1]
