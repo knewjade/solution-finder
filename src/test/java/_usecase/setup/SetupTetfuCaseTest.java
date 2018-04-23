@@ -18,7 +18,7 @@ class SetupTetfuCaseTest {
     @Nested
     class CombinationTest extends SetupUseCaseBaseTest {
         private String buildCommand(String fumen, String options) {
-            return String.format("setup -t %s --co yes %s", fumen, options);
+            return String.format("setup -t %s -c yes %s", fumen, options);
         }
 
         @Override

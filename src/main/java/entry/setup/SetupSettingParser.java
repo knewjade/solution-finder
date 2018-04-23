@@ -326,7 +326,7 @@ public class SetupSettingParser {
                 .build();
         options.addOption(maxHeightOption);
 
-        Option combinationOption = Option.builder("co")
+        Option combinationOption = Option.builder("c")
                 .optionalArg(true)
                 .hasArg()
                 .numberOfArgs(1)
