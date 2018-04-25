@@ -85,7 +85,7 @@
 それを防ぐため、解が除外される前に「ミノを置く」「1ライン全て埋める」などの操作を行うことができます。
 詳細は  ``--operate`` オプションをご参照ください。
 
-この例では ``--operate "T-Reverse(2,2)""`` で1つめの解を取り出すことができます。
+この例では ``--operate "T-Reverse(2,2)"`` で1つめの解を取り出すことができます。
 
 
 ----
@@ -119,7 +119,7 @@
   XXXXXXX_XX
   _X____X_X_
 
-  `SJOZLI <http://fumen.zui.jp/?v115@+gAtRpAeR4CeBtRpR4CeA8Atili0AeB8Aeglzhg0Ae?A8KeAgWGAzvaFDM+AAA>`_
+  SJOZLI (Link: http://fumen.zui.jp/?v115@+gAtRpAeR4CeBtRpR4CeA8Atili0AeB8Aeglzhg0Ae?A8KeAgWGAzvaFDM+AAA)
 
 
 ``2444343022`` の数字は、列ごとのブロック数を左から並べたものです。
