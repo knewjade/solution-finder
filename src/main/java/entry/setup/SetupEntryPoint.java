@@ -35,7 +35,6 @@ import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.calculator.BasicSolutions;
-import searcher.pack.memento.MinoFieldMemento;
 import searcher.pack.memento.SolutionFilter;
 import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.solutions.OnDemandBasicSolutions;
@@ -260,7 +259,8 @@ public class SetupEntryPoint implements EntryPoint {
                 .collect(Collectors.toList());
 
         // 必要があればローカルサーチをする
-        List<SetupTemp> tempOperations = localSearchIfNeed(notFilledField, maxHeight, generator, separableMinos, isLocalSearch, resultOperations, maxDepth);
+        SeparableMinos allMinosForLocalSearch = SeparableMinos.createSeparableMinos(minoFactory, minoShifter, new SizedBit(10, maxHeight), Long.MAX_VALUE);
+        List<SetupTemp> tempOperations = localSearchIfNeed(notFilledField, maxHeight, generator, allMinosForLocalSearch, isLocalSearch, resultOperations, maxDepth, buildUpStreamThreadLocal, initField);
 
         // 結果のフィルタリング
         SetupSolutionFilter finalFilter = filter;
@@ -361,7 +361,7 @@ public class SetupEntryPoint implements EntryPoint {
         output("done");
     }
 
-    private List<SetupTemp> localSearchIfNeed(Field notFilledField, int maxHeight, PatternGenerator generator, SeparableMinos separableMinos, boolean isLocalSearch, List<List<MinoOperationWithKey>> resultOperations, int numOfPieces) throws FinderExecuteException {
+    private List<SetupTemp> localSearchIfNeed(Field notFilledField, int maxHeight, PatternGenerator generator, SeparableMinos separableMinos, boolean isLocalSearch, List<List<MinoOperationWithKey>> resultOperations, int numOfPieces, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal, Field initField) throws FinderExecuteException {
         if (!isLocalSearch)
             return resultOperations.stream().map(o -> new SetupTemp(o, maxHeight)).collect(Collectors.toList());
 
@@ -418,13 +418,13 @@ public class SetupEntryPoint implements EntryPoint {
                         return usable.stream()
                                 .map(PieceCounter::getBlocks)
                                 .map(LinkedList::new)
-                                .flatMap(blocks -> localSearch(operationWithKeys, field, blocks, separableMinoMap, maxHeight));
+                                .flatMap(blocks -> localSearch(operationWithKeys, field, blocks, separableMinoMap, maxHeight, buildUpStreamThreadLocal, initField));
                     }).map((solution) -> new SetupTemp(operationWithKeys, solution, maxHeight));
                 })
                 .collect(Collectors.toList());
     }
 
-    private Stream<? extends List<MinoOperationWithKey>> localSearch(List<MinoOperationWithKey> operationWithKeys, Field field, LinkedList<Piece> pieces, EnumMap<Piece, List<SeparableMino>> separableMinoMap, int maxHeight) {
+    private Stream<? extends List<MinoOperationWithKey>> localSearch(List<MinoOperationWithKey> operationWithKeys, Field field, LinkedList<Piece> pieces, EnumMap<Piece, List<SeparableMino>> separableMinoMap, int maxHeight, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal, Field initField) {
         Stream<? extends List<MinoOperationWithKey>> stream = Stream.empty();
 
         Piece piece = pieces.pollFirst();
@@ -433,18 +433,27 @@ public class SetupEntryPoint implements EntryPoint {
             Field minoField = mino.getField();
             if (field.canMerge(minoField)) {
                 // 次の手順
-                ArrayList<MinoOperationWithKey> newOperations = new ArrayList<>(operationWithKeys);
+                LinkedList<MinoOperationWithKey> newOperations = new LinkedList<>(operationWithKeys);
                 newOperations.add(mino.toMinoOperationWithKey());
 
                 if (pieces.isEmpty()) {
                     // 全てのPieceを使った
-                    stream = Stream.concat(stream, Stream.of(newOperations));
+
+                    // 地形の中で組むことができるoperationsを一つ作成
+                    BuildUpStream buildUpStream = buildUpStreamThreadLocal.get();
+                    Optional<List<MinoOperationWithKey>> result = buildUpStream.existsValidBuildPatternDirectly(initField, newOperations)
+                            .findFirst();
+
+                    // 地形の中で組むことができるものがあるときは結果として記録する
+                    if (result.isPresent()) {
+                        stream = Stream.concat(stream, Stream.of(newOperations));
+                    }
                 } else {
                     // 次のフィールド
                     Field freeze = field.freeze(maxHeight);
                     freeze.merge(minoField);
 
-                    stream = Stream.concat(stream, localSearch(newOperations, freeze, pieces, separableMinoMap, maxHeight));
+                    stream = Stream.concat(stream, localSearch(newOperations, freeze, pieces, separableMinoMap, maxHeight, buildUpStreamThreadLocal, initField));
                 }
             }
         }
@@ -505,10 +514,6 @@ public class SetupEntryPoint implements EntryPoint {
                 return new HarddropBuildUpListUpThreadLocal(maxClearLine);
         }
         throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
-    }
-
-    private Stream<MinoFieldMemento> concat(Stream<MinoFieldMemento> stream, Piece piece, SeparableMinos separableMinos, Map<Piece, List<SeparableMino>> map) {
-        return Stream.empty();
     }
 
     private void output() throws FinderExecuteException {

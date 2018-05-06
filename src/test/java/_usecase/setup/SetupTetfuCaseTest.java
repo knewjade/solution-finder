@@ -440,8 +440,8 @@ class SetupTetfuCaseTest {
 
             // Log
             assertThat(log.getOutput())
-                    .contains(Messages.foundSolutions(1828))
-                    .contains(Messages.foundSubSolutions(6888));
+                    .contains(Messages.foundSolutions(1853))
+                    .contains(Messages.foundSubSolutions(53966));
             assertThat(log.getError()).isEmpty();
 
             // HTML
@@ -450,7 +450,39 @@ class SetupTetfuCaseTest {
                     .contains("4444000000");
 
             assertThat(html.getFumens())
-                    .hasSize(6888);
+                    .hasSize(53966);
+        }
+
+        @Test
+        void case17() throws Exception {
+            String fumen = "v115@fgyhVpAeyhVpAeyhVpAeI8AeI8AeI8AeI8KeAgH";
+            String command = buildCommand(fumen, "-m o -f i -p *p7 -c yes -np 6");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput())
+                    .contains(Messages.foundSolutions(48))
+                    .contains(Messages.foundSubSolutions(1850));
+
+            // HTML
+            SetupHTML html = OutputFileHelper.loadSetupHTML();
+            assertThat(html.getFumens()).hasSize(1850);
+        }
+
+        @Test
+        void case17_2() throws Exception {
+            String fumen = "v115@fgyhVpAeyhVpAe4hAeI8AeI8AeI8AeI8KeAgH";
+            String command = buildCommand(fumen, "-m o -f i -p *p7 -c yes -np 6");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput())
+                    .contains(Messages.foundSolutions(229))
+                    .contains(Messages.foundSubSolutions(516));
+
+            // HTML
+            SetupHTML html = OutputFileHelper.loadSetupHTML();
+            assertThat(html.getFumens()).hasSize(516);
         }
     }
 
@@ -538,9 +570,9 @@ class SetupTetfuCaseTest {
 
             assertThat(html.getFumens())
                     .hasSize(3)
-                    .contains("9gRpHeRpQ4Geg0AeR4Fei0Q4PeAgWDAvvzBA")
-                    .contains("9gQ4IeR4RpFeg0Q4RpFei0QeAgWDAzvqBA")
-                    .contains("9gRpHeRpR4Feg0R4Gei0QeAgWDAvvzBA");
+                    .contains("9gRpHeRpR4Feg0R4Gei0QeAgWDAK9qBA")
+                    .contains("9gQ4IeR4RpFeg0Q4RpFei0QeAgWDAK3zBA")
+                    .contains("9gRpHeRpQ4Geg0AeR4Fei0Q4PeAgWDAK9qBA");
         }
 
         @Test
@@ -563,8 +595,8 @@ class SetupTetfuCaseTest {
             assertThat(html.getFumens())
                     .hasSize(2)
                     .doesNotContain("9gRpHeRpQ4Geg0AeR4Fei0Q4PeAgWDAvvzBA")
-                    .contains("9gQ4IeR4RpFeg0Q4RpFei0QeAgWDAzvqBA")
-                    .contains("9gRpHeRpR4Feg0R4Gei0QeAgWDAvvzBA");
+                    .contains("9gRpHeRpR4Feg0R4Gei0QeAgWDAK9qBA")
+                    .contains("9gQ4IeR4RpFeg0Q4RpFei0QeAgWDAK3zBA");
         }
 
         @Test
