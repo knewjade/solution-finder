@@ -455,6 +455,8 @@ class SetupTetfuCaseTest {
 
         @Test
         void case17() throws Exception {
+            // 高い位置での4x4+マージン
+            // 比較的右側にマージンが存在する地形
             String fumen = "v115@fgyhVpAeyhVpAeyhVpAeI8AeI8AeI8AeI8KeAgH";
             String command = buildCommand(fumen, "-m o -f i -p *p7 -c yes -np 6");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
@@ -462,27 +464,51 @@ class SetupTetfuCaseTest {
             // Log
             assertThat(log.getOutput())
                     .contains(Messages.foundSolutions(48))
-                    .contains(Messages.foundSubSolutions(1850));
+                    .contains(Messages.foundSubSolutions(3167));
 
             // HTML
             SetupHTML html = OutputFileHelper.loadSetupHTML();
-            assertThat(html.getFumens()).hasSize(1850);
+            assertThat(html.getFumens()).hasSize(3167);
         }
 
         @Test
         void case17_2() throws Exception {
+            // 高い位置での4x4+下1ライン+マージン
             String fumen = "v115@fgyhVpAeyhVpAe4hAeI8AeI8AeI8AeI8KeAgH";
             String command = buildCommand(fumen, "-m o -f i -p *p7 -c yes -np 6");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
             assertThat(log.getOutput())
-                    .contains(Messages.foundSolutions(229))
-                    .contains(Messages.foundSubSolutions(516));
+                    .contains(Messages.foundSolutions(238))
+                    .contains(Messages.foundSubSolutions(624));
 
             // HTML
             SetupHTML html = OutputFileHelper.loadSetupHTML();
-            assertThat(html.getFumens()).hasSize(516);
+            assertThat(html.getFumens()).hasSize(624);
+        }
+
+        @Test
+        void case18() throws Exception {
+            // 同じ種類のミノがあり、ローカルサーチが必要になるケース
+            String fumen = "v115@9gwhTpEewhTpEewhTpEewhTpOeAgl";
+            String command = buildCommand(fumen, "-p ISSSS -f i -m o --n-pieces 3");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput())
+                    .contains(Messages.foundSolutions(15))
+                    .contains(Messages.foundSubSolutions(24));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SetupHTML html = OutputFileHelper.loadSetupHTML();
+            assertThat(html.getHtml())
+                    .contains("1111000000")
+                    .doesNotContain("4444000000");
+
+            assertThat(html.getFumens())
+                    .hasSize(24);
         }
     }
 
@@ -657,6 +683,7 @@ class SetupTetfuCaseTest {
             assertThat(log.getOutput())
                     .contains(Messages.foundSolutions(2))
                     .contains(Messages.foundSubSolutions(2));
+            System.out.println(log.getOutput());
 
             // HTML
             SetupHTML html = OutputFileHelper.loadSetupHTML();

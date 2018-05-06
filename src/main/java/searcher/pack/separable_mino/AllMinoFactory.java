@@ -29,8 +29,8 @@ public class AllMinoFactory {
         this.deleteKeyMask = deleteKeyMask;
     }
 
-    public Set<SeparableMino> create() {
-        HashSet<SeparableMino> pieces = new HashSet<>();
+    public Set<FullOperationWithKey> create() {
+        HashSet<FullOperationWithKey> pieces = new HashSet<>();
         HashSet<Mino> createdCheckSet = new HashSet<>();
 
         for (Piece piece : Piece.values()) {
@@ -55,7 +55,7 @@ public class AllMinoFactory {
                 ArrayList<Integer> lineIndexes = getLineIndexes(fieldHeight);
 
                 // リストアップ
-                ArrayList<SeparableMino> piecesEachMino = generatePiecesEachMino(mino, lineIndexes, minoHeight);
+                ArrayList<FullOperationWithKey> piecesEachMino = generatePiecesEachMino(mino, lineIndexes, minoHeight);
 
                 // 追加
                 pieces.addAll(piecesEachMino);
@@ -72,8 +72,8 @@ public class AllMinoFactory {
         return lineIndexes;
     }
 
-    private ArrayList<SeparableMino> generatePiecesEachMino(Mino mino, ArrayList<Integer> lineIndexes, int minoHeight) {
-        ArrayList<SeparableMino> pieces = new ArrayList<>();
+    private ArrayList<FullOperationWithKey> generatePiecesEachMino(Mino mino, ArrayList<Integer> lineIndexes, int minoHeight) {
+        ArrayList<FullOperationWithKey> pieces = new ArrayList<>();
 
         // ブロックが置かれる行を選択する
         CombinationIterable<Integer> combinationIterable = new CombinationIterable<>(lineIndexes, minoHeight);
@@ -107,7 +107,7 @@ public class AllMinoFactory {
             if ((deleteKeyMask & deleteKey) == deleteKey) {
                 for (int x = -mino.getMinX(); x < fieldWidth - mino.getMaxX(); x++) {
                     FullOperationWithKey operationWithKey = new FullOperationWithKey(mino, x, lowerY - mino.getMinY(), deleteKey, usingKey);
-                    pieces.add(parseOperation(operationWithKey, upperY, fieldHeight));
+                    pieces.add(operationWithKey);
                 }
             }
         }
