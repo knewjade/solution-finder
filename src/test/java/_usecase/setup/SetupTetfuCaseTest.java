@@ -447,10 +447,9 @@ class SetupTetfuCaseTest {
             // HTML
             SetupHTML html = OutputFileHelper.loadSetupHTML();
             assertThat(html.getHtml())
-                    .contains("4444000000");
+                    .contains("4440000000");
 
-            assertThat(html.getFumens())
-                    .hasSize(38829);
+            assertThat(html.getFumens()).hasSize(38829);
         }
 
         @Test
@@ -678,7 +677,6 @@ class SetupTetfuCaseTest {
             assertThat(log.getOutput())
                     .contains(Messages.foundSolutions(2))
                     .contains(Messages.foundSubSolutions(2));
-            System.out.println(log.getOutput());
 
             // HTML
             SetupHTML html = OutputFileHelper.loadSetupHTML();
