@@ -386,7 +386,6 @@ public class SetupEntryPoint implements EntryPoint {
                     PieceCounter pieceCounter = new PieceCounter(operationWithKeys.stream().map(MinoOperationWithKey::getPiece));
                     int numOfUsedPieces = pieceCounter.getBlocks().size();
 
-                    System.out.println(operationWithKeys);
                     // 必要な数以上使っている
                     if (numOfPieces < numOfUsedPieces) {
                         return Stream.empty();

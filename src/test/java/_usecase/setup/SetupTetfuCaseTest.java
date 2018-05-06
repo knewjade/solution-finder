@@ -94,7 +94,7 @@ class SetupTetfuCaseTest {
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
-            assertThat(log.getOutput()).contains(Messages.foundSolutions(11));
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(12));
             assertThat(log.getError()).isEmpty();
         }
 
@@ -440,8 +440,8 @@ class SetupTetfuCaseTest {
 
             // Log
             assertThat(log.getOutput())
-                    .contains(Messages.foundSolutions(1853))
-                    .contains(Messages.foundSubSolutions(53966));
+                    .contains(Messages.foundSolutions(38))
+                    .contains(Messages.foundSubSolutions(38829));
             assertThat(log.getError()).isEmpty();
 
             // HTML
@@ -450,7 +450,7 @@ class SetupTetfuCaseTest {
                     .contains("4444000000");
 
             assertThat(html.getFumens())
-                    .hasSize(53966);
+                    .hasSize(38829);
         }
 
         @Test
@@ -497,18 +497,13 @@ class SetupTetfuCaseTest {
 
             // Log
             assertThat(log.getOutput())
-                    .contains(Messages.foundSolutions(15))
-                    .contains(Messages.foundSubSolutions(24));
+                    .contains(Messages.foundSolutions(1))
+                    .contains(Messages.foundSubSolutions(11));
             assertThat(log.getError()).isEmpty();
 
             // HTML
             SetupHTML html = OutputFileHelper.loadSetupHTML();
-            assertThat(html.getHtml())
-                    .contains("1111000000")
-                    .doesNotContain("4444000000");
-
-            assertThat(html.getFumens())
-                    .hasSize(24);
+            assertThat(html.getFumens()).hasSize(11);
         }
     }
 
