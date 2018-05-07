@@ -94,7 +94,7 @@ class SetupTetfuCaseTest {
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
-            assertThat(log.getOutput()).contains(Messages.foundSolutions(11));
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(12));
             assertThat(log.getError()).isEmpty();
         }
 
@@ -440,17 +440,69 @@ class SetupTetfuCaseTest {
 
             // Log
             assertThat(log.getOutput())
-                    .contains(Messages.foundSolutions(1828))
-                    .contains(Messages.foundSubSolutions(6888));
+                    .contains(Messages.foundSolutions(38))
+                    .contains(Messages.foundSubSolutions(38829));
             assertThat(log.getError()).isEmpty();
 
             // HTML
             SetupHTML html = OutputFileHelper.loadSetupHTML();
             assertThat(html.getHtml())
-                    .contains("4444000000");
+                    .contains("4440000000");
 
-            assertThat(html.getFumens())
-                    .hasSize(6888);
+            assertThat(html.getFumens()).hasSize(38829);
+        }
+
+        @Test
+        void case17() throws Exception {
+            // 高い位置での4x4+マージン
+            // 比較的右側にマージンが存在する地形
+            String fumen = "v115@fgyhVpAeyhVpAeyhVpAeI8AeI8AeI8AeI8KeAgH";
+            String command = buildCommand(fumen, "-m o -f i -p *p7 -c yes -np 6");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput())
+                    .contains(Messages.foundSolutions(48))
+                    .contains(Messages.foundSubSolutions(3167));
+
+            // HTML
+            SetupHTML html = OutputFileHelper.loadSetupHTML();
+            assertThat(html.getFumens()).hasSize(3167);
+        }
+
+        @Test
+        void case17_2() throws Exception {
+            // 高い位置での4x4+下1ライン+マージン
+            String fumen = "v115@fgyhVpAeyhVpAe4hAeI8AeI8AeI8AeI8KeAgH";
+            String command = buildCommand(fumen, "-m o -f i -p *p7 -c yes -np 6");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput())
+                    .contains(Messages.foundSolutions(238))
+                    .contains(Messages.foundSubSolutions(624));
+
+            // HTML
+            SetupHTML html = OutputFileHelper.loadSetupHTML();
+            assertThat(html.getFumens()).hasSize(624);
+        }
+
+        @Test
+        void case18() throws Exception {
+            // 同じ種類のミノがあり、ローカルサーチが必要になるケース
+            String fumen = "v115@9gwhTpEewhTpEewhTpEewhTpOeAgl";
+            String command = buildCommand(fumen, "-p ISSSS -f i -m o --n-pieces 3");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput())
+                    .contains(Messages.foundSolutions(1))
+                    .contains(Messages.foundSubSolutions(11));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SetupHTML html = OutputFileHelper.loadSetupHTML();
+            assertThat(html.getFumens()).hasSize(11);
         }
     }
 
@@ -538,9 +590,9 @@ class SetupTetfuCaseTest {
 
             assertThat(html.getFumens())
                     .hasSize(3)
-                    .contains("9gRpHeRpQ4Geg0AeR4Fei0Q4PeAgWDAvvzBA")
-                    .contains("9gQ4IeR4RpFeg0Q4RpFei0QeAgWDAzvqBA")
-                    .contains("9gRpHeRpR4Feg0R4Gei0QeAgWDAvvzBA");
+                    .contains("9gRpHeRpR4Feg0R4Gei0QeAgWDAK9qBA")
+                    .contains("9gQ4IeR4RpFeg0Q4RpFei0QeAgWDAK3zBA")
+                    .contains("9gRpHeRpQ4Geg0AeR4Fei0Q4PeAgWDAK9qBA");
         }
 
         @Test
@@ -563,8 +615,8 @@ class SetupTetfuCaseTest {
             assertThat(html.getFumens())
                     .hasSize(2)
                     .doesNotContain("9gRpHeRpQ4Geg0AeR4Fei0Q4PeAgWDAvvzBA")
-                    .contains("9gQ4IeR4RpFeg0Q4RpFei0QeAgWDAzvqBA")
-                    .contains("9gRpHeRpR4Feg0R4Gei0QeAgWDAvvzBA");
+                    .contains("9gRpHeRpR4Feg0R4Gei0QeAgWDAK9qBA")
+                    .contains("9gQ4IeR4RpFeg0Q4RpFei0QeAgWDAK3zBA");
         }
 
         @Test

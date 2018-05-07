@@ -35,8 +35,8 @@ import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.calculator.BasicSolutions;
-import searcher.pack.memento.MinoFieldMemento;
 import searcher.pack.memento.SolutionFilter;
+import searcher.pack.separable_mino.AllMinoFactory;
 import searcher.pack.separable_mino.SeparableMino;
 import searcher.pack.solutions.OnDemandBasicSolutions;
 import searcher.pack.task.BasicMinoPackingHelper;
@@ -260,7 +260,7 @@ public class SetupEntryPoint implements EntryPoint {
                 .collect(Collectors.toList());
 
         // 必要があればローカルサーチをする
-        List<SetupTemp> tempOperations = localSearchIfNeed(notFilledField, maxHeight, generator, separableMinos, isLocalSearch, resultOperations, maxDepth);
+        List<SetupTemp> tempOperations = localSearchIfNeed(notFilledField, maxHeight, generator, isLocalSearch, resultOperations, maxDepth, minoFactory, minoShifter, buildUpStreamThreadLocal, initField);
 
         // 結果のフィルタリング
         SetupSolutionFilter finalFilter = filter;
@@ -361,20 +361,23 @@ public class SetupEntryPoint implements EntryPoint {
         output("done");
     }
 
-    private List<SetupTemp> localSearchIfNeed(Field notFilledField, int maxHeight, PatternGenerator generator, SeparableMinos separableMinos, boolean isLocalSearch, List<List<MinoOperationWithKey>> resultOperations, int numOfPieces) throws FinderExecuteException {
+    private List<SetupTemp> localSearchIfNeed(Field notFilledField, int maxHeight, PatternGenerator generator, boolean isLocalSearch, List<List<MinoOperationWithKey>> resultOperations, int numOfPieces, MinoFactory minoFactory, MinoShifter minoShifter, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal, Field initField) throws FinderExecuteException {
         if (!isLocalSearch)
             return resultOperations.stream().map(o -> new SetupTemp(o, maxHeight)).collect(Collectors.toList());
 
         // 使っていないミノに対してローカルサーチする
         output("     Search sub solutions for '--n-pieces'");
 
-        // PieceごとのList<SeparableMino>を事前に計算しておく
-        EnumMap<Piece, List<SeparableMino>> separableMinoMap = new EnumMap<>(Piece.class);
+        AllMinoFactory factory = new AllMinoFactory(minoFactory, minoShifter, 10, maxHeight, Long.MAX_VALUE);
+        List<FieldOperationWithKey> allMinos = factory.create().stream().map(FieldOperationWithKey::new).collect(Collectors.toList());
+
+        // PieceごとのList<FieldOperationWithKey>を事前に計算しておく
+        EnumMap<Piece, List<FieldOperationWithKey>> minoEachPieceMap = new EnumMap<>(Piece.class);
         for (Piece piece : Piece.values()) {
-            List<SeparableMino> minos = separableMinos.getMinos().stream()
-                    .filter(mino -> mino.toMinoOperationWithKey().getPiece() == piece)
+            List<FieldOperationWithKey> minos = allMinos.stream()
+                    .filter(mino -> mino.getPiece() == piece)
                     .collect(Collectors.toList());
-            separableMinoMap.put(piece, minos);
+            minoEachPieceMap.put(piece, minos);
         }
 
         // 探索をさらに進める
@@ -418,33 +421,45 @@ public class SetupEntryPoint implements EntryPoint {
                         return usable.stream()
                                 .map(PieceCounter::getBlocks)
                                 .map(LinkedList::new)
-                                .flatMap(blocks -> localSearch(operationWithKeys, field, blocks, separableMinoMap, maxHeight));
+                                .peek(blocks -> blocks.sort(Comparator.comparing(Piece::getNumber)))
+                                .flatMap(blocks -> localSearch(operationWithKeys, field, blocks, minoEachPieceMap, maxHeight, buildUpStreamThreadLocal, initField, null, 0));
                     }).map((solution) -> new SetupTemp(operationWithKeys, solution, maxHeight));
                 })
                 .collect(Collectors.toList());
     }
 
-    private Stream<? extends List<MinoOperationWithKey>> localSearch(List<MinoOperationWithKey> operationWithKeys, Field field, LinkedList<Piece> pieces, EnumMap<Piece, List<SeparableMino>> separableMinoMap, int maxHeight) {
+    private Stream<? extends List<MinoOperationWithKey>> localSearch(List<MinoOperationWithKey> operationWithKeys, Field field, LinkedList<Piece> pieces, EnumMap<Piece, List<FieldOperationWithKey>> minoEachPieceMap, int maxHeight, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal, Field initField, Piece prev, int prevUsingIndex) {
         Stream<? extends List<MinoOperationWithKey>> stream = Stream.empty();
 
         Piece piece = pieces.pollFirst();
-        List<SeparableMino> separableMinos = separableMinoMap.get(piece);
-        for (SeparableMino mino : separableMinos) {
-            Field minoField = mino.getField();
+        List<FieldOperationWithKey> minos = minoEachPieceMap.get(piece);
+        int startIndex = prev == piece ? prevUsingIndex + 1 : 0;
+        for (int index = startIndex; index < minos.size(); index++) {
+            FieldOperationWithKey fieldOperationWithKey = minos.get(index);
+            Field minoField = fieldOperationWithKey.getField();
             if (field.canMerge(minoField)) {
                 // 次の手順
-                ArrayList<MinoOperationWithKey> newOperations = new ArrayList<>(operationWithKeys);
-                newOperations.add(mino.toMinoOperationWithKey());
+                LinkedList<MinoOperationWithKey> newOperations = new LinkedList<>(operationWithKeys);
+                newOperations.add(fieldOperationWithKey.getOperation());
 
                 if (pieces.isEmpty()) {
                     // 全てのPieceを使った
-                    stream = Stream.concat(stream, Stream.of(newOperations));
+
+                    // 地形の中で組むことができるoperationsを一つ作成
+                    BuildUpStream buildUpStream = buildUpStreamThreadLocal.get();
+                    Optional<List<MinoOperationWithKey>> result = buildUpStream.existsValidBuildPatternDirectly(initField, newOperations)
+                            .findFirst();
+
+                    // 地形の中で組むことができるものがあるときは結果として記録する
+                    if (result.isPresent()) {
+                        stream = Stream.concat(stream, Stream.of(newOperations));
+                    }
                 } else {
                     // 次のフィールド
                     Field freeze = field.freeze(maxHeight);
                     freeze.merge(minoField);
 
-                    stream = Stream.concat(stream, localSearch(newOperations, freeze, pieces, separableMinoMap, maxHeight));
+                    stream = Stream.concat(stream, localSearch(newOperations, freeze, pieces, minoEachPieceMap, maxHeight, buildUpStreamThreadLocal, initField, piece, index));
                 }
             }
         }
@@ -507,10 +522,6 @@ public class SetupEntryPoint implements EntryPoint {
         throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
     }
 
-    private Stream<MinoFieldMemento> concat(Stream<MinoFieldMemento> stream, Piece piece, SeparableMinos separableMinos, Map<Piece, List<SeparableMino>> map) {
-        return Stream.empty();
-    }
-
     private void output() throws FinderExecuteException {
         output("");
     }
@@ -542,5 +553,35 @@ public class SetupEntryPoint implements EntryPoint {
         } catch (IOException | FinderExecuteException e) {
             throw new FinderTerminateException(e);
         }
+    }
+}
+
+
+class FieldOperationWithKey {
+    private final FullOperationWithKey operation;
+    private final Field field;
+
+    FieldOperationWithKey(FullOperationWithKey operation) {
+        int maxY = operation.getMino().getMaxY();
+        Field field = FieldFactory.createField(maxY);
+        field.put(operation.getMino(), operation.getX(), operation.getY());
+        field.insertWhiteLineWithKey(operation.getNeedDeletedKey());
+
+        {
+            this.operation = operation;
+            this.field = field;
+        }
+    }
+
+    public FullOperationWithKey getOperation() {
+        return operation;
+    }
+
+    public Field getField() {
+        return field;
+    }
+
+    public Piece getPiece() {
+        return operation.getPiece();
     }
 }

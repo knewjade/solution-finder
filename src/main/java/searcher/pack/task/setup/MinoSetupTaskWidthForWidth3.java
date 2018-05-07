@@ -69,7 +69,7 @@ public class MinoSetupTaskWidthForWidth3 implements PackingTask {
         // 必要なミノを左にずらす
         Field freeze = needFilledField.freeze(sizedBit.getHeight());
         freeze.slideLeft(sizedBit.getWidth());
-        return new MinoSetupTaskWidthForWidth3(searcher, innerField, memento, index, separableMinos, needFilledField);
+        return new MinoSetupTaskWidthForWidth3(searcher, innerField, memento, index, separableMinos, freeze);
     }
 
     private Stream<Result> split(MinoField minoField) {
