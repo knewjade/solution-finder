@@ -11,13 +11,13 @@ jobs:
     language: java
     jdk: oraclejdk8
     script:
-    - travis_wait 55 ./gradlew check
+    - travis_wait 60 ./gradlew check
 
   - stage: test_in_oraclejdk9
     language: java
     jdk: oraclejdk9
     script:
-    - travis_wait 55 ./gradlew check
+    - travis_wait 60 ./gradlew check
 
   - stage: deploy
     language: python

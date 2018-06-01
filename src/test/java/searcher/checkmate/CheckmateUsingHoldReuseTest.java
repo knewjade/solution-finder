@@ -64,9 +64,6 @@ class CheckmateUsingHoldReuseTest {
                         .hasSameSizeAs(result1)
                         .containsAll(result1);
             }
-
-            // TODO:
-//            assertThat(stopwatchReuse.getNanoAverageTime()).isLessThan(stopwatchNoUse.getNanoAverageTime());
         }
     }
 
@@ -114,9 +111,6 @@ class CheckmateUsingHoldReuseTest {
                         .hasSameSizeAs(result1)
                         .containsAll(result1);
             }
-
-            assertThat(stopwatchReuse1.getNanoAverageTime()).isLessThan(stopwatchNoUse.getNanoAverageTime());
-            assertThat(stopwatchReuse2.getNanoAverageTime()).isLessThan(stopwatchReuse1.getNanoAverageTime());
         }
     }
 
@@ -155,8 +149,6 @@ class CheckmateUsingHoldReuseTest {
                         .hasSameSizeAs(result1)
                         .containsAll(result1);
             }
-
-            assertThat(stopwatchReuse.getNanoAverageTime()).isLessThan(stopwatchNoUse.getNanoAverageTime());
         }
     }
 
@@ -195,8 +187,6 @@ class CheckmateUsingHoldReuseTest {
                         .hasSameSizeAs(result1)
                         .containsAll(result1);
             }
-
-            assertThat(stopwatchReuse.getNanoAverageTime()).isLessThan(stopwatchNoUse.getNanoAverageTime());
         }
     }
 }
