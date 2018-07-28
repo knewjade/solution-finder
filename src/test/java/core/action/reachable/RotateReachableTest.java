@@ -1162,7 +1162,7 @@ class RotateReachableTest {
             success(marks, T, Left, 1, 1);
             success(marks, T, Left, 9, 1);
 
-            success(marks, T, Reverse, 5, 0);
+            success(marks, T, Reverse, 5, 1);
             fail(marks, T, Spawn, 4, 0);
         }
     }
