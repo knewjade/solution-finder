@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class LockedCandidateTest {
     @Test
-    void testSearch1() throws Exception {
+    void testSearch1() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = new MinoRotation();
@@ -38,7 +38,7 @@ class LockedCandidateTest {
     }
 
     @Test
-    void testSearch2() throws Exception {
+    void testSearch2() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = new MinoRotation();
@@ -59,7 +59,7 @@ class LockedCandidateTest {
     }
 
     @Test
-    void testSearch3() throws Exception {
+    void testSearch3() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = new MinoRotation();
@@ -89,7 +89,7 @@ class LockedCandidateTest {
     }
 
     @Test
-    void testSearch4() throws Exception {
+    void testSearch4() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new PassedMinoShifter();
         MinoRotation minoRotation = new MinoRotation();
@@ -113,7 +113,7 @@ class LockedCandidateTest {
     }
 
     @Test
-    void testRandom() throws Exception {
+    void testRandom() {
         Randoms randoms = new Randoms();
 
         MinoFactory minoFactory = new MinoFactory();

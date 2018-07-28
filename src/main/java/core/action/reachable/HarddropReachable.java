@@ -29,10 +29,10 @@ public class HarddropReachable implements Reachable {
     }
 
     @Override
-    public boolean checks(Field field, Mino mino, int x, int y, int appearY) {
+    public boolean checks(Field field, Mino mino, int x, int y, int validHeight) {
         assert field.canPut(mino, x, y);
 
-        this.appearY = appearY;
+        this.appearY = validHeight;
 
         Piece piece = mino.getPiece();
         Rotate rotate = mino.getRotate();

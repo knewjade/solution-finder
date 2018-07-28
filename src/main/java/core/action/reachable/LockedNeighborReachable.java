@@ -11,9 +11,7 @@ import core.neighbor.Neighbors;
 import core.neighbor.OriginalPiece;
 import core.srs.Rotate;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * マルチスレッド非対応
@@ -33,7 +31,7 @@ public class LockedNeighborReachable implements Reachable {
     }
 
     @Override
-    public boolean checks(Field field, Mino mino, int x, int y, int appearY) {
+    public boolean checks(Field field, Mino mino, int x, int y, int validHeight) {
         assert field.canPut(mino, x, y);
 
         this.field = field;

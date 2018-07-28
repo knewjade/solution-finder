@@ -7,5 +7,5 @@ import java.util.Set;
 
 public interface Candidate<T> {
     // TODO: To Stream
-    Set<T> search(Field field, Piece piece, int appearY);
+    Set<T> search(Field field, Piece piece, int validHeight);
 }
