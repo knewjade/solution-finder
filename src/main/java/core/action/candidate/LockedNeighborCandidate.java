@@ -3,13 +3,13 @@ package core.action.candidate;
 import common.datastore.action.Action;
 import core.action.cache.LockedNeighborCache;
 import core.field.Field;
-import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
-import core.neighbor.OriginalPiece;
+import core.mino.Piece;
 import core.neighbor.Neighbor;
 import core.neighbor.Neighbors;
+import core.neighbor.OriginalPiece;
 import core.neighbor.OriginalPieceFactory;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
@@ -41,7 +41,7 @@ public class LockedNeighborCandidate implements Candidate<Neighbor> {
     }
 
     @Override
-    public Set<Neighbor> search(Field field, Piece piece, int appearY) {
+    public Set<Neighbor> search(Field field, Piece piece, int validHeight) {
         this.field = field;
 
         HashSet<Neighbor> results = new HashSet<>();
@@ -53,7 +53,7 @@ public class LockedNeighborCandidate implements Candidate<Neighbor> {
         for (Rotate rotate : uniqueRotates) {
             Mino mino = minoFactory.create(piece, rotate);
             for (int x = -mino.getMinX(); x < FIELD_WIDTH - mino.getMaxX(); x++) {
-                for (int y = -mino.getMinY(); y < appearY - mino.getMaxY(); y++) {
+                for (int y = -mino.getMinY(); y < validHeight - mino.getMaxY(); y++) {
                     Neighbor neighbor = neighbors.get(piece, rotate, x, y);
                     if (field.canPut(neighbor.getPiece()) && field.isOnGround(mino, x, y)) {
                         loop(results, neighbor);

@@ -17,7 +17,7 @@ import java.util.Set;
 /**
  * マルチスレッド非対応
  */
-public class LockedCandidate implements Candidate<Action> {
+public class RotateCandidate implements Candidate<Action> {
     private static final int FIELD_WIDTH = 10;
 
     private final MinoFactory minoFactory;
@@ -28,7 +28,7 @@ public class LockedCandidate implements Candidate<Action> {
     // temporary変数
     private int appearY = 0;
 
-    public LockedCandidate(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY) {
+    public RotateCandidate(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY) {
         this.minoFactory = minoFactory;
         this.minoShifter = minoShifter;
         this.minoRotation = minoRotation;
@@ -48,7 +48,7 @@ public class LockedCandidate implements Candidate<Action> {
             for (int x = -mino.getMinX(); x < FIELD_WIDTH - mino.getMaxX(); x++) {
                 for (int y = validHeight - mino.getMaxY() - 1; -mino.getMinY() <= y; y--) {
                     if (field.canPut(mino, x, y) && field.isOnGround(mino, x, y)) {
-                        if (check(field, mino, x, y, From.None)) {
+                        if (firstCheck(field, mino, x, y)) {
                             Action action = minoShifter.createTransformedAction(piece, rotate, x, y);
                             actions.add(action);
                         }
@@ -59,6 +59,24 @@ public class LockedCandidate implements Candidate<Action> {
         }
 
         return actions;
+    }
+
+    private boolean firstCheck(Field field, Mino mino, int x, int y) {
+        Rotate rotate = mino.getRotate();
+
+        // 右回転でくる可能性がある場所を移動
+        if (checkRightRotation(field, mino, x, y)) {
+            lockedCache.found(x, y, rotate);
+            return true;
+        }
+
+        // 左回転でくる可能性がある場所を移動
+        if (checkLeftRotation(field, mino, x, y)) {
+            lockedCache.found(x, y, rotate);
+            return true;
+        }
+
+        return false;
     }
 
     private boolean check(Field field, Mino mino, int x, int y, From from) {
@@ -146,7 +164,7 @@ public class LockedCandidate implements Candidate<Action> {
     private boolean checkLeftRotation(Field field, Mino mino, int x, int y) {
         Rotate currentRotate = mino.getRotate();
         Mino minoBefore = minoFactory.create(mino.getPiece(), currentRotate.getRightRotate());
-        int[][] patterns = minoRotation.getLeftPatternsFrom(minoBefore);  // 左回転前のテストパターンを取得
+        int[][] patterns = minoRotation.getLeftPatternsFrom(minoBefore);  // 右回転前のテストパターンを取得
         for (int[] pattern : patterns) {
             int fromX = x - pattern[0];
             int fromY = y - pattern[1];

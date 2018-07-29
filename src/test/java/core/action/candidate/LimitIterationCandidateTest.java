@@ -4,16 +4,12 @@ import common.datastore.action.Action;
 import common.datastore.action.MinimalAction;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.field.FieldView;
-import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import core.mino.Piece;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
 import lib.Randoms;
-import module.LongTest;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
@@ -158,37 +154,6 @@ class LimitIterationCandidateTest {
             Set<Action> actions1 = harddropCandidate.search(field, piece, height);
             Set<Action> actions2 = limitIterationCandidate.search(field, piece, height);
             assertThat(actions2).isEqualTo(actions1);
-        }
-    }
-
-    @Disabled
-    @Test
-    @LongTest
-    // TODO: mesure time, 移動回数をチェックしていないためテストに失敗することがある
-    void testRandomLocked() {
-        Randoms randoms = new Randoms();
-
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
-        LimitIterationCandidate limitIterationCandidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 12);
-
-        for (int count = 0; count < 10; count++) {
-            int randomHeight = randoms.nextIntClosed(10, 12);
-            int numOfMinos = randoms.nextIntClosed(4, randomHeight * 10 / 4 - 1);
-            Field field = randoms.field(randomHeight, numOfMinos);
-            int clearLine = field.clearLine();
-            int height = randomHeight - clearLine;
-            Piece piece = randoms.block();
-
-            String description = FieldView.toString(field, height) + piece;
-            Set<Action> actions1 = limitIterationCandidate.search(field, piece, height);
-
-            LockedCandidate lockedCandidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
-            Set<Action> actions2 = lockedCandidate.search(field, piece, height);
-            assertThat(actions2)
-                    .as(description)
-                    .isEqualTo(actions1);
         }
     }
 }

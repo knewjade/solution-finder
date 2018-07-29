@@ -1,14 +1,14 @@
 package core.action.candidate;
 
+import common.datastore.action.Action;
 import core.field.Field;
-import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import core.mino.Piece;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
 import searcher.common.From;
-import common.datastore.action.Action;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -32,16 +32,16 @@ public class LimitIterationCandidate implements Candidate<Action> {
     }
 
     @Override
-    public Set<Action> search(Field field, Piece piece, int appearY) {
+    public Set<Action> search(Field field, Piece piece, int validHeight) {
         // temporaryの初期化
-        this.appearY = appearY;
+        this.appearY = validHeight;
 
         HashSet<Action> actions = new HashSet<>();
 
         for (Rotate rotate : Rotate.values()) {
             Mino mino = minoFactory.create(piece, rotate);
             for (int x = -mino.getMinX(); x < FIELD_WIDTH - mino.getMaxX(); x++) {
-                for (int y = appearY - mino.getMaxY() - 1; -mino.getMinY() <= y; y--) {
+                for (int y = validHeight - mino.getMaxY() - 1; -mino.getMinY() <= y; y--) {
                     if (field.canPut(mino, x, y) && field.isOnGround(mino, x, y)) {
                         if (check(field, mino, x, y, From.None, 0)) {
                             Action action = minoShifter.createTransformedAction(piece, rotate, x, y);

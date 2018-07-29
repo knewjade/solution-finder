@@ -1,5 +1,6 @@
 stages:
-  - test_in_oraclejdk8
+  - name: test_in_oraclejdk8
+    if: branch != master
   - name: test_in_oraclejdk9
     if: branch = master
   - name: deploy

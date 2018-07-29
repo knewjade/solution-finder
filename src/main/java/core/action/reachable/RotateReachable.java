@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * マルチスレッド非対応
  */
-public class LockedReachable implements Reachable {
+public class RotateReachable implements Reachable {
     private static final int FIELD_WIDTH = 10;
 
     private final MinoFactory minoFactory;
@@ -27,7 +27,7 @@ public class LockedReachable implements Reachable {
     // temporary変数
     private int appearY = 0;
 
-    public LockedReachable(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY) {
+    public RotateReachable(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY) {
         this.minoFactory = minoFactory;
         this.minoShifter = minoShifter;
         this.minoRotation = minoRotation;
@@ -44,20 +44,32 @@ public class LockedReachable implements Reachable {
         Piece piece = mino.getPiece();
         Rotate rotate = mino.getRotate();
 
-        if (check(field, piece, x, y, rotate))
+        if (firstCheck(field, piece, x, y, rotate))
             return true;
 
         List<Action> actions = minoShifter.enumerateSameOtherActions(piece, rotate, x, y);
         for (Action action : actions)
-            if (check(field, piece, action.getX(), action.getY(), action.getRotate()))
+            if (firstCheck(field, piece, action.getX(), action.getY(), action.getRotate()))
                 return true;
 
         return false;
     }
 
-    private boolean check(Field field, Piece piece, int x, int y, Rotate rotate) {
+    private boolean firstCheck(Field field, Piece piece, int x, int y, Rotate rotate) {
         Mino mino = minoFactory.create(piece, rotate);
-        return check(field, mino, x, y, From.None);
+        return firstCheck(field, mino, x, y);
+    }
+
+    private boolean firstCheck(Field field, Mino mino, int x, int y) {
+        // 右回転でくる可能性がある場所を移動
+        if (checkRightRotation(field, mino, x, y))
+            return true;
+
+        // 左回転でくる可能性がある場所を移動
+        if (checkLeftRotation(field, mino, x, y))
+            return true;
+
+        return false;
     }
 
     private boolean check(Field field, Mino mino, int x, int y, From from) {
@@ -127,7 +139,7 @@ public class LockedReachable implements Reachable {
     private boolean checkLeftRotation(Field field, Mino mino, int x, int y) {
         Rotate currentRotate = mino.getRotate();
         Mino minoBefore = minoFactory.create(mino.getPiece(), currentRotate.getRightRotate());
-        int[][] patterns = minoRotation.getLeftPatternsFrom(minoBefore);  // 右回転前のテストパターンを取得
+        int[][] patterns = minoRotation.getLeftPatternsFrom(minoBefore);  // 左回転前のテストパターンを取得
         for (int[] pattern : patterns) {
             int fromX = x - pattern[0];
             int fromY = y - pattern[1];
