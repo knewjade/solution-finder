@@ -14,8 +14,9 @@ public class MiddleField implements Field {
     private static final int FIELD_ROW_BOARDER_Y = 6;
     private static final long VALID_BOARD_RANGE = 0xfffffffffffffffL;
 
-    private long xBoardLow = 0; // x,y: 最下位 (0,0), (1,0),  ... , (9,0), (0,1), ... 最上位 // フィールド範囲外は必ず0であること
-    private long xBoardHigh = 0; // x,y: 最下位 (0,0), (1,0),  ... , (9,0), (0,1), ... 最上位 // フィールド範囲外は必ず0であること
+    // x,y: 最下位 (0,0), (1,0),  ... , (9,0), (0,1), ... 最上位 // フィールド範囲外は必ず0であること
+    private long xBoardLow = 0;
+    private long xBoardHigh = 0;
 
     public MiddleField() {
     }
