@@ -111,7 +111,6 @@ class MiddleFieldTest {
         }
     }
 
-
     @Test
     void testGetYOnHarddrop() throws Exception {
         String marks = "" +

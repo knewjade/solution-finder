@@ -146,4 +146,14 @@ class BitOperators {
             return 5;
         }
     }
+
+    // x列とその左の列の間が壁（隙間がない）とき true を返却。1 <= xであること
+    static boolean isWallBetweenLeft(int x, int maxY, long board) {
+        long maskHigh = BitOperators.getColumnOneLineBelowY(maxY);
+        long reverseXBoardHigh = ~board;
+        long columnHigh = maskHigh << x;
+        long rightHigh = reverseXBoardHigh & columnHigh;
+        long leftHigh = reverseXBoardHigh & (columnHigh >>> 1);
+        return ((leftHigh << 1) & rightHigh) == 0L;
+    }
 }
