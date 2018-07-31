@@ -1,5 +1,7 @@
 package core.field;
 
+import common.tetfu.common.ColorType;
+import common.tetfu.field.ArrayColoredField;
 import core.mino.Mino;
 import core.mino.Piece;
 import core.neighbor.OriginalPiece;
@@ -284,6 +286,29 @@ class LargeFieldTest {
 
                 assertThat(field.getBlockCountBelowOnX(x, y)).isEqualTo(expected);
             }
+        }
+    }
+
+    @Test
+    void clearLine() {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 10000; count++) {
+            Field field = randoms.field(FIELD_HEIGHT, randoms.nextInt(5, 20));
+
+            // 配列ベースのフィールドに変換
+            ArrayColoredField coloredField = new ArrayColoredField(FIELD_HEIGHT);
+            for (int y = 0; y < FIELD_HEIGHT; y++)
+                for (int x = 0; x < FIELD_WIDTH; x++)
+                    coloredField.setColorType(field.isEmpty(x, y) ? ColorType.Empty : ColorType.Gray, x, y);
+
+            // ライン消去
+            field.clearLine();
+            coloredField.clearLine();
+
+            // 確認
+            for (int y = 0; y < FIELD_HEIGHT; y++)
+                for (int x = 0; x < FIELD_WIDTH; x++)
+                    assertThat(field.isEmpty(x, y)).isEqualTo(coloredField.getColorType(x, y) == ColorType.Empty);
         }
     }
 }

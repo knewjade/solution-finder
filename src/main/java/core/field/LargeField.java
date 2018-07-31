@@ -581,16 +581,81 @@ public class LargeField implements Field {
 
     @Override
     public int clearLine() {
-        throw new UnsupportedOperationException();
+        long deleteKey = clearLineReturnKey();
+        return Long.bitCount(deleteKey);
     }
 
     @Override
     public long clearLineReturnKey() {
-        throw new UnsupportedOperationException();
+        // 下半分
+        long deleteKeyLow = KeyOperators.getDeleteKey(xBoardLow);
+        long newXBoardLow = LongBoardMap.deleteLine(xBoardLow, deleteKeyLow);
+
+        long deleteKeyMidLow = KeyOperators.getDeleteKey(xBoardMidLow);
+        long newXBoardMidLow = LongBoardMap.deleteLine(xBoardMidLow, deleteKeyMidLow);
+
+        int deleteLineLow = Long.bitCount(deleteKeyLow);
+
+        long low = (newXBoardLow | (newXBoardMidLow << (6 - deleteLineLow) * 10)) & VALID_BOARD_RANGE;
+        long midLow = newXBoardMidLow >>> deleteLineLow * 10;
+
+        int deleteLineMidLow = Long.bitCount(deleteKeyMidLow);
+        int deleteLineBottom = deleteLineLow + deleteLineMidLow;
+
+        // 上半分
+        long deleteKeyMidHigh = KeyOperators.getDeleteKey(xBoardMidHigh);
+        long newXBoardMidHigh = LongBoardMap.deleteLine(xBoardMidHigh, deleteKeyMidHigh);
+
+        long deleteKeyHigh = KeyOperators.getDeleteKey(xBoardHigh);
+        long newXBoardHigh = LongBoardMap.deleteLine(xBoardHigh, deleteKeyHigh);
+
+        int deleteLineMidHigh = Long.bitCount(deleteKeyMidHigh);
+
+        long midHigh = (newXBoardMidHigh | (newXBoardHigh << (6 - deleteLineMidHigh) * 10)) & VALID_BOARD_RANGE;
+        long high = newXBoardHigh >>> deleteLineMidHigh * 10;
+
+        // 上半分と下半分をマージ
+        if (deleteLineBottom < 6) {
+            this.xBoardLow = low;
+            this.xBoardMidLow = (midLow | (midHigh << (6 - deleteLineBottom) * 10)) & VALID_BOARD_RANGE;
+            this.xBoardMidHigh = ((midHigh >>> deleteLineBottom * 10) | (high << (6 - deleteLineBottom) * 10)) & VALID_BOARD_RANGE;
+            this.xBoardHigh = high >>> deleteLineBottom * 10;
+        } else {
+            int slide = deleteLineBottom - 6;
+            this.xBoardLow = (low | (midHigh << (6 - slide) * 10)) & VALID_BOARD_RANGE;
+            this.xBoardMidLow = ((midHigh >>> slide * 10) | (high << (6 - slide) * 10)) & VALID_BOARD_RANGE;
+            this.xBoardMidHigh = high >>> slide * 10;
+            this.xBoardHigh = 0L;
+        }
+
+        return deleteKeyLow | (deleteKeyMidLow << 1) | (deleteKeyMidHigh << 2) | (deleteKeyHigh << 3);
     }
 
     @Override
     public void insertBlackLineWithKey(long deleteKey) {
+        long deleteKeyLow = deleteKey & 0x4010040100401L;
+        int deleteLineLow = Long.bitCount(deleteKeyLow);
+        int leftLineLow = 6 - deleteLineLow;
+
+        long deleteKeyMidLow = deleteKey & 0x8020080200802L;
+        int deleteLineMidLow = Long.bitCount(deleteKeyMidLow);
+        int leftLineMidLow = 6 - deleteLineMidLow;
+
+        long deleteKeyMidHigh = deleteKey & 0x10040100401004L;
+        int deleteLineMidHigh = Long.bitCount(deleteKeyMidHigh);
+        int leftLineMidHigh = 6 - deleteLineMidHigh;
+
+        long deleteKeyHigh = deleteKey & 0x20080200802008L;
+        int deleteLineHigh = Long.bitCount(deleteKeyHigh);
+        int leftLineHigh = 6 - deleteLineHigh;
+
+        if (deleteLineLow + leftLineMidLow < 6) {
+            midHighとHighが必要だが、下半分の残りがlongに収まる
+        } else {
+            Highがいらない。midHighと下半分の残りが必要
+        }
+
+
         throw new UnsupportedOperationException();
     }
 
