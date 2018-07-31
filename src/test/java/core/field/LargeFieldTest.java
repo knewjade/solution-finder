@@ -252,4 +252,38 @@ class LargeFieldTest {
             }
         }
     }
+
+    @Test
+    void isOnGround() {
+        {
+            Field field = FieldFactory.createLargeField();
+            assertThat(field.isOnGround(new Mino(Piece.I, Rotate.Spawn), 3, 0)).isTrue();
+            boolean onGround = field.isOnGround(new Mino(Piece.I, Rotate.Spawn), 3, 1);
+            assertThat(onGround).isFalse();
+        }
+
+        for (int y = 2; y < FIELD_HEIGHT; y++) {
+            Field field = FieldFactory.createLargeField();
+            field.setBlock(4, y - 2);
+
+            assertThat(field.isOnGround(new Mino(Piece.I, Rotate.Spawn), 4, y)).isFalse();
+            assertThat(field.isOnGround(new Mino(Piece.I, Rotate.Spawn), 4, y-1)).isTrue();
+        }
+    }
+
+    @Test
+    void getBlockCountBelowOnX() {
+        Randoms randoms = new Randoms();
+        Field field = randoms.field(FIELD_HEIGHT, 25);
+
+        for (int y = 0; y < FIELD_HEIGHT; y++) {
+            for (int x = 0; x < FIELD_WIDTH; x++) {
+                int expected = 0;
+                for (int y2 = 0; y2 < y; y2++)
+                    expected += field.isEmpty(x, y2) ? 0 : 1;
+
+                assertThat(field.getBlockCountBelowOnX(x, y)).isEqualTo(expected);
+            }
+        }
+    }
 }

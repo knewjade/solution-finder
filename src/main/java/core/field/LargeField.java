@@ -505,17 +505,70 @@ public class LargeField implements Field {
 
     @Override
     public boolean isOnGround(Mino mino, int x, int y) {
-        throw new UnsupportedOperationException();
+        return y <= -mino.getMinY() || !canPut(mino, x, y - 1);
     }
 
     @Override
     public int getBlockCountBelowOnX(int x, int maxY) {
-        throw new UnsupportedOperationException();
+        switch (select(maxY)) {
+            case Low: {
+                // Low
+                long mask = BitOperators.getColumnOneLineBelowY(maxY) << x;
+                return Long.bitCount(xBoardLow & mask);
+            }
+            case MidLow: {
+                // Low + MidLow
+                long fullMask = BitOperators.getColumnOneLineBelowY(6) << x;
+                long mask = BitOperators.getColumnOneLineBelowY(maxY - FIELD_ROW_MID_LOW_BOARDER_Y) << x;
+                return Long.bitCount(xBoardLow & fullMask)
+                        + Long.bitCount(xBoardMidLow & mask);
+            }
+            case MidHigh: {
+                // Low + MidLow + MidHigh
+                long fullMask = BitOperators.getColumnOneLineBelowY(6) << x;
+                long mask = BitOperators.getColumnOneLineBelowY(maxY - FIELD_ROW_MID_HIGH_BOARDER_Y) << x;
+                return Long.bitCount(xBoardLow & fullMask)
+                        + Long.bitCount(xBoardMidLow & fullMask)
+                        + Long.bitCount(xBoardMidHigh & mask);
+            }
+            case High: {
+                // Low + MidLow + MidHigh + High
+                long fullMask = BitOperators.getColumnOneLineBelowY(6) << x;
+                long mask = BitOperators.getColumnOneLineBelowY(maxY - FIELD_ROW_HIGH_BOARDER_Y) << x;
+                return Long.bitCount(xBoardLow & fullMask)
+                        + Long.bitCount(xBoardMidLow & fullMask)
+                        + Long.bitCount(xBoardMidHigh & fullMask)
+                        + Long.bitCount(xBoardHigh & mask);
+            }
+        }
+        throw new IllegalStateException("Unreachable");
     }
 
     @Override
     public int getBlockCountOnY(int y) {
-        throw new UnsupportedOperationException();
+        switch (select(y)) {
+            case Low: {
+                int y2 = y;
+                long mask = 0x3ffL << y2 * FIELD_WIDTH;
+                return Long.bitCount(xBoardLow & mask);
+            }
+            case MidLow: {
+                int y2 = y - FIELD_ROW_MID_LOW_BOARDER_Y;
+                long mask = 0x3ffL << y2 * FIELD_WIDTH;
+                return Long.bitCount(xBoardMidLow & mask);
+            }
+            case MidHigh: {
+                int y2 = y - FIELD_ROW_MID_HIGH_BOARDER_Y;
+                long mask = 0x3ffL << y2 * FIELD_WIDTH;
+                return Long.bitCount(xBoardMidHigh & mask);
+            }
+            case High: {
+                int y2 = y - FIELD_ROW_HIGH_BOARDER_Y;
+                long mask = 0x3ffL << y2 * FIELD_WIDTH;
+                return Long.bitCount(xBoardHigh & mask);
+            }
+        }
+        throw new IllegalStateException("Unreachable");
     }
 
     @Override
