@@ -292,8 +292,9 @@ class LargeFieldTest {
     @Test
     void clearLine() {
         Randoms randoms = new Randoms();
-        for (int count = 0; count < 10000; count++) {
+        for (int count = 0; count < 100000; count++) {
             Field field = randoms.field(FIELD_HEIGHT, randoms.nextInt(5, 20));
+            String format = String.format("%dL, %dL, %dL, %dL%n", field.getBoard(0), field.getBoard(1), field.getBoard(2), field.getBoard(3));
 
             // 配列ベースのフィールドに変換
             ArrayColoredField coloredField = new ArrayColoredField(FIELD_HEIGHT);
@@ -308,7 +309,27 @@ class LargeFieldTest {
             // 確認
             for (int y = 0; y < FIELD_HEIGHT; y++)
                 for (int x = 0; x < FIELD_WIDTH; x++)
-                    assertThat(field.isEmpty(x, y)).isEqualTo(coloredField.getColorType(x, y) == ColorType.Empty);
+                    assertThat(field.isEmpty(x, y))
+                            .as(format)
+                            .isEqualTo(coloredField.getColorType(x, y) == ColorType.Empty);
+        }
+    }
+
+    @Test
+    void insertBlackLineWithKey() {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 1000000; count++) {
+            Field field = randoms.field(FIELD_HEIGHT, randoms.nextInt(5, 20));
+            String format = String.format("%dL, %dL, %dL, %dL%n", field.getBoard(0), field.getBoard(1), field.getBoard(2), field.getBoard(3));
+
+            Field freeze = field.freeze(FIELD_HEIGHT);
+
+            long key = field.clearLineReturnKey();
+            field.insertBlackLineWithKey(key);
+
+            assertThat(freeze)
+                    .as(format)
+                    .isEqualTo(field);
         }
     }
 }
