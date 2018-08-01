@@ -38,8 +38,8 @@ class PiecesNameComparatorTest {
 
         Randoms randoms = new Randoms();
         for (int count = 0; count < 10000; count++) {
-            List<Piece> blocks1 = randoms.sample(allPieces, randoms.nextInt(10));
-            List<Piece> blocks2 = randoms.sample(allPieces, randoms.nextInt(10));
+            List<Piece> blocks1 = randoms.sample(allPieces, randoms.nextIntOpen(10));
+            List<Piece> blocks2 = randoms.sample(allPieces, randoms.nextIntOpen(10));
 
             if (blocks1.equals(blocks2))
                 blocks1.add(Piece.O);

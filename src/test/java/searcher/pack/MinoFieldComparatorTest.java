@@ -33,7 +33,7 @@ class MinoFieldComparatorTest {
         RecursiveMinoField recursiveMinoField2 = new RecursiveMinoField(mino, ColumnFieldFactory.createField(), separableMinos);
 
         for (int count = 0; count < 10; count++) {
-            int index = randoms.nextInt(0, minos.size() - 1);
+            int index = randoms.nextIntOpen(0, minos.size() - 1);
             SeparableMino randomMino = minos.get(index);
             recursiveMinoField1 = new RecursiveMinoField(randomMino, recursiveMinoField1, ColumnFieldFactory.createField(), separableMinos);
             recursiveMinoField2 = new RecursiveMinoField(randomMino, recursiveMinoField2, ColumnFieldFactory.createField(), separableMinos);
@@ -50,11 +50,11 @@ class MinoFieldComparatorTest {
         MinoFieldComparator comparator = new MinoFieldComparator();
 
         for (int count = 0; count < 100000; count++) {
-            int index1 = randoms.nextInt(0, minos.size());
+            int index1 = randoms.nextIntOpen(0, minos.size());
             SeparableMino mino1 = minos.get(index1);
             RecursiveMinoField recursiveMinoField1 = new RecursiveMinoField(mino1, ColumnFieldFactory.createField(), separableMinos);
 
-            int index2 = randoms.nextInt(0, minos.size() - 1);
+            int index2 = randoms.nextIntOpen(0, minos.size() - 1);
             if (index1 == index2)
                 index2 += 1;
             SeparableMino mino2 = minos.get(index2);
@@ -70,7 +70,7 @@ class MinoFieldComparatorTest {
         Randoms randoms = new Randoms();
 
         List<SeparableMino> minos = separableMinos.getMinos();
-        int index = randoms.nextInt(0, minos.size() - 1);
+        int index = randoms.nextIntOpen(0, minos.size() - 1);
         SeparableMino mino = minos.get(index);
         RecursiveMinoField recursiveMinoField1 = new RecursiveMinoField(mino, ColumnFieldFactory.createField(), separableMinos);
 
@@ -87,7 +87,7 @@ class MinoFieldComparatorTest {
         Randoms randoms = new Randoms();
 
         List<SeparableMino> minos = separableMinos.getMinos();
-        int index = randoms.nextInt(0, minos.size() - 1);
+        int index = randoms.nextIntOpen(0, minos.size() - 1);
         SeparableMino mino = minos.get(index);
         RecursiveMinoField recursiveMinoField1 = new RecursiveMinoField(mino, ColumnFieldFactory.createField(), separableMinos);
 

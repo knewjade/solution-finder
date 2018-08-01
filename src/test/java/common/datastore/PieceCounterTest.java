@@ -74,7 +74,7 @@ class PieceCounterTest {
 
         LOOP:
         for (int count = 0; count < 10000; count++) {
-            List<Piece> pieces = randoms.blocks(randoms.nextInt(0, 500));
+            List<Piece> pieces = randoms.blocks(randoms.nextIntOpen(0, 500));
             Map<Piece, List<Piece>> group = pieces.stream().collect(Collectors.groupingBy(Function.identity()));
 
             for (List<Piece> eachPiece : group.values())
@@ -112,14 +112,14 @@ class PieceCounterTest {
 
         LOOP:
         for (int count = 0; count < 10000; count++) {
-            List<Piece> blocks1 = randoms.blocks(randoms.nextInt(0, 500));
+            List<Piece> blocks1 = randoms.blocks(randoms.nextIntOpen(0, 500));
             Map<Piece, List<Piece>> group1 = blocks1.stream().collect(Collectors.groupingBy(Function.identity()));
 
             for (List<Piece> eachPiece : group1.values())
                 if (128 <= eachPiece.size())
                     continue LOOP;
 
-            List<Piece> blocks2 = randoms.blocks(randoms.nextInt(0, 500));
+            List<Piece> blocks2 = randoms.blocks(randoms.nextIntOpen(0, 500));
             Map<Piece, List<Piece>> group2 = blocks2.stream().collect(Collectors.groupingBy(Function.identity()));
 
             for (List<Piece> eachPiece : group2.values())

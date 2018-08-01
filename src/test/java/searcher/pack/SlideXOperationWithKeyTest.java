@@ -1,8 +1,8 @@
 package searcher.pack;
 
 import common.datastore.FullOperationWithKey;
-import core.mino.Piece;
 import core.mino.Mino;
+import core.mino.Piece;
 import core.srs.Rotate;
 import lib.Randoms;
 import org.junit.jupiter.api.Test;
@@ -18,13 +18,13 @@ class SlideXOperationWithKeyTest {
             Piece piece = randoms.block();
             Rotate rotate = randoms.rotate();
             Mino mino = new Mino(piece, rotate);
-            int x = randoms.nextInt(0, 10);
-            int y = randoms.nextInt(0, 10);
+            int x = randoms.nextIntOpen(0, 10);
+            int y = randoms.nextIntOpen(0, 10);
             long usingKey = randoms.key();
             long deleteKey = randoms.key();
             FullOperationWithKey operationWithKey = new FullOperationWithKey(mino, x, y, deleteKey, usingKey);
 
-            int slide = randoms.nextInt(4);
+            int slide = randoms.nextIntOpen(4);
             SlideXOperationWithKey key = new SlideXOperationWithKey(operationWithKey, slide);
             assertThat(key)
                     .returns(x + slide, SlideXOperationWithKey::getX)

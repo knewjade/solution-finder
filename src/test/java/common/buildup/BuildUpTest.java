@@ -15,14 +15,13 @@ import core.column_field.ColumnField;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
-import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import core.mino.Piece;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
 import lib.Randoms;
 import module.LongTest;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.checker.CheckerUsingHold;
 import searcher.common.validator.PerfectValidator;
@@ -95,7 +94,7 @@ class BuildUpTest {
 
         for (int count = 0; count < 10000; count++) {
             // Pickup solution from checker
-            int numOfMinos = randoms.nextInt(1, 7);
+            int numOfMinos = randoms.nextIntOpen(1, 7);
             Field field = randoms.field(height, numOfMinos);
             List<Piece> pieces = randoms.blocks(numOfMinos);
             boolean check = checker.check(field, pieces, candidate, height, numOfMinos);
@@ -227,7 +226,7 @@ class BuildUpTest {
 
         for (int count = 0; count < 10000; count++) {
             // Create field
-            int numOfMinos = randoms.nextInt(1, 7);
+            int numOfMinos = randoms.nextIntOpen(1, 7);
             Field field = randoms.field(height, numOfMinos);
 
             // Search

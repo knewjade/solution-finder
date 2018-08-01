@@ -8,7 +8,10 @@ import lib.Randoms;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
@@ -55,7 +58,7 @@ class CombinationIterableTest {
     void iteratorRandom() throws Exception {
         Randoms randoms = new Randoms();
         for (int size = 2; size <= 35; size++) {
-            int pop = randoms.nextInt(1, size <= 10 ? size : 10);
+            int pop = randoms.nextIntOpen(1, size <= 10 ? size : 10);
 
             List<Integer> list = IntStream.range(0, size).boxed().collect(Collectors.toList());
             CombinationIterable<Integer> iterable = new CombinationIterable<>(list, pop);

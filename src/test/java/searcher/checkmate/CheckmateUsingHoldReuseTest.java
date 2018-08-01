@@ -5,15 +5,14 @@ import common.datastore.action.Action;
 import core.action.candidate.Candidate;
 import core.action.candidate.LockedCandidate;
 import core.field.Field;
-import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import core.mino.Piece;
 import core.srs.MinoRotation;
 import lib.Randoms;
 import lib.Stopwatch;
 import module.LongTest;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.common.validator.PerfectValidator;
 
@@ -35,7 +34,7 @@ class CheckmateUsingHoldReuseTest {
         Randoms randoms = new Randoms();
 
         for (int count = 0; count < 25; count++) {
-            int maxClearLine = randoms.nextInt(3, 8);
+            int maxClearLine = randoms.nextIntOpen(3, 8);
 
             int maxDepth = randoms.nextIntClosed(5, 7);
             List<Piece> pieces = randoms.blocks(maxDepth);
@@ -48,7 +47,7 @@ class CheckmateUsingHoldReuseTest {
             Stopwatch stopwatchReuse = Stopwatch.createStoppedStopwatch();
 
             for (int swap = 0; swap < 250; swap++) {
-                int index = randoms.nextInt(3, pieces.size());
+                int index = randoms.nextIntOpen(3, pieces.size());
                 Piece pop = pieces.remove(index);
                 pieces.add(pop);
 
@@ -73,7 +72,7 @@ class CheckmateUsingHoldReuseTest {
         Randoms randoms = new Randoms();
 
         for (int count = 0; count < 25; count++) {
-            int maxClearLine = randoms.nextInt(3, 8);
+            int maxClearLine = randoms.nextIntOpen(3, 8);
 
             int maxDepth = randoms.nextIntClosed(5, 7);
             List<Piece> pieces = randoms.blocks(maxDepth);
@@ -87,7 +86,7 @@ class CheckmateUsingHoldReuseTest {
             Stopwatch stopwatchReuse2 = Stopwatch.createStoppedStopwatch();
 
             for (int swap = 0; swap < 250; swap++) {
-                int index = randoms.nextInt(3, pieces.size());
+                int index = randoms.nextIntOpen(3, pieces.size());
                 Piece pop = pieces.remove(index);
                 pieces.add(pop);
 
@@ -120,7 +119,7 @@ class CheckmateUsingHoldReuseTest {
         Randoms randoms = new Randoms();
 
         for (int count = 0; count < 25; count++) {
-            int maxClearLine = randoms.nextInt(3, 8);
+            int maxClearLine = randoms.nextIntOpen(3, 8);
 
             int maxDepth = randoms.nextIntClosed(5, 7);
             List<Piece> pieces = randoms.blocks(maxDepth + 1);
@@ -133,7 +132,7 @@ class CheckmateUsingHoldReuseTest {
             Stopwatch stopwatchReuse = Stopwatch.createStoppedStopwatch();
 
             for (int swap = 0; swap < 250; swap++) {
-                int index = randoms.nextInt(3, pieces.size());
+                int index = randoms.nextIntOpen(3, pieces.size());
                 Piece pop = pieces.remove(index);
                 pieces.add(pop);
 
@@ -158,7 +157,7 @@ class CheckmateUsingHoldReuseTest {
         Randoms randoms = new Randoms();
 
         for (int count = 0; count < 25; count++) {
-            int maxClearLine = randoms.nextInt(3, 8);
+            int maxClearLine = randoms.nextIntOpen(3, 8);
 
             int maxDepth = randoms.nextIntClosed(5, 7);
             List<Piece> pieces = randoms.blocks(maxDepth + 10);
@@ -171,7 +170,7 @@ class CheckmateUsingHoldReuseTest {
             Stopwatch stopwatchReuse = Stopwatch.createStoppedStopwatch();
 
             for (int swap = 0; swap < 250; swap++) {
-                int index = randoms.nextInt(3, pieces.size());
+                int index = randoms.nextIntOpen(3, pieces.size());
                 Piece pop = pieces.remove(index);
                 pieces.add(pop);
 

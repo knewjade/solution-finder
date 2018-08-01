@@ -303,7 +303,6 @@ public class MiddleField implements Field {
         this.xBoardHigh = newXBoardHigh & VALID_BOARD_RANGE;
     }
 
-    // TODO: write unittest
     @Override
     public void fillLine(int y) {
         if (y < FIELD_ROW_BOARDER_Y)
@@ -422,7 +421,6 @@ public class MiddleField implements Field {
         xBoardHigh = (xBoardHigh & mask) >> slide;
     }
 
-    // TODO: write unittest
     @Override
     public void slideRight(int slide) {
         assert 0 <= slide;
@@ -431,21 +429,15 @@ public class MiddleField implements Field {
         xBoardHigh = (xBoardHigh & mask) << slide;
     }
 
-    // TODO: write unittest
     @Override
     public void slideDown() {
-        long deleteKeyLow = KeyOperators.getDeleteBitKey(0);
-        long newXBoardLow = LongBoardMap.deleteLine(xBoardLow, deleteKeyLow);
+        long newXBoardLow = ((xBoardLow >>> FIELD_WIDTH) | (xBoardHigh << 5 * FIELD_WIDTH)) & VALID_BOARD_RANGE;
+        long newXBoardHigh = xBoardHigh >>> FIELD_WIDTH;
 
-        long newXBoardHigh = xBoardHigh;
-
-        int deleteLineLow = 1;
-
-        this.xBoardLow = (newXBoardLow | (newXBoardHigh << (6 - deleteLineLow) * 10)) & VALID_BOARD_RANGE;
-        this.xBoardHigh = newXBoardHigh >>> deleteLineLow * 10;
+        this.xBoardLow = newXBoardLow;
+        this.xBoardHigh = newXBoardHigh;
     }
 
-    // TODO: write unittest
     @Override
     public boolean contains(Field child) {
         assert child.getBoardCount() <= 2;
@@ -454,7 +446,6 @@ public class MiddleField implements Field {
         return (xBoardLow & childBoardLow) == childBoardLow && (xBoardHigh & childBoardHigh) == childBoardHigh;
     }
 
-    // TODO: write unittest
     @Override
     public void inverse() {
         xBoardLow = (~xBoardLow) & VALID_BOARD_RANGE;

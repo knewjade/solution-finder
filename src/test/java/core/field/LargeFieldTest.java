@@ -269,7 +269,7 @@ class LargeFieldTest {
             field.setBlock(4, y - 2);
 
             assertThat(field.isOnGround(new Mino(Piece.I, Rotate.Spawn), 4, y)).isFalse();
-            assertThat(field.isOnGround(new Mino(Piece.I, Rotate.Spawn), 4, y-1)).isTrue();
+            assertThat(field.isOnGround(new Mino(Piece.I, Rotate.Spawn), 4, y - 1)).isTrue();
         }
     }
 
@@ -293,7 +293,7 @@ class LargeFieldTest {
     void clearLine() {
         Randoms randoms = new Randoms();
         for (int count = 0; count < 100000; count++) {
-            Field field = randoms.field(FIELD_HEIGHT, randoms.nextInt(5, 20));
+            Field field = randoms.field(FIELD_HEIGHT, randoms.nextIntOpen(5, 20));
             String format = String.format("%dL, %dL, %dL, %dL%n", field.getBoard(0), field.getBoard(1), field.getBoard(2), field.getBoard(3));
 
             // 配列ベースのフィールドに変換
@@ -319,7 +319,7 @@ class LargeFieldTest {
     void insertBlackLineWithKey() {
         Randoms randoms = new Randoms();
         for (int count = 0; count < 1000000; count++) {
-            Field field = randoms.field(FIELD_HEIGHT, randoms.nextInt(5, 20));
+            Field field = randoms.field(FIELD_HEIGHT, randoms.nextIntOpen(5, 20));
             String format = String.format("%dL, %dL, %dL, %dL%n", field.getBoard(0), field.getBoard(1), field.getBoard(2), field.getBoard(3));
 
             Field freeze = field.freeze(FIELD_HEIGHT);
@@ -327,9 +327,233 @@ class LargeFieldTest {
             long key = field.clearLineReturnKey();
             field.insertBlackLineWithKey(key);
 
-            assertThat(freeze)
+            assertThat(field)
                     .as(format)
-                    .isEqualTo(field);
+                    .isEqualTo(freeze);
+        }
+    }
+
+    @Test
+    void insertWhiteLineWithKey() {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 500000; count++) {
+            Field field = randoms.field(FIELD_HEIGHT, randoms.nextIntOpen(5, 20));
+            String format = String.format("%dL, %dL, %dL, %dL%n", field.getBoard(0), field.getBoard(1), field.getBoard(2), field.getBoard(3));
+
+            Field freeze = field.freeze(FIELD_HEIGHT);
+
+            LOOP_Y:
+            for (int y = 0; y < FIELD_HEIGHT; y++) {
+                for (int x = 0; x < FIELD_WIDTH; x++)
+                    if (freeze.isEmpty(x, y)) continue LOOP_Y;
+
+                for (int x = 0; x < FIELD_WIDTH; x++)
+                    freeze.removeBlock(x, y);
+            }
+
+            long key = field.clearLineReturnKey();
+            field.insertWhiteLineWithKey(key);
+
+            assertThat(field)
+                    .as(format)
+                    .isEqualTo(freeze);
+        }
+    }
+
+    @Test
+    void fillLine() {
+        for (int y = 0; y < FIELD_HEIGHT; y++) {
+            LargeField field = new LargeField();
+            field.fillLine(y);
+
+            for (int x = 0; x < FIELD_WIDTH; x++)
+                assertThat(field.isEmpty(x, y)).isFalse();
+
+            field.clearLine();
+            assertThat(field.isPerfect()).isTrue();
+        }
+    }
+
+    @Test
+    void getUpperYWith4BlocksRandom() {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 1000000; count++) {
+            LargeField field = FieldFactory.createLargeField();
+            int maxY = -1;
+            while (field.getNumOfAllBlocks() != 4) {
+                int x = randoms.nextIntOpen(Randoms.FIELD_WIDTH);
+                int y = randoms.nextIntOpen(0, FIELD_HEIGHT);
+                field.setBlock(x, y);
+
+                if (maxY < y)
+                    maxY = y;
+            }
+
+            assertThat(field.getUpperYWith4Blocks()).isEqualTo(maxY);
+        }
+    }
+
+    @Test
+    void getLowerY() {
+        // empty
+        {
+            LargeField field = FieldFactory.createLargeField();
+            assertThat(field.getLowerY()).isEqualTo(-1);
+        }
+
+        // 10 blocks
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 1000000; count++) {
+            LargeField field = FieldFactory.createLargeField();
+            int minY = Integer.MAX_VALUE;
+            for (int i = 0; i < 10; i++) {
+                int x = randoms.nextIntOpen(Randoms.FIELD_WIDTH);
+                int y = randoms.nextIntOpen(0, FIELD_HEIGHT);
+                field.setBlock(x, y);
+
+                if (y < minY)
+                    minY = y;
+            }
+
+            assertThat(field.getLowerY()).isEqualTo(minY);
+        }
+    }
+
+    @Test
+    void contains() {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 100000; count++) {
+            Field initField = randoms.field(FIELD_HEIGHT, randoms.nextIntOpen(5, 20));
+
+            {
+                Field field = initField.freeze(FIELD_HEIGHT);
+                for (int i = 0; i < 100; i++) {
+                    int x = randoms.nextIntOpen(Randoms.FIELD_WIDTH);
+                    int y = randoms.nextIntOpen(0, FIELD_HEIGHT);
+                    field.removeBlock(x, y);
+
+                    assertThat(initField.contains(field)).isTrue();
+                }
+            }
+
+            {
+                Field field = initField.freeze(FIELD_HEIGHT);
+                for (int i = 0; i < 100; i++) {
+                    int x = randoms.nextIntOpen(Randoms.FIELD_WIDTH);
+                    int y = randoms.nextIntOpen(0, FIELD_HEIGHT);
+
+                    if (!field.isEmpty(x, y))
+                        continue;
+
+                    field.setBlock(x, y);
+
+                    assertThat(initField.contains(field)).isFalse();
+                }
+            }
+        }
+    }
+
+    @Test
+    void slideDown() {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 100000; count++) {
+            Field field = new LargeField();
+            Field expected = new LargeField();
+
+            for (int x = 0; x < FIELD_WIDTH; x++) {
+                if (randoms.nextBoolean())
+                    field.setBlock(x, 0);
+            }
+
+            for (int y = 1; y < FIELD_HEIGHT; y++) {
+                for (int x = 0; x < FIELD_WIDTH; x++) {
+                    if (randoms.nextBoolean()) {
+                        field.setBlock(x, y);
+                        expected.setBlock(x, y - 1);
+                    }
+                }
+            }
+
+            field.slideDown();
+
+            assertThat(field).isEqualTo(expected);
+        }
+    }
+
+    @Test
+    void slideLeft() {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 100000; count++) {
+            Field field = new LargeField();
+            Field expected = new LargeField();
+
+            int slide = randoms.nextIntClosed(0, 9);
+
+            for (int x = 0; x < slide; x++) {
+                for (int y = 0; y < FIELD_HEIGHT; y++) {
+                    if (randoms.nextBoolean())
+                        field.setBlock(x, y);
+                }
+            }
+
+            for (int x = slide; x < FIELD_WIDTH; x++) {
+                for (int y = 0; y < FIELD_HEIGHT; y++) {
+                    if (randoms.nextBoolean()) {
+                        field.setBlock(x, y);
+                        expected.setBlock(x - slide, y);
+                    }
+                }
+            }
+
+            field.slideLeft(slide);
+
+            assertThat(field).isEqualTo(expected);
+        }
+    }
+
+    @Test
+    void slideRight() {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 100000; count++) {
+            Field field = new LargeField();
+            Field expected = new LargeField();
+
+            int slide = randoms.nextIntClosed(0, 9);
+
+            for (int x = 9; 9 - slide < x; x--) {
+                for (int y = 0; y < FIELD_HEIGHT; y++) {
+                    if (randoms.nextBoolean())
+                        field.setBlock(x, y);
+                }
+            }
+
+            for (int x = 9 - slide; 0 <= x; x--) {
+                for (int y = 0; y < FIELD_HEIGHT; y++) {
+                    if (randoms.nextBoolean()) {
+                        field.setBlock(x, y);
+                        expected.setBlock(x + slide, y);
+                    }
+                }
+            }
+
+            field.slideRight(slide);
+
+            assertThat(field).isEqualTo(expected);
+        }
+    }
+
+    @Test
+    void inverse() {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 10000; count++) {
+            Field initField = randoms.field(FIELD_HEIGHT, randoms.nextIntOpen(5, 20));
+
+            Field field = initField.freeze(FIELD_HEIGHT);
+            field.inverse();
+
+            for (int y = 0; y < FIELD_HEIGHT; y++)
+                for (int x = 0; x < FIELD_WIDTH; x++)
+                    assertThat(field.isEmpty(x, y)).isNotEqualTo(initField.isEmpty(x, y));
         }
     }
 }

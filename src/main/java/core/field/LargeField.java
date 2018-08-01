@@ -645,7 +645,7 @@ public class LargeField implements Field {
         long deleteKeyHigh = (deleteKey & 0x20080200802008L) >> 3;
 
         int deleteLine1 = deleteLineLow;
-        int deleteLine2 = deleteLine1 + deleteLineMidLow;
+        int deleteLine2 = deleteLineLow + deleteLineMidLow;
         int deleteLine3 = deleteLine2 + deleteLineMidHigh;
 
         if (deleteLine3 < 6) {
@@ -680,6 +680,7 @@ public class LargeField implements Field {
             );
 
             if (deleteLine2 < 6) {
+                // Low & MidLow & MidHigh
                 int leftLine2 = 6 - deleteLine2;
                 long newXBoardMidHigh = LongBoardMap.insertBlackLine(
                         (xBoardMidHigh << 10 * deleteLine2) | ((xBoardMidLow & BitOperators.getRowMaskAboveY(leftLine2)) >> 10 * leftLine2), deleteKeyMidHigh
@@ -697,6 +698,7 @@ public class LargeField implements Field {
                 this.xBoardMidHigh = newXBoardMidHigh & VALID_BOARD_RANGE;
                 this.xBoardHigh = newXBoardHigh & VALID_BOARD_RANGE;
             } else {
+                // Low & MidLow
                 int deleteLine2_6 = deleteLine2 - 6;
                 int leftLine2 = 6 - deleteLine2_6;
                 long newXBoardMidHigh = LongBoardMap.insertBlackLine(
@@ -745,12 +747,143 @@ public class LargeField implements Field {
 
     @Override
     public void insertWhiteLineWithKey(long deleteKey) {
-        throw new UnsupportedOperationException();
+        long deleteKeyLow = deleteKey & 0x4010040100401L;
+        int deleteLineLow = Long.bitCount(deleteKeyLow);
+
+        long deleteKeyMidLow = (deleteKey & 0x8020080200802L) >> 1;
+        int deleteLineMidLow = Long.bitCount(deleteKeyMidLow);
+
+        long deleteKeyMidHigh = (deleteKey & 0x10040100401004L) >> 2;
+        int deleteLineMidHigh = Long.bitCount(deleteKeyMidHigh);
+
+        long deleteKeyHigh = (deleteKey & 0x20080200802008L) >> 3;
+
+        int deleteLine1 = deleteLineLow;
+        int deleteLine2 = deleteLineLow + deleteLineMidLow;
+        int deleteLine3 = deleteLine2 + deleteLineMidHigh;
+
+        if (deleteLine3 < 6) {
+            // Low & MidLow & MidHigh & High
+            int leftLine3 = 6 - deleteLine3;
+            long newXBoardHigh = LongBoardMap.insertWhiteLine(
+                    (xBoardHigh << 10 * deleteLine3) | ((xBoardMidHigh & BitOperators.getRowMaskAboveY(leftLine3)) >> 10 * leftLine3), deleteKeyHigh
+            );
+
+            int leftLine2 = 6 - deleteLine2;
+            long newXBoardMidHigh = LongBoardMap.insertWhiteLine(
+                    (xBoardMidHigh << 10 * deleteLine2) | ((xBoardMidLow & BitOperators.getRowMaskAboveY(leftLine2)) >> 10 * leftLine2), deleteKeyMidHigh
+            );
+
+            int leftLine1 = 6 - deleteLine1;
+            long newXBoardMidLow = LongBoardMap.insertWhiteLine(
+                    (xBoardMidLow << 10 * deleteLine1) | ((xBoardLow & BitOperators.getRowMaskAboveY(leftLine1)) >> 10 * leftLine1), deleteKeyMidLow
+            );
+
+            long newXBoardLow = LongBoardMap.insertWhiteLine(xBoardLow & BitOperators.getRowMaskBelowY(leftLine1), deleteKeyLow);
+
+            this.xBoardLow = newXBoardLow;
+            this.xBoardMidLow = newXBoardMidLow & VALID_BOARD_RANGE;
+            this.xBoardMidHigh = newXBoardMidHigh & VALID_BOARD_RANGE;
+            this.xBoardHigh = newXBoardHigh & VALID_BOARD_RANGE;
+        } else if (deleteLine3 < 12) {
+            // Low & MidLow & MidHigh
+            int deleteLine3_6 = deleteLine3 - 6;
+            int leftLine3 = 6 - deleteLine3_6;
+            long newXBoardHigh = LongBoardMap.insertWhiteLine(
+                    (xBoardMidHigh << 10 * deleteLine3_6) | ((xBoardMidLow & BitOperators.getRowMaskAboveY(leftLine3)) >> 10 * leftLine3), deleteKeyHigh
+            );
+
+            if (deleteLine2 < 6) {
+                // Low & MidLow & MidHigh
+                int leftLine2 = 6 - deleteLine2;
+                long newXBoardMidHigh = LongBoardMap.insertWhiteLine(
+                        (xBoardMidHigh << 10 * deleteLine2) | ((xBoardMidLow & BitOperators.getRowMaskAboveY(leftLine2)) >> 10 * leftLine2), deleteKeyMidHigh
+                );
+
+                int leftLine1 = 6 - deleteLine1;
+                long newXBoardMidLow = LongBoardMap.insertWhiteLine(
+                        (xBoardMidLow << 10 * deleteLine1) | ((xBoardLow & BitOperators.getRowMaskAboveY(leftLine1)) >> 10 * leftLine1), deleteKeyMidLow
+                );
+
+                long newXBoardLow = LongBoardMap.insertWhiteLine(xBoardLow & BitOperators.getRowMaskBelowY(leftLine1), deleteKeyLow);
+
+                this.xBoardLow = newXBoardLow;
+                this.xBoardMidLow = newXBoardMidLow & VALID_BOARD_RANGE;
+                this.xBoardMidHigh = newXBoardMidHigh & VALID_BOARD_RANGE;
+                this.xBoardHigh = newXBoardHigh & VALID_BOARD_RANGE;
+            } else {
+                // Low & MidLow
+                int deleteLine2_6 = deleteLine2 - 6;
+                int leftLine2 = 6 - deleteLine2_6;
+                long newXBoardMidHigh = LongBoardMap.insertWhiteLine(
+                        (xBoardMidLow << 10 * deleteLine2_6) | ((xBoardLow & BitOperators.getRowMaskAboveY(leftLine2)) >> 10 * leftLine2), deleteKeyMidHigh
+                );
+
+                int leftLine1 = 6 - deleteLine1;
+                long newXBoardMidLow = LongBoardMap.insertWhiteLine(
+                        (xBoardMidLow << 10 * deleteLine1) | ((xBoardLow & BitOperators.getRowMaskAboveY(leftLine1)) >> 10 * leftLine1), deleteKeyMidLow
+                );
+
+                long newXBoardLow = LongBoardMap.insertWhiteLine(xBoardLow & BitOperators.getRowMaskBelowY(leftLine1), deleteKeyLow);
+
+                this.xBoardLow = newXBoardLow;
+                this.xBoardMidLow = newXBoardMidLow & VALID_BOARD_RANGE;
+                this.xBoardMidHigh = newXBoardMidHigh & VALID_BOARD_RANGE;
+                this.xBoardHigh = newXBoardHigh & VALID_BOARD_RANGE;
+            }
+        } else {
+            // Low & MidLow
+            int deleteLine3_12 = deleteLine3 - 12;
+            int leftLine3 = 6 - deleteLine3_12;
+            long newXBoardHigh = LongBoardMap.insertWhiteLine(
+                    (xBoardMidLow << 10 * deleteLine3_12) | ((xBoardLow & BitOperators.getRowMaskAboveY(leftLine3)) >> 10 * leftLine3), deleteKeyHigh
+            );
+
+            int deleteLine2_6 = deleteLine2 - 6;
+            int leftLine2 = 6 - deleteLine2_6;
+            long newXBoardMidHigh = LongBoardMap.insertWhiteLine(
+                    (xBoardMidLow << 10 * deleteLine2_6) | ((xBoardLow & BitOperators.getRowMaskAboveY(leftLine2)) >> 10 * leftLine2), deleteKeyMidHigh
+            );
+
+            int leftLine1 = 6 - deleteLine1;
+            long newXBoardMidLow = LongBoardMap.insertWhiteLine(
+                    (xBoardMidLow << 10 * deleteLine1) | ((xBoardLow & BitOperators.getRowMaskAboveY(leftLine1)) >> 10 * leftLine1), deleteKeyMidLow
+            );
+
+            long newXBoardLow = LongBoardMap.insertWhiteLine(xBoardLow & BitOperators.getRowMaskBelowY(leftLine1), deleteKeyLow);
+
+            this.xBoardLow = newXBoardLow;
+            this.xBoardMidLow = newXBoardMidLow & VALID_BOARD_RANGE;
+            this.xBoardMidHigh = newXBoardMidHigh & VALID_BOARD_RANGE;
+            this.xBoardHigh = newXBoardHigh & VALID_BOARD_RANGE;
+        }
     }
 
     @Override
     public void fillLine(int y) {
-        throw new UnsupportedOperationException();
+        switch (select(y)) {
+            case Low: {
+                xBoardLow |= getLineMask(y);
+                return;
+            }
+            case MidLow: {
+                xBoardMidLow |= getLineMask(y - FIELD_ROW_MID_LOW_BOARDER_Y);
+                return;
+            }
+            case MidHigh: {
+                xBoardMidHigh |= getLineMask(y - FIELD_ROW_MID_HIGH_BOARDER_Y);
+                return;
+            }
+            case High: {
+                xBoardHigh |= getLineMask(y - FIELD_ROW_HIGH_BOARDER_Y);
+                return;
+            }
+        }
+        throw new IllegalStateException("Unreachable");
+    }
+
+    private long getLineMask(int y) {
+        return 0x3ffL << y * FIELD_WIDTH;
     }
 
     @Override
@@ -858,15 +991,48 @@ public class LargeField implements Field {
 
     @Override
     public int getUpperYWith4Blocks() {
-        throw new UnsupportedOperationException();
+        assert Long.bitCount(xBoardLow) + Long.bitCount(xBoardMidLow) + Long.bitCount(xBoardMidHigh) + Long.bitCount(xBoardHigh) == 4;
+        if (xBoardHigh != 0L) {
+            return getUpperY(xBoardHigh) + FIELD_ROW_HIGH_BOARDER_Y;
+        } else if (xBoardMidHigh != 0L) {
+            return getUpperY(xBoardMidHigh) + FIELD_ROW_MID_HIGH_BOARDER_Y;
+        } else if (xBoardMidLow != 0L) {
+            return getUpperY(xBoardMidLow) + FIELD_ROW_MID_LOW_BOARDER_Y;
+        } else {
+            return getUpperY(xBoardLow);
+        }
+    }
+
+    private int getUpperY(long initBoard) {
+        // initBoardを下から順にオフする
+        long prevBoard = initBoard;
+        long board = initBoard & (initBoard - 1);
+        while (board != 0L) {
+            prevBoard = board;
+            board = board & (board - 1);
+        }
+        return BitOperators.bitToY(prevBoard);
     }
 
     @Override
     public int getLowerY() {
-        throw new UnsupportedOperationException();
+        if (xBoardLow != 0L) {
+            long lowerBit = xBoardLow & (-xBoardLow);
+            return BitOperators.bitToY(lowerBit);
+        } else if (xBoardMidLow != 0L) {
+            long lowerBit = xBoardMidLow & (-xBoardMidLow);
+            return BitOperators.bitToY(lowerBit) + FIELD_ROW_MID_LOW_BOARDER_Y;
+        } else if (xBoardMidHigh != 0L) {
+            long lowerBit = xBoardMidHigh & (-xBoardMidHigh);
+            return BitOperators.bitToY(lowerBit) + FIELD_ROW_MID_HIGH_BOARDER_Y;
+        } else if (xBoardHigh != 0L) {
+            long lowerBit = xBoardHigh & (-xBoardHigh);
+            return BitOperators.bitToY(lowerBit) + FIELD_ROW_HIGH_BOARDER_Y;
+        } else {
+            return -1;
+        }
     }
 
-    // TODO: write unittest
     @Override
     public void slideLeft(int slide) {
         assert 0 <= slide;
@@ -877,7 +1043,6 @@ public class LargeField implements Field {
         xBoardHigh = (xBoardHigh & mask) >> slide;
     }
 
-    // TODO: write unittest
     @Override
     public void slideRight(int slide) {
         assert 0 <= slide;
@@ -890,10 +1055,17 @@ public class LargeField implements Field {
 
     @Override
     public void slideDown() {
-        throw new UnsupportedOperationException();
+        long newXBoardLow = ((xBoardLow >>> FIELD_WIDTH) | (xBoardMidLow << 5 * FIELD_WIDTH)) & VALID_BOARD_RANGE;
+        long newXBoardMidLow = ((xBoardMidLow >>> FIELD_WIDTH) | (xBoardMidHigh << 5 * FIELD_WIDTH)) & VALID_BOARD_RANGE;
+        long newXBoardMidHigh = ((xBoardMidHigh >>> FIELD_WIDTH) | (xBoardHigh << 5 * FIELD_WIDTH)) & VALID_BOARD_RANGE;
+        long newXBoardHigh = xBoardHigh >>> FIELD_WIDTH;
+
+        this.xBoardLow = newXBoardLow;
+        this.xBoardMidLow = newXBoardMidLow;
+        this.xBoardMidHigh = newXBoardMidHigh;
+        this.xBoardHigh = newXBoardHigh;
     }
 
-    // TODO: write unittest
     @Override
     public boolean contains(Field child) {
         assert child.getBoardCount() <= 4;

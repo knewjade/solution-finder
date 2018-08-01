@@ -6,7 +6,6 @@ import core.mino.Piece;
 import lib.Randoms;
 import module.LongTest;
 import org.assertj.core.util.Lists;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -52,7 +51,7 @@ class PermutationIterableTest {
     void iteratorRandom() throws Exception {
         Randoms randoms = new Randoms();
         for (int size = 2; size <= 15; size++) {
-            int pop = randoms.nextInt(1, size <= 8 ? size : 8);
+            int pop = randoms.nextIntOpen(1, size <= 8 ? size : 8);
 
             List<Integer> list = IntStream.range(0, size).boxed().collect(Collectors.toList());
             PermutationIterable<Integer> iterable = new PermutationIterable<>(list, pop);

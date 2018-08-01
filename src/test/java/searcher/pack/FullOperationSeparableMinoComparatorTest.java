@@ -25,7 +25,7 @@ class FullOperationSeparableMinoComparatorTest {
         List<SeparableMino> minos = separableMinos.getMinos();
         Randoms randoms = new Randoms();
 
-        int index = randoms.nextInt(minos.size());
+        int index = randoms.nextIntOpen(minos.size());
         SeparableMino mino = minos.get(index);
 
         FullOperationSeparableMinoComparator comparator = new FullOperationSeparableMinoComparator();
@@ -39,8 +39,8 @@ class FullOperationSeparableMinoComparatorTest {
         FullOperationSeparableMinoComparator comparator = new FullOperationSeparableMinoComparator();
 
         for (int count = 0; count < 100000; count++) {
-            int index1 = randoms.nextInt(minos.size() - 1);
-            int index2 = randoms.nextInt(minos.size());
+            int index1 = randoms.nextIntOpen(minos.size() - 1);
+            int index2 = randoms.nextIntOpen(minos.size());
             if (index1 == index2)
                 index2 += 1;
 

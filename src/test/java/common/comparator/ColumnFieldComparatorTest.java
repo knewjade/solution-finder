@@ -15,14 +15,14 @@ class ColumnFieldComparatorTest {
 
         for (int count = 0; count < 10000; count++) {
             // same field
-            int height = randoms.nextInt(1, 10);
+            int height = randoms.nextIntOpen(1, 10);
             ColumnSmallField field1 = ColumnFieldFactory.createField();
             ColumnSmallField field2 = ColumnFieldFactory.createField();
 
-            int maxBlock = randoms.nextInt(1, 15);
+            int maxBlock = randoms.nextIntOpen(1, 15);
             for (int block = 0; block < maxBlock; block++) {
-                int x = randoms.nextInt(10);
-                int y = randoms.nextInt(height);
+                int x = randoms.nextIntOpen(10);
+                int y = randoms.nextIntOpen(height);
                 field1.setBlock(x, y, height);
                 field2.setBlock(x, y, height);
             }
@@ -31,8 +31,8 @@ class ColumnFieldComparatorTest {
             assertThat(comparator.compare(field2, field1)).isEqualTo(0);
 
             // 1block different field
-            int x = randoms.nextInt(10);
-            int y = randoms.nextInt(height);
+            int x = randoms.nextIntOpen(10);
+            int y = randoms.nextIntOpen(height);
             if (field1.isEmpty(x, y, height))
                 field1.setBlock(x, y, height);
             else

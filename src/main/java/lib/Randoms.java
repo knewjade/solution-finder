@@ -26,19 +26,20 @@ public class Randoms {
         return random.nextDouble() < truePercent;
     }
 
-    public int nextInt(int bound) {
+    public int nextIntOpen(int bound) {
         assert 0 < bound;
         return random.nextInt(bound);
     }
 
-    public int nextInt(int origin, int bound) {
+    // boundは含まない
+    public int nextIntOpen(int origin, int bound) {
         assert origin < bound;
         int size = bound - origin;
         return origin + random.nextInt(size);
     }
 
     public int nextIntClosed(int origin, int boundClosed) {
-        return nextInt(origin, boundClosed + 1);
+        return nextIntOpen(origin, boundClosed + 1);
     }
 
     public Piece block() {
@@ -63,7 +64,7 @@ public class Randoms {
     public <T> List<T> sample(List<T> bag, int size) {
         int[] indexes = IntStream.range(0, size)
                 .map(value -> bag.size() - value)
-                .map(this::nextInt)
+                .map(this::nextIntOpen)
                 .toArray();
 
         for (int i = indexes.length - 2; 0 <= i; i--) {
@@ -90,7 +91,7 @@ public class Randoms {
             // 空白のほうが少ないとき
             int count = 0;
             while (count < numOfEmpty) {
-                int index = nextInt(height);
+                int index = nextIntOpen(height);
                 if (emptyEachLine[index] < 10) {
                     emptyEachLine[index] += 1;
                     count += 1;
@@ -102,7 +103,7 @@ public class Randoms {
 
             int count = 0;
             while (count < numOfBlocks) {
-                int index = nextInt(height);
+                int index = nextIntOpen(height);
                 if (0 < emptyEachLine[index]) {
                     emptyEachLine[index] -= 1;
                     count += 1;
@@ -124,7 +125,7 @@ public class Randoms {
                 int min = count <= prevStart ? prevStart - count + 1 : 0;
                 int max = prevEnd <= FIELD_WIDTH - count ? prevEnd : FIELD_WIDTH - count;
 
-                int start = nextInt(min, max);
+                int start = nextIntOpen(min, max);
                 assert 0 <= start && start < FIELD_WIDTH : Arrays.toString(emptyEachLine);
                 int end = start + count;
                 assert 0 <= end && end < FIELD_WIDTH : Arrays.toString(emptyEachLine);
@@ -215,7 +216,7 @@ public class Randoms {
     }
 
     public String string() {
-        return STRINGS[nextInt(STRINGS.length)];
+        return STRINGS[nextIntOpen(STRINGS.length)];
     }
 
     public double nextDouble() {

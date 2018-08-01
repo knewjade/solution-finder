@@ -183,7 +183,6 @@ public class SmallField implements Field {
         this.xBoard = LongBoardMap.insertWhiteLine(xBoard, deleteKey);
     }
 
-    // TODO: write unittest
     @Override
     public void fillLine(int y) {
         xBoard |= getLineMask(y);
@@ -246,7 +245,6 @@ public class SmallField implements Field {
         xBoard = (xBoard & mask) >> slide;
     }
 
-    // TODO: write unittest
     @Override
     public void slideRight(int slide) {
         assert 0 <= slide;
@@ -254,14 +252,11 @@ public class SmallField implements Field {
         xBoard = (xBoard & mask) << slide;
     }
 
-    // TODO: write unittest
     @Override
     public void slideDown() {
-        long deleteKey = KeyOperators.getDeleteBitKey(0);
-        this.xBoard = LongBoardMap.deleteLine(xBoard, deleteKey);
+        this.xBoard = xBoard >>> FIELD_WIDTH;
     }
 
-    // TODO: write unittest
     @Override
     public boolean contains(Field child) {
         assert child.getBoardCount() <= 1;
@@ -269,7 +264,6 @@ public class SmallField implements Field {
         return (xBoard & childBoard) == childBoard;
     }
 
-    // TODO: write unittest
     @Override
     public void inverse() {
         xBoard = (~xBoard) & VALID_BOARD_RANGE;

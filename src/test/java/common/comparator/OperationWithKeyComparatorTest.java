@@ -1,10 +1,10 @@
 package common.comparator;
 
-import common.datastore.OperationWithKey;
 import common.datastore.FullOperationWithKey;
-import core.mino.Piece;
+import common.datastore.OperationWithKey;
 import core.mino.Mino;
 import core.mino.MinoFactory;
+import core.mino.Piece;
 import core.srs.Rotate;
 import lib.Randoms;
 import org.junit.jupiter.api.Test;
@@ -16,8 +16,8 @@ class OperationWithKeyComparatorTest {
     void compare() throws Exception {
         Randoms randoms = new Randoms();
         MinoFactory minoFactory = new MinoFactory();
-        int x = randoms.nextInt(10);
-        int y = randoms.nextInt(20);
+        int x = randoms.nextIntOpen(10);
+        int y = randoms.nextIntOpen(20);
         long deleteKey = 0L;
         long usingKey = 1049600L;
         OperationWithKey operationWithKey1 = new FullOperationWithKey(minoFactory.create(Piece.I, Rotate.Spawn), x, y, deleteKey, usingKey);
@@ -38,13 +38,13 @@ class OperationWithKeyComparatorTest {
     void compareDiffX() throws Exception {
         Randoms randoms = new Randoms();
         MinoFactory minoFactory = new MinoFactory();
-        int x = randoms.nextInt(10);
-        int y = randoms.nextInt(20);
+        int x = randoms.nextIntOpen(10);
+        int y = randoms.nextIntOpen(20);
         long deleteKey = 0L;
         long usingKey = 1049600L;
         OperationWithKey operationWithKey1 = new FullOperationWithKey(minoFactory.create(Piece.I, Rotate.Spawn), x, y, deleteKey, usingKey);
 
-        int newX = randoms.nextInt(10);
+        int newX = randoms.nextIntOpen(10);
         if (newX == x)
             newX += 1;
         Mino newMino = new MinoFactory().create(Piece.I, Rotate.Spawn);
@@ -61,13 +61,13 @@ class OperationWithKeyComparatorTest {
     void compareDiffY() throws Exception {
         Randoms randoms = new Randoms();
         MinoFactory minoFactory = new MinoFactory();
-        int x = randoms.nextInt(10);
-        int y = randoms.nextInt(20);
+        int x = randoms.nextIntOpen(10);
+        int y = randoms.nextIntOpen(20);
         long deleteKey = 0L;
         long usingKey = 1049600L;
         OperationWithKey operationWithKey1 = new FullOperationWithKey(minoFactory.create(Piece.I, Rotate.Spawn), x, y, deleteKey, usingKey);
 
-        int newY = randoms.nextInt(20);
+        int newY = randoms.nextIntOpen(20);
         if (newY == y)
             newY += 1;
         Mino newMino = new MinoFactory().create(Piece.I, Rotate.Spawn);
@@ -84,8 +84,8 @@ class OperationWithKeyComparatorTest {
     void compareDiffDeleteKey() throws Exception {
         Randoms randoms = new Randoms();
         MinoFactory minoFactory = new MinoFactory();
-        int x = randoms.nextInt(10);
-        int y = randoms.nextInt(20);
+        int x = randoms.nextIntOpen(10);
+        int y = randoms.nextIntOpen(20);
         long deleteKey = 0L;
         long usingKey = 1049600L;
         OperationWithKey operationWithKey1 = new FullOperationWithKey(minoFactory.create(Piece.I, Rotate.Spawn), x, y, deleteKey, usingKey);
@@ -108,8 +108,8 @@ class OperationWithKeyComparatorTest {
     void compareDiffUsingKey() throws Exception {
         Randoms randoms = new Randoms();
         MinoFactory minoFactory = new MinoFactory();
-        int x = randoms.nextInt(10);
-        int y = randoms.nextInt(20);
+        int x = randoms.nextIntOpen(10);
+        int y = randoms.nextIntOpen(20);
         long deleteKey = 0L;
         long usingKey = 1049600L;
         OperationWithKey operationWithKey1 = new FullOperationWithKey(minoFactory.create(Piece.I, Rotate.Spawn), x, y, deleteKey, usingKey);

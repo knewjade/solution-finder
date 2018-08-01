@@ -52,7 +52,7 @@ class PieceInterpreterTest {
     void parseRandom() {
         Randoms randoms = new Randoms();
         for (int count = 0; count < 10000; count++) {
-            int size = randoms.nextInt(1, 100);
+            int size = randoms.nextIntOpen(1, 100);
             List<Piece> pieces = randoms.blocks(size);
             String name = pieces.stream()
                     .map(Piece::getName)

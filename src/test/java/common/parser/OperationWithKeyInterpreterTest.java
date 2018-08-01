@@ -1,10 +1,10 @@
 package common.parser;
 
+import common.datastore.FullOperationWithKey;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.OperationWithKey;
-import common.datastore.FullOperationWithKey;
-import core.mino.Piece;
 import core.mino.MinoFactory;
+import core.mino.Piece;
 import core.srs.Rotate;
 import lib.Randoms;
 import org.junit.jupiter.api.Test;
@@ -34,8 +34,8 @@ class OperationWithKeyInterpreterTest {
             List<OperationWithKey> operations = Stream.generate(() -> {
                 Piece piece = randoms.block();
                 Rotate rotate = randoms.rotate();
-                int x = randoms.nextInt(10);
-                int y = randoms.nextInt(4);
+                int x = randoms.nextIntOpen(10);
+                int y = randoms.nextIntOpen(4);
                 long deleteKey = randoms.key();
                 long usingKey = randoms.key();
                 return new FullOperationWithKey(minoFactory.create(piece, rotate), x, y, deleteKey, usingKey);

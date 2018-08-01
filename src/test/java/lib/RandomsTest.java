@@ -19,7 +19,7 @@ class RandomsTest {
     void nextInt() throws Exception {
         Randoms randoms = new Randoms();
         for (int count = 0; count < 10000; count++) {
-            int next = randoms.nextInt(3, 19);
+            int next = randoms.nextIntOpen(3, 19);
             assertThat(next)
                     .isGreaterThanOrEqualTo(3)
                     .isLessThan(19);
@@ -87,7 +87,7 @@ class RandomsTest {
     void blocks() throws Exception {
         Randoms randoms = new Randoms();
         for (int count = 0; count < 10000; count++) {
-            int size = randoms.nextInt(3, 19);
+            int size = randoms.nextIntOpen(3, 19);
             List<Piece> pieces = randoms.blocks(size);
             assertThat(pieces)
                     .hasSize(size)
@@ -120,7 +120,7 @@ class RandomsTest {
         Randoms randoms = new Randoms();
         List<Integer> bag = IntStream.range(1, 100).boxed().collect(Collectors.toList());
         for (int count = 0; count < 10000; count++) {
-            int size = randoms.nextInt(1, 15);
+            int size = randoms.nextIntOpen(1, 15);
             List<Integer> sample = randoms.sample(bag, size);
             assertThat(sample).hasSize(size);
             assertThat(bag).containsAll(sample);
@@ -133,7 +133,7 @@ class RandomsTest {
         Randoms randoms = new Randoms();
         for (int count = 0; count < 10000; count++) {
             int height = randoms.nextIntClosed(1, 12);
-            int numOfMinos = randoms.nextInt(1, height * 10 / 4);
+            int numOfMinos = randoms.nextIntOpen(1, height * 10 / 4);
             Field randomField = randoms.field(height, numOfMinos);
             assertThat(randomField)
                     .matches(field -> field.getNumOfAllBlocks() == 10 * height - numOfMinos * 4);

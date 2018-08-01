@@ -13,7 +13,7 @@ class PiecesTest {
     void testHashCode() throws Exception {
         Randoms randoms = new Randoms();
         for (int count = 0; count < 10000; count++) {
-            int size = randoms.nextInt(4, 10);
+            int size = randoms.nextIntOpen(4, 10);
             List<Piece> pieces = randoms.blocks(size);
 
             ReadOnlyListPieces readOnlyListPieces = new ReadOnlyListPieces(pieces);

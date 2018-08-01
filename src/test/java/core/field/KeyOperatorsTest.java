@@ -25,7 +25,7 @@ class KeyOperatorsTest {
                             for (int x = 0; x < 10; x++)
                                 if (randoms.nextBoolean(0.8))
                                     field.setBlock(x, y);
-                            field.removeBlock(randoms.nextInt(0, 10), y);
+                            field.removeBlock(randoms.nextIntOpen(0, 10), y);
                         }
                     }
 

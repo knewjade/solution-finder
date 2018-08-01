@@ -15,7 +15,6 @@ import core.srs.MinoRotation;
 import lib.ListComparator;
 import lib.Randoms;
 import module.LongTest;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
@@ -111,7 +110,7 @@ class OperationTransformTest {
 
         for (int count = 0; count < 100; count++) {
             // Create field
-//            int numOfMinos = randoms.nextInt(6, 10);
+//            int numOfMinos = randoms.nextIntOpen(6, 10);
 //            Field field = randoms.field(height, numOfMinos);
             int numOfMinos = 6;
             Field field = FieldFactory.createField("_________X" +
