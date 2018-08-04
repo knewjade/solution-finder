@@ -31,7 +31,7 @@ class ReadOnlyListPiecesTest {
         Randoms randoms = new Randoms();
 
         for (int count = 0; count < 10000; count++) {
-            int size = randoms.nextInt(1, 22);
+            int size = randoms.nextIntOpen(1, 22);
             List<Piece> blocks = randoms.blocks(size);
             Pieces pieces = new ReadOnlyListPieces(blocks);
             assertThat(pieces.getPieces()).isEqualTo(blocks);
@@ -43,7 +43,7 @@ class ReadOnlyListPiecesTest {
         Randoms randoms = new Randoms();
 
         for (int count = 0; count < 10000; count++) {
-            int size = randoms.nextInt(1, 22);
+            int size = randoms.nextIntOpen(1, 22);
             List<Piece> blocks = randoms.blocks(size);
             Pieces pieces = new ReadOnlyListPieces(blocks);
             assertThat(pieces.getPieces()).isEqualTo(blocks);
@@ -55,7 +55,7 @@ class ReadOnlyListPiecesTest {
         Randoms randoms = new Randoms();
 
         for (int count = 0; count < 10000; count++) {
-            int size = randoms.nextInt(1, 22);
+            int size = randoms.nextIntOpen(1, 22);
             List<Piece> pieces = randoms.blocks(size);
             Pieces readOnlyListPieces = new ReadOnlyListPieces(pieces);
             LongPieces longPieces = new LongPieces(pieces);

@@ -30,7 +30,7 @@ class LongBoardMapTest {
                                 }
                             }
 
-                            int removeX = randoms.nextInt(0, 10);
+                            int removeX = randoms.nextIntOpen(0, 10);
                             field.removeBlock(removeX, y);
                             expect.removeBlock(removeX, expectY);
 
@@ -69,7 +69,7 @@ class LongBoardMapTest {
                                 }
                             }
 
-                            int removeX = randoms.nextInt(0, 10);
+                            int removeX = randoms.nextIntOpen(0, 10);
                             expect.removeBlock(removeX, y);
                             field.removeBlock(removeX, expectY);
 
@@ -105,7 +105,7 @@ class LongBoardMapTest {
                                 }
                             }
 
-                            int removeX = randoms.nextInt(0, 10);
+                            int removeX = randoms.nextIntOpen(0, 10);
                             expect.removeBlock(removeX, y);
                             field.removeBlock(removeX, expectY);
 

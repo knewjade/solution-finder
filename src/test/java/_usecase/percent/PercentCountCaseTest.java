@@ -185,7 +185,7 @@ class PercentCountCaseTest extends PercentUseCaseBaseTest {
 
     private static class Hold1TestCase extends TestCase {
         public Hold1TestCase() {
-            super("usecase/percent/hold1.csv", 40);
+            super("usecase/percent/hold1.csv", 20);
         }
     }
 
@@ -202,7 +202,7 @@ class PercentCountCaseTest extends PercentUseCaseBaseTest {
 
     private static class Hold2TestCase extends TestCase {
         public Hold2TestCase() {
-            super("usecase/percent/hold2.csv", 20);
+            super("usecase/percent/hold2.csv", 10);
         }
     }
 

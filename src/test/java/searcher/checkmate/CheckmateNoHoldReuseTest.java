@@ -34,7 +34,7 @@ class CheckmateNoHoldReuseTest {
         Randoms randoms = new Randoms();
 
         for (int count = 0; count < 100; count++) {
-            int maxClearLine = randoms.nextInt(3, 8);
+            int maxClearLine = randoms.nextIntOpen(3, 8);
 
             int maxDepth = randoms.nextIntClosed(5, 7);
             List<Piece> pieces = randoms.blocks(maxDepth);
@@ -47,7 +47,7 @@ class CheckmateNoHoldReuseTest {
             Stopwatch stopwatchReuse = Stopwatch.createStoppedStopwatch();
 
             for (int swap = 0; swap < 250; swap++) {
-                int index = randoms.nextInt(3, pieces.size());
+                int index = randoms.nextIntOpen(3, pieces.size());
                 Piece pop = pieces.remove(index);
                 pieces.add(pop);
 
@@ -74,7 +74,7 @@ class CheckmateNoHoldReuseTest {
         Randoms randoms = new Randoms();
 
         for (int count = 0; count < 100; count++) {
-            int maxClearLine = randoms.nextInt(3, 8);
+            int maxClearLine = randoms.nextIntOpen(3, 8);
 
             int maxDepth = randoms.nextIntClosed(5, 7);
             List<Piece> pieces = randoms.blocks(maxDepth);
@@ -88,7 +88,7 @@ class CheckmateNoHoldReuseTest {
             Stopwatch stopwatchReuse2 = Stopwatch.createStoppedStopwatch();
 
             for (int swap = 0; swap < 250; swap++) {
-                int index = randoms.nextInt(3, pieces.size());
+                int index = randoms.nextIntOpen(3, pieces.size());
                 Piece pop = pieces.remove(index);
                 pieces.add(pop);
 
@@ -125,7 +125,7 @@ class CheckmateNoHoldReuseTest {
         Randoms randoms = new Randoms();
 
         for (int count = 0; count < 100; count++) {
-            int maxClearLine = randoms.nextInt(3, 8);
+            int maxClearLine = randoms.nextIntOpen(3, 8);
 
             int maxDepth = randoms.nextIntClosed(5, 7);
             List<Piece> pieces = randoms.blocks(maxDepth + 1);
@@ -138,7 +138,7 @@ class CheckmateNoHoldReuseTest {
             Stopwatch stopwatchReuse = Stopwatch.createStoppedStopwatch();
 
             for (int swap = 0; swap < 250; swap++) {
-                int index = randoms.nextInt(3, pieces.size());
+                int index = randoms.nextIntOpen(3, pieces.size());
                 Piece pop = pieces.remove(index);
                 pieces.add(pop);
 
@@ -165,7 +165,7 @@ class CheckmateNoHoldReuseTest {
         Randoms randoms = new Randoms();
 
         for (int count = 0; count < 100; count++) {
-            int maxClearLine = randoms.nextInt(3, 8);
+            int maxClearLine = randoms.nextIntOpen(3, 8);
 
             int maxDepth = randoms.nextIntClosed(5, 7);
             List<Piece> pieces = randoms.blocks(maxDepth + 10);
@@ -178,7 +178,7 @@ class CheckmateNoHoldReuseTest {
             Stopwatch stopwatchReuse = Stopwatch.createStoppedStopwatch();
 
             for (int swap = 0; swap < 250; swap++) {
-                int index = randoms.nextInt(3, pieces.size());
+                int index = randoms.nextIntOpen(3, pieces.size());
                 Piece pop = pieces.remove(index);
                 pieces.add(pop);
 

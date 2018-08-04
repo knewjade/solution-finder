@@ -30,8 +30,8 @@ class OperationInterpreterTest {
             List<Operation> operationList = Stream.generate(() -> {
                 Piece piece = randoms.block();
                 Rotate rotate = randoms.rotate();
-                int x = randoms.nextInt(10);
-                int y = randoms.nextInt(4);
+                int x = randoms.nextIntOpen(10);
+                int y = randoms.nextIntOpen(4);
                 return new SimpleOperation(piece, rotate, x, y);
             }).limit(size).collect(Collectors.toList());
 

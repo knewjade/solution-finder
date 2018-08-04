@@ -325,8 +325,8 @@ class CheckerUsingHoldInvokerTest {
         PerfectValidator validator = new PerfectValidator();
         CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
 
-        for (int count = 0; count < 20; count++) {
-            int maxClearLine = randoms.nextInt(3, 6);
+        for (int count = 0; count < 10; count++) {
+            int maxClearLine = randoms.nextIntOpen(3, 6);
             int maxDepth = randoms.nextIntClosed(3, 5);
             Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
             Field field = randoms.field(maxClearLine, maxDepth);

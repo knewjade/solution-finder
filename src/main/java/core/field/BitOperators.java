@@ -25,7 +25,7 @@ class BitOperators {
 
     // x列より右の列を選択するマスクを作成（x列を含む）
     static long getColumnMaskRightX(int minX) {
-        assert 0 <= minX && minX <= 10;
+        assert 0 <= minX && minX <= 10 : minX;
         switch (minX) {
             case 0:
                 return 0xfffffffffffffffL;
@@ -56,7 +56,7 @@ class BitOperators {
     // TODO: write unittest
     // x列より左の列を選択するマスクを作成（x列を含む）
     static long getColumnMaskLeftX(int minX) {
-        assert 0 <= minX && minX <= 10;
+        assert 0 <= minX && minX <= 10 : minX;
         switch (minX) {
             case 0:
                 return 0L;
@@ -86,7 +86,7 @@ class BitOperators {
 
     // yより下の行を選択するマスクを作成 (y行は含まない)
     static long getRowMaskBelowY(int y) {
-        assert 0 <= y && y <= 6;
+        assert 0 <= y && y <= 6 : y;
         switch (y) {
             case 0:
                 return 0L;
@@ -108,7 +108,7 @@ class BitOperators {
 
     // yより上の行を選択するマスクを作成 (y行を含む)
     static long getRowMaskAboveY(int y) {
-        assert 0 <= y && y <= 6;
+        assert 0 <= y && y <= 6 : y;
         switch (y) {
             case 0:
                 return 0xfffffffffffffffL;
@@ -145,5 +145,15 @@ class BitOperators {
                 return 4;
             return 5;
         }
+    }
+
+    // x列とその左の列の間が壁（隙間がない）とき true を返却。1 <= xであること
+    static boolean isWallBetweenLeft(int x, int maxY, long board) {
+        long maskHigh = BitOperators.getColumnOneLineBelowY(maxY);
+        long reverseXBoardHigh = ~board;
+        long columnHigh = maskHigh << x;
+        long rightHigh = reverseXBoardHigh & columnHigh;
+        long leftHigh = reverseXBoardHigh & (columnHigh >>> 1);
+        return ((leftHigh << 1) & rightHigh) == 0L;
     }
 }

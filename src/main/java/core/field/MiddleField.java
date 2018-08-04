@@ -14,8 +14,9 @@ public class MiddleField implements Field {
     private static final int FIELD_ROW_BOARDER_Y = 6;
     private static final long VALID_BOARD_RANGE = 0xfffffffffffffffL;
 
-    private long xBoardLow = 0; // x,y: 最下位 (0,0), (1,0),  ... , (9,0), (0,1), ... 最上位 // フィールド範囲外は必ず0であること
-    private long xBoardHigh = 0; // x,y: 最下位 (0,0), (1,0),  ... , (9,0), (0,1), ... 最上位 // フィールド範囲外は必ず0であること
+    // x,y: 最下位 (0,0), (1,0),  ... , (9,0), (0,1), ... 最上位 // フィールド範囲外は必ず0であること
+    private long xBoardLow = 0;
+    private long xBoardHigh = 0;
 
     public MiddleField() {
     }
@@ -142,7 +143,7 @@ public class MiddleField implements Field {
             return false;
         } else if (FIELD_ROW_BOARDER_Y <= y) {
             // Highで完結
-            long mask = 0xffffffffffL << (y - FIELD_ROW_BOARDER_Y) * FIELD_WIDTH;
+            long mask = VALID_BOARD_RANGE << (y - FIELD_ROW_BOARDER_Y) * FIELD_WIDTH;
             return (xBoardHigh & mask) != 0L;
         } else {
             // すべて必要
@@ -151,7 +152,7 @@ public class MiddleField implements Field {
                 return true;
 
             // Lowのチェック
-            long mask = 0xffffffffffL << y * FIELD_WIDTH;
+            long mask = VALID_BOARD_RANGE << y * FIELD_WIDTH;
             return (xBoardLow & mask) != 0L;
         }
     }
@@ -188,25 +189,16 @@ public class MiddleField implements Field {
             return true;
         } else if (maxY <= FIELD_ROW_BOARDER_Y) {
             // Lowで完結
-            return isWallBetweenLeft(x, maxY, xBoardLow);
+            return BitOperators.isWallBetweenLeft(x, maxY, xBoardLow);
         } else {
             // すべて必要
             // Lowのチェック
-            if (!isWallBetweenLeft(x, FIELD_ROW_BOARDER_Y, xBoardLow))
+            if (!BitOperators.isWallBetweenLeft(x, FIELD_ROW_BOARDER_Y, xBoardLow))
                 return false;
 
             // Highのチェック
-            return isWallBetweenLeft(x, maxY - FIELD_ROW_BOARDER_Y, xBoardHigh);
+            return BitOperators.isWallBetweenLeft(x, maxY - FIELD_ROW_BOARDER_Y, xBoardHigh);
         }
-    }
-
-    private boolean isWallBetweenLeft(int x, int maxYHigh, long xBoardHigh) {
-        long maskHigh = BitOperators.getColumnOneLineBelowY(maxYHigh);
-        long reverseXBoardHigh = ~xBoardHigh;
-        long columnHigh = maskHigh << x;
-        long rightHigh = reverseXBoardHigh & columnHigh;
-        long leftHigh = reverseXBoardHigh & (columnHigh >>> 1);
-        return ((leftHigh << 1) & rightHigh) == 0L;
     }
 
     @Override
@@ -311,7 +303,6 @@ public class MiddleField implements Field {
         this.xBoardHigh = newXBoardHigh & VALID_BOARD_RANGE;
     }
 
-    // TODO: write unittest
     @Override
     public void fillLine(int y) {
         if (y < FIELD_ROW_BOARDER_Y)
@@ -430,7 +421,6 @@ public class MiddleField implements Field {
         xBoardHigh = (xBoardHigh & mask) >> slide;
     }
 
-    // TODO: write unittest
     @Override
     public void slideRight(int slide) {
         assert 0 <= slide;
@@ -439,29 +429,41 @@ public class MiddleField implements Field {
         xBoardHigh = (xBoardHigh & mask) << slide;
     }
 
-    // TODO: write unittest
     @Override
     public void slideDown() {
-        long deleteKeyLow = KeyOperators.getDeleteBitKey(0);
-        long newXBoardLow = LongBoardMap.deleteLine(xBoardLow, deleteKeyLow);
+        long newXBoardLow = ((xBoardLow >>> FIELD_WIDTH) | (xBoardHigh << 5 * FIELD_WIDTH)) & VALID_BOARD_RANGE;
+        long newXBoardHigh = xBoardHigh >>> FIELD_WIDTH;
 
-        long newXBoardHigh = xBoardHigh;
-
-        int deleteLineLow = 1;
-
-        this.xBoardLow = (newXBoardLow | (newXBoardHigh << (6 - deleteLineLow) * 10)) & VALID_BOARD_RANGE;
-        this.xBoardHigh = newXBoardHigh >>> deleteLineLow * 10;
+        this.xBoardLow = newXBoardLow;
+        this.xBoardHigh = newXBoardHigh;
     }
 
-    // TODO: write unittest
     @Override
     public boolean contains(Field child) {
-        long childBoardLow = child.getBoard(0);
-        long childBoardHigh = child.getBoard(1);
-        return (xBoardLow & childBoardLow) == childBoardLow && (xBoardHigh & childBoardHigh) == childBoardHigh;
+        switch (child.getBoardCount()) {
+            case 1: {
+                long childBoardLow = child.getBoard(0);
+                return (xBoardLow & childBoardLow) == childBoardLow;
+            }
+            case 2: {
+                long childBoardLow = child.getBoard(0);
+                long childBoardHigh = child.getBoard(1);
+                return (xBoardLow & childBoardLow) == childBoardLow
+                        && (xBoardHigh & childBoardHigh) == childBoardHigh;
+            }
+            case 4: {
+                long childBoardLow = child.getBoard(0);
+                long childBoardHigh = child.getBoard(1);
+                return (xBoardLow & childBoardLow) == childBoardLow
+                        && (xBoardHigh & childBoardHigh) == childBoardHigh
+                        && child.getBoard(2) == 0L
+                        && child.getBoard(3) == 0L;
+            }
+            default:
+                throw new IllegalStateException("Illegal board count: " + child.getBoardCount());
+        }
     }
 
-    // TODO: write unittest
     @Override
     public void inverse() {
         xBoardLow = (~xBoardLow) & VALID_BOARD_RANGE;
@@ -475,10 +477,20 @@ public class MiddleField implements Field {
 
         if (o instanceof MiddleField) {
             MiddleField that = (MiddleField) o;
-            return xBoardLow == that.xBoardLow && xBoardHigh == that.xBoardHigh;
-        } else if (o instanceof SmallField) {
+            return xBoardLow == that.xBoardLow
+                    && xBoardHigh == that.xBoardHigh;
+        }
+
+        if (o instanceof SmallField) {
             SmallField that = (SmallField) o;
-            return xBoardHigh == 0L && xBoardLow == that.getBoard(0);
+            return xBoardLow == that.getXBoard()
+                    && xBoardHigh == 0L;
+        } else if (o instanceof LargeField) {
+            LargeField that = (LargeField) o;
+            return that.getXBoardLow() == xBoardLow
+                    && that.getXBoardMidLow() == xBoardHigh
+                    && that.getXBoardMidHigh() == 0L
+                    && that.getXBoardHigh() == 0L;
         } else if (o instanceof Field) {
             Field that = (Field) o;
             return FieldComparator.compareField(this, that) == 0;

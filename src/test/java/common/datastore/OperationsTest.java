@@ -55,8 +55,8 @@ class OperationsTest {
     private Operation createRandomOperation(Randoms randoms) {
         Piece piece = randoms.block();
         Rotate rotate = randoms.rotate();
-        int x = randoms.nextInt(10);
-        int y = randoms.nextInt(20);
+        int x = randoms.nextIntOpen(10);
+        int y = randoms.nextIntOpen(20);
         return new SimpleOperation(piece, rotate, x, y);
     }
 }

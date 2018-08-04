@@ -109,7 +109,7 @@ public class SmallField implements Field {
 
     @Override
     public boolean existsAbove(int y) {
-        long mask = 0xffffffffffL << y * FIELD_WIDTH;
+        long mask = VALID_BOARD_RANGE << y * FIELD_WIDTH;
         return y < MAX_FIELD_HEIGHT && (xBoard & mask) != 0L;
     }
 
@@ -129,12 +129,7 @@ public class SmallField implements Field {
 
     @Override
     public boolean isWallBetweenLeft(int x, int maxY) {
-        long mask = BitOperators.getColumnOneLineBelowY(maxY);
-        long reverseXBoard = ~xBoard;
-        long column = mask << x;
-        long right = reverseXBoard & column;
-        long left = reverseXBoard & (column >>> 1);
-        return ((left << 1) & right) == 0L;
+        return BitOperators.isWallBetweenLeft(x, maxY, xBoard);
     }
 
     @Override
@@ -188,7 +183,6 @@ public class SmallField implements Field {
         this.xBoard = LongBoardMap.insertWhiteLine(xBoard, deleteKey);
     }
 
-    // TODO: write unittest
     @Override
     public void fillLine(int y) {
         xBoard |= getLineMask(y);
@@ -251,7 +245,6 @@ public class SmallField implements Field {
         xBoard = (xBoard & mask) >> slide;
     }
 
-    // TODO: write unittest
     @Override
     public void slideRight(int slide) {
         assert 0 <= slide;
@@ -259,21 +252,36 @@ public class SmallField implements Field {
         xBoard = (xBoard & mask) << slide;
     }
 
-    // TODO: write unittest
     @Override
     public void slideDown() {
-        long deleteKey = KeyOperators.getDeleteBitKey(0);
-        this.xBoard = LongBoardMap.deleteLine(xBoard, deleteKey);
+        this.xBoard = xBoard >>> FIELD_WIDTH;
     }
 
-    // TODO: write unittest
     @Override
     public boolean contains(Field child) {
-        long childBoard = child.getBoard(0);
-        return (xBoard & childBoard) == childBoard;
+        assert child.getBoardCount() <= 2;
+        switch (child.getBoardCount()) {
+            case 1: {
+                long childBoardLow = child.getBoard(0);
+                return (xBoard & childBoardLow) == childBoardLow;
+            }
+            case 2: {
+                long childBoardLow = child.getBoard(0);
+                return (xBoard & childBoardLow) == childBoardLow
+                        && child.getBoard(1) == 0L;
+            }
+            case 4: {
+                long childBoardLow = child.getBoard(0);
+                return (xBoard & childBoardLow) == childBoardLow
+                        && child.getBoard(1) == 0L
+                        && child.getBoard(2) == 0L
+                        && child.getBoard(3) == 0L;
+            }
+            default:
+                throw new IllegalStateException("Illegal board count: " + child.getBoardCount());
+        }
     }
 
-    // TODO: write unittest
     @Override
     public void inverse() {
         xBoard = (~xBoard) & VALID_BOARD_RANGE;
@@ -287,9 +295,18 @@ public class SmallField implements Field {
         if (o instanceof SmallField) {
             SmallField that = (SmallField) o;
             return xBoard == that.xBoard;
-        } else if (o instanceof MiddleField) {
+        }
+
+        if (o instanceof MiddleField) {
             MiddleField that = (MiddleField) o;
-            return that.getBoard(0) == xBoard && that.getBoard(1) == 0L;
+            return that.getXBoardLow() == xBoard
+                    && that.getXBoardHigh() == 0L;
+        } else if (o instanceof LargeField) {
+            LargeField that = (LargeField) o;
+            return that.getXBoardLow() == xBoard
+                    && that.getXBoardMidLow() == 0L
+                    && that.getXBoardMidHigh() == 0L
+                    && that.getXBoardHigh() == 0L;
         } else if (o instanceof Field) {
             Field that = (Field) o;
             return FieldComparator.compareField(this, that) == 0;

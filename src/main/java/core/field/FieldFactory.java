@@ -92,6 +92,40 @@ public class FieldFactory {
         return field;
     }
 
+    public static LargeField createLargeField() {
+        return new LargeField();
+    }
+
+    public static LargeField createLargeField(String marks) {
+        return createLargeField(marks, true);
+    }
+
+    private static LargeField createLargeField(String marks, boolean isBlock) {
+        if (240 < marks.length())
+            throw new IllegalArgumentException("length of marks should be <= 240");
+
+
+        if (marks.length() % 10 != 0)
+            throw new IllegalArgumentException("length of marks should be 'mod 10'");
+
+        int maxY = marks.length() / 10;
+        LargeField field = new LargeField();
+        for (int y = 0; y < maxY; y++) {
+            for (int x = 0; x < 10; x++) {
+                char mark = marks.charAt((maxY - y - 1) * 10 + x);
+                if (mark != ' ' && mark != '_') {
+                    if (isBlock)
+                        field.setBlock(x, y);
+                } else {
+                    if (!isBlock)
+                        field.setBlock(x, y);
+                }
+            }
+        }
+
+        return field;
+    }
+
     public static Field createInverseField(String marks) {
         if (marks.length() % 10 != 0)
             throw new IllegalArgumentException("length of marks should be 'mod 10'");

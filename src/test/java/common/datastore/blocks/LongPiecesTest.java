@@ -63,7 +63,7 @@ class LongPiecesTest {
             Pieces pieces = new LongPieces(blocks);
 
             for (int addCount = 0; addCount < 3; addCount++) {
-                List<Piece> newPieces = randoms.blocks(randoms.nextInt(0, 7));
+                List<Piece> newPieces = randoms.blocks(randoms.nextIntOpen(0, 7));
                 blocks.addAll(newPieces);
                 pieces = pieces.addAndReturnNew(newPieces);
             }
@@ -90,10 +90,10 @@ class LongPiecesTest {
         Randoms randoms = new Randoms();
 
         for (int count = 0; count < 10000; count++) {
-            int size1 = randoms.nextInt(1, 21);
+            int size1 = randoms.nextIntOpen(1, 21);
             List<Piece> blocks1 = randoms.blocks(size1);
 
-            int size2 = randoms.nextInt(1, 22);
+            int size2 = randoms.nextIntOpen(1, 22);
             List<Piece> blocks2 = randoms.blocks(size2);
 
             if (blocks1.equals(blocks2))
@@ -111,7 +111,7 @@ class LongPiecesTest {
         Randoms randoms = new Randoms();
 
         for (int count = 0; count < 10000; count++) {
-            int size = randoms.nextInt(1, 22);
+            int size = randoms.nextIntOpen(1, 22);
             List<Piece> pieces = randoms.blocks(size);
             LongPieces longPieces = new LongPieces(pieces);
             Pieces readOnlyListPieces = new ReadOnlyListPieces(pieces);

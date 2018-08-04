@@ -19,8 +19,8 @@ class PassedMinoShifterTest {
         for (int count = 0; count < 10000; count++) {
             Piece piece = randoms.block();
             Rotate rotate = randoms.rotate();
-            int x = randoms.nextInt(10);
-            int y = randoms.nextInt(0, 12);
+            int x = randoms.nextIntOpen(10);
+            int y = randoms.nextIntOpen(0, 12);
             MinimalAction action = MinimalAction.create(x, y, rotate);
 
             Action actualAction = minoShifter.createTransformedAction(piece, action);
@@ -52,8 +52,8 @@ class PassedMinoShifterTest {
         for (int count = 0; count < 10000; count++) {
             Piece piece = randoms.block();
             Rotate rotate = randoms.rotate();
-            int x = randoms.nextInt(10);
-            int y = randoms.nextInt(0, 12);
+            int x = randoms.nextIntOpen(10);
+            int y = randoms.nextIntOpen(0, 12);
 
             List<Action> actions = minoShifter.enumerateSameOtherActions(piece, rotate, x, y);
             assertThat(actions).isEmpty();
