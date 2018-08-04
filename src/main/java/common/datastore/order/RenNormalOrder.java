@@ -1,25 +1,25 @@
 package common.datastore.order;
 
 import common.OperationHistory;
-import common.comparator.OrderComparator;
+import common.comparator.RenOrderComparator;
 import core.field.Field;
 import core.mino.Piece;
 
-public class DepthOrder implements Order {
+public class RenNormalOrder implements RenOrder, Comparable<RenOrder> {
     private final Piece hold;
     private final Field field;
-    private final int maxClearLine;
     private final OperationHistory history;
+    private final int renCount;
 
-    public DepthOrder(Field field, Piece hold, int maxClearLine, int maxDepth) {
-        this(field, hold, maxClearLine, new OperationHistory(maxDepth - 1));
+    public RenNormalOrder(Field field, Piece hold, int renCount, int maxDepth) {
+        this(field, hold, renCount, new OperationHistory(maxDepth));
     }
 
-    private DepthOrder(Field field, Piece hold, int maxClearLine, OperationHistory history) {
+    public RenNormalOrder(Field field, Piece hold, int renCount, OperationHistory history) {
         this.field = field;
         this.hold = hold;
-        this.maxClearLine = maxClearLine;
         this.history = history;
+        this.renCount = renCount;
     }
 
     public OperationHistory getHistory() {
@@ -34,16 +34,16 @@ public class DepthOrder implements Order {
         return field;
     }
 
-    public int getMaxClearLine() {
-        return maxClearLine;
+    public int getRenCount() {
+        return renCount;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || !(o instanceof Order)) return false;
-        Order order = (Order) o;
-        return OrderComparator.compareOrder(this, order) == 0;
+        if (o == null || !(o instanceof RenOrder)) return false;
+        RenOrder order = (RenOrder) o;
+        return RenOrderComparator.compareOrder(this, order) == 0;
     }
 
     @Override
@@ -55,8 +55,7 @@ public class DepthOrder implements Order {
     }
 
     @Override
-    public int compareTo(Order o) {
-        return OrderComparator.compareOrder(this, o);
+    public int compareTo(RenOrder o) {
+        return RenOrderComparator.compareOrder(this, o);
     }
 }
-

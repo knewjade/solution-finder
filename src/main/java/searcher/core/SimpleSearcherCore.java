@@ -7,9 +7,9 @@ import common.datastore.order.NormalOrder;
 import common.datastore.order.Order;
 import core.action.candidate.Candidate;
 import core.field.Field;
-import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
+import core.mino.Piece;
 import searcher.common.DataPool;
 import searcher.common.validator.Validator;
 
@@ -18,9 +18,9 @@ import java.util.Set;
 public class SimpleSearcherCore<T extends Action> {
     private final MinoFactory minoFactory;
     private final Validator validator;
-    private final DataPool dataPool;
+    private final DataPool<Order, Result> dataPool;
 
-    public SimpleSearcherCore(MinoFactory minoFactory, Validator validator, DataPool dataPool) {
+    public SimpleSearcherCore(MinoFactory minoFactory, Validator validator, DataPool<Order, Result> dataPool) {
         this.minoFactory = minoFactory;
         this.validator = validator;
         this.dataPool = dataPool;

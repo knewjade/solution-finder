@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.TreeSet;
 
-public class CheckmateDataPool implements DataPool {
+public class CheckmateDataPool implements DataPool<Order, Result> {
     private TreeSet<Order> nexts;
     private ArrayList<Result> results;
     private final Comparator<Order> comparator = new OrderComparator();

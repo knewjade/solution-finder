@@ -40,11 +40,6 @@ class ResultHelperTest {
         public int getMaxClearLine() {
             return 0;
         }
-
-        @Override
-        public int compareTo(Order o) {
-            return hold.compareTo(o.getHold());
-        }
     }
 
     @Test
