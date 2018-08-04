@@ -25,7 +25,8 @@ public class DevMain {
 //        String command = "setup -p [I]! --fill i --margin o -t v115@GhQpIeQpIeQpIewhJeAgH";  // -> Last I only h4 = 1
 //        String command = "setup -p [I]! --fill i --margin o -t v115@FhQpIeQpIeQpIewhKeAgH";  // -> x8 I only h4 = 1
 //        String command = "setup -p [I]! --fill i --margin o -t v115@6gQpIeQpIeQpIeQpIewhLeAgH";  // -> x7 I only h5 = 1
-        String command = "path -s yes -c 6 -p [^IL]!,*p2 -t v115@wghlwhHeglwhEeA8BtglwhA8DeB8BtwhT8JeAgH";
+//        String command = "path -s yes -c 6 -p [^IL]!,*p2 -t v115@wghlwhHeglwhEeA8BtglwhA8DeB8BtwhT8JeAgH";
+        String command = "path -t v115@VgL8FeC8AewwBeI8BeS8BeG8EeD8EeB8JeAgH -c 8 -p Z,T,Z,L,*p3 -f csv -k pattern -r true";
 
 //        String command = "setup -p [^SZT]! --fill i --margin o -t v115@zgTpwhQpDeTpAeQpDezhAewhDeyhQpAeQpwhCeTpAe?RpMeAgH";
 //        String command = "setup -p [^SZT]! --fill i --margin o -t v115@zgTpwhQpDeTpAeQpDezhAewhDeyhQpAexhCeTpAeRp?MeAgH";

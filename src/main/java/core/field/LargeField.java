@@ -1068,15 +1068,30 @@ public class LargeField implements Field {
 
     @Override
     public boolean contains(Field child) {
-        assert child.getBoardCount() <= 4;
-        long childBoardLow = child.getBoard(0);
-        long childBoardMidLow = child.getBoard(1);
-        long childBoardMidHigh = child.getBoard(2);
-        long childBoardHigh = child.getBoard(3);
-        return (xBoardLow & childBoardLow) == childBoardLow
-                && (xBoardMidLow & childBoardMidLow) == childBoardMidLow
-                && (xBoardMidHigh & childBoardMidHigh) == childBoardMidHigh
-                && (xBoardHigh & childBoardHigh) == childBoardHigh;
+        switch (child.getBoardCount()) {
+            case 1: {
+                long childBoardLow = child.getBoard(0);
+                return (xBoardLow & childBoardLow) == childBoardLow;
+            }
+            case 2: {
+                long childBoardLow = child.getBoard(0);
+                long childBoardMidLow = child.getBoard(1);
+                return (xBoardLow & childBoardLow) == childBoardLow
+                        && (xBoardMidLow & childBoardMidLow) == childBoardMidLow;
+            }
+            case 4: {
+                long childBoardLow = child.getBoard(0);
+                long childBoardMidLow = child.getBoard(1);
+                long childBoardMidHigh = child.getBoard(2);
+                long childBoardHigh = child.getBoard(3);
+                return (xBoardLow & childBoardLow) == childBoardLow
+                        && (xBoardMidLow & childBoardMidLow) == childBoardMidLow
+                        && (xBoardMidHigh & childBoardMidHigh) == childBoardMidHigh
+                        && (xBoardHigh & childBoardHigh) == childBoardHigh;
+            }
+            default:
+                throw new IllegalStateException("Illegal board count: " + child.getBoardCount());
+        }
     }
 
     @Override

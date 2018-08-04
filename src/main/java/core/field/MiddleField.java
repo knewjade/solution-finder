@@ -440,10 +440,28 @@ public class MiddleField implements Field {
 
     @Override
     public boolean contains(Field child) {
-        assert child.getBoardCount() <= 2;
-        long childBoardLow = child.getBoard(0);
-        long childBoardHigh = child.getBoard(1);
-        return (xBoardLow & childBoardLow) == childBoardLow && (xBoardHigh & childBoardHigh) == childBoardHigh;
+        switch (child.getBoardCount()) {
+            case 1: {
+                long childBoardLow = child.getBoard(0);
+                return (xBoardLow & childBoardLow) == childBoardLow;
+            }
+            case 2: {
+                long childBoardLow = child.getBoard(0);
+                long childBoardHigh = child.getBoard(1);
+                return (xBoardLow & childBoardLow) == childBoardLow
+                        && (xBoardHigh & childBoardHigh) == childBoardHigh;
+            }
+            case 4: {
+                long childBoardLow = child.getBoard(0);
+                long childBoardHigh = child.getBoard(1);
+                return (xBoardLow & childBoardLow) == childBoardLow
+                        && (xBoardHigh & childBoardHigh) == childBoardHigh
+                        && child.getBoard(2) == 0L
+                        && child.getBoard(3) == 0L;
+            }
+            default:
+                throw new IllegalStateException("Illegal board count: " + child.getBoardCount());
+        }
     }
 
     @Override

@@ -259,9 +259,27 @@ public class SmallField implements Field {
 
     @Override
     public boolean contains(Field child) {
-        assert child.getBoardCount() <= 1;
-        long childBoard = child.getBoard(0);
-        return (xBoard & childBoard) == childBoard;
+        assert child.getBoardCount() <= 2;
+        switch (child.getBoardCount()) {
+            case 1: {
+                long childBoardLow = child.getBoard(0);
+                return (xBoard & childBoardLow) == childBoardLow;
+            }
+            case 2: {
+                long childBoardLow = child.getBoard(0);
+                return (xBoard & childBoardLow) == childBoardLow
+                        && child.getBoard(1) == 0L;
+            }
+            case 4: {
+                long childBoardLow = child.getBoard(0);
+                return (xBoard & childBoardLow) == childBoardLow
+                        && child.getBoard(1) == 0L
+                        && child.getBoard(2) == 0L
+                        && child.getBoard(3) == 0L;
+            }
+            default:
+                throw new IllegalStateException("Illegal board count: " + child.getBoardCount());
+        }
     }
 
     @Override

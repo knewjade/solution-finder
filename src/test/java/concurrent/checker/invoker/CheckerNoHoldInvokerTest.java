@@ -405,7 +405,7 @@ class CheckerNoHoldInvokerTest {
         PerfectValidator validator = new PerfectValidator();
         CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
 
-        for (int count = 0; count < 40; count++) {
+        for (int count = 0; count < 20; count++) {
             int maxClearLine = randoms.nextIntOpen(3, 6);
             int maxDepth = randoms.nextIntClosed(3, 5);
             Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
