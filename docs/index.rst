@@ -32,6 +32,9 @@ solution-finderは、探索ツールとして次の特徴を持っています�
     - 指定したミノの組み合わせから、置くことができる全パターンを列挙してファイルに出力
     - ブロックを置いても置かなくても良いマージンエリアの設定が可能
 
+* ren (βバージョン): ある地形からRENが続く手順を列挙する
+    - 指定したミノ順から、RENを列挙してファイルに出力
+
 * util: solution-finderの機能を補助するユーティリティ
    - fig: テト譜をもとに画像を生成
 
@@ -75,6 +78,7 @@ solution-finderを操作しやすくするGUIを `@kitsune_fuchi (twitter) <http
    contents/percent/main
    contents/path/main
    contents/setup/main
+   contents/ren/main
    contents/util/main
    contents/caution
    contents/contact

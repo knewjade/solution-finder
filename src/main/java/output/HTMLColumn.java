@@ -8,4 +8,6 @@ public interface HTMLColumn {
     String getId();
 
     Optional<String> getDescription();
+
+    int hashCode();
 }

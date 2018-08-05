@@ -3,12 +3,12 @@ package searcher.checker;
 import common.datastore.Result;
 import common.datastore.action.Action;
 import common.datastore.blocks.Pieces;
-import common.datastore.order.DepthOrder;
+import common.datastore.order.NormalOrder;
 import common.datastore.order.Order;
 import core.action.candidate.Candidate;
 import core.field.Field;
-import core.mino.Piece;
 import core.mino.MinoFactory;
+import core.mino.Piece;
 import searcher.common.validator.Validator;
 import searcher.core.SimpleSearcherCore;
 
@@ -40,7 +40,7 @@ public class CheckerNoHold<T extends Action> implements Checker<T> {
         int deleteLine = freeze.clearLine();
 
         dataPool.initFirst();
-        dataPool.addOrder(new DepthOrder(freeze, null, maxClearLine - deleteLine, maxDepth));
+        dataPool.addOrder(new NormalOrder(freeze, null, maxClearLine - deleteLine, maxDepth));
 
         while (!dataPool.getNexts().isEmpty() && dataPool.getResults().isEmpty()) {
             Order order = dataPool.getNexts().pollLast();

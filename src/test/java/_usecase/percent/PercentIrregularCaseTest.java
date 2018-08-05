@@ -2,8 +2,8 @@ package _usecase.percent;
 
 import _usecase.ConfigFileHelper;
 import _usecase.Log;
-import _usecase.path.files.OutputFileHelper;
 import _usecase.RunnerHelper;
+import _usecase.path.files.OutputFileHelper;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
@@ -199,20 +199,20 @@ class PercentIrregularCaseTest extends PercentUseCaseBaseTest {
         // 高さの指定が大きすぎる
 
         String tetfu = "v115@vhAAgH";
-        String command = String.format("percent -c 13 -t %s -p *p2", tetfu);
+        String command = String.format("percent -c 25 -t %s -p *p2", tetfu);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
         assertThat(log.getReturnCode()).isEqualTo(1);
 
         assertThat(log.getError())
-                .contains(ErrorMessages.failMain());
+                .contains(ErrorMessages.failPreMain());
 
         assertThat(OutputFileHelper.existsErrorText()).isTrue();
 
         String errorFile = OutputFileHelper.loadErrorText();
         assertThat(errorFile)
                 .contains(command)
-                .contains("Clear-Line should be 2 <= line <= 12: line=13 [FinderInitializeException]");
+                .contains("Field height should be equal or less than 24: height=25 [IllegalArgumentException]");
     }
 
     @Test
@@ -283,7 +283,7 @@ class PercentIrregularCaseTest extends PercentUseCaseBaseTest {
         String errorFile = OutputFileHelper.loadErrorText();
         assertThat(errorFile)
                 .contains(command)
-                .contains("Clear-Line should be 2 <= line <= 12: line=0 [FinderInitializeException]");
+                .contains("Clear-Line should be 2 <= line <= 24: line=0 [FinderInitializeException]");
     }
 
     @Test

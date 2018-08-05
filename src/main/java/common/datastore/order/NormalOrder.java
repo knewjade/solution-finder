@@ -5,7 +5,7 @@ import common.comparator.OrderComparator;
 import core.field.Field;
 import core.mino.Piece;
 
-public class NormalOrder implements Order {
+public class NormalOrder implements Order, Comparable<Order> {
     private final Piece hold;
     private final Field field;
     private final int maxClearLine;

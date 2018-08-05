@@ -32,11 +32,6 @@ class ResultPCFComparatorTest {
         public int getMaxClearLine() {
             return 0;
         }
-
-        @Override
-        public int compareTo(Order o) {
-            return 0;
-        }
     };
 
     @Test

@@ -1,10 +1,7 @@
 package searcher.common;
 
-import common.datastore.Result;
-import common.datastore.order.Order;
+public interface DataPool<O, R> {
+    void addOrder(O order);
 
-public interface DataPool {
-    void addOrder(Order order);
-
-    void addResult(Result result);
+    void addResult(R result);
 }

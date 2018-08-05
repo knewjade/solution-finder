@@ -4,7 +4,7 @@ import common.OperationHistory;
 import common.datastore.Result;
 import common.datastore.action.Action;
 import common.datastore.blocks.Pieces;
-import common.datastore.order.DepthOrder;
+import common.datastore.order.NormalOrder;
 import common.datastore.order.Order;
 import core.action.candidate.Candidate;
 import core.field.Field;
@@ -41,7 +41,7 @@ public class CheckerUsingHold<T extends Action> implements Checker<T> {
         int deleteLine = freeze.clearLine();
 
         dataPool.initFirst();
-        dataPool.addOrder(new DepthOrder(freeze, pieces[0], maxClearLine - deleteLine, maxDepth));
+        dataPool.addOrder(new NormalOrder(freeze, pieces[0], maxClearLine - deleteLine, maxDepth));
 
         while (!dataPool.getNexts().isEmpty() && dataPool.getResults().isEmpty()) {
             Order order = dataPool.getNexts().pollLast();

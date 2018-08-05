@@ -32,6 +32,11 @@ public class Verify {
             throw new FinderInitializeException("Clear-Line should be 2 <= line <= 12: line=" + maxClearLine);
     }
 
+    public static void maxClearLineUnder24(int maxClearLine) throws FinderInitializeException {
+        if (maxClearLine < 2 || 24 < maxClearLine)
+            throw new FinderInitializeException("Clear-Line should be 2 <= line <= 24: line=" + maxClearLine);
+    }
+
     public static void reservedBlocks(BlockField blockField) throws FinderInitializeException {
         if (blockField == null)
             throw new FinderInitializeException("Invalid reserved blocks");
@@ -40,7 +45,14 @@ public class Verify {
     public static PatternGenerator patterns(List<String> patterns) throws FinderInitializeException {
         if (patterns.isEmpty())
             throw new FinderInitializeException("Should specify patterns, not allow empty");
-        return createBlocksGenerator(patterns);
+
+        PatternGenerator patternGenerator = createBlocksGenerator(patterns);
+
+        int depth = patternGenerator.getDepth();
+        if (22 < depth)
+            throw new FinderInitializeException("Length of sequence should be <= 22: depth=" + depth);
+
+        return patternGenerator;
     }
 
     public static PatternGenerator patterns(List<String> patterns, int depth) throws FinderInitializeException {

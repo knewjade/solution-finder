@@ -8,7 +8,7 @@ public class FieldFactory {
             return new MiddleField();
         else if (maxHeight <= 24)
             return new LargeField();
-        throw new IllegalArgumentException("MaxHeight check too large. Should be equal or less than 12");
+        throw new IllegalArgumentException("Field height should be equal or less than 24: height=" + maxHeight);
     }
 
     public static Field createField(String marks) {
