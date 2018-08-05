@@ -69,7 +69,7 @@ public class PercentEntryPoint implements EntryPoint {
 
         // Setup max clear line
         int maxClearLine = settings.getMaxClearLine();
-        Verify.maxClearLineUnder12(maxClearLine);
+        Verify.maxClearLineUnder24(maxClearLine);
 
         // Output field
         output(FieldView.toString(field, maxClearLine));

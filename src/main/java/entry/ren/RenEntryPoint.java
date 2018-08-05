@@ -146,8 +146,6 @@ public class RenEntryPoint implements EntryPoint {
 
         output("# Output");
 
-        output("     Found solutions = " + results.size());
-
         // HTMLを出力
         {
             HTMLBuilder<HTMLColumn> htmlBuilder = new HTMLBuilder<>("Ren Result");
@@ -166,7 +164,7 @@ public class RenEntryPoint implements EntryPoint {
                 String name = operationWithKeys.stream()
                         .map(operation -> String.format("%s-%s", operation.getPiece(), operation.getRotate()))
                         .collect(Collectors.joining(" "));
-                String aLink = String.format("<a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a>", fumenData, name);
+                String aLink = String.format("<div><a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a></div>", fumenData, name);
 
                 int renCount = result.getRenCount();
                 htmlBuilder.addColumn(new RenHTMLColumn(renCount), aLink);
@@ -178,6 +176,11 @@ public class RenEntryPoint implements EntryPoint {
             ArrayList<Integer> renKeyList = new ArrayList<>(renKeys);
             Collections.reverse(renKeyList);
             List<HTMLColumn> allColumns = renKeyList.stream().map(RenHTMLColumn::new).collect(Collectors.toList());
+
+            if (allColumns.isEmpty())
+                output("  Found solutions = 0");
+            else
+                output(String.format("  Found solutions = %d (Max %d Ren)", results.size(), renKeyList.get(0)));
 
             // 出力
             try (BufferedWriter writer = this.base.newBufferedWriter()) {

@@ -10,7 +10,7 @@ public enum RenOptions {
     Help(NoArgOption.full("h", "help", "Usage")),
     Fumen(SingleArgOption.full("t", "tetfu", "v115@~", "Specify tetfu data for s-finder settings")),
     Page(SingleArgOption.full("P", "page", "number", "Specify pages of tetfu data for s-finder settings")),
-    FieldPath(SingleArgOption.full("fp", "file-path", "path", "File path of field definition")),
+    FieldPath(SingleArgOption.full("fp", "field-path", "path", "File path of field definition")),
     Patterns(SingleArgOption.full("p", "patterns", "definition", "Specify pattern definition, directly")),
     PatternsPath(SingleArgOption.full("pp", "patterns-path", "path", "File path of pattern definition")),
     LogPath(SingleArgOption.full("lp", "log-path", "path", "File path of output log")),
