@@ -95,17 +95,6 @@ public class LongPieces implements Pieces, Comparable<LongPieces> {
         assert this.max <= 22;
     }
 
-    public long getPiecesValue() {
-        return pieces;
-    }
-
-    // TODO: write unittest
-    public Piece getLastBlock() {
-        assert 1 <= max : max;
-        long value = pieces / SCALE[max - 1];
-        return Piece.getBlock((int) (value % 7));
-    }
-
     @Override
     public List<Piece> getPieces() {
         ArrayList<Piece> pieces = new ArrayList<>();

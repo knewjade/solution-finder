@@ -40,7 +40,14 @@ public class Verify {
     public static PatternGenerator patterns(List<String> patterns) throws FinderInitializeException {
         if (patterns.isEmpty())
             throw new FinderInitializeException("Should specify patterns, not allow empty");
-        return createBlocksGenerator(patterns);
+
+        PatternGenerator patternGenerator = createBlocksGenerator(patterns);
+
+        int depth = patternGenerator.getDepth();
+        if (22 < depth)
+            throw new FinderInitializeException("Length of sequence should be <= 22: depth=" + depth);
+
+        return patternGenerator;
     }
 
     public static PatternGenerator patterns(List<String> patterns, int depth) throws FinderInitializeException {

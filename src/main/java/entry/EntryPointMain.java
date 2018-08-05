@@ -11,6 +11,10 @@ import entry.path.PathSettings;
 import entry.percent.PercentEntryPoint;
 import entry.percent.PercentSettingParser;
 import entry.percent.PercentSettings;
+import entry.ren.RenEntryPoint;
+import entry.ren.RenOptions;
+import entry.ren.RenSettingParser;
+import entry.ren.RenSettings;
 import entry.setup.SetupEntryPoint;
 import entry.setup.SetupSettingParser;
 import entry.setup.SetupSettings;
@@ -19,6 +23,9 @@ import entry.util.fig.FigUtilSettingParser;
 import entry.util.fig.FigUtilSettings;
 import exceptions.FinderInitializeException;
 import exceptions.FinderParseException;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Options;
 
 import java.io.*;
 import java.time.LocalDateTime;
@@ -31,6 +38,7 @@ public class EntryPointMain {
             "percent",
             "path",
             "setup",
+            "ren",
             "move",
             "util fig",
     };
@@ -184,6 +192,8 @@ public class EntryPointMain {
                 return getSetupEntryPoint(commands);
             case "move":
                 return getMoveEntryPoint(commands);
+            case "ren":
+                return getRenEntryPoint(commands);
             case "dev":
                 return getDevEntryPoint(commands);
             default:
@@ -251,7 +261,20 @@ public class EntryPointMain {
         }
     }
 
-    private static Optional<EntryPoint> getDevEntryPoint(List<String> commands) throws FinderInitializeException, FinderParseException {
+    private static Optional<EntryPoint> getRenEntryPoint(List<String> commands) throws FinderParseException, FinderInitializeException {
+        Options options = RenOptions.create();
+        CommandLineParser parser = new DefaultParser();
+        RenSettingParser settingParser = new RenSettingParser(options, parser);
+        Optional<RenSettings> settingsOptional = settingParser.parse(commands);
+        if (settingsOptional.isPresent()) {
+            RenSettings settings = settingsOptional.get();
+            return Optional.of(new RenEntryPoint(settings));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    private static Optional<EntryPoint> getDevEntryPoint(List<String> commands) {
         if (commands.get(0).equals("quiz"))
             return Optional.of(new DevRandomEntryPoint(commands.subList(1, commands.size())));
         throw new IllegalArgumentException("dev: Invalid type: Use quiz");

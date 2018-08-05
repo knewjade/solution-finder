@@ -27,24 +27,34 @@ public class RenSearcherCore<T extends Action> {
 
     public void stepWithNext(Candidate<T> candidate, Piece drawn, RenOrder order, boolean isLast) {
         Piece hold = order.getHold();
-        step(candidate, drawn, hold, order, isLast);
+        boolean isTerminated = step(candidate, drawn, hold, order, isLast);
 
         if (drawn != hold) {
             // Holdの探索
-            step(candidate, hold, drawn, order, isLast);
+            isTerminated &= step(candidate, hold, drawn, order, isLast);
+        }
+
+        if (isTerminated) {
+            dataPool.addResult(new RenResult(order, false));
         }
     }
 
     public void stepWithNextNoHold(Candidate<T> candidate, Piece drawn, RenOrder order, boolean isLast) {
-        step(candidate, drawn, order.getHold(), order, isLast);
+        boolean isTerminated = step(candidate, drawn, order.getHold(), order, isLast);
+        if (isTerminated) {
+            dataPool.addResult(new RenResult(order, false));
+        }
     }
 
     public void stepWhenNoNext(Candidate<T> candidate, RenOrder order, boolean isLast) {
         Piece hold = order.getHold();
-        step(candidate, hold, null, order, isLast);
+        boolean isTerminated = step(candidate, hold, null, order, isLast);
+        if (isTerminated) {
+            dataPool.addResult(new RenResult(order, false));
+        }
     }
 
-    private void step(Candidate<T> candidate, Piece drawn, Piece nextHold, RenOrder order, boolean isLast) {
+    private boolean step(Candidate<T> candidate, Piece drawn, Piece nextHold, RenOrder order, boolean isLast) {
         Field currentField = order.getField();
         int renCount = order.getRenCount();
         Set<T> candidateList = candidate.search(currentField, drawn, max);
@@ -72,8 +82,6 @@ public class RenSearcherCore<T extends Action> {
             }
         }
 
-        if (isTerminated) {
-            dataPool.addResult(new RenResult(order, false));
-        }
+        return isTerminated;
     }
 }
