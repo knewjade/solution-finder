@@ -10,7 +10,7 @@ import java.util.List;
 
 public class RenSettings {
     private static final String DEFAULT_LOG_FILE_PATH = "output/last_output.txt";
-    private static final String DEFAULT_OUTPUT_BASE_FILE_PATH = "output/move.csv";
+    private static final String DEFAULT_OUTPUT_BASE_FILE_PATH = "output/ren.html";
 
     private boolean isUsingHold = true;
     private String logFilePath = DEFAULT_LOG_FILE_PATH;

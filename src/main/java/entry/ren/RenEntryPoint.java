@@ -26,14 +26,21 @@ import exceptions.FinderException;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
 import exceptions.FinderTerminateException;
+import lib.Stopwatch;
+import output.HTMLBuilder;
+import output.HTMLColumn;
 import searcher.ren.RenNoHold;
 import searcher.ren.RenSearcher;
 import searcher.ren.RenUsingHold;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
-import java.util.Comparator;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class RenEntryPoint implements EntryPoint {
@@ -41,6 +48,7 @@ public class RenEntryPoint implements EntryPoint {
 
     private final RenSettings settings;
     private final BufferedWriter logWriter;
+    private final MyFile base;
 
     public RenEntryPoint(RenSettings settings) throws FinderInitializeException {
         this.settings = settings;
@@ -57,6 +65,23 @@ public class RenEntryPoint implements EntryPoint {
         } catch (IOException e) {
             throw new FinderInitializeException(e);
         }
+
+        {
+            // 出力ファイルが正しく出力できるか確認
+            String outputBaseFilePath = settings.getOutputBaseFilePath();
+            String namePath = getRemoveExtensionFromPath(outputBaseFilePath);
+
+            // pathが空 または ディレクトリであるとき、pathを追加して、ファイルにする
+            if (namePath.isEmpty() || namePath.endsWith(String.valueOf(File.separatorChar)))
+                namePath += "path";
+
+            // baseファイル
+            String outputFilePath = String.format("%s%s", namePath, FILE_EXTENSION);
+            MyFile base = new MyFile(outputFilePath);
+            base.mkdirs();
+
+            this.base = base;
+        }
     }
 
     @Override
@@ -68,7 +93,7 @@ public class RenEntryPoint implements EntryPoint {
         Verify.field(field);
 
         // Output field
-        output(FieldView.toString(field));
+        output(FieldView.toReducedString(field));
 
         output();
 
@@ -90,7 +115,9 @@ public class RenEntryPoint implements EntryPoint {
 
         Pieces pieces = piecesList.get(0);
         List<Piece> pieceList = pieces.getPieces();
+
         output("  " + pieceList.stream().map(Piece::getName).collect(Collectors.joining()));
+        output();
 
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
@@ -98,26 +125,84 @@ public class RenEntryPoint implements EntryPoint {
 
         RenSearcher<Action> renSearcher = getRenSearcher(minoFactory);
         Candidate<Action> candidate = getCandidate(minoFactory, minoShifter, minoRotation);
+
+        // ========================================
+
+        output("# Search");
+        output("  -> Stopwatch start");
+        output("     ... searching");
+
+        Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
+        stopwatch.stop();
+
         List<RenResult> results = renSearcher.check(field, pieceList, candidate, pieceList.size());
+
+        output("     ... done");
+        output("  -> Stopwatch stop : " + stopwatch.toMessage(TimeUnit.MILLISECONDS));
+
+        output();
 
         // ========================================
 
         output("# Output");
 
-        System.out.println(results.size());
-        results.sort(Comparator.comparingInt(RenResult::getRenCount).reversed());
+        output("     Found solutions = " + results.size());
 
-        ColorConverter colorConverter = new ColorConverter();
-        for (RenResult result : results) {
+        // HTMLを出力
+        {
+            HTMLBuilder<HTMLColumn> htmlBuilder = new HTMLBuilder<>("Ren Result");
+            htmlBuilder.addHeader("Ren Result");
+
+            ColorConverter colorConverter = new ColorConverter();
             SequenceFumenParser fumenParser = new SequenceFumenParser(minoFactory, colorConverter);
 
-            Operations operations = new Operations(result.getRenOrder().getHistory().getOperationStream());
-            List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, 24);
-            System.out.println(operationWithKeys);
+            HashSet<Integer> renKeys = new HashSet<>();
+            for (RenResult result : results) {
+                Operations operations = new Operations(result.getRenOrder().getHistory().getOperationStream());
+                List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, 24);
 
-            String parse = fumenParser.parse(operationWithKeys, field, 24);
-            System.out.println("http://fumen.zui.jp/?v115@" + parse);
+                String fumenData = fumenParser.parse(operationWithKeys, field, 24);
+
+                String name = operationWithKeys.stream()
+                        .map(operation -> String.format("%s-%s", operation.getPiece(), operation.getRotate()))
+                        .collect(Collectors.joining(" "));
+                String aLink = String.format("<a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a>", fumenData, name);
+
+                int renCount = result.getRenCount();
+                htmlBuilder.addColumn(new RenHTMLColumn(renCount), aLink);
+
+                renKeys.add(renCount);
+            }
+
+            // HTMLのキー一覧を取得
+            ArrayList<Integer> renKeyList = new ArrayList<>(renKeys);
+            Collections.reverse(renKeyList);
+            List<HTMLColumn> allColumns = renKeyList.stream().map(RenHTMLColumn::new).collect(Collectors.toList());
+
+            // 出力
+            try (BufferedWriter writer = this.base.newBufferedWriter()) {
+                for (String line : htmlBuilder.toList(allColumns, true))
+                    writer.write(line);
+                writer.flush();
+            } catch (Exception e) {
+                throw new FinderExecuteException("Failed to output file", e);
+            }
         }
+    }
+
+    private static final String FILE_EXTENSION = ".html";
+
+
+    private String getRemoveExtensionFromPath(String path) throws FinderInitializeException {
+        int pointIndex = path.lastIndexOf('.');
+        int separatorIndex = path.lastIndexOf(File.separatorChar);
+
+        // .がない or セパレータより前にあるとき
+        if (pointIndex <= separatorIndex)
+            return path;
+
+        // .があるとき
+        return path.substring(0, pointIndex);
     }
 
     private RenSearcher<Action> getRenSearcher(MinoFactory minoFactory) {
