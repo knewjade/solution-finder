@@ -39,6 +39,7 @@ public class EntryPointMain {
             "path",
             "setup",
             "ren",
+            "combo",
             "move",
             "util fig",
     };
@@ -193,6 +194,7 @@ public class EntryPointMain {
             case "move":
                 return getMoveEntryPoint(commands);
             case "ren":
+            case "combo":
                 return getRenEntryPoint(commands);
             case "dev":
                 return getDevEntryPoint(commands);
