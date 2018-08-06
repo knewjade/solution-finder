@@ -18,14 +18,13 @@ import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import core.mino.Piece;
 import core.srs.MinoRotation;
 import lib.Randoms;
 import module.LongTest;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.checker.CheckerNoHold;
 import searcher.common.validator.PerfectValidator;
@@ -120,7 +119,7 @@ class PackSearcherTest {
                 add(new Pair<>(5, 7043L));
                 add(new Pair<>(6, 60416L));
                 add(new Pair<>(7, 437597L));
-                add(new Pair<>(8, 3615403L));
+//                add(new Pair<>(8, 3615403L));
             }
         };
 
@@ -130,7 +129,7 @@ class PackSearcherTest {
                 add(new Pair<>(5, 2602L));
                 add(new Pair<>(6, 16944L));
                 add(new Pair<>(7, 103465L));
-                add(new Pair<>(8, 634634L));
+//                add(new Pair<>(8, 634634L));
             }
         };
 
@@ -401,7 +400,7 @@ class PackSearcherTest {
             int height = 4;
             SizedBit sizedBit = new SizedBit(width, height);
             BiFunction<Field, SolutionFilter, BasicSolutions> basicSolutionSupplier = (field, solutionFilter) -> createMappedBasicSolutions(sizedBit);
-            assertHeight4(sizedBit, 20, basicSolutionSupplier);
+            assertHeight4(sizedBit, 5, basicSolutionSupplier);
         }
 
         @Test
@@ -410,7 +409,7 @@ class PackSearcherTest {
             int height = 5;
             SizedBit sizedBit = new SizedBit(width, height);
             BiFunction<Field, SolutionFilter, BasicSolutions> basicSolutionSupplier = (field, solutionFilter) -> createMappedBasicSolutions(sizedBit);
-            assertHeight5(sizedBit, 20, basicSolutionSupplier);
+            assertHeight5(sizedBit, 5, basicSolutionSupplier);
         }
     }
 
@@ -422,7 +421,7 @@ class PackSearcherTest {
             int height = 4;
             SizedBit sizedBit = new SizedBit(width, height);
             BiFunction<Field, SolutionFilter, BasicSolutions> basicSolutionSupplier = (field, solutionFilter) -> createOnDemandBasicSolutions(sizedBit);
-            assertHeight4(sizedBit, 20, basicSolutionSupplier);
+            assertHeight4(sizedBit, 5, basicSolutionSupplier);
         }
 
         @Test
@@ -431,7 +430,7 @@ class PackSearcherTest {
             int height = 5;
             SizedBit sizedBit = new SizedBit(width, height);
             BiFunction<Field, SolutionFilter, BasicSolutions> basicSolutionSupplier = (field, solutionFilter) -> createOnDemandBasicSolutions(sizedBit);
-            assertHeight5(sizedBit, 20, basicSolutionSupplier);
+            assertHeight5(sizedBit, 5, basicSolutionSupplier);
         }
     }
 
@@ -446,7 +445,7 @@ class PackSearcherTest {
                 ColumnSmallField maxOuterBoard = InOutPairField.createMaxOuterBoard(sizedBit, field);
                 return createOnDemandBasicSolutions(sizedBit, maxOuterBoard);
             };
-            assertHeight4(sizedBit, 20, basicSolutionSupplier);
+            assertHeight4(sizedBit, 5, basicSolutionSupplier);
         }
 
         @Test
@@ -458,7 +457,7 @@ class PackSearcherTest {
                 ColumnSmallField maxOuterBoard = InOutPairField.createMaxOuterBoard(sizedBit, field);
                 return createOnDemandBasicSolutions(sizedBit, maxOuterBoard);
             };
-            assertHeight5(sizedBit, 20, basicSolutionSupplier);
+            assertHeight5(sizedBit, 5, basicSolutionSupplier);
         }
     }
 
@@ -470,7 +469,7 @@ class PackSearcherTest {
             int height = 4;
             SizedBit sizedBit = new SizedBit(width, height);
             BiFunction<Field, SolutionFilter, BasicSolutions> basicSolutionSupplier = (field, solutionFilter) -> createFilterOnDemandBasicSolutions(sizedBit, solutionFilter);
-            assertHeight4(sizedBit, 20, basicSolutionSupplier);
+            assertHeight4(sizedBit, 5, basicSolutionSupplier);
         }
 
         @Test
@@ -479,7 +478,7 @@ class PackSearcherTest {
             int height = 5;
             SizedBit sizedBit = new SizedBit(width, height);
             BiFunction<Field, SolutionFilter, BasicSolutions> basicSolutionSupplier = (field, solutionFilter) -> createFilterOnDemandBasicSolutions(sizedBit, solutionFilter);
-            assertHeight5(sizedBit, 20, basicSolutionSupplier);
+            assertHeight5(sizedBit, 5, basicSolutionSupplier);
         }
     }
 
@@ -494,7 +493,7 @@ class PackSearcherTest {
                 ColumnSmallField maxOuterBoard = InOutPairField.createMaxOuterBoard(sizedBit, field);
                 return createFilterOnDemandBasicSolutions(sizedBit, maxOuterBoard, solutionFilter);
             };
-            assertHeight4(sizedBit, 20, basicSolutionSupplier);
+            assertHeight4(sizedBit, 5, basicSolutionSupplier);
         }
 
         @Test
@@ -506,7 +505,7 @@ class PackSearcherTest {
                 ColumnSmallField maxOuterBoard = InOutPairField.createMaxOuterBoard(sizedBit, field);
                 return createFilterOnDemandBasicSolutions(sizedBit, maxOuterBoard, solutionFilter);
             };
-            assertHeight5(sizedBit, 20, basicSolutionSupplier);
+            assertHeight5(sizedBit, 5, basicSolutionSupplier);
         }
     }
 }
