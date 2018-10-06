@@ -27,10 +27,9 @@ public class ListArgOption implements OptionBuilder {
     public Option toOption() {
         return Option.builder(shortName)
                 .optionalArg(true)
+                .hasArg()
                 .numberOfArgs(numOfArgs)
                 .valueSeparator(separator)
-                .hasArg()
-                .numberOfArgs(1)
                 .argName(valueName)
                 .longOpt(longName)
                 .desc(description)

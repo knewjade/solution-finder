@@ -3,6 +3,7 @@ package entry.setup;
 import common.parser.StringEnumTransform;
 import common.tetfu.common.ColorType;
 import core.field.Field;
+import core.field.FieldView;
 import core.mino.Piece;
 import core.srs.Rotate;
 import entry.DropType;
@@ -131,7 +132,7 @@ public class SetupSettings {
         this.isCombination = isCombination;
     }
 
-    void setMaxHeight(int maxHeight) {
+    private void setMaxHeight(int maxHeight) {
         this.maxHeight = maxHeight;
     }
 
@@ -139,7 +140,8 @@ public class SetupSettings {
         this.patterns = patterns;
     }
 
-    void setField(Field initField, Field needFilledField, Field notFilledField, Field freeField) {
+    void setField(Field initField, Field needFilledField, Field notFilledField, Field freeField, int maxHeight) {
+        setMaxHeight(maxHeight);
         setInitField(initField);
         setNeedFilledField(needFilledField);
         setNotFilledField(notFilledField);

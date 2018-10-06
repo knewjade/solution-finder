@@ -164,7 +164,6 @@ public class SetupEntryPoint implements EntryPoint {
         if (!settings.isCombination())
             output("Using hold: " + (settings.isUsingHold() ? "use" : "avoid"));
 
-
         // Output patterns
         output("Searching patterns [" + (settings.isCombination() ? "combination" : "order") + "]:");
         for (String pattern : patterns)

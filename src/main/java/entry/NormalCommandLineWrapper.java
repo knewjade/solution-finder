@@ -93,6 +93,7 @@ public class NormalCommandLineWrapper implements CommandLineWrapper {
     @Override
     public List<String> getStringOptions(String name) {
         String[] values = commandLine.getOptionValues(name);
+        System.out.println(Arrays.toString(values));
         if (values == null)
             return Collections.emptyList();
         return Arrays.asList(values);

@@ -55,22 +55,19 @@ public class SetupSettingParser extends SettingParser<SetupSettings> {
                 DEFAULT_FIELD_TXT,
                 Charset.forName(CHARSET_NAME),
                 fieldData -> {
+                    ColoredField coloredField = fieldData.toColoredField();
+
                     // 高さの設定
                     Optional<Integer> heightOptional = initWrapper.getIntegerOption(SetupOptions.Line.optName());
-                    heightOptional.ifPresent(settings::setMaxHeight);
+                    int maxHeight = heightOptional.orElse(coloredField.getUsingHeight());
 
                     // フィールドの設定
-                    int height = settings.getMaxHeight();
-                    loadTetfu(fieldData.toColoredField(), initWrapper, height, settings);
+                    loadTetfu(coloredField, initWrapper, maxHeight, settings);
 
-                    if (heightOptional.isPresent()) {
-                        // 最大削除ラインをコマンドラインのオプションに設定
-                        CommandLine commandLineTetfu = commandLineFactory.parse(Arrays.asList("--" + SetupOptions.Line.optName(), String.valueOf(heightOptional.get())));
-                        CommandLineWrapper newWrapper = new NormalCommandLineWrapper(commandLineTetfu);
-                        return Optional.of(new FieldData(fieldData.toColoredField(), newWrapper));
-                    }
-
-                    return Optional.empty();
+                    // 最大削除ラインをコマンドラインのオプションに設定
+                    CommandLine commandLineTetfu = commandLineFactory.parse(Arrays.asList("--" + SetupOptions.Line.optName(), String.valueOf(maxHeight)));
+                    CommandLineWrapper newWrapper = new NormalCommandLineWrapper(commandLineTetfu);
+                    return Optional.of(new FieldData(coloredField, newWrapper));
                 },
                 fieldLines -> {
                     // 最大削除ラインの設定
@@ -88,15 +85,10 @@ public class SetupSettingParser extends SettingParser<SetupSettings> {
                     int maxHeight = maxHeightForce != null ? maxHeightForce : coloredField.getUsingHeight();
                     loadTetfu(fieldMarks, maxHeight, settings);
 
-
                     // 最大削除ラインをコマンドラインのオプションに設定
-                    if (maxHeightForce != null) {
-                        CommandLine commandLineTetfu = commandLineFactory.parse(Arrays.asList("--" + SetupOptions.Line.optName(), String.valueOf(maxHeightForce)));
-                        CommandLineWrapper newWrapper = new NormalCommandLineWrapper(commandLineTetfu);
-                        return Optional.of(new FieldData(coloredField, newWrapper));
-                    }
-
-                    return Optional.empty();
+                    CommandLine commandLineTetfu = commandLineFactory.parse(Arrays.asList("--" + SetupOptions.Line.optName(), String.valueOf(maxHeight)));
+                    CommandLineWrapper newWrapper = new NormalCommandLineWrapper(commandLineTetfu);
+                    return Optional.of(new FieldData(coloredField, newWrapper));
                 }
         );
 
@@ -208,7 +200,7 @@ public class SetupSettingParser extends SettingParser<SetupSettings> {
             for (int x = 0; x < 10; x++)
                 notFilledField.removeBlock(x, y);
 
-        settings.setField(initField, needFilledField, notFilledField, freeField);
+        settings.setField(initField, needFilledField, notFilledField, freeField, maxHeight);
     }
 
     private void loadTetfu(ColoredField coloredField, CommandLineWrapper wrapper, int maxHeight, SetupSettings settings) throws FinderParseException {
@@ -265,7 +257,7 @@ public class SetupSettingParser extends SettingParser<SetupSettings> {
             }
         }
 
-        settings.setField(initField, needFilledField, notFilledField, freeField);
+        settings.setField(initField, needFilledField, notFilledField, freeField, maxHeight);
     }
 
     private String filterString(String str, char allow, char notAllowTo) {
