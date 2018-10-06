@@ -3,8 +3,10 @@ package entry.path;
 import common.comparator.FieldComparator;
 import core.field.Field;
 import core.field.FieldFactory;
+import org.apache.commons.cli.DefaultParser;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -21,8 +23,8 @@ class PathSettingParserTest {
         String fieldPath = ClassLoader.getSystemResource("field/2line.txt").getPath();
         String patternsPath = ClassLoader.getSystemResource("patterns/7mino.txt").getPath();
         String commands = String.format("--field-path %s --patterns-path %s", fieldPath, patternsPath);
-        PathSettingParser entryPoint = new PathSettingParser(commands);
-        Optional<PathSettings> parse = entryPoint.parse();
+        PathSettingParser entryPoint = new PathSettingParser(PathOptions.create(), new DefaultParser());
+        Optional<PathSettings> parse = entryPoint.parse(Arrays.asList(commands.split(" ")));
 
         Field expectedField = FieldFactory.createField("" +
                 "XX________" +
@@ -51,8 +53,8 @@ class PathSettingParserTest {
         String fieldPath = ClassLoader.getSystemResource("field/template.txt").getPath();
         String patternsPath = ClassLoader.getSystemResource("patterns/3mino.txt").getPath();
         String commands = String.format("--field-path %s --patterns-path %s", fieldPath, patternsPath);
-        PathSettingParser entryPoint = new PathSettingParser(commands);
-        Optional<PathSettings> parse = entryPoint.parse();
+        PathSettingParser entryPoint = new PathSettingParser(PathOptions.create(), new DefaultParser());
+        Optional<PathSettings> parse = entryPoint.parse(Arrays.asList(commands.split(" ")));
 
         Field expectedField = FieldFactory.createField("" +
                 "XXXX____XX" +
@@ -81,8 +83,8 @@ class PathSettingParserTest {
     @Test
     void testHelp() throws Exception {
         String commands = "-h";
-        PathSettingParser entryPoint = new PathSettingParser(commands);
-        Optional<PathSettings> parse = entryPoint.parse();
+        PathSettingParser entryPoint = new PathSettingParser(PathOptions.create(), new DefaultParser());
+        Optional<PathSettings> parse = entryPoint.parse(Arrays.asList(commands.split(" ")));
         assertThat(parse.isPresent()).isFalse();
     }
 
@@ -93,8 +95,8 @@ class PathSettingParserTest {
         String tetfu = "v115@9gB8DeG8CeH8BeG8CeD8JeAgWBAUAAAA";  // comment: 4
         String commands = String.format("--hold avoid -fp %s -pp %s --tetfu %s --max-layer 1 --format csv --cached-bit 1", fieldPath, patternsPath, tetfu);
 
-        PathSettingParser entryPoint = new PathSettingParser(commands);
-        Optional<PathSettings> parse = entryPoint.parse();
+        PathSettingParser entryPoint = new PathSettingParser(PathOptions.create(), new DefaultParser());
+        Optional<PathSettings> parse = entryPoint.parse(Arrays.asList(commands.split(" ")));
 
         Field expectedField = FieldFactory.createField("" +
                 "XX____XXXX" +
@@ -129,8 +131,8 @@ class PathSettingParserTest {
         String tetfu = "v115@9gB8DeG8CeH8BeG8CeD8JeAgWnA0no2AtTKNEM388A?wBrNEJ388AwjdOEB/2rDSm0TASYtSAyUDCA";
         String commands = String.format("--hold use -fp %s -pp %s --tetfu %s --patterns *p4 --log-path output/dummy -L 2", fieldPath, patternsPath, tetfu);
 
-        PathSettingParser entryPoint = new PathSettingParser(commands);
-        Optional<PathSettings> parse = entryPoint.parse();
+        PathSettingParser entryPoint = new PathSettingParser(PathOptions.create(), new DefaultParser());
+        Optional<PathSettings> parse = entryPoint.parse(Arrays.asList(commands.split(" ")));
 
         Field expectedField = FieldFactory.createField("" +
                 "XX____XXXX" +
@@ -165,8 +167,8 @@ class PathSettingParserTest {
         String tetfu = "v115@vh2SSYRBFLDmClcJSAVDEHBEooRBMoAVBUujPCv3jx?CPNUPCJHWWCJtPFDs+bgC6P9VCp/dgCzn9VCzvaFDUePFDv?+TWCviLuCqe1LCqHLWCzAAAANpBXqBGjBznB0fB0rBdnBzq?BxvB/tBqsBGjBJnB1vBTmBxkB3pBikBGrByuB9tBXjB0sB0?rBTkBmfBplBxmBirBNpBWyBXqB0fBToBCjBRmBesBTmB0qB?NpBpoBXqB0fBmrBzsB3rB6qBzsBirB0sB/tBGjB1wBNmQSA?0no2AtTKNEM388AwBrNEJnBAA";
         String commands = String.format("--hold use -fp %s -pp %s --tetfu %s --patterns T,*p5 --log-path output/dummy -P 55", fieldPath, patternsPath, tetfu);
 
-        PathSettingParser entryPoint = new PathSettingParser(commands);
-        Optional<PathSettings> parse = entryPoint.parse();
+        PathSettingParser entryPoint = new PathSettingParser(PathOptions.create(), new DefaultParser());
+        Optional<PathSettings> parse = entryPoint.parse(Arrays.asList(commands.split(" ")));
 
         Field expectedField = FieldFactory.createField("" +
                 "____X__XXX" +
@@ -201,8 +203,8 @@ class PathSettingParserTest {
         String tetfu = "v115@vh2SSYRBFLDmClcJSAVDEHBEooRBMoAVBUujPCv3jx?CPNUPCJHWWCJtPFDs+bgC6P9VCp/dgCzn9VCzvaFDUePFDv?+TWCviLuCqe1LCqHLWCzAAAANpBXqBGjBznB0fB0rBdnBzq?BxvB/tBqsBGjBJnB1vBTmBxkB3pBikBGrByuB9tBXjB0sB0?rBTkBmfBplBxmBirBNpBWyBXqB0fBToBCjBRmBesBTmB0qB?NpBpoBXqB0fBmrBzsQaA0no2ANI98AQe88ADd88AjS88ADX?88AjCBAA3rQjAFLDmClcJSAVztSAVG88A4c88AZyKWCat/w?CJePFDvyzBA6qBzsBirB0sB/tBGjB1wBNmQSA0no2AtTKNE?M388AwBrNEJnBAA";
         String commands = String.format("--hold avoid -fp %s -pp %s --tetfu %s --patterns *p5 --log-path output/dummy -P 46 -o output/result_dummy.txt -s yes -th 4", fieldPath, patternsPath, tetfu);
 
-        PathSettingParser entryPoint = new PathSettingParser(commands);
-        Optional<PathSettings> parse = entryPoint.parse();
+        PathSettingParser entryPoint = new PathSettingParser(PathOptions.create(), new DefaultParser());
+        Optional<PathSettings> parse = entryPoint.parse(Arrays.asList(commands.split(" ")));
 
         Field expectedField = FieldFactory.createField("" +
                 "XX_______X" +
@@ -234,8 +236,8 @@ class PathSettingParserTest {
         String fieldPath = ClassLoader.getSystemResource("field/tetfu1.txt").getPath();
         String commands = String.format("-fp %s -P 46", fieldPath);
 
-        PathSettingParser entryPoint = new PathSettingParser(commands);
-        Optional<PathSettings> parse = entryPoint.parse();
+        PathSettingParser entryPoint = new PathSettingParser(PathOptions.create(), new DefaultParser());
+        Optional<PathSettings> parse = entryPoint.parse(Arrays.asList(commands.split(" ")));
 
         Field expectedField = FieldFactory.createField("" +
                 "XX_______X" +
@@ -266,8 +268,8 @@ class PathSettingParserTest {
         String fieldPath = ClassLoader.getSystemResource("field/tetfu2.txt").getPath();
         String commands = String.format("-fp %s -P 6 -p *p4 -th 1", fieldPath);
 
-        PathSettingParser entryPoint = new PathSettingParser(commands);
-        Optional<PathSettings> parse = entryPoint.parse();
+        PathSettingParser entryPoint = new PathSettingParser(PathOptions.create(), new DefaultParser());
+        Optional<PathSettings> parse = entryPoint.parse(Arrays.asList(commands.split(" ")));
 
         Field expectedField = FieldFactory.createField("" +
                 "_____XXXXX" +

@@ -1,11 +1,8 @@
 package entry.common;
 
-import common.tetfu.common.ColorConverter;
-import common.tetfu.field.ColoredFieldView;
-import core.mino.MinoFactory;
+import common.tetfu.Tetfu;
 import entry.CommandLineWrapper;
 import entry.common.field.FieldData;
-import entry.common.field.FieldTextLoader;
 import entry.common.field.FumenLoader;
 import exceptions.FinderParseException;
 
@@ -15,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,14 +21,12 @@ import java.util.stream.Stream;
 public class Loader {
     // フィールドの情報を読み込む
     public static Optional<FieldData> loadFieldData(
-            CommandLineWrapper wrapper, CommandLineFactory commandLineFactory, String pageOptName,
-            String fumenOptName, String fieldPathOptName, String defaultFieldText, Charset charset
+            CommandLineWrapper wrapper, FumenLoader fumenLoader,
+            String pageOptName, String fumenOptName, String fieldPathOptName,
+            String defaultFieldText, Charset charset,
+            FunctionParseException<FieldData, Optional<FieldData>> callbackWithFumen,
+            FunctionParseException<LinkedList<String>, Optional<FieldData>> callbackWithText
     ) throws FinderParseException {
-        MinoFactory minoFactory = new MinoFactory();
-        ColorConverter colorConverter = new ColorConverter();
-
-        FumenLoader fumenLoader = new FumenLoader(commandLineFactory, minoFactory, colorConverter);
-
         // 指定されたページを抽出
         int page = wrapper.getIntegerOption(pageOptName).orElse(1);
 
@@ -41,14 +37,13 @@ public class Loader {
                 throw new FinderParseException("Should specify option value: --" + fumenOptName);
 
             FieldData fieldData = fumenLoader.load(tetfuData.get(), page);
-            return Optional.of(fieldData);
+
+            return callbackWithFumen.apply(fieldData);
         } else {
             // フィールドファイルから
             Optional<String> fieldPathOption = wrapper.getStringOption(fieldPathOptName);
             String fieldPath = fieldPathOption.orElse(defaultFieldText);
             Path path = Paths.get(fieldPath);
-
-            FieldTextLoader textLoader = new FieldTextLoader(commandLineFactory);
 
             Stream<String> lines;
             try {
@@ -57,8 +52,27 @@ public class Loader {
                 throw new FinderParseException("Cannot open field file");
             }
 
-            FieldData fieldData = textLoader.load(lines, fumen -> fumenLoader.load(fumen, page));
-            return Optional.of(fieldData);
+            LinkedList<String> fieldLines = lines
+                    .map(str -> {
+                        if (str.contains("#"))
+                            return str.substring(0, str.indexOf('#'));
+                        return str;
+                    })
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .collect(Collectors.toCollection(LinkedList::new));
+
+            if (fieldLines.isEmpty())
+                throw new FinderParseException("Should specify clear-line & field-definition in field file");
+
+            String removeDomainData = Tetfu.removeDomainData(fieldLines.get(0));
+            if (Tetfu.isDataLater115(removeDomainData)) {
+                // テト譜から
+                FieldData fieldData = fumenLoader.load(removeDomainData, page);
+                return callbackWithFumen.apply(fieldData);
+            } else {
+                return callbackWithText.apply(fieldLines);
+            }
         }
     }
 

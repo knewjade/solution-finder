@@ -102,7 +102,11 @@ public class PathSettings {
         this.isUsingHold = isUsingHold;
     }
 
-    void setField(ColoredField coloredField, int height) {
+    void setColoredField(ColoredField coloredField) {
+        setColoredField(coloredField, this.maxClearLine);
+    }
+
+    void setColoredField(ColoredField coloredField, int height) {
         Field field = FieldFactory.createField(height);
         for (int y = 0; y < height; y++)
             for (int x = 0; x < 10; x++)
@@ -110,6 +114,10 @@ public class PathSettings {
                     field.setBlock(x, y);
         setField(field);
         setReservedBlock(null);
+    }
+
+    void setFieldWithReserved(ColoredField coloredField) {
+        setFieldWithReserved(coloredField, this.maxClearLine);
     }
 
     void setFieldWithReserved(ColoredField coloredField, int height) {

@@ -74,6 +74,10 @@ public class PercentSettings {
         this.isUsingHold = isUsingHold;
     }
 
+    void setField(ColoredField coloredField) {
+        setField(coloredField, this.maxClearLine);
+    }
+
     void setField(ColoredField coloredField, int height) {
         Field field = FieldFactory.createField(height);
         for (int y = 0; y < height; y++)

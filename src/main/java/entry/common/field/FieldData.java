@@ -12,11 +12,11 @@ public class FieldData {
     private final ColoredField coloredField;
     private final CommandLineWrapper wrapper;
 
-    FieldData(ColoredField coloredField) {
+    public FieldData(ColoredField coloredField) {
         this(coloredField, null);
     }
 
-    FieldData(ColoredField coloredField, CommandLineWrapper wrapper) {
+    public FieldData(ColoredField coloredField, CommandLineWrapper wrapper) {
         this.coloredField = coloredField;
         this.wrapper = wrapper;
     }

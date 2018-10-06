@@ -6,6 +6,7 @@ import entry.move.MoveEntryPoint;
 import entry.move.MoveSettingParser;
 import entry.move.MoveSettings;
 import entry.path.PathEntryPoint;
+import entry.path.PathOptions;
 import entry.path.PathSettingParser;
 import entry.path.PathSettings;
 import entry.percent.PercentEntryPoint;
@@ -218,8 +219,10 @@ public class EntryPointMain {
     }
 
     private static Optional<EntryPoint> getPathEntryPoint(List<String> commands) throws FinderInitializeException, FinderParseException {
-        PathSettingParser settingParser = new PathSettingParser(commands);
-        Optional<PathSettings> settingsOptional = settingParser.parse();
+        Options options = PathOptions.create();
+        CommandLineParser parser = new DefaultParser();
+        PathSettingParser settingParser = new PathSettingParser(options, parser);
+        Optional<PathSettings> settingsOptional = settingParser.parse(commands);
         if (settingsOptional.isPresent()) {
             PathSettings settings = settingsOptional.get();
             return Optional.of(new PathEntryPoint(settings));

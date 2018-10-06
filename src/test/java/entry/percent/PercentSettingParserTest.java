@@ -3,9 +3,7 @@ package entry.percent;
 import common.comparator.FieldComparator;
 import core.field.Field;
 import core.field.FieldFactory;
-import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -32,8 +30,8 @@ class PercentSettingParserTest {
                 "XX________" +
                 "XX________"
         );
-        
-       assertThat(parse).isPresent();
+
+        assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
             assertThat(settings)
                     .returns("output/last_output.txt", PercentSettings::getLogFilePath)
@@ -60,7 +58,7 @@ class PercentSettingParserTest {
                 "XXXX___XXX"
         );
 
-       assertThat(parse).isPresent();
+        assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
             assertThat(settings)
                     .returns("output/last_output.txt", PercentSettings::getLogFilePath)
@@ -97,7 +95,7 @@ class PercentSettingParserTest {
                 "XXX___XXXX"
         );
 
-       assertThat(parse).isPresent();
+        assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
             assertThat(settings)
                     .returns("output/last_output.txt", PercentSettings::getLogFilePath)
@@ -128,7 +126,7 @@ class PercentSettingParserTest {
                 "XXX___XXXX"
         );
 
-       assertThat(parse).isPresent();
+        assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
             assertThat(settings)
                     .returns("output/dummy", PercentSettings::getLogFilePath)
@@ -159,7 +157,7 @@ class PercentSettingParserTest {
                 "____XXXXXX"
         );
 
-       assertThat(parse).isPresent();
+        assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
             assertThat(settings)
                     .returns("output/dummy", PercentSettings::getLogFilePath)
@@ -191,7 +189,7 @@ class PercentSettingParserTest {
                 "XXX___XXXX"
         );
 
-       assertThat(parse).isPresent();
+        assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
             System.out.println(settings.getMaxClearLine());
             assertThat(settings)
@@ -222,7 +220,7 @@ class PercentSettingParserTest {
                 "XXX___XXXX"
         );
 
-       assertThat(parse).isPresent();
+        assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
             assertThat(settings)
                     .returns(4, PercentSettings::getMaxClearLine)
@@ -252,7 +250,7 @@ class PercentSettingParserTest {
                 ""
         );
 
-       assertThat(parse).isPresent();
+        assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
             assertThat(settings)
                     .returns(4, PercentSettings::getMaxClearLine)
@@ -281,7 +279,7 @@ class PercentSettingParserTest {
                 ""
         );
 
-       assertThat(parse).isPresent();
+        assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
             assertThat(settings)
                     .returns(4, PercentSettings::getMaxClearLine)
