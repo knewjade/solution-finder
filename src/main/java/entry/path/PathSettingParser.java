@@ -66,7 +66,7 @@ public class PathSettingParser extends SettingParser<PathSettings> {
                         ColoredField coloredField = ColoredFieldFactory.createColoredField(fieldMarks);
 
                         // 最大削除ラインをコマンドラインのオプションに設定
-                        CommandLine commandLineTetfu = commandLineFactory.parse(Arrays.asList("--clear-line", String.valueOf(maxClearLine)));
+                        CommandLine commandLineTetfu = commandLineFactory.parse(Arrays.asList("--" + PathOptions.ClearLine.optName(), String.valueOf(maxClearLine)));
                         CommandLineWrapper newWrapper = new NormalCommandLineWrapper(commandLineTetfu);
                         return Optional.of(new FieldData(coloredField, newWrapper));
                     } catch (NumberFormatException e) {

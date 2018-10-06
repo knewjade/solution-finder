@@ -18,6 +18,7 @@ import entry.ren.RenOptions;
 import entry.ren.RenSettingParser;
 import entry.ren.RenSettings;
 import entry.setup.SetupEntryPoint;
+import entry.setup.SetupOptions;
 import entry.setup.SetupSettingParser;
 import entry.setup.SetupSettings;
 import entry.util.fig.FigUtilEntryPoint;
@@ -248,8 +249,10 @@ public class EntryPointMain {
     }
 
     private static Optional<EntryPoint> getSetupEntryPoint(List<String> commands) throws FinderParseException, FinderInitializeException {
-        SetupSettingParser settingParser = new SetupSettingParser(commands);
-        Optional<SetupSettings> settingsOptional = settingParser.parse();
+        Options options = SetupOptions.create();
+        CommandLineParser parser = new DefaultParser();
+        SetupSettingParser settingParser = new SetupSettingParser(options, parser);
+        Optional<SetupSettings> settingsOptional = settingParser.parse(commands);
         if (settingsOptional.isPresent()) {
             SetupSettings settings = settingsOptional.get();
             return Optional.of(new SetupEntryPoint(settings));

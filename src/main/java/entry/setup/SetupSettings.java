@@ -131,7 +131,7 @@ public class SetupSettings {
         this.isCombination = isCombination;
     }
 
-    private void setMaxHeight(int maxHeight) {
+    void setMaxHeight(int maxHeight) {
         this.maxHeight = maxHeight;
     }
 
@@ -139,8 +139,7 @@ public class SetupSettings {
         this.patterns = patterns;
     }
 
-    void setField(Field initField, Field needFilledField, Field notFilledField, Field freeField, int maxHeight) {
-        setMaxHeight(maxHeight);
+    void setField(Field initField, Field needFilledField, Field notFilledField, Field freeField) {
         setInitField(initField);
         setNeedFilledField(needFilledField);
         setNotFilledField(notFilledField);
