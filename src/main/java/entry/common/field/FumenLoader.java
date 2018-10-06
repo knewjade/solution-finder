@@ -31,25 +31,19 @@ public class FumenLoader {
 
     public FieldData load(String data, int page) throws FinderParseException {
         String removeDomainData = Tetfu.removeDomainData(data);
-        if (!Tetfu.isDataLater115(removeDomainData)) {
-            throw new FinderParseException("Unsupported tetfu version" + removeDomainData);
+        String removePrefixData = Tetfu.removePrefixData(removeDomainData);
+        if (removePrefixData == null) {
+            throw new FinderParseException("Unsupported tetfu: data=" + removeDomainData);
         }
 
         // テト譜面のエンコード
-        List<TetfuPage> decoded = encodeTetfu(removeDomainData);
+        Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
+        List<TetfuPage> decoded = tetfu.decode(removePrefixData);
 
         // 指定されたページを抽出
         TetfuPage tetfuPage = extractTetfuPage(decoded, page);
 
         return load(tetfuPage);
-    }
-
-    private List<TetfuPage> encodeTetfu(String encoded) throws FinderParseException {
-        Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
-        String data = Tetfu.removePrefixData(encoded);
-        if (data == null)
-            throw new FinderParseException("Unsupported tetfu: data=" + encoded);
-        return tetfu.decode(data);
     }
 
     private TetfuPage extractTetfuPage(List<TetfuPage> tetfuPages, int page) throws FinderParseException {

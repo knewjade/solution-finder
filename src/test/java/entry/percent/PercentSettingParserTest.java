@@ -3,8 +3,12 @@ package entry.percent;
 import common.comparator.FieldComparator;
 import core.field.Field;
 import core.field.FieldFactory;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Options;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -21,8 +25,8 @@ class PercentSettingParserTest {
         String fieldPath = ClassLoader.getSystemResource("field/2line.txt").getPath();
         String patternsPath = ClassLoader.getSystemResource("patterns/7mino.txt").getPath();
         String commands = String.format("--field-path %s --patterns-path %s", fieldPath, patternsPath);
-        PercentSettingParser entryPoint = new PercentSettingParser(commands);
-        Optional<PercentSettings> parse = entryPoint.parse();
+        PercentSettingParser entryPoint = new PercentSettingParser(PercentOptions.create(), new DefaultParser());
+        Optional<PercentSettings> parse = entryPoint.parse(Arrays.asList(commands.split(" ")));
 
         Field expectedField = FieldFactory.createField("" +
                 "XX________" +
@@ -46,8 +50,8 @@ class PercentSettingParserTest {
         String fieldPath = ClassLoader.getSystemResource("field/template.txt").getPath();
         String patternsPath = ClassLoader.getSystemResource("patterns/3mino.txt").getPath();
         String commands = String.format("--field-path %s --patterns-path %s", fieldPath, patternsPath);
-        PercentSettingParser entryPoint = new PercentSettingParser(commands);
-        Optional<PercentSettings> parse = entryPoint.parse();
+        PercentSettingParser entryPoint = new PercentSettingParser(PercentOptions.create(), new DefaultParser());
+        Optional<PercentSettings> parse = entryPoint.parse(Arrays.asList(commands.split(" ")));
 
         Field expectedField = FieldFactory.createField("" +
                 "XXXX____XX" +
@@ -71,8 +75,8 @@ class PercentSettingParserTest {
     @Test
     void testHelp() throws Exception {
         String commands = "-h";
-        PercentSettingParser entryPoint = new PercentSettingParser(commands);
-        Optional<PercentSettings> parse = entryPoint.parse();
+        PercentSettingParser entryPoint = new PercentSettingParser(PercentOptions.create(), new DefaultParser());
+        Optional<PercentSettings> parse = entryPoint.parse(Arrays.asList(commands.split(" ")));
         assertThat(parse.isPresent()).isFalse();
     }
 
@@ -83,8 +87,8 @@ class PercentSettingParserTest {
         String tetfu = "v115@9gB8DeG8CeH8BeG8CeD8JeAgWBAUAAAA";  // comment: 4
         String commands = String.format("--hold avoid -fp %s -pp %s --tetfu %s", fieldPath, patternsPath, tetfu);
 
-        PercentSettingParser entryPoint = new PercentSettingParser(commands);
-        Optional<PercentSettings> parse = entryPoint.parse();
+        PercentSettingParser entryPoint = new PercentSettingParser(PercentOptions.create(), new DefaultParser());
+        Optional<PercentSettings> parse = entryPoint.parse(Arrays.asList(commands.split(" ")));
 
         Field expectedField = FieldFactory.createField("" +
                 "XX____XXXX" +
@@ -114,8 +118,8 @@ class PercentSettingParserTest {
         String tetfu = "v115@9gB8DeG8CeH8BeG8CeD8JeAgWlA0no2AtTKNEM388A?wBrNEJ388AwjdOEB/2rDSm0TAS4WOEUAAAA";
         String commands = String.format("--hold use -fp %s -pp %s --tetfu %s --patterns T,Z --log-path output/dummy", fieldPath, patternsPath, tetfu);
 
-        PercentSettingParser entryPoint = new PercentSettingParser(commands);
-        Optional<PercentSettings> parse = entryPoint.parse();
+        PercentSettingParser entryPoint = new PercentSettingParser(PercentOptions.create(), new DefaultParser());
+        Optional<PercentSettings> parse = entryPoint.parse(Arrays.asList(commands.split(" ")));
 
         Field expectedField = FieldFactory.createField("" +
                 "XX____XXXX" +
@@ -145,8 +149,8 @@ class PercentSettingParserTest {
         String tetfu = "v115@vh2SSYRBFLDmClcJSAVDEHBEooRBMoAVBUujPCv3jx?CPNUPCJHWWCJtPFDs+bgC6P9VCp/dgCzn9VCzvaFDUePFDv?+TWCviLuCqe1LCqHLWCzAAAANpBXqBGjBznB0fB0rBdnBzq?BxvB/tBqsBGjBJnB1vBTmBxkB3pBikBGrByuB9tBXjB0sB0?rBTkBmfBplBxmBirBNpBWyBXqB0fBToBCjBRmBesBTmB0qB?NpBpoBXqB0fBmrBzsB3rB6qBzsBirB0sB/tBGjB1wBNmQSA?0no2AtTKNEM388AwBrNEJnBAA";
         String commands = String.format("--hold avoid -fp %s -pp %s --tetfu %s --patterns *p5 --log-path output/dummy -P 55", fieldPath, patternsPath, tetfu);
 
-        PercentSettingParser entryPoint = new PercentSettingParser(commands);
-        Optional<PercentSettings> parse = entryPoint.parse();
+        PercentSettingParser entryPoint = new PercentSettingParser(PercentOptions.create(), new DefaultParser());
+        Optional<PercentSettings> parse = entryPoint.parse(Arrays.asList(commands.split(" ")));
 
         Field expectedField = FieldFactory.createField("" +
                 "____X__XXX" +
@@ -177,8 +181,8 @@ class PercentSettingParserTest {
         String tetfu = "v115@vh2SSYRBFLDmClcJSAVDEHBEooRBMoAVBUujPCv3jx?CPNUPCJHWWCJtPFDs+bgC6P9VCp/dgCzn9VCzvaFDUePFDv?+TWCviLuCqe1LCqHLWCzAAAANpBXqBGjBznB0fB0rBdnBzq?BxvB/tBqsBGjBJnB1vBTmBxkB3pBikBGrByuB9tBXjB0sB0?rBTkBmfBplBxmBirBNpBWyBXqB0fBToBCjBRmBesBTmB0qB?NpBpoBXqB0fBmrBzsQaA0no2ANI98AQe88ADd88AjS88ADX?88AjCBAA3rQjAFLDmClcJSAVztSAVG88A4c88AZyKWCat/w?CJePFDvyzBA6qBzsBirB0sB/tBGjB1wBNmQSA0no2AtTKNE?M388AwBrNEJnBAA";
         String commands = String.format("--hold avoid -fp %s -pp %s --tetfu %s --patterns *p5 --log-path output/dummy -P 46 --tree-depth 1 --failed-count 10 -th 1", fieldPath, patternsPath, tetfu);
 
-        PercentSettingParser entryPoint = new PercentSettingParser(commands);
-        Optional<PercentSettings> parse = entryPoint.parse();
+        PercentSettingParser entryPoint = new PercentSettingParser(PercentOptions.create(), new DefaultParser());
+        Optional<PercentSettings> parse = entryPoint.parse(Arrays.asList(commands.split(" ")));
 
         Field expectedField = FieldFactory.createField("" +
                 "XX_______X" +
@@ -208,8 +212,8 @@ class PercentSettingParserTest {
         String fieldPath = ClassLoader.getSystemResource("field/tetfu1.txt").getPath();
         String commands = String.format("-fp %s -P 46 -td 4 -threads 3", fieldPath);
 
-        PercentSettingParser entryPoint = new PercentSettingParser(commands);
-        Optional<PercentSettings> parse = entryPoint.parse();
+        PercentSettingParser entryPoint = new PercentSettingParser(PercentOptions.create(), new DefaultParser());
+        Optional<PercentSettings> parse = entryPoint.parse(Arrays.asList(commands.split(" ")));
 
         Field expectedField = FieldFactory.createField("" +
                 "XX_______X" +
@@ -237,8 +241,8 @@ class PercentSettingParserTest {
         String fieldPath = ClassLoader.getSystemResource("field/tetfu2.txt").getPath();
         String commands = String.format("-fp %s -P 6 -p *p4 -td 2 -fc 50", fieldPath);
 
-        PercentSettingParser entryPoint = new PercentSettingParser(commands);
-        Optional<PercentSettings> parse = entryPoint.parse();
+        PercentSettingParser entryPoint = new PercentSettingParser(PercentOptions.create(), new DefaultParser());
+        Optional<PercentSettings> parse = entryPoint.parse(Arrays.asList(commands.split(" ")));
 
         Field expectedField = FieldFactory.createField("" +
                 "_____XXXXX" +
@@ -266,8 +270,8 @@ class PercentSettingParserTest {
         String fieldPath = ClassLoader.getSystemResource("field/tetfu3.txt").getPath();
         String commands = String.format("-fp %s -P 36", fieldPath);
 
-        PercentSettingParser entryPoint = new PercentSettingParser(commands);
-        Optional<PercentSettings> parse = entryPoint.parse();
+        PercentSettingParser entryPoint = new PercentSettingParser(PercentOptions.create(), new DefaultParser());
+        Optional<PercentSettings> parse = entryPoint.parse(Arrays.asList(commands.split(" ")));
 
         Field expectedField = FieldFactory.createField("" +
                 "XX_____XXX" +

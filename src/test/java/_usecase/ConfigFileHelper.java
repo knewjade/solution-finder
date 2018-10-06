@@ -1,6 +1,8 @@
 package _usecase;
 
 import com.google.common.base.Charsets;
+import com.google.common.io.CharSink;
+import com.google.common.io.FileWriteMode;
 import com.google.common.io.Files;
 import core.field.Field;
 import core.field.FieldView;
@@ -51,7 +53,8 @@ public class ConfigFileHelper {
 
         // noinspection ResultOfMethodCallIgnored
         file.createNewFile();
-        Files.append(text, file, Charsets.UTF_8);
+        CharSink charSink = Files.asCharSink(file, Charsets.UTF_8, FileWriteMode.APPEND);
+        charSink.write(text);
     }
 
     public static void createPatternFile(String pattern) throws IOException {

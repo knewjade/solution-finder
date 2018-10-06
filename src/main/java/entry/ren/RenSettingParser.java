@@ -42,13 +42,13 @@ public class RenSettingParser extends SettingParser<RenSettings> {
         if (fieldDataOptional.isPresent()) {
             FieldData fieldData = fieldDataOptional.get();
 
-            // フィールドの設定
-            settings.setField(fieldData.toField(24));
-
             Optional<CommandLineWrapper> commandLineWrapper = fieldData.getCommandLineWrapper();
             if (commandLineWrapper.isPresent()) {
                 wrapper = new PriorityCommandLineWrapper(Arrays.asList(wrapper, commandLineWrapper.get()));
             }
+
+            // フィールドの設定
+            settings.setField(fieldData.toField(24));
         }
 
         // パターンの読み込み

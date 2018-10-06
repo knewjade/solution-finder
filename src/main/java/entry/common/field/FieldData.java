@@ -35,4 +35,8 @@ public class FieldData {
     public Optional<CommandLineWrapper> getCommandLineWrapper() {
         return Optional.ofNullable(wrapper);
     }
+
+    public ColoredField toColoredField() {
+        return this.coloredField;
+    }
 }

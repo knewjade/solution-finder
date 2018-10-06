@@ -9,6 +9,7 @@ import entry.path.PathEntryPoint;
 import entry.path.PathSettingParser;
 import entry.path.PathSettings;
 import entry.percent.PercentEntryPoint;
+import entry.percent.PercentOptions;
 import entry.percent.PercentSettingParser;
 import entry.percent.PercentSettings;
 import entry.ren.RenEntryPoint;
@@ -204,8 +205,10 @@ public class EntryPointMain {
     }
 
     private static Optional<EntryPoint> getPercentEntryPoint(List<String> commands) throws FinderInitializeException, FinderParseException {
-        PercentSettingParser settingParser = new PercentSettingParser(commands);
-        Optional<PercentSettings> settingsOptional = settingParser.parse();
+        Options options = PercentOptions.create();
+        CommandLineParser parser = new DefaultParser();
+        PercentSettingParser settingParser = new PercentSettingParser(options, parser);
+        Optional<PercentSettings> settingsOptional = settingParser.parse(commands);
         if (settingsOptional.isPresent()) {
             PercentSettings settings = settingsOptional.get();
             return Optional.of(new PercentEntryPoint(settings));
