@@ -56,7 +56,11 @@ public class PngWriter implements FigWriter {
 
             // フィールドの更新
             ColoredField field = tetfuPage.getField();
-            figGenerator.updateField(field, mino, x, y);
+            if (tetfuPage.isLock()) {
+                figGenerator.updateField(field, mino, x, y);
+            } else {
+                figGenerator.updateField(field, null, 0, 0);
+            }
 
             // ミノを置くかチェック
             if (ColorType.isMinoBlock(colorType)) {

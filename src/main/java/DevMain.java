@@ -30,7 +30,10 @@ public class DevMain {
 //        String command = "path -t v115@VgL8FeC8AewwBeI8BeS8BeG8EeD8EeB8JeAgH -c 8 -p Z,T,Z,L,*p3 -f csv -k pattern -r true";
 
 //        String command = "ren --tetfu v115@VgF8DeF8DeF8DeF8DeF8DeF8DeF8DeI8KeAgH --patterns TOLJISZ";
-        String command = "ren -h";
+
+        String command = "util fig -t v115@9gwhglQpAtwwg0Q4B8AewhglQpAtwwg0Q4B8Aewhgl?QpAtwwg0Q4B8AewhglQpAtwwg0Q4B8KepDnvhApDJ -s 1 -e 2";
+
+//        String command = "ren -h";
 
 //        String command = "setup -p [^SZT]! --fill i --margin o -t v115@zgTpwhQpDeTpAeQpDezhAewhDeyhQpAeQpwhCeTpAe?RpMeAgH";
 //        String command = "setup -p [^SZT]! --fill i --margin o -t v115@zgTpwhQpDeTpAeQpDezhAewhDeyhQpAexhCeTpAeRp?MeAgH";

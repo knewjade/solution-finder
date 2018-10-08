@@ -18,4 +18,6 @@ public interface TetfuPage {
     ColoredField getField();
 
     boolean isPutMino();
+
+    boolean isLock();
 }

@@ -8,15 +8,15 @@ import java.util.EnumMap;
 public enum FigColor {
     Background(ColorType.Empty, Color.BLACK, Color.BLACK),
     Frame(null, Color.ORANGE, Color.ORANGE),
-    Line(null, new Color(0x333333), new Color(0x333333)),
-    I(ColorType.I, new Color(0x00999A), new Color(0x24CCCD)),
-    T(ColorType.T, new Color(0x9B009B), new Color(0xCE27CE)),
-    S(ColorType.S, new Color(0x009B00), new Color(0x26CE22)),
-    Z(ColorType.Z, new Color(0x9B0000), new Color(0xCE312D)),
-    L(ColorType.L, new Color(0x9A6700), new Color(0xCD9A24)),
-    J(ColorType.J, new Color(0x0000BE), new Color(0x3229CF)),
-    O(ColorType.O, new Color(0x999A00), new Color(0xCCCE19)),
-    Gray(ColorType.Gray, new Color(0x999999), new Color(0xCCCCCC)),;
+    Line(null, new Color(0x333333), new Color(0x333333), new Color(0x333333)),
+    I(ColorType.I, new Color(0x009999), new Color(0x33cccc), new Color(0x00ffff)),
+    T(ColorType.T, new Color(0x990099), new Color(0xcc33cc), new Color(0xff00ff)),
+    S(ColorType.S, new Color(0x009900), new Color(0x33cc33), new Color(0x00ff00)),
+    Z(ColorType.Z, new Color(0x990000), new Color(0xcc3333), new Color(0xff0000)),
+    L(ColorType.L, new Color(0x996600), new Color(0xcc9933), new Color(0xff9900)),
+    J(ColorType.J, new Color(0x0000BB), new Color(0x3333cc), new Color(0x0000ff)),
+    O(ColorType.O, new Color(0x999900), new Color(0xcccc33), new Color(0xffff00)),
+    Gray(ColorType.Gray, new Color(0x999999), new Color(0xcccccc), new Color(0xffffff)),;
 
     private static final EnumMap<ColorType, FigColor> map = new EnumMap<>(ColorType.class);
 
@@ -33,12 +33,18 @@ public enum FigColor {
 
     private final ColorType type;
     private final Color normal;
-    private final Color strong;
+    private final Color strong1;
+    private final Color strong2;
 
-    FigColor(ColorType type, Color normal, Color strong) {
+    FigColor(ColorType type, Color normal, Color strong1) {
+        this(type, normal, strong1, strong1);
+    }
+
+    FigColor(ColorType type, Color normal, Color strong1, Color strong2) {
         this.type = type;
         this.normal = normal;
-        this.strong = strong;
+        this.strong1 = strong1;
+        this.strong2 = strong2;
     }
 
     public Color getNormalColor() {
@@ -46,6 +52,10 @@ public enum FigColor {
     }
 
     public Color getStrongColor() {
-        return strong;
+        return strong1;
+    }
+
+    public Color getStrong2Color() {
+        return strong2;
     }
 }
