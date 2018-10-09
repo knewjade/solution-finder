@@ -6,7 +6,6 @@ import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
 import core.field.Field;
-import core.mino.Piece;
 import entry.path.*;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
@@ -19,7 +18,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class LinkPathOutput implements PathOutput {
@@ -30,8 +28,9 @@ public class LinkPathOutput implements PathOutput {
 
     private final MyFile outputMinimalFile;
     private final MyFile outputUniqueFile;
+    private final long numOfAllPieces;
 
-    public LinkPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings) throws FinderInitializeException {
+    public LinkPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings, int numOfAllPieces) throws FinderInitializeException {
         // 出力ファイルが正しく出力できるか確認
         String outputBaseFilePath = pathSettings.getOutputBaseFilePath();
         String namePath = getRemoveExtensionFromPath(outputBaseFilePath);
@@ -60,6 +59,7 @@ public class LinkPathOutput implements PathOutput {
         this.settings = pathSettings;
         this.outputUniqueFile = unique;
         this.outputMinimalFile = minimal;
+        this.numOfAllPieces = numOfAllPieces;
     }
 
     private String getRemoveExtensionFromPath(String path) throws FinderInitializeException {
@@ -119,7 +119,7 @@ public class LinkPathOutput implements PathOutput {
         pathPairs.parallelStream()
                 .forEach(pathPair -> {
                     PathHTMLColumn htmlColumn = getHTMLColumn(pathPair);
-                    Pair<String, Integer> linkAndPriority = createALink(pathPair);
+                    Pair<String, Long> linkAndPriority = createALink(pathPair);
                     String line = String.format("<div>%s</div>", linkAndPriority.getKey());
                     htmlBuilder.addColumn(htmlColumn, line, -linkAndPriority.getValue());
                 });
@@ -142,7 +142,7 @@ public class LinkPathOutput implements PathOutput {
             return PathHTMLColumn.NotDeletedLine;
     }
 
-    private Pair<String, Integer> createALink(PathPair pathPair) {
+    private Pair<String, Long> createALink(PathPair pathPair) {
         // パターンを表す名前 を生成
         String linkText = pathPair.getSampleOperations().stream()
                 .map(operationWithKey -> operationWithKey.getPiece().getName() + "-" + operationWithKey.getRotate().name())
@@ -152,13 +152,10 @@ public class LinkPathOutput implements PathOutput {
         String encode = pathPair.getFumen();
 
         // 有効なミノ順をまとめる
-        AtomicInteger counter = new AtomicInteger();
-        String validOrders = pathPair.blocksStreamForValidSolution()
-                .map(longBlocks -> longBlocks.blockStream().map(Piece::getName).collect(Collectors.joining()))
-                .peek(s -> counter.incrementAndGet())
-                .collect(Collectors.joining(", "));
+        long counter = pathPair.blocksStreamForPattern().count();
+        double validPercent = (double) counter / numOfAllPieces * 100.0;
 
         // 出力
-        return new Pair<>(String.format("<a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a> [%s]", encode, linkText, validOrders), counter.get());
+        return new Pair<>(String.format("<a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a> [%.3f %%]", encode, linkText, validPercent), counter);
     }
 }

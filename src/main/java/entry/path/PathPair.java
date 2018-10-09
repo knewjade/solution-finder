@@ -52,26 +52,30 @@ public class PathPair implements HaveSet<LongPieces> {
         return fumen;
     }
 
-    public Stream<LongPieces> blocksStreamForPattern() {
-        return piecesPattern.stream();
-    }
-
-    // パフェで使用するミノと同じ数 の すべてミノ順（パターンより少なくなる可能性がある）
-    public Stream<LongPieces> blocksStreamForSolution() {
-        return piecesSolution.stream();
-    }
-
-    public Stream<LongPieces> blocksStreamForValidSolution() {
-        return piecesSolution.stream().filter(validPieces::contains);
-    }
-
-    // パターンで設定したミノと同じ数 の すべてミノ順
+    // すべての入力パターンの中で、その手順で対応できるツモ
+    // パターンで6ミノを設定したとき、このツモは6ミノになる
     public HashSet<LongPieces> blocksHashSetForPattern() {
         return piecesPattern;
     }
 
+    public Stream<LongPieces> blocksStreamForPattern() {
+        return piecesPattern.stream();
+    }
+
+    // その地形を積み込むことができるツモ (入力パターンには依存しない)
+    // パターンで6ミノを設定した場合でも、地形で5ミノしか使わないときは、このツモは5ミノになる
+    public Stream<LongPieces> blocksStreamForSolution() {
+        return piecesSolution.stream();
+    }
+
     public HashSet<LongPieces> blocksHashSetForSolution() {
         return piecesSolution;
+    }
+
+    // その地形を積み込むことができるツモ (入力パターンには依存しない)のうち、パターンで対応できるツモ
+    // パターンで6ミノを設定した場合でも、地形で5ミノしか使わないときは、このツモは5ミノになる
+    public Stream<LongPieces> blocksStreamForValidSolution() {
+        return piecesSolution.stream().filter(validPieces::contains);
     }
 
     public List<OperationWithKey> getSampleOperations() {

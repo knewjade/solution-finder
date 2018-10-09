@@ -6,10 +6,10 @@ import java.util.stream.Collectors;
 // TODO: write unittest
 public class HTMLBuilder<T extends HTMLColumn> {
     private class PriorityString {
-        private final int priority;
+        private final long priority;
         private final String string;
 
-        private PriorityString(int priority, String string) {
+        private PriorityString(long priority, String string) {
             this.priority = priority;
             this.string = string;
         }
@@ -37,7 +37,11 @@ public class HTMLBuilder<T extends HTMLColumn> {
     }
 
     // 小さいほど優先度が高い
-    public synchronized void addColumn(T column, String line, int priority) {
+    public void addColumn(T column, String line, Integer priority) {
+        addColumn(column, line, priority);
+    }
+
+    public synchronized void addColumn(T column, String line, Long priority) {
         List<PriorityString> list = maps.computeIfAbsent(column, t -> new ArrayList<>());
         list.add(new PriorityString(priority, line));
     }
@@ -111,7 +115,7 @@ public class HTMLBuilder<T extends HTMLColumn> {
         column.getDescription().ifPresent(description -> lines.add(String.format("<p>%s</p>", description)));
 
         List<String> addingLines = maps.get(column).stream()
-                .sorted(Comparator.comparingInt(o -> o.priority))
+                .sorted(Comparator.comparingLong(o -> o.priority))
                 .map(PriorityString::getLine)
                 .collect(Collectors.toList());
 
