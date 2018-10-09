@@ -144,7 +144,6 @@ class PathCountCaseTest extends PathUseCaseBaseTest {
 
         String command = String.format("path -p J,Z,O,S,L,I,I,J,S,O,Z -t %s", tetfu);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
-        System.out.println(log.getOutput());
 
         assertThat(log.getReturnCode()).isEqualTo(0);
 

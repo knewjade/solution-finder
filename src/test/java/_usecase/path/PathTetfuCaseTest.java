@@ -56,7 +56,6 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(uniqueHTML.noDeletedLineFumens())
                 .isEmpty();
 
-        System.out.println(uniqueHTML.getHtml());
         // ライン消去あり
         assertThat(uniqueHTML.deletedLineFumens())
                 .hasSize(35)

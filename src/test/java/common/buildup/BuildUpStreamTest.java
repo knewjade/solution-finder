@@ -171,8 +171,6 @@ class BuildUpStreamTest {
                 }
             });
         }
-
-        System.out.println(counter);
     }
 
     @Test
@@ -239,8 +237,6 @@ class BuildUpStreamTest {
                 }
             });
         }
-
-        System.out.println(counter);
     }
 
     private SolutionFilter createRandomSolutionFilter(Randoms randoms, SizedBit sizedBit, LockedReachableThreadLocal lockedReachableThreadLocal, Field field) {

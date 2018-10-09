@@ -63,7 +63,7 @@ class CheckerNoHoldInvokerTest {
             tree.set(result, pieces);
         }
 
-        System.out.println(tree.show());
+//        System.out.println(tree.show());
 
         return tree;
     }

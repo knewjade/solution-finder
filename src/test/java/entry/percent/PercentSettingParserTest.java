@@ -191,7 +191,6 @@ class PercentSettingParserTest {
 
         assertThat(parse).isPresent();
         parse.ifPresent(settings -> {
-            System.out.println(settings.getMaxClearLine());
             assertThat(settings)
                     .returns("output/dummy", PercentSettings::getLogFilePath)
                     .returns(4, PercentSettings::getMaxClearLine)

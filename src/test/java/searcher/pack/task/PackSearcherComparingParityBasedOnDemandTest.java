@@ -147,8 +147,6 @@ class PackSearcherComparingParityBasedOnDemandTest {
             BasicSolutions basicSolutions = new FilterWrappedBasicSolutions(onDemandBasicSolutions, solutionFilter);
             long packCounter = calculateSRSValidCount(sizedBit, basicSolutions, initField, solutionFilter);
 
-            System.out.println(usingPieces);
-
             assertThat(packCounter).isEqualTo(data.getCount());
         }
     }

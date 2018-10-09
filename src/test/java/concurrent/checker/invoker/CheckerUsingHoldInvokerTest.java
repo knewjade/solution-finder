@@ -59,8 +59,6 @@ class CheckerUsingHoldInvokerTest {
             tree.set(result, pieces);
         }
 
-        System.out.println(tree.show());
-
         return tree;
     }
 
@@ -347,7 +345,6 @@ class CheckerUsingHoldInvokerTest {
                 tree1.set(result, pieces1);
             }
 
-            System.out.println(tree1.show());
             executorService.shutdown();
 
             AnalyzeTree tree = tree1;

@@ -524,7 +524,6 @@ class SetupTetfuCaseTest {
             String fumen = "v115@9gzhFezhFezhFezhPeAgH";
             String command = buildCommand(fumen, "-p IOOI --fill i --hold yes");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
-            System.out.println(log.getOutput());
 
             // Log
             assertThat(log.getOutput())
@@ -750,7 +749,7 @@ class SetupTetfuCaseTest {
 
             String command = String.format("setup -t %s -f i -p #Q=[I](*)*O", tetfu);
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
-            System.out.println(log.getError());
+
             assertThat(log.getOutput())
                     .contains("#Q=[I](*)*O")
                     .contains(Messages.foundSolutions(2))
