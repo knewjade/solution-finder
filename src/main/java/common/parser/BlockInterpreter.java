@@ -47,4 +47,25 @@ public class BlockInterpreter {
         }
         return builder.build();
     }
+
+    public static String parseQuizToPieceString(String comment) {
+        StringBuilder builder = new StringBuilder();
+
+        for (char ch : comment.toUpperCase().toCharArray()) {
+            switch (ch) {
+                case 'T':
+                case 'I':
+                case 'O':
+                case 'S':
+                case 'Z':
+                case 'L':
+                case 'J':
+                case '*':
+                    builder.append(ch);
+            }
+        }
+
+        return builder.toString();
+    }
+
 }

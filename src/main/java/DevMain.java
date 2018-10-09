@@ -31,7 +31,7 @@ public class DevMain {
 
 //        String command = "ren --tetfu v115@VgF8DeF8DeF8DeF8DeF8DeF8DeF8DeI8KeAgH --patterns TOLJISZ";
 
-        String command = "util fig -t v115@9gwhglQpAtwwg0Q4B8AewhglQpAtwwg0Q4B8Aewhgl?QpAtwwg0Q4B8AewhglQpAtwwg0Q4B8KepDnvhApDJ -s 1 -e 2";
+        String command = "ren -t v115@neF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8De?F8DeF8DeF8DeF8DeF8DeF8DeF8DeF8AeL8KeAgH -p tilsojztilsojz";
 
 //        String command = "ren -h";
 

@@ -67,6 +67,12 @@ public class SetupSettingParser extends SettingParser<SetupSettings> {
                     // 最大削除ラインをコマンドラインのオプションに設定
                     CommandLine commandLineTetfu = commandLineFactory.parse(Arrays.asList("--" + SetupOptions.Line.optName(), String.valueOf(maxHeight)));
                     CommandLineWrapper newWrapper = new NormalCommandLineWrapper(commandLineTetfu);
+
+                    Optional<CommandLineWrapper> FieldLineWrapper = fieldData.getCommandLineWrapper();
+                    if (FieldLineWrapper.isPresent()) {
+                        newWrapper = new PriorityCommandLineWrapper(Arrays.asList(FieldLineWrapper.get(), newWrapper));
+                    }
+
                     return Optional.of(new FieldData(coloredField, newWrapper));
                 },
                 fieldLines -> {

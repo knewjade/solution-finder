@@ -985,4 +985,56 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
                 .hasSize(74)
                 .contains("wgC8HeB8EeF8DeY8JeTAYZAFLDmClcJSAVDEHBEooR?BPoAVBqHUxCqAAAAvhEOrBUiB3gBNkBupB");
     }
+
+    @Test
+    void quizTetfu() throws Exception {
+        // テト譜 + Quizパターンコマンド (フィールドファイル・パターンファイル無視)
+
+            /*
+            comment: #Q=[](I)LOSZTJ
+            __________
+            L__S______
+            LZZSS___OO
+            LLZZS___OO
+             */
+
+        String tetfu = "http://fumen.zui.jp/?v115@HhglBeQ4FeglBtR4CeRphlBtQ4CeRpJeAgWaAFLDmC?lcJSAVDEHBEooRBJoAVBM3jFD0/AAA";
+
+        String command = String.format("path -t %s", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getOutput())
+                .contains("ILOSZTJ")
+                .contains(Messages.uniqueCount(1))
+                .contains(Messages.minimalCount(1))
+                .contains(Messages.useHold());
+
+        assertThat(log.getError()).isEmpty();
+    }
+
+    @Test
+    void quizTetfuWithPatterns() throws Exception {
+        // テト譜 + Quizパターンコマンド + オプション (フィールドファイル・パターンファイル無視)
+
+            /*
+            comment: #Q=[](I)LOSZTJ
+            __________
+            L__S______
+            LZZSS___OO
+            LLZZS___OO
+             */
+
+        String tetfu = "http://fumen.zui.jp/?v115@HhglBeQ4FeglBtR4CeRphlBtQ4CeRpJeAgWaAFLDmC?lcJSAVDEHBEooRBJoAVBM3jFD0/AAA";
+
+        String command = String.format("path -t %s -p #Q=[T](*)IJOZS", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getOutput())
+                .contains("#Q=[T](*)IJOZS")
+                .contains(Messages.uniqueCount(7))
+                .contains(Messages.minimalCount(5))
+                .contains(Messages.useHold());
+
+        assertThat(log.getError()).isEmpty();
+    }
 }

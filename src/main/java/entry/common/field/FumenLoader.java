@@ -1,5 +1,6 @@
 package entry.common.field;
 
+import common.parser.BlockInterpreter;
 import common.tetfu.Tetfu;
 import common.tetfu.TetfuPage;
 import common.tetfu.common.ColorConverter;
@@ -43,44 +44,8 @@ public class FumenLoader {
         // 指定されたページを抽出
         TetfuPage tetfuPage = extractTetfuPage(decoded, page);
 
-        return load(tetfuPage);
-    }
-
-    private TetfuPage extractTetfuPage(List<TetfuPage> tetfuPages, int page) throws FinderParseException {
-        if (page < 1) {
-            throw new FinderParseException(String.format("Page of fumen should be 1 <= page: page=%d", page));
-        } else if (page <= tetfuPages.size()) {
-            return tetfuPages.get(page - 1);
-        } else {
-            throw new FinderParseException(String.format("Page of fumen is over max page: page=%d", page));
-        }
-    }
-
-    private FieldData load(TetfuPage page) {
-        // フィールドを設定
-        ColoredField coloredField = page.getField();
-        if (page.isPutMino()) {
-            ColorType colorType = page.getColorType();
-            Rotate rotate = page.getRotate();
-            Mino mino = minoFactory.create(colorConverter.parseToBlock(colorType), rotate);
-
-            int x = page.getX();
-            int y = page.getY();
-            coloredField.putMino(mino, x, y);
-        }
-
-        // コメントの確認
-        String comment = page.getComment().trim();
-        if (comment.isEmpty()) {
-            return new FieldData(coloredField);
-        }
-
-        // オプションとして読み込む
-        if (Character.isDigit(comment.charAt(0))) {
-            // コメントの先頭が数字
-            // 削除する行のオプションを追加
-            comment = "--clear-line " + comment;
-        }
+        ColoredField coloredField = loadField(tetfuPage);
+        String comment = loadComment(tetfuPage);
 
         List<String> commentArgs = Arrays.stream(comment.split(" "))
                 .map(String::trim)
@@ -94,5 +59,54 @@ public class FumenLoader {
         } catch (FinderParseException ignore) {
             return new FieldData(coloredField);
         }
+    }
+
+    private TetfuPage extractTetfuPage(List<TetfuPage> tetfuPages, int page) throws FinderParseException {
+        if (page < 1) {
+            throw new FinderParseException(String.format("Page of fumen should be 1 <= page: page=%d", page));
+        } else if (page <= tetfuPages.size()) {
+            return tetfuPages.get(page - 1);
+        } else {
+            throw new FinderParseException(String.format("Page of fumen is over max page: page=%d", page));
+        }
+    }
+
+    private ColoredField loadField(TetfuPage page) {
+        // フィールドを設定
+        ColoredField coloredField = page.getField();
+
+        if (page.isPutMino()) {
+            ColorType colorType = page.getColorType();
+            Rotate rotate = page.getRotate();
+            Mino mino = minoFactory.create(colorConverter.parseToBlock(colorType), rotate);
+
+            int x = page.getX();
+            int y = page.getY();
+            coloredField.putMino(mino, x, y);
+        }
+
+        return coloredField;
+    }
+
+    private String loadComment(TetfuPage page) {
+        String comment = page.getComment().trim();
+
+        if (comment.isEmpty()) {
+            return comment;
+        }
+
+        // Quizの確認
+        if (comment.startsWith("#Q=")) {
+            return "--patterns " + BlockInterpreter.parseQuizToPieceString(comment);
+        }
+
+        // オプションとして読み込む
+        if (Character.isDigit(comment.charAt(0))) {
+            // コメントの先頭が数字
+            // 削除する行のオプションを追加
+            return "--clear-line " + comment;
+        }
+
+        return comment;
     }
 }

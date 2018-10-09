@@ -346,4 +346,54 @@ class PercentTetfuCaseTest extends PercentUseCaseBaseTest {
 
         assertThat(log.getError()).isEmpty();
     }
+
+    @Test
+    void quizTetfu() throws Exception {
+        // テト譜 + Quizパターンコマンド (フィールドファイル・パターンファイル無視)
+
+            /*
+            comment: #Q=[](I)LOSZTJ
+            __________
+            L__S______
+            LZZSS___OO
+            LLZZS___OO
+             */
+
+        String tetfu = "http://fumen.zui.jp/?v115@HhglBeQ4FeglBtR4CeRphlBtQ4CeRpJeAgWaAFLDmC?lcJSAVDEHBEooRBJoAVBM3jFD0/AAA";
+
+        String command = String.format("percent -t %s", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getOutput())
+                .contains(Messages.useHold())
+                .contains(Messages.success(1, 1))
+                .contains("ILOSZTJ");
+
+        assertThat(log.getError()).isEmpty();
+    }
+
+    @Test
+    void quizTetfuWithPatterns() throws Exception {
+        // テト譜 + Quizパターンコマンド + オプション (フィールドファイル・パターンファイル無視)
+
+            /*
+            comment: #Q=[](I)LOSZTJ
+            __________
+            L__S______
+            LZZSS___OO
+            LLZZS___OO
+             */
+
+        String tetfu = "http://fumen.zui.jp/?v115@HhglBeQ4FeglBtR4CeRphlBtQ4CeRpJeAgWaAFLDmC?lcJSAVDEHBEooRBJoAVBM3jFD0/AAA";
+
+        String command = String.format("percent -t %s -p #Q=[S](Z)I*JOT", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getOutput())
+                .contains(Messages.useHold())
+                .contains(Messages.success(0, 7))
+                .contains("#Q=[S](Z)I*JOT");
+
+        assertThat(log.getError()).isEmpty();
+    }
 }

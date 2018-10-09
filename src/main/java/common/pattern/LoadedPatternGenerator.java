@@ -3,6 +3,7 @@ package common.pattern;
 import common.SyntaxException;
 import common.datastore.PieceCounter;
 import common.datastore.blocks.Pieces;
+import common.parser.BlockInterpreter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,11 +23,17 @@ public class LoadedPatternGenerator implements PatternGenerator {
         for (int index = 0; index < patterns.size(); index++) {
             String pattern = patterns.get(index);
             String trim = pattern.trim();
-            if (trim.startsWith("'") && trim.endsWith("'"))
+            if (trim.startsWith("'") && trim.endsWith("'")) {
                 trim = trim.substring(1, trim.length() - 1);
+            }
 
-            if (trim.isEmpty() || trim.startsWith("#"))
+            if (trim.startsWith("#Q=")) {
+                trim = BlockInterpreter.parseQuizToPieceString(trim);
+            }
+
+            if (trim.isEmpty() || trim.startsWith("#")) {
                 continue;
+            }
 
             PatternInterpreter interpreter = parseInterpreter(index, trim);
 

@@ -708,6 +708,59 @@ class SetupTetfuCaseTest {
     }
 
     @Nested
+    class QuizTest extends SetupUseCaseBaseTest {
+        @Test
+        void quizTetfu() throws Exception {
+            // テト譜 + Quizパターンコマンド (フィールドファイル・パターンファイル無視)
+
+            /*
+            comment: #Q=[](L)SZO
+            __________
+            I__I______
+            IIIII___II
+            IIIII___II
+             */
+
+            String tetfu = "http://fumen.zui.jp/?v115@HhwhBewhFe0hCe2hCexhJeAgWXAFLDmClcJSAVDEHB?EooRBMoAVBzHrBA";
+
+            String command = String.format("setup -t %s -f i", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput())
+                    .contains("LSZO")
+                    .contains(Messages.foundSolutions(1))
+                    .contains(Messages.foundSubSolutions(1));
+
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
+        void quizTetfuWithPatterns() throws Exception {
+            // テト譜 + Quizパターンコマンド + オプション (フィールドファイル・パターンファイル無視)
+
+            /*
+            comment: #Q=[](L)SZO
+            __________
+            I__I______
+            IIIII___II
+            IIIII___II
+             */
+
+            String tetfu = "http://fumen.zui.jp/?v115@HhwhBewhFe0hCe2hCexhJeAgWXAFLDmClcJSAVDEHB?EooRBMoAVBzHrBA";
+
+            String command = String.format("setup -t %s -f i -p #Q=[I](*)*O", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+            System.out.println(log.getError());
+            assertThat(log.getOutput())
+                    .contains("#Q=[I](*)*O")
+                    .contains(Messages.foundSolutions(2))
+                    .contains(Messages.foundSubSolutions(2));
+
+            assertThat(log.getError()).isEmpty();
+        }
+    }
+
+    @Nested
     class ErrorTest extends SetupUseCaseBaseTest {
         private String buildCommand(String fumen, String options) {
             return String.format("setup -t %s %s", fumen, options);
