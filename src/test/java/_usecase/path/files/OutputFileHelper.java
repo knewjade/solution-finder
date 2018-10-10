@@ -40,6 +40,7 @@ public class OutputFileHelper {
     private static PathHTML loadHTML(String path) throws IOException {
         String html = Files.lines(Paths.get(path)).collect(Collectors.joining());
         int pattern = extractPattern(html);
+        int sequence = extractSequence(html);
 
         if (html.contains("ライン消去あり")) {
             String[] split = html.split("ライン消去あり");
@@ -47,11 +48,11 @@ public class OutputFileHelper {
             String deletedLine = split[1];
             List<String> noDeletedLineFumens = extractTetfu(noDeletedLine);
             List<String> deletedLineFumens = extractTetfu(deletedLine);
-            return new PathHTML(html, pattern, noDeletedLineFumens, deletedLineFumens);
+            return new PathHTML(html, pattern, sequence, noDeletedLineFumens, deletedLineFumens);
         } else {
             List<String> noDeletedLineFumens = extractTetfu(html);
             List<String> deletedLineFumens = extractTetfu("");
-            return new PathHTML(html, pattern, noDeletedLineFumens, deletedLineFumens);
+            return new PathHTML(html, pattern, sequence, noDeletedLineFumens, deletedLineFumens);
         }
     }
 
@@ -99,13 +100,24 @@ public class OutputFileHelper {
     }
 
     private static int extractPattern(String html) {
-        Pattern pattern = Pattern.compile("<div>(\\d+)パターン</div>");
+        Pattern pattern = Pattern.compile("<div>(\\d+)パターン.*?</div>");
         Matcher matcher = pattern.matcher(html);
         if (matcher.find()) {
             assert matcher.groupCount() == 1 : html;
             return Integer.valueOf(matcher.group(1));
         } else {
             throw new IllegalStateException("Not found pattern: " + html);
+        }
+    }
+
+    private static int extractSequence(String html) {
+        Pattern pattern = Pattern.compile("\\[(\\d+)シーケンス]");
+        Matcher matcher = pattern.matcher(html);
+        if (matcher.find()) {
+            assert matcher.groupCount() == 1 : html;
+            return Integer.valueOf(matcher.group(1));
+        } else {
+            throw new IllegalStateException("Not found sequence: " + html);
         }
     }
 

@@ -38,7 +38,7 @@ public class HTMLBuilder<T extends HTMLColumn> {
 
     // 小さいほど優先度が高い
     public void addColumn(T column, String line, Integer priority) {
-        addColumn(column, line, priority);
+        addColumn(column, line, priority.longValue());
     }
 
     public synchronized void addColumn(T column, String line, Long priority) {

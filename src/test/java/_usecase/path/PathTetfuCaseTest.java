@@ -793,8 +793,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // minimal
         PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
         assertThat(minimalHTML.getHtml())
-                .contains("I-Left O-Spawn S-Spawn Z-Spawn")
-                .contains("IOSZ");
+                .contains("I-Left O-Spawn S-Spawn Z-Spawn");
 
         // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens())
@@ -913,9 +912,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // minimal
         PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
         assertThat(minimalHTML.getHtml())
-                .doesNotContain("SISJLO")
-                .contains("O-Spawn S-Spawn L-Spawn J-Spawn S-Spawn I-Spawn")
-                .contains("LSOISJ", "OSLIJS", "LOJSIS", "SOJLSI", "SJIOSL", "JSIOSL");
+                .contains("O-Spawn S-Spawn L-Spawn J-Spawn S-Spawn I-Spawn");
 
         // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens())
@@ -1026,5 +1023,68 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
                 .contains(Messages.useHold());
 
         assertThat(log.getError()).isEmpty();
+    }
+
+    @Test
+    void useTet3() throws Exception {
+            /*
+            comment: <Empty>
+            __________
+            _________X
+            XX__X__XXX
+            XX_XXXXXXX
+             */
+
+        String tetfu = "v115@QhC8BeA8BeE8AeG8JeAgH";
+
+        String command = String.format("path -p *! -t %s", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getReturnCode()).isEqualTo(0);
+
+        assertThat(log.getOutput())
+                .contains(Messages.uniqueCount(5))
+                .contains(Messages.minimalCount(3))
+                .contains(Messages.useHold());
+
+        // unique
+        PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
+        assertThat(uniqueHTML)
+                .returns(5040, PathHTML::sequence)
+                .returns(5, PathHTML::pattern);
+
+        assertThat(uniqueHTML.getHtml())
+                .contains("Z-Spawn I-Left S-Spawn J-Right O-Spawn T-Reverse")
+                .contains("76.2 %")
+                .contains("[3840]")
+                .contains("I-Left S-Spawn J-Right T-Right L-Left O-Spawn")
+                .contains("75.0 %")
+                .contains("[3780]")
+                .contains("T-Right S-Spawn J-Right L-Left O-Spawn Z-Spawn")
+                .contains("66.7 %")
+                .contains("[3360]")
+                .contains("Z-Right S-Spawn J-Right T-Left O-Spawn L-Reverse")
+                .contains("53.3 %")
+                .contains("[2688]")
+                .contains("O-Spawn S-Spawn T-Right J-Spawn L-Left I-Spawn")
+                .contains("20.0 %")
+                .contains("[1008]");
+
+        // minimal
+        PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
+        assertThat(minimalHTML)
+                .returns(5040, PathHTML::sequence)
+                .returns(3, PathHTML::pattern);
+
+        assertThat(minimalHTML.getHtml())
+                .contains("Z-Spawn I-Left S-Spawn J-Right O-Spawn T-Reverse")
+                .contains("76.2 %")
+                .contains("[3840]")
+                .contains("I-Left S-Spawn J-Right T-Right L-Left O-Spawn")
+                .contains("75.0 %")
+                .contains("[3780]")
+                .contains("Z-Right S-Spawn J-Right T-Left O-Spawn L-Reverse")
+                .contains("53.3 %")
+                .contains("[2688]");
     }
 }

@@ -62,7 +62,7 @@ public class LinkPathOutput implements PathOutput {
         this.numOfAllPieces = numOfAllPieces;
     }
 
-    private String getRemoveExtensionFromPath(String path) throws FinderInitializeException {
+    private String getRemoveExtensionFromPath(String path) {
         int pointIndex = path.lastIndexOf('.');
         int separatorIndex = path.lastIndexOf(File.separatorChar);
 
@@ -114,7 +114,7 @@ public class LinkPathOutput implements PathOutput {
 
         // HTMLの生成  // true: ライン消去あり, false: ライン消去なし
         HTMLBuilder<HTMLColumn> htmlBuilder = new HTMLBuilder<>("Path Result");
-        htmlBuilder.addHeader(String.format("<div>%dパターン</div>", pathPairs.size()));
+        htmlBuilder.addHeader(String.format("<div>%dパターン <span style='color: #999'>[%dシーケンス]</span></div>", pathPairs.size(), numOfAllPieces));
 
         pathPairs.parallelStream()
                 .forEach(pathPair -> {
@@ -156,6 +156,6 @@ public class LinkPathOutput implements PathOutput {
         double validPercent = (double) counter / numOfAllPieces * 100.0;
 
         // 出力
-        return new Pair<>(String.format("<a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a> [%.3f %%]", encode, linkText, validPercent), counter);
+        return new Pair<>(String.format("<a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a> / %.1f %% <span style='color: #999'>[%d]</span>", encode, linkText, validPercent, counter), counter);
     }
 }

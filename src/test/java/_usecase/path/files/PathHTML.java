@@ -6,12 +6,14 @@ import java.util.List;
 public class PathHTML {
     private final String html;
     private final int pattern;
+    private final int sequence;
     private final List<String> deletedLineFumens;
     private final List<String> noDeletedLineFumens;
 
-    PathHTML(String html, int pattern, List<String> noDeletedLineFumens, List<String> deletedLineFumens) {
+    PathHTML(String html, int pattern, int sequence, List<String> noDeletedLineFumens, List<String> deletedLineFumens) {
         this.html = html;
         this.pattern = pattern;
+        this.sequence = sequence;
         this.noDeletedLineFumens = noDeletedLineFumens;
         this.deletedLineFumens = deletedLineFumens;
     }
@@ -22,6 +24,10 @@ public class PathHTML {
 
     public int pattern() {
         return pattern;
+    }
+
+    public int sequence() {
+        return sequence;
     }
 
     public List<String> allFumens() {
