@@ -24,13 +24,12 @@ import entry.setup.functions.CombinationFunctions;
 import entry.setup.functions.OrderFunctions;
 import entry.setup.functions.SetupFunctions;
 import entry.setup.operation.FieldOperation;
+import entry.setup.output.LinkSetupOutput;
 import exceptions.FinderException;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
 import exceptions.FinderTerminateException;
 import lib.Stopwatch;
-import output.HTMLBuilder;
-import output.HTMLColumn;
 import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
@@ -49,7 +48,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -169,11 +167,6 @@ public class SetupEntryPoint implements EntryPoint {
         for (String pattern : patterns)
             output("  " + pattern);
 
-        // Setup output file
-        MyFile base = new MyFile(settings.getOutputBaseFilePath());
-        base.mkdirs();
-        base.verify();
-
         output();
 
         // ========================================
@@ -222,10 +215,10 @@ public class SetupEntryPoint implements EntryPoint {
         }
 
         // 組み合わせか順番かで処理を変更する
-        SetupFunctions data = createSetupFunctions(settings.isCombination(), generator, buildUpStreamThreadLocal, initField, maxDepth, settings.isUsingHold());
+        SetupFunctions setupFunctions = createSetupFunctions(settings.isCombination(), generator, buildUpStreamThreadLocal, initField, maxDepth, settings.isUsingHold());
 
         // ホールを取り除く
-        SetupSolutionFilter filter = data.getSetupSolutionFilter();
+        SetupSolutionFilter filter = setupFunctions.getSetupSolutionFilter();
         // ホールを持ってはいけないエリアがある場合は、新たにフィルターを追加する
         switch (settings.getExcludeType()) {
             case Holes: {
@@ -310,47 +303,9 @@ public class SetupEntryPoint implements EntryPoint {
 
         output("# Output file");
 
-        HTMLBuilder<HTMLColumn> htmlBuilder = new HTMLBuilder<>("Setup result");
-        BiFunction<List<MinoOperationWithKey>, Field, String> naming = data.getNaming();
-
-        resultMap.forEach((keyField, setupResults) -> {
-            Field field = initField.freeze(maxHeight);
-            for (Piece piece : Piece.values())
-                field.merge(keyField.get(piece));
-
-            HTMLColumn column = new FieldHTMLColumn(field, maxHeight);
-            StringBuilder builder = new StringBuilder();
-
-            setupResults.forEach(setupResult -> {
-                // 操作に変換
-                List<MinoOperationWithKey> operationWithKeys = setupResult.getSolution();
-
-                // 譜面の作成
-                String encode = fumenParser.parse(operationWithKeys, initField, maxHeight);
-
-                // 名前の作成
-                String name = naming.apply(operationWithKeys, setupResult.getRawField());
-
-                String link = String.format("<a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a>", encode, name);
-                String line = String.format("<div>%s</div>", link);
-
-                builder.append(line);
-            });
-
-            htmlBuilder.addColumn(column, builder.toString());
-        });
-
-        ArrayList<HTMLColumn> columns = new ArrayList<>(htmlBuilder.getRegisteredColumns());
-        columns.sort(Comparator.comparing(HTMLColumn::getTitle).reversed());
-        try (BufferedWriter bufferedWriter = base.newBufferedWriter()) {
-            for (String line : htmlBuilder.toList(columns, true)) {
-                bufferedWriter.write(line);
-                bufferedWriter.newLine();
-            }
-            bufferedWriter.flush();
-        } catch (IOException e) {
-            throw new FinderExecuteException(e);
-        }
+        LinkSetupOutput setupOutput = new LinkSetupOutput(settings, setupFunctions, fumenParser);
+        SetupResults setupResults = new SetupResults(resultMap);
+        setupOutput.output(setupResults, initField, sizedBit);
 
         output();
 
@@ -525,7 +480,7 @@ public class SetupEntryPoint implements EntryPoint {
         output("");
     }
 
-    private void output(String str) throws FinderExecuteException {
+    public void output(String str) throws FinderExecuteException {
         try {
             logWriter.append(str).append(LINE_SEPARATOR);
         } catch (IOException e) {
@@ -552,35 +507,5 @@ public class SetupEntryPoint implements EntryPoint {
         } catch (IOException | FinderExecuteException e) {
             throw new FinderTerminateException(e);
         }
-    }
-}
-
-
-class FieldOperationWithKey {
-    private final FullOperationWithKey operation;
-    private final Field field;
-
-    FieldOperationWithKey(FullOperationWithKey operation) {
-        int maxY = operation.getMino().getMaxY();
-        Field field = FieldFactory.createField(maxY);
-        field.put(operation.getMino(), operation.getX(), operation.getY());
-        field.insertWhiteLineWithKey(operation.getNeedDeletedKey());
-
-        {
-            this.operation = operation;
-            this.field = field;
-        }
-    }
-
-    public FullOperationWithKey getOperation() {
-        return operation;
-    }
-
-    public Field getField() {
-        return field;
-    }
-
-    public Piece getPiece() {
-        return operation.getPiece();
     }
 }

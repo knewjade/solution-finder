@@ -1,6 +1,5 @@
 package entry.setup.filters;
 
-import common.datastore.BlockField;
 import common.datastore.MinoOperationWithKey;
 import core.field.Field;
 

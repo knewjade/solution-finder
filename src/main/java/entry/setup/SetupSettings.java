@@ -47,7 +47,7 @@ public class SetupSettings {
         return logFilePath;
     }
 
-    String getOutputBaseFilePath() {
+    public String getOutputBaseFilePath() {
         return outputBaseFilePath;
     }
 
