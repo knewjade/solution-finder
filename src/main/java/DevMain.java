@@ -15,7 +15,7 @@ public class DevMain {
 //        String command = "path -k solution -f csv -t v115@zgyhGexhHexhGeAtxhC8BeA8BtyhE8AtA8JeAgWBAV?AAAAvhAAAPBAUAAAA -P 2 -p [IJLOS]p5,S --split yes";
 //        String command = "path -t v115@9gB8HeC8GeE8EeF8NeAgWMA0no2ANI98AQPcQB";
 //        String command = "path -t v115@9gB8EeF8DeG8CeF8DeC8JeAgH -p I,*p3";
-        String command = "path -t v115@QhC8BeA8BeE8AeG8JeAgH -p *!";
+//        String command = "path -t v115@QhC8BeA8BeE8AeG8JeAgH -p *!";
 
 //         String command = "setup -p [^T]! --fill i --margin o -t v115@zgdpwhUpxhCe3hAe1hZpJeAgH";  // 14
 //        String command = "setup -p [^T]! --fill i --margin o -t v115@zgTpwhYpAeUpzhAe3hQpAeQpzhTpAeUpJeAgH";  // 7
@@ -37,6 +37,8 @@ public class DevMain {
 //        String command = "ren -h";
 
 //        String command = "setup -p [^SZT]! --fill i --margin o -t v115@zgTpwhQpDeTpAeQpDezhAewhDeyhQpAeQpwhCeTpAe?RpMeAgH";
+//        String command = "setup -p *! --fill i --margin o -t v115@3gwhHezhGe0hAexhAe4hAe2hJeAgH";
+        String command = "setup -p *! --fill i --margin o -t v115@2gWpCeWpDe0hQpxhAe4hAe2hJeAgH";
 //        String command = "setup -p [^SZT]! --fill i --margin o -t v115@zgTpwhQpDeTpAeQpDezhAewhDeyhQpAexhCeTpAeRp?MeAgH";
 
         int returnCode = EntryPointMain.main(command.split(" "));

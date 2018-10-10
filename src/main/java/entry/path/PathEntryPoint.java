@@ -1,6 +1,7 @@
 package entry.path;
 
 import common.SyntaxException;
+import common.ValidPiecesPool;
 import common.buildup.BuildUpStream;
 import common.datastore.BlockField;
 import common.pattern.LoadedPatternGenerator;
@@ -186,10 +187,9 @@ public class PathEntryPoint implements EntryPoint {
 
         output("# Output file");
         OutputType outputType = settings.getOutputType();
-        PathOutput pathOutput = createOutput(outputType, generator, maxDepth);
-        OneFumenParser oneFumenParser = new OneFumenParser(minoFactory, colorConverter);
+        PathOutput pathOutput = createOutput(outputType, generator, maxDepth, minoFactory, colorConverter);
         int numOfAllPatternSequences = validPiecesPool.getAllPieces().size();
-        PathPairs pathPairs = new PathPairs(minoFactory, colorConverter, pathPairList, oneFumenParser, numOfAllPatternSequences);
+        PathPairs pathPairs = new PathPairs(pathPairList, numOfAllPatternSequences);
         pathOutput.output(pathPairs, field, sizedBit);
 
         output();
@@ -285,12 +285,13 @@ public class PathEntryPoint implements EntryPoint {
         }
     }
 
-    private PathOutput createOutput(OutputType outputType, PatternGenerator generator, int maxDepth) throws FinderExecuteException, FinderInitializeException {
+    private PathOutput createOutput(OutputType outputType, PatternGenerator generator, int maxDepth, MinoFactory minoFactory, ColorConverter colorConverter) throws FinderExecuteException, FinderInitializeException {
         switch (outputType) {
             case CSV:
                 return new CSVPathOutput(this, settings);
-            case Link:
-                return new LinkPathOutput(this, settings);
+            case Link: {
+                return new LinkPathOutput(this, settings, minoFactory, colorConverter);
+            }
             case TetfuCSV:
                 return new FumenCSVPathOutput(this, settings);
             case PatternCSV:

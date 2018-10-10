@@ -1,11 +1,18 @@
 package entry.setup.output;
 
+import common.buildup.BuildUpStream;
 import common.datastore.BlockField;
 import common.datastore.MinoOperationWithKey;
+import common.datastore.OperationWithKey;
+import common.datastore.Pair;
+import common.tetfu.common.ColorConverter;
 import core.field.Field;
+import core.mino.MinoFactory;
 import core.mino.Piece;
+import entry.path.output.BufferedFumenParser;
 import entry.path.output.FumenParser;
 import entry.path.output.MyFile;
+import entry.path.output.OneFumenParser;
 import entry.setup.FieldHTMLColumn;
 import entry.setup.SetupResults;
 import entry.setup.SetupSettings;
@@ -24,13 +31,17 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 public class LinkSetupOutput implements SetupOutput {
     private final MyFile outputSetupFile;
     private final SetupFunctions setupFunctions;
     private final FumenParser fumenParser;
+    private final ThreadLocal<BuildUpStream> buildUpStreamThreadLocal;
+    private final MinoFactory minoFactory;
+    private final ColorConverter colorConverter;
 
-    public LinkSetupOutput(SetupSettings setupSettings, SetupFunctions setupFunctions, FumenParser fumenParser) throws FinderInitializeException {
+    public LinkSetupOutput(SetupSettings setupSettings, SetupFunctions setupFunctions, FumenParser fumenParser, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal, MinoFactory minoFactory, ColorConverter colorConverter) throws FinderInitializeException {
         // 出力ファイルが正しく出力できるか確認
         String outputBaseFilePath = setupSettings.getOutputBaseFilePath();
         MyFile setup = new MyFile(outputBaseFilePath);
@@ -41,6 +52,9 @@ public class LinkSetupOutput implements SetupOutput {
         this.outputSetupFile = setup;
         this.setupFunctions = setupFunctions;
         this.fumenParser = fumenParser;
+        this.buildUpStreamThreadLocal = buildUpStreamThreadLocal;
+        this.minoFactory = minoFactory;
+        this.colorConverter = colorConverter;
     }
 
     @Override
@@ -51,32 +65,60 @@ public class LinkSetupOutput implements SetupOutput {
         HTMLBuilder<HTMLColumn> htmlBuilder = new HTMLBuilder<>("Setup result");
         BiFunction<List<MinoOperationWithKey>, Field, String> naming = setupFunctions.getNaming();
 
-        resultMap.forEach((keyField, results) -> {
+        OneFumenParser oneFumenParser = new OneFumenParser(minoFactory, colorConverter);
+        BufferedFumenParser bufferedFumenParser = new BufferedFumenParser(minoFactory, colorConverter, oneFumenParser);
+
+        Comparator<Pair<Long, ?>> comparator = Comparator.comparingLong(Pair::getKey);
+
+        for (Map.Entry<BlockField, List<SetupResult>> entry : resultMap.entrySet()) {
+            BlockField keyField = entry.getKey();
+            List<SetupResult> results = entry.getValue();
+
             Field field = initField.freeze(maxHeight);
             for (Piece piece : Piece.values())
                 field.merge(keyField.get(piece));
 
-            HTMLColumn column = new FieldHTMLColumn(field, maxHeight);
-            StringBuilder builder = new StringBuilder();
+            FieldHTMLColumn column = new FieldHTMLColumn(field, maxHeight);
 
-            results.forEach(setupResult -> {
-                // 操作に変換
-                List<MinoOperationWithKey> operationWithKeys = setupResult.getSolution();
+            results.stream()
+                    .map(setupResult -> {
+                        List<MinoOperationWithKey> operationWithKeys = setupResult.getSolution();
 
-                // 譜面の作成
-                String encode = fumenParser.parse(operationWithKeys, initField, maxHeight);
+                        BuildUpStream buildUpStream = buildUpStreamThreadLocal.get();
+                        long counter = buildUpStream.existsValidBuildPattern(initField, operationWithKeys).count();
+                        return new Pair<>(counter, setupResult);
+                    })
+                    .sorted(comparator.reversed())
+                    .forEach(pair -> {
+                        Long counter = pair.getKey();
+                        SetupResult setupResult = pair.getValue();
 
-                // 名前の作成
-                String name = naming.apply(operationWithKeys, setupResult.getRawField());
+                        // 操作に変換
+                        List<MinoOperationWithKey> operationWithKeys = setupResult.getSolution();
 
-                String link = String.format("<a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a>", encode, name);
-                String line = String.format("<div>%s</div>", link);
+                        // パターンを表す名前 を生成
+                        String blocksName = operationWithKeys.stream()
+                                .map(OperationWithKey::getPiece)
+                                .map(Piece::getName)
+                                .collect(Collectors.joining());
 
-                builder.append(line);
-            });
+                        bufferedFumenParser.add(operationWithKeys, initField, maxHeight, String.format("%d : %s", counter, blocksName), counter);
 
-            htmlBuilder.addColumn(column, builder.toString());
-        });
+                        // 譜面の作成
+                        String encode = fumenParser.parse(operationWithKeys, initField, maxHeight);
+
+                        // 名前の作成
+                        String name = naming.apply(operationWithKeys, setupResult.getRawField());
+
+                        String link = String.format("<a href='http://fumen.zui.jp/?v115@%s'>%s</a> <span style='color: #999'>[%d]</span>", encode, name, counter);
+                        String line = String.format("<div>%s</div>", link);
+
+                        htmlBuilder.addColumn(column, line, -counter);
+                    });
+        }
+
+        String mergedFumen = bufferedFumenParser.parse();
+        htmlBuilder.addHeader(String.format("<div><a href='http://fumen.zui.jp/?v115@%s'>すべての地形<a></div>", mergedFumen));
 
         ArrayList<HTMLColumn> columns = new ArrayList<>(htmlBuilder.getRegisteredColumns());
         columns.sort(Comparator.comparing(HTMLColumn::getTitle).reversed());

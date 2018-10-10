@@ -9,7 +9,7 @@ import java.util.Map;
 public class SetupResults {
     private final Map<BlockField, List<SetupResult>> resultMap;
 
-    public SetupResults(Map<BlockField, List<SetupResult>> resultMap) {
+    SetupResults(Map<BlockField, List<SetupResult>> resultMap) {
         this.resultMap = resultMap;
     }
 

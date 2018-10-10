@@ -1,10 +1,15 @@
 package entry.path.output;
 
+import common.datastore.MinoOperationWithKey;
+import common.datastore.OperationWithKey;
 import common.datastore.Pair;
+import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
 import core.field.Field;
+import core.mino.MinoFactory;
+import core.mino.Piece;
 import entry.path.*;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
@@ -27,8 +32,10 @@ public class LinkPathOutput implements PathOutput {
 
     private final MyFile outputMinimalFile;
     private final MyFile outputUniqueFile;
+    private final MinoFactory minoFactory;
+    private final ColorConverter colorConverter;
 
-    public LinkPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings) throws FinderInitializeException {
+    public LinkPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings, MinoFactory minoFactory, ColorConverter colorConverter) throws FinderInitializeException {
         // 出力ファイルが正しく出力できるか確認
         String outputBaseFilePath = pathSettings.getOutputBaseFilePath();
         String namePath = getRemoveExtensionFromPath(outputBaseFilePath);
@@ -57,6 +64,8 @@ public class LinkPathOutput implements PathOutput {
         this.settings = pathSettings;
         this.outputUniqueFile = unique;
         this.outputMinimalFile = minimal;
+        this.minoFactory = minoFactory;
+        this.colorConverter = colorConverter;
     }
 
     private String getRemoveExtensionFromPath(String path) {
@@ -80,19 +89,17 @@ public class LinkPathOutput implements PathOutput {
         // 同一ミノ配置を取り除いたパスの出力
         if (pathLayer.contains(PathLayer.Unique)) {
             List<PathPair> pathPairList = pathPairs.getUniquePathPairList();
-            String mergedFumen = pathPairs.createMergedFumen(pathPairList, field, sizedBit.getHeight());
 
             outputLog("Found path [unique] = " + pathPairList.size());
-            outputOperationsToSimpleHTML(field, outputUniqueFile, pathPairList, sizedBit, mergedFumen, numOfAllPatternSequences);
+            outputOperationsToSimpleHTML(field, outputUniqueFile, pathPairList, sizedBit, numOfAllPatternSequences);
         }
 
         // 少ないパターンでカバーできるパスを出力
         if (pathLayer.contains(PathLayer.Minimal)) {
             List<PathPair> pathPairList = pathPairs.getMinimalPathPairList();
-            String mergedFumen = pathPairs.createMergedFumen(pathPairList, field, sizedBit.getHeight());
 
             outputLog("Found path [minimal] = " + pathPairList.size());
-            outputOperationsToSimpleHTML(field, outputMinimalFile, pathPairList, sizedBit, mergedFumen, numOfAllPatternSequences);
+            outputOperationsToSimpleHTML(field, outputMinimalFile, pathPairList, sizedBit, numOfAllPatternSequences);
         }
     }
 
@@ -100,7 +107,7 @@ public class LinkPathOutput implements PathOutput {
         pathEntryPoint.output(str);
     }
 
-    private void outputOperationsToSimpleHTML(Field field, MyFile file, List<PathPair> pathPairs, SizedBit sizedBit, String mergedFumen, int numOfAllPatternSequences) throws FinderExecuteException {
+    private void outputOperationsToSimpleHTML(Field field, MyFile file, List<PathPair> pathPairs, SizedBit sizedBit, int numOfAllPatternSequences) throws FinderExecuteException {
         // Get height
         int maxClearLine = sizedBit.getHeight();
 
@@ -119,15 +126,35 @@ public class LinkPathOutput implements PathOutput {
         HTMLBuilder<HTMLColumn> htmlBuilder = new HTMLBuilder<>("Path Result");
         htmlBuilder.addHeader(String.format("<div>%dパターン <span style='color: #999'>[%dシーケンス]</span></div>", pathPairs.size(), numOfAllPatternSequences));
 
-        htmlBuilder.addHeader(String.format("<div><a href='http://fumen.zui.jp/?v115@%s'>すべての手順<a></div>", mergedFumen));
+        OneFumenParser oneFumenParser = new OneFumenParser(minoFactory, colorConverter);
+        BufferedFumenParser bufferedFumenParser = new BufferedFumenParser(minoFactory, colorConverter, oneFumenParser);
 
         pathPairs.parallelStream()
                 .forEach(pathPair -> {
                     PathHTMLColumn htmlColumn = getHTMLColumn(pathPair);
-                    Pair<String, Long> linkAndPriority = createALink(pathPair, numOfAllPatternSequences);
+
+                    List<MinoOperationWithKey> operations = pathPair.getSampleOperations();
+
+                    // パターンを表す名前 を生成
+                    String blocksName = operations.stream()
+                            .map(OperationWithKey::getPiece)
+                            .map(Piece::getName)
+                            .collect(Collectors.joining());
+
+                    // 入力パターンのうち有効なミノ順を確率に変換
+                    long counter = pathPair.blocksStreamForPattern().count();
+                    double validPercent = (double) counter / numOfAllPatternSequences * 100.0;
+                    String comment = String.format("%.1f %% : %s", validPercent, blocksName);
+
+                    bufferedFumenParser.add(operations, field, maxClearLine, comment, counter);
+
+                    Pair<String, Long> linkAndPriority = createALink(pathPair, counter, validPercent);
                     String line = String.format("<div>%s</div>", linkAndPriority.getKey());
                     htmlBuilder.addColumn(htmlColumn, line, -linkAndPriority.getValue());
                 });
+
+        String mergedFumen = bufferedFumenParser.parse();
+        htmlBuilder.addHeader(String.format("<div><a href='http://fumen.zui.jp/?v115@%s'>すべての手順<a></div>", mergedFumen));
 
         // 出力
         try (BufferedWriter writer = file.newBufferedWriter()) {
@@ -147,7 +174,7 @@ public class LinkPathOutput implements PathOutput {
             return PathHTMLColumn.NotDeletedLine;
     }
 
-    private Pair<String, Long> createALink(PathPair pathPair, int numOfAllPatternSequences) {
+    private Pair<String, Long> createALink(PathPair pathPair, long counter, double validPercent) {
         // パターンを表す名前 を生成
         String linkText = pathPair.getSampleOperations().stream()
                 .map(operationWithKey -> operationWithKey.getPiece().getName() + "-" + operationWithKey.getRotate().name())
@@ -155,10 +182,6 @@ public class LinkPathOutput implements PathOutput {
 
         // テト譜に変換
         String encode = pathPair.getFumen();
-
-        // 入力パターンのうち有効なミノ順を確率に変換
-        long counter = pathPair.blocksStreamForPattern().count();
-        double validPercent = (double) counter / numOfAllPatternSequences * 100.0;
 
         // 出力
         return new Pair<>(String.format("<a href='http://fumen.zui.jp/?v115@%s'>%s</a> / %.1f %% <span style='color: #999'>[%d]</span>", encode, linkText, validPercent, counter), counter);

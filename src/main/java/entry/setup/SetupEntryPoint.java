@@ -1,5 +1,6 @@
 package entry.setup;
 
+import common.ValidPiecesPool;
 import common.buildup.BuildUpStream;
 import common.datastore.*;
 import common.iterable.CombinationIterable;
@@ -16,7 +17,10 @@ import core.mino.Piece;
 import entry.DropType;
 import entry.EntryPoint;
 import entry.Verify;
-import entry.path.*;
+import entry.path.ForPathSolutionFilter;
+import entry.path.HarddropBuildUpListUpThreadLocal;
+import entry.path.LockedBuildUpListUpThreadLocal;
+import entry.path.ReducePatternGenerator;
 import entry.path.output.MyFile;
 import entry.path.output.OneFumenParser;
 import entry.setup.filters.*;
@@ -196,7 +200,7 @@ public class SetupEntryPoint implements EntryPoint {
         TaskResultHelper taskResultHelper = new BasicMinoPackingHelper();
         SolutionFilter solutionFilter = new ForPathSolutionFilter(generator, maxHeight);
         ThreadLocal<BuildUpStream> buildUpStreamThreadLocal = createBuildUpStreamThreadLocal(dropType, maxHeight);
-        OneFumenParser fumenParser = new OneFumenParser(minoFactory, colorConverter);
+        OneFumenParser oneFumenParser = new OneFumenParser(minoFactory, colorConverter);
 
         // ミノリストの作成
         long deleteKeyMask = getDeleteKeyMask(notFilledField, maxHeight);
@@ -303,7 +307,7 @@ public class SetupEntryPoint implements EntryPoint {
 
         output("# Output file");
 
-        LinkSetupOutput setupOutput = new LinkSetupOutput(settings, setupFunctions, fumenParser);
+        LinkSetupOutput setupOutput = new LinkSetupOutput(settings, setupFunctions, oneFumenParser, buildUpStreamThreadLocal, minoFactory, colorConverter);
         SetupResults setupResults = new SetupResults(resultMap);
         setupOutput.output(setupResults, initField, sizedBit);
 
