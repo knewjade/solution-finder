@@ -75,18 +75,20 @@ public class CSVPathOutput implements PathOutput {
     }
 
     @Override
-    public void output(List<PathPair> pathPairs, Field field, SizedBit sizedBit) throws FinderExecuteException {
+    public void output(PathPairs pathPairs, Field field, SizedBit sizedBit) throws FinderExecuteException {
+        List<PathPair> pathPairList = pathPairs.getUniquePathPairList();
+
         PathLayer pathLayer = settings.getPathLayer();
 
         // 同一ミノ配置を取り除いたパスの出力
         if (pathLayer.contains(PathLayer.Unique)) {
-            outputLog("Found path [unique] = " + pathPairs.size());
-            outputOperationsToCSV(field, outputUniqueFile, pathPairs, sizedBit);
+            outputLog("Found path [unique] = " + pathPairList.size());
+            outputOperationsToCSV(field, outputUniqueFile, pathPairList, sizedBit);
         }
 
         // 少ないパターンでカバーできるパスを出力
         if (pathLayer.contains(PathLayer.Minimal)) {
-            Selector<PathPair, LongPieces> selector = new Selector<>(pathPairs);
+            Selector<PathPair, LongPieces> selector = new Selector<>(pathPairList);
             List<PathPair> minimal = selector.select();
             outputLog("Found path [minimal] = " + minimal.size());
             outputOperationsToCSV(field, outputMinimalFile, minimal, sizedBit);

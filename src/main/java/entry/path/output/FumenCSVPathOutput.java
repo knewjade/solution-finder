@@ -5,6 +5,7 @@ import core.field.Field;
 import core.mino.Piece;
 import entry.path.PathEntryPoint;
 import entry.path.PathPair;
+import entry.path.PathPairs;
 import entry.path.PathSettings;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
@@ -24,7 +25,6 @@ public class FumenCSVPathOutput implements PathOutput {
     private final PathEntryPoint pathEntryPoint;
 
     private final MyFile outputBaseFile;
-    private Exception lastException = null;
 
     public FumenCSVPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings) throws FinderInitializeException {
         // 出力ファイルが正しく出力できるか確認
@@ -46,7 +46,7 @@ public class FumenCSVPathOutput implements PathOutput {
         this.outputBaseFile = base;
     }
 
-    private String getRemoveExtensionFromPath(String path) throws FinderInitializeException {
+    private String getRemoveExtensionFromPath(String path) {
         int pointIndex = path.lastIndexOf('.');
         int separatorIndex = path.lastIndexOf(File.separatorChar);
 
@@ -59,15 +59,15 @@ public class FumenCSVPathOutput implements PathOutput {
     }
 
     @Override
-    public void output(List<PathPair> pathPairs, Field field, SizedBit sizedBit) throws FinderExecuteException {
-        this.lastException = null;
+    public void output(PathPairs pathPairs, Field field, SizedBit sizedBit) throws FinderExecuteException {
+        List<PathPair> pathPairList = pathPairs.getUniquePathPairList();
 
-        outputLog("Found path = " + pathPairs.size());
+        outputLog("Found path = " + pathPairList.size());
 
         try (AsyncBufferedFileWriter writer = outputBaseFile.newAsyncWriter()) {
             writer.writeAndNewLine("テト譜,使用ミノ,対応ツモ数 (対地形&パターン),対応ツモ数 (対地形),対応ツモ数 (対パターン),ツモ (対地形),ツモ (対パターン)");
 
-            pathPairs.parallelStream()
+            pathPairList.parallelStream()
                     .map(pathPair -> {
                         // テト譜
                         String encode = pathPair.getFumen();
@@ -110,9 +110,6 @@ public class FumenCSVPathOutput implements PathOutput {
         } catch (IOException e) {
             throw new FinderExecuteException("Failed to output file", e);
         }
-
-        if (lastException != null)
-            throw new FinderExecuteException("Error to output file", lastException);
     }
 
     private void outputLog(String str) throws FinderExecuteException {

@@ -1026,7 +1026,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
     }
 
     @Test
-    void useTet3() throws Exception {
+    void checkSatisfiedSequencePercentage() throws Exception {
             /*
             comment: <Empty>
             __________

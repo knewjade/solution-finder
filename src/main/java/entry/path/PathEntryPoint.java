@@ -174,7 +174,7 @@ public class PathEntryPoint implements EntryPoint {
         Stopwatch stopwatch2 = Stopwatch.createStartedStopwatch();
         ValidPiecesPool validPiecesPool = createValidPiecesPool(maxDepth, patterns, isUsingHold);
         PathCore pathCore = createPathCore(field, maxClearLine, maxDepth, minoFactory, colorConverter, sizedBit, solutionFilter, isUsingHold, basicSolutions, threadCount, validPiecesPool);
-        List<PathPair> pathPairs = run(pathCore, field, sizedBit, reservedBlocks);
+        List<PathPair> pathPairList = run(pathCore, field, sizedBit, reservedBlocks);
         stopwatch2.stop();
 
         output("     ... done");
@@ -186,7 +186,10 @@ public class PathEntryPoint implements EntryPoint {
 
         output("# Output file");
         OutputType outputType = settings.getOutputType();
-        PathOutput pathOutput = createOutput(outputType, generator, maxDepth, validPiecesPool);
+        PathOutput pathOutput = createOutput(outputType, generator, maxDepth);
+        OneFumenParser oneFumenParser = new OneFumenParser(minoFactory, colorConverter);
+        int numOfAllPatternSequences = validPiecesPool.getAllPieces().size();
+        PathPairs pathPairs = new PathPairs(minoFactory, colorConverter, pathPairList, oneFumenParser, numOfAllPatternSequences);
         pathOutput.output(pathPairs, field, sizedBit);
 
         output();
@@ -282,12 +285,12 @@ public class PathEntryPoint implements EntryPoint {
         }
     }
 
-    private PathOutput createOutput(OutputType outputType, PatternGenerator generator, int maxDepth, ValidPiecesPool validPiecesPool) throws FinderExecuteException, FinderInitializeException {
+    private PathOutput createOutput(OutputType outputType, PatternGenerator generator, int maxDepth) throws FinderExecuteException, FinderInitializeException {
         switch (outputType) {
             case CSV:
                 return new CSVPathOutput(this, settings);
             case Link:
-                return new LinkPathOutput(this, settings, validPiecesPool.getAllPieces().size());
+                return new LinkPathOutput(this, settings);
             case TetfuCSV:
                 return new FumenCSVPathOutput(this, settings);
             case PatternCSV:

@@ -1,5 +1,6 @@
 package entry.path.output;
 
+import common.datastore.MinoOperationWithKey;
 import common.datastore.OperationWithKey;
 import entry.path.PathPair;
 
@@ -13,8 +14,8 @@ public class PathPairComparator implements Comparator<PathPair> {
         if (compareDeletedLine != 0)
             return compareDeletedLine;
 
-        List<OperationWithKey> operations1 = o1.getSampleOperations();
-        List<OperationWithKey> operations2 = o2.getSampleOperations();
+        List<MinoOperationWithKey> operations1 = o1.getSampleOperations();
+        List<MinoOperationWithKey> operations2 = o2.getSampleOperations();
 
         int compareSize = Integer.compare(operations1.size(), operations2.size());
         if (compareSize != 0)

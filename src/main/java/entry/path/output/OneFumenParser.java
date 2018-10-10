@@ -11,9 +11,9 @@ import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
+import core.mino.Piece;
 import core.srs.Rotate;
 
 import java.util.Collections;
@@ -31,9 +31,6 @@ public class OneFumenParser implements FumenParser {
 
     @Override
     public String parse(List<MinoOperationWithKey> operations, Field field, int maxClearLine) {
-        // BlockField を生成
-        BlockField blockField = createBlockField(operations, maxClearLine);
-
         // パターンを表す名前 を生成
         String blocksName = operations.stream()
                 .map(OperationWithKey::getPiece)
@@ -41,10 +38,26 @@ public class OneFumenParser implements FumenParser {
                 .collect(Collectors.joining());
 
         // テト譜1ページを作成
-        TetfuElement tetfuElement = createTetfuElement(field, blockField, blocksName, maxClearLine);
+        ColoredField coloredField = parseToColoredField(operations, field, maxClearLine);
+        TetfuElement tetfuElement = new TetfuElement(coloredField, ColorType.Empty, Rotate.Reverse, 0, 0, blocksName);
 
         Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
         return tetfu.encode(Collections.singletonList(tetfuElement));
+    }
+
+    public ColoredField parseToColoredField(List<MinoOperationWithKey> operations, Field initField, int maxClearLine) {
+        // BlockField を生成
+        BlockField blockField = createBlockField(operations, maxClearLine);
+
+        ColoredField coloredField = createInitColoredField(initField, maxClearLine);
+
+        for (Piece piece : Piece.values()) {
+            Field target = blockField.get(piece);
+            ColorType colorType = this.colorConverter.parseToColorType(piece);
+            fillInField(coloredField, colorType, target, maxClearLine);
+        }
+
+        return coloredField;
     }
 
     private BlockField createBlockField(List<MinoOperationWithKey> operations, int maxClearLine) {
@@ -65,18 +78,6 @@ public class OneFumenParser implements FumenParser {
         test.put(mino, key.getX(), key.getY());
         test.insertWhiteLineWithKey(key.getNeedDeletedKey());
         return test;
-    }
-
-    private TetfuElement createTetfuElement(Field initField, BlockField blockField, String comment, int maxClearLine) {
-        ColoredField coloredField = createInitColoredField(initField, maxClearLine);
-
-        for (Piece piece : Piece.values()) {
-            Field target = blockField.get(piece);
-            ColorType colorType = this.colorConverter.parseToColorType(piece);
-            fillInField(coloredField, colorType, target, maxClearLine);
-        }
-
-        return new TetfuElement(coloredField, ColorType.Empty, Rotate.Reverse, 0, 0, comment);
     }
 
     private ColoredField createInitColoredField(Field initField, int maxClearLine) {

@@ -5,10 +5,7 @@ import common.datastore.blocks.Pieces;
 import common.pattern.PatternGenerator;
 import core.field.Field;
 import core.mino.Piece;
-import entry.path.PathEntryPoint;
-import entry.path.PathPair;
-import entry.path.PathSettings;
-import entry.path.ReducePatternGenerator;
+import entry.path.*;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
 import lib.AsyncBufferedFileWriter;
@@ -30,7 +27,6 @@ public class PatternCSVPathOutput implements PathOutput {
 
     private final MyFile outputBaseFile;
     private final ReducePatternGenerator generator;
-    private Exception lastException = null;
 
     public PatternCSVPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings, PatternGenerator generator, int maxDepth) throws FinderInitializeException {
         // 出力ファイルが正しく出力できるか確認
@@ -60,7 +56,7 @@ public class PatternCSVPathOutput implements PathOutput {
             return new ReducePatternGenerator(generator, maxDepth);
     }
 
-    private String getRemoveExtensionFromPath(String path) throws FinderInitializeException {
+    private String getRemoveExtensionFromPath(String path) {
         int pointIndex = path.lastIndexOf('.');
         int separatorIndex = path.lastIndexOf(File.separatorChar);
 
@@ -73,10 +69,10 @@ public class PatternCSVPathOutput implements PathOutput {
     }
 
     @Override
-    public void output(List<PathPair> pathPairs, Field field, SizedBit sizedBit) throws FinderExecuteException {
-        this.lastException = null;
+    public void output(PathPairs pathPairs, Field field, SizedBit sizedBit) throws FinderExecuteException {
+        List<PathPair> pathPairList = pathPairs.getUniquePathPairList();
 
-        outputLog("Found path = " + pathPairs.size());
+        outputLog("Found path = " + pathPairList.size());
 
         AtomicInteger validCounter = new AtomicInteger();
         AtomicInteger allCounter = new AtomicInteger();
@@ -92,7 +88,7 @@ public class PatternCSVPathOutput implements PathOutput {
                                 .collect(Collectors.joining());
 
                         // パフェ可能な地形を抽出
-                        List<PathPair> valid = pathPairs.stream()
+                        List<PathPair> valid = pathPairList.stream()
                                 .filter(pathPair -> {
                                     HashSet<? extends Pieces> buildBlocks = pathPair.blocksHashSetForPattern();
                                     return buildBlocks.contains(blocks);
@@ -152,9 +148,6 @@ public class PatternCSVPathOutput implements PathOutput {
         outputLog("");
         outputLog("perfect clear percent");
         outputLog(String.format("  -> success = %.2f%% (%d/%d)", 100.0 * validCounter.get() / allCounter.get(), validCounter.get(), allCounter.get()));
-
-        if (lastException != null)
-            throw new FinderExecuteException("Error to output file", lastException);
     }
 
     private void outputLog(String str) throws FinderExecuteException {
