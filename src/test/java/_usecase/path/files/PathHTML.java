@@ -8,12 +8,14 @@ public class PathHTML {
     private final int pattern;
     private final int sequence;
     private final List<String> deletedLineFumens;
+    private final String allSolutionFumen;
     private final List<String> noDeletedLineFumens;
 
-    PathHTML(String html, int pattern, int sequence, List<String> noDeletedLineFumens, List<String> deletedLineFumens) {
+    PathHTML(String html, int pattern, int sequence, String allSolutionFumen, List<String> noDeletedLineFumens, List<String> deletedLineFumens) {
         this.html = html;
         this.pattern = pattern;
         this.sequence = sequence;
+        this.allSolutionFumen = allSolutionFumen;
         this.noDeletedLineFumens = noDeletedLineFumens;
         this.deletedLineFumens = deletedLineFumens;
     }
@@ -28,6 +30,10 @@ public class PathHTML {
 
     public int sequence() {
         return sequence;
+    }
+
+    public String allSolutionFumen() {
+        return allSolutionFumen;
     }
 
     public List<String> allFumens() {

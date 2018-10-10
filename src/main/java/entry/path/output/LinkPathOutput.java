@@ -119,7 +119,7 @@ public class LinkPathOutput implements PathOutput {
         HTMLBuilder<HTMLColumn> htmlBuilder = new HTMLBuilder<>("Path Result");
         htmlBuilder.addHeader(String.format("<div>%dパターン <span style='color: #999'>[%dシーケンス]</span></div>", pathPairs.size(), numOfAllPatternSequences));
 
-        htmlBuilder.addHeader(String.format("<div><a href='http://fumen.zui.jp/?v115@%s'>すべての地形<a></div>", mergedFumen));
+        htmlBuilder.addHeader(String.format("<div><a href='http://fumen.zui.jp/?v115@%s'>すべての手順<a></div>", mergedFumen));
 
         pathPairs.parallelStream()
                 .forEach(pathPair -> {

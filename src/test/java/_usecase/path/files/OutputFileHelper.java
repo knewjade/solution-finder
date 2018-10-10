@@ -42,17 +42,27 @@ public class OutputFileHelper {
         int pattern = extractPattern(html);
         int sequence = extractSequence(html);
 
+        String allSolutionFumen;
+        {
+            String[] split = html.split("</header>");
+            html = split[1];
+
+            List<String> list = extractTetfu(split[0]);
+            assert list.size() == 1;
+            allSolutionFumen = list.get(0);
+        }
+
         if (html.contains("ライン消去あり")) {
             String[] split = html.split("ライン消去あり");
             String noDeletedLine = split[0];
             String deletedLine = split[1];
             List<String> noDeletedLineFumens = extractTetfu(noDeletedLine);
             List<String> deletedLineFumens = extractTetfu(deletedLine);
-            return new PathHTML(html, pattern, sequence, noDeletedLineFumens, deletedLineFumens);
+            return new PathHTML(html, pattern, sequence, allSolutionFumen, noDeletedLineFumens, deletedLineFumens);
         } else {
             List<String> noDeletedLineFumens = extractTetfu(html);
             List<String> deletedLineFumens = extractTetfu("");
-            return new PathHTML(html, pattern, sequence, noDeletedLineFumens, deletedLineFumens);
+            return new PathHTML(html, pattern, sequence, allSolutionFumen, noDeletedLineFumens, deletedLineFumens);
         }
     }
 
