@@ -775,8 +775,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // unique
         PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
         assertThat(uniqueHTML.getHtml())
-                .contains("I-Left O-Spawn S-Spawn Z-Spawn")
-                .contains("IOSZ");
+                .contains("I-Left O-Spawn S-Spawn Z-Spawn");
 
         // ライン消去なし
         assertThat(uniqueHTML.noDeletedLineFumens())
@@ -836,8 +835,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // unique
         PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
         assertThat(uniqueHTML.getHtml())
-                .contains("T-Spawn O-Spawn J-Reverse L-Reverse")
-                .contains("TOLJ", "OTJL", "TLOJ", "TOJL", "TLJO", "OTLJ");
+                .contains("T-Spawn O-Spawn J-Reverse L-Reverse");
 
         // ライン消去なし
         assertThat(uniqueHTML.noDeletedLineFumens())
@@ -855,8 +853,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // minimal
         PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
         assertThat(minimalHTML.getHtml())
-                .contains("T-Spawn O-Spawn J-Reverse L-Reverse")
-                .contains("TOLJ", "OTJL", "TLOJ", "TOJL", "TLJO", "OTLJ");
+                .contains("T-Spawn O-Spawn J-Reverse L-Reverse");
 
         // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens())
@@ -899,9 +896,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // unique
         PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
         assertThat(uniqueHTML.getHtml())
-                .doesNotContain("SISJLO")
-                .contains("O-Spawn S-Spawn L-Spawn J-Spawn S-Spawn I-Spawn")
-                .contains("LSOISJ", "OSLIJS", "LOJSIS", "SOJLSI", "SJIOSL", "JSIOSL");
+                .contains("O-Spawn S-Spawn L-Spawn J-Spawn S-Spawn I-Spawn");
 
         // ライン消去なし
         assertThat(uniqueHTML.noDeletedLineFumens())
@@ -953,9 +948,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // unique
         PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
         assertThat(uniqueHTML.getHtml())
-                .doesNotContain("TJISZIO", "LJOTST")
-                .contains("O-Spawn S-Left T-Spawn Z-Spawn L-Left I-Spawn")
-                .contains("TJOSSO");
+                .contains("O-Spawn S-Left T-Spawn Z-Spawn L-Left I-Spawn");
 
         // ライン消去なし
         assertThat(uniqueHTML.noDeletedLineFumens())
@@ -970,9 +963,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // minimal
         PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
         assertThat(minimalHTML.getHtml())
-                .doesNotContain("TJISZIO", "LJOTST")
-                .contains("O-Spawn S-Left T-Spawn Z-Spawn L-Left I-Spawn")
-                .contains("TJOSSO");
+                .contains("O-Spawn S-Left T-Spawn Z-Spawn L-Left I-Spawn");
 
         // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens())

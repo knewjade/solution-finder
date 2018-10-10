@@ -149,12 +149,12 @@ class PathCSVCaseTest extends PathUseCaseBaseTest {
         assertThat(log.getOutput())
                 .contains(Messages.foundPath(18));
 
-        // column: [fumen, use, num-solutions, num-patterns, solutions, patterns]
         CSVStore csvStore = OutputFileHelper.loadPathSolutionCSV();
         assertThat(csvStore.size()).isEqualTo(18);
 
         assertThat(csvStore.row("fumen", "http://fumen.zui.jp/?v115@9gF8BthlG8ywH8wwglG8BtglJeAgWDA0iDCA"))
                 .contains(entry("use", "TLZ"))
+                .contains(entry("num-valid", "1"))
                 .contains(entry("num-solutions", "1"))
                 .contains(entry("num-patterns", "4"))
                 .contains(entry("solutions", "TLZ"))
@@ -162,6 +162,7 @@ class PathCSVCaseTest extends PathUseCaseBaseTest {
 
         assertThat(csvStore.row("fumen", "http://fumen.zui.jp/?v115@9gF8zhG8BtglH8BtG8ilJeAgWDA6SdBA"))
                 .contains(entry("use", "ILZ"))
+                .contains(entry("num-valid", "3"))
                 .contains(entry("num-solutions", "3"))
                 .contains(entry("num-patterns", "6"))
                 .matches(map -> count(map.get("solutions"), 3), "fail solutions")
@@ -176,41 +177,53 @@ class PathCSVCaseTest extends PathUseCaseBaseTest {
     }
 
     @Test
-    void solution1WithoutHold() throws Exception {
-        String fumen = "v115@9gF8DeG8CeH8BeG8MeAgH";
+    void solution2() throws Exception {
+        String fumen = "v115@/gH8BeH8BeH8BeH8JeAgH";
 
-        String command = String.format("path -t %s -p *p3 -f csv -k solution -H no", fumen);
+        String command = String.format("path -t %s -p [TLJ]! -f csv -k solution", fumen);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
         assertThat(log.getReturnCode()).isEqualTo(0);
 
         assertThat(log.getOutput())
-                .contains(Messages.foundPath(18));
+                .contains(Messages.foundPath(4));
 
-        // column: [fumen, use, num-solutions, num-patterns, solutions, patterns]
         CSVStore csvStore = OutputFileHelper.loadPathSolutionCSV();
-        assertThat(csvStore.size()).isEqualTo(18);
+        assertThat(csvStore.size()).isEqualTo(4);
 
-        assertThat(csvStore.row("fumen", "http://fumen.zui.jp/?v115@9gF8BthlG8ywH8wwglG8BtglJeAgWDA0iDCA"))
-                .contains(entry("use", "TLZ"))
+        assertThat(csvStore.row("fumen", "http://fumen.zui.jp/?v115@9ghlH8h0H8g0glH8g0glH8JeAgWCAqCBAA"))
+                .contains(entry("use", "LJ"))
+                .contains(entry("num-valid", "1"))
                 .contains(entry("num-solutions", "1"))
+                .contains(entry("num-patterns", "4"))
+                .contains(entry("valid", "JL"))
+                .contains(entry("solutions", "JL"))
+                .contains(entry("patterns", "JLT;JTL;TJL;LJT"));
+    }
+
+    @Test
+    void solution3WithoutHold() throws Exception {
+        String fumen = "v115@JhF8CeH8BeH8KeAgH";
+
+        String command = String.format("path -t %s -p JL,* -c 3 -f csv -k solution -H no", fumen);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getReturnCode()).isEqualTo(0);
+
+        assertThat(log.getOutput())
+                .contains(Messages.foundPath(1));
+
+        CSVStore csvStore = OutputFileHelper.loadPathSolutionCSV();
+        assertThat(csvStore.size()).isEqualTo(1);
+
+        assertThat(csvStore.row("fumen", "http://fumen.zui.jp/?v115@Hhh0F8hlg0H8glg0H8glJeAgWCAqCBAA"))
+                .contains(entry("use", "LJ"))
+                .contains(entry("num-valid", "1"))
+                .contains(entry("num-solutions", "2"))
                 .contains(entry("num-patterns", "1"))
-                .contains(entry("solutions", "TLZ"))
-                .contains(entry("patterns", "TLZ"));
-
-        assertThat(csvStore.row("fumen", "http://fumen.zui.jp/?v115@9gF8zhG8RpwwH8xwG8RpwwJeAgWDAUXdBA"))
-                .contains(entry("use", "TIO"))
-                .contains(entry("num-solutions", "3"))
-                .contains(entry("num-patterns", "3"))
-                .matches(map -> count(map.get("solutions"), 3), "fail solutions")
-                .matches(map -> count(map.get("patterns"), 3), "fail patterns");
-
-        assertThat(csvStore.row("fumen", "http://fumen.zui.jp/?v115@9gF8zhG8ywH8wwglG8ilJeAgWDAsedBA"))
-                .contains(entry("use", "TIL"))
-                .contains(entry("num-solutions", "6"))
-                .contains(entry("num-patterns", "6"))
-                .matches(map -> count(map.get("solutions"), 6), "fail solutions")
-                .matches(map -> count(map.get("patterns"), 6), "fail patterns");
+                .contains(entry("valid", "JL"))
+                .contains(entry("solutions", "JL;LJ"))
+                .contains(entry("patterns", "JL"));
     }
 
     @Test

@@ -79,7 +79,7 @@ public class OutputFileHelper {
     }
 
     public static CSVStore loadPathSolutionCSV() throws IOException {
-        return loadCSVStore(Paths.get(DEFAULT_CSV), Arrays.asList("fumen", "use", "num-solutions", "num-patterns", "solutions", "patterns"));
+        return loadCSVStore(Paths.get(DEFAULT_CSV), Arrays.asList("fumen", "use", "num-valid", "num-solutions", "num-patterns", "valid", "solutions", "patterns"));
     }
 
     public static CSVStore loadPathUseCSV() throws IOException {
