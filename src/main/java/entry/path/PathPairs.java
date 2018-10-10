@@ -60,12 +60,11 @@ public class PathPairs {
                             .map(Piece::getName)
                             .collect(Collectors.joining());
 
-
                     // 入力パターンのうち有効なミノ順を確率に変換
                     long counter = pathPair.blocksStreamForPattern().count();
                     double validPercent = (double) counter / numOfAllPatternSequences * 100.0;
 
-                    String comment = String.format("%.1f %%: %s", validPercent, blocksName);
+                    String comment = String.format("%.1f %% : %s", validPercent, blocksName);
                     TetfuElement element = new TetfuElement(coloredField, ColorType.Empty, Rotate.Reverse, 0, 0, comment);
                     return new Pair<>(counter, element);
                 })

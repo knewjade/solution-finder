@@ -42,14 +42,14 @@ public class OutputFileHelper {
         int pattern = extractPattern(html);
         int sequence = extractSequence(html);
 
-        String allSolutionFumen;
+        String mergedFumen;
         {
             String[] split = html.split("</header>");
             html = split[1];
 
             List<String> list = extractTetfu(split[0]);
             assert list.size() == 1;
-            allSolutionFumen = list.get(0);
+            mergedFumen = list.get(0);
         }
 
         if (html.contains("ライン消去あり")) {
@@ -58,11 +58,11 @@ public class OutputFileHelper {
             String deletedLine = split[1];
             List<String> noDeletedLineFumens = extractTetfu(noDeletedLine);
             List<String> deletedLineFumens = extractTetfu(deletedLine);
-            return new PathHTML(html, pattern, sequence, allSolutionFumen, noDeletedLineFumens, deletedLineFumens);
+            return new PathHTML(html, pattern, sequence, mergedFumen, noDeletedLineFumens, deletedLineFumens);
         } else {
             List<String> noDeletedLineFumens = extractTetfu(html);
             List<String> deletedLineFumens = extractTetfu("");
-            return new PathHTML(html, pattern, sequence, allSolutionFumen, noDeletedLineFumens, deletedLineFumens);
+            return new PathHTML(html, pattern, sequence, mergedFumen, noDeletedLineFumens, deletedLineFumens);
         }
     }
 

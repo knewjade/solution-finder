@@ -1052,7 +1052,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(uniqueHTML)
                 .returns(5040, PathHTML::sequence)
                 .returns(5, PathHTML::pattern)
-                .returns("9gRpwhh0ywR4Rpwhg0BtwwR4C8whg0A8BtE8whG8Je?AgWSAXBQ9AgngHBlsKBAaujPCvOBAA9gRpwhwwhlh0R4Rpw?hxwglg0R4C8whwwA8glg0E8whG8JeAAPSA3/f2AgngHBlsK?BAJt/wCMHBAA9gRpBthlh0R4RpwwBtglg0R4C8xwA8glg0E?8wwG8JeAAPSAWBIOBgngHBlsKBAUt/VCvXBAA9gRpilwwh0?R4RpglAtxwg0R4C8BtA8wwg0E8AtG8JeAAPSA18nABgngHB?lsKBAat/wCvCBAA9gg0hlwwzhR4i0xwRpR4C8glwwA8RpE8?glG8JeAAPSAS4f2AgngHBlsKBAPNmPCM+AAA", PathHTML::allSolutionFumen);
+                .returns("9gRpwhh0ywR4Rpwhg0BtwwR4C8whg0A8BtE8whG8Je?AgWTAXBQ9AgngHBg3CwBAnltCKH2BA9gRpwhwwhlh0R4Rpw?hxwglg0R4C8whwwA8glg0E8whG8JeAAPTA3/f2AgngHBg3C?wBgtjPC0yqBA9gRpBthlh0R4RpwwBtglg0R4C8xwA8glg0E?8wwG8JeAAPTAWBIOBgngHBg3CwBA+jPCMnDCA9gRpilwwh0?R4RpglAtxwg0R4C8BtA8wwg0E8AtG8JeAAPTA18nABgngHB?g3CwBAHkPCUHkBA9gg0hlwwzhR4i0xwRpR4C8glwwA8RpE8?glG8JeAAPTAS4f2AgngHBg3CwBg2TxCqSdBA", PathHTML::mergedFumen);
 
         assertThat(uniqueHTML.getHtml())
                 .contains("Z-Spawn I-Left S-Spawn J-Right O-Spawn T-Reverse")
@@ -1076,7 +1076,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(minimalHTML)
                 .returns(5040, PathHTML::sequence)
                 .returns(3, PathHTML::pattern)
-                .returns("9gRpwhh0ywR4Rpwhg0BtwwR4C8whg0A8BtE8whG8Je?AgWSAXBQ9AgngHBlsKBAaujPCvOBAA9gRpwhwwhlh0R4Rpw?hxwglg0R4C8whwwA8glg0E8whG8JeAAPSA3/f2AgngHBlsK?BAJt/wCMHBAA9gRpilwwh0R4RpglAtxwg0R4C8BtA8wwg0E?8AtG8JeAAPSA18nABgngHBlsKBAat/wCvCBAA", PathHTML::allSolutionFumen);
+                .returns("9gRpwhh0ywR4Rpwhg0BtwwR4C8whg0A8BtE8whG8Je?AgWTAXBQ9AgngHBg3CwBAnltCKH2BA9gRpwhwwhlh0R4Rpw?hxwglg0R4C8whwwA8glg0E8whG8JeAAPTA3/f2AgngHBg3C?wBgtjPC0yqBA9gRpilwwh0R4RpglAtxwg0R4C8BtA8wwg0E?8AtG8JeAAPTA18nABgngHBg3CwBAHkPCUHkBA", PathHTML::mergedFumen);
 
         assertThat(minimalHTML.getHtml())
                 .contains("Z-Spawn I-Left S-Spawn J-Right O-Spawn T-Reverse")
