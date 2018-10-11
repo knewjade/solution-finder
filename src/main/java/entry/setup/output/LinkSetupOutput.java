@@ -63,6 +63,8 @@ public class LinkSetupOutput implements SetupOutput {
         int maxHeight = sizedBit.getHeight();
 
         HTMLBuilder<HTMLColumn> htmlBuilder = new HTMLBuilder<>("Setup result");
+        htmlBuilder.addHeader(String.format("<div>%d solutions / %d sub solutions</div>", resultMap.size(), resultMap.values().stream().mapToInt(List::size).sum()));
+
         BiFunction<List<MinoOperationWithKey>, Field, String> naming = setupFunctions.getNaming();
 
         OneFumenParser oneFumenParser = new OneFumenParser(minoFactory, colorConverter);
@@ -118,7 +120,7 @@ public class LinkSetupOutput implements SetupOutput {
         }
 
         String mergedFumen = bufferedFumenParser.parse();
-        htmlBuilder.addHeader(String.format("<div><a href='http://fumen.zui.jp/?v115@%s'>すべての地形<a></div>", mergedFumen));
+        htmlBuilder.addHeader(String.format("<div><a href='http://fumen.zui.jp/?v115@%s'>All solutions<a></div>", mergedFumen));
 
         ArrayList<HTMLColumn> columns = new ArrayList<>(htmlBuilder.getRegisteredColumns());
         columns.sort(Comparator.comparing(HTMLColumn::getTitle).reversed());

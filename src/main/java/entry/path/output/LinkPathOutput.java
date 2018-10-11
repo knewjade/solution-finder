@@ -124,7 +124,7 @@ public class LinkPathOutput implements PathOutput {
 
         // HTMLの生成  // true: ライン消去あり, false: ライン消去なし
         HTMLBuilder<HTMLColumn> htmlBuilder = new HTMLBuilder<>("Path Result");
-        htmlBuilder.addHeader(String.format("<div>%dパターン <span style='color: #999'>[%dシーケンス]</span></div>", pathPairs.size(), numOfAllPatternSequences));
+        htmlBuilder.addHeader(String.format("<div>%d solutions <span style='color: #999'>[%d input sequences]</span></div>", pathPairs.size(), numOfAllPatternSequences));
 
         OneFumenParser oneFumenParser = new OneFumenParser(minoFactory, colorConverter);
         BufferedFumenParser bufferedFumenParser = new BufferedFumenParser(minoFactory, colorConverter, oneFumenParser);
@@ -154,7 +154,7 @@ public class LinkPathOutput implements PathOutput {
                 });
 
         String mergedFumen = bufferedFumenParser.parse();
-        htmlBuilder.addHeader(String.format("<div><a href='http://fumen.zui.jp/?v115@%s'>すべての手順<a></div>", mergedFumen));
+        htmlBuilder.addHeader(String.format("<div><a href='http://fumen.zui.jp/?v115@%s'>All solutions<a></div>", mergedFumen));
 
         // 出力
         try (BufferedWriter writer = file.newBufferedWriter()) {
