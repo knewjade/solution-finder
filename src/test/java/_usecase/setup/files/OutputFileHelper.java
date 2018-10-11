@@ -29,7 +29,8 @@ public class OutputFileHelper {
 
     private static SetupHTML loadHTML(String path) throws IOException {
         String html = Files.lines(Paths.get(path)).collect(Collectors.joining());
-        List<String> fumens = extractTetfu(html);
+        String[] split = html.split("</header>");
+        List<String> fumens = extractTetfu(split[1]);
         return new SetupHTML(html, fumens);
     }
 
