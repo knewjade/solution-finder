@@ -110,7 +110,7 @@ public class OutputFileHelper {
     }
 
     private static int extractPattern(String html) {
-        Pattern pattern = Pattern.compile("<div>(\\d+)パターン.*?</div>");
+        Pattern pattern = Pattern.compile("<div>(\\d+) solutions.*?</div>");
         Matcher matcher = pattern.matcher(html);
         if (matcher.find()) {
             assert matcher.groupCount() == 1 : html;
@@ -121,7 +121,7 @@ public class OutputFileHelper {
     }
 
     private static int extractSequence(String html) {
-        Pattern pattern = Pattern.compile("\\[(\\d+)シーケンス]");
+        Pattern pattern = Pattern.compile("\\[(\\d+) input sequences]");
         Matcher matcher = pattern.matcher(html);
         if (matcher.find()) {
             assert matcher.groupCount() == 1 : html;

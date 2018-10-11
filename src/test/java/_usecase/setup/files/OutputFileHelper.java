@@ -40,8 +40,8 @@ public class OutputFileHelper {
             html = split[1];
 
             List<String> list = extractTetfu(split[0]);
-            assert list.size() == 1;
-            mergedFumen = list.get(0);
+            assert list.size() <= 1 : split[0];
+            mergedFumen = list.isEmpty() ? null : list.get(0);
         }
 
         List<String> fumens = extractTetfu(html);
