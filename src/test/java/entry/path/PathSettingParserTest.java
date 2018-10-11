@@ -41,7 +41,7 @@ class PathSettingParserTest {
                     .returns(true, PathSettings::isUsingHold)
                     .returns("output/path.txt", PathSettings::getOutputBaseFilePath)
                     .returns(PathLayer.Minimal, PathSettings::getPathLayer)
-                    .returns(OutputType.Link, PathSettings::getOutputType)
+                    .returns(OutputType.HTML, PathSettings::getOutputType)
                     .returns(false, PathSettings::isTetfuSplit)
                     .returns(0, PathSettings::getCachedMinBit);
             assertField(settings.getField(), expectedField);
@@ -73,7 +73,7 @@ class PathSettingParserTest {
                     .returns(true, PathSettings::isUsingHold)
                     .returns("output/path.txt", PathSettings::getOutputBaseFilePath)
                     .returns(PathLayer.Minimal, PathSettings::getPathLayer)
-                    .returns(OutputType.Link, PathSettings::getOutputType)
+                    .returns(OutputType.HTML, PathSettings::getOutputType)
                     .returns(false, PathSettings::isTetfuSplit)
                     .returns(0, PathSettings::getCachedMinBit);
             assertField(settings.getField(), expectedField);
@@ -151,7 +151,7 @@ class PathSettingParserTest {
                     .returns(true, PathSettings::isUsingHold)
                     .returns("output/path.txt", PathSettings::getOutputBaseFilePath)
                     .returns(PathLayer.Minimal, PathSettings::getPathLayer)
-                    .returns(OutputType.Link, PathSettings::getOutputType)
+                    .returns(OutputType.HTML, PathSettings::getOutputType)
                     .returns(false, PathSettings::isTetfuSplit)
                     .returns(0, PathSettings::getCachedMinBit);
             assertField(settings.getField(), expectedField);
@@ -187,7 +187,7 @@ class PathSettingParserTest {
                     .returns(true, PathSettings::isUsingHold)
                     .returns("output/path.txt", PathSettings::getOutputBaseFilePath)
                     .returns(PathLayer.Minimal, PathSettings::getPathLayer)
-                    .returns(OutputType.Link, PathSettings::getOutputType)
+                    .returns(OutputType.HTML, PathSettings::getOutputType)
                     .returns(false, PathSettings::isTetfuSplit)
                     .returns(0, PathSettings::getCachedMinBit);
             assertField(settings.getField(), expectedField);
@@ -223,7 +223,7 @@ class PathSettingParserTest {
                     .returns(false, PathSettings::isUsingHold)
                     .returns("output/result_dummy.txt", PathSettings::getOutputBaseFilePath)
                     .returns(PathLayer.Minimal, PathSettings::getPathLayer)
-                    .returns(OutputType.Link, PathSettings::getOutputType)
+                    .returns(OutputType.HTML, PathSettings::getOutputType)
                     .returns(true, PathSettings::isTetfuSplit)
                     .returns(0, PathSettings::getCachedMinBit)
                     .returns(4, PathSettings::getThreadCount);
@@ -255,7 +255,7 @@ class PathSettingParserTest {
                     .returns(true, PathSettings::isUsingHold)
                     .returns("output/path.txt", PathSettings::getOutputBaseFilePath)
                     .returns(PathLayer.Minimal, PathSettings::getPathLayer)
-                    .returns(OutputType.Link, PathSettings::getOutputType)
+                    .returns(OutputType.HTML, PathSettings::getOutputType)
                     .returns(false, PathSettings::isTetfuSplit)
                     .returns(0, PathSettings::getCachedMinBit)
                     .returns(-1, PathSettings::getThreadCount);
@@ -288,7 +288,7 @@ class PathSettingParserTest {
                     .returns(true, PathSettings::isUsingHold)
                     .returns("output/path.txt", PathSettings::getOutputBaseFilePath)
                     .returns(PathLayer.Minimal, PathSettings::getPathLayer)
-                    .returns(OutputType.Link, PathSettings::getOutputType)
+                    .returns(OutputType.HTML, PathSettings::getOutputType)
                     .returns(false, PathSettings::isTetfuSplit)
                     .returns(0, PathSettings::getCachedMinBit)
                     .returns(1, PathSettings::getThreadCount);

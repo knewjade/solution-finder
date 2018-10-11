@@ -289,7 +289,7 @@ public class PathEntryPoint implements EntryPoint {
         switch (outputType) {
             case CSV:
                 return new CSVPathOutput(this, settings);
-            case Link: {
+            case HTML: {
                 return new LinkPathOutput(this, settings, minoFactory, colorConverter);
             }
             case TetfuCSV:

@@ -98,19 +98,13 @@ public class LinkSetupOutput implements SetupOutput {
                         // 操作に変換
                         List<MinoOperationWithKey> operationWithKeys = setupResult.getSolution();
 
-                        // パターンを表す名前 を生成
-                        String blocksName = operationWithKeys.stream()
-                                .map(OperationWithKey::getPiece)
-                                .map(Piece::getName)
-                                .collect(Collectors.joining());
+                        // 名前の作成
+                        String name = naming.apply(operationWithKeys, setupResult.getRawField());
 
-                        bufferedFumenParser.add(operationWithKeys, initField, maxHeight, String.format("%d : %s", counter, blocksName), counter);
+                        bufferedFumenParser.add(operationWithKeys, initField, maxHeight, String.format("%d : %s", counter, name), counter);
 
                         // 譜面の作成
                         String encode = fumenParser.parse(operationWithKeys, initField, maxHeight);
-
-                        // 名前の作成
-                        String name = naming.apply(operationWithKeys, setupResult.getRawField());
 
                         String link = String.format("<a href='http://fumen.zui.jp/?v115@%s'>%s</a> <span style='color: #999'>[%d]</span>", encode, name, counter);
                         String line = String.format("<div>%s</div>", link);

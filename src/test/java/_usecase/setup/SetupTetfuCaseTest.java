@@ -267,6 +267,8 @@ class SetupTetfuCaseTest {
             assertThat(html.getFumens())
                     .hasSize(12)
                     .contains("AhBtDewhQ4CeBti0whR4AeRpilg0whAeQ4AeRpglCe?whJeAgWGApvaFDMNBAA");
+
+            assertThat(html.getMergedFumen()).isEqualTo("AhBtDewhQ4CeBti0whR4AeRpilg0whAeQ4AeRpglCe?whJeAgWOASYtAAlsKBApvaFDMNBAAAhhlg0CeQaEeglSLDe?xhCewSglCewhwSCeQpglJeAAPOAREyAAlsKBAPezPCMNBAA?AhhWgHCewhEegWwhhlDehlAtAewhAegWCeAPAeAthlwSgWJ?eAAPOARkkAAlsKBAJHUFDKNBAAOhRaQegWwhQpKeAAADhwh?BeQaFeQaxhwwCeCPQaBewwCeglAegHwhwSQpwwJeAAPOARk?kAAlsKBAKXNFDMNBAAOhRpReQpwSgHJeAAPOARkkAAlsKBA?vPNFDMNBAADhQaBewhFeglwSAeQLFeglAeQpQLFeQaRpwhJ?eAAPOARkkAAlsKBAJnPFDMNBAANhRpReQpwSgHKeAAADhwh?BeQaFeQLAPwSglCeCtgWQawSglCegWAeg0gWQaglQaJeAAP?OARkkAAlsKBAvSNFDKNBAAPhRaQegWwhQpJeAAAAhhlg0Qa?HeglAeSaCehWwSglAeRaCeAtAewShlxSJeAAPOARh2AAlsK?BAMuaFDKNBAAAhhWgHBeglFegWyhwwCeRahWRaAtCeQaQpx?SgWh0JeAAPNAWe4QAzxwNCMnbMCzAAAA");
         }
 
         @Test
@@ -503,6 +505,8 @@ class SetupTetfuCaseTest {
             // HTML
             SetupHTML html = OutputFileHelper.loadSetupHTML();
             assertThat(html.getFumens()).hasSize(11);
+
+            assertThat(html.getMergedFumen()).isEqualTo("9gwhIewhQ4AeQ4FewhT4EewhAeQ4AeQ4OeAgWJAWQT?ABhQktCzAAAAAhQ4GewDQ4AeQ4FewDJewDQ4wDOeAAPJATQ?TABhQktCzAAAA/gQ4HeQ4BewDGewDJewDQ4OeAAAKhwDHeQ?4AewDFeR4AewDOeAAPJATQTABhwKMCzAAAA/gwDAeQ4FewD?AeQ4jeAAABhwDGewDAeQ4IeQ4YeAAA+gQ4AewDGeR4xDPew?DAeQ4PeAAA+gwDAeR4FewDAeQ4HewDaeAAAAhxDPeR4aeAA?A/gQ4HeQ4LewDHewDPeAAPJATQTABhQktCzAAAA/gwDR4Re?wDZeAAA");
         }
     }
 
@@ -639,6 +643,8 @@ class SetupTetfuCaseTest {
                     .contains("IhAtHeBtwwGeAtywPeAgWCA6OBAA")
                     .contains("Hhh0Heg0AewwGeg0ywPeAgWCAqOBAA")
                     .contains("9ghlIeglIeglHezhPeAgWCApCBAA");
+
+            assertThat(html.getMergedFumen()).isEqualTo("KhwwFeg0AexwFei0wwPeAgWIASQTABhAlPCIhg0AeQ?LFegHg0hWHewSgWPeAAPIASQTABhwZPCIhgHhlGeQawSQaF?eRaglQaPeAAPIASQTABhADxCHhh0hWFeg0QLHewhxSQeAAP?IASQTABhg+VCHhhHQ4IeQ4wwGeBtwwPeAAPIASQTABhwiPC?JhQLGewSQpQLwDFexSAPQLPeAAPIASQTABhwJWCAhwhHegW?whFexSAewhFeRaAeQaPeAAPIASQTABhQ8VC9gwhBeQaFewh?BeQaFewhg0gWQaFeQaBtwwPeAAPIASQTABhg2LC9gQaBewh?FeQaBewhFewwgHAewhFewwBeQLPeAAPIASQTABhQMPCAhQa?FeglBeQaFeAPAeQpglFeBPwSglPeAAPIASQTABhwJWCHhAt?g0HeAtAeglwSFeAtQphlPeAAPIASQTABhg+wCHhQagHHeQa?wwQLglFeQaySPeAAPIASQTABhADxCHhQLg0glGeQLwhglgW?FewhAtReAAPIASQTABhg+VCIhgHwwHeQawwQ4FeRaQpwwPe?AAPIASQTABhwSxCIhAtwDGeAtQagWwDFeQaBegWPeAAPIAS?QTABhgixCIhAPAeg0FeAPQpglg0FeQpglxhPeAAPIASQTAB?hwiPCHhglIeglxDGeRLReAAPIASQTABhg+VC9gwhIeQaBeg?HFeQaAewwgHFeQaQpRaPeAAPIASQTABhQ8wC9gQaBewhFeQ?aBewhFeQawwQLwhFeAtBeAPPeAAA9gwhBeQaFewhBeQaFew?hQLAewhFeAPxSwhPeAAPIASQTABhA7LC9gQaIeQaBeg0Feg?lQpAeAtFeglwhBtPeAAPIASQTABhwZPCIhAtAegHFexhAeA?PFewhQaBPPeAAPIASQTABhgiWCIhAPhlFeglAPHeglBtQeA?APIASQTABhATPCHhglAehWFeAPBtgWFeBPgWglPeAAPIARQ?TABhgiWCHhgWg0HegWhlg0FeRaxSPeAAPIARQTABhQMPCHh?g0Aeg0HegHAegHZeAAAHhgHBeg0HegHg0ZeAAA+gg0JehHF?eh0AegHZeAAA+ggHg0HegHg0GegHAeg0aeAAA/ggHGeg0Ae?gHGeg0ceAAAAhg0FegHBeg0FehHAeg0ZeAAA9gh0AegHFeg?0BegHFeg0AehHZeAAA9ghHh0FegHAeg0GegHAeg0aeAAA+g?g0AegHGeg0gHHeg0gHaeAAA+ggHgWHegWAtHegWbeAAPIAR?QTABhQMFD/gAPReAPBtZeAAA+gAtHeAtAeAPGeAtAeBPZeA?AA+gAPReAPBtaeAAAAhAtFeBPBtGeAPbeAAAAhAPHewhAPG?ewwwhwwZeAAPIARQTABhQ8wCIhwwAewwGeQLAeQLZeAAA/g?wwHeQLleAAAIhwwAeQLjeAAA/gQLIeQLGexwbeAAAHhwwAe?wwGeQLAeQLaeAAA+gwwHeQLmeAAA9gwwQLHewwAeQLGewwQ?LbeAAA9gQLBewwFeRLxwFeQLBewwZeAAA+gwwAeQLFexwRL?GewwAeQLZeAAA+gwSglGeRLglHeQLglaeAAPIARQTABhQ8V?C9gglAegWHeglgWHeglgWaeAAA+ggWHeglgWHeglceAAA9g?gWJehlHegWbeAAA+gglHegWAegWGegWhlaeAAA+ggWglHeg?WglHegWAeglZeAAA/ggWQehlAegWZeAAAJhgWglFegWBegl?ZeAAAIhhlIehWZeAAA/ghlGehWHegWAeglZeAAA+gQ4hWGe?R4gWHeQ4gWZeAAPIARQTABhQktC9gQ4wDHeQ4AewDHeQ4wD?aeAAA9gwDAeQ4GexDR4GewDAeQ4ZeAAA/gwDHeQ4AewDFeR?4AewDZeAAAIhwDAeQ4FewDAeQ4aeAAAHhRpxDFeQpAPwDae?AAPIARQTABhQEgCHhwSAeQpGewSAeQpaeAAAIhwSAeQpGew?SAeQpZeAAA");
         }
 
         @Test
@@ -703,6 +709,8 @@ class SetupTetfuCaseTest {
                     .hasSize(13)
                     .contains("HhhlwwCeD8AeglxwAeE8AeglwwQeAgWCAsOBAA")
                     .contains("HhhlQ4CeD8AeglR4AeE8AeglAeQ4PeAgWCAzCBAA");
+
+            assertThat(html.getMergedFumen()).isEqualTo("HhhlwwCeD8AeglxwAeE8AeglwwQeAgWIASQTABhADx?CJhglIehlHeQLQ4PeAAPIASQTABhwSWCHhBtQLGeg0gWQLw?DFeg0gWglQLPeAAPIASQTABhg+VCJhglHeAtglHeAthWPeA?APIASQTABhgyPCJhQpHeAPQpQ4GeAPAeQ4PeAAPIASQTABh?wiPCJhgWHewwgWwDHewwwDPeAAPIASQTABhg+wCShQLAeww?ZeAAAHhwhAPwSGewhQ4wSQLFegHQ4wSQeAAPIARQTABhwSW?CHhgWhlGehWglAtFewwwDgWQeAAPIARQTABhgixCHhwSRaG?ewSgWQaAPFewSglReAAPIARQTABhwJWCHhwhAeQpGewhAeQ?pGegWAtg0QeAAPIARQTABhwZPCHhAtwhgWGeBtgWAtGewhg?HQeAAPIARQTABhgKuCHhiWGeiWAPFewwwDglQeAAPIARQTA?BhADxC");
         }
     }
 

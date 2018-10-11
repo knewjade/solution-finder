@@ -24,7 +24,7 @@ public class PathSettings {
     private List<String> patterns = new ArrayList<>();
     private String outputBaseFilePath = DEFAULT_OUTPUT_BASE_FILE_PATH;
     private PathLayer pathLayer = PathLayer.Minimal;
-    private OutputType outputType = OutputType.Link;
+    private OutputType outputType = OutputType.HTML;
     private boolean isSplit = false;
     private int cachedMinBit = 0;
     private BlockField reservedBlock = null;
@@ -192,8 +192,9 @@ public class PathSettings {
                     default:
                         throw new FinderParseException("Unsupported CSV key: key=" + key);
                 }
+            case "html":
             case "link":
-                this.outputType = OutputType.Link;
+                this.outputType = OutputType.HTML;
                 return;
             default:
                 throw new FinderParseException("Unsupported format: format=" + type);

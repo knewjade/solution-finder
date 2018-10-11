@@ -23,6 +23,7 @@ public enum SetupOptions {
     Exclude(SingleArgOption.full("e", "exclude", "string", "If specify, exclude some solutions")),
     Operations(ListArgOption.fullSpace("op", "operate", "operation-list", "Operate field before determining to exclude solutions")),
     NPieces(SingleArgOption.full("np", "n-pieces", "number", "If specify N, must use N pieces")),
+    Format(SingleArgOption.full("rf", "format", "string", "Result format type for output")),
     FieldPath(SingleArgOption.full("fp", "field-path", "path", "File path of field definition")),
     LogPath(SingleArgOption.full("lp", "log-path", "path", "File path of output log")),
     OutputBase(SingleArgOption.full("o", "output-base", "path", "Base file path of result to output")),;

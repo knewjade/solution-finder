@@ -28,7 +28,9 @@ import entry.setup.functions.CombinationFunctions;
 import entry.setup.functions.OrderFunctions;
 import entry.setup.functions.SetupFunctions;
 import entry.setup.operation.FieldOperation;
+import entry.setup.output.CSVSetupOutput;
 import entry.setup.output.LinkSetupOutput;
+import entry.setup.output.SetupOutput;
 import exceptions.FinderException;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
@@ -307,7 +309,7 @@ public class SetupEntryPoint implements EntryPoint {
 
         output("# Output file");
 
-        LinkSetupOutput setupOutput = new LinkSetupOutput(settings, setupFunctions, oneFumenParser, buildUpStreamThreadLocal, minoFactory, colorConverter);
+        SetupOutput setupOutput = createOutput(settings.getOutputType(), minoFactory, colorConverter, buildUpStreamThreadLocal, oneFumenParser, setupFunctions);
         SetupResults setupResults = new SetupResults(resultMap);
         setupOutput.output(setupResults, initField, sizedBit);
 
@@ -317,6 +319,16 @@ public class SetupEntryPoint implements EntryPoint {
 
         output("# Finalize");
         output("done");
+    }
+
+    private SetupOutput createOutput(OutputType outputType, MinoFactory minoFactory, ColorConverter colorConverter, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal, OneFumenParser oneFumenParser, SetupFunctions setupFunctions) throws FinderInitializeException, FinderExecuteException {
+        switch (outputType) {
+            case CSV:
+                return new CSVSetupOutput(settings, setupFunctions, oneFumenParser, buildUpStreamThreadLocal);
+            case HTML:
+                return new LinkSetupOutput(settings, setupFunctions, oneFumenParser, buildUpStreamThreadLocal, minoFactory, colorConverter);
+        }
+        throw new FinderExecuteException("Unsupported format: format=" + outputType);
     }
 
     private List<SetupTemp> localSearchIfNeed(Field notFilledField, int maxHeight, PatternGenerator generator, boolean isLocalSearch, List<List<MinoOperationWithKey>> resultOperations, int numOfPieces, MinoFactory minoFactory, MinoShifter minoShifter, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal, Field initField) throws FinderExecuteException {

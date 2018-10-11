@@ -2,7 +2,7 @@ package entry.path;
 
 public enum OutputType {
     CSV,
-    Link,
+    HTML,
     TetfuCSV,
     PatternCSV,
     UseCSV

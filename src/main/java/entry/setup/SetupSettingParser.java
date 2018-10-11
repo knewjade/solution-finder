@@ -15,6 +15,7 @@ import entry.common.Loader;
 import entry.common.SettingParser;
 import entry.common.field.FieldData;
 import entry.common.field.FumenLoader;
+import entry.path.PathOptions;
 import exceptions.FinderParseException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -171,6 +172,20 @@ public class SetupSettingParser extends SettingParser<SetupSettings> {
         // アウトプットファイルの設定
         Optional<String> outputBaseFilePath = wrapper.getStringOption(SetupOptions.OutputBase.optName());
         outputBaseFilePath.ifPresent(settings::setOutputBaseFilePath);
+
+        // 出力タイプの設定
+        Optional<String> outputType = wrapper.getStringOption(SetupOptions.Format.optName());
+        try {
+            outputType.ifPresent(type -> {
+                try {
+                    settings.setOutputType(type);
+                } catch (FinderParseException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            throw new FinderParseException("Unsupported format: format=" + outputType.orElse("<empty>"));
+        }
 
         return Optional.of(settings);
     }

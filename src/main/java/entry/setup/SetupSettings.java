@@ -3,7 +3,6 @@ package entry.setup;
 import common.parser.StringEnumTransform;
 import common.tetfu.common.ColorType;
 import core.field.Field;
-import core.field.FieldView;
 import core.mino.Piece;
 import core.srs.Rotate;
 import entry.DropType;
@@ -37,6 +36,7 @@ public class SetupSettings {
     private ColorType noHolesColorType = null;
     private DropType dropType = DropType.Softdrop;
     private String outputBaseFilePath = DEFAULT_OUTPUT_BASE_FILE_PATH;
+    private OutputType outputType = OutputType.HTML;
 
     // ********* Getter ************
     public boolean isUsingHold() {
@@ -109,6 +109,10 @@ public class SetupSettings {
 
     DropType getDropType() {
         return dropType;
+    }
+
+    OutputType getOutputType() {
+        return outputType;
     }
 
     // ********* Setter ************
@@ -358,6 +362,20 @@ public class SetupSettings {
                 return Rotate.Right;
         }
         throw new IllegalArgumentException("No reachable");
+    }
+
+    void setOutputType(String type) throws FinderParseException {
+        switch (type.trim().toLowerCase()) {
+            case "csv":
+                this.outputType = OutputType.CSV;
+                return;
+            case "html":
+            case "link":
+                this.outputType = OutputType.HTML;
+                return;
+            default:
+                throw new FinderParseException("Unsupported format: format=" + type);
+        }
     }
 }
 
