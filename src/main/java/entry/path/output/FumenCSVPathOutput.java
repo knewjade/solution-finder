@@ -65,7 +65,7 @@ public class FumenCSVPathOutput implements PathOutput {
         outputLog("Found path = " + pathPairList.size());
 
         try (AsyncBufferedFileWriter writer = outputBaseFile.newAsyncWriter()) {
-            writer.writeAndNewLine("テト譜,使用ミノ,対応ツモ数 (対地形&パターン),対応ツモ数 (対地形),対応ツモ数 (対パターン),ツモ (対地形),ツモ (対パターン)");
+            writer.writeAndNewLine("テト譜,使用ミノ,対応ツモ数 (対地形&パターン),対応ツモ数 (対地形),対応ツモ数 (対パターン),ツモ (対地形&パターン),ツモ (対地形),ツモ (対パターン)");
 
             pathPairList.parallelStream()
                     .map(pathPair -> {

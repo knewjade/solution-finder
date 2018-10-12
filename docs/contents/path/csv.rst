@@ -42,8 +42,8 @@ key: solution
 
 出力例) ``path -t v115@BhF8CeG8BeH8CeG8JeAgWDAqedBA -p *p4 -f csv -k solution`` ::
 
-    テト譜,使用ミノ,対応ツモ数 (対地形),対応ツモ数 (対パターン),ツモ (対地形),ツモ (対パターン)
-    http://fumen.zui.jp/?v115@9gh0R4F8g0R4G8BtH8g0BtG8JeAgWDA6vzBA,JSZ,2,48,ZSJ;ZJS,JZSI;ZLJS;JZTS;SZJO;ZSLJ;ZSJI;ZSOJ;ZJSL;ZTSJ;SZLJ;SZJI;SZOJ;TZJS;IZJS;LZJS;ZISJ;ZSIJ;JZSL;OZJS;ZJLS;ZLSJ;ZJOS;SZIJ;ZJST;ZOJS;ZSJL;JZLS;ZSTJ;ZJIS;ZJSO;SZJL;JZOS;JZST;TZSJ;SZTJ;IZSJ;LZSJ;OZSJ;JZIS;JZSO;ZSJT;ZTJS;ZJSI;ZJTS;ZOSJ;SZJT;ZIJS;ZSJO
+    テト譜,使用ミノ,対応ツモ数 (対地形&パターン),対応ツモ数 (対地形),対応ツモ数 (対パターン),ツモ (対地形&パターン),ツモ (対地形),ツモ (対パターン)
+    http://fumen.zui.jp/?v115@9gh0R4F8g0R4G8BtH8g0BtG8JeAgWDA6vzBA,JSZ,2,2,48,ZSJ;ZJS,ZSJ;ZJS,JZSI;ZLJS;JZTS;SZJO;ZSLJ;ZSJI;ZSOJ;ZJSL;ZTSJ;SZLJ;SZJI;SZOJ;TZJS;IZJS;LZJS;ZISJ;ZSIJ;JZSL;OZJS;ZJLS;ZLSJ;ZJOS;SZIJ;ZJST;ZOJS;ZSJL;JZLS;ZSTJ;ZJIS;ZJSO;SZJL;JZOS;JZST;TZSJ;SZTJ;IZSJ;LZSJ;OZSJ;JZIS;JZSO;ZSJT;ZTJS;ZJSI;ZJTS;ZOSJ;SZJT;ZIJS;ZSJO
 
 
 各項目は、左から順に以下の通りです。
@@ -59,6 +59,11 @@ key: solution
     - 例)
         * ``JSZ`` JSZの3ミノを使ってパフェをする地形である
 
+* 対応ツモ数 (対地形&パターン)
+    - そのパフェ手順で組むことができるツモのうち、入力パターンでカバーされる手順の総数
+    - 例) 入力パターンが ``*p4`` で、ホールドありのとき
+        * ``2`` JSZの組み合わせでこのパフェができる順番は 2通り。この2通りは、入力パターンの範囲で組むことができる
+
 * 対応ツモ数 (対地形)
     - その手順に持ち込むことができるツモの総数 (入力パターンには依存しません)
     - 例)
@@ -68,6 +73,11 @@ key: solution
     - すべての入力パターンの中で、その手順で対応できるツモの総数
     - 例) 入力パターンが ``*p4`` で、ホールドありのとき
         * ``48`` 全7p4(840通り)の入力パターンのうち、ホールドを使うことで48通りのツモ順に対応できる
+
+* ツモ (対地形&パターン)
+    - 「対応ツモ数 (対地形&パターン)」の一覧
+    - 例) 入力パターンが ``*p4`` で、ホールドありのとき
+        * ``ZSJ;ZJS`` ZSJ か ZJS の順にミノを置いたときだけパフェでき、入力パターンの範囲で組むことができる
 
 * ツモ (対地形)
     - 「対応ツモ数 (対地形)」の一覧
