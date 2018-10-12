@@ -115,9 +115,9 @@
 書き方: テト譜の場合
 ============================================================
 
-テト譜からミノの組み合わせを変更する場合、テト譜のコメント部分にパターンを記述します。
+テト譜からミノの組み合わせを変更する場合、テト譜のコメント部分にパターン or Quizを記述します。
 
-例) 消去ライン数が4ラインで、パターンを*p4で指定する場合 ::
+例) 消去ライン数が4ラインで、パターンを*p4で指定する場合 / `サンプル1 <http://fumen.zui.jp/?v115@9gD8DeF8DeF8DeF8DeB8JeAgWUA0no2AtTMeDUPNXE?uN98AQPUGB>`_ ::
 
   4 --patterns *p4
 
@@ -127,7 +127,12 @@
 
   4 --patterns T,*;I,*
 
-* TIPS
+例) Quiz形式で ZILJTOS を指定する場合 / `サンプル2 <http://fumen.zui.jp/?v115@HhA8BeA8FeE8CeG8CeB8JeAgWaAFLDmClcJSAVDEHB?EooRBaoAVBpi/wCPNBAA>`_ ::
+
+  #Q=[](Z)ILJTOS
+
+
+.. note::
 
   - 空白を入れたい場合は ``'`` で囲ってください( ``'T,*; I,*'`` )
   - ``--patterns`` は ``-p`` に省略できます

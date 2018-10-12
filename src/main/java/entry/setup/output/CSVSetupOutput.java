@@ -79,7 +79,7 @@ public class CSVSetupOutput implements SetupOutput {
         Comparator<Pair<Long, ?>> comparator = Comparator.comparingLong(Pair::getKey);
 
         try (AsyncBufferedFileWriter writer = outputSetupFile.newAsyncWriter()) {
-            writer.writeAndNewLine("地形,使用ミノ,手順数");
+            writer.writeAndNewLine("テト譜,使用ミノ,手順数");
 
             for (List<SetupResult> results : resultMap.values()) {
                 results.stream()

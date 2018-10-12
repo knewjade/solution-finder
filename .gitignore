@@ -27,8 +27,6 @@ input/*
 binary/*
 !binary/.gitkeep
 
-*.gif
-
 test_*/
 
 .venv/
