@@ -1,4 +1,4 @@
-package entry.path;
+package common;
 
 import common.datastore.blocks.LongPieces;
 import common.datastore.blocks.Pieces;

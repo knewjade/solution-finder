@@ -109,8 +109,6 @@ class BuildUpTest {
                         .isTrue();
             }
         }
-
-        System.out.println(counter);
     }
 
     @Test
@@ -150,8 +148,6 @@ class BuildUpTest {
                         .isTrue();
             }
         }
-
-        System.out.println(counter);
     }
 
     @Test
@@ -281,8 +277,6 @@ class BuildUpTest {
                 }
             });
         }
-
-        System.out.println(counter);
     }
 
     @Test
@@ -365,8 +359,6 @@ class BuildUpTest {
                 }
             });
         }
-
-        System.out.println(counter);
     }
 
     @Test
@@ -471,7 +463,6 @@ class BuildUpTest {
         MinoFactory minoFactory = new MinoFactory();
         Stream<MinoOperationWithKey> stream = OperationWithKeyInterpreter.parseToStream(line, minoFactory);
         List<MinoOperationWithKey> operations = stream.collect(Collectors.toList());
-        System.out.println(operations);
 
         int height = 4;
         MinoRotation minoRotation = new MinoRotation();

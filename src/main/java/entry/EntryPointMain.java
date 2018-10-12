@@ -6,9 +6,11 @@ import entry.move.MoveEntryPoint;
 import entry.move.MoveSettingParser;
 import entry.move.MoveSettings;
 import entry.path.PathEntryPoint;
+import entry.path.PathOptions;
 import entry.path.PathSettingParser;
 import entry.path.PathSettings;
 import entry.percent.PercentEntryPoint;
+import entry.percent.PercentOptions;
 import entry.percent.PercentSettingParser;
 import entry.percent.PercentSettings;
 import entry.ren.RenEntryPoint;
@@ -16,6 +18,7 @@ import entry.ren.RenOptions;
 import entry.ren.RenSettingParser;
 import entry.ren.RenSettings;
 import entry.setup.SetupEntryPoint;
+import entry.setup.SetupOptions;
 import entry.setup.SetupSettingParser;
 import entry.setup.SetupSettings;
 import entry.util.fig.FigUtilEntryPoint;
@@ -204,8 +207,10 @@ public class EntryPointMain {
     }
 
     private static Optional<EntryPoint> getPercentEntryPoint(List<String> commands) throws FinderInitializeException, FinderParseException {
-        PercentSettingParser settingParser = new PercentSettingParser(commands);
-        Optional<PercentSettings> settingsOptional = settingParser.parse();
+        Options options = PercentOptions.create();
+        CommandLineParser parser = new DefaultParser();
+        PercentSettingParser settingParser = new PercentSettingParser(options, parser);
+        Optional<PercentSettings> settingsOptional = settingParser.parse(commands);
         if (settingsOptional.isPresent()) {
             PercentSettings settings = settingsOptional.get();
             return Optional.of(new PercentEntryPoint(settings));
@@ -215,8 +220,10 @@ public class EntryPointMain {
     }
 
     private static Optional<EntryPoint> getPathEntryPoint(List<String> commands) throws FinderInitializeException, FinderParseException {
-        PathSettingParser settingParser = new PathSettingParser(commands);
-        Optional<PathSettings> settingsOptional = settingParser.parse();
+        Options options = PathOptions.create();
+        CommandLineParser parser = new DefaultParser();
+        PathSettingParser settingParser = new PathSettingParser(options, parser);
+        Optional<PathSettings> settingsOptional = settingParser.parse(commands);
         if (settingsOptional.isPresent()) {
             PathSettings settings = settingsOptional.get();
             return Optional.of(new PathEntryPoint(settings));
@@ -242,8 +249,10 @@ public class EntryPointMain {
     }
 
     private static Optional<EntryPoint> getSetupEntryPoint(List<String> commands) throws FinderParseException, FinderInitializeException {
-        SetupSettingParser settingParser = new SetupSettingParser(commands);
-        Optional<SetupSettings> settingsOptional = settingParser.parse();
+        Options options = SetupOptions.create();
+        CommandLineParser parser = new DefaultParser();
+        SetupSettingParser settingParser = new SetupSettingParser(options, parser);
+        Optional<SetupSettings> settingsOptional = settingParser.parse(commands);
         if (settingsOptional.isPresent()) {
             SetupSettings settings = settingsOptional.get();
             return Optional.of(new SetupEntryPoint(settings));

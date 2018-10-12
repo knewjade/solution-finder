@@ -1,5 +1,6 @@
 package entry.path;
 
+import common.datastore.MinoOperationWithKey;
 import common.datastore.OperationWithKey;
 import common.datastore.PieceCounter;
 import common.datastore.blocks.LongPieces;
@@ -20,11 +21,11 @@ public class PathPair implements HaveSet<LongPieces> {
     private final HashSet<LongPieces> piecesSolution;
     private final HashSet<LongPieces> piecesPattern;
     private final String fumen;
-    private final List<OperationWithKey> sampleOperations;
+    private final List<MinoOperationWithKey> sampleOperations;
     private final boolean deletedLine;
     private final HashSet<LongPieces> validPieces;
 
-    public PathPair(Result result, HashSet<LongPieces> piecesSolution, HashSet<LongPieces> piecesPattern, String fumen, List<OperationWithKey> sampleOperations, HashSet<LongPieces> validPieces) {
+    public PathPair(Result result, HashSet<LongPieces> piecesSolution, HashSet<LongPieces> piecesPattern, String fumen, List<MinoOperationWithKey> sampleOperations, HashSet<LongPieces> validPieces) {
         this.result = result;
         this.piecesSolution = piecesSolution;
         this.piecesPattern = piecesPattern;
@@ -52,29 +53,33 @@ public class PathPair implements HaveSet<LongPieces> {
         return fumen;
     }
 
+    // すべての入力パターンの中で、その手順で対応できるツモ
+    // パターンで6ミノを設定したとき、このツモは6ミノになる
+    public HashSet<LongPieces> blocksHashSetForPattern() {
+        return piecesPattern;
+    }
+
     public Stream<LongPieces> blocksStreamForPattern() {
         return piecesPattern.stream();
     }
 
-    // パフェで使用するミノと同じ数 の すべてミノ順（パターンより少なくなる可能性がある）
+    // その地形を積み込むことができるツモ (入力パターンには依存しない)
+    // パターンで6ミノを設定した場合でも、地形で5ミノしか使わないときは、このツモは5ミノになる
     public Stream<LongPieces> blocksStreamForSolution() {
         return piecesSolution.stream();
-    }
-
-    public Stream<LongPieces> blocksStreamForValidSolution() {
-        return piecesSolution.stream().filter(validPieces::contains);
-    }
-
-    // パターンで設定したミノと同じ数 の すべてミノ順
-    public HashSet<LongPieces> blocksHashSetForPattern() {
-        return piecesPattern;
     }
 
     public HashSet<LongPieces> blocksHashSetForSolution() {
         return piecesSolution;
     }
 
-    public List<OperationWithKey> getSampleOperations() {
+    // その地形を積み込むことができるツモ (入力パターンには依存しない)のうち、パターンで対応できるツモ
+    // パターンで6ミノを設定した場合でも、地形で5ミノしか使わないときは、このツモは5ミノになる
+    public Stream<LongPieces> blocksStreamForValidSolution() {
+        return piecesSolution.stream().filter(validPieces::contains);
+    }
+
+    public List<MinoOperationWithKey> getSampleOperations() {
         return sampleOperations;
     }
 

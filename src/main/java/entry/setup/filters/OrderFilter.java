@@ -4,7 +4,7 @@ import common.buildup.BuildUpStream;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.blocks.LongPieces;
 import core.field.Field;
-import entry.path.ValidPiecesPool;
+import common.ValidPiecesPool;
 
 import java.util.HashSet;
 

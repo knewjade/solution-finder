@@ -1,11 +1,14 @@
 package entry.path.output;
 
+import common.datastore.MinoOperationWithKey;
+import common.datastore.OperationWithKey;
 import common.datastore.Pair;
-import common.datastore.blocks.LongPieces;
+import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
 import core.field.Field;
+import core.mino.MinoFactory;
 import core.mino.Piece;
 import entry.path.*;
 import exceptions.FinderExecuteException;
@@ -19,7 +22,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class LinkPathOutput implements PathOutput {
@@ -30,8 +32,10 @@ public class LinkPathOutput implements PathOutput {
 
     private final MyFile outputMinimalFile;
     private final MyFile outputUniqueFile;
+    private final MinoFactory minoFactory;
+    private final ColorConverter colorConverter;
 
-    public LinkPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings) throws FinderInitializeException {
+    public LinkPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings, MinoFactory minoFactory, ColorConverter colorConverter) throws FinderInitializeException {
         // 出力ファイルが正しく出力できるか確認
         String outputBaseFilePath = pathSettings.getOutputBaseFilePath();
         String namePath = getRemoveExtensionFromPath(outputBaseFilePath);
@@ -60,9 +64,11 @@ public class LinkPathOutput implements PathOutput {
         this.settings = pathSettings;
         this.outputUniqueFile = unique;
         this.outputMinimalFile = minimal;
+        this.minoFactory = minoFactory;
+        this.colorConverter = colorConverter;
     }
 
-    private String getRemoveExtensionFromPath(String path) throws FinderInitializeException {
+    private String getRemoveExtensionFromPath(String path) {
         int pointIndex = path.lastIndexOf('.');
         int separatorIndex = path.lastIndexOf(File.separatorChar);
 
@@ -75,21 +81,25 @@ public class LinkPathOutput implements PathOutput {
     }
 
     @Override
-    public void output(List<PathPair> pathPairs, Field field, SizedBit sizedBit) throws FinderExecuteException {
+    public void output(PathPairs pathPairs, Field field, SizedBit sizedBit) throws FinderExecuteException {
+        int numOfAllPatternSequences = pathPairs.getNumOfAllPatternSequences();
+
         PathLayer pathLayer = settings.getPathLayer();
 
         // 同一ミノ配置を取り除いたパスの出力
         if (pathLayer.contains(PathLayer.Unique)) {
-            outputLog("Found path [unique] = " + pathPairs.size());
-            outputOperationsToSimpleHTML(field, outputUniqueFile, pathPairs, sizedBit);
+            List<PathPair> pathPairList = pathPairs.getUniquePathPairList();
+
+            outputLog("Found path [unique] = " + pathPairList.size());
+            outputOperationsToSimpleHTML(field, outputUniqueFile, pathPairList, sizedBit, numOfAllPatternSequences);
         }
 
         // 少ないパターンでカバーできるパスを出力
         if (pathLayer.contains(PathLayer.Minimal)) {
-            Selector<PathPair, LongPieces> selector = new Selector<>(pathPairs);
-            List<PathPair> minimal = selector.select();
-            outputLog("Found path [minimal] = " + minimal.size());
-            outputOperationsToSimpleHTML(field, outputMinimalFile, minimal, sizedBit);
+            List<PathPair> pathPairList = pathPairs.getMinimalPathPairList();
+
+            outputLog("Found path [minimal] = " + pathPairList.size());
+            outputOperationsToSimpleHTML(field, outputMinimalFile, pathPairList, sizedBit, numOfAllPatternSequences);
         }
     }
 
@@ -97,7 +107,7 @@ public class LinkPathOutput implements PathOutput {
         pathEntryPoint.output(str);
     }
 
-    private void outputOperationsToSimpleHTML(Field field, MyFile file, List<PathPair> pathPairs, SizedBit sizedBit) throws FinderExecuteException {
+    private void outputOperationsToSimpleHTML(Field field, MyFile file, List<PathPair> pathPairs, SizedBit sizedBit, int numOfAllPatternSequences) throws FinderExecuteException {
         // Get height
         int maxClearLine = sizedBit.getHeight();
 
@@ -114,15 +124,37 @@ public class LinkPathOutput implements PathOutput {
 
         // HTMLの生成  // true: ライン消去あり, false: ライン消去なし
         HTMLBuilder<HTMLColumn> htmlBuilder = new HTMLBuilder<>("Path Result");
-        htmlBuilder.addHeader(String.format("<div>%dパターン</div>", pathPairs.size()));
+        htmlBuilder.addHeader(String.format("<div>%d solutions <span style='color: #999'>[%d input sequences]</span></div>", pathPairs.size(), numOfAllPatternSequences));
+
+        OneFumenParser oneFumenParser = new OneFumenParser(minoFactory, colorConverter);
+        BufferedFumenParser bufferedFumenParser = new BufferedFumenParser(minoFactory, colorConverter, oneFumenParser);
 
         pathPairs.parallelStream()
                 .forEach(pathPair -> {
                     PathHTMLColumn htmlColumn = getHTMLColumn(pathPair);
-                    Pair<String, Integer> linkAndPriority = createALink(pathPair);
+
+                    List<MinoOperationWithKey> operations = pathPair.getSampleOperations();
+
+                    // パターンを表す名前 を生成
+                    String blocksName = operations.stream()
+                            .map(OperationWithKey::getPiece)
+                            .map(Piece::getName)
+                            .collect(Collectors.joining());
+
+                    // 入力パターンのうち有効なミノ順を確率に変換
+                    long counter = pathPair.blocksStreamForPattern().count();
+                    double validPercent = (double) counter / numOfAllPatternSequences * 100.0;
+                    String comment = String.format("%.1f %% : %s", validPercent, blocksName);
+
+                    bufferedFumenParser.add(operations, field, maxClearLine, comment, counter);
+
+                    Pair<String, Long> linkAndPriority = createALink(pathPair, counter, validPercent);
                     String line = String.format("<div>%s</div>", linkAndPriority.getKey());
                     htmlBuilder.addColumn(htmlColumn, line, -linkAndPriority.getValue());
                 });
+
+        String mergedFumen = bufferedFumenParser.parse();
+        htmlBuilder.addHeader(String.format("<div><a href='http://fumen.zui.jp/?v115@%s'>All solutions<a></div>", mergedFumen));
 
         // 出力
         try (BufferedWriter writer = file.newBufferedWriter()) {
@@ -142,7 +174,7 @@ public class LinkPathOutput implements PathOutput {
             return PathHTMLColumn.NotDeletedLine;
     }
 
-    private Pair<String, Integer> createALink(PathPair pathPair) {
+    private Pair<String, Long> createALink(PathPair pathPair, long counter, double validPercent) {
         // パターンを表す名前 を生成
         String linkText = pathPair.getSampleOperations().stream()
                 .map(operationWithKey -> operationWithKey.getPiece().getName() + "-" + operationWithKey.getRotate().name())
@@ -151,14 +183,7 @@ public class LinkPathOutput implements PathOutput {
         // テト譜に変換
         String encode = pathPair.getFumen();
 
-        // 有効なミノ順をまとめる
-        AtomicInteger counter = new AtomicInteger();
-        String validOrders = pathPair.blocksStreamForValidSolution()
-                .map(longBlocks -> longBlocks.blockStream().map(Piece::getName).collect(Collectors.joining()))
-                .peek(s -> counter.incrementAndGet())
-                .collect(Collectors.joining(", "));
-
         // 出力
-        return new Pair<>(String.format("<a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a> [%s]", encode, linkText, validOrders), counter.get());
+        return new Pair<>(String.format("<a href='http://fumen.zui.jp/?v115@%s'>%s</a> / %.1f %% <span style='color: #999'>[%d]</span>", encode, linkText, validPercent, counter), counter);
     }
 }

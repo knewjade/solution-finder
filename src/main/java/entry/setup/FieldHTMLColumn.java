@@ -11,7 +11,7 @@ public class FieldHTMLColumn implements HTMLColumn {
     private final int maxHeight;
     private final String title;
 
-    FieldHTMLColumn(Field field, int maxHeight) {
+    public FieldHTMLColumn(Field field, int maxHeight) {
         assert field != null;
         this.field = field;
         this.maxHeight = maxHeight;

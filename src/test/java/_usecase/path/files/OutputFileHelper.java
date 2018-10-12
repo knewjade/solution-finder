@@ -40,6 +40,17 @@ public class OutputFileHelper {
     private static PathHTML loadHTML(String path) throws IOException {
         String html = Files.lines(Paths.get(path)).collect(Collectors.joining());
         int pattern = extractPattern(html);
+        int sequence = extractSequence(html);
+
+        String mergedFumen;
+        {
+            String[] split = html.split("</header>");
+            html = split[1];
+
+            List<String> list = extractTetfu(split[0]);
+            assert list.size() == 1;
+            mergedFumen = list.get(0);
+        }
 
         if (html.contains("ライン消去あり")) {
             String[] split = html.split("ライン消去あり");
@@ -47,11 +58,11 @@ public class OutputFileHelper {
             String deletedLine = split[1];
             List<String> noDeletedLineFumens = extractTetfu(noDeletedLine);
             List<String> deletedLineFumens = extractTetfu(deletedLine);
-            return new PathHTML(html, pattern, noDeletedLineFumens, deletedLineFumens);
+            return new PathHTML(html, pattern, sequence, mergedFumen, noDeletedLineFumens, deletedLineFumens);
         } else {
             List<String> noDeletedLineFumens = extractTetfu(html);
             List<String> deletedLineFumens = extractTetfu("");
-            return new PathHTML(html, pattern, noDeletedLineFumens, deletedLineFumens);
+            return new PathHTML(html, pattern, sequence, mergedFumen, noDeletedLineFumens, deletedLineFumens);
         }
     }
 
@@ -79,7 +90,7 @@ public class OutputFileHelper {
     }
 
     public static CSVStore loadPathSolutionCSV() throws IOException {
-        return loadCSVStore(Paths.get(DEFAULT_CSV), Arrays.asList("fumen", "use", "num-solutions", "num-patterns", "solutions", "patterns"));
+        return loadCSVStore(Paths.get(DEFAULT_CSV), Arrays.asList("fumen", "use", "num-valid", "num-solutions", "num-patterns", "valid", "solutions", "patterns"));
     }
 
     public static CSVStore loadPathUseCSV() throws IOException {
@@ -99,13 +110,24 @@ public class OutputFileHelper {
     }
 
     private static int extractPattern(String html) {
-        Pattern pattern = Pattern.compile("<div>(\\d+)パターン</div>");
+        Pattern pattern = Pattern.compile("<div>(\\d+) solutions.*?</div>");
         Matcher matcher = pattern.matcher(html);
         if (matcher.find()) {
             assert matcher.groupCount() == 1 : html;
             return Integer.valueOf(matcher.group(1));
         } else {
             throw new IllegalStateException("Not found pattern: " + html);
+        }
+    }
+
+    private static int extractSequence(String html) {
+        Pattern pattern = Pattern.compile("\\[(\\d+) input sequences]");
+        Matcher matcher = pattern.matcher(html);
+        if (matcher.find()) {
+            assert matcher.groupCount() == 1 : html;
+            return Integer.valueOf(matcher.group(1));
+        } else {
+            throw new IllegalStateException("Not found sequence: " + html);
         }
     }
 

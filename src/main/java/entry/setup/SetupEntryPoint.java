@@ -1,5 +1,6 @@
 package entry.setup;
 
+import common.ValidPiecesPool;
 import common.buildup.BuildUpStream;
 import common.datastore.*;
 import common.iterable.CombinationIterable;
@@ -16,7 +17,10 @@ import core.mino.Piece;
 import entry.DropType;
 import entry.EntryPoint;
 import entry.Verify;
-import entry.path.*;
+import entry.path.ForPathSolutionFilter;
+import entry.path.HarddropBuildUpListUpThreadLocal;
+import entry.path.LockedBuildUpListUpThreadLocal;
+import entry.path.ReducePatternGenerator;
 import entry.path.output.MyFile;
 import entry.path.output.OneFumenParser;
 import entry.setup.filters.*;
@@ -24,13 +28,14 @@ import entry.setup.functions.CombinationFunctions;
 import entry.setup.functions.OrderFunctions;
 import entry.setup.functions.SetupFunctions;
 import entry.setup.operation.FieldOperation;
+import entry.setup.output.CSVSetupOutput;
+import entry.setup.output.LinkSetupOutput;
+import entry.setup.output.SetupOutput;
 import exceptions.FinderException;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
 import exceptions.FinderTerminateException;
 import lib.Stopwatch;
-import output.HTMLBuilder;
-import output.HTMLColumn;
 import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
@@ -49,7 +54,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -164,16 +168,10 @@ public class SetupEntryPoint implements EntryPoint {
         if (!settings.isCombination())
             output("Using hold: " + (settings.isUsingHold() ? "use" : "avoid"));
 
-
         // Output patterns
         output("Searching patterns [" + (settings.isCombination() ? "combination" : "order") + "]:");
         for (String pattern : patterns)
             output("  " + pattern);
-
-        // Setup output file
-        MyFile base = new MyFile(settings.getOutputBaseFilePath());
-        base.mkdirs();
-        base.verify();
 
         output();
 
@@ -204,7 +202,7 @@ public class SetupEntryPoint implements EntryPoint {
         TaskResultHelper taskResultHelper = new BasicMinoPackingHelper();
         SolutionFilter solutionFilter = new ForPathSolutionFilter(generator, maxHeight);
         ThreadLocal<BuildUpStream> buildUpStreamThreadLocal = createBuildUpStreamThreadLocal(dropType, maxHeight);
-        OneFumenParser fumenParser = new OneFumenParser(minoFactory, colorConverter);
+        OneFumenParser oneFumenParser = new OneFumenParser(minoFactory, colorConverter);
 
         // ミノリストの作成
         long deleteKeyMask = getDeleteKeyMask(notFilledField, maxHeight);
@@ -223,10 +221,10 @@ public class SetupEntryPoint implements EntryPoint {
         }
 
         // 組み合わせか順番かで処理を変更する
-        SetupFunctions data = createSetupFunctions(settings.isCombination(), generator, buildUpStreamThreadLocal, initField, maxDepth, settings.isUsingHold());
+        SetupFunctions setupFunctions = createSetupFunctions(settings.isCombination(), generator, buildUpStreamThreadLocal, initField, maxDepth, settings.isUsingHold());
 
         // ホールを取り除く
-        SetupSolutionFilter filter = data.getSetupSolutionFilter();
+        SetupSolutionFilter filter = setupFunctions.getSetupSolutionFilter();
         // ホールを持ってはいけないエリアがある場合は、新たにフィルターを追加する
         switch (settings.getExcludeType()) {
             case Holes: {
@@ -311,47 +309,9 @@ public class SetupEntryPoint implements EntryPoint {
 
         output("# Output file");
 
-        HTMLBuilder<HTMLColumn> htmlBuilder = new HTMLBuilder<>("Setup result");
-        BiFunction<List<MinoOperationWithKey>, Field, String> naming = data.getNaming();
-
-        resultMap.forEach((keyField, setupResults) -> {
-            Field field = initField.freeze(maxHeight);
-            for (Piece piece : Piece.values())
-                field.merge(keyField.get(piece));
-
-            HTMLColumn column = new FieldHTMLColumn(field, maxHeight);
-            StringBuilder builder = new StringBuilder();
-
-            setupResults.forEach(setupResult -> {
-                // 操作に変換
-                List<MinoOperationWithKey> operationWithKeys = setupResult.getSolution();
-
-                // 譜面の作成
-                String encode = fumenParser.parse(operationWithKeys, initField, maxHeight);
-
-                // 名前の作成
-                String name = naming.apply(operationWithKeys, setupResult.getRawField());
-
-                String link = String.format("<a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a>", encode, name);
-                String line = String.format("<div>%s</div>", link);
-
-                builder.append(line);
-            });
-
-            htmlBuilder.addColumn(column, builder.toString());
-        });
-
-        ArrayList<HTMLColumn> columns = new ArrayList<>(htmlBuilder.getRegisteredColumns());
-        columns.sort(Comparator.comparing(HTMLColumn::getTitle).reversed());
-        try (BufferedWriter bufferedWriter = base.newBufferedWriter()) {
-            for (String line : htmlBuilder.toList(columns, true)) {
-                bufferedWriter.write(line);
-                bufferedWriter.newLine();
-            }
-            bufferedWriter.flush();
-        } catch (IOException e) {
-            throw new FinderExecuteException(e);
-        }
+        SetupOutput setupOutput = createOutput(settings.getOutputType(), minoFactory, colorConverter, buildUpStreamThreadLocal, oneFumenParser, setupFunctions);
+        SetupResults setupResults = new SetupResults(resultMap);
+        setupOutput.output(setupResults, initField, sizedBit);
 
         output();
 
@@ -359,6 +319,16 @@ public class SetupEntryPoint implements EntryPoint {
 
         output("# Finalize");
         output("done");
+    }
+
+    private SetupOutput createOutput(OutputType outputType, MinoFactory minoFactory, ColorConverter colorConverter, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal, OneFumenParser oneFumenParser, SetupFunctions setupFunctions) throws FinderInitializeException, FinderExecuteException {
+        switch (outputType) {
+            case CSV:
+                return new CSVSetupOutput(settings, setupFunctions, oneFumenParser, buildUpStreamThreadLocal);
+            case HTML:
+                return new LinkSetupOutput(settings, setupFunctions, oneFumenParser, buildUpStreamThreadLocal, minoFactory, colorConverter);
+        }
+        throw new FinderExecuteException("Unsupported format: format=" + outputType);
     }
 
     private List<SetupTemp> localSearchIfNeed(Field notFilledField, int maxHeight, PatternGenerator generator, boolean isLocalSearch, List<List<MinoOperationWithKey>> resultOperations, int numOfPieces, MinoFactory minoFactory, MinoShifter minoShifter, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal, Field initField) throws FinderExecuteException {
@@ -526,7 +496,7 @@ public class SetupEntryPoint implements EntryPoint {
         output("");
     }
 
-    private void output(String str) throws FinderExecuteException {
+    public void output(String str) throws FinderExecuteException {
         try {
             logWriter.append(str).append(LINE_SEPARATOR);
         } catch (IOException e) {
@@ -553,35 +523,5 @@ public class SetupEntryPoint implements EntryPoint {
         } catch (IOException | FinderExecuteException e) {
             throw new FinderTerminateException(e);
         }
-    }
-}
-
-
-class FieldOperationWithKey {
-    private final FullOperationWithKey operation;
-    private final Field field;
-
-    FieldOperationWithKey(FullOperationWithKey operation) {
-        int maxY = operation.getMino().getMaxY();
-        Field field = FieldFactory.createField(maxY);
-        field.put(operation.getMino(), operation.getX(), operation.getY());
-        field.insertWhiteLineWithKey(operation.getNeedDeletedKey());
-
-        {
-            this.operation = operation;
-            this.field = field;
-        }
-    }
-
-    public FullOperationWithKey getOperation() {
-        return operation;
-    }
-
-    public Field getField() {
-        return field;
-    }
-
-    public Piece getPiece() {
-        return operation.getPiece();
     }
 }

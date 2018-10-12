@@ -1,6 +1,6 @@
 package entry.path;
 
-import common.SyntaxException;
+import common.ValidPiecesPool;
 import common.buildup.BuildUpStream;
 import common.datastore.BlockField;
 import common.datastore.MinoOperationWithKey;
@@ -8,8 +8,6 @@ import common.datastore.Operation;
 import common.datastore.OperationWithKey;
 import common.datastore.blocks.LongPieces;
 import common.order.ReverseOrderLookUp;
-import common.pattern.LoadedPatternGenerator;
-import common.pattern.PatternGenerator;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Mino;
@@ -33,15 +31,13 @@ class PathCore {
     private final int maxDepth;
     private final ValidPiecesPool piecesPool;
 
-    PathCore(List<String> patterns, PerfectPackSearcher searcher, int maxDepth, boolean isUsingHold, FumenParser fumenParser, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal) throws SyntaxException {
+    PathCore(PerfectPackSearcher searcher, int maxDepth, boolean isUsingHold, FumenParser fumenParser, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal, ValidPiecesPool piecesPool) {
         this.searcher = searcher;
         this.fumenParser = fumenParser;
         this.buildUpStreamThreadLocal = buildUpStreamThreadLocal;
         this.isUsingHold = isUsingHold;
         this.maxDepth = maxDepth;
-
-        PatternGenerator blocksGenerator = new LoadedPatternGenerator(patterns);
-        this.piecesPool = new ValidPiecesPool(blocksGenerator, maxDepth, isUsingHold);
+        this.piecesPool = piecesPool;
     }
 
     List<PathPair> run(Field field, SizedBit sizedBit) throws ExecutionException, InterruptedException {

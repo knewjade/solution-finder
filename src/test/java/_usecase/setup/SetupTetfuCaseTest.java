@@ -4,6 +4,10 @@ import _usecase.Log;
 import _usecase.RunnerHelper;
 import _usecase.setup.files.OutputFileHelper;
 import _usecase.setup.files.SetupHTML;
+import common.tetfu.Tetfu;
+import common.tetfu.TetfuPage;
+import common.tetfu.common.ColorConverter;
+import core.mino.MinoFactory;
 import entry.EntryPointMain;
 import module.LongTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +15,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -267,6 +272,16 @@ class SetupTetfuCaseTest {
             assertThat(html.getFumens())
                     .hasSize(12)
                     .contains("AhBtDewhQ4CeBti0whR4AeRpilg0whAeQ4AeRpglCe?whJeAgWGApvaFDMNBAA");
+
+            // Merge fumen
+            {
+                MinoFactory minoFactory = new MinoFactory();
+                ColorConverter colorConverter = new ColorConverter();
+                Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
+                List<TetfuPage> pages = tetfu.decode(html.getMergedFumen());
+                assertThat(pages).hasSize(12);
+                assertThat(pages.get(0)).returns("204 : IJOZLS", TetfuPage::getComment);
+            }
         }
 
         @Test
@@ -503,6 +518,16 @@ class SetupTetfuCaseTest {
             // HTML
             SetupHTML html = OutputFileHelper.loadSetupHTML();
             assertThat(html.getFumens()).hasSize(11);
+
+            // Merge fumen
+            {
+                MinoFactory minoFactory = new MinoFactory();
+                ColorConverter colorConverter = new ColorConverter();
+                Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
+                List<TetfuPage> pages = tetfu.decode(html.getMergedFumen());
+                assertThat(pages).hasSize(11);
+                assertThat(pages.get(0)).returns("6 : ISS", TetfuPage::getComment);
+            }
         }
     }
 
@@ -524,7 +549,6 @@ class SetupTetfuCaseTest {
             String fumen = "v115@9gzhFezhFezhFezhPeAgH";
             String command = buildCommand(fumen, "-p IOOI --fill i --hold yes");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
-            System.out.println(log.getOutput());
 
             // Log
             assertThat(log.getOutput())
@@ -640,6 +664,16 @@ class SetupTetfuCaseTest {
                     .contains("IhAtHeBtwwGeAtywPeAgWCA6OBAA")
                     .contains("Hhh0Heg0AewwGeg0ywPeAgWCAqOBAA")
                     .contains("9ghlIeglIeglHezhPeAgWCApCBAA");
+
+            // Merge fumen
+            {
+                MinoFactory minoFactory = new MinoFactory();
+                ColorConverter colorConverter = new ColorConverter();
+                Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
+                List<TetfuPage> pages = tetfu.decode(html.getMergedFumen());
+                assertThat(pages).hasSize(67);
+                assertThat(pages.get(0).getComment()).startsWith("2 : ");
+            }
         }
 
         @Test
@@ -704,6 +738,69 @@ class SetupTetfuCaseTest {
                     .hasSize(13)
                     .contains("HhhlwwCeD8AeglxwAeE8AeglwwQeAgWCAsOBAA")
                     .contains("HhhlQ4CeD8AeglR4AeE8AeglAeQ4PeAgWCAzCBAA");
+
+            // Merge fumen
+            {
+                MinoFactory minoFactory = new MinoFactory();
+                ColorConverter colorConverter = new ColorConverter();
+                Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
+                List<TetfuPage> pages = tetfu.decode(html.getMergedFumen());
+                assertThat(pages).hasSize(13);
+                assertThat(pages.get(0).getComment()).startsWith("2 : ");
+            }
+        }
+    }
+
+    @Nested
+    class QuizTest extends SetupUseCaseBaseTest {
+        @Test
+        void quizTetfu() throws Exception {
+            // テト譜 + Quizパターンコマンド (フィールドファイル・パターンファイル無視)
+
+            /*
+            comment: #Q=[](L)SZO
+            __________
+            I__I______
+            IIIII___II
+            IIIII___II
+             */
+
+            String tetfu = "http://fumen.zui.jp/?v115@HhwhBewhFe0hCe2hCexhJeAgWXAFLDmClcJSAVDEHB?EooRBMoAVBzHrBA";
+
+            String command = String.format("setup -t %s -f i", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput())
+                    .contains("LSZO")
+                    .contains(Messages.foundSolutions(1))
+                    .contains(Messages.foundSubSolutions(1));
+
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
+        void quizTetfuWithPatterns() throws Exception {
+            // テト譜 + Quizパターンコマンド + オプション (フィールドファイル・パターンファイル無視)
+
+            /*
+            comment: #Q=[](L)SZO
+            __________
+            I__I______
+            IIIII___II
+            IIIII___II
+             */
+
+            String tetfu = "http://fumen.zui.jp/?v115@HhwhBewhFe0hCe2hCexhJeAgWXAFLDmClcJSAVDEHB?EooRBMoAVBzHrBA";
+
+            String command = String.format("setup -t %s -f i -p #Q=[I](*)*O", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput())
+                    .contains("#Q=[I](*)*O")
+                    .contains(Messages.foundSolutions(2))
+                    .contains(Messages.foundSubSolutions(2));
+
+            assertThat(log.getError()).isEmpty();
         }
     }
 

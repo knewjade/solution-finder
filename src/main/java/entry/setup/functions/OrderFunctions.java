@@ -5,7 +5,7 @@ import common.datastore.MinoOperationWithKey;
 import common.datastore.blocks.LongPieces;
 import core.field.Field;
 import core.mino.Piece;
-import entry.path.ValidPiecesPool;
+import common.ValidPiecesPool;
 import entry.setup.filters.OrderFilter;
 import entry.setup.filters.SetupSolutionFilter;
 

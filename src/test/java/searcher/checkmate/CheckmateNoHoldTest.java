@@ -281,7 +281,6 @@ class CheckmateNoHoldTest {
         // Assertion
         // Set test case
         List<Piece> piecesList = pieces.getPieces();
-        System.out.println(piecesList);
 
         // Execute
         List<Result> results = checkmate.search(field, piecesList, candidate, maxClearLine, maxDepth);

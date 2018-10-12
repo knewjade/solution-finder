@@ -1,8 +1,10 @@
 package entry.path;
 
 import common.SyntaxException;
+import common.ValidPiecesPool;
 import common.buildup.BuildUpStream;
 import common.datastore.BlockField;
+import common.pattern.LoadedPatternGenerator;
 import common.pattern.PatternGenerator;
 import common.tetfu.common.ColorConverter;
 import core.FinderConstant;
@@ -171,8 +173,9 @@ public class PathEntryPoint implements EntryPoint {
         output("     ... searching");
 
         Stopwatch stopwatch2 = Stopwatch.createStartedStopwatch();
-        PathCore pathCore = createPathCore(field, maxClearLine, maxDepth, patterns, minoFactory, colorConverter, sizedBit, solutionFilter, isUsingHold, basicSolutions, threadCount);
-        List<PathPair> pathPairs = run(pathCore, field, sizedBit, reservedBlocks);
+        ValidPiecesPool validPiecesPool = createValidPiecesPool(maxDepth, patterns, isUsingHold);
+        PathCore pathCore = createPathCore(field, maxClearLine, maxDepth, minoFactory, colorConverter, sizedBit, solutionFilter, isUsingHold, basicSolutions, threadCount, validPiecesPool);
+        List<PathPair> pathPairList = run(pathCore, field, sizedBit, reservedBlocks);
         stopwatch2.stop();
 
         output("     ... done");
@@ -184,7 +187,9 @@ public class PathEntryPoint implements EntryPoint {
 
         output("# Output file");
         OutputType outputType = settings.getOutputType();
-        PathOutput pathOutput = createOutput(outputType, generator, maxDepth);
+        PathOutput pathOutput = createOutput(outputType, generator, maxDepth, minoFactory, colorConverter);
+        int numOfAllPatternSequences = validPiecesPool.getAllPieces().size();
+        PathPairs pathPairs = new PathPairs(pathPairList, numOfAllPatternSequences);
         pathOutput.output(pathPairs, field, sizedBit);
 
         output();
@@ -193,6 +198,17 @@ public class PathEntryPoint implements EntryPoint {
 
         output("# Finalize");
         output("done");
+    }
+
+    private ValidPiecesPool createValidPiecesPool(int maxDepth, List<String> patterns, boolean isUsingHold) throws FinderInitializeException, FinderExecuteException {
+        try {
+            PatternGenerator blocksGenerator = new LoadedPatternGenerator(patterns);
+            return new ValidPiecesPool(blocksGenerator, maxDepth, isUsingHold);
+        } catch (SyntaxException e) {
+            output("Pattern syntax error");
+            output(e.getMessage());
+            throw new FinderInitializeException("Pattern syntax error", e);
+        }
     }
 
     private int getThreadCount() {
@@ -225,7 +241,7 @@ public class PathEntryPoint implements EntryPoint {
         throw new FinderInitializeException("Cached-min-bit should be 0 <= bit: bit=" + cachedMinBit);
     }
 
-    private PathCore createPathCore(Field field, int maxClearLine, int maxDepth, List<String> patterns, MinoFactory minoFactory, ColorConverter colorConverter, SizedBit sizedBit, SolutionFilter solutionFilter, boolean isUsingHold, BasicSolutions basicSolutions, int threadCount) throws FinderInitializeException, FinderExecuteException {
+    private PathCore createPathCore(Field field, int maxClearLine, int maxDepth, MinoFactory minoFactory, ColorConverter colorConverter, SizedBit sizedBit, SolutionFilter solutionFilter, boolean isUsingHold, BasicSolutions basicSolutions, int threadCount, ValidPiecesPool validPiecesPool) throws FinderInitializeException {
         assert 1 <= threadCount;
         List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(sizedBit, field);
         TaskResultHelper taskResultHelper = createTaskResultHelper(maxClearLine);
@@ -233,13 +249,7 @@ public class PathEntryPoint implements EntryPoint {
         FumenParser fumenParser = createFumenParser(settings.isTetfuSplit(), minoFactory, colorConverter);
         ThreadLocal<BuildUpStream> threadLocalBuildUpStream = createBuildUpStreamThreadLocal(settings.getDropType(), maxClearLine);
 
-        try {
-            return new PathCore(patterns, searcher, maxDepth, isUsingHold, fumenParser, threadLocalBuildUpStream);
-        } catch (SyntaxException e) {
-            output("Pattern syntax error");
-            output(e.getMessage());
-            throw new FinderInitializeException("Pattern syntax error", e);
-        }
+        return new PathCore(searcher, maxDepth, isUsingHold, fumenParser, threadLocalBuildUpStream, validPiecesPool);
     }
 
     private TaskResultHelper createTaskResultHelper(int height) {
@@ -275,12 +285,13 @@ public class PathEntryPoint implements EntryPoint {
         }
     }
 
-    private PathOutput createOutput(OutputType outputType, PatternGenerator generator, int maxDepth) throws FinderExecuteException, FinderInitializeException {
+    private PathOutput createOutput(OutputType outputType, PatternGenerator generator, int maxDepth, MinoFactory minoFactory, ColorConverter colorConverter) throws FinderExecuteException, FinderInitializeException {
         switch (outputType) {
             case CSV:
                 return new CSVPathOutput(this, settings);
-            case Link:
-                return new LinkPathOutput(this, settings);
+            case HTML: {
+                return new LinkPathOutput(this, settings, minoFactory, colorConverter);
+            }
             case TetfuCSV:
                 return new FumenCSVPathOutput(this, settings);
             case PatternCSV:

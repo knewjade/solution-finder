@@ -12,8 +12,9 @@ public class DirectTetfuPage implements TetfuPage {
     private final String comment;
     private final ColoredField field;
     private final boolean isPutMino;
+    private final boolean isLock;
 
-    public DirectTetfuPage(ColorType colorType, int x, int y, Rotate rotate, String comment, ColoredField field, boolean isPutMino) {
+    public DirectTetfuPage(ColorType colorType, int x, int y, Rotate rotate, String comment, ColoredField field, boolean isPutMino, boolean isLock) {
         this.colorType = colorType;
         this.x = x;
         this.y = y;
@@ -21,6 +22,7 @@ public class DirectTetfuPage implements TetfuPage {
         this.comment = comment;
         this.field = field;
         this.isPutMino = isPutMino;
+        this.isLock = isLock;
     }
 
     @Override
@@ -56,5 +58,10 @@ public class DirectTetfuPage implements TetfuPage {
     @Override
     public boolean isPutMino() {
         return isPutMino;
+    }
+
+    @Override
+    public boolean isLock() {
+        return isLock;
     }
 }

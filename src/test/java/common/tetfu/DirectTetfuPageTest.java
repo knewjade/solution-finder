@@ -12,13 +12,14 @@ class DirectTetfuPageTest {
     @Test
     void test1() {
         ColoredField coloredField = ColoredFieldFactory.createColoredField("______IIII");
-        TetfuPage page = new DirectTetfuPage(ColorType.I, 3, 0, Rotate.Left, "test", coloredField, true);
+        TetfuPage page = new DirectTetfuPage(ColorType.I, 3, 0, Rotate.Left, "test", coloredField, true, true);
         assertThat(page)
                 .returns(ColorType.I, TetfuPage::getColorType)
                 .returns(3, TetfuPage::getX)
                 .returns(0, TetfuPage::getY)
                 .returns("test", TetfuPage::getComment)
                 .returns(coloredField, TetfuPage::getField)
-                .returns(true, TetfuPage::isPutMino);
+                .returns(true, TetfuPage::isPutMino)
+                .returns(true, TetfuPage::isLock);
     }
 }

@@ -46,8 +46,9 @@ public class NoHoldFigGenerator implements FigGenerator {
     @Override
     public void updateField(ColoredField field, Mino mino, int x, int y) {
         ColoredField freeze = field.freeze(field.getMaxHeight());
-        if (mino != null)
+        if (mino != null) {
             freeze.putMino(mino, x, y);
+        }
 
         int heightBlock = setting.getFieldHeightBlock();
         int widthBlock = setting.getFieldWidthBlock();
@@ -79,7 +80,7 @@ public class NoHoldFigGenerator implements FigGenerator {
         Piece piece = colorConverter.parseToBlock(colorType);
         Mino mino = minoFactory.create(piece, rotate);
         FigColor figColor = FigColor.parse(colorType);
-        Color color = figColor.getStrongColor();
+        Color color = figColor.getStrong2Color();
         graphics.setColor(color);
         for (int[] positions : mino.getPositions()) {
             Rectangle rectangle = positionDecider.getInField(xIndex + positions[0], yIndex + positions[1]);

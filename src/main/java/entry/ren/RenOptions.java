@@ -29,13 +29,13 @@ public enum RenOptions {
     }
 
     public static Options create() {
-        Options options = new Options();
+        Options allOptions = new Options();
 
-        for (RenOptions renOptions : RenOptions.values()) {
-            Option option = renOptions.optionBuilder.toOption();
-            options.addOption(option);
+        for (RenOptions options : RenOptions.values()) {
+            Option option = options.optionBuilder.toOption();
+            allOptions.addOption(option);
         }
 
-        return options;
+        return allOptions;
     }
 }

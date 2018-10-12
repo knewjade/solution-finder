@@ -1,124 +1,108 @@
 package entry.percent;
 
-import common.tetfu.Tetfu;
-import common.tetfu.TetfuPage;
 import common.tetfu.common.ColorConverter;
-import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
-import core.field.Field;
-import core.field.FieldFactory;
-import core.mino.Mino;
+import common.tetfu.field.ColoredFieldFactory;
 import core.mino.MinoFactory;
-import core.srs.Rotate;
 import entry.CommandLineWrapper;
 import entry.NormalCommandLineWrapper;
 import entry.PriorityCommandLineWrapper;
+import entry.common.CommandLineFactory;
+import entry.common.Loader;
+import entry.common.SettingParser;
+import entry.common.field.FieldData;
+import entry.common.field.FumenLoader;
 import exceptions.FinderParseException;
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.Options;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-public class PercentSettingParser {
+public class PercentSettingParser extends SettingParser<PercentSettings> {
     private static final String CHARSET_NAME = "utf-8";
     private static final String DEFAULT_PATTERNS_TXT = "input/patterns.txt";
     private static final String DEFAULT_FIELD_TXT = "input/field.txt";
     private static final String PATTERN_DELIMITER = ";";
 
-    private final String[] commands;
-
-    public PercentSettingParser(List<String> commands) {
-        this.commands = new String[commands.size()];
-        commands.stream()
-                .map(String::trim)
-                .filter(s -> !s.isEmpty())
-                .collect(Collectors.toList())
-                .toArray(this.commands);
+    public PercentSettingParser(Options options, CommandLineParser parser) {
+        super(options, parser);
     }
 
-    PercentSettingParser(String commands) {
-        this(commands.split(" "));
-    }
-
-    private PercentSettingParser(String[] commands) {
-        this.commands = commands;
-    }
-
-    public Optional<PercentSettings> parse() throws FinderParseException {
-        Options options = createOptions();
-        CommandLineParser parser = new DefaultParser();
-        CommandLine commandLine = parseToCommandLine(options, parser, commands);
-        CommandLineWrapper wrapper = new NormalCommandLineWrapper(commandLine);
+    @Override
+    protected Optional<PercentSettings> parse(CommandLineWrapper wrapper) throws FinderParseException {
         PercentSettings settings = new PercentSettings();
 
-        // help
-        if (wrapper.hasOption("help")) {
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("percent [options]", options);
-            return Optional.empty();
-        }
+        CommandLineFactory commandLineFactory = this.getCommandLineFactory();
+        MinoFactory minoFactory = new MinoFactory();
+        ColorConverter colorConverter = new ColorConverter();
+        FumenLoader fumenLoader = new FumenLoader(commandLineFactory, minoFactory, colorConverter);
 
-        // フィールド・最大削除ラインの設定
-        if (wrapper.hasOption("tetfu")) {
-            // テト譜から
-            Optional<String> tetfuData = wrapper.getStringOption("tetfu");
-            if (!tetfuData.isPresent())
-                throw new FinderParseException("Should specify option value: --tetfu");
+        // フィールドの読み込み
+        Optional<FieldData> fieldDataOptional = Loader.loadFieldData(
+                wrapper,
+                fumenLoader,
+                PercentOptions.Page.optName(),
+                PercentOptions.Fumen.optName(),
+                PercentOptions.FieldPath.optName(),
+                DEFAULT_FIELD_TXT,
+                Charset.forName(CHARSET_NAME),
+                Optional::of,
+                fieldLines -> {
+                    try {
+                        // 最大削除ラインの設定
+                        String firstLine = fieldLines.pollFirst();
+                        int maxClearLine = Integer.valueOf(firstLine != null ? firstLine : "error");
 
-            String encoded = Tetfu.removeDomainData(tetfuData.get());
-            wrapper = loadTetfu(encoded, parser, options, wrapper, settings);
-        } else {
-            // フィールドファイルから
-            Optional<String> fieldPathOption = wrapper.getStringOption("field-path");
-            String fieldPath = fieldPathOption.orElse(DEFAULT_FIELD_TXT);
-            Path path = Paths.get(fieldPath);
-            Charset charset = Charset.forName(CHARSET_NAME);
+                        // フィールドの設定
+                        String fieldMarks = String.join("", fieldLines);
+                        ColoredField coloredField = ColoredFieldFactory.createColoredField(fieldMarks);
 
-            try {
-                LinkedList<String> fieldLines = Files.lines(path, charset)
-                        .map(str -> {
-                            if (str.contains("#"))
-                                return str.substring(0, str.indexOf('#'));
-                            return str;
-                        })
-                        .map(String::trim)
-                        .filter(s -> !s.isEmpty())
-                        .collect(Collectors.toCollection(LinkedList::new));
-
-                if (fieldLines.isEmpty())
-                    throw new FinderParseException("Should specify clear-line & field-definition in field file");
-
-                String removeDomainData = Tetfu.removeDomainData(fieldLines.get(0));
-                if (Tetfu.isDataLater115(removeDomainData)) {
-                    // テト譜から
-                    wrapper = loadTetfu(removeDomainData, parser, options, wrapper, settings);
-                } else {
-                    // 最大削除ラインの設定
-                    int maxClearLine = Integer.valueOf(fieldLines.pollFirst());
-                    settings.setMaxClearLine(maxClearLine);
-
-                    // フィールドの設定
-                    String fieldMarks = String.join("", fieldLines);
-                    Field field = FieldFactory.createField(fieldMarks);
-                    settings.setFieldFilePath(field);
+                        // 最大削除ラインをコマンドラインのオプションに設定
+                        CommandLine commandLineTetfu = commandLineFactory.parse(Arrays.asList("--" + PercentOptions.ClearLine.optName(), String.valueOf(maxClearLine)));
+                        CommandLineWrapper newWrapper = new NormalCommandLineWrapper(commandLineTetfu);
+                        return Optional.of(new FieldData(coloredField, newWrapper));
+                    } catch (NumberFormatException e) {
+                        throw new FinderParseException("Cannot read clear-line from field file");
+                    }
                 }
-            } catch (NumberFormatException e) {
-                throw new FinderParseException("Cannot read clear-line from " + fieldPath);
-            } catch (IOException e) {
-                throw new FinderParseException("Cannot open field file", e);
+        );
+
+        if (fieldDataOptional.isPresent()) {
+            FieldData fieldData = fieldDataOptional.get();
+
+            Optional<CommandLineWrapper> commandLineWrapper = fieldData.getCommandLineWrapper();
+            if (commandLineWrapper.isPresent()) {
+                wrapper = new PriorityCommandLineWrapper(Arrays.asList(wrapper, commandLineWrapper.get()));
+            }
+
+            // フィールドの設定
+            Optional<Integer> heightOptinal = wrapper.getIntegerOption(PercentOptions.ClearLine.optName());
+            if (heightOptinal.isPresent()) {
+                int height = heightOptinal.get();
+                settings.setField(fieldData.toColoredField(), height);
+                settings.setMaxClearLine(height);
+            } else {
+                settings.setField(fieldData.toColoredField());
             }
         }
 
+        // パターンの読み込み
+        List<String> patterns = Loader.loadPatterns(
+                wrapper,
+                PercentOptions.Patterns.optName(),
+                PATTERN_DELIMITER,
+                PercentOptions.PatternsPath.optName(),
+                DEFAULT_PATTERNS_TXT,
+                Charset.forName(CHARSET_NAME)
+        );
+        settings.setPatterns(patterns);
+
         // ドロップの設定
-        Optional<String> dropType = wrapper.getStringOption("drop");
+        Optional<String> dropType = wrapper.getStringOption(PercentOptions.Drop.optName());
         try {
             dropType.ifPresent(type -> {
                 String key = dropType.orElse("softdrop");
@@ -133,259 +117,25 @@ public class PercentSettingParser {
         }
 
         // パフェ成功確率ツリーの深さの設定
-        Optional<Integer> treeDepth = wrapper.getIntegerOption("tree-depth");
+        Optional<Integer> treeDepth = wrapper.getIntegerOption(PercentOptions.TreeDepth.optName());
         treeDepth.ifPresent(settings::setTreeDepth);
 
         // パフェ失敗パターンの表示個数の設定
-        Optional<Integer> failedCount = wrapper.getIntegerOption("failed-count");
+        Optional<Integer> failedCount = wrapper.getIntegerOption(PercentOptions.FailedCount.optName());
         failedCount.ifPresent(settings::setFailedCount);
 
-        // ホールドの設定
-        Optional<Boolean> isUsingHold = wrapper.getBoolOption("hold");
-        isUsingHold.ifPresent(settings::setUsingHold);
-
         // ログファイルの設定
-        Optional<String> logFilePath = wrapper.getStringOption("log-path");
+        Optional<String> logFilePath = wrapper.getStringOption(PercentOptions.LogPath.optName());
         logFilePath.ifPresent(settings::setLogFilePath);
 
+        // ホールドの設定
+        Optional<Boolean> isUsingHold = wrapper.getBoolOption(PercentOptions.Hold.optName());
+        isUsingHold.ifPresent(settings::setUsingHold);
+
         // スレッド数の設定
-        Optional<Integer> threadCount = wrapper.getIntegerOption("threads");
+        Optional<Integer> threadCount = wrapper.getIntegerOption(PercentOptions.Threads.optName());
         threadCount.ifPresent(settings::setThreadCount);
 
-        // 探索パターンの設定
-        if (wrapper.hasOption("patterns")) {
-            // パターン定義から
-            Optional<String> patternOption = wrapper.getStringOption("patterns");
-            assert patternOption.isPresent();
-            String patternValue = patternOption.get();
-            List<String> patterns = Arrays.stream(patternValue.split(PATTERN_DELIMITER)).collect(Collectors.toList());
-            settings.setPatterns(patterns);
-        } else {
-            // パターンファイルから
-            Optional<String> patternPathOption = wrapper.getStringOption("patterns-path");
-            String patternPath = patternPathOption.orElse(DEFAULT_PATTERNS_TXT);
-            Path path = Paths.get(patternPath);
-            Charset charset = Charset.forName(CHARSET_NAME);
-
-            try {
-                List<String> patterns = Files.lines(path, charset).collect(Collectors.toList());
-                settings.setPatterns(patterns);
-            } catch (IOException e) {
-                throw new FinderParseException("Cannot open patterns file", e);
-            }
-        }
         return Optional.of(settings);
-    }
-
-    private Options createOptions() {
-        Options options = new Options();
-
-        Option helpOption = Option.builder("h")
-                .optionalArg(true)
-                .longOpt("help")
-                .desc("Usage")
-                .build();
-        options.addOption(helpOption);
-
-        Option holdOption = Option.builder("H")
-                .optionalArg(true)
-                .hasArg()
-                .numberOfArgs(1)
-                .argName("use or avoid")
-                .longOpt("hold")
-                .desc("If use hold, set 'use'. If not use hold, set 'avoid'")
-                .build();
-        options.addOption(holdOption);
-
-        Option tetfuOption = Option.builder("t")
-                .optionalArg(true)
-                .hasArg()
-                .numberOfArgs(1)
-                .argName("data-of-tetfu")
-                .longOpt("tetfu")
-                .desc("Specify tetfu data for s-finder settings")
-                .build();
-        options.addOption(tetfuOption);
-
-        Option tetfuPageOption = Option.builder("P")
-                .optionalArg(true)
-                .hasArg()
-                .numberOfArgs(1)
-                .argName("page-of-tetfu")
-                .longOpt("page")
-                .desc("Specify pages of tetfu data for s-finder settings")
-                .build();
-        options.addOption(tetfuPageOption);
-
-        Option fieldFileOption = Option.builder("fp")
-                .optionalArg(true)
-                .hasArg()
-                .numberOfArgs(1)
-                .argName("file-path")
-                .longOpt("field-path")
-                .desc("File path of field definition")
-                .build();
-        options.addOption(fieldFileOption);
-
-        Option patternOption = Option.builder("p")
-                .optionalArg(true)
-                .hasArg()
-                .numberOfArgs(1)
-                .argName("definition")
-                .longOpt("patterns")
-                .desc("Specify pattern definition, directly")
-                .build();
-        options.addOption(patternOption);
-
-        Option patternFileOption = Option.builder("pp")
-                .optionalArg(true)
-                .hasArg()
-                .numberOfArgs(1)
-                .argName("file-path")
-                .longOpt("patterns-path")
-                .desc("File path of pattern definition")
-                .build();
-        options.addOption(patternFileOption);
-
-        Option logFileOption = Option.builder("lp")
-                .optionalArg(true)
-                .hasArg()
-                .numberOfArgs(1)
-                .argName("file-path")
-                .longOpt("log-path")
-                .desc("File path of output log")
-                .build();
-        options.addOption(logFileOption);
-
-        Option clearLineOption = Option.builder("c")
-                .optionalArg(true)
-                .hasArg()
-                .numberOfArgs(1)
-                .argName("num-of-line")
-                .longOpt("clear-line")
-                .desc("Max clear line")
-                .build();
-        options.addOption(clearLineOption);
-
-        Option treeDepthOption = Option.builder("td")
-                .optionalArg(true)
-                .hasArg()
-                .numberOfArgs(1)
-                .argName("depth")
-                .longOpt("tree-depth")
-                .desc("Depth of percent tree each head pieces")
-                .build();
-        options.addOption(treeDepthOption);
-
-        Option failedCountOption = Option.builder("fc")
-                .optionalArg(true)
-                .hasArg()
-                .numberOfArgs(1)
-                .argName("max-count")
-                .longOpt("failed-count")
-                .desc("Max count of failed patterns when output")
-                .build();
-        options.addOption(failedCountOption);
-
-        Option dropOption = Option.builder("d")
-                .optionalArg(true)
-                .hasArg()
-                .numberOfArgs(1)
-                .argName("drop")
-                .longOpt("drop")
-                .desc("Specify drop")
-                .build();
-        options.addOption(dropOption);
-
-        Option threadOption = Option.builder("th")
-                .optionalArg(true)
-                .hasArg()
-                .numberOfArgs(1)
-                .argName("thread-count")
-                .longOpt("threads")
-                .desc("Specify num of used thread")
-                .build();
-        options.addOption(threadOption);
-
-        return options;
-    }
-
-    private CommandLine parseToCommandLine(Options options, CommandLineParser parser, String[] commands) throws FinderParseException {
-        try {
-            return parser.parse(options, commands);
-        } catch (ParseException e) {
-            throw new FinderParseException(e);
-        }
-    }
-
-    private CommandLineWrapper loadTetfu(String data, CommandLineParser parser, Options options, CommandLineWrapper wrapper, PercentSettings settings) throws FinderParseException {
-        // テト譜面のエンコード
-        List<TetfuPage> decoded = encodeTetfu(data);
-
-        // 指定されたページを抽出
-        int page = wrapper.getIntegerOption("page").orElse(1);
-        TetfuPage tetfuPage = extractTetfuPage(decoded, page);
-
-        // コメントの抽出
-        // 先頭が数字ではない(--clear-line -p *p7のようになる)場合でも、parserはエラーにならない
-        // データ取得時にOptional.emptyがかえるだけ
-        String comment = "--clear-line " + tetfuPage.getComment();
-        List<String> splitComment = Arrays.stream(comment.split(" "))
-                .map(String::trim)
-                .filter(s -> !s.isEmpty())
-                .collect(Collectors.toList());
-
-        // コマンド引数を配列に変換
-        String[] commentArgs = new String[splitComment.size()];
-        splitComment.toArray(commentArgs);
-
-        // オプションとして読み込む
-        try {
-            CommandLine commandLineTetfu = parseToCommandLine(options, parser, commentArgs);
-            CommandLineWrapper newWrapper = new NormalCommandLineWrapper(commandLineTetfu);
-            newWrapper.getIntegerOption("clear-line");  // 削除ラインが読み取れればOK
-            wrapper = new PriorityCommandLineWrapper(Arrays.asList(wrapper, newWrapper));
-        } catch (FinderParseException ignore) {
-        }
-
-        // 最大削除ラインの設定
-        Optional<Integer> maxClearLineOption = wrapper.getIntegerOption("clear-line");
-        maxClearLineOption.ifPresent(settings::setMaxClearLine);
-
-        // フィールドを設定
-        ColoredField coloredField = tetfuPage.getField();
-        if (tetfuPage.isPutMino()) {
-            ColorType colorType = tetfuPage.getColorType();
-            Rotate rotate = tetfuPage.getRotate();
-            int x = tetfuPage.getX();
-            int y = tetfuPage.getY();
-
-            ColorConverter colorConverter = new ColorConverter();
-            Mino mino = new Mino(colorConverter.parseToBlock(colorType), rotate);
-            coloredField.putMino(mino, x, y);
-        }
-        settings.setField(coloredField, settings.getMaxClearLine());
-
-        return wrapper;
-    }
-
-    private List<TetfuPage> encodeTetfu(String encoded) throws FinderParseException {
-        MinoFactory minoFactory = new MinoFactory();
-        ColorConverter colorConverter = new ColorConverter();
-        Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
-        String data = Tetfu.removePrefixData(encoded);
-        if (data == null)
-            throw new FinderParseException("Unsupported tetfu: data=" + encoded);
-        return tetfu.decode(data);
-    }
-
-    private TetfuPage extractTetfuPage(List<TetfuPage> tetfuPages, int page) throws FinderParseException {
-        if (page < 1) {
-            throw new FinderParseException(String.format("Tetfu-page should be 1 <= page: page=%d", page));
-        } else if (page <= tetfuPages.size()) {
-            return tetfuPages.get(page - 1);
-        } else {
-            throw new FinderParseException(String.format("Tetfu-page is over max page: page=%d", page));
-        }
     }
 }

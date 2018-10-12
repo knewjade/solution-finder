@@ -78,7 +78,7 @@ public class AllFigGenerator implements FigGenerator {
         Piece piece = colorConverter.parseToBlock(colorType);
         Mino mino = minoFactory.create(piece, rotate);
         FigColor figColor = FigColor.parse(colorType);
-        Color color = figColor.getStrongColor();
+        Color color = figColor.getStrong2Color();
         graphics.setColor(color);
         for (int[] positions : mino.getPositions()) {
             Rectangle rectangle = positionDecider.getInField(xIndex + positions[0], yIndex + positions[1]);

@@ -61,6 +61,11 @@ public class DecodedTetfuPage implements TetfuPage {
     }
 
     @Override
+    public boolean isLock() {
+        return actionDecoder.isLock;
+    }
+
+    @Override
     public String toString() {
         return "TetfuPage{" +
                 "colorType=" + colorType +

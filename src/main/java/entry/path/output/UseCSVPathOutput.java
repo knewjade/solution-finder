@@ -1,15 +1,13 @@
 package entry.path.output;
 
-import common.datastore.PieceCounter;
+import common.datastore.MinoOperationWithKey;
 import common.datastore.OperationWithKey;
+import common.datastore.PieceCounter;
 import common.datastore.blocks.LongPieces;
 import common.pattern.PatternGenerator;
 import core.field.Field;
 import core.mino.Piece;
-import entry.path.PathEntryPoint;
-import entry.path.PathPair;
-import entry.path.PathSettings;
-import entry.path.ReducePatternGenerator;
+import entry.path.*;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
 import lib.AsyncBufferedFileWriter;
@@ -28,7 +26,6 @@ public class UseCSVPathOutput implements PathOutput {
 
     private final MyFile outputBaseFile;
     private final ReducePatternGenerator generator;
-    private Exception lastException = null;
 
     public UseCSVPathOutput(PathEntryPoint pathEntryPoint, PathSettings pathSettings, PatternGenerator generator, int maxDepth) throws FinderInitializeException {
         // 出力ファイルが正しく出力できるか確認
@@ -51,7 +48,7 @@ public class UseCSVPathOutput implements PathOutput {
         this.generator = new ReducePatternGenerator(generator, maxDepth);
     }
 
-    private String getRemoveExtensionFromPath(String path) throws FinderInitializeException {
+    private String getRemoveExtensionFromPath(String path) {
         int pointIndex = path.lastIndexOf('.');
         int separatorIndex = path.lastIndexOf(File.separatorChar);
 
@@ -64,16 +61,16 @@ public class UseCSVPathOutput implements PathOutput {
     }
 
     @Override
-    public void output(List<PathPair> pathPairs, Field field, SizedBit sizedBit) throws FinderExecuteException {
-        this.lastException = null;
+    public void output(PathPairs pathPairs, Field field, SizedBit sizedBit) throws FinderExecuteException {
+        List<PathPair> pathPairList = pathPairs.getUniquePathPairList();
 
-        outputLog("Found path = " + pathPairs.size());
+        outputLog("Found path = " + pathPairList.size());
 
         AtomicInteger allCounter = new AtomicInteger();
 
-        Map<PieceCounter, List<PathPair>> groupingByClockCounter = pathPairs.parallelStream()
+        Map<PieceCounter, List<PathPair>> groupingByClockCounter = pathPairList.parallelStream()
                 .collect(Collectors.groupingBy(pathPair -> {
-                    List<OperationWithKey> operations = pathPair.getSampleOperations();
+                    List<MinoOperationWithKey> operations = pathPair.getSampleOperations();
                     return new PieceCounter(operations.stream().map(OperationWithKey::getPiece));
                 }));
 
@@ -127,9 +124,6 @@ public class UseCSVPathOutput implements PathOutput {
         }
 
         outputLog("Found piece combinations = " + allCounter.get());
-
-        if (lastException != null)
-            throw new FinderExecuteException("Error to output file", lastException);
     }
 
     private void outputLog(String str) throws FinderExecuteException {

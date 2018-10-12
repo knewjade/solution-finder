@@ -108,7 +108,7 @@ class PathIrregularCaseTest extends PathUseCaseBaseTest {
         String errorFile = OutputFileHelper.loadErrorText();
         assertThat(errorFile)
                 .contains(command)
-                .contains("Cannot read clear-line from input/field.txt [FinderParseException]");
+                .contains("Cannot read clear-line from field file [FinderParseException]");
     }
 
     @Test
@@ -367,7 +367,7 @@ class PathIrregularCaseTest extends PathUseCaseBaseTest {
         String errorFile = OutputFileHelper.loadErrorText();
         assertThat(errorFile)
                 .contains(command)
-                .contains("Tetfu-page should be 1 <= page: page=0 [FinderParseException]");
+                .contains("Page of fumen should be 1 <= page: page=0 [FinderParseException]");
     }
 
     @Test
@@ -388,7 +388,7 @@ class PathIrregularCaseTest extends PathUseCaseBaseTest {
         String errorFile = OutputFileHelper.loadErrorText();
         assertThat(errorFile)
                 .contains(command)
-                .contains("Tetfu-page is over max page: page=6");
+                .contains("Page of fumen is over max page: page=6");
     }
 
     @Test

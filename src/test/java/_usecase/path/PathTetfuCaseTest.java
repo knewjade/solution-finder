@@ -56,7 +56,6 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(uniqueHTML.noDeletedLineFumens())
                 .isEmpty();
 
-        System.out.println(uniqueHTML.getHtml());
         // ライン消去あり
         assertThat(uniqueHTML.deletedLineFumens())
                 .hasSize(35)
@@ -776,8 +775,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // unique
         PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
         assertThat(uniqueHTML.getHtml())
-                .contains("I-Left O-Spawn S-Spawn Z-Spawn")
-                .contains("IOSZ");
+                .contains("I-Left O-Spawn S-Spawn Z-Spawn");
 
         // ライン消去なし
         assertThat(uniqueHTML.noDeletedLineFumens())
@@ -795,8 +793,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // minimal
         PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
         assertThat(minimalHTML.getHtml())
-                .contains("I-Left O-Spawn S-Spawn Z-Spawn")
-                .contains("IOSZ");
+                .contains("I-Left O-Spawn S-Spawn Z-Spawn");
 
         // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens())
@@ -837,8 +834,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // unique
         PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
         assertThat(uniqueHTML.getHtml())
-                .contains("T-Spawn O-Spawn J-Reverse L-Reverse")
-                .contains("TOLJ", "OTJL", "TLOJ", "TOJL", "TLJO", "OTLJ");
+                .contains("T-Spawn O-Spawn J-Reverse L-Reverse");
 
         // ライン消去なし
         assertThat(uniqueHTML.noDeletedLineFumens())
@@ -856,8 +852,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // minimal
         PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
         assertThat(minimalHTML.getHtml())
-                .contains("T-Spawn O-Spawn J-Reverse L-Reverse")
-                .contains("TOLJ", "OTJL", "TLOJ", "TOJL", "TLJO", "OTLJ");
+                .contains("T-Spawn O-Spawn J-Reverse L-Reverse");
 
         // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens())
@@ -900,9 +895,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // unique
         PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
         assertThat(uniqueHTML.getHtml())
-                .doesNotContain("SISJLO")
-                .contains("O-Spawn S-Spawn L-Spawn J-Spawn S-Spawn I-Spawn")
-                .contains("LSOISJ", "OSLIJS", "LOJSIS", "SOJLSI", "SJIOSL", "JSIOSL");
+                .contains("O-Spawn S-Spawn L-Spawn J-Spawn S-Spawn I-Spawn");
 
         // ライン消去なし
         assertThat(uniqueHTML.noDeletedLineFumens())
@@ -919,9 +912,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // minimal
         PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
         assertThat(minimalHTML.getHtml())
-                .doesNotContain("SISJLO")
-                .contains("O-Spawn S-Spawn L-Spawn J-Spawn S-Spawn I-Spawn")
-                .contains("LSOISJ", "OSLIJS", "LOJSIS", "SOJLSI", "SJIOSL", "JSIOSL");
+                .contains("O-Spawn S-Spawn L-Spawn J-Spawn S-Spawn I-Spawn");
 
         // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens())
@@ -954,9 +945,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // unique
         PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
         assertThat(uniqueHTML.getHtml())
-                .doesNotContain("TJISZIO", "LJOTST")
-                .contains("O-Spawn S-Left T-Spawn Z-Spawn L-Left I-Spawn")
-                .contains("TJOSSO");
+                .contains("O-Spawn S-Left T-Spawn Z-Spawn L-Left I-Spawn");
 
         // ライン消去なし
         assertThat(uniqueHTML.noDeletedLineFumens())
@@ -971,9 +960,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // minimal
         PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
         assertThat(minimalHTML.getHtml())
-                .doesNotContain("TJISZIO", "LJOTST")
-                .contains("O-Spawn S-Left T-Spawn Z-Spawn L-Left I-Spawn")
-                .contains("TJOSSO");
+                .contains("O-Spawn S-Left T-Spawn Z-Spawn L-Left I-Spawn");
 
         // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens())
@@ -984,5 +971,122 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(minimalHTML.deletedLineFumens())
                 .hasSize(74)
                 .contains("wgC8HeB8EeF8DeY8JeTAYZAFLDmClcJSAVDEHBEooR?BPoAVBqHUxCqAAAAvhEOrBUiB3gBNkBupB");
+    }
+
+    @Test
+    void quizTetfu() throws Exception {
+        // テト譜 + Quizパターンコマンド (フィールドファイル・パターンファイル無視)
+
+            /*
+            comment: #Q=[](I)LOSZTJ
+            __________
+            L__S______
+            LZZSS___OO
+            LLZZS___OO
+             */
+
+        String tetfu = "http://fumen.zui.jp/?v115@HhglBeQ4FeglBtR4CeRphlBtQ4CeRpJeAgWaAFLDmC?lcJSAVDEHBEooRBJoAVBM3jFD0/AAA";
+
+        String command = String.format("path -t %s", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getOutput())
+                .contains("ILOSZTJ")
+                .contains(Messages.uniqueCount(1))
+                .contains(Messages.minimalCount(1))
+                .contains(Messages.useHold());
+
+        assertThat(log.getError()).isEmpty();
+    }
+
+    @Test
+    void quizTetfuWithPatterns() throws Exception {
+        // テト譜 + Quizパターンコマンド + オプション (フィールドファイル・パターンファイル無視)
+
+            /*
+            comment: #Q=[](I)LOSZTJ
+            __________
+            L__S______
+            LZZSS___OO
+            LLZZS___OO
+             */
+
+        String tetfu = "http://fumen.zui.jp/?v115@HhglBeQ4FeglBtR4CeRphlBtQ4CeRpJeAgWaAFLDmC?lcJSAVDEHBEooRBJoAVBM3jFD0/AAA";
+
+        String command = String.format("path -t %s -p #Q=[T](*)IJOZS", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getOutput())
+                .contains("#Q=[T](*)IJOZS")
+                .contains(Messages.uniqueCount(7))
+                .contains(Messages.minimalCount(5))
+                .contains(Messages.useHold());
+
+        assertThat(log.getError()).isEmpty();
+    }
+
+    @Test
+    void checkSatisfiedSequencePercentage() throws Exception {
+            /*
+            comment: <Empty>
+            __________
+            _________X
+            XX__X__XXX
+            XX_XXXXXXX
+             */
+
+        String tetfu = "v115@QhC8BeA8BeE8AeG8JeAgH";
+
+        String command = String.format("path -p *! -t %s", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getReturnCode()).isEqualTo(0);
+
+        assertThat(log.getOutput())
+                .contains(Messages.uniqueCount(5))
+                .contains(Messages.minimalCount(3))
+                .contains(Messages.useHold());
+
+        // unique
+        PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
+        assertThat(uniqueHTML)
+                .returns(5040, PathHTML::sequence)
+                .returns(5, PathHTML::pattern)
+                .returns("9gRpwhh0ywR4Rpwhg0BtwwR4C8whg0A8BtE8whG8Je?AgWTAXBQ9AgngHBg3CwBAnltCKH2BA9gRpwhwwhlh0R4Rpw?hxwglg0R4C8whwwA8glg0E8whG8JeAAPTA3/f2AgngHBg3C?wBgtjPC0yqBA9gRpBthlh0R4RpwwBtglg0R4C8xwA8glg0E?8wwG8JeAAPTAWBIOBgngHBg3CwBA+jPCMnDCA9gRpilwwh0?R4RpglAtxwg0R4C8BtA8wwg0E8AtG8JeAAPTA18nABgngHB?g3CwBAHkPCUHkBA9gg0hlwwzhR4i0xwRpR4C8glwwA8RpE8?glG8JeAAPTAS4f2AgngHBg3CwBg2TxCqSdBA", PathHTML::mergedFumen);
+
+        assertThat(uniqueHTML.getHtml())
+                .contains("Z-Spawn I-Left S-Spawn J-Right O-Spawn T-Reverse")
+                .contains("76.2 %")
+                .contains("[3840]")
+                .contains("I-Left S-Spawn J-Right T-Right L-Left O-Spawn")
+                .contains("75.0 %")
+                .contains("[3780]")
+                .contains("T-Right S-Spawn J-Right L-Left O-Spawn Z-Spawn")
+                .contains("66.7 %")
+                .contains("[3360]")
+                .contains("Z-Right S-Spawn J-Right T-Left O-Spawn L-Reverse")
+                .contains("53.3 %")
+                .contains("[2688]")
+                .contains("O-Spawn S-Spawn T-Right J-Spawn L-Left I-Spawn")
+                .contains("20.0 %")
+                .contains("[1008]");
+
+        // minimal
+        PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
+        assertThat(minimalHTML)
+                .returns(5040, PathHTML::sequence)
+                .returns(3, PathHTML::pattern)
+                .returns("9gRpwhh0ywR4Rpwhg0BtwwR4C8whg0A8BtE8whG8Je?AgWTAXBQ9AgngHBg3CwBAnltCKH2BA9gRpwhwwhlh0R4Rpw?hxwglg0R4C8whwwA8glg0E8whG8JeAAPTA3/f2AgngHBg3C?wBgtjPC0yqBA9gRpilwwh0R4RpglAtxwg0R4C8BtA8wwg0E?8AtG8JeAAPTA18nABgngHBg3CwBAHkPCUHkBA", PathHTML::mergedFumen);
+
+        assertThat(minimalHTML.getHtml())
+                .contains("Z-Spawn I-Left S-Spawn J-Right O-Spawn T-Reverse")
+                .contains("76.2 %")
+                .contains("[3840]")
+                .contains("I-Left S-Spawn J-Right T-Right L-Left O-Spawn")
+                .contains("75.0 %")
+                .contains("[3780]")
+                .contains("Z-Right S-Spawn J-Right T-Left O-Spawn L-Reverse")
+                .contains("53.3 %")
+                .contains("[2688]");
     }
 }
