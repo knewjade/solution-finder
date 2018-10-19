@@ -3,6 +3,7 @@ package entry.setup;
 import common.datastore.FullOperationWithKey;
 import core.field.Field;
 import core.field.FieldFactory;
+import core.mino.Mino;
 import core.mino.Piece;
 
 class FieldOperationWithKey {
@@ -10,9 +11,10 @@ class FieldOperationWithKey {
     private final Field field;
 
     FieldOperationWithKey(FullOperationWithKey operation) {
-        int maxY = operation.getMino().getMaxY();
+        Mino mino = operation.getMino();
+        int maxY = operation.getY() + mino.getMaxY();
         Field field = FieldFactory.createField(maxY);
-        field.put(operation.getMino(), operation.getX(), operation.getY());
+        field.put(mino, operation.getX(), operation.getY());
         field.insertWhiteLineWithKey(operation.getNeedDeletedKey());
 
         {

@@ -749,6 +749,19 @@ class SetupTetfuCaseTest {
                 assertThat(pages.get(0).getComment()).startsWith("2 : ");
             }
         }
+
+        @Test
+        void case4() throws Exception {
+            String fumen = "v115@BgTpFezhCeB8AezhDeB8zhCeE8xhDeD8whD8AeH8Be?G8CeH8AeJ8AeB8JeAgH";
+            String command = String.format("setup -p [ZLOSJ]! --fill i --margin o -t %s --n-pieces 4", fumen);
+            EntryPointMain.main(command.split(" "));
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput())
+                    .contains(Messages.foundSolutions(3))
+                    .contains(Messages.foundSubSolutions(3));
+        }
     }
 
     @Nested
