@@ -124,7 +124,7 @@ public class KeyOperators {
             case 24:
                 return 0L;
         }
-        throw new IllegalArgumentException("No reachable");
+        throw new IllegalArgumentException("No reachable: y=" + y);
     }
 
     public static long getDeleteBitKey(int y) {

@@ -19,7 +19,7 @@ public interface Field extends Comparable<Field> {
     // 指定した位置にピースの形にブロックをおく
     void put(OriginalPiece piece);
 
-    // 指定した位置にピースをおく
+    // 指定した位置にピースをおくことができるか（足場は確認しない）
     boolean canPut(OriginalPiece piece);
 
     // 指定した位置のミノの形でブロックを消す
