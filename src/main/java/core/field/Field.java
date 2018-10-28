@@ -127,4 +127,7 @@ public interface Field extends Comparable<Field> {
 
     // ブロックと空白を反転させる
     void inverse();
+
+    // ブロックが左右に反転させる
+    void mirror();
 }

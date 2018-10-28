@@ -1103,6 +1103,14 @@ public class LargeField implements Field {
     }
 
     @Override
+    public void mirror() {
+        xBoardLow = KeyOperators.mirror(xBoardLow);
+        xBoardMidLow = KeyOperators.mirror(xBoardMidLow);
+        xBoardMidHigh = KeyOperators.mirror(xBoardMidHigh);
+        xBoardHigh = KeyOperators.mirror(xBoardHigh);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null) return false;
