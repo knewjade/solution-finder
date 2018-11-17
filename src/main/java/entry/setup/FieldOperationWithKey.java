@@ -12,7 +12,7 @@ class FieldOperationWithKey {
 
     FieldOperationWithKey(FullOperationWithKey operation) {
         Mino mino = operation.getMino();
-        int maxY = operation.getY() + mino.getMaxY();
+        int maxY = operation.getY() + mino.getMaxY() + Long.bitCount(operation.getNeedDeletedKey()) + 1;
         Field field = FieldFactory.createField(maxY);
         field.put(mino, operation.getX(), operation.getY());
         field.insertWhiteLineWithKey(operation.getNeedDeletedKey());

@@ -114,8 +114,4 @@ public class AllMinoFactory {
 
         return pieces;
     }
-
-    private SeparableMino parseOperation(FullOperationWithKey operationWithKey, int upperY, int fieldHeight) {
-        return FullOperationSeparableMino.create(operationWithKey, upperY, fieldHeight);
-    }
 }

@@ -13,8 +13,10 @@ public enum UtilFigResources {
     FileCase2("figs/file_case2.gif"),
     PngCase1Java8("figs/png_case1_java8/"),
     PngCase1Java9("figs/png_case1_java9/"),
+    PngCase1Java11("figs/png_case1_java9/"),  // Java9と同じ
     PngCase2Java8("figs/png_case2_java8/"),
     PngCase2Java9("figs/png_case2_java9/"),
+    PngCase2Java11("figs/png_case2_java9/"),  // Java9と同じ
     ;
 
     private final String resourceName;

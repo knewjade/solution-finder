@@ -1,9 +1,8 @@
 group 'com.knewjade'
-version '0.621'
+version '0.622'
 
 apply plugin: 'java'
 apply plugin: 'idea'
-apply plugin: 'org.junit.platform.gradle.plugin'
 
 archivesBaseName = 'solution-finder'
 sourceCompatibility = 1.8
@@ -25,7 +24,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.2.0'
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.+'
     }
 }
 
@@ -45,9 +44,6 @@ dependencies {
 
     // for assertions
     testCompile 'org.assertj:assertj-core:3.+'
-
-    // for IDE runner
-    testRuntime 'org.junit.platform:junit-platform-launcher:1.+'
 }
 
 jar {
@@ -138,23 +134,10 @@ task releaseWithBianry(type: Zip) {
 test {
     useJUnitPlatform {
         if (System.getenv("TRAVIS_BRANCH") == "master") {
-            println "[test] Run all tests"
+            println "[useJUnitPlatform] Run all tests"
         } else {
-            println "[test] Run tests / Exclude tag:long"
+            println "[useJUnitPlatform] Run tests / Exclude tag:long"
             excludeTags 'long'
-        }
-    }
-}
-
-junitPlatform {
-    filters {
-        if (System.getenv("TRAVIS_BRANCH") == "master") {
-            println "[junitPlatform] Run all tests"
-        } else {
-            println "[junitPlatform] Run tests / Exclude tag:long"
-            tags {
-                exclude 'long'
-            }
         }
     }
 }

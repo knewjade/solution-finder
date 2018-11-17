@@ -193,6 +193,13 @@ class UtilFigTetfuCaseTest extends UtilFigUseCaseBaseTest {
                     assertThat(actuals.get(index).contentEquals(expects.get(index))).isTrue();
                 break;
             }
+            case "11": {
+                List<ByteSource> expects = FigureFileHelper.loadResourcesByteSource(UtilFigResources.PngCase1Java11);
+                assertThat(actuals).hasSameSizeAs(expects);
+                for (int index = 0; index < actuals.size(); index++)
+                    assertThat(actuals.get(index).contentEquals(expects.get(index))).isTrue();
+                break;
+            }
             default:
                 fail("Test is not support this version: " + version);
         }
@@ -244,6 +251,13 @@ class UtilFigTetfuCaseTest extends UtilFigUseCaseBaseTest {
             }
             case "9": {
                 List<ByteSource> expects = FigureFileHelper.loadResourcesByteSource(UtilFigResources.PngCase2Java9);
+                assertThat(actuals).hasSameSizeAs(expects);
+                for (int index = 0; index < actuals.size(); index++)
+                    assertThat(actuals.get(index).contentEquals(expects.get(index))).isTrue();
+                break;
+            }
+            case "11": {
+                List<ByteSource> expects = FigureFileHelper.loadResourcesByteSource(UtilFigResources.PngCase2Java11);
                 assertThat(actuals).hasSameSizeAs(expects);
                 for (int index = 0; index < actuals.size(); index++)
                     assertThat(actuals.get(index).contentEquals(expects.get(index))).isTrue();
