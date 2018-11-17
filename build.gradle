@@ -3,6 +3,7 @@ version '0.622'
 
 apply plugin: 'java'
 apply plugin: 'idea'
+apply plugin: 'org.junit.platform.gradle.plugin'
 
 archivesBaseName = 'solution-finder'
 sourceCompatibility = 1.8
@@ -24,7 +25,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.2.0'
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.+'
     }
 }
 

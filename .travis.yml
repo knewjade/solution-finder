@@ -1,7 +1,7 @@
 stages:
   - name: test_in_oraclejdk8
     if: branch = master
-  - name: test_in_oraclejdk9
+  - name: test_in_oraclejdk11
     if: branch != master
   - name: deploy
     if: tag =~ ^v0\.
@@ -14,21 +14,20 @@ jobs:
     script:
     - travis_wait 45 ./gradlew check
 
-  - stage: test_in_oraclejdk9
+  - stage: test_in_oraclejdk11
     language: java
-    jdk: oraclejdk9
+    jdk: oraclejdk11
     script:
     - travis_wait 45 ./gradlew check
 
   - stage: deploy
     language: python
-    python: 3.6
+    python: 3.8
     before_install:
     - cd docs
     script:
     - make html
     before_deploy:
-    - sphinx-versioning build docs build/html -r v0.511 -w "nobranch"
     - touch build/html/.nojekyll
     deploy:
       provider: pages
