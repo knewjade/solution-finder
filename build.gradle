@@ -132,25 +132,29 @@ task releaseWithBianry(type: Zip) {
 }
 
 test {
-    useJUnitPlatform {
-        if (System.getenv("TRAVIS_BRANCH") == "master") {
-            println "[test] Run all tests"
-        } else {
-            println "[test] Run tests / Exclude tag:long"
-            excludeTags 'long'
-        }
-    }
+    useJUnitPlatform()
 }
 
-junitPlatform {
-    filters {
-        if (System.getenv("TRAVIS_BRANCH") == "master") {
-            println "[junitPlatform] Run all tests"
-        } else {
-            println "[junitPlatform] Run tests / Exclude tag:long"
-            tags {
-                exclude 'long'
-            }
-        }
-    }
-}
+//test {
+//    useJUnitPlatform {
+//        if (System.getenv("TRAVIS_BRANCH") == "master") {
+//            println "[test] Run all tests"
+//        } else {
+//            println "[test] Run tests / Exclude tag:long"
+//            excludeTags 'long'
+//        }
+//    }
+//}
+//
+//junitPlatform {
+//    filters {
+//        if (System.getenv("TRAVIS_BRANCH") == "master") {
+//            println "[junitPlatform] Run all tests"
+//        } else {
+//            println "[junitPlatform] Run tests / Exclude tag:long"
+//            tags {
+//                exclude 'long'
+//            }
+//        }
+//    }
+//}
