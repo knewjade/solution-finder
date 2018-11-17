@@ -1,9 +1,8 @@
 group 'com.knewjade'
-version '0.621'
+version '0.622'
 
 apply plugin: 'java'
 apply plugin: 'idea'
-apply plugin: 'org.junit.platform.gradle.plugin'
 
 archivesBaseName = 'solution-finder'
 sourceCompatibility = 1.8
@@ -45,9 +44,6 @@ dependencies {
 
     // for assertions
     testCompile 'org.assertj:assertj-core:3.+'
-
-    // for IDE runner
-    testRuntime 'org.junit.platform:junit-platform-launcher:1.+'
 }
 
 jar {
