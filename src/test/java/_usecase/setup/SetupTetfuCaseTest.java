@@ -478,11 +478,11 @@ class SetupTetfuCaseTest {
             // Log
             assertThat(log.getOutput())
                     .contains(Messages.foundSolutions(48))
-                    .contains(Messages.foundSubSolutions(3167));
+                    .contains(Messages.foundSubSolutions(1850));
 
             // HTML
             SetupHTML html = OutputFileHelper.loadSetupHTML();
-            assertThat(html.getFumens()).hasSize(3167);
+            assertThat(html.getFumens()).hasSize(1850);
         }
 
         @Test
@@ -494,12 +494,12 @@ class SetupTetfuCaseTest {
 
             // Log
             assertThat(log.getOutput())
-                    .contains(Messages.foundSolutions(238))
-                    .contains(Messages.foundSubSolutions(624));
+                    .contains(Messages.foundSolutions(229))
+                    .contains(Messages.foundSubSolutions(516));
 
             // HTML
             SetupHTML html = OutputFileHelper.loadSetupHTML();
-            assertThat(html.getFumens()).hasSize(624);
+            assertThat(html.getFumens()).hasSize(516);
         }
 
         @Test
@@ -512,12 +512,12 @@ class SetupTetfuCaseTest {
             // Log
             assertThat(log.getOutput())
                     .contains(Messages.foundSolutions(1))
-                    .contains(Messages.foundSubSolutions(11));
+                    .contains(Messages.foundSubSolutions(66));
             assertThat(log.getError()).isEmpty();
 
             // HTML
             SetupHTML html = OutputFileHelper.loadSetupHTML();
-            assertThat(html.getFumens()).hasSize(11);
+            assertThat(html.getFumens()).hasSize(66);
 
             // Merge fumen
             {
@@ -525,7 +525,7 @@ class SetupTetfuCaseTest {
                 ColorConverter colorConverter = new ColorConverter();
                 Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
                 List<TetfuPage> pages = tetfu.decode(html.getMergedFumen());
-                assertThat(pages).hasSize(11);
+                assertThat(pages).hasSize(66);
                 assertThat(pages.get(0)).returns("6 : ISS", TetfuPage::getComment);
             }
         }
@@ -605,7 +605,7 @@ class SetupTetfuCaseTest {
             // Log
             assertThat(log.getOutput())
                     .contains(Messages.foundSolutions(2))
-                    .contains(Messages.foundSubSolutions(3));
+                    .contains(Messages.foundSubSolutions(6));
             assertThat(log.getError()).isEmpty();
 
             // HTML
@@ -613,7 +613,7 @@ class SetupTetfuCaseTest {
             assertThat(html.getHtml()).contains("4310000000");
 
             assertThat(html.getFumens())
-                    .hasSize(3)
+                    .hasSize(6)
                     .contains("9gRpHeRpR4Feg0R4Gei0QeAgWDAK9qBA")
                     .contains("9gQ4IeR4RpFeg0Q4RpFei0QeAgWDAK3zBA")
                     .contains("9gRpHeRpQ4Geg0AeR4Fei0Q4PeAgWDAK9qBA");
@@ -629,7 +629,7 @@ class SetupTetfuCaseTest {
             // Log
             assertThat(log.getOutput())
                     .contains(Messages.foundSolutions(2))
-                    .contains(Messages.foundSubSolutions(2));
+                    .contains(Messages.foundSubSolutions(4));
             assertThat(log.getError()).isEmpty();
 
             // HTML
@@ -637,7 +637,7 @@ class SetupTetfuCaseTest {
             assertThat(html.getHtml()).contains("4310000000");
 
             assertThat(html.getFumens())
-                    .hasSize(2)
+                    .hasSize(4)
                     .doesNotContain("9gRpHeRpQ4Geg0AeR4Fei0Q4PeAgWDAvvzBA")
                     .contains("9gRpHeRpR4Feg0R4Gei0QeAgWDAK9qBA")
                     .contains("9gQ4IeR4RpFeg0Q4RpFei0QeAgWDAK3zBA");
