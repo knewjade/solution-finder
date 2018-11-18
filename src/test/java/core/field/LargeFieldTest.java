@@ -556,4 +556,19 @@ class LargeFieldTest {
                     assertThat(field.isEmpty(x, y)).isNotEqualTo(initField.isEmpty(x, y));
         }
     }
+
+    @Test
+    void mirror() {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 10000; count++) {
+            Field initField = randoms.field(FIELD_HEIGHT, randoms.nextIntOpen(3, 10));
+
+            Field field = initField.freeze(FIELD_HEIGHT);
+            field.mirror();
+
+            for (int y = 0; y < FIELD_HEIGHT; y++)
+                for (int x = 0; x < FIELD_WIDTH; x++)
+                    assertThat(field.isEmpty(x, y)).isEqualTo(initField.isEmpty(9 - x, y));
+        }
+    }
 }

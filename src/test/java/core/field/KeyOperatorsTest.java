@@ -72,4 +72,10 @@ class KeyOperatorsTest {
             assertThat(mask).isEqualTo(1L << ((y % 6) * 10) + (y / 6));
         }
     }
+
+    @Test
+    void mirrorSampleCase() {
+        long mirror = KeyOperators.mirror(0b001111100011111000001101010001L);
+        assertThat(mirror).isEqualTo(0b000111110000000111111000101011L);
+    }
 }

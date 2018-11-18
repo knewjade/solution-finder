@@ -3,6 +3,7 @@ package common.parser;
 import common.datastore.*;
 import core.field.Field;
 import core.field.FieldFactory;
+import core.field.FieldView;
 import core.field.KeyOperators;
 import core.mino.Mino;
 import core.mino.MinoFactory;
@@ -19,25 +20,8 @@ public class OperationTransform {
             Mino mino = minoFactory.create(op.getPiece(), op.getRotate());
             int x = op.getX();
             int y = op.getY();
-
             long deleteKey = field.clearLineReturnKey();
-
-            // 一番上と一番下のy座標を抽出
-            Field vanilla = FieldFactory.createField(height);
-            vanilla.put(mino, x, y);
-            vanilla.insertWhiteLineWithKey(deleteKey);
-            int lowerY = vanilla.getLowerY();
-            int upperY = vanilla.getUpperYWith4Blocks();
-
-            // 接着に必ず消去されている必要がある行を抽出
-            long aboveLowerY = KeyOperators.getMaskForKeyAboveY(lowerY);
-            long belowUpperY = KeyOperators.getMaskForKeyBelowY(upperY + 1);
-            long keyLine = aboveLowerY & belowUpperY;
-            long needDeletedKey = deleteKey & keyLine;
-            long usingKey = keyLine & ~needDeletedKey;
-
-            // 操作・消去されている必要がある行をセットで記録
-            MinoOperationWithKey operationWithKey = new FullOperationWithKey(mino, x, needDeletedKey, usingKey, lowerY);
+            MinoOperationWithKey operationWithKey = toFullOperationWithKey(mino, x, y, deleteKey);
             keys.add(operationWithKey);
 
             // 次のフィールドを作成
@@ -45,6 +29,27 @@ public class OperationTransform {
             field.insertBlackLineWithKey(deleteKey);
         }
         return keys;
+    }
+
+    public static FullOperationWithKey toFullOperationWithKey(Mino mino, int x, int y, long deleteKey) {
+        int height = y + mino.getMaxY() + Long.bitCount(deleteKey) + 1;
+
+        // 一番上と一番下のy座標を抽出
+        Field vanilla = FieldFactory.createField(height);
+        vanilla.put(mino, x, y);
+        vanilla.insertWhiteLineWithKey(deleteKey);
+        int lowerY = vanilla.getLowerY();
+        int upperY = vanilla.getUpperYWith4Blocks();
+
+        // 接着に必ず消去されている必要がある行を抽出
+        long aboveLowerY = KeyOperators.getMaskForKeyAboveY(lowerY);
+        long belowUpperY = KeyOperators.getMaskForKeyBelowY(upperY + 1);
+        long keyLine = aboveLowerY & belowUpperY;
+        long needDeletedKey = deleteKey & keyLine;
+        long usingKey = keyLine & ~needDeletedKey;
+
+        // 操作・消去されている必要がある行をセットで記録
+        return new FullOperationWithKey(mino, x, needDeletedKey, usingKey, lowerY);
     }
 
     // List<Operation>に変換する。正しく組み立てられるかはチェックしない

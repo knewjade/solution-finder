@@ -9,9 +9,10 @@ import core.neighbor.OriginalPiece;
  * マルチスレッド非対応
  */
 public class SmallField implements Field {
+    public static final long VALID_BOARD_RANGE = 0xfffffffffffffffL;
+
     private static final int FIELD_WIDTH = 10;
     private static final int MAX_FIELD_HEIGHT = 6;
-    public static final long VALID_BOARD_RANGE = 0xfffffffffffffffL;
 
     private long xBoard = 0; // x,y: 最下位 (0,0), (1,0),  ... , (9,0), (0,1), ... 最上位 // フィールド範囲外は必ず0であること
 
@@ -285,6 +286,11 @@ public class SmallField implements Field {
     @Override
     public void inverse() {
         xBoard = (~xBoard) & VALID_BOARD_RANGE;
+    }
+
+    @Override
+    public void mirror() {
+        xBoard = KeyOperators.mirror(xBoard);
     }
 
     @Override

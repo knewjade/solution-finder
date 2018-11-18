@@ -1,7 +1,8 @@
 package core.neighbor;
 
-import common.datastore.MinimalOperationWithKey;
+import common.datastore.FullOperationWithKey;
 import common.datastore.MinoOperationWithKey;
+import common.parser.OperationTransform;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Mino;
@@ -11,18 +12,18 @@ import core.srs.Rotate;
 public class OriginalPiece implements MinoOperationWithKey {
     static final OriginalPiece EMPTY_COLLIDER_PIECE = new OriginalPiece();
 
-    private final MinoOperationWithKey operationWithKey;
+    private final FullOperationWithKey operationWithKey;
     private final Field harddropCollider;
     private final Field minoField;
 
     public OriginalPiece(Mino mino, int x, int y, int fieldHeight) {
-        this.operationWithKey = new MinimalOperationWithKey(mino, x, y, 0L);
+        this.operationWithKey = OperationTransform.toFullOperationWithKey(mino, x, y, 0L);
         this.minoField = createMinoField(mino, x, y);
         this.harddropCollider = createHarddropCollider(mino, x, y, fieldHeight);
     }
 
     private OriginalPiece() {
-        this.operationWithKey = new MinimalOperationWithKey(new Mino(Piece.I, Rotate.Spawn), -1, -1, 0L);
+        this.operationWithKey = new FullOperationWithKey(new Mino(Piece.I, Rotate.Spawn), -1, -1, 0L, 0L);
         this.minoField = FieldFactory.createField(1);
         this.harddropCollider = FieldFactory.createField(1);
     }

@@ -67,7 +67,7 @@ public class KeyOperators {
             case 24:
                 return 0x3c0f03c0f03c0fL;
         }
-        throw new IllegalArgumentException("No reachable");
+        throw new IllegalArgumentException("No reachable: y=" + y);
     }
 
     // y行上のブロックは対象に含む
@@ -124,7 +124,7 @@ public class KeyOperators {
             case 24:
                 return 0L;
         }
-        throw new IllegalArgumentException("No reachable");
+        throw new IllegalArgumentException("No reachable: y=" + y);
     }
 
     public static long getDeleteBitKey(int y) {
@@ -179,5 +179,35 @@ public class KeyOperators {
                 return 0x20000000000000L;
         }
         throw new IllegalArgumentException("No reachable");
+    }
+
+    public static long mirror(long field) {
+        {
+            long leftBit = 0b111110000011111000001111100000111110000011111000001111100000L;
+            long rightBit = 0b000001111100000111110000011111000001111100000111110000011111L;
+            field = (field & leftBit) >> 5 | (field & rightBit) << 5;
+        }
+
+        long centerBit = 0b001000010000100001000010000100001000010000100001000010000100L;
+        long fixed = field & centerBit;
+
+        {
+            long sideBit = 0b110111101111011110111101111011110111101111011110111101111011L;
+            field = field & sideBit;
+        }
+
+        {
+            long leftBit = 0b110001100011000110001100011000110001100011000110001100011000L;
+            long rightBit = 0b000110001100011000110001100011000110001100011000110001100011L;
+            field = (field & leftBit) >> 3 | (field & rightBit) << 3;
+        }
+
+        {
+            long leftBit = 0b100101001010010100101001010010100101001010010100101001010010L;
+            long rightBit = 0b010010100101001010010100101001010010100101001010010100101001L;
+            field = (field & leftBit) >> 1 | (field & rightBit) << 1;
+        }
+
+        return field | fixed;
     }
 }

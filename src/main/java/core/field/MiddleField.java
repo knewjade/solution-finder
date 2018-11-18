@@ -471,6 +471,12 @@ public class MiddleField implements Field {
     }
 
     @Override
+    public void mirror() {
+        xBoardLow = KeyOperators.mirror(xBoardLow);
+        xBoardHigh = KeyOperators.mirror(xBoardHigh);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null) return false;
