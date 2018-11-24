@@ -6,11 +6,11 @@ import core.field.FieldFactory;
 import core.mino.Mino;
 import core.mino.Piece;
 
-class FieldOperationWithKey {
+public class FieldOperationWithKey {
     private final FullOperationWithKey operation;
     private final Field field;
 
-    FieldOperationWithKey(FullOperationWithKey operation) {
+    public FieldOperationWithKey(FullOperationWithKey operation) {
         Mino mino = operation.getMino();
         int maxY = operation.getY() + mino.getMaxY() + Long.bitCount(operation.getNeedDeletedKey()) + 1;
         Field field = FieldFactory.createField(maxY);
