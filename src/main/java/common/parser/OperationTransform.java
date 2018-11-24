@@ -119,4 +119,16 @@ public class OperationTransform {
                 });
         return blockField;
     }
+
+    public static Field parseToField(List<MinoOperationWithKey> operationWithKeys, int height) {
+        Field field = FieldFactory.createField(height);
+        for (MinoOperationWithKey operation : operationWithKeys) {
+            Field pieceField = FieldFactory.createField(height);
+            pieceField.put(operation.getMino(), operation.getX(), operation.getY());
+            pieceField.insertWhiteLineWithKey(operation.getNeedDeletedKey());
+
+            field.merge(pieceField);
+        }
+        return field;
+    }
 }
