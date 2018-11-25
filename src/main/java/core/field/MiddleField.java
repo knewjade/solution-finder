@@ -439,6 +439,19 @@ public class MiddleField implements Field {
     }
 
     @Override
+    public int getMinX() {
+        long board = xBoardLow | xBoardHigh;
+        if (board == 0)
+            return -1;
+
+        board = board | (board >> 20);
+        board = board | (board >> 20);
+        board = board | (board >> 10);
+        long lowerBit = board & (-board);
+        return BitOperators.bitToX(lowerBit);
+    }
+
+    @Override
     public boolean contains(Field child) {
         switch (child.getBoardCount()) {
             case 1: {

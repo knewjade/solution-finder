@@ -259,6 +259,18 @@ public class SmallField implements Field {
     }
 
     @Override
+    public int getMinX() {
+        if (xBoard == 0)
+            return -1;
+        long board = xBoard;
+        board = board | (board >> 20);
+        board = board | (board >> 20);
+        board = board | (board >> 10);
+        long lowerBit = board & (-board);
+        return BitOperators.bitToX(lowerBit);
+    }
+
+    @Override
     public boolean contains(Field child) {
         assert child.getBoardCount() <= 2;
         switch (child.getBoardCount()) {
