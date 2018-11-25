@@ -81,7 +81,7 @@ class BitOperators {
             case 10:
                 return 0xfffffffffffffffL;
         }
-        throw new IllegalStateException("No reachable");
+        throw new IllegalStateException("No reachable: " + minX);
     }
 
     // yより下の行を選択するマスクを作成 (y行は含まない)
