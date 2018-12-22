@@ -25,15 +25,14 @@ public class BlockCounter {
      * 0 0 0 0 0 0
      * <- 最下位ビット ---
      */
-    public static long countBlocks(long field) {
+    public static long countColumnBlocks(long field) {
         long bits = swap(field);
 
-        long count1 = (bits & 0b010101010101010101010101010101010101010101010101010101010101L)
-                + ((bits & 0b101010101010101010101010101010101010101010101010101010101010L) >> 1);
+        long mask1 = 0b010101010101010101010101010101010101010101010101010101010101L;
+        long count1 = (bits & mask1) + (bits >> 1 & mask1);
 
-        return (count1 & 0b000011000011000011000011000011000011000011000011000011000011L)
-                + ((count1 & 0b001100001100001100001100001100001100001100001100001100001100L) >> 2)
-                + ((count1 & 0b110000110000110000110000110000110000110000110000110000110000L) >> 4);
+        long mask2 = 0b000011000011000011000011000011000011000011000011000011000011L;
+        return (count1 & mask2) + (count1 >> 2 & mask2) + (count1 >> 4 & mask2);
     }
 
     private static long swap(long bits) {
@@ -70,18 +69,44 @@ public class BlockCounter {
         return bits ^ x ^ (x << delta);
     }
 
-    public static long[] parseToArray(long bits) {
+    public static long[] parseColumnIndexToArray(long bits) {
+        long mask = 0b111111L;
         return new long[]{
-                (bits) & 0b111111L,
-                (bits >> 5 * 6) & 0b111111L,
-                (bits >> 7 * 6) & 0b111111L,
-                (bits >> 2 * 6) & 0b111111L,
-                (bits >> 4 * 6) & 0b111111L,
-                (bits >> 9 * 6) & 0b111111L,
-                (bits >> 1 * 6) & 0b111111L,
-                (bits >> 6 * 6) & 0b111111L,
-                (bits >> 8 * 6) & 0b111111L,
-                (bits >> 3 * 6) & 0b111111L,
+                (bits >> 0 * 6) & mask,
+                (bits >> 5 * 6) & mask,
+                (bits >> 7 * 6) & mask,
+                (bits >> 2 * 6) & mask,
+                (bits >> 4 * 6) & mask,
+                (bits >> 9 * 6) & mask,
+                (bits >> 1 * 6) & mask,
+                (bits >> 6 * 6) & mask,
+                (bits >> 8 * 6) & mask,
+                (bits >> 3 * 6) & mask,
         };
+    }
+
+    public static long[] parseRowIndexToArray(long bits) {
+        long mask = 0b1111111111L;
+        return new long[]{
+                (bits >> 0 * 10) & mask,
+                (bits >> 1 * 10) & mask,
+                (bits >> 2 * 10) & mask,
+                (bits >> 3 * 10) & mask,
+                (bits >> 4 * 10) & mask,
+                (bits >> 5 * 10) & mask,
+        };
+    }
+
+    public static long countRowBlocks(long field) {
+        long mask1 = 0b010101010101010101010101010101010101010101010101010101010101L;
+        long k1 = (field & mask1) + (field >> 1 & mask1);
+
+        long mask2 = 0b001100110000110011000011001100001100110000110011000011001100L;
+        long mask3 = 0b110011001111001100111100110011110011001111001100111100110011L;
+        long k2 = (k1 & mask3) + ((k1 & mask2) >> 2);
+
+        long mask4 = 0b000000111100000011110000001111000000111100000011110000001111L;
+        long mask5 = 0b000000001100000000110000000011000000001100000000110000000011L;
+        return (k2 >> 8 & mask5) + (k2 >> 4 & mask4) + (k2 & mask4);
     }
 }
