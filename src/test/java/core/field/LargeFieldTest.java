@@ -571,4 +571,37 @@ class LargeFieldTest {
                     assertThat(field.isEmpty(x, y)).isEqualTo(initField.isEmpty(9 - x, y));
         }
     }
+
+    @Test
+    void getMinX() {
+        {
+            int minX = FieldFactory.createLargeField().getMinX();
+            assertThat(minX).isEqualTo(-1);
+        }
+
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 10000; count++) {
+            Field initField = randoms.field(FIELD_HEIGHT, randoms.nextIntOpen(3, 10));
+
+            Field field = initField.freeze(FIELD_HEIGHT);
+            int minX = field.getMinX();
+
+            int expectedMinX = -1;
+            for (int x = 0; x < 10; x++) {
+                boolean isExists = false;
+                for (int y = 0; y < FIELD_HEIGHT; y++) {
+                    if (!field.isEmpty(x, y)) {
+                        isExists = true;
+                        break;
+                    }
+                }
+                if (isExists) {
+                    expectedMinX = x;
+                    break;
+                }
+            }
+
+            assertThat(minX).isEqualTo(expectedMinX);
+        }
+    }
 }

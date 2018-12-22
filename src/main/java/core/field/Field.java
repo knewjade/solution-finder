@@ -122,6 +122,9 @@ public interface Field extends Comparable<Field> {
     // フィールドを下にスライドさせる
     void slideDown();
 
+    // 最も小さいx座標を取得。ブロックが存在しないとき -1 を返却
+    int getMinX();
+
     // childの全てのブロックが、フィールド内の同じ位置にブロックがあればtrue
     boolean contains(Field child);
 

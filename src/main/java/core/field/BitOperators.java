@@ -156,4 +156,36 @@ class BitOperators {
         long leftHigh = reverseXBoardHigh & (columnHigh >>> 1);
         return ((leftHigh << 1) & rightHigh) == 0L;
     }
+
+    public static int bitToX(long bit) {
+        assert Long.bitCount(bit) == 1 : bit;
+        assert bit < (1L << 10);
+        if (bit < 0b10000L) {  // 0-3
+            if (bit < 0b100L) {  // 0 or 1
+                if (bit < 0b10L)
+                    return 0;
+                return 1;
+            } else {  // 2 or 3
+                if (bit < 0b1000L)
+                    return 2;
+                return 3;
+            }
+        } else {  // 4-9
+            if (bit < 0b1000000L) {  // 4 or 5
+                if (bit < 0b100000L)
+                    return 4;
+                return 5;
+            } else {  // 6-9
+                if (bit < 0b100000000L) { // 6-7
+                    if (bit < 0b10000000L)
+                        return 6;
+                    return 7;
+                } else { // 8-9
+                    if (bit < 0b1000000000L)
+                        return 8;
+                    return 9;
+                }
+            }
+        }
+    }
 }
