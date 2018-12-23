@@ -14,7 +14,7 @@ import searcher.common.DataPool;
 
 import java.util.Set;
 
-public class RenSearcherCore<T extends Action> {
+public class RenSearcherCore<T extends Action, O extends RenOrder> implements SearcherCore<T, O> {
     private final MinoFactory minoFactory;
     private final DataPool<RenOrder, RenResult> dataPool;
     private final int max;
@@ -25,7 +25,7 @@ public class RenSearcherCore<T extends Action> {
         this.max = max;
     }
 
-    public void stepWithNext(Candidate<T> candidate, Piece drawn, RenOrder order, boolean isLast) {
+    public void stepWithNext(Candidate<T> candidate, Piece drawn, O order, boolean isLast) {
         Piece hold = order.getHold();
         boolean isTerminated = step(candidate, drawn, hold, order, isLast);
 
@@ -39,14 +39,14 @@ public class RenSearcherCore<T extends Action> {
         }
     }
 
-    public void stepWithNextNoHold(Candidate<T> candidate, Piece drawn, RenOrder order, boolean isLast) {
+    public void stepWithNextNoHold(Candidate<T> candidate, Piece drawn, O order, boolean isLast) {
         boolean isTerminated = step(candidate, drawn, order.getHold(), order, isLast);
         if (isTerminated) {
             dataPool.addResult(new RenResult(order, false));
         }
     }
 
-    public void stepWhenNoNext(Candidate<T> candidate, RenOrder order, boolean isLast) {
+    public void stepWhenNoNext(Candidate<T> candidate, O order, boolean isLast) {
         Piece hold = order.getHold();
         boolean isTerminated = step(candidate, hold, null, order, isLast);
         if (isTerminated) {
@@ -54,7 +54,7 @@ public class RenSearcherCore<T extends Action> {
         }
     }
 
-    private boolean step(Candidate<T> candidate, Piece drawn, Piece nextHold, RenOrder order, boolean isLast) {
+    private boolean step(Candidate<T> candidate, Piece drawn, Piece nextHold, O order, boolean isLast) {
         Field currentField = order.getField();
         int renCount = order.getRenCount();
         Set<T> candidateList = candidate.search(currentField, drawn, max);
