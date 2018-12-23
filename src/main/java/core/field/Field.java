@@ -95,8 +95,11 @@ public interface Field extends Comparable<Field> {
     // 指定した番号の6列分のフィールドを表現するボードを返却（0が最下層）
     long getBoard(int index);
 
-    // 現在のフィールドのコピーを返却
+    // 現在のフィールドのコピーを返却 (`maxHeight` によってフィールドは縮小されるが、拡張はされない)
     Field freeze(int maxHeight);
+
+    // 現在のフィールドのコピーを返却  // フィールドは高さは現在のフィールドと同じ
+    Field freeze();
 
     // 指定したフィールドのブロックを重ね合せる
     void merge(Field field);
