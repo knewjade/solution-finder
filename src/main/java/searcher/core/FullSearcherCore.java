@@ -10,17 +10,17 @@ import core.field.Field;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.Piece;
+import searcher.SearchValidator;
 import searcher.common.DataPool;
-import searcher.common.validator.Validator;
 
 import java.util.Set;
 
-public class SimpleSearcherCore<T extends Action, O extends Order> implements SearcherCore<T, O> {
+public class FullSearcherCore<T extends Action, O extends Order> implements SearcherCore<T, O> {
     private final MinoFactory minoFactory;
-    private final Validator validator;
+    private final SearchValidator validator;
     private final DataPool<Order, Result> dataPool;
 
-    public SimpleSearcherCore(MinoFactory minoFactory, Validator validator, DataPool<Order, Result> dataPool) {
+    public FullSearcherCore(MinoFactory minoFactory, SearchValidator validator, DataPool<Order, Result> dataPool) {
         this.minoFactory = minoFactory;
         this.validator = validator;
         this.dataPool = dataPool;
@@ -54,21 +54,23 @@ public class SimpleSearcherCore<T extends Action, O extends Order> implements Se
         for (T action : candidateList) {
             Field field = currentField.freeze(max);
             Mino mino = minoFactory.create(drawn, action.getRotate());
-            field.put(mino, action.getX(), action.getY());
-            int clearLine = field.clearLine();
-            int maxClearLine = max - clearLine;
+            int x = action.getX();
+            int y = action.getY();
+            field.put(mino, x, y);
+            long deletedKey = field.clearLineReturnKey();
+            int maxClearLine = max - Long.bitCount(deletedKey);
 
-            if (!validator.validate(field, maxClearLine))
-                continue;
-
-            if (validator.satisfies(field, maxClearLine)) {
-                Result result = new Result(order, drawn, action, nextHold);
-                dataPool.addResult(result);
-                continue;
+            ValidationParameter parameter = new ValidationParameter(order, field, mino, x, y, deletedKey, maxClearLine, isLast);
+            switch (validator.check(parameter)) {
+                case Result: {
+                    Result result = new Result(order, drawn, action, nextHold);
+                    dataPool.addResult(result);
+                    continue;
+                }
+                case Prune: {
+                    continue;
+                }
             }
-
-            if (isLast)
-                continue;
 
             OperationHistory nextHistory = history.recordAndReturnNew(drawn, action);
             Order nextOrder = new NormalOrder(field, nextHold, maxClearLine, nextHistory);

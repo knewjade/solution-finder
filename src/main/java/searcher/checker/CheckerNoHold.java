@@ -10,13 +10,14 @@ import core.field.Field;
 import core.mino.MinoFactory;
 import core.mino.Piece;
 import searcher.common.validator.Validator;
+import searcher.core.SearcherCore;
 import searcher.core.SimpleSearcherCore;
 
 import java.util.List;
 
 public class CheckerNoHold<T extends Action> implements Checker<T> {
     private final CheckerDataPool dataPool;
-    private final SimpleSearcherCore<T> searcherCore;
+    private final SearcherCore<T, Order> searcherCore;
 
     public CheckerNoHold(MinoFactory minoFactory, Validator validator) {
         this.dataPool = new CheckerDataPool();
