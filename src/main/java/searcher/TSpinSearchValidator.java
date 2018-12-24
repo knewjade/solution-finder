@@ -6,7 +6,6 @@ import core.action.candidate.RotateCandidate;
 import core.field.BlockCounter;
 import core.field.Field;
 import core.field.FieldHelper;
-import core.field.FieldView;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
@@ -91,6 +90,7 @@ public class TSpinSearchValidator implements SearchValidator {
         // ミノを置ける領域 (置ける領域が空ブロック)
         Field inverseTestField = testField.freeze();
         inverseTestField.inverse();
+        inverseTestField.merge(originalField);
 
         for (Rotate rotate : Rotate.values()) {
             Mino mino = minoFactory.create(Piece.T, rotate);
@@ -169,8 +169,6 @@ public class TSpinSearchValidator implements SearchValidator {
                 freeze.put(minoFactory.create(Piece.T, action.getRotate()), x, y);
                 int clearedLine = freeze.clearLine();
                 if (0 < clearedLine) {
-                    System.out.println("#");
-                    System.out.println(FieldView.toString(field));
                     return true;
                 }
             }
