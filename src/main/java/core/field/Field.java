@@ -98,6 +98,9 @@ public interface Field extends Comparable<Field> {
     // 現在のフィールドのコピーを返却
     Field freeze(int maxHeight);
 
+    // 現在のフィールドのコピーを返却  // 現在の地形と同じ高さのフィールドをコピー
+    Field freeze();
+
     // 指定したフィールドのブロックを重ね合せる
     void merge(Field field);
 
