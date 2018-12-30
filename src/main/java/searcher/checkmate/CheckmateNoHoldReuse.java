@@ -1,18 +1,17 @@
 package searcher.checkmate;
 
-import common.comparator.FieldComparator;
-import common.datastore.Result;
-import common.datastore.action.Action;
-import common.datastore.order.NormalOrder;
-import common.datastore.order.Order;
 import core.action.candidate.Candidate;
 import core.field.Field;
 import core.field.SmallField;
-import core.mino.MinoFactory;
 import core.mino.Piece;
-import searcher.common.validator.Validator;
-import searcher.core.SearcherCore;
+import core.mino.MinoFactory;
+import common.comparator.FieldComparator;
+import common.datastore.Result;
 import searcher.core.SimpleSearcherCore;
+import common.datastore.action.Action;
+import common.datastore.order.NormalOrder;
+import common.datastore.order.Order;
+import searcher.common.validator.Validator;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -21,7 +20,7 @@ import java.util.TreeSet;
 
 public class CheckmateNoHoldReuse<T extends Action> implements Checkmate<T> {
     private final CheckmateDataPool dataPool;
-    private final SearcherCore<T, Order> searcherCore;
+    private final SimpleSearcherCore<T> searcherCore;
     private final Comparator<Field> fieldComparator = new FieldComparator();
 
     private List<TreeSet<Order>> memento = null;
@@ -30,7 +29,7 @@ public class CheckmateNoHoldReuse<T extends Action> implements Checkmate<T> {
 
     public CheckmateNoHoldReuse(MinoFactory minoFactory, Validator validator) {
         this.dataPool = new CheckmateDataPool();
-        this.searcherCore = new SimpleSearcherCore<>(minoFactory, validator, dataPool);
+        this.searcherCore = new SimpleSearcherCore<T>(minoFactory, validator, dataPool);
     }
 
     @Override

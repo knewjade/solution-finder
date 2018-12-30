@@ -26,10 +26,6 @@ public class BlockCounter {
      * <- 最下位ビット ---
      */
     public static long countColumnBlocks(long field) {
-        if (field == 0L) {
-            return 0L;
-        }
-
         long bits = swap(field);
 
         long mask1 = 0b010101010101010101010101010101010101010101010101010101010101L;
@@ -37,21 +33,6 @@ public class BlockCounter {
 
         long mask2 = 0b000011000011000011000011000011000011000011000011000011000011L;
         return (count1 & mask2) + (count1 >> 2 & mask2) + (count1 >> 4 & mask2);
-    }
-
-    public static long countColumnBlocks(Field field) {
-        int boardCount = field.getBoardCount();
-        if (boardCount == 1) {
-            return countColumnBlocks(field.getBoard(0));
-        } else if (boardCount == 2) {
-            return countColumnBlocks(field.getBoard(0)) + countColumnBlocks(field.getBoard(1));
-        } else {
-            long sum = 0;
-            for (int index = 0; index < boardCount; index++) {
-                sum += countColumnBlocks(field.getBoard(index));
-            }
-            return sum;
-        }
     }
 
     private static long swap(long bits) {
@@ -104,21 +85,16 @@ public class BlockCounter {
         };
     }
 
-    public static long[] countRowBlocksToArray(Field field, int boardCount) {
-        if (boardCount == 1) {
-            long bits = countRowBlocks(field.getBoard(0));
-            return parseRowIndexToArray(bits);
-        } else if (boardCount == 2) {
-            long bits1 = countRowBlocks(field.getBoard(0));
-            long bits2 = countRowBlocks(field.getBoard(1));
-            return parseRowIndexToArray(bits1, bits2);
-        } else {
-            long bits1 = countRowBlocks(field.getBoard(0));
-            long bits2 = countRowBlocks(field.getBoard(1));
-            long bits3 = countRowBlocks(field.getBoard(2));
-            long bits4 = countRowBlocks(field.getBoard(3));
-            return parseRowIndexToArray(bits1, bits2, bits3, bits4);
-        }
+    public static long[] parseRowIndexToArray(long bits) {
+        long mask = 0b1111111111L;
+        return new long[]{
+                (bits >> 0 * 10) & mask,
+                (bits >> 1 * 10) & mask,
+                (bits >> 2 * 10) & mask,
+                (bits >> 3 * 10) & mask,
+                (bits >> 4 * 10) & mask,
+                (bits >> 5 * 10) & mask,
+        };
     }
 
     public static long countRowBlocks(long field) {
@@ -132,65 +108,5 @@ public class BlockCounter {
         long mask4 = 0b000000111100000011110000001111000000111100000011110000001111L;
         long mask5 = 0b000000001100000000110000000011000000001100000000110000000011L;
         return (k2 >> 8 & mask5) + (k2 >> 4 & mask4) + (k2 & mask4);
-    }
-
-    public static long[] parseRowIndexToArray(long bits) {
-        long mask = 0b1111111111L;
-        return new long[]{
-                (bits >> 0 * 10) & mask,
-                (bits >> 1 * 10) & mask,
-                (bits >> 2 * 10) & mask,
-                (bits >> 3 * 10) & mask,
-                (bits >> 4 * 10) & mask,
-                (bits >> 5 * 10) & mask,
-        };
-    }
-
-    public static long[] parseRowIndexToArray(long bits1, long bits2) {
-        long mask = 0b1111111111L;
-        return new long[]{
-                (bits1 >> 0 * 10) & mask,
-                (bits1 >> 1 * 10) & mask,
-                (bits1 >> 2 * 10) & mask,
-                (bits1 >> 3 * 10) & mask,
-                (bits1 >> 4 * 10) & mask,
-                (bits1 >> 5 * 10) & mask,
-                (bits2 >> 0 * 10) & mask,
-                (bits2 >> 1 * 10) & mask,
-                (bits2 >> 2 * 10) & mask,
-                (bits2 >> 3 * 10) & mask,
-                (bits2 >> 4 * 10) & mask,
-                (bits2 >> 5 * 10) & mask,
-        };
-    }
-
-    public static long[] parseRowIndexToArray(long bits1, long bits2, long bits3, long bits4) {
-        long mask = 0b1111111111L;
-        return new long[]{
-                (bits1 >> 0 * 10) & mask,
-                (bits1 >> 1 * 10) & mask,
-                (bits1 >> 2 * 10) & mask,
-                (bits1 >> 3 * 10) & mask,
-                (bits1 >> 4 * 10) & mask,
-                (bits1 >> 5 * 10) & mask,
-                (bits2 >> 0 * 10) & mask,
-                (bits2 >> 1 * 10) & mask,
-                (bits2 >> 2 * 10) & mask,
-                (bits2 >> 3 * 10) & mask,
-                (bits2 >> 4 * 10) & mask,
-                (bits2 >> 5 * 10) & mask,
-                (bits3 >> 0 * 10) & mask,
-                (bits3 >> 1 * 10) & mask,
-                (bits3 >> 2 * 10) & mask,
-                (bits3 >> 3 * 10) & mask,
-                (bits3 >> 4 * 10) & mask,
-                (bits3 >> 5 * 10) & mask,
-                (bits4 >> 0 * 10) & mask,
-                (bits4 >> 1 * 10) & mask,
-                (bits4 >> 2 * 10) & mask,
-                (bits4 >> 3 * 10) & mask,
-                (bits4 >> 4 * 10) & mask,
-                (bits4 >> 5 * 10) & mask,
-        };
     }
 }

@@ -15,7 +15,7 @@ import searcher.common.validator.Validator;
 
 import java.util.Set;
 
-public class SimpleSearcherCore<T extends Action, O extends Order> implements SearcherCore<T, O> {
+public class SimpleSearcherCore<T extends Action> {
     private final MinoFactory minoFactory;
     private final Validator validator;
     private final DataPool<Order, Result> dataPool;
@@ -26,7 +26,7 @@ public class SimpleSearcherCore<T extends Action, O extends Order> implements Se
         this.dataPool = dataPool;
     }
 
-    public void stepWithNext(Candidate<T> candidate, Piece drawn, O order, boolean isLast) {
+    public void stepWithNext(Candidate<T> candidate, Piece drawn, Order order, boolean isLast) {
         Piece hold = order.getHold();
         step(candidate, drawn, hold, order, isLast);
 
@@ -36,11 +36,11 @@ public class SimpleSearcherCore<T extends Action, O extends Order> implements Se
         }
     }
 
-    public void stepWithNextNoHold(Candidate<T> candidate, Piece drawn, O order, boolean isLast) {
+    public void stepWithNextNoHold(Candidate<T> candidate, Piece drawn, Order order, boolean isLast) {
         step(candidate, drawn, order.getHold(), order, isLast);
     }
 
-    public void stepWhenNoNext(Candidate<T> candidate, O order, boolean isLast) {
+    public void stepWhenNoNext(Candidate<T> candidate, Order order, boolean isLast) {
         Piece hold = order.getHold();
         step(candidate, hold, null, order, isLast);
     }

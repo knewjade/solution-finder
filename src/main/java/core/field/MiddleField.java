@@ -337,11 +337,6 @@ public class MiddleField implements Field {
     }
 
     @Override
-    public Field freeze() {
-        return new MiddleField(this);
-    }
-
-    @Override
     public void merge(Field other) {
         int otherBoardCount = other.getBoardCount();
         assert 0 < otherBoardCount && otherBoardCount <= 2 : otherBoardCount;

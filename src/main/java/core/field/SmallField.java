@@ -195,11 +195,6 @@ public class SmallField implements Field {
     }
 
     @Override
-    public Field freeze() {
-        return new SmallField(this);
-    }
-
-    @Override
     public long getBoard(int index) {
         if (index == 0)
             return xBoard;

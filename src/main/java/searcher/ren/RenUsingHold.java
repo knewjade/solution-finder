@@ -17,7 +17,7 @@ import java.util.TreeSet;
 public class RenUsingHold<T extends Action> implements RenSearcher<T> {
     private static final int MAX_FIELD_HEIGHT = 24;
     private final RenDataPool dataPool;
-    private final RenSearcherCore<T, RenOrder> searcherCore;
+    private final RenSearcherCore<T> searcherCore;
 
     public RenUsingHold(MinoFactory minoFactory) {
         this.dataPool = new RenDataPool();

@@ -1,27 +1,26 @@
 package searcher.checkmate;
 
+import core.action.candidate.Candidate;
+import core.field.Field;
+import core.mino.Piece;
+import core.mino.MinoFactory;
 import common.datastore.Result;
+import searcher.core.SimpleSearcherCore;
 import common.datastore.action.Action;
 import common.datastore.order.NormalOrder;
 import common.datastore.order.Order;
-import core.action.candidate.Candidate;
-import core.field.Field;
-import core.mino.MinoFactory;
-import core.mino.Piece;
 import searcher.common.validator.Validator;
-import searcher.core.SearcherCore;
-import searcher.core.SimpleSearcherCore;
 
 import java.util.List;
 import java.util.TreeSet;
 
 public class CheckmateUsingHold<T extends Action> implements Checkmate<T> {
     private final CheckmateDataPool dataPool;
-    private final SearcherCore<T, Order> searcherCore;
+    private final SimpleSearcherCore<T> searcherCore;
 
     public CheckmateUsingHold(MinoFactory minoFactory, Validator validator) {
         this.dataPool = new CheckmateDataPool();
-        this.searcherCore = new SimpleSearcherCore<>(minoFactory, validator, dataPool);
+        this.searcherCore = new SimpleSearcherCore<T>(minoFactory, validator, dataPool);
     }
 
     @Override
