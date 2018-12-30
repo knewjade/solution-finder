@@ -18,14 +18,13 @@ import searcher.core.ValidationResultState;
 
 import java.util.Set;
 
-// マルチスレッド非対応
 public class TSpinSearchValidator implements SearchValidator {
     private final int maxBoardCount;
     private final RotateCandidate candidate;
     private final int maxPieceNum;  // 利用できるミノの最大個数 (Tスピンに利用するTは除く)
     private final MinoFactory minoFactory;
 
-    public TSpinSearchValidator(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxHeight, int maxPieceNum) {
+    TSpinSearchValidator(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxHeight, int maxPieceNum) {
         this.minoFactory = minoFactory;
         this.maxBoardCount = (maxHeight / 6) + 1;
         this.maxPieceNum = maxPieceNum;
@@ -49,7 +48,7 @@ public class TSpinSearchValidator implements SearchValidator {
             }
 
             if (canSpinT(originalField, maxClearLine)) {
-//                 解である
+                // 解である
                 return ValidationResultState.Result;
             }
 
@@ -132,7 +131,7 @@ public class TSpinSearchValidator implements SearchValidator {
                     // 揃う可能性のある行があるか
                     boolean filled = isFilled(rowBlocks2, lowerY);
                     if (!filled) {
-                        continue LOOP_Y;
+                        continue;
                     }
 
                     // 埋めるのに必要なブロック数は
