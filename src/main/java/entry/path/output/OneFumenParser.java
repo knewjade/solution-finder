@@ -36,10 +36,13 @@ public class OneFumenParser implements FumenParser {
                 .map(OperationWithKey::getPiece)
                 .map(Piece::getName)
                 .collect(Collectors.joining());
+        return parse(operations, field, maxClearLine, blocksName);
+    }
 
+    public String parse(List<MinoOperationWithKey> operations, Field field, int maxClearLine, String comment) {
         // テト譜1ページを作成
         ColoredField coloredField = parseToColoredField(operations, field, maxClearLine);
-        TetfuElement tetfuElement = new TetfuElement(coloredField, ColorType.Empty, Rotate.Reverse, 0, 0, blocksName);
+        TetfuElement tetfuElement = new TetfuElement(coloredField, ColorType.Empty, Rotate.Reverse, 0, 0, comment);
 
         Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
         return tetfu.encode(Collections.singletonList(tetfuElement));
