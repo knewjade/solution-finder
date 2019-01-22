@@ -572,6 +572,33 @@ public class LargeField implements Field {
     }
 
     @Override
+    public boolean existsBlockCountOnY(int y) {
+        switch (select(y)) {
+            case Low: {
+                int y2 = y;
+                long mask = 0x3ffL << y2 * FIELD_WIDTH;
+                return (xBoardLow & mask) != 0;
+            }
+            case MidLow: {
+                int y2 = y - FIELD_ROW_MID_LOW_BOARDER_Y;
+                long mask = 0x3ffL << y2 * FIELD_WIDTH;
+                return (xBoardMidLow & mask) != 0;
+            }
+            case MidHigh: {
+                int y2 = y - FIELD_ROW_MID_HIGH_BOARDER_Y;
+                long mask = 0x3ffL << y2 * FIELD_WIDTH;
+                return (xBoardMidHigh & mask) != 0;
+            }
+            case High: {
+                int y2 = y - FIELD_ROW_HIGH_BOARDER_Y;
+                long mask = 0x3ffL << y2 * FIELD_WIDTH;
+                return (xBoardHigh & mask) != 0;
+            }
+        }
+        throw new IllegalStateException("Unreachable");
+    }
+
+    @Override
     public int getNumOfAllBlocks() {
         return Long.bitCount(xBoardLow)
                 + Long.bitCount(xBoardMidLow)
@@ -587,11 +614,19 @@ public class LargeField implements Field {
 
     @Override
     public long clearLineReturnKey() {
-        // 下半分
         long deleteKeyLow = KeyOperators.getDeleteKey(xBoardLow);
+        long deleteKeyMidLow = KeyOperators.getDeleteKey(xBoardMidLow);
+        long deleteKeyMidHigh = KeyOperators.getDeleteKey(xBoardMidHigh);
+        long deleteKeyHigh = KeyOperators.getDeleteKey(xBoardHigh);
+        deleteLine(deleteKeyLow, deleteKeyMidLow, deleteKeyMidHigh, deleteKeyHigh);
+
+        return deleteKeyLow | (deleteKeyMidLow << 1) | (deleteKeyMidHigh << 2) | (deleteKeyHigh << 3);
+    }
+
+    private void deleteLine(long deleteKeyLow, long deleteKeyMidLow, long deleteKeyMidHigh, long deleteKeyHigh) {
+        // 下半分
         long newXBoardLow = LongBoardMap.deleteLine(xBoardLow, deleteKeyLow);
 
-        long deleteKeyMidLow = KeyOperators.getDeleteKey(xBoardMidLow);
         long newXBoardMidLow = LongBoardMap.deleteLine(xBoardMidLow, deleteKeyMidLow);
 
         int deleteLineLow = Long.bitCount(deleteKeyLow);
@@ -603,10 +638,8 @@ public class LargeField implements Field {
         int deleteLineBottom = deleteLineLow + deleteLineMidLow;
 
         // 上半分
-        long deleteKeyMidHigh = KeyOperators.getDeleteKey(xBoardMidHigh);
         long newXBoardMidHigh = LongBoardMap.deleteLine(xBoardMidHigh, deleteKeyMidHigh);
 
-        long deleteKeyHigh = KeyOperators.getDeleteKey(xBoardHigh);
         long newXBoardHigh = LongBoardMap.deleteLine(xBoardHigh, deleteKeyHigh);
 
         int deleteLineMidHigh = Long.bitCount(deleteKeyMidHigh);
@@ -627,22 +660,20 @@ public class LargeField implements Field {
             this.xBoardMidHigh = high >>> slide * 10;
             this.xBoardHigh = 0L;
         }
-
-        return deleteKeyLow | (deleteKeyMidLow << 1) | (deleteKeyMidHigh << 2) | (deleteKeyHigh << 3);
     }
 
     @Override
     public void insertBlackLineWithKey(long deleteKey) {
-        long deleteKeyLow = deleteKey & 0x4010040100401L;
+        long deleteKeyLow = extractDeleteKeyLow(deleteKey);
         int deleteLineLow = Long.bitCount(deleteKeyLow);
 
-        long deleteKeyMidLow = (deleteKey & 0x8020080200802L) >> 1;
+        long deleteKeyMidLow = extractDeleteKeyMidLow(deleteKey);
         int deleteLineMidLow = Long.bitCount(deleteKeyMidLow);
 
-        long deleteKeyMidHigh = (deleteKey & 0x10040100401004L) >> 2;
+        long deleteKeyMidHigh = extractDeleteKeyMidHigh(deleteKey);
         int deleteLineMidHigh = Long.bitCount(deleteKeyMidHigh);
 
-        long deleteKeyHigh = (deleteKey & 0x20080200802008L) >> 3;
+        long deleteKeyHigh = extractDeleteKeyHigh(deleteKey);
 
         int deleteLine1 = deleteLineLow;
         int deleteLine2 = deleteLineLow + deleteLineMidLow;
@@ -745,18 +776,34 @@ public class LargeField implements Field {
         }
     }
 
+    private long extractDeleteKeyLow(long deleteKey) {
+        return deleteKey & 0x4010040100401L;
+    }
+
+    private long extractDeleteKeyMidLow(long deleteKey) {
+        return (deleteKey & 0x8020080200802L) >> 1;
+    }
+
+    private long extractDeleteKeyMidHigh(long deleteKey) {
+        return (deleteKey & 0x10040100401004L) >> 2;
+    }
+
+    private long extractDeleteKeyHigh(long deleteKey) {
+        return (deleteKey & 0x20080200802008L) >> 3;
+    }
+
     @Override
     public void insertWhiteLineWithKey(long deleteKey) {
-        long deleteKeyLow = deleteKey & 0x4010040100401L;
+        long deleteKeyLow = extractDeleteKeyLow(deleteKey);
         int deleteLineLow = Long.bitCount(deleteKeyLow);
 
-        long deleteKeyMidLow = (deleteKey & 0x8020080200802L) >> 1;
+        long deleteKeyMidLow = extractDeleteKeyMidLow(deleteKey);
         int deleteLineMidLow = Long.bitCount(deleteKeyMidLow);
 
-        long deleteKeyMidHigh = (deleteKey & 0x10040100401004L) >> 2;
+        long deleteKeyMidHigh = extractDeleteKeyMidHigh(deleteKey);
         int deleteLineMidHigh = Long.bitCount(deleteKeyMidHigh);
 
-        long deleteKeyHigh = (deleteKey & 0x20080200802008L) >> 3;
+        long deleteKeyHigh = extractDeleteKeyHigh(deleteKey);
 
         int deleteLine1 = deleteLineLow;
         int deleteLine2 = deleteLineLow + deleteLineMidLow;
@@ -857,6 +904,15 @@ public class LargeField implements Field {
             this.xBoardMidHigh = newXBoardMidHigh & VALID_BOARD_RANGE;
             this.xBoardHigh = newXBoardHigh & VALID_BOARD_RANGE;
         }
+    }
+
+    @Override
+    public void deleteLineWithKey(long deleteKey) {
+        long deleteKeyLow = extractDeleteKeyLow(deleteKey);
+        long deleteKeyMidLow = extractDeleteKeyMidLow(deleteKey);
+        long deleteKeyMidHigh = extractDeleteKeyMidHigh(deleteKey);
+        long deleteKeyHigh = extractDeleteKeyHigh(deleteKey);
+        deleteLine(deleteKeyLow, deleteKeyMidLow, deleteKeyMidHigh, deleteKeyHigh);
     }
 
     @Override

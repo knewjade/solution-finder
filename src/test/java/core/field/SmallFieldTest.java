@@ -1007,4 +1007,44 @@ class SmallFieldTest {
             assertThat(minX).isEqualTo(expectedMinX);
         }
     }
+
+    @Test
+    void existsBlockCountOnY() {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 10000; count++) {
+            Field initField = randoms.field(FIELD_HEIGHT, randoms.nextIntOpen(3, 10));
+
+            for (int y = 0; y < FIELD_HEIGHT; y++) {
+                boolean expected = false;
+                for (int x = 0; x < FIELD_WIDTH; x++) {
+                    if (!initField.isEmpty(x, y)) {
+                        expected = true;
+                    }
+                }
+
+                assertThat(initField.existsBlockCountOnY(y)).isEqualTo(expected);
+            }
+        }
+    }
+
+    @Test
+    void deleteLine() {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 10000; count++) {
+            // 適度にフィールドのラインが揃うようにランダムに地形を作る
+            Field field = randoms.field(FIELD_HEIGHT, randoms.nextIntOpen(3, 10));
+
+            int maxCount = randoms.nextIntOpen(0, FIELD_HEIGHT * 2);
+            for (int lineCount = 0; lineCount < maxCount; lineCount++) {
+                field.fillLine(randoms.nextIntClosed(0, FIELD_HEIGHT));
+            }
+
+            Field expected = field.freeze();
+            long deletedKey = expected.clearLineReturnKey();
+
+            field.deleteLineWithKey(deletedKey);
+
+            assertThat(field).isEqualTo(expected);
+        }
+    }
 }

@@ -7,6 +7,8 @@ import java.awt.*;
 
 // Blockの番号とColorの番号
 public interface ColoredField {
+    ColoredField freeze();
+
     ColoredField freeze(int maxHeight);
 
     // Empty = 0, I = 1, L = 2, O = 3, Z = 4, T = 5, J = 6, S = 7, Gray = 8,

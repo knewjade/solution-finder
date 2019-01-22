@@ -1,11 +1,14 @@
 package core.neighbor;
 
 import core.mino.Mino;
+import core.mino.MinoShifter;
 import core.mino.Piece;
 import core.srs.Rotate;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 // TODO: write unittest
 public class OriginalPieceFactory {
@@ -35,8 +38,19 @@ public class OriginalPieceFactory {
         return pieces;
     }
 
-    public Set<OriginalPiece> create() {
+    public Set<OriginalPiece> createPieces() {
         return pieces;
+    }
+
+    public Set<KeyOriginalPiece> createUniquePiecesWithKey(MinoShifter minoShifter) {
+        AtomicInteger counter = new AtomicInteger();
+        return pieces.stream()
+                .filter(originalPiece -> {
+                    Set<Rotate> uniqueRotates = minoShifter.getUniqueRotates(originalPiece.getPiece());
+                    return uniqueRotates.contains(originalPiece.getRotate());
+                })
+                .map(originalPiece -> new KeyOriginalPiece(originalPiece, counter.getAndIncrement()))
+                .collect(Collectors.toSet());
     }
 
     public int getMaxHeight() {

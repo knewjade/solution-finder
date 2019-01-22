@@ -3,6 +3,7 @@ package common.datastore;
 import core.mino.Piece;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.stream.Stream;
@@ -13,6 +14,19 @@ public class PieceCounter {
     public static final PieceCounter EMPTY = new PieceCounter(0L);
 
     private static final long[] SLIDE_MASK = new long[]{1L, 1L << 8, 1L << 16, 1L << 24, 1L << 32, 1L << 40, 1L << 48};
+    private static final EnumMap<Piece, PieceCounter> SINGLE_PIECE_COUNTERS;
+
+    static {
+        EnumMap<Piece, PieceCounter> pieceCounters = new EnumMap<>(Piece.class);
+        for (Piece piece : Piece.values()) {
+            pieceCounters.put(piece, new PieceCounter(Collections.singletonList(piece)));
+        }
+        SINGLE_PIECE_COUNTERS = pieceCounters;
+    }
+
+    public static PieceCounter getSinglePieceCounter(Piece piece) {
+        return SINGLE_PIECE_COUNTERS.get(piece);
+    }
 
     private final long counter;
 
@@ -123,5 +137,9 @@ public class PieceCounter {
         long difference = this.counter - child.counter;
         // 各ブロックの最上位ビットが1のとき（繰り下がり）が発生していない時true
         return (difference & 0x80808080808080L) == 0L;
+    }
+
+    public boolean isEmpty() {
+        return this.counter == 0L;
     }
 }

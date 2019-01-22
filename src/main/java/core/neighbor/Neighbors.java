@@ -26,7 +26,7 @@ public class Neighbors {
         int maxBlock = Piece.values().length;
         int maxRotate = Rotate.values().length;
         Neighbor[][][][] neighbors = new Neighbor[maxBlock][maxRotate][maxHeight][FIELD_WIDTH];
-        Collection<OriginalPiece> pieces = pieceFactory.create();
+        Collection<OriginalPiece> pieces = pieceFactory.createPieces();
         for (OriginalPiece piece : pieces) {
             Mino mino = piece.getMino();
             Piece block = mino.getPiece();

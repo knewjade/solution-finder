@@ -64,6 +64,9 @@ public interface Field extends Comparable<Field> {
     // y行上にあるブロックの個数を返却
     int getBlockCountOnY(int y);
 
+    // y行上にブロックがあるとき true を返却
+    boolean existsBlockCountOnY(int y);
+
     // すべてのブロックの個数を返却
     int getNumOfAllBlocks();
 
@@ -85,6 +88,9 @@ public interface Field extends Comparable<Field> {
 
     // ブロックがそろった行を空白の状態で復元する
     void insertWhiteLineWithKey(long deleteKey);
+
+    // 指定された行を削除する
+    void deleteLineWithKey(long deleteKey);
 
     // y行上をブロックで塗りつぶす
     void fillLine(int y);

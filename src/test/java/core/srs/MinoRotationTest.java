@@ -2,8 +2,8 @@ package core.srs;
 
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Piece;
 import core.mino.Mino;
+import core.mino.Piece;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -19,14 +19,14 @@ class MinoRotationTest {
         Field field = FieldFactory.createField(marks);
         assert field.canPut(mino, x, y);
         Mino after = new Mino(mino.getPiece(), mino.getRotate().getLeftRotate());
-        return minoRotation.getKicksWithLeftRotation(field, mino, after, x, y);
+        return minoRotation.getKicks(field, mino, after, x, y, RotateDirection.Left);
     }
 
     private int[] kicksRight(String marks, Mino mino, int x, int y) {
         Field field = FieldFactory.createField(marks);
         assert field.canPut(mino, x, y);
         Mino after = new Mino(mino.getPiece(), mino.getRotate().getRightRotate());
-        return minoRotation.getKicksWithRightRotation(field, mino, after, x, y);
+        return minoRotation.getKicks(field, mino, after, x, y, RotateDirection.Right);
     }
 
     @Nested

@@ -249,6 +249,17 @@ public class MiddleField implements Field {
     }
 
     @Override
+    public boolean existsBlockCountOnY(int y) {
+        if (y < 6) {
+            long mask = 0x3ffL << y * FIELD_WIDTH;
+            return (xBoardLow & mask) != 0;
+        } else {
+            long mask = 0x3ffL << (y - 6) * FIELD_WIDTH;
+            return (xBoardHigh & mask) != 0;
+        }
+    }
+
+    @Override
     public int getNumOfAllBlocks() {
         return Long.bitCount(xBoardLow) + Long.bitCount(xBoardHigh);
     }
@@ -262,45 +273,64 @@ public class MiddleField implements Field {
     @Override
     public long clearLineReturnKey() {
         long deleteKeyLow = KeyOperators.getDeleteKey(xBoardLow);
-        long newXBoardLow = LongBoardMap.deleteLine(xBoardLow, deleteKeyLow);
-
         long deleteKeyHigh = KeyOperators.getDeleteKey(xBoardHigh);
-        long newXBoardHigh = LongBoardMap.deleteLine(xBoardHigh, deleteKeyHigh);
 
-        int deleteLineLow = Long.bitCount(deleteKeyLow);
-
-        this.xBoardLow = (newXBoardLow | (newXBoardHigh << (6 - deleteLineLow) * 10)) & VALID_BOARD_RANGE;
-        this.xBoardHigh = newXBoardHigh >>> deleteLineLow * 10;
+        deleteLine(deleteKeyLow, deleteKeyHigh);
 
         return deleteKeyLow | (deleteKeyHigh << 1);
     }
 
     @Override
     public void insertBlackLineWithKey(long deleteKey) {
-        long deleteKeyLow = deleteKey & 0x4010040100401L;
+        long deleteKeyLow = extractDeleteKeyLow(deleteKey);
         int deleteLineLow = Long.bitCount(deleteKeyLow);
-        int leftLineLow = 6 - deleteLineLow;
-        long newXBoardLow = LongBoardMap.insertBlackLine(xBoardLow & BitOperators.getRowMaskBelowY(leftLineLow), deleteKeyLow);
+        int leftLineLowY = 6 - deleteLineLow;
+        long newXBoardLow = LongBoardMap.insertBlackLine(xBoardLow & BitOperators.getRowMaskBelowY(leftLineLowY), deleteKeyLow);
 
-        long deleteKeyHigh = (deleteKey & 0x8020080200802L) >> 1;
-        long newXBoardHigh = LongBoardMap.insertBlackLine((xBoardHigh << 10 * deleteLineLow) | ((xBoardLow & BitOperators.getRowMaskAboveY(leftLineLow)) >> 10 * leftLineLow), deleteKeyHigh);
+        long deleteKeyHigh = extractDeleteKeyHigh(deleteKey);
+        long newXBoardHigh = LongBoardMap.insertBlackLine((xBoardHigh << 10 * deleteLineLow) | ((xBoardLow & BitOperators.getRowMaskAboveY(leftLineLowY)) >> 10 * leftLineLowY), deleteKeyHigh);
+
+        this.xBoardLow = newXBoardLow;
+        this.xBoardHigh = newXBoardHigh & VALID_BOARD_RANGE;
+    }
+
+    private long extractDeleteKeyLow(long deleteKey) {
+        return deleteKey & 0x4010040100401L;
+    }
+
+    private long extractDeleteKeyHigh(long deleteKey) {
+        return (deleteKey & 0x8020080200802L) >> 1;
+    }
+
+    @Override
+    public void insertWhiteLineWithKey(long deleteKey) {
+        long deleteKeyLow = extractDeleteKeyLow(deleteKey);
+        int deleteLineLow = Long.bitCount(deleteKeyLow);
+        int leftLineLowY = 6 - deleteLineLow;
+        long newXBoardLow = LongBoardMap.insertWhiteLine(xBoardLow & BitOperators.getRowMaskBelowY(leftLineLowY), deleteKeyLow);
+
+        long deleteKeyHigh = extractDeleteKeyHigh(deleteKey);
+        long newXBoardHigh = LongBoardMap.insertWhiteLine((xBoardHigh << 10 * deleteLineLow) | ((xBoardLow & BitOperators.getRowMaskAboveY(leftLineLowY)) >> 10 * leftLineLowY), deleteKeyHigh);
 
         this.xBoardLow = newXBoardLow;
         this.xBoardHigh = newXBoardHigh & VALID_BOARD_RANGE;
     }
 
     @Override
-    public void insertWhiteLineWithKey(long deleteKey) {
-        long deleteKeyLow = deleteKey & 0x4010040100401L;
+    public void deleteLineWithKey(long deleteKey) {
+        long deleteKeyLow = extractDeleteKeyLow(deleteKey);
+        long deleteKeyHigh = extractDeleteKeyHigh(deleteKey);
+        deleteLine(deleteKeyLow, deleteKeyHigh);
+    }
+
+    private void deleteLine(long deleteKeyLow, long deleteKeyHigh) {
+        long newXBoardLow = LongBoardMap.deleteLine(xBoardLow, deleteKeyLow);
+        long newXBoardHigh = LongBoardMap.deleteLine(xBoardHigh, deleteKeyHigh);
+
         int deleteLineLow = Long.bitCount(deleteKeyLow);
-        int leftLineLow = 6 - deleteLineLow;
-        long newXBoardLow = LongBoardMap.insertWhiteLine(xBoardLow & BitOperators.getRowMaskBelowY(leftLineLow), deleteKeyLow);
 
-        long deleteKeyHigh = (deleteKey & 0x8020080200802L) >> 1;
-        long newXBoardHigh = LongBoardMap.insertWhiteLine((xBoardHigh << 10 * deleteLineLow) | ((xBoardLow & BitOperators.getRowMaskAboveY(leftLineLow)) >> 10 * leftLineLow), deleteKeyHigh);
-
-        this.xBoardLow = newXBoardLow;
-        this.xBoardHigh = newXBoardHigh & VALID_BOARD_RANGE;
+        this.xBoardLow = (newXBoardLow | (newXBoardHigh << (6 - deleteLineLow) * 10)) & VALID_BOARD_RANGE;
+        this.xBoardHigh = newXBoardHigh >>> deleteLineLow * 10;
     }
 
     @Override
@@ -354,10 +384,10 @@ public class MiddleField implements Field {
     @Override
     public void reduce(Field other) {
         int otherBoardCount = other.getBoardCount();
-        assert 0 < otherBoardCount && otherBoardCount <= 2;
+        assert 0 < otherBoardCount && otherBoardCount <= 4;
 
         xBoardLow &= ~other.getBoard(0);
-        if (otherBoardCount == 2)
+        if (2 <= otherBoardCount)
             xBoardHigh &= ~other.getBoard(1);
     }
 

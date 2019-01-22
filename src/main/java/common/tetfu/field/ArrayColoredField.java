@@ -1,9 +1,9 @@
 package common.tetfu.field;
 
-import core.mino.Piece;
-import core.mino.Mino;
 import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
+import core.mino.Mino;
+import core.mino.Piece;
 
 import java.util.Arrays;
 
@@ -21,6 +21,11 @@ public class ArrayColoredField implements ColoredField {
 
     private ArrayColoredField(short[][] field) {
         this.field = field;
+    }
+
+    @Override
+    public ColoredField freeze() {
+        return freeze(field.length);
     }
 
     @Override

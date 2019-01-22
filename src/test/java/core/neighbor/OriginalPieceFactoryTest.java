@@ -12,7 +12,7 @@ class OriginalPieceFactoryTest {
     @Test
     void create() {
         OriginalPieceFactory pieceFactory = new OriginalPieceFactory(4);
-        Set<OriginalPiece> pieces = pieceFactory.create();
+        Set<OriginalPiece> pieces = pieceFactory.createPieces();
 
         // ALL
         assertThat(pieces).hasSize(604);
