@@ -1,6 +1,8 @@
 package _usecase.path;
 
-import _usecase.*;
+import _usecase.ConfigFileHelper;
+import _usecase.Log;
+import _usecase.RunnerHelper;
 import _usecase.path.files.OutputFileHelper;
 import _usecase.path.files.PathHTML;
 import core.field.FieldFactory;
@@ -1088,5 +1090,31 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
                 .contains("Z-Right S-Spawn J-Right T-Left O-Spawn L-Reverse")
                 .contains("53.3 %")
                 .contains("[2688]");
+    }
+
+    @Test
+    void harddrop1() throws Exception {
+        // Harddropのみ
+        String command = "path -t v115@RhA8GeE8EeB8JeAgH -p LZZSITSO -d harddrop";
+
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getOutput())
+                .contains("LZZSITSO")
+                .contains(Messages.uniqueCount(0))
+                .contains(Messages.minimalCount(0))
+                .contains(Messages.useHold());
+
+        assertThat(log.getError()).isEmpty();
+
+        PathHTML minimal = OutputFileHelper.loadPathMinimalHTML();
+        assertThat(minimal)
+                .returns(1, PathHTML::sequence)
+                .returns(0, path -> path.allFumens().size());
+
+        PathHTML unique = OutputFileHelper.loadPathUniqueHTML();
+        assertThat(unique)
+                .returns(1, PathHTML::sequence)
+                .returns(0, path -> path.allFumens().size());
     }
 }

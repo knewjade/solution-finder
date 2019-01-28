@@ -188,7 +188,7 @@ public class PathEntryPoint implements EntryPoint {
         output("# Output file");
         OutputType outputType = settings.getOutputType();
         PathOutput pathOutput = createOutput(outputType, generator, maxDepth, minoFactory, colorConverter);
-        int numOfAllPatternSequences = validPiecesPool.getAllPieces().size();
+        long numOfAllPatternSequences = validPiecesPool.getNumOfAllPatternSequences();
         PathPairs pathPairs = new PathPairs(pathPairList, numOfAllPatternSequences);
         pathOutput.output(pathPairs, field, sizedBit);
 

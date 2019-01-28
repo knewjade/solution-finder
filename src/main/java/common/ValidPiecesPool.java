@@ -22,7 +22,11 @@ public class ValidPiecesPool {
     // 11ミノパターン指定でHoldありの場合、11ミノのみ含まれる
     private final HashSet<LongPieces> allPieces;
 
+    // 指定されたパターンの総数
+    private final long numOfAllPatternSequences;
+
     public ValidPiecesPool(PatternGenerator blocksGenerator, int maxDepth, boolean isUsingHold) {
+        this.numOfAllPatternSequences = blocksGenerator.blocksStream().count();
         this.isHoldReduced = isHoldReducedPieces(blocksGenerator, maxDepth, isUsingHold);
         this.allPieces = getAllPieces(blocksGenerator, maxDepth, isUsingHold);
         this.validPieces = getValidPieces(blocksGenerator, allPieces, maxDepth, isHoldReduced);
@@ -100,5 +104,9 @@ public class ValidPiecesPool {
 
     public HashSet<LongPieces> getAllPieces() {
         return allPieces;
+    }
+
+    public long getNumOfAllPatternSequences() {
+        return numOfAllPatternSequences;
     }
 }

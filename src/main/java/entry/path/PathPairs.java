@@ -6,14 +6,14 @@ import java.util.List;
 
 public class PathPairs {
     private final List<PathPair> pathPairList;
-    private final int numOfAllPatternSequences;
+    private final long numOfAllPatternSequences;
 
-    PathPairs(List<PathPair> pathPairList, int numOfAllPatternSequences) {
+    PathPairs(List<PathPair> pathPairList, long numOfAllPatternSequences) {
         this.pathPairList = pathPairList;
         this.numOfAllPatternSequences = numOfAllPatternSequences;
     }
 
-    public int getNumOfAllPatternSequences() {
+    public long getNumOfAllPatternSequences() {
         return numOfAllPatternSequences;
     }
 
