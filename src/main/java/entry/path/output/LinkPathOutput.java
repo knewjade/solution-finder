@@ -82,7 +82,7 @@ public class LinkPathOutput implements PathOutput {
 
     @Override
     public void output(PathPairs pathPairs, Field field, SizedBit sizedBit) throws FinderExecuteException {
-        long numOfAllPatternSequences = pathPairs.getNumOfAllPatternSequences();
+        int numOfAllPatternSequences = pathPairs.getNumOfAllPatternSequences();
 
         PathLayer pathLayer = settings.getPathLayer();
 
@@ -107,7 +107,7 @@ public class LinkPathOutput implements PathOutput {
         pathEntryPoint.output(str);
     }
 
-    private void outputOperationsToSimpleHTML(Field field, MyFile file, List<PathPair> pathPairs, SizedBit sizedBit, long numOfAllPatternSequences) throws FinderExecuteException {
+    private void outputOperationsToSimpleHTML(Field field, MyFile file, List<PathPair> pathPairs, SizedBit sizedBit, int numOfAllPatternSequences) throws FinderExecuteException {
         // Get height
         int maxClearLine = sizedBit.getHeight();
 
@@ -142,7 +142,7 @@ public class LinkPathOutput implements PathOutput {
                             .collect(Collectors.joining());
 
                     // 入力パターンのうち有効なミノ順を確率に変換
-                    long counter = pathPair.blocksStreamForPattern().count();
+                    long counter = pathPair.getNumOfValidSpecifiedPatterns();
                     double validPercent = (double) counter / numOfAllPatternSequences * 100.0;
                     String comment = String.format("%.1f %% : %s", validPercent, blocksName);
 

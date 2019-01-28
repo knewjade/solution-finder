@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PathPair implements HaveSet<LongPieces> {
-    static final PathPair EMPTY_PAIR = new PathPair(null, new HashSet<>(), null, "", Collections.emptyList(), new HashSet<>());
+    static final PathPair EMPTY_PAIR = new PathPair(null, new HashSet<>(), null, "", Collections.emptyList(), new HashSet<>(), 0L);
 
     private final Result result;
     private final HashSet<LongPieces> piecesSolution;
@@ -25,7 +25,9 @@ public class PathPair implements HaveSet<LongPieces> {
     private final boolean deletedLine;
     private final HashSet<LongPieces> validPieces;
 
-    public PathPair(Result result, HashSet<LongPieces> piecesSolution, HashSet<LongPieces> piecesPattern, String fumen, List<MinoOperationWithKey> sampleOperations, HashSet<LongPieces> validPieces) {
+    private final long numOfValidSpecifiedPatterns;
+
+    public PathPair(Result result, HashSet<LongPieces> piecesSolution, HashSet<LongPieces> piecesPattern, String fumen, List<MinoOperationWithKey> sampleOperations, HashSet<LongPieces> validPieces, long numOfValidSpecifiedPatterns) {
         this.result = result;
         this.piecesSolution = piecesSolution;
         this.piecesPattern = piecesPattern;
@@ -33,6 +35,7 @@ public class PathPair implements HaveSet<LongPieces> {
         this.sampleOperations = sampleOperations;
         this.deletedLine = result != null && containsDeletedLine();
         this.validPieces = validPieces;
+        this.numOfValidSpecifiedPatterns = numOfValidSpecifiedPatterns;
     }
 
     private boolean containsDeletedLine() {
@@ -101,5 +104,9 @@ public class PathPair implements HaveSet<LongPieces> {
 
     public boolean isDeletedLine() {
         return deletedLine;
+    }
+
+    public long getNumOfValidSpecifiedPatterns() {
+        return numOfValidSpecifiedPatterns;
     }
 }

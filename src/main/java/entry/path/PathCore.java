@@ -7,6 +7,7 @@ import common.datastore.MinoOperationWithKey;
 import common.datastore.Operation;
 import common.datastore.OperationWithKey;
 import common.datastore.blocks.LongPieces;
+import common.order.ForwardOrderLookUp;
 import common.order.ReverseOrderLookUp;
 import core.field.Field;
 import core.field.FieldFactory;
@@ -61,8 +62,8 @@ class PathCore {
 
                     // 地形の中で組むことができるSetを作成
                     HashSet<LongPieces> piecesSolution = validOperaions.stream()
-                            .map(operationWithKeys -> operationWithKeys.stream()
-                                    .map(OperationWithKey::getPiece)
+                            .map(
+                                    operationWithKeys -> operationWithKeys.stream().map(OperationWithKey::getPiece)
                             )
                             .map(LongPieces::new)
                             .collect(Collectors.toCollection(HashSet::new));
@@ -86,7 +87,9 @@ class PathCore {
                     // 譜面の作成
                     String fumen = fumenParser.parse(operationsToUrl, field, maxClearLine);
 
-                    return new PathPair(result, piecesSolution, piecesPattern, fumen, new ArrayList<>(operationsToUrl), validPieces);
+                    long numOfValidSpecifiedPatterns = getNumOfValidSpecifiedPatterns(piecesSolution);
+
+                    return new PathPair(result, piecesSolution, piecesPattern, fumen, new ArrayList<>(operationsToUrl), validPieces, numOfValidSpecifiedPatterns);
                 })
                 .filter(pathPair -> pathPair != PathPair.EMPTY_PAIR)
                 .collect(Collectors.toList());
@@ -151,7 +154,9 @@ class PathCore {
                     String fumen = fumenParser.parse(sampleOperations, field, maxClearLine);
 
                     HashSet<LongPieces> validPieces = piecesPool.getValidPieces();
-                    return new PathPair(result, piecesSolution, piecesPattern, fumen, new ArrayList<>(sampleOperations), validPieces);
+                    long numOfValidSpecifiedPatterns = getNumOfValidSpecifiedPatterns(piecesSolution);
+
+                    return new PathPair(result, piecesSolution, piecesPattern, fumen, new ArrayList<>(sampleOperations), validPieces, numOfValidSpecifiedPatterns);
                 })
                 .filter(pathPair -> pathPair != PathPair.EMPTY_PAIR)
                 .collect(Collectors.toList());
@@ -224,6 +229,47 @@ class PathCore {
             return piecesSolution.stream()
                     .filter(validPieces::contains)
                     .collect(Collectors.toCollection(HashSet::new));
+        }
+    }
+
+    private long getNumOfValidSpecifiedPatterns(HashSet<LongPieces> piecesSolution) {
+        HashSet<LongPieces> allSpecifiedPieces = piecesPool.getAllSpecifiedPieces();
+
+        if (piecesPool.isHoldReduced()) {
+            // allとvalidが異なる
+            ForwardOrderLookUp forwardOrderLookUp = new ForwardOrderLookUp(maxDepth + 1, maxDepth);
+
+            return allSpecifiedPieces.stream()
+                    .filter(pieces -> {
+                        return forwardOrderLookUp.parse(pieces.getPieces())
+                                .anyMatch(forward -> {
+                                    LongPieces holdCandidate = new LongPieces(forward);
+                                    return piecesSolution.contains(holdCandidate);
+                                });
+                    })
+                    .count();
+        } else if (isUsingHold) {
+            // allとvalidが同じだが、ホールドが使える
+            ForwardOrderLookUp forwardOrderLookUp = new ForwardOrderLookUp(maxDepth, maxDepth);
+
+            return allSpecifiedPieces.stream()
+                    .filter(pieces -> {
+                        return forwardOrderLookUp.parse(pieces.getPieces())
+                                .anyMatch(forward -> {
+                                    LongPieces holdCandidate = new LongPieces(forward);
+                                    return piecesSolution.contains(holdCandidate);
+                                });
+                    })
+                    .count();
+        } else {
+            // allとvalidが同じで、ホールドも使えない
+            // そのまま絞り込みだけ実施
+            return allSpecifiedPieces.stream()
+                    .filter(pieces -> {
+                        LongPieces candidate = new LongPieces(pieces);
+                        return piecesSolution.contains(candidate);
+                    })
+                    .count();
         }
     }
 }
