@@ -102,7 +102,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
                 .hasSize(29)
                 .allMatch(coloredField -> isFilled(height, coloredField));
 
-        assertThat(uniqueHTML)
+        assertThat(minimalHTML)
                 .returns(5040, PathHTML::sequence)
                 .returns(29, path -> path.allFumens().size());
 
