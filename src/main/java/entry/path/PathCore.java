@@ -7,7 +7,7 @@ import common.datastore.MinoOperationWithKey;
 import common.datastore.Operation;
 import common.datastore.OperationWithKey;
 import common.datastore.blocks.LongPieces;
-import common.order.ForwardOrderLookUp;
+import common.datastore.blocks.Pieces;
 import common.order.ReverseOrderLookUp;
 import core.field.Field;
 import core.field.FieldFactory;
@@ -29,16 +29,19 @@ class PathCore {
     private final FumenParser fumenParser;
     private final ThreadLocal<BuildUpStream> buildUpStreamThreadLocal;
     private final boolean isUsingHold;
-    private final int maxDepth;
     private final ValidPiecesPool piecesPool;
+    private final ReverseOrderLookUp reverseOrderLookUpReduceDepth;
+    private final ReverseOrderLookUp reverseOrderLookUpSameDepth;
 
     PathCore(PerfectPackSearcher searcher, int maxDepth, boolean isUsingHold, FumenParser fumenParser, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal, ValidPiecesPool piecesPool) {
         this.searcher = searcher;
         this.fumenParser = fumenParser;
         this.buildUpStreamThreadLocal = buildUpStreamThreadLocal;
         this.isUsingHold = isUsingHold;
-        this.maxDepth = maxDepth;
         this.piecesPool = piecesPool;
+
+        this.reverseOrderLookUpReduceDepth = new ReverseOrderLookUp(maxDepth, maxDepth + 1);
+        this.reverseOrderLookUpSameDepth = new ReverseOrderLookUp(maxDepth, maxDepth);
     }
 
     List<PathPair> run(Field field, SizedBit sizedBit) throws ExecutionException, InterruptedException {
@@ -176,12 +179,10 @@ class PathCore {
 
         if (piecesPool.isHoldReduced()) {
             // allとvalidが異なる
-            ReverseOrderLookUp reverseOrderLookUp = new ReverseOrderLookUp(maxDepth, maxDepth + 1);
-
             return piecesSolution.stream()
                     .filter(validPieces::contains)
                     .flatMap(blocks -> {
-                        return reverseOrderLookUp.parse(blocks.getPieces())
+                        return reverseOrderLookUpReduceDepth.parse(blocks.getPieces())
                                 .map(stream -> stream.collect(Collectors.toCollection(ArrayList::new)))
                                 .flatMap(blocksWithHold -> {
                                     int nullIndex = blocksWithHold.indexOf(null);
@@ -200,12 +201,10 @@ class PathCore {
                     .collect(Collectors.toCollection(HashSet::new));
         } else if (isUsingHold) {
             // allとvalidが同じだが、ホールドが使える
-            ReverseOrderLookUp reverseOrderLookUp = new ReverseOrderLookUp(maxDepth, maxDepth);
-
             return piecesSolution.stream()
                     .filter(validPieces::contains)
                     .flatMap(blocks -> {
-                        return reverseOrderLookUp.parse(blocks.getPieces())
+                        return reverseOrderLookUpSameDepth.parse(blocks.getPieces())
                                 .map(stream -> stream.collect(Collectors.toCollection(ArrayList::new)))
                                 .flatMap(blocksWithHold -> {
                                     int nullIndex = blocksWithHold.indexOf(null);
@@ -236,39 +235,34 @@ class PathCore {
         HashSet<LongPieces> allSpecifiedPieces = piecesPool.getAllSpecifiedPieces();
 
         if (piecesPool.isHoldReduced()) {
-            // allとvalidが異なる
-            ForwardOrderLookUp forwardOrderLookUp = new ForwardOrderLookUp( maxDepth, maxDepth + 1);
+            // ホールドによって1ミノ少ない
+            // 1ミノ増やして、入力パターンと同じ数にする
+            HashSet<LongPieces> sequencePiecesSolution = piecesSolution.stream()
+                    .map(Pieces::getPieces)
+                    .flatMap(reverseOrderLookUpReduceDepth::parseAndExpand)
+                    .map(LongPieces::new)
+                    .collect(Collectors.toCollection(HashSet::new));
 
             return allSpecifiedPieces.stream()
-                    .filter(pieces -> {
-                        return forwardOrderLookUp.parse(pieces.getPieces())
-                                .anyMatch(forward -> {
-                                    LongPieces holdCandidate = new LongPieces(forward);
-                                    return piecesSolution.contains(holdCandidate);
-                                });
-                    })
+                    .filter(sequencePiecesSolution::contains)
                     .count();
         } else if (isUsingHold) {
-            // allとvalidが同じだが、ホールドが使える
-            ForwardOrderLookUp forwardOrderLookUp = new ForwardOrderLookUp(maxDepth, maxDepth);
+            // ホールドはできるが、ミノ数は入力パターンと同じ
+            // そのため、ミノ順の並び替えのみ
+            HashSet<LongPieces> sequencePiecesSolution = piecesSolution.stream()
+                    .map(Pieces::getPieces)
+                    .flatMap(reverseOrderLookUpSameDepth::parseAndExpand)
+                    .map(LongPieces::new)
+                    .collect(Collectors.toCollection(HashSet::new));
 
             return allSpecifiedPieces.stream()
-                    .filter(pieces -> {
-                        return forwardOrderLookUp.parse(pieces.getPieces())
-                                .anyMatch(forward -> {
-                                    LongPieces holdCandidate = new LongPieces(forward);
-                                    return piecesSolution.contains(holdCandidate);
-                                });
-                    })
+                    .filter(sequencePiecesSolution::contains)
                     .count();
         } else {
-            // allとvalidが同じで、ホールドも使えない
-            // そのまま絞り込みだけ実施
+            // ホールドはできないため、ミノ数は入力パターンと同じ
+            // そのまま絞り込む
             return allSpecifiedPieces.stream()
-                    .filter(pieces -> {
-                        LongPieces candidate = new LongPieces(pieces);
-                        return piecesSolution.contains(candidate);
-                    })
+                    .filter(piecesSolution::contains)
                     .count();
         }
     }
