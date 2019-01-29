@@ -70,6 +70,18 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
                 .hasSize(35)
                 .allMatch(coloredField -> isFilled(height, coloredField));
 
+        assertThat(uniqueHTML)
+                .returns(5040, PathHTML::sequence)
+                .returns(35, path -> path.allFumens().size());
+
+        assertThat(uniqueHTML.getHtml())
+                .contains("I-Left T-Right S-Left L-Left Z-Spawn J-Reverse")
+                .contains("28.9 %")
+                .contains("[1456]")
+                .contains("O-Spawn Z-Spawn I-Spawn S-Spawn T-Reverse L-Reverse")
+                .contains("25.4 %")
+                .contains("[1280]");
+
         // minimal
         PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
         assertThat(minimalHTML)
@@ -89,6 +101,112 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(parseLastPageTetfu(minimalHTML.allFumens()))
                 .hasSize(29)
                 .allMatch(coloredField -> isFilled(height, coloredField));
+
+        assertThat(uniqueHTML)
+                .returns(5040, PathHTML::sequence)
+                .returns(29, path -> path.allFumens().size());
+
+        assertThat(minimalHTML.getHtml())
+                .contains("I-Left T-Right S-Left L-Left Z-Spawn J-Reverse")
+                .contains("28.9 %")
+                .contains("[1456]")
+                .contains("O-Spawn Z-Spawn I-Spawn S-Spawn T-Reverse L-Reverse")
+                .contains("25.4 %")
+                .contains("[1280]");
+    }
+
+    @Test
+    void useTetfuOnly1_p6() throws Exception {
+        // テト譜 + パターンコメント (コマンド優先)
+
+            /*
+            comment: 4 -p *p7
+            XX________
+            XXX_______
+            XXXXX_____
+            XXXXXX____
+             */
+
+        int height = 4;
+        String tetfu = "v115@9gB8HeC8GeE8EeF8NeAgWMA0no2ANI98AQPcQB";
+
+        ConfigFileHelper.createPatternFile("*p2");
+
+        String command = String.format("path -t %s -p T,[^T]p5", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getReturnCode()).isEqualTo(0);
+
+        assertThat(log.getOutput())
+                .contains("T,[^T]p5")
+                .contains(Messages.uniqueCount(35))
+                .contains(Messages.minimalCount(27))
+                .contains(Messages.useHold());
+
+        // unique
+        PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
+        assertThat(uniqueHTML)
+                .returns(35, PathHTML::pattern);
+
+        // ライン消去なし
+        assertThat(uniqueHTML.noDeletedLineFumens())
+                .isEmpty();
+
+        // ライン消去あり
+        assertThat(uniqueHTML.deletedLineFumens())
+                .hasSize(35)
+                .contains("9gB8Bthlwwi0C8BtglxwR4E8glwwR4g0F8zhJeAgWG?AJNWWC6/AAA")
+                .contains("9gB8Bti0hlwhC8BtRpwwglwhE8RpxwwhF8g0wwglwh?JeAgWGAp+KWC6/AAA")
+                .contains("9gB8Bthlwwi0C8BtglzhE8glxwR4F8wwR4g0JeAgWG?AT+TFD0/AAA");
+
+        // すべての譜面
+        assertThat(parseLastPageTetfu(uniqueHTML.allFumens()))
+                .hasSize(35)
+                .allMatch(coloredField -> isFilled(height, coloredField));
+
+        assertThat(uniqueHTML)
+                .returns(720, PathHTML::sequence)
+                .returns(35, path -> path.allFumens().size());
+
+        assertThat(uniqueHTML.getHtml())
+                .contains("T-Left S-Spawn L-Left J-Spawn Z-Spawn I-Spawn")
+                .contains("15.0 %")
+                .contains("[108]")
+                .contains("S-Spawn T-Right L-Left J-Reverse Z-Spawn I-Spawn")
+                .contains("14.4 %")
+                .contains("[104]");
+
+        // minimal
+        PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
+        assertThat(minimalHTML)
+                .returns(27, PathHTML::pattern);
+
+        // ライン消去なし
+        assertThat(minimalHTML.noDeletedLineFumens()).isEmpty();
+
+        // ライン消去あり
+        assertThat(minimalHTML.deletedLineFumens())
+                .hasSize(27)
+                .contains("9gB8zhQ4BtwwC8i0R4xwE8g0ilwwF8glQ4BtJeAgWG?AsuntCa+AAA")
+                .contains("9gB8zhBthlC8i0wwBtglE8g0xwR4F8wwR4glJeAgWG?AzuzPCM+AAA")
+                .contains("9gB8BthlzhC8Btgli0wwE8glRpxwF8Rpg0wwJeAgWG?AvOUPCa+AAA");
+
+        // すべての譜面
+        assertThat(parseLastPageTetfu(minimalHTML.allFumens()))
+                .hasSize(27)
+                .allMatch(coloredField -> isFilled(height, coloredField));
+
+        assertThat(minimalHTML)
+                .returns(720, PathHTML::sequence)
+                .returns(27, path -> path.allFumens().size());
+
+        assertThat(minimalHTML.getHtml())
+                .contains("T-Left S-Spawn L-Left J-Spawn Z-Spawn I-Spawn")
+                .contains("15.0 %")
+                .contains("[108]")
+                .contains("S-Spawn T-Right L-Left J-Reverse Z-Spawn I-Spawn")
+                .contains("14.4 %")
+                .contains("[104]");
     }
 
     @Test
@@ -725,6 +843,18 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
                 .hasSize(9)
                 .allMatch(coloredField -> isFilled(height, coloredField));
 
+        assertThat(uniqueHTML)
+                .returns(42, PathHTML::sequence)
+                .returns(9, path -> path.allFumens().size());
+
+        assertThat(uniqueHTML.getHtml())
+                .contains("T-Left O-Spawn I-Spawn")
+                .contains("4.8 %")
+                .contains("[2]")
+                .contains("T-Left Z-Spawn S-Spawn")
+                .contains("2.4 %")
+                .contains("[1]");
+
         // minimal
         PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
         assertThat(minimalHTML)
@@ -747,6 +877,18 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(parseLastPageTetfu(minimalHTML.allFumens()))
                 .hasSize(8)
                 .allMatch(coloredField -> isFilled(height, coloredField));
+
+        assertThat(minimalHTML)
+                .returns(42, PathHTML::sequence)
+                .returns(8, path -> path.allFumens().size());
+
+        assertThat(minimalHTML.getHtml())
+                .contains("T-Left O-Spawn I-Spawn")
+                .contains("4.8 %")
+                .contains("[2]")
+                .contains("T-Left Z-Spawn S-Spawn")
+                .contains("2.4 %")
+                .contains("[1]");
     }
 
     @Test
@@ -1028,7 +1170,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
     }
 
     @Test
-    void checkSatisfiedSequencePercentage() throws Exception {
+    void checkSatisfiedSequencePercentage1() throws Exception {
             /*
             comment: <Empty>
             __________
@@ -1090,6 +1232,42 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
                 .contains("Z-Right S-Spawn J-Right T-Left O-Spawn L-Reverse")
                 .contains("53.3 %")
                 .contains("[2688]");
+    }
+
+    @Test
+    void checkSatisfiedSequencePercentage2() throws Exception {
+        // 入力シーケンスが1のケース
+        String command = "path -t v115@RhA8GeE8EeB8JeAgH -p LZZSITSO -d softdrop";
+
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getOutput())
+                .contains("LZZSITSO")
+                .contains(Messages.uniqueCount(1))
+                .contains(Messages.minimalCount(1))
+                .contains(Messages.useHold());
+
+        assertThat(log.getError()).isEmpty();
+
+        PathHTML minimal = OutputFileHelper.loadPathMinimalHTML();
+        assertThat(minimal)
+                .returns(1, PathHTML::sequence)
+                .returns(1, path -> path.allFumens().size());
+
+        assertThat(minimal.getHtml())
+                .contains("Z-Spawn Z-Spawn S-Spawn I-Spawn T-Reverse L-Left O-Spawn S-Spawn")
+                .contains("100.0 %")
+                .contains("[1]");
+
+        PathHTML unique = OutputFileHelper.loadPathUniqueHTML();
+        assertThat(unique)
+                .returns(1, PathHTML::sequence)
+                .returns(1, path -> path.allFumens().size());
+
+        assertThat(unique.getHtml())
+                .contains("Z-Spawn Z-Spawn S-Spawn I-Spawn T-Reverse L-Left O-Spawn S-Spawn")
+                .contains("100.0 %")
+                .contains("[1]");
     }
 
     @Test

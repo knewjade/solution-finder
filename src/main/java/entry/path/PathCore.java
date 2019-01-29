@@ -237,7 +237,7 @@ class PathCore {
 
         if (piecesPool.isHoldReduced()) {
             // allとvalidが異なる
-            ForwardOrderLookUp forwardOrderLookUp = new ForwardOrderLookUp(maxDepth + 1, maxDepth);
+            ForwardOrderLookUp forwardOrderLookUp = new ForwardOrderLookUp( maxDepth, maxDepth + 1);
 
             return allSpecifiedPieces.stream()
                     .filter(pieces -> {
