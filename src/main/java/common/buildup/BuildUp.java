@@ -223,19 +223,19 @@ public class BuildUp {
 
         Piece piece = depth < pieces.size() ? pieces.get(depth) : null;
 
-        if (hold != null && existsValidByOrderWithHold(field, eachBlocks, pieces, height, reachable, maxDepth, depth, hold, deleteKey, hold)) {
+        if (hold != null && existsValidByOrderWithHold(field, eachBlocks, pieces, height, reachable, maxDepth, depth, hold, deleteKey, piece)) {
             return true;
         }
 
-        if (piece != null && existsValidByOrderWithHold(field, eachBlocks, pieces, height, reachable, maxDepth, depth, hold, deleteKey, hold)) {
+        if (piece != null && existsValidByOrderWithHold(field, eachBlocks, pieces, height, reachable, maxDepth, depth, piece, deleteKey, hold)) {
             return true;
         }
 
         return false;
     }
 
-    private static boolean existsValidByOrderWithHold(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height, Reachable reachable, int maxDepth, int depth, Piece hold, long deleteKey, Piece nextHoldPiece) {
-        LinkedList<MinoOperationWithKey> operationWithKeys = eachBlocks.get(hold);
+    private static boolean existsValidByOrderWithHold(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height, Reachable reachable, int maxDepth, int depth, Piece usePiece, long deleteKey, Piece nextHoldPiece) {
+        LinkedList<MinoOperationWithKey> operationWithKeys = eachBlocks.get(usePiece);
         if (operationWithKeys == null) {
             return false;
         }
