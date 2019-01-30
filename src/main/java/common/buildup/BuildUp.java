@@ -5,8 +5,8 @@ import common.datastore.OperationWithKey;
 import core.action.reachable.Reachable;
 import core.field.Field;
 import core.field.KeyOperators;
-import core.mino.Piece;
 import core.mino.Mino;
+import core.mino.Piece;
 
 import java.util.EnumMap;
 import java.util.LinkedList;
@@ -149,55 +149,158 @@ public class BuildUp {
     // block順番で組み立てられる手順が存在するかチェックする
     // operationsで使用するミノとblocksが一致していること
     public static boolean existsValidByOrder(Field field, Stream<MinoOperationWithKey> operations, List<Piece> pieces, int height, Reachable reachable) {
-        EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks = operations.sequential().collect(() -> new EnumMap<Piece, LinkedList<MinoOperationWithKey>>(Piece.class), (blockLinkedListEnumMap, operationWithKey) -> {
+        return existsValidByOrder(field, operations, pieces, height, reachable, pieces.size());
+    }
+
+    public static boolean existsValidByOrder(Field field, Stream<MinoOperationWithKey> operations, List<Piece> pieces, int height, Reachable reachable, int maxDepth) {
+        EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks = operations.sequential().collect(() -> new EnumMap<>(Piece.class), (blockLinkedListEnumMap, operationWithKey) -> {
             Piece piece = operationWithKey.getPiece();
             LinkedList<MinoOperationWithKey> operationWithKeys = blockLinkedListEnumMap.computeIfAbsent(piece, b -> new LinkedList<>());
             operationWithKeys.add(operationWithKey);
         }, EnumMap::putAll);
 
-        return existsValidByOrder(field.freeze(height), eachBlocks, pieces, height, reachable, 0);
+        return existsValidByOrder(field.freeze(height), eachBlocks, pieces, height, reachable, 0, maxDepth);
     }
 
-    private static boolean existsValidByOrder(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height, Reachable reachable, int depth) {
+    private static boolean existsValidByOrder(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height, Reachable reachable, int depth, int maxDepth) {
         long deleteKey = field.clearLineReturnKey();
         Piece piece = pieces.get(depth);
         LinkedList<MinoOperationWithKey> operationWithKeys = eachBlocks.get(piece);
 
-        for (int index = 0; index < operationWithKeys.size(); index++) {
-            MinoOperationWithKey key = operationWithKeys.remove(index);
+        if (operationWithKeys != null) {
+            for (int index = 0; index < operationWithKeys.size(); index++) {
+                MinoOperationWithKey key = operationWithKeys.remove(index);
 
-            long needDeletedKey = key.getNeedDeletedKey();
-            if ((deleteKey & needDeletedKey) != needDeletedKey) {
-                // 必要な列が消えていない
+                long needDeletedKey = key.getNeedDeletedKey();
+                if ((deleteKey & needDeletedKey) != needDeletedKey) {
+                    // 必要な列が消えていない
+                    operationWithKeys.add(index, key);
+                    continue;
+                }
+
+                // すでに下のラインが消えているときは、その分スライドさせる
+                int originalY = key.getY();
+                int deletedLines = Long.bitCount(KeyOperators.getMaskForKeyBelowY(originalY) & deleteKey);
+
+                Mino mino = key.getMino();
+                int x = key.getX();
+                int y = originalY - deletedLines;
+
+                if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY())) {
+                    if (maxDepth == depth + 1)
+                        return true;
+
+                    Field nextField = field.freeze(height);
+                    nextField.put(mino, x, y);
+                    nextField.insertBlackLineWithKey(deleteKey);
+
+                    boolean exists = existsValidByOrder(nextField, eachBlocks, pieces, height, reachable, depth + 1, maxDepth);
+                    if (exists)
+                        return true;
+                }
+
                 operationWithKeys.add(index, key);
-                continue;
             }
-
-            // すでに下のラインが消えているときは、その分スライドさせる
-            int originalY = key.getY();
-            int deletedLines = Long.bitCount(KeyOperators.getMaskForKeyBelowY(originalY) & deleteKey);
-
-            Mino mino = key.getMino();
-            int x = key.getX();
-            int y = originalY - deletedLines;
-
-            if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY())) {
-                if (pieces.size() == depth + 1)
-                    return true;
-
-                Field nextField = field.freeze(height);
-                nextField.put(mino, x, y);
-                nextField.insertBlackLineWithKey(deleteKey);
-
-                boolean exists = existsValidByOrder(nextField, eachBlocks, pieces, height, reachable, depth + 1);
-                if (exists)
-                    return true;
-            }
-
-            operationWithKeys.add(index, key);
         }
 
-        field.insertBlackLineWithKey(deleteKey);
+        return false;
+    }
+
+    // block順番で組み立てられる手順が存在するかチェックする
+    // operationsで使用するミノとblocksが一致していること
+    public static boolean existsValidByOrder2(Field field, Stream<MinoOperationWithKey> operations, List<Piece> pieces, int height, Reachable reachable, int maxDepth) {
+        EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks = operations.sequential().collect(() -> new EnumMap<>(Piece.class), (blockLinkedListEnumMap, operationWithKey) -> {
+            Piece piece = operationWithKey.getPiece();
+            LinkedList<MinoOperationWithKey> operationWithKeys = blockLinkedListEnumMap.computeIfAbsent(piece, b -> new LinkedList<>());
+            operationWithKeys.add(operationWithKey);
+        }, EnumMap::putAll);
+
+        return existsValidByOrder2(field.freeze(height), eachBlocks, pieces, height, reachable, maxDepth, 1, pieces.get(0));
+    }
+
+    private static boolean existsValidByOrder2(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height, Reachable reachable, int maxDepth, int depth, Piece hold) {
+        long deleteKey = field.clearLineReturnKey();
+
+        Piece piece = depth < pieces.size() ? pieces.get(depth) : null;
+
+        if (hold != null) {
+            LinkedList<MinoOperationWithKey> operationWithKeys = eachBlocks.get(hold);
+            if (operationWithKeys != null) {
+                for (int index = 0; index < operationWithKeys.size(); index++) {
+                    MinoOperationWithKey key = operationWithKeys.remove(index);
+
+                    long needDeletedKey = key.getNeedDeletedKey();
+                    if ((deleteKey & needDeletedKey) != needDeletedKey) {
+                        // 必要な列が消えていない
+                        operationWithKeys.add(index, key);
+                        continue;
+                    }
+
+                    // すでに下のラインが消えているときは、その分スライドさせる
+                    int originalY = key.getY();
+                    int deletedLines = Long.bitCount(KeyOperators.getMaskForKeyBelowY(originalY) & deleteKey);
+
+                    Mino mino = key.getMino();
+                    int x = key.getX();
+                    int y = originalY - deletedLines;
+
+                    if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY())) {
+                        if (depth == maxDepth)
+                            return true;
+
+                        Field nextField = field.freeze(height);
+                        nextField.put(mino, x, y);
+                        nextField.insertBlackLineWithKey(deleteKey);
+
+                        boolean exists = existsValidByOrder2(nextField, eachBlocks, pieces, height, reachable, maxDepth, depth + 1, piece);
+                        if (exists)
+                            return true;
+                    }
+
+                    operationWithKeys.add(index, key);
+                }
+            }
+        }
+
+        if (piece != null) {
+            LinkedList<MinoOperationWithKey> operationWithKeys = eachBlocks.get(piece);
+            if (operationWithKeys != null) {
+                for (int index = 0; index < operationWithKeys.size(); index++) {
+                    MinoOperationWithKey key = operationWithKeys.remove(index);
+
+                    long needDeletedKey = key.getNeedDeletedKey();
+                    if ((deleteKey & needDeletedKey) != needDeletedKey) {
+                        // 必要な列が消えていない
+                        operationWithKeys.add(index, key);
+                        continue;
+                    }
+
+                    // すでに下のラインが消えているときは、その分スライドさせる
+                    int originalY = key.getY();
+                    int deletedLines = Long.bitCount(KeyOperators.getMaskForKeyBelowY(originalY) & deleteKey);
+
+                    Mino mino = key.getMino();
+                    int x = key.getX();
+                    int y = originalY - deletedLines;
+
+                    if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY())) {
+                        if (depth == maxDepth)
+                            return true;
+
+                        Field nextField = field.freeze(height);
+                        nextField.put(mino, x, y);
+                        nextField.insertBlackLineWithKey(deleteKey);
+
+                        boolean exists = existsValidByOrder2(nextField, eachBlocks, pieces, height, reachable, maxDepth, depth + 1, hold);
+                        if (exists)
+                            return true;
+                    }
+
+                    operationWithKeys.add(index, key);
+                }
+            }
+        }
+
         return false;
     }
 }

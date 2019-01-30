@@ -42,7 +42,8 @@ public class DevMain {
 //        String command = "setup -p *! --fill i --margin o -t v115@2gWpCeWpDe0hQpxhAe4hAe2hJeAgH";
 //        String command = "setup -p [^SZT]! --fill i --margin o -t v115@zgTpwhQpDeTpAeQpDezhAewhDeyhQpAexhCeTpAeRp?MeAgH";
 
-        String command = "path -t v115@RhA8GeE8EeB8JeAgH -p LZZSITSO";
+//        String command = "path -t v115@RhA8GeE8EeB8JeAgH -p LZZSITSO";
+        String command = "path -p J,Z,O,S,L,I,I,J,S,O,Z -t v115@vhAAgH";
 
         int returnCode = EntryPointMain.main(command.split(" "));
         System.exit(returnCode);
