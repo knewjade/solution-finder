@@ -208,97 +208,70 @@ public class BuildUp {
 
     // block順番で組み立てられる手順が存在するかチェックする
     // operationsで使用するミノとblocksが一致していること
-    public static boolean existsValidByOrder2(Field field, Stream<MinoOperationWithKey> operations, List<Piece> pieces, int height, Reachable reachable, int maxDepth) {
+    public static boolean existsValidByOrderWithHold(Field field, Stream<MinoOperationWithKey> operations, List<Piece> pieces, int height, Reachable reachable, int maxDepth) {
         EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks = operations.sequential().collect(() -> new EnumMap<>(Piece.class), (blockLinkedListEnumMap, operationWithKey) -> {
             Piece piece = operationWithKey.getPiece();
             LinkedList<MinoOperationWithKey> operationWithKeys = blockLinkedListEnumMap.computeIfAbsent(piece, b -> new LinkedList<>());
             operationWithKeys.add(operationWithKey);
         }, EnumMap::putAll);
 
-        return existsValidByOrder2(field.freeze(height), eachBlocks, pieces, height, reachable, maxDepth, 1, pieces.get(0));
+        return existsValidByOrderWithHold(field.freeze(height), eachBlocks, pieces, height, reachable, maxDepth, 1, pieces.get(0));
     }
 
-    private static boolean existsValidByOrder2(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height, Reachable reachable, int maxDepth, int depth, Piece hold) {
+    private static boolean existsValidByOrderWithHold(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height, Reachable reachable, int maxDepth, int depth, Piece hold) {
         long deleteKey = field.clearLineReturnKey();
 
         Piece piece = depth < pieces.size() ? pieces.get(depth) : null;
 
-        if (hold != null) {
-            LinkedList<MinoOperationWithKey> operationWithKeys = eachBlocks.get(hold);
-            if (operationWithKeys != null) {
-                for (int index = 0; index < operationWithKeys.size(); index++) {
-                    MinoOperationWithKey key = operationWithKeys.remove(index);
-
-                    long needDeletedKey = key.getNeedDeletedKey();
-                    if ((deleteKey & needDeletedKey) != needDeletedKey) {
-                        // 必要な列が消えていない
-                        operationWithKeys.add(index, key);
-                        continue;
-                    }
-
-                    // すでに下のラインが消えているときは、その分スライドさせる
-                    int originalY = key.getY();
-                    int deletedLines = Long.bitCount(KeyOperators.getMaskForKeyBelowY(originalY) & deleteKey);
-
-                    Mino mino = key.getMino();
-                    int x = key.getX();
-                    int y = originalY - deletedLines;
-
-                    if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY())) {
-                        if (depth == maxDepth)
-                            return true;
-
-                        Field nextField = field.freeze(height);
-                        nextField.put(mino, x, y);
-                        nextField.insertBlackLineWithKey(deleteKey);
-
-                        boolean exists = existsValidByOrder2(nextField, eachBlocks, pieces, height, reachable, maxDepth, depth + 1, piece);
-                        if (exists)
-                            return true;
-                    }
-
-                    operationWithKeys.add(index, key);
-                }
-            }
+        if (hold != null && existsValidByOrderWithHold(field, eachBlocks, pieces, height, reachable, maxDepth, depth, hold, deleteKey, hold)) {
+            return true;
         }
 
-        if (piece != null) {
-            LinkedList<MinoOperationWithKey> operationWithKeys = eachBlocks.get(piece);
-            if (operationWithKeys != null) {
-                for (int index = 0; index < operationWithKeys.size(); index++) {
-                    MinoOperationWithKey key = operationWithKeys.remove(index);
+        if (piece != null && existsValidByOrderWithHold(field, eachBlocks, pieces, height, reachable, maxDepth, depth, hold, deleteKey, hold)) {
+            return true;
+        }
 
-                    long needDeletedKey = key.getNeedDeletedKey();
-                    if ((deleteKey & needDeletedKey) != needDeletedKey) {
-                        // 必要な列が消えていない
-                        operationWithKeys.add(index, key);
-                        continue;
-                    }
+        return false;
+    }
 
-                    // すでに下のラインが消えているときは、その分スライドさせる
-                    int originalY = key.getY();
-                    int deletedLines = Long.bitCount(KeyOperators.getMaskForKeyBelowY(originalY) & deleteKey);
+    private static boolean existsValidByOrderWithHold(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height, Reachable reachable, int maxDepth, int depth, Piece hold, long deleteKey, Piece nextHoldPiece) {
+        LinkedList<MinoOperationWithKey> operationWithKeys = eachBlocks.get(hold);
+        if (operationWithKeys == null) {
+            return false;
+        }
 
-                    Mino mino = key.getMino();
-                    int x = key.getX();
-                    int y = originalY - deletedLines;
+        for (int index = 0; index < operationWithKeys.size(); index++) {
+            MinoOperationWithKey key = operationWithKeys.remove(index);
 
-                    if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY())) {
-                        if (depth == maxDepth)
-                            return true;
-
-                        Field nextField = field.freeze(height);
-                        nextField.put(mino, x, y);
-                        nextField.insertBlackLineWithKey(deleteKey);
-
-                        boolean exists = existsValidByOrder2(nextField, eachBlocks, pieces, height, reachable, maxDepth, depth + 1, hold);
-                        if (exists)
-                            return true;
-                    }
-
-                    operationWithKeys.add(index, key);
-                }
+            long needDeletedKey = key.getNeedDeletedKey();
+            if ((deleteKey & needDeletedKey) != needDeletedKey) {
+                // 必要な列が消えていない
+                operationWithKeys.add(index, key);
+                continue;
             }
+
+            // すでに下のラインが消えているときは、その分スライドさせる
+            int originalY = key.getY();
+            int deletedLines = Long.bitCount(KeyOperators.getMaskForKeyBelowY(originalY) & deleteKey);
+
+            Mino mino = key.getMino();
+            int x = key.getX();
+            int y = originalY - deletedLines;
+
+            if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY())) {
+                if (depth == maxDepth)
+                    return true;
+
+                Field nextField = field.freeze(height);
+                nextField.put(mino, x, y);
+                nextField.insertBlackLineWithKey(deleteKey);
+
+                boolean exists = existsValidByOrderWithHold(nextField, eachBlocks, pieces, height, reachable, maxDepth, depth + 1, nextHoldPiece);
+                if (exists)
+                    return true;
+            }
+
+            operationWithKeys.add(index, key);
         }
 
         return false;

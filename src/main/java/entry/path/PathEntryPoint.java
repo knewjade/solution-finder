@@ -7,7 +7,10 @@ import common.datastore.BlockField;
 import common.pattern.LoadedPatternGenerator;
 import common.pattern.PatternGenerator;
 import common.tetfu.common.ColorConverter;
+import concurrent.HarddropReachableThreadLocal;
+import concurrent.LockedReachableThreadLocal;
 import core.FinderConstant;
+import core.action.reachable.Reachable;
 import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
 import core.field.Field;
@@ -247,9 +250,12 @@ public class PathEntryPoint implements EntryPoint {
         TaskResultHelper taskResultHelper = createTaskResultHelper(maxClearLine);
         PerfectPackSearcher searcher = new PerfectPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper, threadCount != 1);
         FumenParser fumenParser = createFumenParser(settings.isTetfuSplit(), minoFactory, colorConverter);
-        ThreadLocal<BuildUpStream> threadLocalBuildUpStream = createBuildUpStreamThreadLocal(settings.getDropType(), maxClearLine);
 
-        return new PathCore(searcher, maxDepth, isUsingHold, fumenParser, threadLocalBuildUpStream, validPiecesPool);
+        DropType dropType = settings.getDropType();
+        ThreadLocal<BuildUpStream> threadLocalBuildUpStream = createBuildUpStreamThreadLocal(dropType, maxClearLine);
+        ThreadLocal<? extends Reachable> reachableThreadLocal = createReachableThreadLocal(dropType, maxClearLine);
+
+        return new PathCore(searcher, maxDepth, isUsingHold, fumenParser, threadLocalBuildUpStream, reachableThreadLocal, validPiecesPool);
     }
 
     private TaskResultHelper createTaskResultHelper(int height) {
@@ -270,6 +276,16 @@ public class PathEntryPoint implements EntryPoint {
                 return new LockedBuildUpListUpThreadLocal(maxClearLine);
             case Harddrop:
                 return new HarddropBuildUpListUpThreadLocal(maxClearLine);
+        }
+        throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
+    }
+
+    private ThreadLocal<? extends Reachable> createReachableThreadLocal(DropType dropType, int maxClearLine) throws FinderInitializeException {
+        switch (dropType) {
+            case Softdrop:
+                return new LockedReachableThreadLocal(maxClearLine);
+            case Harddrop:
+                return new HarddropReachableThreadLocal(maxClearLine);
         }
         throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
     }
