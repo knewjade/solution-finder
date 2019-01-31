@@ -1,6 +1,7 @@
 package entry.path;
 
 import common.ValidPiecesPool;
+import common.buildup.BuildUp;
 import common.buildup.BuildUpStream;
 import common.datastore.BlockField;
 import common.datastore.MinoOperationWithKey;
@@ -8,6 +9,7 @@ import common.datastore.Operation;
 import common.datastore.OperationWithKey;
 import common.datastore.blocks.LongPieces;
 import common.order.ReverseOrderLookUp;
+import core.action.reachable.Reachable;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Mino;
@@ -27,17 +29,25 @@ class PathCore {
     private final PerfectPackSearcher searcher;
     private final FumenParser fumenParser;
     private final ThreadLocal<BuildUpStream> buildUpStreamThreadLocal;
+    private final ThreadLocal<? extends Reachable> reachableThreadLocal;
     private final boolean isUsingHold;
     private final int maxDepth;
     private final ValidPiecesPool piecesPool;
 
-    PathCore(PerfectPackSearcher searcher, int maxDepth, boolean isUsingHold, FumenParser fumenParser, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal, ValidPiecesPool piecesPool) {
+    private final ReverseOrderLookUp reverseOrderLookUpReduceDepth;
+    private final ReverseOrderLookUp reverseOrderLookUpSameDepth;
+
+    PathCore(PerfectPackSearcher searcher, int maxDepth, boolean isUsingHold, FumenParser fumenParser, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal, ThreadLocal<? extends Reachable> reachableThreadLocal, ValidPiecesPool piecesPool) {
         this.searcher = searcher;
         this.fumenParser = fumenParser;
         this.buildUpStreamThreadLocal = buildUpStreamThreadLocal;
+        this.reachableThreadLocal = reachableThreadLocal;
         this.isUsingHold = isUsingHold;
         this.maxDepth = maxDepth;
         this.piecesPool = piecesPool;
+
+        this.reverseOrderLookUpReduceDepth = new ReverseOrderLookUp(maxDepth, maxDepth + 1);
+        this.reverseOrderLookUpSameDepth = new ReverseOrderLookUp(maxDepth, maxDepth);
     }
 
     List<PathPair> run(Field field, SizedBit sizedBit) throws ExecutionException, InterruptedException {
@@ -61,8 +71,8 @@ class PathCore {
 
                     // 地形の中で組むことができるSetを作成
                     HashSet<LongPieces> piecesSolution = validOperaions.stream()
-                            .map(operationWithKeys -> operationWithKeys.stream()
-                                    .map(OperationWithKey::getPiece)
+                            .map(
+                                    operationWithKeys -> operationWithKeys.stream().map(OperationWithKey::getPiece)
                             )
                             .map(LongPieces::new)
                             .collect(Collectors.toCollection(HashSet::new));
@@ -86,7 +96,9 @@ class PathCore {
                     // 譜面の作成
                     String fumen = fumenParser.parse(operationsToUrl, field, maxClearLine);
 
-                    return new PathPair(result, piecesSolution, piecesPattern, fumen, new ArrayList<>(operationsToUrl), validPieces);
+                    long numOfValidSpecifiedPatterns = getNumOfValidSpecifiedPatterns(field, operations, maxClearLine);
+
+                    return new PathPair(result, piecesSolution, piecesPattern, fumen, new ArrayList<>(operationsToUrl), validPieces, numOfValidSpecifiedPatterns);
                 })
                 .filter(pathPair -> pathPair != PathPair.EMPTY_PAIR)
                 .collect(Collectors.toList());
@@ -151,7 +163,9 @@ class PathCore {
                     String fumen = fumenParser.parse(sampleOperations, field, maxClearLine);
 
                     HashSet<LongPieces> validPieces = piecesPool.getValidPieces();
-                    return new PathPair(result, piecesSolution, piecesPattern, fumen, new ArrayList<>(sampleOperations), validPieces);
+                    long numOfValidSpecifiedPatterns = getNumOfValidSpecifiedPatterns(field, operations, maxClearLine);
+
+                    return new PathPair(result, piecesSolution, piecesPattern, fumen, new ArrayList<>(sampleOperations), validPieces, numOfValidSpecifiedPatterns);
                 })
                 .filter(pathPair -> pathPair != PathPair.EMPTY_PAIR)
                 .collect(Collectors.toList());
@@ -171,12 +185,10 @@ class PathCore {
 
         if (piecesPool.isHoldReduced()) {
             // allとvalidが異なる
-            ReverseOrderLookUp reverseOrderLookUp = new ReverseOrderLookUp(maxDepth, maxDepth + 1);
-
             return piecesSolution.stream()
                     .filter(validPieces::contains)
                     .flatMap(blocks -> {
-                        return reverseOrderLookUp.parse(blocks.getPieces())
+                        return reverseOrderLookUpReduceDepth.parse(blocks.getPieces())
                                 .map(stream -> stream.collect(Collectors.toCollection(ArrayList::new)))
                                 .flatMap(blocksWithHold -> {
                                     int nullIndex = blocksWithHold.indexOf(null);
@@ -195,12 +207,10 @@ class PathCore {
                     .collect(Collectors.toCollection(HashSet::new));
         } else if (isUsingHold) {
             // allとvalidが同じだが、ホールドが使える
-            ReverseOrderLookUp reverseOrderLookUp = new ReverseOrderLookUp(maxDepth, maxDepth);
-
             return piecesSolution.stream()
                     .filter(validPieces::contains)
                     .flatMap(blocks -> {
-                        return reverseOrderLookUp.parse(blocks.getPieces())
+                        return reverseOrderLookUpSameDepth.parse(blocks.getPieces())
                                 .map(stream -> stream.collect(Collectors.toCollection(ArrayList::new)))
                                 .flatMap(blocksWithHold -> {
                                     int nullIndex = blocksWithHold.indexOf(null);
@@ -224,6 +234,28 @@ class PathCore {
             return piecesSolution.stream()
                     .filter(validPieces::contains)
                     .collect(Collectors.toCollection(HashSet::new));
+        }
+    }
+
+    private long getNumOfValidSpecifiedPatterns(Field field, LinkedList<MinoOperationWithKey> operations, int maxClearLine) {
+        HashSet<LongPieces> allSpecifiedPieces = piecesPool.getAllSpecifiedPieces();
+
+        Reachable reachable = reachableThreadLocal.get();
+
+        if (isUsingHold) {
+            // ミノ順の並び替えも確認する
+            return allSpecifiedPieces.stream()
+                    .filter(pieces -> {
+                        return BuildUp.existsValidByOrderWithHold(field, operations.stream(), pieces.getPieces(), maxClearLine, reachable, maxDepth);
+                    })
+                    .count();
+        } else {
+            // そのまま絞り込む
+            return allSpecifiedPieces.stream()
+                    .filter(pieces -> {
+                        return BuildUp.existsValidByOrder(field, operations.stream(), pieces.getPieces(), maxClearLine, reachable, maxDepth);
+                    })
+                    .count();
         }
     }
 }

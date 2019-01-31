@@ -142,7 +142,7 @@ public class LinkPathOutput implements PathOutput {
                             .collect(Collectors.joining());
 
                     // 入力パターンのうち有効なミノ順を確率に変換
-                    long counter = pathPair.blocksStreamForPattern().count();
+                    long counter = pathPair.getNumOfValidSpecifiedPatterns();
                     double validPercent = (double) counter / numOfAllPatternSequences * 100.0;
                     String comment = String.format("%.1f %% : %s", validPercent, blocksName);
 
@@ -153,8 +153,10 @@ public class LinkPathOutput implements PathOutput {
                     htmlBuilder.addColumn(htmlColumn, line, -linkAndPriority.getValue());
                 });
 
-        String mergedFumen = bufferedFumenParser.parse();
-        htmlBuilder.addHeader(String.format("<div><a href='http://fumen.zui.jp/?v115@%s'>All solutions<a></div>", mergedFumen));
+        if (!pathPairs.isEmpty()) {
+            String mergedFumen = bufferedFumenParser.parse();
+            htmlBuilder.addHeader(String.format("<div><a href='http://fumen.zui.jp/?v115@%s'>All solutions<a></div>", mergedFumen));
+        }
 
         // 出力
         try (BufferedWriter writer = file.newBufferedWriter()) {

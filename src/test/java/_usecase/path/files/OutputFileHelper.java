@@ -48,8 +48,13 @@ public class OutputFileHelper {
             html = split[1];
 
             List<String> list = extractTetfu(split[0]);
-            assert list.size() == 1;
-            mergedFumen = list.get(0);
+            if (list.isEmpty()) {
+                mergedFumen = "";
+            } else if (list.size() == 1) {
+                mergedFumen = list.get(0);
+            } else {
+                throw new IllegalStateException("Too many merged fumens");
+            }
         }
 
         if (html.contains("ライン消去あり")) {

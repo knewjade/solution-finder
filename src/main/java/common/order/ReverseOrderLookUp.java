@@ -11,13 +11,15 @@ import java.util.stream.Stream;
 // 「あるミノ列」からホールドを利用して指定したミノ列にできるとき、その「あるミノ列」をすべて逆算して列挙
 public class ReverseOrderLookUp {
     private final List<List<Integer>> indexesList;
+    private final boolean containsNull;
 
     /**
-     * @param toDepth ホールドした後のミノ列の長さ
+     * @param toDepth   ホールドした後のミノ列の長さ
      * @param fromDepth 元のミノ列の長さ（ホールド前のミノ列）
      */
     public ReverseOrderLookUp(int toDepth, int fromDepth) {
         this.indexesList = reverse(toDepth, fromDepth);
+        this.containsNull = toDepth < fromDepth;
     }
 
     private List<List<Integer>> reverse(int toDepth, int fromDepth) {
@@ -54,8 +56,21 @@ public class ReverseOrderLookUp {
     }
 
     public Stream<Stream<Piece>> parse(List<Piece> pieces) {
+        return parse(pieces, null);
+    }
+
+    private Stream<Stream<Piece>> parse(List<Piece> pieces, Piece nullPiece) {
         assert pieces.size() <= indexesList.get(0).size();
         return indexesList.stream()
-                .map(indexes -> indexes.stream().map(index -> index != -1 ? pieces.get(index) : null));
+                .map(indexes -> indexes.stream().map(index -> index != -1 ? pieces.get(index) : nullPiece));
+    }
+
+    public Stream<Stream<Piece>> parseAndExpand(List<Piece> pieces) {
+        assert pieces.size() <= indexesList.get(0).size();
+        if (containsNull) {
+            return Piece.valueList().stream().flatMap(piece -> parse(pieces, piece));
+        } else {
+            return parse(pieces);
+        }
     }
 }

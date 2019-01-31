@@ -18,11 +18,16 @@ public class ValidPiecesPool {
     // 11ミノパターン指定でHoldありの場合、10ミノ・11ミノともに含まれる
     private final HashSet<LongPieces> validPieces;
 
-    // パターンから生成される全ての有効ミノ順
+    // Holdも考慮したパターンから生成される全ての有効ミノ順
     // 11ミノパターン指定でHoldありの場合、11ミノのみ含まれる
     private final HashSet<LongPieces> allPieces;
 
+    // 指定されたそのままのパターン
+    // 11ミノパターン指定でHoldありの場合、11ミノのみ含まれる
+    private final HashSet<LongPieces> allSpecifiedPieces;
+
     public ValidPiecesPool(PatternGenerator blocksGenerator, int maxDepth, boolean isUsingHold) {
+        this.allSpecifiedPieces = getAllSpecifiedPieces(blocksGenerator, maxDepth, isUsingHold);
         this.isHoldReduced = isHoldReducedPieces(blocksGenerator, maxDepth, isUsingHold);
         this.allPieces = getAllPieces(blocksGenerator, maxDepth, isUsingHold);
         this.validPieces = getValidPieces(blocksGenerator, allPieces, maxDepth, isHoldReduced);
@@ -30,6 +35,28 @@ public class ValidPiecesPool {
 
     private boolean isHoldReducedPieces(PatternGenerator blocksGenerator, int maxDepth, boolean isUsingHold) {
         return isUsingHold && maxDepth < blocksGenerator.getDepth();
+    }
+
+    private HashSet<LongPieces> getAllSpecifiedPieces(PatternGenerator blocksGenerator, int maxDepth, boolean isUsingHold) {
+        if (isUsingHold) {
+            // ホールドあり
+            if (maxDepth + 1 < blocksGenerator.getDepth()) {
+                // Reduceあり // ホールドはしない
+                return toReducedHashSetWithoutHold(blocksGenerator.blocksStream(), maxDepth + 1);
+            } else {
+                // そのまま
+                return toDirectHashSet(blocksGenerator.blocksStream());
+            }
+        } else {
+            // ホールドなし
+            if (maxDepth < blocksGenerator.getDepth()) {
+                // Reduceあり
+                return toReducedHashSetWithoutHold(blocksGenerator.blocksStream(), maxDepth);
+            } else {
+                // そのまま
+                return toDirectHashSet(blocksGenerator.blocksStream());
+            }
+        }
     }
 
     private HashSet<LongPieces> getAllPieces(PatternGenerator blocksGenerator, int maxDepth, boolean isUsingHold) {
@@ -100,5 +127,9 @@ public class ValidPiecesPool {
 
     public HashSet<LongPieces> getAllPieces() {
         return allPieces;
+    }
+
+    public HashSet<LongPieces> getAllSpecifiedPieces() {
+        return allSpecifiedPieces;
     }
 }

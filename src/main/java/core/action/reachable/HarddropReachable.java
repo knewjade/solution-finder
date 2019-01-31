@@ -1,7 +1,6 @@
 package core.action.reachable;
 
 import common.datastore.action.Action;
-import core.action.cache.MinimalLockedCache;
 import core.field.Field;
 import core.mino.Mino;
 import core.mino.MinoFactory;
@@ -17,7 +16,6 @@ import java.util.List;
 public class HarddropReachable implements Reachable {
     private final MinoFactory minoFactory;
     private final MinoShifter minoShifter;
-    private final MinimalLockedCache lockedCache;
 
     // temporary変数
     private int appearY = 0;
@@ -25,7 +23,6 @@ public class HarddropReachable implements Reachable {
     public HarddropReachable(MinoFactory minoFactory, MinoShifter minoShifter, int maxY) {
         this.minoFactory = minoFactory;
         this.minoShifter = minoShifter;
-        this.lockedCache = new MinimalLockedCache(maxY);
     }
 
     @Override
@@ -49,13 +46,12 @@ public class HarddropReachable implements Reachable {
     }
 
     private boolean check(Field field, Piece piece, int x, int y, Rotate rotate) {
-        lockedCache.clear();
         Mino mino = minoFactory.create(piece, rotate);
         return check(field, mino, x, y);
     }
 
     private boolean check(Field field, Mino mino, int x, int y) {
-        int maxY = appearY - mino.getMaxY();
+        int maxY = appearY - mino.getMinY();
         int harddropY = field.getYOnHarddrop(mino, x, maxY);
         return harddropY == y;
     }
