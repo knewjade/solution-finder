@@ -11,6 +11,7 @@ import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
 import core.field.Field;
 import core.field.FieldFactory;
+import core.field.LargeField;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.Piece;
@@ -48,7 +49,10 @@ public class OneFumenParser implements FumenParser {
         return tetfu.encode(Collections.singletonList(tetfuElement));
     }
 
-    public ColoredField parseToColoredField(List<MinoOperationWithKey> operations, Field initField, int maxClearLine) {
+    public ColoredField parseToColoredField(List<MinoOperationWithKey> operations, Field field, int maxClearLine) {
+        LargeField initField = FieldFactory.createLargeField();
+        initField.merge(field);
+
         // BlockField を生成
         BlockField blockField = createBlockField(operations, maxClearLine);
 

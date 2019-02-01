@@ -157,6 +157,12 @@ public class SmallField implements Field {
     }
 
     @Override
+    public boolean existsBlockCountOnY(int y) {
+        long mask = 0x3ffL << y * FIELD_WIDTH;
+        return (xBoard & mask) != 0L;
+    }
+
+    @Override
     public int getNumOfAllBlocks() {
         return Long.bitCount(xBoard);
     }
@@ -170,7 +176,9 @@ public class SmallField implements Field {
     @Override
     public long clearLineReturnKey() {
         long deleteKey = KeyOperators.getDeleteKey(xBoard);
-        this.xBoard = LongBoardMap.deleteLine(xBoard, deleteKey);
+
+        deleteLineWithKey(deleteKey);
+
         return deleteKey;
     }
 
@@ -182,6 +190,11 @@ public class SmallField implements Field {
     @Override
     public void insertWhiteLineWithKey(long deleteKey) {
         this.xBoard = LongBoardMap.insertWhiteLine(xBoard, deleteKey);
+    }
+
+    @Override
+    public void deleteLineWithKey(long deleteKey) {
+        this.xBoard = LongBoardMap.deleteLine(xBoard, deleteKey);
     }
 
     @Override

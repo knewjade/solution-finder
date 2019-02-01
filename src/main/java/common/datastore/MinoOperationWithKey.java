@@ -2,7 +2,7 @@ package common.datastore;
 
 import core.mino.Mino;
 
-public interface MinoOperationWithKey extends OperationWithKey {
+public interface MinoOperationWithKey extends OperationWithKey, MinoOperation {
     static int defaultHash(Mino mino, int x, int y, long needDeletedKey) {
         int result = y;
         result = 10 * result + x;
@@ -17,6 +17,4 @@ public interface MinoOperationWithKey extends OperationWithKey {
                 self.getNeedDeletedKey() == that.getNeedDeletedKey() &&
                 self.getMino().equals(that.getMino());
     }
-
-    Mino getMino();
 }

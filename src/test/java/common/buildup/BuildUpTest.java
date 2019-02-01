@@ -481,4 +481,46 @@ class BuildUpTest {
         assertThat(BuildUp.existsValidByOrder(field, operations.stream(), Arrays.asList(T, L, I, L), height, reachable)).isFalse();
         assertThat(BuildUp.existsValidByOrder(field, operations.stream(), Arrays.asList(T, I, L, L), height, reachable)).isFalse();
     }
+
+    @Test
+    void existsValidBuildPatternWithoutKey() throws Exception {
+        Field field = FieldFactory.createField("" +
+                "____XXXXXX" +
+                "____XXXXXX" +
+                "____XXXXXX" +
+                "____XXXXXX" +
+                ""
+        );
+        int height = 4;
+
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        MinoRotation minoRotation = new MinoRotation();
+
+        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
+
+        {
+            String line = "O,0,0,0;O,0,2,0;O,0,2,0;O,0,2,0";
+            Operations operations = OperationInterpreter.parseToOperations(line);
+            List<MinoOperationWithKey> keys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
+
+            assertThat(BuildUp.existsValidBuildPatternWithoutKey(field, keys, height, reachable)).isTrue();
+        }
+
+        {
+            String line = "L,2,1,1;I,L,3,1;Z,0,1,0;J,2,1,1";
+            Operations operations = OperationInterpreter.parseToOperations(line);
+            List<MinoOperationWithKey> keys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
+
+            assertThat(BuildUp.existsValidBuildPatternWithoutKey(field, keys, height, reachable)).isTrue();
+        }
+
+        {
+            String line = "I,0,1,1;O,0,0,0;O,0,2,0;I,0,1,0";
+            Operations operations = OperationInterpreter.parseToOperations(line);
+            List<MinoOperationWithKey> keys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
+
+            assertThat(BuildUp.existsValidBuildPatternWithoutKey(field, keys, height, reachable)).isFalse();
+        }
+    }
 }

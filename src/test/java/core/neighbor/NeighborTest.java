@@ -26,7 +26,7 @@ class NeighborTest {
         Neighbor neighbor = new Neighbor(piece);
 
         OriginalPieceFactory factory = new OriginalPieceFactory(4);
-        List<OriginalPiece> pieces = new ArrayList<>(factory.create());
+        List<OriginalPiece> pieces = new ArrayList<>(factory.createPieces());
         Randoms randoms = new Randoms();
 
         ArrayList<Neighbor> all = new ArrayList<>();
@@ -67,7 +67,7 @@ class NeighborTest {
         Neighbor neighbor = new Neighbor(piece);
 
         OriginalPieceFactory factory = new OriginalPieceFactory(4);
-        List<OriginalPiece> pieces = new ArrayList<>(factory.create());
+        List<OriginalPiece> pieces = new ArrayList<>(factory.createPieces());
         Randoms randoms = new Randoms();
 
         List<Neighbor> samples = randoms.sample(pieces, 4).stream()
@@ -83,7 +83,7 @@ class NeighborTest {
         Neighbor neighbor = new Neighbor(piece);
 
         OriginalPieceFactory factory = new OriginalPieceFactory(4);
-        List<OriginalPiece> pieces = new ArrayList<>(factory.create());
+        List<OriginalPiece> pieces = new ArrayList<>(factory.createPieces());
         Randoms randoms = new Randoms();
 
         List<Neighbor> samples = randoms.sample(pieces, 4).stream()
@@ -99,7 +99,7 @@ class NeighborTest {
         Neighbor neighbor = new Neighbor(piece);
 
         OriginalPieceFactory factory = new OriginalPieceFactory(4);
-        List<OriginalPiece> pieces = new ArrayList<>(factory.create());
+        List<OriginalPiece> pieces = new ArrayList<>(factory.createPieces());
         Randoms randoms = new Randoms();
 
         List<Neighbor> samples = randoms.sample(pieces, 4).stream()
@@ -115,7 +115,7 @@ class NeighborTest {
         Neighbor neighbor = new Neighbor(piece);
 
         OriginalPieceFactory factory = new OriginalPieceFactory(4);
-        List<OriginalPiece> pieces = new ArrayList<>(factory.create());
+        List<OriginalPiece> pieces = new ArrayList<>(factory.createPieces());
         Randoms randoms = new Randoms();
 
         List<Neighbor> samples = randoms.sample(pieces, 4).stream()

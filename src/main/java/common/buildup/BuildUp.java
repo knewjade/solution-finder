@@ -1,13 +1,16 @@
 package common.buildup;
 
+import common.datastore.MinoOperation;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.OperationWithKey;
+import common.datastore.action.Action;
 import core.action.reachable.Reachable;
 import core.field.Field;
 import core.field.KeyOperators;
 import core.mino.Mino;
 import core.mino.Piece;
 
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,7 +48,7 @@ public class BuildUp {
     }
 
     // 組み立てられる手順が存在するか確認
-    public static boolean existsValidBuildPattern(Field fieldOrigin, List<MinoOperationWithKey> operationWithKeys, int height, Reachable reachable) {
+    public static boolean existsValidBuildPattern(Field fieldOrigin, List<? extends MinoOperationWithKey> operationWithKeys, int height, Reachable reachable) {
         LinkedList<MinoOperationWithKey> keys = new LinkedList<>(operationWithKeys);
         return existsValidBuildPatternDirectly(fieldOrigin, keys, height, reachable);
     }
@@ -95,6 +98,48 @@ public class BuildUp {
             }
 
             operationWithKeys.add(index, key);
+        }
+
+        field.insertBlackLineWithKey(deleteKey);
+        return false;
+    }
+
+    // 組み立てられる手順が存在するか確認
+    // キーのチェックは行わない
+    public static boolean existsValidBuildPatternWithoutKey(Field fieldOrigin, List<? extends MinoOperation> operations, int height, Reachable reachable) {
+        LinkedList<MinoOperation> keys = new LinkedList<>(operations);
+        return existsValidBuildPatternDirectlyWithoutKey(fieldOrigin, keys, height, reachable);
+    }
+
+    public static boolean existsValidBuildPatternDirectlyWithoutKey(Field fieldOrigin, LinkedList<MinoOperation> operations, int height, Reachable reachable) {
+        operations.sort(Comparator.comparingInt(Action::getY));
+        return existsValidBuildPatternRecursiveWithoutKey(fieldOrigin.freeze(height), operations, height, reachable);
+    }
+
+    private static boolean existsValidBuildPatternRecursiveWithoutKey(Field field, LinkedList<MinoOperation> operations, int height, Reachable reachable) {
+        long deleteKey = field.clearLineReturnKey();
+
+        for (int index = 0; index < operations.size(); index++) {
+            MinoOperation operation = operations.remove(index);
+
+            Mino mino = operation.getMino();
+            int x = operation.getX();
+            int y = operation.getY();
+
+            if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY())) {
+                if (operations.isEmpty())
+                    return true;
+
+                Field nextField = field.freeze(height);
+                nextField.put(mino, x, y);
+                nextField.insertBlackLineWithKey(deleteKey);
+
+                boolean exists = existsValidBuildPatternRecursiveWithoutKey(nextField, operations, height, reachable);
+                if (exists)
+                    return true;
+            }
+
+            operations.add(index, operation);
         }
 
         field.insertBlackLineWithKey(deleteKey);

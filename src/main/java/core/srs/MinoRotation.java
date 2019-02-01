@@ -1,8 +1,8 @@
 package core.srs;
 
-import core.mino.Piece;
 import core.field.Field;
 import core.mino.Mino;
+import core.mino.Piece;
 
 import java.util.EnumMap;
 
@@ -54,6 +54,16 @@ public class MinoRotation {
         return blockMap;
     }
 
+    public int[] getKicks(Field field, Mino before, Mino after, int x, int y, RotateDirection direction) {
+        switch (direction) {
+            case Right:
+                return getKicksWithRightRotation(field, before, after, x, y);
+            case Left:
+                return getKicksWithLeftRotation(field, before, after, x, y);
+        }
+        throw new IllegalStateException();
+    }
+
     public int[] getKicksWithRightRotation(Field field, Mino before, Mino after, int x, int y) {
         Pattern pattern = rightMap.get(before.getPiece()).get(before.getRotate());
         return getKicks(field, x, y, after, pattern);
@@ -73,9 +83,19 @@ public class MinoRotation {
         return null;
     }
 
-    public int[] getKicksWithLeftRotation(Field field,Mino before, Mino after, int x, int y) {
+    public int[] getKicksWithLeftRotation(Field field, Mino before, Mino after, int x, int y) {
         Pattern pattern = leftMap.get(before.getPiece()).get(before.getRotate());
         return getKicks(field, x, y, after, pattern);
+    }
+
+    public int[][] getPatternsFrom(Mino current, RotateDirection direction) {
+        switch (direction) {
+            case Right:
+                return getRightPatternsFrom(current);
+            case Left:
+                return getLeftPatternsFrom(current);
+        }
+        throw new IllegalStateException();
     }
 
     public int[][] getRightPatternsFrom(Mino current) {

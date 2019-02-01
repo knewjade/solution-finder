@@ -3,7 +3,9 @@ package common.parser;
 import common.buildup.BuildUpStream;
 import common.comparator.OperationWithKeyComparator;
 import common.datastore.MinoOperationWithKey;
+import common.datastore.Operation;
 import common.datastore.Operations;
+import common.datastore.SimpleOperation;
 import concurrent.LockedReachableThreadLocal;
 import core.column_field.ColumnField;
 import core.field.Field;
@@ -11,7 +13,9 @@ import core.field.FieldFactory;
 import core.field.FieldView;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import core.mino.Piece;
 import core.srs.MinoRotation;
+import core.srs.Rotate;
 import lib.ListComparator;
 import lib.Randoms;
 import module.LongTest;
@@ -28,6 +32,8 @@ import searcher.pack.task.PerfectPackSearcher;
 import searcher.pack.task.Result;
 import searcher.pack.task.TaskResultHelper;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -139,5 +145,26 @@ class OperationTransformTest {
                 });
             });
         }
+    }
+
+    @Test
+    void minMaxY() {
+        MinoFactory minoFactory = new MinoFactory();
+        List<Operation> operationList = Arrays.asList(
+                new SimpleOperation(Piece.T, Rotate.Right, 0, 2),
+                new SimpleOperation(Piece.I, Rotate.Left, 9, 2)
+        );
+
+        assertThat(OperationTransform.getMinY(minoFactory, operationList)).isEqualTo(1);
+        assertThat(OperationTransform.getMaxY(minoFactory, operationList)).isEqualTo(4);
+    }
+
+    @Test
+    void minMaxYWithEmpty() {
+        MinoFactory minoFactory = new MinoFactory();
+        List<Operation> operationList = Collections.emptyList();
+
+        assertThat(OperationTransform.getMinY(minoFactory, operationList)).isEqualTo(-1);
+        assertThat(OperationTransform.getMaxY(minoFactory, operationList)).isEqualTo(-1);
     }
 }

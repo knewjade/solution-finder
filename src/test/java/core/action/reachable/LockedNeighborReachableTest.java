@@ -76,7 +76,7 @@ class LockedNeighborReachableTest {
         LockedNeighborReachable reachable2 = createLockedNeighborReachable(injector, maxClearLine);
 
         OriginalPieceFactory pieceFactory = injector.getInstance(OriginalPieceFactory.class);
-        Set<OriginalPiece> pieces = pieceFactory.create();
+        Set<OriginalPiece> pieces = pieceFactory.createPieces();
 
         Randoms randoms = new Randoms();
         for (int count = 0; count < 10000; count++) {

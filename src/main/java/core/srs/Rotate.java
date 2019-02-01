@@ -8,7 +8,8 @@ public enum Rotate {
     Spawn(0),
     Right(1),
     Reverse(2),
-    Left(3),;
+    Left(3),
+    ;
 
     private static final EnumMap<Rotate, Rotate> toLeft = new EnumMap<>(Rotate.class);
     private static final EnumMap<Rotate, Rotate> toRight = new EnumMap<>(Rotate.class);
@@ -46,6 +47,16 @@ public enum Rotate {
 
     Rotate(int number) {
         this.number = number;
+    }
+
+    public Rotate get(RotateDirection direction) {
+        switch (direction) {
+            case Left:
+                return getLeftRotate();
+            case Right:
+                return getRightRotate();
+        }
+        throw new IllegalStateException();
     }
 
     public Rotate getLeftRotate() {

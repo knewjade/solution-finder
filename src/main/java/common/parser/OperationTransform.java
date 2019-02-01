@@ -3,7 +3,6 @@ package common.parser;
 import common.datastore.*;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.field.FieldView;
 import core.field.KeyOperators;
 import core.mino.Mino;
 import core.mino.MinoFactory;
@@ -130,5 +129,27 @@ public class OperationTransform {
             field.merge(pieceField);
         }
         return field;
+    }
+
+    // 最も低いブロックのy座標を取得
+    public static int getMinY(MinoFactory minoFactory, List<? extends Operation> operationsList) {
+        return operationsList.stream()
+                .mapToInt(operation -> {
+                    Mino mino = minoFactory.create(operation.getPiece(), operation.getRotate());
+                    return operation.getY() + mino.getMinY();
+                })
+                .min()
+                .orElse(-1);
+    }
+
+    // 最も高いブロックのy座標を取得
+    public static int getMaxY(MinoFactory minoFactory, List<? extends Operation> operationsList) {
+        return operationsList.stream()
+                .mapToInt(operation -> {
+                    Mino mino = minoFactory.create(operation.getPiece(), operation.getRotate());
+                    return operation.getY() + mino.getMaxY();
+                })
+                .max()
+                .orElse(-1);
     }
 }
