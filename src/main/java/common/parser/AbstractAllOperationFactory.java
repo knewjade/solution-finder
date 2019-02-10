@@ -7,6 +7,7 @@ import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import core.neighbor.SimpleOriginalPiece;
 import core.srs.Rotate;
 
 import java.util.ArrayList;
@@ -21,6 +22,10 @@ public abstract class AbstractAllOperationFactory<T> {
     private final int fieldHeight;
     private final long deleteKeyMask;
 
+    public AbstractAllOperationFactory(MinoFactory minoFactory, MinoShifter minoShifter, int fieldWidth, int fieldHeight) {
+        this(minoFactory, minoShifter, fieldWidth, fieldHeight, Long.MAX_VALUE);
+    }
+
     public AbstractAllOperationFactory(MinoFactory minoFactory, MinoShifter minoShifter, int fieldWidth, int fieldHeight, long deleteKeyMask) {
         this.minoFactory = minoFactory;
         this.minoShifter = minoShifter;
@@ -29,20 +34,12 @@ public abstract class AbstractAllOperationFactory<T> {
         this.deleteKeyMask = deleteKeyMask;
     }
 
-    public Set<T> create() {
-        HashSet<T> pieces = new HashSet<>();
-        HashSet<Mino> createdCheckSet = new HashSet<>();
+    public List<T> createList() {
+        ArrayList<T> pieces = new ArrayList<>();
 
         for (Piece piece : Piece.values()) {
-            for (Rotate originRotate : Rotate.values()) {
-                Rotate rotate = minoShifter.createTransformedRotate(piece, originRotate);
+            for (Rotate rotate : minoShifter.getUniqueRotates(piece)) {
                 Mino mino = minoFactory.create(piece, rotate);
-
-                // 追加済みかチェック
-                if (createdCheckSet.contains(mino))
-                    continue;
-
-                createdCheckSet.add(mino);
 
                 // ミノの高さを計算
                 int minoHeight = mino.getMaxY() - mino.getMinY() + 1;
@@ -105,7 +102,7 @@ public abstract class AbstractAllOperationFactory<T> {
             assert Long.bitCount(deleteKey) + indexes.size() == upperY - lowerY + 1;
 
             if ((deleteKeyMask & deleteKey) == deleteKey) {
-                for (int x = -mino.getMinX(); x < fieldWidth - mino.getMinX(); x++) {
+                for (int x = -mino.getMinX(); x < fieldWidth - mino.getMaxX(); x++) {
                     FullOperationWithKey operationWithKey = new FullOperationWithKey(mino, x, lowerY - mino.getMinY(), deleteKey, usingKey);
                     pieces.add(parseOperation(operationWithKey, upperY, fieldHeight));
                 }
@@ -116,4 +113,8 @@ public abstract class AbstractAllOperationFactory<T> {
     }
 
     protected abstract T parseOperation(FullOperationWithKey operationWithKey, int upperY, int fieldHeight);
+
+    public Set<T> create() {
+        return new HashSet<>(createList());
+    }
 }

@@ -1,5 +1,7 @@
 package common.datastore;
 
+import core.field.Field;
+import core.field.FieldFactory;
 import core.mino.Mino;
 
 public interface MinoOperationWithKey extends OperationWithKey, MinoOperation {
@@ -16,5 +18,12 @@ public interface MinoOperationWithKey extends OperationWithKey, MinoOperation {
                 self.getY() == that.getY() &&
                 self.getNeedDeletedKey() == that.getNeedDeletedKey() &&
                 self.getMino().equals(that.getMino());
+    }
+
+    default Field createMinoField(int maxHeight) {
+        Field field = FieldFactory.createField(maxHeight);
+        field.put(this.getMino(), this.getX(), this.getY());
+        field.insertWhiteLineWithKey(this.getNeedDeletedKey());
+        return field;
     }
 }

@@ -644,4 +644,57 @@ class LargeFieldTest {
             assertThat(field).isEqualTo(expected);
         }
     }
+
+    @Test
+    void mask() {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 10000; count++) {
+            // 適度にフィールドのラインが揃うようにランダムに地形を作る
+            Field field1 = randoms.field(FIELD_HEIGHT, randoms.nextIntOpen(3, 10));
+            Field field2 = randoms.field(FIELD_HEIGHT, randoms.nextIntOpen(3, 10));
+
+            // 期待値
+            Field expected = FieldFactory.createField(field1.getMaxFieldHeight());
+            for (int y = 0; y < FIELD_HEIGHT; y++) {
+                for (int x = 0; x < FIELD_WIDTH; x++) {
+                    if (!field1.isEmpty(x, y)&&!field2.isEmpty(x, y)) {
+                        expected.setBlock(x, y);
+                    }
+                }
+            }
+
+            {
+                Field freeze = field1.freeze();
+                freeze.mask(field2);
+                assertThat(freeze).isEqualTo(expected);
+            }
+
+            {
+                Field freeze = field2.freeze();
+                freeze.mask(field1);
+                assertThat(freeze).isEqualTo(expected);
+            }
+        }
+    }
+
+    @Test
+    void getUsingKey() {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 10000; count++) {
+            Field field = randoms.field(FIELD_HEIGHT, randoms.nextIntOpen(1, 10));
+
+            // 期待値
+            long expected = 0L;
+            for (int y = 0; y < FIELD_HEIGHT; y++) {
+                for (int x = 0; x < FIELD_WIDTH; x++) {
+                    if (field.exists(x, y)) {
+                        expected |= KeyOperators.getDeleteBitKey(y);
+                        break;
+                    }
+                }
+            }
+
+            assertThat(field.getUsingKey()).isEqualTo(expected);
+        }
+    }
 }

@@ -1,10 +1,20 @@
 package common.datastore;
 
+import core.field.Field;
+import core.field.FieldFactory;
 import core.mino.Mino;
 import core.mino.Piece;
 import core.srs.Rotate;
 
 public class FullOperationWithKey implements MinoOperationWithKey {
+    public static FullOperationWithKey create(Mino mino, int x, int y, long needDeletedKey, int fieldHeight) {
+        Field field = FieldFactory.createField(fieldHeight);
+        field.put(mino, x, y);
+        field.insertWhiteLineWithKey(needDeletedKey);
+        long usingKey = field.getUsingKey();
+        return new FullOperationWithKey(mino, x, y, needDeletedKey, usingKey);
+    }
+
     private final Mino mino;
     private final int x;
     private final int y;

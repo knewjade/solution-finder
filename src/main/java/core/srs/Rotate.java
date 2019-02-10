@@ -59,6 +59,16 @@ public enum Rotate {
         throw new IllegalStateException();
     }
 
+    public Rotate getReverse(RotateDirection direction) {
+        switch (direction) {
+            case Left:
+                return getRightRotate();
+            case Right:
+                return getLeftRotate();
+        }
+        throw new IllegalStateException();
+    }
+
     public Rotate getLeftRotate() {
         return toLeft.get(this);
     }
