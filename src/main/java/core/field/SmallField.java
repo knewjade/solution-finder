@@ -109,6 +109,11 @@ public class SmallField implements Field {
     }
 
     @Override
+    public boolean exists(int x, int y) {
+        return !isEmpty(x, y);
+    }
+
+    @Override
     public boolean existsAbove(int y) {
         long mask = VALID_BOARD_RANGE << y * FIELD_WIDTH;
         return y < MAX_FIELD_HEIGHT && (xBoard & mask) != 0L;
@@ -175,11 +180,21 @@ public class SmallField implements Field {
 
     @Override
     public long clearLineReturnKey() {
-        long deleteKey = KeyOperators.getDeleteKey(xBoard);
+        long deleteKey = getFilledLine();
 
         deleteLineWithKey(deleteKey);
 
         return deleteKey;
+    }
+
+    @Override
+    public long getFilledLine() {
+        return KeyOperators.getDeleteKey(xBoard);
+    }
+
+    @Override
+    public long getUsingKey() {
+        return KeyOperators.getUsingKey(xBoard);
     }
 
     @Override
@@ -321,6 +336,11 @@ public class SmallField implements Field {
     @Override
     public void mirror() {
         xBoard = KeyOperators.mirror(xBoard);
+    }
+
+    @Override
+    public void mask(Field maskField) {
+        xBoard &= maskField.getBoard(0);
     }
 
     @Override

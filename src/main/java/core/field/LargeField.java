@@ -346,6 +346,11 @@ public class LargeField implements Field {
     }
 
     @Override
+    public boolean exists(int x, int y) {
+        return !isEmpty(x, y);
+    }
+
+    @Override
     public boolean existsAbove(int y) {
         if (MAX_FIELD_HEIGHT <= y) {
             return false;
@@ -618,9 +623,30 @@ public class LargeField implements Field {
         long deleteKeyMidLow = KeyOperators.getDeleteKey(xBoardMidLow);
         long deleteKeyMidHigh = KeyOperators.getDeleteKey(xBoardMidHigh);
         long deleteKeyHigh = KeyOperators.getDeleteKey(xBoardHigh);
+
         deleteLine(deleteKeyLow, deleteKeyMidLow, deleteKeyMidHigh, deleteKeyHigh);
 
         return deleteKeyLow | (deleteKeyMidLow << 1) | (deleteKeyMidHigh << 2) | (deleteKeyHigh << 3);
+    }
+
+    @Override
+    public long getFilledLine() {
+        long deleteKeyLow = KeyOperators.getDeleteKey(xBoardLow);
+        long deleteKeyMidLow = KeyOperators.getDeleteKey(xBoardMidLow);
+        long deleteKeyMidHigh = KeyOperators.getDeleteKey(xBoardMidHigh);
+        long deleteKeyHigh = KeyOperators.getDeleteKey(xBoardHigh);
+
+        return deleteKeyLow | (deleteKeyMidLow << 1) | (deleteKeyMidHigh << 2) | (deleteKeyHigh << 3);
+    }
+
+    @Override
+    public long getUsingKey() {
+        long usingKeyLow = KeyOperators.getUsingKey(xBoardLow);
+        long usingKeyMidLow = KeyOperators.getUsingKey(xBoardMidLow);
+        long usingKeyMidHigh = KeyOperators.getUsingKey(xBoardMidHigh);
+        long usingKeyHigh = KeyOperators.getUsingKey(xBoardHigh);
+
+        return usingKeyLow | (usingKeyMidLow << 1) | (usingKeyMidHigh << 2) | (usingKeyHigh << 3);
     }
 
     private void deleteLine(long deleteKeyLow, long deleteKeyMidLow, long deleteKeyMidHigh, long deleteKeyHigh) {
@@ -1182,6 +1208,14 @@ public class LargeField implements Field {
         xBoardMidLow = KeyOperators.mirror(xBoardMidLow);
         xBoardMidHigh = KeyOperators.mirror(xBoardMidHigh);
         xBoardHigh = KeyOperators.mirror(xBoardHigh);
+    }
+
+    @Override
+    public void mask(Field maskField) {
+        xBoardLow &= maskField.getBoard(0);
+        xBoardMidLow &= maskField.getBoard(1);
+        xBoardMidHigh &= maskField.getBoard(2);
+        xBoardHigh &= maskField.getBoard(3);
     }
 
     @Override

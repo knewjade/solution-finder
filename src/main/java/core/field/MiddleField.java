@@ -138,6 +138,11 @@ public class MiddleField implements Field {
     }
 
     @Override
+    public boolean exists(int x, int y) {
+        return !isEmpty(x, y);
+    }
+
+    @Override
     public boolean existsAbove(int y) {
         if (MAX_FIELD_HEIGHT <= y) {
             return false;
@@ -278,6 +283,22 @@ public class MiddleField implements Field {
         deleteLine(deleteKeyLow, deleteKeyHigh);
 
         return deleteKeyLow | (deleteKeyHigh << 1);
+    }
+
+    @Override
+    public long getFilledLine() {
+        long deleteKeyLow = KeyOperators.getDeleteKey(xBoardLow);
+        long deleteKeyHigh = KeyOperators.getDeleteKey(xBoardHigh);
+
+        return deleteKeyLow | (deleteKeyHigh << 1);
+    }
+
+    @Override
+    public long getUsingKey() {
+        long usingKeyLow = KeyOperators.getUsingKey(xBoardLow);
+        long usingKeyHigh = KeyOperators.getUsingKey(xBoardHigh);
+
+        return usingKeyLow | (usingKeyHigh << 1);
     }
 
     @Override
@@ -522,6 +543,12 @@ public class MiddleField implements Field {
     public void mirror() {
         xBoardLow = KeyOperators.mirror(xBoardLow);
         xBoardHigh = KeyOperators.mirror(xBoardHigh);
+    }
+
+    @Override
+    public void mask(Field maskField) {
+        xBoardLow &= maskField.getBoard(0);
+        xBoardHigh &= maskField.getBoard(1);
     }
 
     @Override

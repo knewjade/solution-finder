@@ -4,6 +4,13 @@ import core.mino.Mino;
 import core.neighbor.OriginalPiece;
 
 public interface Field extends Comparable<Field> {
+    static boolean isIn(Mino mino, int x, int y) {
+        int minX = x + mino.getMinX();
+        int maxX = x + mino.getMinX();
+        int minY = y + mino.getMinY();
+        return 0 <= minX && maxX < 10 && 0 <= minY;
+    }
+
     // フィールドの最大高さを返却
     int getMaxFieldHeight();
 
@@ -39,6 +46,9 @@ public interface Field extends Comparable<Field> {
 
     // 指定した位置にブロックがないとき true を返却
     boolean isEmpty(int x, int y);
+
+    // 指定した位置にブロックがあるとき true を返却
+    boolean exists(int x, int y);
 
     // y行以上にブロックがあるとき true を返却（y行上のブロックも対象に含む）
     boolean existsAbove(int y);
@@ -76,6 +86,12 @@ public interface Field extends Comparable<Field> {
     // ブロックがそろった行を削除し、削除した行を表すマスクを返却
     long clearLineReturnKey();
 
+    // ブロックが揃っている行を表すマスクを返却
+    long getFilledLine();
+
+    // ブロックがある行を表すマスクを返却
+    long getUsingKey();
+
     // ブロックがそろった行を埋めた状態で復元する
     // deleteKeyは以下のビット位置に、対応する行が揃っているときフラグをたてる
     //       5.******** 最上位
@@ -101,7 +117,7 @@ public interface Field extends Comparable<Field> {
     // 指定した番号の6列分のフィールドを表現するボードを返却（0が最下層）
     long getBoard(int index);
 
-    // 現在のフィールドのコピーを返却
+    // 現在のフィールドのコピーを返却  // 拡張はしない
     Field freeze(int maxHeight);
 
     // 現在のフィールドのコピーを返却  // 現在の地形と同じ高さのフィールドをコピー
@@ -142,4 +158,7 @@ public interface Field extends Comparable<Field> {
 
     // ブロックが左右に反転させる
     void mirror();
+
+    // `maskField` のブロックだけマスクする
+    void mask(Field maskField);
 }

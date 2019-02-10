@@ -48,4 +48,16 @@ public class SuccessSpinResult implements SpinResult {
     public RotateDirection getDirection() {
         return direction;
     }
+
+    @Override
+    public String toString() {
+        return "SuccessSpinResult{" +
+                "after=" + after +
+                ", x=" + x +
+                ", y=" + y +
+                ", clearedLine=" + clearedLine +
+                ", testPatternIndex=" + testPatternIndex +
+                ", direction=" + direction +
+                '}';
+    }
 }

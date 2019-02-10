@@ -420,7 +420,7 @@ class LongBoardMap {
             case 3145731:
                 return ((x & 1023L) << 10) | ((x & 1047552L) << 30);
             default:
-                throw new IllegalArgumentException("No reachable");
+                throw new IllegalArgumentException("No reachable: key=" + key);
         }
     }
 }

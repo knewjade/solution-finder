@@ -127,7 +127,19 @@ public class KeyOperators {
         throw new IllegalArgumentException("No reachable: y=" + y);
     }
 
+    public static long getBitKeys(int... ys) {
+        long key = 0L;
+        for (int y : ys) {
+            key |= getBitKey(y);
+        }
+        return key;
+    }
+
     public static long getDeleteBitKey(int y) {
+        return getBitKey(y);
+    }
+
+    public static long getBitKey(int y) {
         switch (y) {
             case 0:
                 return 1L;
@@ -209,5 +221,18 @@ public class KeyOperators {
         }
 
         return field | fixed;
+    }
+
+    public static long getUsingKey(long board) {
+        long a1010101010 = 768614336404564650L;
+        long b1 = (board & a1010101010) >>> 1 | board;
+        long a0101010000 = 378672165735973200L;
+        long b2 = (b1 & a0101010000) >>> 4 | b1;
+        long a0000010100 = 22540009865236500L;
+        long b3 = (b2 & a0000010100) >>> 2 | b2;
+        long a0000000100 = 4508001973047300L;
+        long b4 = (b3 & a0000000100) >>> 2 | b3;
+        long a0000000001 = 1127000493261825L;
+        return b4 & a0000000001;
     }
 }
