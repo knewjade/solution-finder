@@ -6,7 +6,7 @@ import core.neighbor.OriginalPiece;
 public interface Field extends Comparable<Field> {
     static boolean isIn(Mino mino, int x, int y) {
         int minX = x + mino.getMinX();
-        int maxX = x + mino.getMinX();
+        int maxX = x + mino.getMaxX();
         int minY = y + mino.getMinY();
         return 0 <= minX && maxX < 10 && 0 <= minY;
     }

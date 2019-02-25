@@ -193,11 +193,11 @@ public class BuildUp {
 
     // block順番で組み立てられる手順が存在するかチェックする
     // operationsで使用するミノとblocksが一致していること
-    public static boolean existsValidByOrder(Field field, Stream<MinoOperationWithKey> operations, List<Piece> pieces, int height, Reachable reachable) {
+    public static boolean existsValidByOrder(Field field, Stream<? extends MinoOperationWithKey> operations, List<Piece> pieces, int height, Reachable reachable) {
         return existsValidByOrder(field, operations, pieces, height, reachable, pieces.size());
     }
 
-    public static boolean existsValidByOrder(Field field, Stream<MinoOperationWithKey> operations, List<Piece> pieces, int height, Reachable reachable, int maxDepth) {
+    public static boolean existsValidByOrder(Field field, Stream<? extends MinoOperationWithKey> operations, List<Piece> pieces, int height, Reachable reachable, int maxDepth) {
         EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks = operations.sequential().collect(() -> new EnumMap<>(Piece.class), (blockLinkedListEnumMap, operationWithKey) -> {
             Piece piece = operationWithKey.getPiece();
             LinkedList<MinoOperationWithKey> operationWithKeys = blockLinkedListEnumMap.computeIfAbsent(piece, b -> new LinkedList<>());

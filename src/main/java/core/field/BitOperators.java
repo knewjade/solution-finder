@@ -1,6 +1,6 @@
 package core.field;
 
-class BitOperators {
+public class BitOperators {
     // y行より下の1列ブロックマスクを取得する（y行を含まない）
     static long getColumnOneLineBelowY(int maxY) {
         assert 0 <= maxY && maxY <= 6 : maxY;
@@ -128,7 +128,7 @@ class BitOperators {
         throw new IllegalArgumentException("No reachable");
     }
 
-    // 1ビットがオンになっているとき、そのビットのy座標を返却
+    // boardのうち1ビットがオンになっているとき、そのビットのy座標を返却
     static int bitToY(long bit) {
         assert Long.bitCount(bit) == 1 : bit;
         assert bit < (1L << 60);
@@ -159,7 +159,7 @@ class BitOperators {
 
     public static int bitToX(long bit) {
         assert Long.bitCount(bit) == 1 : bit;
-        assert bit < (1L << 10);
+        assert bit < (1L << 10) : Long.toBinaryString(bit);
         if (bit < 0b10000L) {  // 0-3
             if (bit < 0b100L) {  // 0 or 1
                 if (bit < 0b10L)

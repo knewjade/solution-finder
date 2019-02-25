@@ -235,4 +235,62 @@ public class KeyOperators {
         long a0000000001 = 1127000493261825L;
         return b4 & a0000000001;
     }
+
+    // keyのうち1ビットがオンになっているとき、そのビットのy座標を返却
+    public static int bitToYFromKey(long key) {
+        assert Long.bitCount(key & 0b000000111100000011110000001111000000111100000011110000001111L) == 1 : Long.toBinaryString(key);
+
+        {
+            long low = key & 0b000000000100000000010000000001000000000100000000010000000001L;
+            if (low != 0L) {
+                return BitOperators.bitToY(low);
+            }
+        }
+
+        {
+            long midLow = key & 0b000000001000000000100000000010000000001000000000100000000010L;
+            if (midLow != 0L) {
+                return BitOperators.bitToY(midLow >> 1) + 6;
+            }
+        }
+
+        {
+            long midHigh = key & 0b000000010000000001000000000100000000010000000001000000000100L;
+            if (midHigh != 0L) {
+                return BitOperators.bitToY(midHigh >> 2) + 12;
+            }
+        }
+
+        long high = key & 0b000000100000000010000000001000000000100000000010000000001000L;
+        return BitOperators.bitToY(high >> 3) + 18;
+    }
+
+    // keyのうち、最も低い行のbitを取り出す
+    public static long extractLowerBit(long key) {
+        assert 1 <= Long.bitCount(key & 0b000000111100000011110000001111000000111100000011110000001111L) : Long.toBinaryString(key);
+
+        {
+            long low = key & 0b000000000100000000010000000001000000000100000000010000000001L;
+            if (low != 0L) {
+                return low & (-low);
+            }
+        }
+
+        {
+            long midLow = key & 0b000000001000000000100000000010000000001000000000100000000010L;
+            if (midLow != 0L) {
+                return midLow & (-midLow);
+            }
+        }
+
+        {
+            long midHigh = key & 0b000000010000000001000000000100000000010000000001000000000100L;
+            if (midHigh != 0L) {
+                return midHigh & (-midHigh);
+            }
+        }
+
+        long high = key & 0b000000100000000010000000001000000000100000000010000000001000L;
+        return high & (-high);
+    }
 }

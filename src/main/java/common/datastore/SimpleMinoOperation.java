@@ -1,30 +1,29 @@
 package common.datastore;
 
+import core.mino.Mino;
 import core.mino.Piece;
 import core.srs.Rotate;
 
-public class SimpleOperation implements Operation {
-    private final Piece piece;
-    private final Rotate rotate;
+public class SimpleMinoOperation implements MinoOperation {
+    private final Mino mino;
     private final int x;
     private final int y;
 
-    public SimpleOperation(Piece piece, Rotate rotate, int x, int y) {
-        assert piece != null && rotate != null;
-        this.piece = piece;
-        this.rotate = rotate;
+    public SimpleMinoOperation(Mino mino, int x, int y) {
+        assert mino != null;
+        this.mino = mino;
         this.x = x;
         this.y = y;
     }
 
     @Override
     public Piece getPiece() {
-        return piece;
+        return mino.getPiece();
     }
 
     @Override
     public Rotate getRotate() {
-        return rotate;
+        return mino.getRotate();
     }
 
     @Override
@@ -38,11 +37,16 @@ public class SimpleOperation implements Operation {
     }
 
     @Override
+    public Mino getMino() {
+        return mino;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SimpleOperation operation = (SimpleOperation) o;
-        return x == operation.x && y == operation.y && piece == operation.piece && rotate == operation.rotate;
+        SimpleMinoOperation operation = (SimpleMinoOperation) o;
+        return x == operation.x && y == operation.y && mino.equals(operation.mino);
     }
 
     @Override
@@ -52,6 +56,6 @@ public class SimpleOperation implements Operation {
 
     @Override
     public String toString() {
-        return String.format("[%s-%s %d,%d]", piece, rotate, x, y);
+        return String.format("[%s %d,%d]", mino, x, y);
     }
 }

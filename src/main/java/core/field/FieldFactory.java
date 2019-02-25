@@ -11,6 +11,12 @@ public class FieldFactory {
         throw new IllegalArgumentException("Field height should be equal or less than 24: height=" + maxHeight);
     }
 
+    public static Field createField(String marks, int maxHeight) {
+        Field field = createField(maxHeight);
+        field.merge(createField(marks));
+        return field;
+    }
+
     public static Field createField(String marks) {
         if (marks.length() % 10 != 0)
             throw new IllegalArgumentException("length of marks should be 'mod 10'");
