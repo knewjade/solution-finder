@@ -10,12 +10,16 @@ public interface OperationWithKey extends Operation {
         );
     }
 
-    public static long toUniqueKey(Piece piece, Rotate rotate, int x, int y, long needDeletedKey) {
+    static long toUniqueKey(Piece piece, Rotate rotate, int x, int y, long needDeletedKey) {
         long maskLow = 0b111111111111111111111111111111L;
         long maskHigh = 0b111111111111111111111111111111000000000000000000000000000000L;
         long uniqueDeletedKey = (needDeletedKey & maskHigh) | (needDeletedKey & maskLow) << 35;
 
         return uniqueDeletedKey + Operation.toUniqueKey(piece, rotate, x, y);
+    }
+
+    static long toUniqueKey(Piece piece, Rotate rotate, int x, int y) {
+        return Operation.toUniqueKey(piece, rotate, x, y);
     }
 
     long getUsingKey();
