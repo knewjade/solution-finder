@@ -1,17 +1,15 @@
-package searcher.spins.fill.line;
+package searcher.spins.fill.line.spot;
 
-import common.datastore.OperationWithKey;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.mino.Piece;
-import core.neighbor.SimpleOriginalPiece;
 import core.srs.Rotate;
 
 import java.util.*;
 
 public class LinePools {
-    public static LinePools create(MinoFactory minoFactory, MinoShifter minoShifter, List<SimpleOriginalPiece> simpleOriginalPieces, int maxHeight) {
+    public static LinePools create(MinoFactory minoFactory, MinoShifter minoShifter) {
         Map<Piece, Set<PieceBlockCount>> pieceToPieceBlockCounts = new EnumMap<>(Piece.class);
         Map<PieceBlockCount, List<MinoDiff>> pieceBlockCountToMinoDiffs = new HashMap<>();
 
@@ -56,38 +54,25 @@ public class LinePools {
             pieceToPieceBlockCounts.put(piece, currentPieceToPieceBlockCounts);
         }
 
-        Map<Long, SimpleOriginalPiece> keyToOriginPiece = new HashMap<>();
-        for (SimpleOriginalPiece originalPiece : simpleOriginalPieces) {
-            long key = OperationWithKey.toUniqueKey(originalPiece);
-            assert !keyToOriginPiece.containsKey(key) : originalPiece;
-            keyToOriginPiece.put(key, originalPiece);
-        }
-
-        return new LinePools(pieceToPieceBlockCounts, pieceBlockCountToMinoDiffs, keyToOriginPiece, maxHeight);
+        return new LinePools(pieceToPieceBlockCounts, pieceBlockCountToMinoDiffs);
     }
 
     private final Map<Piece, Set<PieceBlockCount>> pieceToPieceBlockCounts;
     private final Map<PieceBlockCount, List<MinoDiff>> pieceBlockCountToMinoDiffs;
-    private final Map<Long, SimpleOriginalPiece> keyToOriginPiece;
-    private final int maxHeight;
 
     private LinePools(
             Map<Piece, Set<PieceBlockCount>> pieceToPieceBlockCounts,
-            Map<PieceBlockCount, List<MinoDiff>> pieceBlockCountToMinoDiffs,
-            Map<Long, SimpleOriginalPiece> keyToOriginPiece,
-            int maxHeight
+            Map<PieceBlockCount, List<MinoDiff>> pieceBlockCountToMinoDiffs
     ) {
         this.pieceToPieceBlockCounts = pieceToPieceBlockCounts;
         this.pieceBlockCountToMinoDiffs = pieceBlockCountToMinoDiffs;
-        this.keyToOriginPiece = keyToOriginPiece;
-        this.maxHeight = maxHeight;
     }
 
     public Map<PieceBlockCount, List<MinoDiff>> getPieceBlockCountToMinoDiffs() {
         return pieceBlockCountToMinoDiffs;
     }
 
-    public Map<Long, SimpleOriginalPiece> getKeyToOriginPiece() {
-        return keyToOriginPiece;
+    public Map<Piece, Set<PieceBlockCount>> getPieceToPieceBlockCounts() {
+        return pieceToPieceBlockCounts;
     }
 }

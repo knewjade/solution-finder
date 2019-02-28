@@ -495,6 +495,50 @@ public class MiddleField implements Field {
     }
 
     @Override
+    public void slideDown(int slide) {
+        assert 0 <= slide : slide;
+        if (slide <= FIELD_ROW_BOARDER_Y) {
+            long deleteKey = KeyOperators.getMaskForKeyBelowY(slide);
+            deleteLine(deleteKey, 0L);
+        } else if (slide <= MAX_FIELD_HEIGHT) {
+            long deleteKey = KeyOperators.getMaskForKeyBelowY(slide - FIELD_ROW_BOARDER_Y);
+            deleteLine(0x4010040100401L, deleteKey);
+        } else {
+            clearAll();
+        }
+    }
+
+    private void clearAll() {
+        this.xBoardLow = 0L;
+        this.xBoardHigh = 0L;
+    }
+
+    @Override
+    public void slideUpWithWhiteLine(int slide) {
+        assert 0 <= slide : slide;
+        if (slide < MAX_FIELD_HEIGHT) {
+            insertWhiteLineWithKey(KeyOperators.getMaskForKeyBelowY(slide));
+        } else {
+            clearAll();
+        }
+    }
+
+    @Override
+    public void slideUpWithBlackLine(int slide) {
+        assert 0 <= slide : slide;
+        if (slide < MAX_FIELD_HEIGHT) {
+            insertBlackLineWithKey(KeyOperators.getMaskForKeyBelowY(slide));
+        } else {
+            fillAll();
+        }
+    }
+
+    private void fillAll() {
+        this.xBoardLow = VALID_BOARD_RANGE;
+        this.xBoardHigh = VALID_BOARD_RANGE;
+    }
+
+    @Override
     public int getMinX() {
         long board = xBoardLow | xBoardHigh;
         if (board == 0)

@@ -10,17 +10,17 @@ import java.util.stream.Stream;
 public class EmptyResult extends Result {
     private final Field initField;
     private final PieceCounter reminderPieceCounter;
-    private final int maxHeight;
+    private final int fieldHeight;
 
-    public EmptyResult(Field initField, PieceCounter reminderPieceCounter, int maxHeight) {
+    public EmptyResult(Field initField, PieceCounter reminderPieceCounter, int fieldHeight) {
         this.initField = initField;
         this.reminderPieceCounter = reminderPieceCounter;
-        this.maxHeight = maxHeight;
+        this.fieldHeight = fieldHeight;
     }
 
     @Override
     Field getUsingField() {
-        return FieldFactory.createField(maxHeight);
+        return FieldFactory.createField(fieldHeight);
     }
 
     @Override

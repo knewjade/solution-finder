@@ -1,4 +1,4 @@
-package searcher.spins.fill.line;
+package searcher.spins.fill.line.spot;
 
 import common.datastore.SimpleMinoOperation;
 import core.field.Field;
@@ -9,7 +9,7 @@ import core.srs.Rotate;
 
 import java.util.Objects;
 
-class MinoDiff {
+public class MinoDiff {
     private static final int MAX_HEIGHT = 7;
     private static final int FILL_X = 3;
     private static final int FILL_Y = 3;

@@ -292,6 +292,25 @@ public class SmallField implements Field {
     }
 
     @Override
+    public void slideDown(int slide) {
+        assert 0 <= slide : slide;
+        this.xBoard = xBoard >>> (FIELD_WIDTH * slide);
+    }
+
+    @Override
+    public void slideUpWithWhiteLine(int slide) {
+        assert 0 <= slide : slide;
+        this.xBoard = xBoard << (FIELD_WIDTH * slide);
+    }
+
+    @Override
+    public void slideUpWithBlackLine(int slide) {
+        assert 0 <= slide : slide;
+        int count = FIELD_WIDTH * slide;
+        this.xBoard = (xBoard << count) | ((1L << count) - 1);
+    }
+
+    @Override
     public int getMinX() {
         if (xBoard == 0)
             return -1;

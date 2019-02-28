@@ -1,249 +1,257 @@
 package searcher.spins.fill.line;
 
-import common.datastore.Operation;
-import common.datastore.OperationWithKey;
 import common.datastore.PieceCounter;
-import common.datastore.SimpleMinoOperation;
 import common.iterable.CombinationIterable;
 import core.field.Field;
-import core.field.FieldFactory;
-import core.mino.Mino;
-import core.mino.MinoFactory;
-import core.mino.MinoShifter;
+import core.field.FieldView;
 import core.mino.Piece;
 import core.neighbor.SimpleOriginalPiece;
-import core.srs.Rotate;
+import searcher.spins.fill.line.next.RemainderField;
+import searcher.spins.fill.line.next.RemainderFieldRunner;
+import searcher.spins.fill.line.spot.*;
+import searcher.spins.results.AddLastsResult;
+import searcher.spins.results.EmptyResult;
+import searcher.spins.results.Result;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.stream.BaseStream;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public class LineFillRunner {
     private static final Set<PieceBlockCount> EMPTY_PIECE_BLOCK_COUNT_SET = Collections.emptySet();
-    public static final int MAX_SIZE = 3;
+    private static final int MAX_SIZE = 4;
+    public static final int FIELD_WIDTH = 10;
 
-    public static LineFillRunner create(MinoFactory minoFactory, MinoShifter minoShifter, List<SimpleOriginalPiece> simpleOriginalPieces, int maxHeight) {
-        Map<Piece, Set<PieceBlockCount>> pieceToPieceBlockCounts = new EnumMap<>(Piece.class);
-        Map<PieceBlockCount, List<MinoDiff>> pieceBlockCountToMinoDiffs = new HashMap<>();
+    private final RemainderFieldRunner remainderFieldRunner;
+    private final SpotRunner spotRunner;
+    private final Map<Piece, Set<PieceBlockCount>> pieceToPieceBlockCounts;
+    private final SimpleOriginalPieces simpleOriginalPieces;
+    private final int fieldHeight;
 
-        for (Piece piece : Piece.values()) {
-            Set<PieceBlockCount> currentPieceToPieceBlockCounts = new HashSet<>();
+    private final List<List<Integer>> indexes;
+    private final ConcurrentMap<PieceBlockCounts, List<SpotResult>> spotResultCache = new ConcurrentHashMap<>();
 
-            Set<Rotate> rotates = minoShifter.getUniqueRotates(piece);
-            for (Rotate rotate : rotates) {
-                Mino mino = minoFactory.create(piece, rotate);
-
-                // 計算
-                HashMap<Integer, MinXBlockCount> dyToMinXLineCount = new HashMap<>();
-                int[][] positions = mino.getPositions();
-                for (int[] position : positions) {
-                    int dx = position[0];
-                    int dy = position[1];
-
-                    MinXBlockCount minXBlockCount = dyToMinXLineCount.computeIfAbsent(dy, (key) -> new MinXBlockCount());
-                    minXBlockCount.incrementBlockCount();
-                    minXBlockCount.updateMinX(dx);
-                }
-
-                // 更新: dy
-                for (Map.Entry<Integer, MinXBlockCount> entry : dyToMinXLineCount.entrySet()) {
-                    int dy = entry.getKey();
-                    MinXBlockCount minXBlockCount = entry.getValue();
-                    int blockCount = minXBlockCount.getBlockCount();
-                    int minX = minXBlockCount.getMinX();
-
-                    PieceBlockCount pieceBlockCount = new PieceBlockCount(piece, blockCount);
-                    MinoDiff minoDiff = new MinoDiff(mino, minX, dy, blockCount);
-
-                    // currentPieceToPieceBlockCounts
-                    currentPieceToPieceBlockCounts.add(pieceBlockCount);
-
-                    // currentPieceLineCountToMinos
-                    List<MinoDiff> minoDiffs = pieceBlockCountToMinoDiffs.computeIfAbsent(pieceBlockCount, (key) -> new ArrayList<>());
-                    minoDiffs.add(minoDiff);
-                }
-            }
-
-            pieceToPieceBlockCounts.put(piece, currentPieceToPieceBlockCounts);
-        }
-
-        Map<Long, SimpleOriginalPiece> keyToOriginPiece = new HashMap<>();
-        for (SimpleOriginalPiece originalPiece : simpleOriginalPieces) {
-            long key = OperationWithKey.toUniqueKey(originalPiece);
-            assert !keyToOriginPiece.containsKey(key) : originalPiece;
-            keyToOriginPiece.put(key, originalPiece);
-        }
-
-//        return new LineFillRunner(pieceToPieceBlockCounts, pieceBlockCountToMinoDiffs, keyToOriginPiece, maxHeight);
-        return null;
-    }
-
-//    private final ConcurrentMap<Long, List<PieceSpot>> map;
-//    private final Map<Integer, List<Integer>> indexes;
-//    private final Map<Piece, Set<PieceBlockCount>> pieceToPieceBlockCounts;
-//    private final Map<PieceBlockCount, List<MinoDiff>> pieceBlockCountToMinoDiffs;
-//    private final Map<Long, SimpleMinoOperation> keyToOperation;
-
-//    private final int maxHeight;
-
-
-    private LineFillRunner(
-            Map<Piece, Set<PieceBlockCount>> pieceToPieceBlockCounts,
+    LineFillRunner(
             Map<PieceBlockCount, List<MinoDiff>> pieceBlockCountToMinoDiffs,
-            Map<Long, SimpleMinoOperation> keyToOperation,
-            int maxHeight
+            Map<Piece, Set<PieceBlockCount>> pieceToPieceBlockCounts,
+            SimpleOriginalPieces simpleOriginalPieces,
+            int maxPieceNum,
+            int fieldHeight
     ) {
-//        this.pieceToPieceBlockCounts = pieceToPieceBlockCounts;
-//        this.pieceBlockCountToMinoDiffs = pieceBlockCountToMinoDiffs;
-//        this.keyToOriginPiece = keyToOriginPiece;
-//        this.maxHeight = maxHeight;
+        this.remainderFieldRunner = new RemainderFieldRunner();
+        this.spotRunner = new SpotRunner(pieceBlockCountToMinoDiffs, simpleOriginalPieces);
+        this.pieceToPieceBlockCounts = pieceToPieceBlockCounts;
+        this.simpleOriginalPieces = simpleOriginalPieces;
+        this.fieldHeight = fieldHeight;
+
+        this.indexes = createIndexes(maxPieceNum);
     }
 
-    public Stream<LineFillResult> search(PieceCounter pieceCounter, Field initField, long filledLine, int startX, int targetY, int blockCount) {
-        return Stream.empty();
-    }
-/**
-    public Stream<LineFillResult> search(PieceCounter pieceCounter, Field initField, long filledLine, int startX, int targetY, int blockCount) {
-        Map<Long, SimpleOriginalPiece> keyToOriginPiece = new HashMap<>()
-
-        EmptyLineFillResult emptyLineFillResult = new EmptyLineFillResult(initField, pieceCounter, blockCount);
-        return next(keyToOriginPiece, emptyLineFillResult, startX, targetY);
+    private List<List<Integer>> createIndexes(int maxPieceNum) {
+        List<List<Integer>> indexes = new ArrayList<>();
+        for (int index = 0; index <= maxPieceNum; index++) {
+            indexes.add(index, IntStream.range(0, index).boxed().collect(Collectors.toList()));
+        }
+        return indexes;
     }
 
-    private Stream<LineFillResult> next(
-            Map<Long, SimpleOriginalPiece> keyToOriginPiece, LineFillResult prevResult, int startX, int targetY
+    public Stream<Result> search(Field initField, PieceCounter pieceCounter, int targetY) {
+        EmptyResult emptyResult = new EmptyResult(initField, pieceCounter, fieldHeight);
+        List<RemainderField> remainderFields = remainderFieldRunner.extract(initField, targetY);
+        return search(emptyResult, targetY, remainderFields, 0);
+    }
+
+    private Stream<Result> search(
+            Result prevResult, int targetY, List<RemainderField> remainderFields, int index
     ) {
-        int remainBlockCount = prevResult.getRemainBlockCount();
-        PieceCounter restPieceCounter = prevResult.getRemainPieceCounter();
+        assert index < remainderFields.size() : index;
 
-        return searchBlockCounts(remainBlockCount, restPieceCounter)
-                .flatMap(pieceBlockCountList -> {
-                    return getStream(keyToOriginPiece, prevResult, startX, targetY, pieceBlockCountList);
-                });
-    }
+        RemainderField remainderField = remainderFields.get(index);
+        int blockCount = remainderField.getTargetBlockCount();
+        int startX = remainderField.getMinX();
 
-    private Stream<? extends LineFillResult> getStream(Map<Long, SimpleOriginalPiece> keyToOriginPiece, LineFillResult prevResult, int startX, int targetY, List<PieceBlockCount> pieceBlockCountList) {
-        int remainBlockCount = prevResult.getRemainBlockCount();
+        Field allMergedField = prevResult.getAllMergedField();
+        SlidedField slidedField = SlidedField.create(allMergedField, targetY);
 
-        // `MAX_SIZE` ミノも残っていない
-        int size = pieceBlockCountList.size();
-        if (size <= MAX_SIZE) {
-            PieceBlockCounts pieceBlockCounts = new PieceBlockCounts(pieceBlockCountList);
-            return to(pieceBlockCounts).stream()
-                    .filter(spot -> spot.getUsingBlockCount() == remainBlockCount)
-                    .map(spot -> {
-                        List<SimpleOriginalPiece> operations = slide(keyToOriginPiece, startX, targetY, spot);
-                        return new AddLastLineFillResult(prevResult, operations, spot.getUsingBlockCount());
-                    });
+        Stream<Result> stream = searchBlockCounts(prevResult.getRemainderPieceCounter(), blockCount)
+                .flatMap(pieceBlockCountList -> spot(slidedField, pieceBlockCountList, prevResult, startX, targetY));
+
+        if (index == remainderFields.size() - 1) {
+            return stream;
         }
 
-        // `MAX_SIZE` ミノ以上残っている
-        // 分割する
-        List<Integer> indexList = indexes.get(size);
-        CombinationIterable<Integer> iterable = new CombinationIterable<>(indexList, MAX_SIZE);
-        return StreamSupport.stream(iterable.spliterator(), true)
-                // TODO: 同じ組み合わせをフィルタする
-                .flatMap(selected -> {
-                    assert selected.size() == MAX_SIZE;
-
-                    int[] arr = new int[]{selected.get(0), selected.get(1), selected.get(2)};
-                    Arrays.sort(arr);
-
-                    List<PieceBlockCount> remain = new LinkedList<>(pieceBlockCountList);
-
-                    List<PieceBlockCount> first = Arrays.asList(remain.get(arr[0]), remain.get(arr[1]), remain.get((arr[2])));
-                    PieceBlockCounts pieceBlockCounts = new PieceBlockCounts(first);
-
-                    remain.remove(arr[2]);
-                    remain.remove(arr[1]);
-                    remain.remove(arr[0]);
-
-                    return to(pieceBlockCounts).stream()
-                            .flatMap(spot -> {
-                                int usingBlockCount = spot.getUsingBlockCount();
-
-                                if (remainBlockCount < usingBlockCount) {
-                                    return Stream.empty();
-                                }
-
-                                List<SimpleOriginalPiece> operations = slide(keyToOriginPiece, startX, targetY, spot);
-                                LineFillResult nextResult = new AddLastLineFillResult(prevResult, operations, spot.getUsingBlockCount());
-
-                                if (nextResult.getRemainBlockCount() == 0) {
-                                    return Stream.of(nextResult);
-                                }
-
-                                if (nextResult.getRemainPieceCounter().isEmpty()) {
-                                    return Stream.empty();
-                                }
-
-                                return getStream(keyToOriginPiece, nextResult, startX + usingBlockCount, targetY, remain);
-                            });
-                });
+        return stream.flatMap(result -> search(result, targetY, remainderFields, index + 1));
     }
 
-    private List<SimpleOriginalPiece> slide(Map<Long, SimpleOriginalPiece> keyToOriginPiece, int startX, int targetY, PieceSpot spot) {
-        return spot.getOperations().stream()
-                .map(operation -> {
-                    Piece piece = operation.getPiece();
-                    Rotate rotate = operation.getRotate();
-                    int x = startX + operation.getX();
-                    int y = operation.getY() - 3 + targetY;
-                    return keyToOriginPiece.get(Operation.toUniqueKey(piece, rotate, x, y));
-                })
-                .collect(Collectors.toList());
+    private Stream<List<PieceBlockCount>> searchBlockCounts(PieceCounter pieceCounter, int blockCount) {
+        assert !pieceCounter.isEmpty();
+        assert 0 < blockCount;
+        Stream.Builder<List<PieceBlockCount>> builder = Stream.builder();
+        searchBlockCounts(builder, new LinkedList<>(pieceCounter.getBlocks()), blockCount, new LinkedList<>());
+        return builder.build();
     }
 
-    private Stream<List<PieceBlockCount>> searchBlockCounts(int blockCount, PieceCounter pieceCounter) {
-        return searchBlockCounts(blockCount, new LinkedList<>(pieceCounter.getBlocks()), new LinkedList<>());
-    }
-
-    private Stream<List<PieceBlockCount>> searchBlockCounts(int remainderBlockCount, LinkedList<Piece> remainderPieces, LinkedList<PieceBlockCount> result) {
+    private void searchBlockCounts(
+            Stream.Builder<List<PieceBlockCount>> builder,
+            LinkedList<Piece> remainderPieces, int remainderBlockCount, LinkedList<PieceBlockCount> result
+    ) {
         // 残りのミノがないときは探索終了
         if (remainderPieces.isEmpty()) {
-            return Stream.empty();
+            return;
         }
 
         Piece headPiece = remainderPieces.pollFirst();
 
         // `headPiece` を使う場合
-        Stream<List<PieceBlockCount>> useStream = Stream.empty();
-
-        for (PieceBlockCount candidateBlockCount : pieceToPieceBlockCounts.getOrDefault(headPiece, EMPTY_PIECE_BLOCK_COUNT_SET)) {
+        Set<PieceBlockCount> pieceBlockCounts = pieceToPieceBlockCounts.getOrDefault(headPiece, EMPTY_PIECE_BLOCK_COUNT_SET);
+        for (PieceBlockCount candidateBlockCount : pieceBlockCounts) {
+            // 残りのブロック数
             int nextBlockCount = remainderBlockCount - candidateBlockCount.getBlockCount();
 
+            // 残りのブロック数をオーバーしたときは次に進む
             if (nextBlockCount < 0) {
                 continue;
             }
 
+            // 候補を追加
             result.addLast(candidateBlockCount);
 
             if (nextBlockCount == 0) {
-                useStream = Stream.concat(useStream, Stream.of(new ArrayList<>(result)));
+                builder.accept(new ArrayList<>(result));
             } else {
-                Stream<List<PieceBlockCount>> nextStream = searchBlockCounts(nextBlockCount, remainderPieces, result);
-                useStream = Stream.concat(useStream, nextStream);
+                searchBlockCounts(builder, remainderPieces, nextBlockCount, result);
             }
 
             result.removeLast();
         }
 
         // `headPiece` を使わない場合
-        Stream<List<PieceBlockCount>> noUseStream = searchBlockCounts(remainderBlockCount, remainderPieces, result);
+        searchBlockCounts(builder, remainderPieces, remainderBlockCount, result);
 
         remainderPieces.addFirst(headPiece);
-
-        return Stream.concat(useStream, noUseStream);
     }
 
-    private List<PieceSpot> to(PieceBlockCounts pieceBlockCounts) {
-        long key = pieceBlockCounts.getKey();
-        return map.computeIfAbsent(key, (ignore) -> toNew(pieceBlockCounts.getPieceBlockCountList()));
+    private Stream<Result> spot(
+            SlidedField slidedField, List<PieceBlockCount> pieceBlockCountList, Result prevResult, int startX, int targetY
+    ) {
+        int size = pieceBlockCountList.size();
+
+        if (size <= MAX_SIZE) {
+            // 残っているミノが `MAX_SIZE` こ以内
+            PieceBlockCounts pieceBlockCounts = new PieceBlockCounts(pieceBlockCountList);
+            return spot(slidedField, prevResult, startX, targetY, pieceBlockCounts);
+        }
+
+        // 残っているミノが `MAX_SIZE+1` こ以上
+        CombinationIterable<Integer> iterable = new CombinationIterable<>(indexes.get(size), MAX_SIZE);
+
+        HashSet<Long> visited = new HashSet<>();
+
+        // 分割する
+        return StreamSupport.stream(iterable.spliterator(), false)
+                .flatMap(selectedIndexes -> {
+                    assert selectedIndexes.size() == MAX_SIZE;
+
+                    Integer i1 = selectedIndexes.get(0);
+                    Integer i2 = selectedIndexes.get(1);
+                    Integer i3 = selectedIndexes.get(2);
+                    Integer i4 = selectedIndexes.get(3);
+
+                    PieceBlockCounts pieceBlockCounts = new PieceBlockCounts(
+                            Arrays.asList(pieceBlockCountList.get(i1), pieceBlockCountList.get(i2), pieceBlockCountList.get(i3), pieceBlockCountList.get(i4))
+                    );
+
+                    if (!visited.add(pieceBlockCounts.getKey())) {
+                        return Stream.empty();
+                    }
+
+                    int[] indexArray = new int[]{i1, i2, i3, i4};
+                    Arrays.sort(indexArray);
+
+                    List<PieceBlockCount> remain = new LinkedList<>(pieceBlockCountList);
+
+                    // 要素がスライドされないようにindexが大きい順に取り除いていく
+                    remain.remove(indexArray[3]);
+                    remain.remove(indexArray[2]);
+                    remain.remove(indexArray[1]);
+                    remain.remove(indexArray[0]);
+
+                    return spot(slidedField, prevResult, startX, targetY, pieceBlockCounts)
+                            .flatMap(result -> {
+                                int usingBlockCount = pieceBlockCounts.getUsingBlockCount();
+
+                                Field allMergedField = result.getAllMergedField();
+                                SlidedField nextSlidedField = SlidedField.create(allMergedField, slidedField);
+
+                                return spot(nextSlidedField, remain, result, startX + usingBlockCount, targetY);
+                            });
+                });
     }
 
+    private Stream<Result> spot(
+            SlidedField slidedField, Result prevResult, int startX, int targetY, PieceBlockCounts pieceBlockCounts
+    ) {
+        assert pieceBlockCounts.getPieceBlockCountList().size() <= MAX_SIZE;
 
-     **/
+        Field field = slidedField.getField();
+        long filledLine = slidedField.getFilledLine();
+        int slideDownY = slidedField.getSlideDownY();
+
+        int slideY = 3 - targetY;
+
+        Stream<Result> stream = spot(pieceBlockCounts).stream()
+                .map(spotResult -> {
+                    int slideX = startX - spotResult.getStartX();
+                    if (slideX < 0) {
+                        // 左に移動しないといけないときは必ず置けない
+                        return null;
+                    }
+
+                    int rightX = spotResult.getRightX() + slideX;
+                    if (10 <= rightX) {
+                        // 最も右にあるブロックが範囲外になる
+                        return null;
+                    }
+
+                    int minY = spotResult.getMinY();
+                    if (minY - slideY < 0) {
+                        // 最も下にあるブロックが範囲外になる
+                        return null;
+                    }
+
+                    // 揃えるラインをy=3にスライド済み
+                    Field usingField = spotResult.getUsingField().freeze();
+                    usingField.slideRight(slideX);
+                    if (!field.canMerge(usingField)) {
+                        // マージできない
+                        return null;
+                    }
+
+                    List<SimpleOriginalPiece> operations = spotResult.getOperations().stream()
+                            .map(originalPiece -> {
+                                SimpleOriginalPiece slidedPiece = simpleOriginalPieces.get(
+                                        originalPiece.getPiece(), originalPiece.getRotate(),
+                                        originalPiece.getX() + slideX, originalPiece.getY() + slideDownY
+                                );
+                                Field freeze = slidedPiece.getMinoField().freeze();
+                                freeze.insertWhiteLineWithKey(filledLine);
+                                return simpleOriginalPieces.get(freeze);
+                            })
+                            .collect(Collectors.toList());
+
+                    return AddLastsResult.create(prevResult, operations);
+                });
+
+        return stream.filter(Objects::nonNull);
+    }
+
+    private List<SpotResult> spot(PieceBlockCounts pieceBlockCounts) {
+        return spotResultCache.computeIfAbsent(pieceBlockCounts, (key) -> (
+                spotRunner.search(pieceBlockCounts.getPieceBlockCountList()))
+        );
+    }
 }

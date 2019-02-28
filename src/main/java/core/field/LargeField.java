@@ -1154,6 +1154,67 @@ public class LargeField implements Field {
     }
 
     @Override
+    public void slideDown(int slide) {
+        if (slide <= FIELD_ROW_MID_HIGH_BOARDER_Y) {
+            if (slide <= FIELD_ROW_MID_LOW_BOARDER_Y) {
+                // <= 6
+                long deleteKey = KeyOperators.getMaskForKeyBelowY(slide);
+                deleteLine(deleteKey, 0L, 0L, 0L);
+            } else {
+                // <= 12
+                long deleteKey = KeyOperators.getMaskForKeyBelowY(slide - FIELD_ROW_MID_LOW_BOARDER_Y);
+                deleteLine(0x4010040100401L, deleteKey, 0L, 0L);
+            }
+        } else {
+            if (slide <= FIELD_ROW_HIGH_BOARDER_Y) {
+                // <= 18
+                long deleteKey = KeyOperators.getMaskForKeyBelowY(slide - FIELD_ROW_MID_HIGH_BOARDER_Y);
+                deleteLine(0x4010040100401L, 0x4010040100401L, deleteKey, 0L);
+            } else if (slide <= MAX_FIELD_HEIGHT) {
+                // <= 24
+                long deleteKey = KeyOperators.getMaskForKeyBelowY(slide - FIELD_ROW_HIGH_BOARDER_Y);
+                deleteLine(0x4010040100401L, 0x4010040100401L, 0x4010040100401L, deleteKey);
+            } else {
+                clearAll();
+            }
+        }
+    }
+
+    private void clearAll() {
+        this.xBoardLow = 0L;
+        this.xBoardMidLow = 0L;
+        this.xBoardMidHigh = 0L;
+        this.xBoardHigh = 0L;
+    }
+
+    @Override
+    public void slideUpWithWhiteLine(int slide) {
+        assert 0 <= slide : slide;
+        if (slide < MAX_FIELD_HEIGHT) {
+            insertWhiteLineWithKey(KeyOperators.getMaskForKeyBelowY(slide));
+        } else {
+            clearAll();
+        }
+    }
+
+    @Override
+    public void slideUpWithBlackLine(int slide) {
+        assert 0 <= slide : slide;
+        if (slide < MAX_FIELD_HEIGHT) {
+            insertBlackLineWithKey(KeyOperators.getMaskForKeyBelowY(slide));
+        } else {
+            fillAll();
+        }
+    }
+
+    private void fillAll() {
+        this.xBoardLow = VALID_BOARD_RANGE;
+        this.xBoardMidLow = VALID_BOARD_RANGE;
+        this.xBoardMidHigh = VALID_BOARD_RANGE;
+        this.xBoardHigh = VALID_BOARD_RANGE;
+    }
+
+    @Override
     public int getMinX() {
         long board = xBoardLow | xBoardMidLow | xBoardMidHigh | xBoardHigh;
         if (board == 0)

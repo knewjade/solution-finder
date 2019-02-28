@@ -884,6 +884,95 @@ class SmallFieldTest {
     }
 
     @Test
+    void slideDownN() {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 100000; count++) {
+            Field field = randoms.field(FIELD_HEIGHT, 10);
+            int slide = randoms.nextIntOpen(FIELD_HEIGHT + 1);
+
+            Field freeze = field.freeze();
+            for (int n = 0; n < slide; n++) {
+                freeze.slideDown();
+            }
+
+            field.slideDown(slide);
+            assertThat(field).isEqualTo(freeze);
+        }
+    }
+
+    @Test
+    void slideUpWithWhiteLine() {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 100000; count++) {
+            Field field = randoms.field(FIELD_HEIGHT, 10);
+
+            Field freeze = field.freeze();
+            freeze.slideDown();
+
+            freeze.slideUpWithWhiteLine(1);
+
+            for (int x = 0; x < FIELD_WIDTH; x++) {
+                field.removeBlock(x, 0);
+            }
+
+            assertThat(field).isEqualTo(freeze);
+        }
+    }
+
+    @Test
+    void slideUpWithBlackLine() {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 100000; count++) {
+            Field field = randoms.field(FIELD_HEIGHT, 10);
+
+            Field freeze = field.freeze();
+            freeze.slideDown();
+
+            freeze.slideUpWithBlackLine(1);
+
+            for (int x = 0; x < FIELD_WIDTH; x++) {
+                field.setBlock(x, 0);
+            }
+
+            assertThat(field).isEqualTo(freeze);
+        }
+    }
+
+    @Test
+    void slideUpWithWhiteLineN() {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 100000; count++) {
+            Field field = randoms.field(FIELD_HEIGHT, 10);
+            int slide = randoms.nextIntOpen(FIELD_HEIGHT + 1);
+
+            Field freeze = field.freeze();
+            for (int n = 0; n < slide; n++) {
+                freeze.slideUpWithWhiteLine(1);
+            }
+
+            field.slideUpWithWhiteLine(slide);
+            assertThat(field).isEqualTo(freeze);
+        }
+    }
+
+    @Test
+    void slideUpWithBlackLineN() {
+        Randoms randoms = new Randoms();
+        for (int count = 0; count < 100000; count++) {
+            Field field = randoms.field(FIELD_HEIGHT, 10);
+            int slide = randoms.nextIntOpen(FIELD_HEIGHT + 1);
+
+            Field freeze = field.freeze();
+            for (int n = 0; n < slide; n++) {
+                freeze.slideUpWithBlackLine(1);
+            }
+
+            field.slideUpWithBlackLine(slide);
+            assertThat(field).isEqualTo(freeze);
+        }
+    }
+
+    @Test
     void slideLeft() {
         Randoms randoms = new Randoms();
         for (int count = 0; count < 100000; count++) {

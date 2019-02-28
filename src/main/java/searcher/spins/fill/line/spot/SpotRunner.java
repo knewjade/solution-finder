@@ -1,31 +1,32 @@
-package searcher.spins.fill.line;
+package searcher.spins.fill.line.spot;
 
-import common.datastore.OperationWithKey;
 import common.iterable.PermutationIterable;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.neighbor.SimpleOriginalPiece;
+import searcher.spins.fill.line.SimpleOriginalPieces;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class SpotRunner {
-    private static final int MAX_HEIGHT = 7;
+public class SpotRunner {
+    public static final int MAX_HEIGHT = 7;
 
     private final Map<PieceBlockCount, List<MinoDiff>> pieceBlockCountToMinoDiffs;
-    private final Map<Long, SimpleOriginalPiece> keyToOperation;
+    private final SimpleOriginalPieces simpleOriginalPieces;
 
-    SpotRunner(
+    public SpotRunner(
             Map<PieceBlockCount, List<MinoDiff>> pieceBlockCountToMinoDiffs,
-            Map<Long, SimpleOriginalPiece> keyToOperation
+            SimpleOriginalPieces simpleOriginalPieces
     ) {
+        assert MAX_HEIGHT <= simpleOriginalPieces.getMaxTargetHeight() : simpleOriginalPieces.getMaxTargetHeight();
         this.pieceBlockCountToMinoDiffs = pieceBlockCountToMinoDiffs;
-        this.keyToOperation = keyToOperation;
+        this.simpleOriginalPieces = simpleOriginalPieces;
     }
 
     // y=3で揃える
-    List<SpotResult> toNew(List<PieceBlockCount> pieceBlockCounts) {
+    public List<SpotResult> search(List<PieceBlockCount> pieceBlockCounts) {
         assert 1 <= pieceBlockCounts.size();
 
         HashSet<Long> visited = new HashSet<>();
@@ -78,6 +79,7 @@ class SpotRunner {
         int size = minoDiffs.size();
         int sumBlockCount = 0;
         int startX = 0;
+        int blockCountWithRightMargin = 0;
         int[] xs = new int[size];
 
         Field field = FieldFactory.createField(MAX_HEIGHT);
@@ -109,8 +111,14 @@ class SpotRunner {
 
             // ブロックとマージンの合計が10を超えていないか
             int rightMargin = minoDiff.getRightMargin();
-            if (10 < startX + sumBlockCount + rightMargin) {
+            int currentBlockCountWithRightMargin = sumBlockCount + rightMargin;
+            if (10 < startX + currentBlockCountWithRightMargin) {
                 return;
+            }
+
+            // 最も右にあるブロックまで個数を更新する
+            if (blockCountWithRightMargin < currentBlockCountWithRightMargin) {
+                blockCountWithRightMargin = currentBlockCountWithRightMargin;
             }
 
             // フィールドをスライドする
@@ -120,24 +128,31 @@ class SpotRunner {
         // 解として確定
         List<SimpleOriginalPiece> operations = new ArrayList<>();
         Field usingField = FieldFactory.createField(MAX_HEIGHT);
+        int minY = Integer.MAX_VALUE;
         for (int index = 0; index < size; index++) {
             MinoDiff minoDiff = minoDiffs.get(index);
             int minX = xs[index] + startX;
 
-            long key = OperationWithKey.toUniqueKey(
-                    minoDiff.getPiece(), minoDiff.getRotate(), minoDiff.calcCx(minX), minoDiff.getY()
-            );
+            SimpleOriginalPiece operation = simpleOriginalPieces.get(minoDiff.getPiece(), minoDiff.getRotate(), minoDiff.calcCx(minX), minoDiff.getY());
 
-            SimpleOriginalPiece operation = keyToOperation.get(key);
+            assert operation != null : minoDiff;
+
             operations.add(operation);
 
             assert Field.isIn(operation.getMino(), operation.getX(), operation.getY()) : operation;
             assert usingField.canMerge(operation.getMinoField());
 
             usingField.merge(operation.getMinoField());
+
+            // 最も下のブロックを更新
+            int minoMinoY = operation.getY() + operation.getMino().getMinY();
+            if (minoMinoY < minY) {
+                minY = minoMinoY;
+            }
         }
 
-        SpotResult spotResult = new SpotResult(operations, usingField, startX, sumBlockCount);
+        int rightX = startX + blockCountWithRightMargin - 1;
+        SpotResult spotResult = new SpotResult(operations, usingField, startX, sumBlockCount, rightX, minY);
         builder.accept(spotResult);
     }
 }

@@ -1,28 +1,26 @@
-package searcher.spins.fill.line;
+package searcher.spins.fill.line.spot;
 
 import core.field.Field;
-import core.field.FieldFactory;
-import core.field.FieldView;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.mino.Piece;
 import core.neighbor.SimpleOriginalPiece;
 import org.junit.jupiter.api.Test;
-import searcher.spins.AllSimpleOriginalPieces;
+import searcher.spins.fill.line.SimpleOriginalPieces;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class SpotRunnerTest {
     @Test
     void case1() {
-        SpotRunner spotRunner = createSpotRunner();
+        int maxHeight = 8;
+        SpotRunner spotRunner = createSpotRunner(maxHeight);
 
-        List<SpotResult> spots = spotRunner.toNew(Arrays.asList(
+        List<SpotResult> spots = spotRunner.search(Arrays.asList(
                 new PieceBlockCount(Piece.I, 4),
                 new PieceBlockCount(Piece.O, 2),
                 new PieceBlockCount(Piece.T, 2)
@@ -35,9 +33,10 @@ class SpotRunnerTest {
 
     @Test
     void case2() {
-        SpotRunner spotRunner = createSpotRunner();
+        int maxHeight = 8;
+        SpotRunner spotRunner = createSpotRunner(maxHeight);
 
-        List<SpotResult> spots = spotRunner.toNew(Arrays.asList(
+        List<SpotResult> spots = spotRunner.search(Arrays.asList(
                 new PieceBlockCount(Piece.J, 1),
                 new PieceBlockCount(Piece.L, 1),
                 new PieceBlockCount(Piece.I, 4)
@@ -50,9 +49,10 @@ class SpotRunnerTest {
 
     @Test
     void case3() {
-        SpotRunner spotRunner = createSpotRunner();
+        int maxHeight = 8;
+        SpotRunner spotRunner = createSpotRunner(maxHeight);
 
-        List<SpotResult> spots = spotRunner.toNew(Collections.singletonList(new PieceBlockCount(Piece.J, 1)));
+        List<SpotResult> spots = spotRunner.search(Collections.singletonList(new PieceBlockCount(Piece.J, 1)));
 
         assertThat(spots).hasSize(6);
 
@@ -61,9 +61,10 @@ class SpotRunnerTest {
 
     @Test
     void case4() {
-        SpotRunner spotRunner = createSpotRunner();
+        int maxHeight = 8;
+        SpotRunner spotRunner = createSpotRunner(maxHeight);
 
-        List<SpotResult> spots = spotRunner.toNew(Arrays.asList(
+        List<SpotResult> spots = spotRunner.search(Arrays.asList(
                 new PieceBlockCount(Piece.I, 4),
                 new PieceBlockCount(Piece.I, 4),
                 new PieceBlockCount(Piece.I, 4)
@@ -76,9 +77,10 @@ class SpotRunnerTest {
 
     @Test
     void case5() {
-        SpotRunner spotRunner = createSpotRunner();
+        int maxHeight = 8;
+        SpotRunner spotRunner = createSpotRunner(maxHeight);
 
-        List<SpotResult> spots = spotRunner.toNew(Arrays.asList(
+        List<SpotResult> spots = spotRunner.search(Arrays.asList(
                 new PieceBlockCount(Piece.O, 2),
                 new PieceBlockCount(Piece.O, 2),
                 new PieceBlockCount(Piece.O, 2),
@@ -91,20 +93,15 @@ class SpotRunnerTest {
         verify(spots);
     }
 
-    private SpotRunner createSpotRunner() {
-        int maxHeight = 8;
-        Field initField = FieldFactory.createField(maxHeight);
+    private SpotRunner createSpotRunner(int maxTargetHeight) {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
 
-        AllSimpleOriginalPieces allSimpleOriginalPieces = new AllSimpleOriginalPieces(minoFactory, minoShifter, 10, maxHeight);
-        List<SimpleOriginalPiece> originalPieces = allSimpleOriginalPieces.createList().stream()
-                .filter(simpleOriginalPiece -> initField.canMerge(simpleOriginalPiece.getMinoField()))
-                .collect(Collectors.toList());
+        LinePools pools = LinePools.create(minoFactory, minoShifter);
 
-        LinePools pools = LinePools.create(minoFactory, minoShifter, originalPieces, maxHeight);
+        SimpleOriginalPieces simpleOriginalPieces = SimpleOriginalPieces.create(minoFactory, minoShifter, maxTargetHeight);
 
-        return new SpotRunner(pools.getPieceBlockCountToMinoDiffs(), pools.getKeyToOriginPiece());
+        return new SpotRunner(pools.getPieceBlockCountToMinoDiffs(), simpleOriginalPieces);
     }
 
     private void verify(List<SpotResult> spots) {
@@ -137,5 +134,19 @@ class SpotRunnerTest {
         for (SimpleOriginalPiece operation : spot.getOperations()) {
             assertThat(Field.isIn(operation.getMino(), operation.getX(), operation.getY())).isTrue();
         }
+
+        // 最も下のブロック
+        assertThat(spot.getMinY()).isEqualTo(usingField.getLowerY());
+
+        // 最も右のブロック
+        int maxFieldHeight = usingField.getMaxFieldHeight();
+        int expectedRightX = -1;
+        for (int x = 9; 0 <= x; x--) {
+            if (0 < usingField.getBlockCountBelowOnX(x, maxFieldHeight)) {
+                expectedRightX = x;
+                break;
+            }
+        }
+        assertThat(spot.getRightX()).isEqualTo(expectedRightX);
     }
 }

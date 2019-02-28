@@ -1,11 +1,10 @@
-package searcher.spins.fill.line;
-
+package searcher.spins.fill.line.spot;
 
 import core.mino.Piece;
 
 import java.util.Objects;
 
-class PieceBlockCount implements Comparable<PieceBlockCount> {
+public class PieceBlockCount implements Comparable<PieceBlockCount> {
     private final Piece piece;
     private final int blockCount;
 
@@ -18,7 +17,7 @@ class PieceBlockCount implements Comparable<PieceBlockCount> {
         return piece;
     }
 
-    int getBlockCount() {
+    public int getBlockCount() {
         return blockCount;
     }
 
@@ -42,6 +41,8 @@ class PieceBlockCount implements Comparable<PieceBlockCount> {
 
     @Override
     public int compareTo(PieceBlockCount o) {
+        assert o != null;
+
         int pieceCompare = piece.compareTo(o.piece);
         if (pieceCompare != 0) {
             return pieceCompare;

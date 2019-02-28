@@ -1,4 +1,4 @@
-package searcher.spins.fill.line;
+package searcher.spins.fill.line.spot;
 
 class MinXBlockCount {
     private int blockCount = 0;

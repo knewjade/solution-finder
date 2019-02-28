@@ -4,27 +4,32 @@ import common.datastore.PieceCounter;
 import core.field.Field;
 import core.neighbor.SimpleOriginalPiece;
 
+import java.util.List;
 import java.util.stream.Stream;
 
-public class AddLastResult extends Result {
-    public static AddLastResult create(Result prev, SimpleOriginalPiece operation) {
-        PieceCounter reminderPieceCounter = prev.getRemainderPieceCounter().removeAndReturnNew(PieceCounter.getSinglePieceCounter(operation.getPiece()));
+public class AddLastsResult extends Result {
+    public static AddLastsResult create(Result prev, List<SimpleOriginalPiece> operations) {
+        // 残りのミノ
+        PieceCounter usingPiceCounter = new PieceCounter(operations.stream().map(SimpleOriginalPiece::getPiece));
+        PieceCounter reminderPieceCounter = prev.getRemainderPieceCounter().removeAndReturnNew(usingPiceCounter);
 
         // すでに使われているブロックを計算
         Field usingField = prev.freezeUsingField();
-        usingField.merge(operation.getMinoField());
+        for (SimpleOriginalPiece operation : operations) {
+            usingField.merge(operation.getMinoField());
+        }
 
-        return new AddLastResult(prev, operation, reminderPieceCounter, usingField);
+        return new AddLastsResult(prev, operations, reminderPieceCounter, usingField);
     }
 
     private final Result prev;
-    private final SimpleOriginalPiece operation;
+    private final List<SimpleOriginalPiece> operations;
     private final PieceCounter reminderPieceCounter;
     private final Field usingField;
 
-    private AddLastResult(Result prev, SimpleOriginalPiece operation, PieceCounter reminderPieceCounter, Field usingField) {
+    private AddLastsResult(Result prev, List<SimpleOriginalPiece> operations, PieceCounter reminderPieceCounter, Field usingField) {
         this.prev = prev;
-        this.operation = operation;
+        this.operations = operations;
         this.reminderPieceCounter = reminderPieceCounter;
         this.usingField = usingField;
     }
@@ -53,15 +58,11 @@ public class AddLastResult extends Result {
 
     @Override
     public Stream<SimpleOriginalPiece> operationStream() {
-        return Stream.concat(prev.operationStream(), Stream.of(operation));
+        return Stream.concat(prev.operationStream(), operations.stream());
     }
 
     @Override
     public int getNumOfUsingPiece() {
-        return prev.getNumOfUsingPiece() + 1;
-    }
-
-    public SimpleOriginalPiece getCurrentOperation() {
-        return operation;
+        return prev.getNumOfUsingPiece() + operations.size();
     }
 }
