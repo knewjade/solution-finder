@@ -23,7 +23,7 @@ public class AddLastScaffoldResultWithT extends ScaffoldResultWithT {
         this.operation = operation;
         this.result = AddLastResult.create(prev.getLastResult(), operation);
         this.numOfUsingPiece = prev.getNumOfUsingPiece() + 1;
-        this.airOperations = ScaffoldResultWithoutT.extractAirOperations(result, Stream.concat(prev.getAirOperations().stream(), Stream.of(operation)));
+        this.airOperations = ScaffoldResultWithT.extractAirOperations(result, prev.getOperationT(), Stream.concat(prev.getAirOperations().stream(), Stream.of(operation)));
 
         Field freezeNotAllowed = prev.getNotAllowed().freeze();
         freezeNotAllowed.merge(operation.getMinoField());

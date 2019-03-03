@@ -39,7 +39,6 @@ public class SpinCommons {
     }
 
     // Tスピンか判定
-    // `needDeletedKey` のフラグは、Tミノの間の行のみ立っていること
     public static boolean canTSpin(Field field, int x, int y, long needDeletedKey) {
         int slide = Long.bitCount(needDeletedKey);
         return 3L <= Stream.of(
@@ -55,5 +54,15 @@ public class SpinCommons {
             return true;
         }
         return !field.isEmpty(x, y);
+    }
+
+    // Tスピンか判定
+    public static boolean canTSpin(Field field, int x, int y) {
+        return 3L <= Stream.of(
+                isBlock(field, x - 1, y - 1),
+                isBlock(field, x - 1, y + 1),
+                isBlock(field, x + 1, y - 1),
+                isBlock(field, x + 1, y + 1)
+        ).filter(Boolean::booleanValue).count();
     }
 }

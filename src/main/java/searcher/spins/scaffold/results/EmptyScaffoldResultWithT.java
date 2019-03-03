@@ -22,7 +22,7 @@ public class EmptyScaffoldResultWithT extends ScaffoldResultWithT {
         this.result = candidateWithMask.getResult();
         this.candidateWithMask = candidateWithMask;
         this.operations = operations;
-        this.airOperations = ScaffoldResultWithoutT.extractAirOperations(candidateWithMask.getResult(), operations.stream());
+        this.airOperations = ScaffoldResultWithT.extractAirOperations(result, candidateWithMask.getOperationT(), operations.stream());
 
         Field freezeNotAllowed = result.freezeAllMergedField();
         freezeNotAllowed.merge(candidateWithMask.getNotAllowed());

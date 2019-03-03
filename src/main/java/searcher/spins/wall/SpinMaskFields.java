@@ -2,6 +2,7 @@ package searcher.spins.wall;
 
 import core.field.Field;
 import core.field.FieldFactory;
+import core.field.KeyOperators;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -87,9 +88,9 @@ class SpinMaskFields {
         return maskFields.get(key).stream();
     }
 
-    // `deletedKey` のフラグは、Tミノの間の行のみ立っていること
     Stream<MaskField> get(int x, int y, long deletedKey) {
-        int key = toKey(x, y);
+        int slideY = Long.bitCount(deletedKey & KeyOperators.getMaskForKeyBelowY(y));
+        int key = toKey(x, y - slideY);
         return maskFields.get(key).stream()
                 .map(maskField -> {
                     Field freezeNeed = maskField.getRemain().freeze();

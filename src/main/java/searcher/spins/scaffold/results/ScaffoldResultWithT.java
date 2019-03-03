@@ -18,7 +18,7 @@ public abstract class ScaffoldResultWithT extends ScaffoldResult {
         long filledLine = field.getFilledLine();
 
         return targetOperationStream
-                .filter(operation -> SpinCommons.existsOnGround(field, filledLine, operation))
+                .filter(operation -> !SpinCommons.existsOnGround(field, filledLine, operation))
                 .collect(Collectors.toList());
     }
 

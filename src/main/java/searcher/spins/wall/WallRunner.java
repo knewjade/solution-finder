@@ -41,6 +41,8 @@ public class WallRunner {
     }
 
     Stream<CandidateWithMask> search(Candidate candidate) {
+        assert candidate.getResult().operationStream().anyMatch(it -> it.equals(candidate.getOperationT()));
+
         // Tミノを指定された場所に置いたら、Tスピンになる地形である
         if (canSpin(candidate)) {
             Field notAllowed = FieldFactory.createField(candidate.getAllMergedFieldWithoutT().getMaxFieldHeight());
@@ -51,12 +53,16 @@ public class WallRunner {
         Solutions<Long> solutions = new Solutions<>();
 
         SimpleOriginalPiece operationT = candidate.getOperationT();
-        Stream<MaskField> maskFields = spinMaskFields.get(operationT.getX(), operationT.getY(), operationT.getNeedDeletedKey());
-
         Result result = candidate.getResult();
 
         // すでに使用されているブロック
         Field allMergedField = result.getAllMergedField();
+
+        // マスクを取得する
+        // Tミノ以外のフィールドで揃っているラインを考慮する
+        long filledLineWithoutT = candidate.getAllMergedFieldWithoutT().getFilledLine();
+        assert (filledLineWithoutT & operationT.getNeedDeletedKey()) == operationT.getNeedDeletedKey();
+        Stream<MaskField> maskFields = spinMaskFields.get(operationT.getX(), operationT.getY(), filledLineWithoutT);
 
         // すでに揃っているライン
         long initFilledLine = allMergedField.getFilledLine();
@@ -97,7 +103,7 @@ public class WallRunner {
         long filledLine = lastResult.getAllMergedField().getFilledLine();
 
         // 消去されるラインが探索開始時から変わっていない
-        if (filledLine == initFilledLine) {
+        if (filledLine != initFilledLine) {
             return Stream.empty();
         }
 
@@ -137,15 +143,15 @@ public class WallRunner {
                             .filter(Objects::nonNull)
                             .flatMap(nextResult -> {
                                 // 既に解として登録済み
-                                Set<Long> keys = initResult.toKeyStream().collect(Collectors.toSet());
+                                Set<Long> keys = nextResult.toKeyStream().collect(Collectors.toSet());
                                 if (solutions.contains(keys)) {
                                     return Stream.empty();
                                 }
 
                                 // すべてが埋まっている
-                                if (initResult.isVisitedAll()) {
+                                if (nextResult.isVisitedAll()) {
                                     solutions.add(keys);
-                                    return Stream.of(initResult);
+                                    return Stream.of(nextResult);
                                 }
 
                                 return this.next(operationT, nextResult, solutions, initFilledLine);
