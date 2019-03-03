@@ -1,14 +1,11 @@
-package searcher.spins.fill.line;
+package searcher.spins.pieces;
 
 import common.comparator.FieldComparator;
 import common.datastore.OperationWithKey;
 import core.field.Field;
-import core.mino.MinoFactory;
-import core.mino.MinoShifter;
 import core.mino.Piece;
 import core.neighbor.SimpleOriginalPiece;
 import core.srs.Rotate;
-import searcher.spins.AllSimpleOriginalPieces;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,16 +13,11 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class SimpleOriginalPieces {
-    public static SimpleOriginalPieces create(MinoFactory minoFactory, MinoShifter minoShifter, int maxTargetHeight) {
-        AllSimpleOriginalPieces allSimpleOriginalPieces = new AllSimpleOriginalPieces(minoFactory, minoShifter, 10, maxTargetHeight);
-        List<SimpleOriginalPiece> originalPieces = allSimpleOriginalPieces.createList();
-        return create(originalPieces, maxTargetHeight);
-    }
-
-    private static SimpleOriginalPieces create(List<SimpleOriginalPiece> originalPieces, int maxTargetHeight) {
+    public static SimpleOriginalPieces create(AllSimpleOriginalPieces allSimpleOriginalPieces) {
+        List<SimpleOriginalPiece> originalPieces = allSimpleOriginalPieces.getOriginalPieces();
         Map<Long, SimpleOriginalPiece> keyToPiece = createKeyToPiece(originalPieces);
         Map<Field, SimpleOriginalPiece> fieldToPiece = createFieldToPiece(originalPieces);
-        return new SimpleOriginalPieces(keyToPiece, fieldToPiece, maxTargetHeight);
+        return new SimpleOriginalPieces(keyToPiece, fieldToPiece, allSimpleOriginalPieces.getMaxHeight());
     }
 
     private static Map<Long, SimpleOriginalPiece> createKeyToPiece(List<SimpleOriginalPiece> originalPieces) {
@@ -51,16 +43,16 @@ public class SimpleOriginalPieces {
 
     private final Map<Long, SimpleOriginalPiece> keyToPiece;
     private final Map<Field, SimpleOriginalPiece> fieldToPiece;
-    private final int maxTargetHeight;
+    private final int maxHeight;
 
     private SimpleOriginalPieces(
             Map<Long, SimpleOriginalPiece> keyToPiece,
             Map<Field, SimpleOriginalPiece> fieldToPiece,
-            int maxTargetHeight
+            int maxHeight
     ) {
         this.keyToPiece = keyToPiece;
         this.fieldToPiece = fieldToPiece;
-        this.maxTargetHeight = maxTargetHeight;
+        this.maxHeight = maxHeight;
     }
 
     public SimpleOriginalPiece get(Piece piece, Rotate rotate, int x, int y) {
@@ -72,7 +64,7 @@ public class SimpleOriginalPieces {
         return fieldToPiece.get(field);
     }
 
-    public int getMaxTargetHeight() {
-        return maxTargetHeight;
+    public int getMaxHeight() {
+        return maxHeight;
     }
 }

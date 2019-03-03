@@ -28,6 +28,7 @@ public class AddLastsResult extends Result {
     private final Field usingField;
 
     private AddLastsResult(Result prev, List<SimpleOriginalPiece> operations, PieceCounter reminderPieceCounter, Field usingField) {
+        super();
         this.prev = prev;
         this.operations = operations;
         this.reminderPieceCounter = reminderPieceCounter;

@@ -1,9 +1,10 @@
-package searcher.spins.results;
+package searcher.spins.temp;
 
 
 import common.datastore.PieceCounter;
 import core.field.Field;
 import core.neighbor.SimpleOriginalPiece;
+import searcher.spins.results.Result;
 
 public class ResultWithT {
     private final Result result;

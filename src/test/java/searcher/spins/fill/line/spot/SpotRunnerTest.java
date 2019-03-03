@@ -6,7 +6,8 @@ import core.mino.MinoShifter;
 import core.mino.Piece;
 import core.neighbor.SimpleOriginalPiece;
 import org.junit.jupiter.api.Test;
-import searcher.spins.fill.line.SimpleOriginalPieces;
+import searcher.spins.pieces.SimpleOriginalPieceFactory;
+import searcher.spins.pieces.SimpleOriginalPieces;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -99,7 +100,8 @@ class SpotRunnerTest {
 
         LinePools pools = LinePools.create(minoFactory, minoShifter);
 
-        SimpleOriginalPieces simpleOriginalPieces = SimpleOriginalPieces.create(minoFactory, minoShifter, maxTargetHeight);
+        SimpleOriginalPieceFactory factory = new SimpleOriginalPieceFactory(minoFactory, minoShifter, maxTargetHeight);
+        SimpleOriginalPieces simpleOriginalPieces = SimpleOriginalPieces.create(factory.createAllPieces());
 
         return new SpotRunner(pools.getPieceBlockCountToMinoDiffs(), simpleOriginalPieces);
     }

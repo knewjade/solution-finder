@@ -37,4 +37,23 @@ public class SpinCommons {
         freeze.remove(mino, x, y);
         return freeze.isOnGround(mino, x, y);
     }
+
+    // Tスピンか判定
+    // `needDeletedKey` のフラグは、Tミノの間の行のみ立っていること
+    public static boolean canTSpin(Field field, int x, int y, long needDeletedKey) {
+        int slide = Long.bitCount(needDeletedKey);
+        return 3L <= Stream.of(
+                isBlock(field, x - 1, y - 1),
+                isBlock(field, x - 1, y + 1 + slide),
+                isBlock(field, x + 1, y - 1),
+                isBlock(field, x + 1, y + 1 + slide)
+        ).filter(Boolean::booleanValue).count();
+    }
+
+    private static boolean isBlock(Field field, int x, int y) {
+        if (x < 0 || 10 <= x || y < 0) {
+            return true;
+        }
+        return !field.isEmpty(x, y);
+    }
 }

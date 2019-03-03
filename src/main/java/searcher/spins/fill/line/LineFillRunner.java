@@ -3,9 +3,11 @@ package searcher.spins.fill.line;
 import common.datastore.PieceCounter;
 import common.iterable.CombinationIterable;
 import core.field.Field;
-import core.field.FieldView;
+import core.field.KeyOperators;
 import core.mino.Piece;
 import core.neighbor.SimpleOriginalPiece;
+import searcher.spins.pieces.SimpleOriginalPieces;
+import searcher.spins.TargetY;
 import searcher.spins.fill.line.next.RemainderField;
 import searcher.spins.fill.line.next.RemainderFieldRunner;
 import searcher.spins.fill.line.spot.*;
@@ -31,15 +33,17 @@ public class LineFillRunner {
     private final Map<Piece, Set<PieceBlockCount>> pieceToPieceBlockCounts;
     private final SimpleOriginalPieces simpleOriginalPieces;
     private final int fieldHeight;
+    private final int maxTargetHeight;
 
     private final List<List<Integer>> indexes;
     private final ConcurrentMap<PieceBlockCounts, List<SpotResult>> spotResultCache = new ConcurrentHashMap<>();
 
-    LineFillRunner(
+    public LineFillRunner(
             Map<PieceBlockCount, List<MinoDiff>> pieceBlockCountToMinoDiffs,
             Map<Piece, Set<PieceBlockCount>> pieceToPieceBlockCounts,
             SimpleOriginalPieces simpleOriginalPieces,
             int maxPieceNum,
+            int maxTargetHeight,
             int fieldHeight
     ) {
         this.remainderFieldRunner = new RemainderFieldRunner();
@@ -47,6 +51,7 @@ public class LineFillRunner {
         this.pieceToPieceBlockCounts = pieceToPieceBlockCounts;
         this.simpleOriginalPieces = simpleOriginalPieces;
         this.fieldHeight = fieldHeight;
+        this.maxTargetHeight = maxTargetHeight;
 
         this.indexes = createIndexes(maxPieceNum);
     }
@@ -60,13 +65,17 @@ public class LineFillRunner {
     }
 
     public Stream<Result> search(Field initField, PieceCounter pieceCounter, int targetY) {
+        long initFilledLine = initField.getFilledLine();
+
+        assert (initFilledLine & KeyOperators.getBitKey(targetY)) == 0L;
+
         EmptyResult emptyResult = new EmptyResult(initField, pieceCounter, fieldHeight);
         List<RemainderField> remainderFields = remainderFieldRunner.extract(initField, targetY);
-        return search(emptyResult, targetY, remainderFields, 0);
+        return search(emptyResult, initFilledLine, targetY, remainderFields, 0);
     }
 
     private Stream<Result> search(
-            Result prevResult, int targetY, List<RemainderField> remainderFields, int index
+            Result prevResult, long initFilledLine, int targetY, List<RemainderField> remainderFields, int index
     ) {
         assert index < remainderFields.size() : index;
 
@@ -77,14 +86,21 @@ public class LineFillRunner {
         Field allMergedField = prevResult.getAllMergedField();
         SlidedField slidedField = SlidedField.create(allMergedField, targetY);
 
-        Stream<Result> stream = searchBlockCounts(prevResult.getRemainderPieceCounter(), blockCount)
-                .flatMap(pieceBlockCountList -> spot(slidedField, pieceBlockCountList, prevResult, startX, targetY));
+        TargetY target = new TargetY(targetY);
+
+        PieceCounter remainderPieceCounter = prevResult.getRemainderPieceCounter();
+        if (remainderPieceCounter.isEmpty()) {
+            return Stream.empty();
+        }
+
+        Stream<Result> stream = searchBlockCounts(remainderPieceCounter, blockCount)
+                .flatMap(pieceBlockCountList -> spot(initFilledLine, slidedField, pieceBlockCountList, prevResult, startX, target));
 
         if (index == remainderFields.size() - 1) {
             return stream;
         }
 
-        return stream.flatMap(result -> search(result, targetY, remainderFields, index + 1));
+        return stream.flatMap(result -> search(result, initFilledLine, targetY, remainderFields, index + 1));
     }
 
     private Stream<List<PieceBlockCount>> searchBlockCounts(PieceCounter pieceCounter, int blockCount) {
@@ -136,14 +152,17 @@ public class LineFillRunner {
     }
 
     private Stream<Result> spot(
-            SlidedField slidedField, List<PieceBlockCount> pieceBlockCountList, Result prevResult, int startX, int targetY
+            long initFilledLine, SlidedField slidedField, List<PieceBlockCount> pieceBlockCountList,
+            Result prevResult, int startX, TargetY targetY
     ) {
         int size = pieceBlockCountList.size();
+        long keyBelowY = targetY.getKeyBelowY() & ~initFilledLine;
 
         if (size <= MAX_SIZE) {
             // 残っているミノが `MAX_SIZE` こ以内
             PieceBlockCounts pieceBlockCounts = new PieceBlockCounts(pieceBlockCountList);
-            return spot(slidedField, prevResult, startX, targetY, pieceBlockCounts);
+            return spot(slidedField, prevResult, startX, targetY, pieceBlockCounts)
+                    .filter(result -> isFilledBelowTarget(keyBelowY, result));
         }
 
         // 残っているミノが `MAX_SIZE+1` こ以上
@@ -181,19 +200,26 @@ public class LineFillRunner {
                     remain.remove(indexArray[0]);
 
                     return spot(slidedField, prevResult, startX, targetY, pieceBlockCounts)
+                            .filter(result -> isFilledBelowTarget(keyBelowY, result))
                             .flatMap(result -> {
                                 int usingBlockCount = pieceBlockCounts.getUsingBlockCount();
 
                                 Field allMergedField = result.getAllMergedField();
                                 SlidedField nextSlidedField = SlidedField.create(allMergedField, slidedField);
 
-                                return spot(nextSlidedField, remain, result, startX + usingBlockCount, targetY);
+                                return spot(initFilledLine, nextSlidedField, remain, result, startX + usingBlockCount, targetY);
                             });
                 });
     }
 
+    private boolean isFilledBelowTarget(long keyBelowY, Result result) {
+        Field field = result.getAllMergedField();
+        long filledLineBelowTarget = field.getFilledLine() & keyBelowY;
+        return filledLineBelowTarget == 0L;
+    }
+
     private Stream<Result> spot(
-            SlidedField slidedField, Result prevResult, int startX, int targetY, PieceBlockCounts pieceBlockCounts
+            SlidedField slidedField, Result prevResult, int startX, TargetY targetY, PieceBlockCounts pieceBlockCounts
     ) {
         assert pieceBlockCounts.getPieceBlockCountList().size() <= MAX_SIZE;
 
@@ -201,7 +227,7 @@ public class LineFillRunner {
         long filledLine = slidedField.getFilledLine();
         int slideDownY = slidedField.getSlideDownY();
 
-        int slideY = 3 - targetY;
+        int slideY = 3 - targetY.getTargetY();
 
         Stream<Result> stream = spot(pieceBlockCounts).stream()
                 .map(spotResult -> {
@@ -223,6 +249,12 @@ public class LineFillRunner {
                         return null;
                     }
 
+                    int maxY = spotResult.getMaxY();
+                    if (maxTargetHeight <= maxY - slideY) {
+                        // 最も上にあるブロックが範囲外になる
+                        return null;
+                    }
+
                     // 揃えるラインをy=3にスライド済み
                     Field usingField = spotResult.getUsingField().freeze();
                     usingField.slideRight(slideX);
@@ -237,6 +269,7 @@ public class LineFillRunner {
                                         originalPiece.getPiece(), originalPiece.getRotate(),
                                         originalPiece.getX() + slideX, originalPiece.getY() + slideDownY
                                 );
+                                assert slidedPiece != null : originalPiece + " " + slideX + " " + slideDownY;
                                 Field freeze = slidedPiece.getMinoField().freeze();
                                 freeze.insertWhiteLineWithKey(filledLine);
                                 return simpleOriginalPieces.get(freeze);

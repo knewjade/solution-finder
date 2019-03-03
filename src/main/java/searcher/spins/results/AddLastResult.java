@@ -23,6 +23,7 @@ public class AddLastResult extends Result {
     private final Field usingField;
 
     private AddLastResult(Result prev, SimpleOriginalPiece operation, PieceCounter reminderPieceCounter, Field usingField) {
+        super();
         this.prev = prev;
         this.operation = operation;
         this.reminderPieceCounter = reminderPieceCounter;

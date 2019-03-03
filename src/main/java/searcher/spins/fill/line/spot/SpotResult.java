@@ -12,14 +12,16 @@ public class SpotResult {
     private final int usingBlockCount;
     private final int rightX;
     private final int minY;
+    private final int maxY;
 
-    SpotResult(List<SimpleOriginalPiece> operations, Field usingField, int startX, int usingBlockCount, int rightX, int minY) {
+    SpotResult(List<SimpleOriginalPiece> operations, Field usingField, int startX, int usingBlockCount, int rightX, int minY, int maxY) {
         this.operations = operations;
         this.usingField = usingField;
         this.startX = startX;
         this.usingBlockCount = usingBlockCount;
         this.rightX = rightX;
         this.minY = minY;
+        this.maxY = maxY;
     }
 
     public List<SimpleOriginalPiece> getOperations() {
@@ -45,5 +47,9 @@ public class SpotResult {
 
     public int getMinY() {
         return minY;
+    }
+
+    public int getMaxY() {
+        return maxY;
     }
 }

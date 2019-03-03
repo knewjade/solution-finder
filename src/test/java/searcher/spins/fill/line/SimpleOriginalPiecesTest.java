@@ -10,6 +10,8 @@ import core.mino.Piece;
 import core.neighbor.SimpleOriginalPiece;
 import core.srs.Rotate;
 import org.junit.jupiter.api.Test;
+import searcher.spins.pieces.SimpleOriginalPieceFactory;
+import searcher.spins.pieces.SimpleOriginalPieces;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -19,7 +21,8 @@ class SimpleOriginalPiecesTest {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
 
-        SimpleOriginalPieces simpleOriginalPieces = SimpleOriginalPieces.create(minoFactory, minoShifter, 7);
+        SimpleOriginalPieceFactory factory = new SimpleOriginalPieceFactory(minoFactory, minoShifter, 7);
+        SimpleOriginalPieces simpleOriginalPieces = SimpleOriginalPieces.create(factory.createAllPieces());
 
         // keyToPiece
 

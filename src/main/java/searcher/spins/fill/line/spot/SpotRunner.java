@@ -3,8 +3,9 @@ package searcher.spins.fill.line.spot;
 import common.iterable.PermutationIterable;
 import core.field.Field;
 import core.field.FieldFactory;
+import core.mino.Mino;
 import core.neighbor.SimpleOriginalPiece;
-import searcher.spins.fill.line.SimpleOriginalPieces;
+import searcher.spins.pieces.SimpleOriginalPieces;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -20,7 +21,7 @@ public class SpotRunner {
             Map<PieceBlockCount, List<MinoDiff>> pieceBlockCountToMinoDiffs,
             SimpleOriginalPieces simpleOriginalPieces
     ) {
-        assert MAX_HEIGHT <= simpleOriginalPieces.getMaxTargetHeight() : simpleOriginalPieces.getMaxTargetHeight();
+        assert MAX_HEIGHT <= simpleOriginalPieces.getMaxHeight() : simpleOriginalPieces.getMaxHeight();
         this.pieceBlockCountToMinoDiffs = pieceBlockCountToMinoDiffs;
         this.simpleOriginalPieces = simpleOriginalPieces;
     }
@@ -77,6 +78,9 @@ public class SpotRunner {
 
     private void fix(Stream.Builder<SpotResult> builder, List<MinoDiff> minoDiffs) {
         int size = minoDiffs.size();
+
+        assert 1 <= size : size;
+
         int sumBlockCount = 0;
         int startX = 0;
         int blockCountWithRightMargin = 0;
@@ -129,6 +133,7 @@ public class SpotRunner {
         List<SimpleOriginalPiece> operations = new ArrayList<>();
         Field usingField = FieldFactory.createField(MAX_HEIGHT);
         int minY = Integer.MAX_VALUE;
+        int maxY = -1;
         for (int index = 0; index < size; index++) {
             MinoDiff minoDiff = minoDiffs.get(index);
             int minX = xs[index] + startX;
@@ -139,20 +144,29 @@ public class SpotRunner {
 
             operations.add(operation);
 
-            assert Field.isIn(operation.getMino(), operation.getX(), operation.getY()) : operation;
+            int y = operation.getY();
+            Mino mino = operation.getMino();
+
+            assert Field.isIn(mino, operation.getX(), y) : operation;
             assert usingField.canMerge(operation.getMinoField());
 
             usingField.merge(operation.getMinoField());
 
             // 最も下のブロックを更新
-            int minoMinoY = operation.getY() + operation.getMino().getMinY();
-            if (minoMinoY < minY) {
-                minY = minoMinoY;
+            int minoMinY = y + mino.getMinY();
+            if (minoMinY < minY) {
+                minY = minoMinY;
+            }
+
+            // 最も上のブロックを更新
+            int minoMaxY = y + mino.getMaxY();
+            if (maxY < minoMaxY) {
+                maxY = minoMaxY;
             }
         }
 
         int rightX = startX + blockCountWithRightMargin - 1;
-        SpotResult spotResult = new SpotResult(operations, usingField, startX, sumBlockCount, rightX, minY);
+        SpotResult spotResult = new SpotResult(operations, usingField, startX, sumBlockCount, rightX, minY, maxY);
         builder.accept(spotResult);
     }
 }

@@ -13,6 +13,7 @@ public class EmptyResult extends Result {
     private final int fieldHeight;
 
     public EmptyResult(Field initField, PieceCounter reminderPieceCounter, int fieldHeight) {
+        super();
         this.initField = initField;
         this.reminderPieceCounter = reminderPieceCounter;
         this.fieldHeight = fieldHeight;
