@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class SimpleOriginalPieceFactory {
+    private static final int LEAST_MAX_HEIGHT = 7;
+
     private static class SimpleOriginalPieceFactoryImpl extends AbstractAllOperationFactory<SimpleOriginalPiece> {
         SimpleOriginalPieceFactoryImpl(MinoFactory minoFactory, MinoShifter minoShifter, int fieldWidth, int fieldHeight) {
             super(minoFactory, minoShifter, fieldWidth, fieldHeight);
@@ -23,26 +25,30 @@ public class SimpleOriginalPieceFactory {
     }
 
     private final List<SimpleOriginalPiece> originalPieces;
-    private final int maxHeight;
+    private final int maxHeightForAll;
+    private final int maxHeightForMinimal;
 
-    public SimpleOriginalPieceFactory(MinoFactory minoFactory, MinoShifter minoShifter, int maxHeight) {
-        this(minoFactory, minoShifter, 10, maxHeight);
+    public SimpleOriginalPieceFactory(MinoFactory minoFactory, MinoShifter minoShifter, int maxTargetHeight) {
+        this(minoFactory, minoShifter, 10, maxTargetHeight);
     }
 
-    private SimpleOriginalPieceFactory(MinoFactory minoFactory, MinoShifter minoShifter, int fieldWidth, int maxHeight) {
-        SimpleOriginalPieceFactoryImpl factory = new SimpleOriginalPieceFactoryImpl(minoFactory, minoShifter, fieldWidth, maxHeight);
+    private SimpleOriginalPieceFactory(MinoFactory minoFactory, MinoShifter minoShifter, int fieldWidth, int maxTargetHeight) {
+        this.maxHeightForAll = LEAST_MAX_HEIGHT <= maxTargetHeight ? maxTargetHeight : LEAST_MAX_HEIGHT;
+
+        SimpleOriginalPieceFactoryImpl factory = new SimpleOriginalPieceFactoryImpl(minoFactory, minoShifter, fieldWidth, maxHeightForAll);
         this.originalPieces = factory.createList();
-        this.maxHeight = maxHeight;
+        this.maxHeightForMinimal = maxTargetHeight + 1;
     }
 
     public AllSimpleOriginalPieces createAllPieces() {
-        return new AllSimpleOriginalPieces(originalPieces, maxHeight);
+        return new AllSimpleOriginalPieces(originalPieces, maxHeightForAll);
     }
 
     public MinimalSimpleOriginalPieces createMinimalPieces(Field field) {
         List<SimpleOriginalPiece> minimalOriginalPieces = originalPieces.stream()
                 .filter(originalPiece -> field.canMerge(originalPiece.getMinoField()))
+                .filter(originalPiece -> originalPiece.getY() + originalPiece.getMino().getMaxY() < maxHeightForMinimal)
                 .collect(Collectors.toList());
-        return new MinimalSimpleOriginalPieces(minimalOriginalPieces, maxHeight);
+        return new MinimalSimpleOriginalPieces(minimalOriginalPieces, maxHeightForMinimal);
     }
 }

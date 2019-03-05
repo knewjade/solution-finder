@@ -15,7 +15,7 @@ public abstract class ScaffoldResultWithT extends ScaffoldResult {
         Field field = result.freezeAllMergedField();
         field.reduce(operationT.getMinoField());
 
-        long filledLine = field.getFilledLine();
+        long filledLine = result.getAllMergedFilledLine();
 
         return targetOperationStream
                 .filter(operation -> !SpinCommons.existsOnGround(field, filledLine, operation))

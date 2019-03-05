@@ -12,8 +12,8 @@ import java.util.stream.Stream;
 public abstract class ScaffoldResultWithoutT extends ScaffoldResult {
     // すべてのミノが地面 or 他のミノの上にあるか
     static List<SimpleOriginalPiece> extractAirOperations(Result result, Stream<SimpleOriginalPiece> targetOperationStream) {
-        Field field = result.freezeAllMergedField();
-        long filledLine = field.getFilledLine();
+        long filledLine = result.getAllMergedFilledLine();
+        Field field = result.getAllMergedField();
         return targetOperationStream
                 .filter(operation -> !SpinCommons.existsOnGround(field, filledLine, operation))
                 .collect(Collectors.toList());

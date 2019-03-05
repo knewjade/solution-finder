@@ -8,14 +8,16 @@ public class Candidate {
     private final Result result;
     private final SimpleOriginalPiece tOperation;
     private final Field allMergedFieldWithoutT;
+    private final long allMergedFilledLineWithoutT;
 
     public Candidate(Result result, SimpleOriginalPiece tOperation) {
         this.result = result;
         this.tOperation = tOperation;
 
-        Field allMergedFieldWithoutT = result.getAllMergedField();
+        Field allMergedFieldWithoutT = result.freezeAllMergedField();
         allMergedFieldWithoutT.reduce(tOperation.getMinoField());
         this.allMergedFieldWithoutT = allMergedFieldWithoutT;
+        this.allMergedFilledLineWithoutT = allMergedFieldWithoutT.getFilledLine();
     }
 
     public Result getResult() {
@@ -28,5 +30,9 @@ public class Candidate {
 
     public Field getAllMergedFieldWithoutT() {
         return allMergedFieldWithoutT;
+    }
+
+    public long getAllMergedFilledLineWithoutT() {
+        return allMergedFilledLineWithoutT;
     }
 }

@@ -26,6 +26,8 @@ public class AddLastsResult extends Result {
     private final List<SimpleOriginalPiece> operations;
     private final PieceCounter reminderPieceCounter;
     private final Field usingField;
+    private final Field allMergedField;
+    private final long allMergedFilledLine;
 
     private AddLastsResult(Result prev, List<SimpleOriginalPiece> operations, PieceCounter reminderPieceCounter, Field usingField) {
         super();
@@ -33,6 +35,11 @@ public class AddLastsResult extends Result {
         this.operations = operations;
         this.reminderPieceCounter = reminderPieceCounter;
         this.usingField = usingField;
+
+        Field allMergedField = freezeInitField();
+        allMergedField.merge(usingField);
+        this.allMergedField = allMergedField;
+        this.allMergedFilledLine = allMergedField.getFilledLine();
     }
 
     @Override
@@ -47,9 +54,7 @@ public class AddLastsResult extends Result {
 
     @Override
     public Field getAllMergedField() {
-        Field field = freezeInitField();
-        field.merge(getUsingField());
-        return field;
+        return allMergedField;
     }
 
     @Override
@@ -65,5 +70,10 @@ public class AddLastsResult extends Result {
     @Override
     public int getNumOfUsingPiece() {
         return prev.getNumOfUsingPiece() + operations.size();
+    }
+
+    @Override
+    public long getAllMergedFilledLine() {
+        return allMergedFilledLine;
     }
 }

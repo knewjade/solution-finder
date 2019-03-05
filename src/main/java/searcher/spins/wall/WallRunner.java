@@ -40,7 +40,7 @@ public class WallRunner {
         this.scaffoldRunner = scaffoldRunner;
     }
 
-    Stream<CandidateWithMask> search(Candidate candidate) {
+    public Stream<CandidateWithMask> search(Candidate candidate) {
         assert candidate.getResult().operationStream().anyMatch(it -> it.equals(candidate.getOperationT()));
 
         // Tミノを指定された場所に置いたら、Tスピンになる地形である
@@ -60,12 +60,12 @@ public class WallRunner {
 
         // マスクを取得する
         // Tミノ以外のフィールドで揃っているラインを考慮する
-        long filledLineWithoutT = candidate.getAllMergedFieldWithoutT().getFilledLine();
+        long filledLineWithoutT = candidate.getAllMergedFilledLineWithoutT();
         assert (filledLineWithoutT & operationT.getNeedDeletedKey()) == operationT.getNeedDeletedKey();
         Stream<MaskField> maskFields = spinMaskFields.get(operationT.getX(), operationT.getY(), filledLineWithoutT);
 
         // すでに揃っているライン
-        long initFilledLine = allMergedField.getFilledLine();
+        long initFilledLine = result.getAllMergedFilledLine();
 
         // まだブロックがない部分同じ形のマスクを取り除く
         return maskFields
@@ -85,7 +85,7 @@ public class WallRunner {
                     }
 
                     // 探索
-                    return this.next(candidate.getOperationT(), emptyWallResult, solutions, initFilledLine);
+                    return this.next(candidate.getOperationT(), emptyWallResult, solutions, initFilledLine, filledLineWithoutT);
                 })
                 .map(wallResult -> new CandidateWithMask(wallResult.getLastResult(), operationT, wallResult.getNotAllowed()));
     }
@@ -97,10 +97,11 @@ public class WallRunner {
     }
 
     private Stream<WallResult> next(
-            SimpleOriginalPiece operationT, WallResult initResult, Solutions<Long> solutions, long initFilledLine
+            SimpleOriginalPiece operationT, WallResult initResult, Solutions<Long> solutions,
+            long initFilledLine, long filledLineWithoutT
     ) {
         Result lastResult = initResult.getLastResult();
-        long filledLine = lastResult.getAllMergedField().getFilledLine();
+        long filledLine = lastResult.getAllMergedFilledLine();
 
         // 消去されるラインが探索開始時から変わっていない
         if (filledLine != initFilledLine) {
@@ -114,6 +115,7 @@ public class WallRunner {
         }
 
         // 次に置くミノ一覧
+        assert !initResult.getRemain().isPerfect();
         EnumMap<Piece, List<SimpleOriginalPiece>> nextOriginPiecesMap = bitBlocks.getNextOriginPiecesMap(initResult.getRemain());
         Result initLastResult = initResult.getLastResult();
 
@@ -128,7 +130,7 @@ public class WallRunner {
                     return nextOriginPiecesMap.get(piece).stream()
                             .filter(originalPiece -> {
                                 long needDeletedKey = originalPiece.getNeedDeletedKey();
-                                return (initFilledLine & needDeletedKey) == needDeletedKey;
+                                return (filledLineWithoutT & needDeletedKey) == needDeletedKey;
                             })
                             .flatMap(it -> {
                                 if (!notAllowed.canMerge(it.getMinoField())) {
@@ -154,7 +156,7 @@ public class WallRunner {
                                     return Stream.of(nextResult);
                                 }
 
-                                return this.next(operationT, nextResult, solutions, initFilledLine);
+                                return this.next(operationT, nextResult, solutions, initFilledLine, filledLineWithoutT);
                             });
                 });
     }

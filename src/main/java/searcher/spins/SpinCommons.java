@@ -8,12 +8,6 @@ import core.neighbor.SimpleOriginalPiece;
 import java.util.stream.Stream;
 
 public class SpinCommons {
-    public static boolean existsAllOnGroundWithoutT(Field allMergedField, Stream<? extends MinoOperationWithKey> operations) {
-        long filledLine = allMergedField.getFilledLine();
-
-        return operations.allMatch(operation -> existsOnGround(allMergedField, filledLine, operation));
-    }
-
     public static boolean existsAllOnGroundWithT(Field allMergedField, Stream<? extends MinoOperationWithKey> operations, SimpleOriginalPiece operationT) {
         Field fieldWithoutT = allMergedField.freeze();
         fieldWithoutT.reduce(operationT.getMinoField());

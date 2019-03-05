@@ -4,7 +4,7 @@ import core.neighbor.SimpleOriginalPiece;
 
 import java.util.List;
 
-class AllSimpleOriginalPieces {
+public class AllSimpleOriginalPieces {
     private final List<SimpleOriginalPiece> originalPieces;
     private final int maxHeight;
 

@@ -26,7 +26,7 @@ import java.util.stream.StreamSupport;
 public class LineFillRunner {
     private static final Set<PieceBlockCount> EMPTY_PIECE_BLOCK_COUNT_SET = Collections.emptySet();
     private static final int MAX_SIZE = 4;
-    public static final int FIELD_WIDTH = 10;
+    private static final int FIELD_WIDTH = 10;
 
     private final RemainderFieldRunner remainderFieldRunner;
     private final SpotRunner spotRunner;
@@ -65,11 +65,11 @@ public class LineFillRunner {
     }
 
     public Stream<Result> search(Field initField, PieceCounter pieceCounter, int targetY) {
-        long initFilledLine = initField.getFilledLine();
+        EmptyResult emptyResult = new EmptyResult(initField, pieceCounter, fieldHeight);
+        long initFilledLine = emptyResult.getAllMergedFilledLine();
 
         assert (initFilledLine & KeyOperators.getBitKey(targetY)) == 0L;
 
-        EmptyResult emptyResult = new EmptyResult(initField, pieceCounter, fieldHeight);
         List<RemainderField> remainderFields = remainderFieldRunner.extract(initField, targetY);
         return search(emptyResult, initFilledLine, targetY, remainderFields, 0);
     }
@@ -213,8 +213,7 @@ public class LineFillRunner {
     }
 
     private boolean isFilledBelowTarget(long keyBelowY, Result result) {
-        Field field = result.getAllMergedField();
-        long filledLineBelowTarget = field.getFilledLine() & keyBelowY;
+        long filledLineBelowTarget = result.getAllMergedFilledLine() & keyBelowY;
         return filledLineBelowTarget == 0L;
     }
 

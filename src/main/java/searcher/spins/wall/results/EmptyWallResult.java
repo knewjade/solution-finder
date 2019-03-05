@@ -5,8 +5,6 @@ import searcher.spins.candidates.Candidate;
 import searcher.spins.results.Result;
 import searcher.spins.wall.MaskField;
 
-import java.util.Collections;
-import java.util.Set;
 import java.util.stream.Stream;
 
 public class EmptyWallResult extends WallResult {

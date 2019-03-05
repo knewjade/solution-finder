@@ -2,6 +2,7 @@ package searcher.spins.pieces.bits;
 
 import core.field.Field;
 import core.field.FieldFactory;
+import core.field.FieldView;
 import core.field.MiddleField;
 import core.mino.Piece;
 import core.neighbor.SimpleOriginalPiece;
@@ -74,7 +75,9 @@ public class MiddleBitBlocks implements BitBlocks {
     private EnumMap<Piece, List<SimpleOriginalPiece>> get(MiddleField field) {
         long firstKey = field.getBoard(0);
         long secondKey = field.getBoard(1);
-        return maps.get(firstKey).get(secondKey);
+        Map<Long, EnumMap<Piece, List<SimpleOriginalPiece>>> firstResponse = maps.get(firstKey);
+        assert firstResponse != null : FieldView.toString(field);
+        return firstResponse.get(secondKey);
     }
 
     private MiddleField getBit(Field field) {

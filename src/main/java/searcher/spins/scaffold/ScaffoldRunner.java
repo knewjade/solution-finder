@@ -24,7 +24,7 @@ public class ScaffoldRunner {
 
     public Stream<ScaffoldResultWithoutT> build(Result result, List<SimpleOriginalPiece> targetOperations) {
         // 最後のミノを置く前のフィールドで消去されているラインを取得
-        long initFilledLine = result.getAllMergedField().getFilledLine();
+        long initFilledLine = result.getAllMergedFilledLine();
 
         EmptyScaffoldResultWithoutT scaffoldResult = new EmptyScaffoldResultWithoutT(result, targetOperations);
         return localSearch(scaffoldResult, initFilledLine, AddLastScaffoldResultWithoutT::new);
@@ -34,7 +34,7 @@ public class ScaffoldRunner {
         Result result = candidateWithMask.getResult();
 
         // 最後のミノを置く前のフィールドで消去されているラインを取得
-        long initFilledLine = result.getAllMergedField().getFilledLine();
+        long initFilledLine = result.getAllMergedFilledLine();
 
         EmptyScaffoldResultWithT scaffoldResult = new EmptyScaffoldResultWithT(candidateWithMask, Collections.singletonList(operation));
         return localSearch(scaffoldResult, initFilledLine, AddLastScaffoldResultWithT::new);
@@ -43,7 +43,7 @@ public class ScaffoldRunner {
         /*
  public Stream<ScaffoldResultWithoutT> build(Result initResult, SimpleOriginalPiece operation) {
         // 最後のミノを置く前のフィールドで消去されているラインを取得
-        long initFilledLine = initResult.getAllMergedField().getFilledLine();
+        long initFilledLine = initResult.getAllMergedFilledLine();
 
         Result result = AddLastResult.create(initResult, operation);
         EmptyScaffoldResultWithoutT scaffoldResult = new EmptyScaffoldResultWithoutT(result, Collections.singletonList(operation));
@@ -137,7 +137,7 @@ public class ScaffoldRunner {
 
                         T nextScaffoldResult = factory.apply(scaffoldResult, operation);
 
-                        long filledLine = nextScaffoldResult.getLastResult().getAllMergedField().getFilledLine();
+                        long filledLine = nextScaffoldResult.getLastResult().getAllMergedFilledLine();
 
                         // 消去されるラインが変わらない
                         if (filledLine != initFilledLine) {
@@ -166,7 +166,7 @@ public class ScaffoldRunner {
             Result result, TargetY target, List<SimpleOriginalPiece> targetOperations
     ) {
         // 最初のフィールドで消去されているラインを取得
-        long initFilledLine = result.getAllMergedField().getFilledLine();
+        long initFilledLine = result.getAllMergedFilledLine();
 
         // ターゲットより下のラインは揃っても良い
         long allowFilledLine = target.getKeyBelowY() & ~initFilledLine;
@@ -261,7 +261,7 @@ public class ScaffoldRunner {
                         T nextScaffoldResult = factory.apply(scaffoldResult, operation);
 
                         // 消去されたラインが指定された範囲内
-                        long filledLine = nextScaffoldResult.getLastResult().getAllMergedField().getFilledLine();
+                        long filledLine = nextScaffoldResult.getLastResult().getAllMergedFilledLine();
                         long newFilledLine = filledLine & ~initFilledLine;
                         if ((allowFilledLine & newFilledLine) != newFilledLine) {
                             return;

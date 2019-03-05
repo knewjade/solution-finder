@@ -1,10 +1,7 @@
 package searcher.spins.wall;
 
-import common.buildup.BuildUp;
 import common.datastore.PieceCounter;
 import common.parser.OperationTransform;
-import concurrent.LockedReachableThreadLocal;
-import core.action.reachable.LockedReachable;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.KeyOperators;
@@ -57,7 +54,7 @@ class WallRunnerTest {
 
         assertThat(results).hasSize(2);
 
-        verify(results, initField, fieldHeight);
+        verify(results, fieldHeight);
     }
 
     @Test
@@ -87,7 +84,7 @@ class WallRunnerTest {
 
         assertThat(results).hasSize(1);
 
-        verify(results, initField, fieldHeight);
+        verify(results, fieldHeight);
     }
 
     @Test
@@ -118,7 +115,7 @@ class WallRunnerTest {
 
         assertThat(results).hasSize(1);
 
-        verify(results, initField, fieldHeight);
+        verify(results, fieldHeight);
     }
 
     @Test
@@ -147,19 +144,19 @@ class WallRunnerTest {
 
         assertThat(results).hasSize(4);
 
-        verify(results, initField, fieldHeight);
+        verify(results, fieldHeight);
     }
 
     @Test
     @LongTest
     void case5() {
-        int fieldHeight = 8;
+        int fieldHeight = 7;
         Field initField = FieldFactory.createField(fieldHeight);
         WallRunner runner = createWallRunner(initField, fieldHeight);
 
         PieceCounter reminderPieceCounter = new PieceCounter(Arrays.asList(
                 Piece.Z, Piece.S, Piece.I, Piece.J, Piece.I, Piece.I, Piece.O, Piece.J, Piece.O, Piece.T,
-                Piece.J, Piece.L, Piece.S, Piece.Z
+                Piece.J, Piece.L, Piece.S, Piece.Z, Piece.I
         ));
         EmptyResult emptyResult = new EmptyResult(initField, reminderPieceCounter, fieldHeight);
         SimpleOriginalPiece tOperation = to(Piece.T, Rotate.Reverse, 4, 4, KeyOperators.getBitKey(4), fieldHeight);
@@ -179,14 +176,70 @@ class WallRunnerTest {
 
         List<CandidateWithMask> results = runner.search(new Candidate(result, tOperation)).collect(Collectors.toList());
 
-        assertThat(results).hasSize(119);
+        assertThat(results).hasSize(104);
 
-        verify(results, initField, fieldHeight);
+        verify(results, fieldHeight);
     }
 
-    private void verify(List<CandidateWithMask> results, Field initField, int height) {
-        LockedReachableThreadLocal lockedReachableThreadLocal = new LockedReachableThreadLocal(height);
+    @Test
+    void case6() {
+        int fieldHeight = 5;
+        Field initField = FieldFactory.createField(fieldHeight);
+        WallRunner runner = createWallRunner(initField, fieldHeight);
 
+        PieceCounter reminderPieceCounter = new PieceCounter(Arrays.asList(
+                Piece.J, Piece.S, Piece.T, Piece.Z
+        ));
+        EmptyResult emptyResult = new EmptyResult(initField, reminderPieceCounter, fieldHeight);
+        SimpleOriginalPiece tOperation = to(Piece.T, Rotate.Reverse, 8, 4, fieldHeight);
+        List<SimpleOriginalPiece> operations = Arrays.asList(
+                to(Piece.J, Rotate.Left, 9, 2, fieldHeight),
+                to(Piece.S, Rotate.Right, 6, 3, fieldHeight),
+                tOperation
+        );
+        Result result = AddLastsResult.create(emptyResult, operations);
+
+        List<CandidateWithMask> results = runner.search(new Candidate(result, tOperation)).collect(Collectors.toList());
+
+        assertThat(results).hasSize(0);
+
+        verify(results, fieldHeight);
+    }
+
+    @Test
+    void case7() {
+        int fieldHeight = 5;
+        Field initField = FieldFactory.createField("" +
+                "XXXX______" +
+                "XXXXXX____" +
+                "XXXXXXX___" +
+                "XXXXXXXX__" +
+                "XXXXXXXXX_" +
+                ""
+        );
+        WallRunner runner = createWallRunner(initField, fieldHeight);
+
+        PieceCounter reminderPieceCounter = new PieceCounter(Arrays.asList(
+                Piece.Z, Piece.J, Piece.T, Piece.I
+        ));
+        EmptyResult emptyResult = new EmptyResult(initField, reminderPieceCounter, fieldHeight);
+        SimpleOriginalPiece tOperation = to(Piece.T, Rotate.Reverse, 8, 4, fieldHeight);
+        List<SimpleOriginalPiece> operations = Arrays.asList(
+                to(Piece.Z, Rotate.Right, 8, 2, fieldHeight),
+                to(Piece.J, Rotate.Reverse, 5, 4, fieldHeight),
+                tOperation
+        );
+        Result result = AddLastsResult.create(emptyResult, operations);
+
+        List<CandidateWithMask> results = runner.search(new Candidate(result, tOperation)).collect(Collectors.toList());
+
+        assertThat(results).hasSize(1);
+
+        verify(results, fieldHeight);
+    }
+
+
+    private void verify(List<CandidateWithMask> results, int height) {
         assertThat(results)
                 .allSatisfy(candidateWithMask -> {
                     SimpleOriginalPiece operationT = candidateWithMask.getOperationT();
@@ -194,12 +247,6 @@ class WallRunnerTest {
                     List<SimpleOriginalPiece> operationsWithoutT = result.operationStream()
                             .filter(op -> !op.equals(operationT))
                             .collect(Collectors.toList());
-
-                    LockedReachable lockedReachable = lockedReachableThreadLocal.get();
-
-                    // Tミノ以外で組み立てられる手順が存在する
-                    boolean exists = BuildUp.existsValidBuildPattern(initField, operationsWithoutT, height, lockedReachable);
-                    assertThat(exists).isTrue();
 
                     // Tミノ以外でフィールドを組み立てられる
                     Field fieldWithoutT = FieldFactory.createField(height);
@@ -230,7 +277,8 @@ class WallRunnerTest {
         SimpleOriginalPieceFactory factory = new SimpleOriginalPieceFactory(minoFactory, minoShifter, fieldHeight);
         MinimalSimpleOriginalPieces minimalPieces = factory.createMinimalPieces(initField);
         BitBlocks bitBlocks = BitBlocks.create(minimalPieces);
-        ScaffoldRunner scaffoldRunner = new ScaffoldRunner(Scaffolds.create(minimalPieces));
+        Scaffolds scaffolds = Scaffolds.create(minimalPieces);
+        ScaffoldRunner scaffoldRunner = new ScaffoldRunner(scaffolds);
         return WallRunner.create(bitBlocks, scaffoldRunner, fieldHeight);
     }
 

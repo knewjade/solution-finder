@@ -11,12 +11,14 @@ public class EmptyResult extends Result {
     private final Field initField;
     private final PieceCounter reminderPieceCounter;
     private final int fieldHeight;
+    private final long filledLine;
 
     public EmptyResult(Field initField, PieceCounter reminderPieceCounter, int fieldHeight) {
         super();
         this.initField = initField;
         this.reminderPieceCounter = reminderPieceCounter;
         this.fieldHeight = fieldHeight;
+        this.filledLine = initField.getFilledLine();
     }
 
     @Override
@@ -42,6 +44,11 @@ public class EmptyResult extends Result {
     @Override
     public int getNumOfUsingPiece() {
         return 0;
+    }
+
+    @Override
+    public long getAllMergedFilledLine() {
+        return filledLine;
     }
 
     @Override

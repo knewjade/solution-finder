@@ -8,13 +8,6 @@ import core.neighbor.SimpleOriginalPiece;
 import java.util.stream.Stream;
 
 public abstract class Result {
-    // 消去されるライン数を計算
-    public int calculateClearedLine() {
-        Field freeze = this.freezeUsingField();
-        freeze.merge(this.getInitField());
-        return Long.bitCount(freeze.getFilledLine());
-    }
-
     // BlockField に変換
     public BlockField parseToBlockField() {
         Field field = this.getInitField();
@@ -53,4 +46,7 @@ public abstract class Result {
 
     // 利用したミノの数
     public abstract int getNumOfUsingPiece();
+
+    // 消去されているライン
+    public abstract long getAllMergedFilledLine();
 }
