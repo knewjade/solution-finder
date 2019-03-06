@@ -1,11 +1,6 @@
 package searcher.spins;
 
-import common.datastore.MinoOperationWithKey;
 import common.datastore.PieceCounter;
-import common.tetfu.Tetfu;
-import common.tetfu.TetfuElement;
-import common.tetfu.common.ColorConverter;
-import common.tetfu.field.ColoredField;
 import concurrent.RotateReachableThreadLocal;
 import core.field.Field;
 import core.mino.MinoFactory;
@@ -13,13 +8,13 @@ import core.mino.MinoShifter;
 import core.mino.Piece;
 import core.neighbor.SimpleOriginalPiece;
 import core.srs.MinoRotation;
-import entry.path.output.OneFumenParser;
 import searcher.spins.candidates.Candidate;
 import searcher.spins.fill.FillRunner;
 import searcher.spins.fill.line.LineFillRunner;
 import searcher.spins.fill.line.spot.LinePools;
 import searcher.spins.fill.line.spot.MinoDiff;
 import searcher.spins.fill.line.spot.PieceBlockCount;
+import searcher.spins.fill.results.FillResult;
 import searcher.spins.pieces.*;
 import searcher.spins.pieces.bits.BitBlocks;
 import searcher.spins.results.EmptyResult;
@@ -61,7 +56,7 @@ public class MainRunner {
         this.rotateReachableThreadLocal = new RotateReachableThreadLocal(minoFactory, minoShifter, minoRotation, maxTargetHeight);
     }
 
-    public Stream<RoofResult> search(Field initField, PieceCounter pieceCounter) {
+    public Stream<RoofResult> search(Field initField, PieceCounter pieceCounter, int minClearedLine) {
         Map<PieceBlockCount, List<MinoDiff>> pieceBlockCountToMinoDiffs = pools.getPieceBlockCountToMinoDiffs();
         Map<Piece, Set<PieceBlockCount>> pieceToPieceBlockCounts = pools.getPieceToPieceBlockCounts();
 
@@ -80,28 +75,18 @@ public class MainRunner {
 
         RoofRunner roofRunner = new RoofRunner(roofs, rotateReachableThreadLocal, maxTargetHeight);
 
-        return search(initField, fillRunner, scaffoldRunner, wallRunner, roofRunner, pieceCounter);
+        return search(initField, fillRunner, scaffoldRunner, wallRunner, roofRunner, pieceCounter, minClearedLine);
     }
 
     private Stream<RoofResult> search(
             Field initField, FillRunner fillRunner, ScaffoldRunner scaffoldRunner,
-            WallRunner wallRunner, RoofRunner roofRunner, PieceCounter pieceCounter
+            WallRunner wallRunner, RoofRunner roofRunner, PieceCounter pieceCounter,
+            int minClearedLine
     ) {
         EmptyResult emptyResult = new EmptyResult(initField, pieceCounter, fieldHeight);
 
-        MinoFactory minoFactory = new MinoFactory();
-        ColorConverter colorConverter = new ColorConverter();
-        OneFumenParser oneFumenParser = new OneFumenParser(minoFactory, colorConverter);
-
-        List<RoofResult> results = fillRunner.search(emptyResult).parallel()
-                .filter(fillResult -> {
-                    if (fillResult.containsT()) {
-                        return true;
-                    }
-//                    System.out.println(BlockFieldView.toString(fillResult.getLastResult().parseToBlockField()));
-//                    System.out.println();
-                    return false;
-                })
+        return fillRunner.search(emptyResult).parallel()
+                .filter(FillResult::containsT)
                 .flatMap(fillResult -> {
                     Result lastResult = fillResult.getLastResult();
                     long filledLine = lastResult.getAllMergedFilledLine();
@@ -109,7 +94,7 @@ public class MainRunner {
                     return fillResult.tOperationStream()
                             .filter(tOperation -> {
                                 long usingKey = tOperation.getUsingKey();
-                                return 2 <= Long.bitCount(filledLine & usingKey);
+                                return minClearedLine <= Long.bitCount(filledLine & usingKey);
                             })
                             .flatMap(tOperation -> {
                                 List<SimpleOriginalPiece> targetOperations = fillResult.operationStream()
@@ -123,22 +108,6 @@ public class MainRunner {
                                         });
                             });
                 })
-                .flatMap(roofRunner::search)
-                .collect(Collectors.toList());
-
-        List<TetfuElement> elements = results.stream()
-                .map(roofResult -> {
-                    Result result = roofResult.getLastResult();
-                    List<MinoOperationWithKey> operations = result.operationStream().collect(Collectors.toList());
-                    ColoredField coloredField = oneFumenParser.parseToColoredField(operations, initField, fieldHeight);
-                    return new TetfuElement(coloredField, "");
-                })
-                .collect(Collectors.toList());
-
-        Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
-        String encode = tetfu.encode(elements);
-        System.out.println("https://knewjade.github.io/fumen-for-mobile/#?d=v115@" + encode);
-
-        return results.stream();
+                .flatMap(roofRunner::search);
     }
 }
