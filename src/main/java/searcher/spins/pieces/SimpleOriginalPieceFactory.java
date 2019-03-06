@@ -37,7 +37,7 @@ public class SimpleOriginalPieceFactory {
 
         SimpleOriginalPieceFactoryImpl factory = new SimpleOriginalPieceFactoryImpl(minoFactory, minoShifter, fieldWidth, maxHeightForAll);
         this.originalPieces = factory.createList();
-        this.maxHeightForMinimal = maxTargetHeight + 1;
+        this.maxHeightForMinimal = maxTargetHeight;
     }
 
     public AllSimpleOriginalPieces createAllPieces() {

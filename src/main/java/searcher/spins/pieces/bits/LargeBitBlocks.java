@@ -103,6 +103,8 @@ public class LargeBitBlocks implements BitBlocks {
         }
 
         long fourthBoard = field.getBoard(3);
+        assert fourthBoard != 0L;
+
         long board = fourthBoard & (-fourthBoard);
         return new LargeField(0L, 0L, 0L, board);
     }

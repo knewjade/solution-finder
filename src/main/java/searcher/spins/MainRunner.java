@@ -33,13 +33,19 @@ import java.util.stream.Stream;
 
 public class MainRunner {
     private final SimpleOriginalPieceFactory factory;
+    private final int allowFillMaxHeight;
     private final int maxTargetHeight;
     private final int fieldHeight;
     private final SimpleOriginalPieces simpleOriginalPieces;
     private final LinePools pools;
     private final RotateReachableThreadLocal rotateReachableThreadLocal;
 
-    MainRunner(int maxTargetHeight, int fieldHeight) {
+    MainRunner(int allowFillMaxHeight, int fieldHeight) {
+        int maxTargetHeight = allowFillMaxHeight + 2;
+        assert allowFillMaxHeight + 2 <= maxTargetHeight;
+        assert maxTargetHeight <= fieldHeight;
+
+        this.allowFillMaxHeight = allowFillMaxHeight;
         this.maxTargetHeight = maxTargetHeight;
         this.fieldHeight = fieldHeight;
         MinoFactory minoFactory = new MinoFactory();
@@ -47,13 +53,13 @@ public class MainRunner {
 
         this.pools = LinePools.create(minoFactory, minoShifter);
 
-        this.factory = new SimpleOriginalPieceFactory(minoFactory, minoShifter, maxTargetHeight);
+        this.factory = new SimpleOriginalPieceFactory(minoFactory, minoShifter, this.maxTargetHeight);
         AllSimpleOriginalPieces allPieces = factory.createAllPieces();
 
         this.simpleOriginalPieces = SimpleOriginalPieces.create(allPieces);
 
         MinoRotation minoRotation = new MinoRotation();
-        this.rotateReachableThreadLocal = new RotateReachableThreadLocal(minoFactory, minoShifter, minoRotation, maxTargetHeight);
+        this.rotateReachableThreadLocal = new RotateReachableThreadLocal(minoFactory, minoShifter, minoRotation, fieldHeight);
     }
 
     public Stream<RoofResult> search(Field initField, PieceCounter pieceCounter, int minClearedLine) {
@@ -66,14 +72,14 @@ public class MainRunner {
         MinimalSimpleOriginalPieces minimalPieces = factory.createMinimalPieces(initField);
         Scaffolds scaffolds = Scaffolds.create(minimalPieces);
         ScaffoldRunner scaffoldRunner = new ScaffoldRunner(scaffolds);
-        FillRunner fillRunner = new FillRunner(lineFillRunner, maxTargetHeight);
+        FillRunner fillRunner = new FillRunner(lineFillRunner, allowFillMaxHeight);
 
         BitBlocks bitBlocks = BitBlocks.create(minimalPieces);
-        WallRunner wallRunner = WallRunner.create(bitBlocks, scaffoldRunner, maxTargetHeight);
+        WallRunner wallRunner = WallRunner.create(bitBlocks, scaffoldRunner, allowFillMaxHeight, fieldHeight);
 
         Roofs roofs = new Roofs(minimalPieces);
 
-        RoofRunner roofRunner = new RoofRunner(roofs, rotateReachableThreadLocal, maxTargetHeight);
+        RoofRunner roofRunner = new RoofRunner(roofs, rotateReachableThreadLocal, fieldHeight);
 
         return search(initField, fillRunner, scaffoldRunner, wallRunner, roofRunner, pieceCounter, minClearedLine);
     }

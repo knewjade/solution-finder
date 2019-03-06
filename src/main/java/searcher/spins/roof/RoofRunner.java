@@ -19,20 +19,17 @@ public class RoofRunner {
     private static final Comparator<RoofResult> COMPARATOR = Comparator.comparingInt(RoofResult::getNumOfUsingPiece);
 
     private final Roofs roofs;
-    //    private final ThreadLocal<? extends Reachable> reachableThreadLocal;
     private final ThreadLocal<? extends RotateReachable> rotateReachableThreadLocal;
-    private final int maxTargetHeight;
+    private final int fieldHeight;
 
     public RoofRunner(
             Roofs roofs,
-//            ThreadLocal<? extends Reachable> reachableThreadLocal,
             ThreadLocal<? extends RotateReachable> rotateReachableThreadLocal,
-            int maxTargetHeight
+            int fieldHeight
     ) {
         this.roofs = roofs;
-//        this.reachableThreadLocal = reachableThreadLocal;
         this.rotateReachableThreadLocal = rotateReachableThreadLocal;
-        this.maxTargetHeight = maxTargetHeight;
+        this.fieldHeight = fieldHeight;
     }
 
     public Stream<RoofResult> search(CandidateWithMask candidateWithMask) {
@@ -75,7 +72,6 @@ public class RoofRunner {
     }
 
     private boolean isSolution(RoofResult roofResult) {
-//        Reachable reachable = reachableThreadLocal.get();
         RotateReachable rotateReachable = rotateReachableThreadLocal.get();
 
         Result result = roofResult.getLastResult();
@@ -85,25 +81,7 @@ public class RoofRunner {
         // Tが回転入れで終了する
         field.reduce(operationT.getMinoField());
         field.deleteLineWithKey(operationT.getNeedDeletedKey());
-        if (!rotateReachable.checks(field, operationT.getMino(), operationT.getX(), operationT.getY(), maxTargetHeight)) {
-            return false;
-        }
-
-//        Result result = roofResult.getLastResult();
-//        Field field = result.freezeAllMergedField();
-//
-//        // 空中に浮いているミノがない
-//        SimpleOriginalPiece operationT = roofResult.getOperationT();
-//        if (!SpinCommons.existsAllOnGroundWithT(field, roofResult.targetOperationStream(), operationT)) {
-//            return false;
-//        }
-//
-//        // T以外のミノを実際に組む手順が存在する
-//        Field initField = result.getInitField();
-//        List<SimpleOriginalPiece> operations = result.operationStream().collect(Collectors.toList());
-//        return BuildUp.existsValidBuildPattern(initField, operations, maxTargetHeight, reachable);
-
-        return true;
+        return rotateReachable.checks(field, operationT.getMino(), operationT.getX(), operationT.getY(), fieldHeight);
     }
 
     private List<RoofResult> localSearch(

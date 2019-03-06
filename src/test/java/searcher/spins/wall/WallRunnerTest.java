@@ -2,6 +2,7 @@ package searcher.spins.wall;
 
 import common.datastore.PieceCounter;
 import common.parser.OperationTransform;
+import core.field.BlockFieldView;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.KeyOperators;
@@ -35,9 +36,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 class WallRunnerTest {
     @Test
     void case1() {
-        int fieldHeight = 8;
+        int allowFillMaxHeight = 8;
+        int fieldHeight = 10;
         Field initField = FieldFactory.createField(fieldHeight);
-        WallRunner runner = createWallRunner(initField, fieldHeight);
+        WallRunner runner = createWallRunner(initField, allowFillMaxHeight, allowFillMaxHeight + 1, fieldHeight);
 
         EmptyResult emptyResult = new EmptyResult(initField, new PieceCounter(Piece.valueList()), fieldHeight);
         SimpleOriginalPiece tOperation = to(Piece.T, Rotate.Reverse, 2, 1, fieldHeight);
@@ -60,9 +62,10 @@ class WallRunnerTest {
     @Test
     void case2() {
         // 壁を使ったT-Spin Miniがすでにできている
-        int fieldHeight = 8;
+        int allowFillMaxHeight = 8;
+        int fieldHeight = 10;
         Field initField = FieldFactory.createField(fieldHeight);
-        WallRunner runner = createWallRunner(initField, fieldHeight);
+        WallRunner runner = createWallRunner(initField, allowFillMaxHeight, allowFillMaxHeight + 1, fieldHeight);
 
         PieceCounter reminderPieceCounter = new PieceCounter(Arrays.asList(
                 Piece.Z, Piece.L, Piece.L, Piece.I, Piece.O, Piece.O, Piece.T
@@ -90,9 +93,10 @@ class WallRunnerTest {
     @Test
     void case3() {
         // 床を使ったT-Spin Miniがすでにできている
-        int fieldHeight = 8;
+        int allowFillMaxHeight = 8;
+        int fieldHeight = 10;
         Field initField = FieldFactory.createField(fieldHeight);
-        WallRunner runner = createWallRunner(initField, fieldHeight);
+        WallRunner runner = createWallRunner(initField, allowFillMaxHeight, allowFillMaxHeight + 1, fieldHeight);
 
         PieceCounter reminderPieceCounter = new PieceCounter(Arrays.asList(
                 Piece.Z, Piece.L, Piece.L, Piece.I, Piece.Z, Piece.O, Piece.J, Piece.T
@@ -120,9 +124,10 @@ class WallRunnerTest {
 
     @Test
     void case4() {
-        int fieldHeight = 8;
+        int allowFillMaxHeight = 8;
+        int fieldHeight = 10;
         Field initField = FieldFactory.createField(fieldHeight);
-        WallRunner runner = createWallRunner(initField, fieldHeight);
+        WallRunner runner = createWallRunner(initField, allowFillMaxHeight, allowFillMaxHeight + 1, fieldHeight);
 
         PieceCounter reminderPieceCounter = new PieceCounter(Arrays.asList(
                 Piece.Z, Piece.L, Piece.L, Piece.I, Piece.I, Piece.L, Piece.T, Piece.Z, Piece.S
@@ -150,9 +155,10 @@ class WallRunnerTest {
     @Test
     @LongTest
     void case5() {
-        int fieldHeight = 7;
+        int allowFillMaxHeight = 7;
+        int fieldHeight = 10;
         Field initField = FieldFactory.createField(fieldHeight);
-        WallRunner runner = createWallRunner(initField, fieldHeight);
+        WallRunner runner = createWallRunner(initField, allowFillMaxHeight, allowFillMaxHeight, fieldHeight);
 
         PieceCounter reminderPieceCounter = new PieceCounter(Arrays.asList(
                 Piece.Z, Piece.S, Piece.I, Piece.J, Piece.I, Piece.I, Piece.O, Piece.J, Piece.O, Piece.T,
@@ -183,9 +189,10 @@ class WallRunnerTest {
 
     @Test
     void case6() {
-        int fieldHeight = 5;
+        int allowFillMaxHeight = 5;
+        int fieldHeight = 10;
         Field initField = FieldFactory.createField(fieldHeight);
-        WallRunner runner = createWallRunner(initField, fieldHeight);
+        WallRunner runner = createWallRunner(initField, allowFillMaxHeight, allowFillMaxHeight + 2, fieldHeight);
 
         PieceCounter reminderPieceCounter = new PieceCounter(Arrays.asList(
                 Piece.J, Piece.S, Piece.T, Piece.Z
@@ -201,23 +208,24 @@ class WallRunnerTest {
 
         List<CandidateWithMask> results = runner.search(new Candidate(result, tOperation)).collect(Collectors.toList());
 
-        assertThat(results).hasSize(0);
+        assertThat(results).hasSize(1);
 
         verify(results, fieldHeight);
     }
 
     @Test
     void case7() {
-        int fieldHeight = 5;
+        int allowFillMaxHeight = 5;
+        int fieldHeight = 10;
         Field initField = FieldFactory.createField("" +
-                "XXXX______" +
-                "XXXXXX____" +
-                "XXXXXXX___" +
-                "XXXXXXXX__" +
-                "XXXXXXXXX_" +
-                ""
-        );
-        WallRunner runner = createWallRunner(initField, fieldHeight);
+                        "XXXX______" +
+                        "XXXXXX____" +
+                        "XXXXXXX___" +
+                        "XXXXXXXX__" +
+                        "XXXXXXXXX_" +
+                        ""
+                , fieldHeight);
+        WallRunner runner = createWallRunner(initField, allowFillMaxHeight, allowFillMaxHeight + 1, fieldHeight);
 
         PieceCounter reminderPieceCounter = new PieceCounter(Arrays.asList(
                 Piece.Z, Piece.J, Piece.T, Piece.I
@@ -237,7 +245,6 @@ class WallRunnerTest {
 
         verify(results, fieldHeight);
     }
-
 
     private void verify(List<CandidateWithMask> results, int height) {
         assertThat(results)
@@ -271,15 +278,15 @@ class WallRunnerTest {
                 });
     }
 
-    private WallRunner createWallRunner(Field initField, int fieldHeight) {
+    private WallRunner createWallRunner(Field initField, int allowFillMaxHeight, int maxTargetHeight, int fieldHeight) {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        SimpleOriginalPieceFactory factory = new SimpleOriginalPieceFactory(minoFactory, minoShifter, fieldHeight);
+        SimpleOriginalPieceFactory factory = new SimpleOriginalPieceFactory(minoFactory, minoShifter, maxTargetHeight);
         MinimalSimpleOriginalPieces minimalPieces = factory.createMinimalPieces(initField);
         BitBlocks bitBlocks = BitBlocks.create(minimalPieces);
         Scaffolds scaffolds = Scaffolds.create(minimalPieces);
         ScaffoldRunner scaffoldRunner = new ScaffoldRunner(scaffolds);
-        return WallRunner.create(bitBlocks, scaffoldRunner, fieldHeight);
+        return WallRunner.create(bitBlocks, scaffoldRunner, allowFillMaxHeight, fieldHeight);
     }
 
     private SimpleOriginalPiece to(Piece piece, Rotate rotate, int x, int y, int fieldHeight) {

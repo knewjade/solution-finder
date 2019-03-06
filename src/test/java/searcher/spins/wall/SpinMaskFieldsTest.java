@@ -4,7 +4,6 @@ import common.comparator.FieldComparator;
 import common.datastore.Coordinate;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.field.FieldView;
 import core.field.KeyOperators;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +18,7 @@ class SpinMaskFieldsTest {
     @Test
     void center() {
         // 中央
-        SpinMaskFields spinMaskFields = new SpinMaskFields(MAX_HEIGHT);
+        SpinMaskFields spinMaskFields = new SpinMaskFields(MAX_HEIGHT, MAX_HEIGHT + 1);
 
         FieldComparator comparator = new FieldComparator();
 
@@ -53,7 +52,7 @@ class SpinMaskFieldsTest {
     @Test
     void leftSide() {
         // 左端
-        SpinMaskFields spinMaskFields = new SpinMaskFields(MAX_HEIGHT);
+        SpinMaskFields spinMaskFields = new SpinMaskFields(MAX_HEIGHT, MAX_HEIGHT + 1);
 
         FieldComparator comparator = new FieldComparator();
 
@@ -79,7 +78,7 @@ class SpinMaskFieldsTest {
     @Test
     void rightSide() {
         // 右端
-        SpinMaskFields spinMaskFields = new SpinMaskFields(MAX_HEIGHT);
+        SpinMaskFields spinMaskFields = new SpinMaskFields(MAX_HEIGHT, MAX_HEIGHT + 1);
 
         FieldComparator comparator = new FieldComparator();
 
@@ -105,7 +104,7 @@ class SpinMaskFieldsTest {
     @Test
     void bottom() {
         // 下端
-        SpinMaskFields spinMaskFields = new SpinMaskFields(MAX_HEIGHT);
+        SpinMaskFields spinMaskFields = new SpinMaskFields(MAX_HEIGHT, MAX_HEIGHT + 1);
 
         FieldComparator comparator = new FieldComparator();
 
@@ -131,7 +130,7 @@ class SpinMaskFieldsTest {
     @Test
     void upper() {
         // 上端
-        SpinMaskFields spinMaskFields = new SpinMaskFields(MAX_HEIGHT);
+        SpinMaskFields spinMaskFields = new SpinMaskFields(MAX_HEIGHT, MAX_HEIGHT + 1);
 
         FieldComparator comparator = new FieldComparator();
 
@@ -165,7 +164,7 @@ class SpinMaskFieldsTest {
 
     @Test
     void deletedLine1() {
-        SpinMaskFields spinMaskFields = new SpinMaskFields(MAX_HEIGHT);
+        SpinMaskFields spinMaskFields = new SpinMaskFields(MAX_HEIGHT, MAX_HEIGHT + 1);
 
         FieldComparator comparator = new FieldComparator();
 
@@ -198,7 +197,7 @@ class SpinMaskFieldsTest {
 
     @Test
     void deletedLine2() {
-        SpinMaskFields spinMaskFields = new SpinMaskFields(MAX_HEIGHT);
+        SpinMaskFields spinMaskFields = new SpinMaskFields(MAX_HEIGHT, MAX_HEIGHT + 1);
 
         FieldComparator comparator = new FieldComparator();
 

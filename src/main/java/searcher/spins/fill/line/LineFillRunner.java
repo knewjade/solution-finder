@@ -31,8 +31,8 @@ public class LineFillRunner {
     private final SpotRunner spotRunner;
     private final Map<Piece, Set<PieceBlockCount>> pieceToPieceBlockCounts;
     private final SimpleOriginalPieces simpleOriginalPieces;
-    private final int fieldHeight;
     private final int maxTargetHeight;
+    private final int fieldHeight;
 
     private final List<List<Integer>> indexes;
     private final ConcurrentMap<PieceBlockCounts, List<SpotResult>> spotResultCache = new ConcurrentHashMap<>();
@@ -45,12 +45,13 @@ public class LineFillRunner {
             int maxTargetHeight,
             int fieldHeight
     ) {
+        assert maxTargetHeight <= fieldHeight;
         this.remainderFieldRunner = new RemainderFieldRunner();
         this.spotRunner = new SpotRunner(pieceBlockCountToMinoDiffs, simpleOriginalPieces);
         this.pieceToPieceBlockCounts = pieceToPieceBlockCounts;
         this.simpleOriginalPieces = simpleOriginalPieces;
-        this.fieldHeight = fieldHeight;
         this.maxTargetHeight = maxTargetHeight;
+        this.fieldHeight = fieldHeight;
 
         this.indexes = createIndexes(maxPieceNum);
     }
@@ -268,7 +269,7 @@ public class LineFillRunner {
                                         originalPiece.getPiece(), originalPiece.getRotate(),
                                         originalPiece.getX() + slideX, originalPiece.getY() + slideDownY
                                 );
-                                assert slidedPiece != null : originalPiece + " " + slideX + " " + slideDownY;
+                                assert slidedPiece != null : originalPiece + " " + slideX + "," + slideDownY;
                                 Field freeze = slidedPiece.getMinoField().freeze();
                                 freeze.insertWhiteLineWithKey(filledLine);
                                 return simpleOriginalPieces.get(freeze);

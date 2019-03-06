@@ -16,13 +16,14 @@ class SpinMaskFields {
 
     private final HashMap<Integer, List<MaskField>> maskFields;
 
-    SpinMaskFields(int maxTargetHeight) {
-        this.maskFields = getTSpinMaskFields(maxTargetHeight);
+    SpinMaskFields(int allowFillMaxHeight, int fieldHeight) {
+        this.maskFields = getTSpinMaskFields(allowFillMaxHeight, fieldHeight);
     }
 
     // Tスピンとして判定されるのに必要なブロックを取得
-    private HashMap<Integer, List<MaskField>> getTSpinMaskFields(int maxHeight) {
-        int fieldHeight = maxHeight + 1;
+    private HashMap<Integer, List<MaskField>> getTSpinMaskFields(int allowFillMaxHeight, int fieldHeight) {
+        int maxHeight = allowFillMaxHeight + 1;
+        assert maxHeight <= fieldHeight;
 
         HashMap<Integer, List<MaskField>> maps = new HashMap<>();
 
@@ -91,7 +92,7 @@ class SpinMaskFields {
     Stream<MaskField> get(int x, int y, long deletedKey) {
         int slideY = Long.bitCount(deletedKey & KeyOperators.getMaskForKeyBelowY(y));
         int key = toKey(x, y - slideY);
-        return maskFields.get(key).stream()
+        return this.maskFields.get(key).stream()
                 .map(maskField -> {
                     Field freezeNeed = maskField.getRemain().freeze();
                     freezeNeed.insertWhiteLineWithKey(deletedKey);

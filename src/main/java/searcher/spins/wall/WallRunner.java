@@ -25,8 +25,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class WallRunner {
-    public static WallRunner create(BitBlocks bitBlocks, ScaffoldRunner scaffoldRunner, int maxTargetHeight) {
-        SpinMaskFields spinMaskFields = new SpinMaskFields(maxTargetHeight);
+    public static WallRunner create(BitBlocks bitBlocks, ScaffoldRunner scaffoldRunner, int allowFillMaxHeight, int fieldHeight) {
+        SpinMaskFields spinMaskFields = new SpinMaskFields(allowFillMaxHeight, fieldHeight);
         return new WallRunner(bitBlocks, spinMaskFields, scaffoldRunner);
     }
 
@@ -138,11 +138,21 @@ public class WallRunner {
                                 }
 
                                 Result result = AddLastResult.create(initLastResult, it);
+
+                                // 消去されるラインが探索開始時から変わっていない
+                                if (result.getAllMergedFilledLine() != initFilledLine) {
+                                    return Stream.empty();
+                                }
+
                                 CandidateWithMask candidateWithMask = new CandidateWithMask(result, operationT, notAllowed);
                                 return scaffoldRunner.build(candidateWithMask, it)
                                         .map(scaffoldResult -> new AddLastWallResult(initResult, scaffoldResult));
                             })
                             .filter(Objects::nonNull)
+                            .filter(nextResult -> {
+                                // 消去されるラインが探索開始時から変わっていない
+                                return nextResult.getLastResult().getAllMergedFilledLine() == initFilledLine;
+                            })
                             .flatMap(nextResult -> {
                                 // 既に解として登録済み
                                 Set<Long> keys = nextResult.toKeyStream().collect(Collectors.toSet());

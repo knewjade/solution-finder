@@ -73,11 +73,11 @@ public class MiddleBitBlocks implements BitBlocks {
     }
 
     private EnumMap<Piece, List<SimpleOriginalPiece>> get(MiddleField field) {
+        assert !field.isPerfect();
         long firstKey = field.getBoard(0);
         long secondKey = field.getBoard(1);
-        Map<Long, EnumMap<Piece, List<SimpleOriginalPiece>>> firstResponse = maps.get(firstKey);
-        assert firstResponse != null : FieldView.toString(field);
-        return firstResponse.get(secondKey);
+        assert maps.containsKey(firstKey) : FieldView.toString(field);
+        return maps.get(firstKey).get(secondKey);
     }
 
     private MiddleField getBit(Field field) {
@@ -88,6 +88,8 @@ public class MiddleBitBlocks implements BitBlocks {
         }
 
         long secondBoard = field.getBoard(1);
+        assert secondBoard != 0L;
+
         long board = secondBoard & (-secondBoard);
         return new MiddleField(0L, board);
     }
