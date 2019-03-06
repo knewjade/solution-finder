@@ -6,11 +6,11 @@ import core.field.Field;
 import core.field.KeyOperators;
 import core.mino.Piece;
 import core.neighbor.SimpleOriginalPiece;
-import searcher.spins.pieces.SimpleOriginalPieces;
 import searcher.spins.TargetY;
 import searcher.spins.fill.line.next.RemainderField;
 import searcher.spins.fill.line.next.RemainderFieldRunner;
 import searcher.spins.fill.line.spot.*;
+import searcher.spins.pieces.SimpleOriginalPieces;
 import searcher.spins.results.AddLastsResult;
 import searcher.spins.results.EmptyResult;
 import searcher.spins.results.Result;
@@ -26,7 +26,6 @@ import java.util.stream.StreamSupport;
 public class LineFillRunner {
     private static final Set<PieceBlockCount> EMPTY_PIECE_BLOCK_COUNT_SET = Collections.emptySet();
     private static final int MAX_SIZE = 4;
-    private static final int FIELD_WIDTH = 10;
 
     private final RemainderFieldRunner remainderFieldRunner;
     private final SpotRunner spotRunner;
@@ -64,18 +63,19 @@ public class LineFillRunner {
         return indexes;
     }
 
-    public Stream<Result> search(Field initField, PieceCounter pieceCounter, int targetY) {
+    public Stream<Result> search(Field initField, PieceCounter pieceCounter, int targetY, long allowDeletedLine) {
         EmptyResult emptyResult = new EmptyResult(initField, pieceCounter, fieldHeight);
-        long initFilledLine = emptyResult.getAllMergedFilledLine();
 
-        assert (initFilledLine & KeyOperators.getBitKey(targetY)) == 0L;
+        long filledLine = emptyResult.getAllMergedFilledLine();
+        assert (filledLine & KeyOperators.getBitKey(targetY)) == 0L;
 
         List<RemainderField> remainderFields = remainderFieldRunner.extract(initField, targetY);
-        return search(emptyResult, initFilledLine, targetY, remainderFields, 0);
+        return search(emptyResult, filledLine, allowDeletedLine, targetY, remainderFields, 0);
     }
 
     private Stream<Result> search(
-            Result prevResult, long initFilledLine, int targetY, List<RemainderField> remainderFields, int index
+            Result prevResult, long filledLine, long allowDeletedLine, int targetY,
+            List<RemainderField> remainderFields, int index
     ) {
         assert index < remainderFields.size() : index;
 
@@ -84,7 +84,7 @@ public class LineFillRunner {
         int startX = remainderField.getMinX();
 
         Field allMergedField = prevResult.getAllMergedField();
-        SlidedField slidedField = SlidedField.create(allMergedField, targetY);
+        SlidedField slidedField = SlidedField.create(allMergedField, targetY, allowDeletedLine);
 
         TargetY target = new TargetY(targetY);
 
@@ -94,13 +94,13 @@ public class LineFillRunner {
         }
 
         Stream<Result> stream = searchBlockCounts(remainderPieceCounter, blockCount)
-                .flatMap(pieceBlockCountList -> spot(initFilledLine, slidedField, pieceBlockCountList, prevResult, startX, target));
+                .flatMap(pieceBlockCountList -> spot(filledLine, slidedField, pieceBlockCountList, prevResult, startX, target));
 
         if (index == remainderFields.size() - 1) {
             return stream;
         }
 
-        return stream.flatMap(result -> search(result, initFilledLine, targetY, remainderFields, index + 1));
+        return stream.flatMap(result -> search(result, filledLine, allowDeletedLine, targetY, remainderFields, index + 1));
     }
 
     private Stream<List<PieceBlockCount>> searchBlockCounts(PieceCounter pieceCounter, int blockCount) {
@@ -152,11 +152,11 @@ public class LineFillRunner {
     }
 
     private Stream<Result> spot(
-            long initFilledLine, SlidedField slidedField, List<PieceBlockCount> pieceBlockCountList,
+            long filledLine, SlidedField slidedField, List<PieceBlockCount> pieceBlockCountList,
             Result prevResult, int startX, TargetY targetY
     ) {
         int size = pieceBlockCountList.size();
-        long keyBelowY = targetY.getKeyBelowY() & ~initFilledLine;
+        long keyBelowY = targetY.getKeyBelowY() & ~filledLine;
 
         if (size <= MAX_SIZE) {
             // 残っているミノが `MAX_SIZE` こ以内
@@ -207,7 +207,7 @@ public class LineFillRunner {
                                 Field allMergedField = result.getAllMergedField();
                                 SlidedField nextSlidedField = SlidedField.create(allMergedField, slidedField);
 
-                                return spot(initFilledLine, nextSlidedField, remain, result, startX + usingBlockCount, targetY);
+                                return spot(filledLine, nextSlidedField, remain, result, startX + usingBlockCount, targetY);
                             });
                 });
     }

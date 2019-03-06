@@ -40,7 +40,7 @@ class LineFillRunnerTest {
 
         LineFillRunner lineFillRunner = createLineFillRunner(pieceCounter.getBlocks().size(), maxTargetHeight, maxTargetHeight);
 
-        List<Result> results = lineFillRunner.search(initField, pieceCounter, targetY)
+        List<Result> results = lineFillRunner.search(initField, pieceCounter, targetY, initField.getFilledLine())
                 .parallel()
                 .collect(Collectors.toList());
 
@@ -66,7 +66,7 @@ class LineFillRunnerTest {
 
         LineFillRunner lineFillRunner = createLineFillRunner(pieceCounter.getBlocks().size(), maxTargetHeight, maxTargetHeight);
 
-        List<Result> results = lineFillRunner.search(initField, pieceCounter, targetY)
+        List<Result> results = lineFillRunner.search(initField, pieceCounter, targetY, initField.getFilledLine())
                 .parallel()
                 .collect(Collectors.toList());
 
@@ -93,7 +93,7 @@ class LineFillRunnerTest {
 
         LineFillRunner lineFillRunner = createLineFillRunner(pieceCounter.getBlocks().size(), maxTargetHeight, maxTargetHeight);
 
-        List<Result> results = lineFillRunner.search(initField, pieceCounter, targetY)
+        List<Result> results = lineFillRunner.search(initField, pieceCounter, targetY, initField.getFilledLine())
                 .parallel()
                 .collect(Collectors.toList());
 
@@ -114,7 +114,7 @@ class LineFillRunnerTest {
 
         LineFillRunner lineFillRunner = createLineFillRunner(pieceCounter.getBlocks().size(), maxTargetHeight, maxTargetHeight);
 
-        List<Result> results = lineFillRunner.search(initField, pieceCounter, targetY)
+        List<Result> results = lineFillRunner.search(initField, pieceCounter, targetY, initField.getFilledLine())
                 .parallel()
                 .collect(Collectors.toList());
 

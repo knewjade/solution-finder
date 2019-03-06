@@ -11,6 +11,7 @@ import core.field.Field;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.mino.Piece;
+import core.neighbor.SimpleOriginalPiece;
 import core.srs.MinoRotation;
 import entry.path.output.OneFumenParser;
 import searcher.spins.candidates.Candidate;
@@ -70,7 +71,7 @@ public class MainRunner {
         MinimalSimpleOriginalPieces minimalPieces = factory.createMinimalPieces(initField);
         Scaffolds scaffolds = Scaffolds.create(minimalPieces);
         ScaffoldRunner scaffoldRunner = new ScaffoldRunner(scaffolds);
-        FillRunner fillRunner = new FillRunner(lineFillRunner, scaffoldRunner, maxTargetHeight);
+        FillRunner fillRunner = new FillRunner(lineFillRunner, maxTargetHeight);
 
         BitBlocks bitBlocks = BitBlocks.create(minimalPieces);
         WallRunner wallRunner = WallRunner.create(bitBlocks, scaffoldRunner, maxTargetHeight);
@@ -79,12 +80,12 @@ public class MainRunner {
 
         RoofRunner roofRunner = new RoofRunner(roofs, rotateReachableThreadLocal, maxTargetHeight);
 
-        return search(initField, fillRunner, wallRunner, roofRunner, pieceCounter);
+        return search(initField, fillRunner, scaffoldRunner, wallRunner, roofRunner, pieceCounter);
     }
 
     private Stream<RoofResult> search(
-            Field initField, FillRunner fillRunner, WallRunner wallRunner, RoofRunner roofRunner,
-            PieceCounter pieceCounter
+            Field initField, FillRunner fillRunner, ScaffoldRunner scaffoldRunner,
+            WallRunner wallRunner, RoofRunner roofRunner, PieceCounter pieceCounter
     ) {
         EmptyResult emptyResult = new EmptyResult(initField, pieceCounter, fieldHeight);
 
@@ -101,14 +102,27 @@ public class MainRunner {
 //                    System.out.println();
                     return false;
                 })
-                .flatMap(fillResult -> (
-                        fillResult.tOperationStream()
-                                .flatMap(tOperation -> {
-                                    Result lastResult = fillResult.getLastResult();
-                                    Candidate candidate = new Candidate(lastResult, tOperation);
-                                    return wallRunner.search(candidate);
-                                })
-                ))
+                .flatMap(fillResult -> {
+                    Result lastResult = fillResult.getLastResult();
+                    long filledLine = lastResult.getAllMergedFilledLine();
+
+                    return fillResult.tOperationStream()
+                            .filter(tOperation -> {
+                                long usingKey = tOperation.getUsingKey();
+                                return 2 <= Long.bitCount(filledLine & usingKey);
+                            })
+                            .flatMap(tOperation -> {
+                                List<SimpleOriginalPiece> targetOperations = fillResult.operationStream()
+                                        .filter(operation -> operation != tOperation)
+                                        .collect(Collectors.toList());
+
+                                return scaffoldRunner.build(lastResult, tOperation, targetOperations)
+                                        .flatMap(scaffoldResult -> {
+                                            Candidate candidate = new Candidate(scaffoldResult.getLastResult(), tOperation);
+                                            return wallRunner.search(candidate);
+                                        });
+                            });
+                })
                 .flatMap(roofRunner::search)
                 .collect(Collectors.toList());
 

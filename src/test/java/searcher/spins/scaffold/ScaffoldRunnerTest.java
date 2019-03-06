@@ -34,6 +34,7 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ScaffoldRunnerTest {
+    /*
     @Test
     void case1() {
         MinoFactory minoFactory = new MinoFactory();
@@ -138,14 +139,14 @@ class ScaffoldRunnerTest {
 
         int targetY = 3;
         TargetY target = new TargetY(targetY);
-        List<ScaffoldResultWithoutT> results = runner.buildToAllowFilledLine(result, target, operations)
+        List<ScaffoldResultWithoutT> results = runner.build(result, target, operations)
                 .collect(Collectors.toList());
 
         assertThat(results).hasSize(72);
 
         verify(results, initField, fieldHeight);
     }
-
+*/
     private SimpleOriginalPiece to(Piece piece, Rotate rotate, int x, int y, int fieldHeight) {
         return new SimpleOriginalPiece(
                 OperationTransform.toFullOperationWithKey(new Mino(piece, rotate), x, y, 0L), fieldHeight

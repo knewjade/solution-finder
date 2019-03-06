@@ -13,11 +13,9 @@ import searcher.spins.fill.line.spot.MinoDiff;
 import searcher.spins.fill.line.spot.PieceBlockCount;
 import searcher.spins.fill.line.spot.SpotRunner;
 import searcher.spins.fill.results.FillResult;
-import searcher.spins.pieces.Scaffolds;
 import searcher.spins.pieces.SimpleOriginalPieceFactory;
 import searcher.spins.pieces.SimpleOriginalPieces;
 import searcher.spins.results.EmptyResult;
-import searcher.spins.scaffold.ScaffoldRunner;
 
 import java.util.List;
 import java.util.Map;
@@ -43,14 +41,11 @@ class FillRunnerTest {
                         "XXXXXXXXX_"
                 , fieldHeight);
 
-        SimpleOriginalPieceFactory factory = new SimpleOriginalPieceFactory(minoFactory, minoShifter, fieldHeight);
-        ScaffoldRunner scaffoldRunner = new ScaffoldRunner(Scaffolds.create(factory.createMinimalPieces(initField)));
-
         PieceCounter pieceCounter = new PieceCounter(Piece.valueList());
 
         LineFillRunner lineFillRunner = createLineFillRunner(pieceCounter.getBlocks().size(), fieldHeight, fieldHeight);
 
-        FillRunner fillRunner = new FillRunner(lineFillRunner, scaffoldRunner, fieldHeight);
+        FillRunner fillRunner = new FillRunner(lineFillRunner, fieldHeight);
 
         EmptyResult emptyResult = new EmptyResult(initField, pieceCounter, fieldHeight);
 

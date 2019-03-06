@@ -14,7 +14,7 @@ class SlidedFieldTest {
                 "XXXXX_____" +
                 "XXXXX_____"
         );
-        SlidedField slidedField = SlidedField.create(field, 1);
+        SlidedField slidedField = SlidedField.create(field, 1, field.getFilledLine());
         assertThat(slidedField)
                 .returns(FieldFactory.createField("" +
                         "XXXXX_____" +
@@ -37,7 +37,7 @@ class SlidedFieldTest {
                 "XXX_______" +
                 "XXXX______"
         );
-        SlidedField slidedField = SlidedField.create(field, 5);
+        SlidedField slidedField = SlidedField.create(field, 5, field.getFilledLine());
         assertThat(slidedField)
                 .returns(FieldFactory.createField("" +
                         "X_________" +
@@ -57,7 +57,7 @@ class SlidedFieldTest {
                 "XXXXXXXXXX" +
                 "XXXXXXXXXX"
         );
-        SlidedField slidedField = SlidedField.create(field, 2);
+        SlidedField slidedField = SlidedField.create(field, 2, field.getFilledLine());
         assertThat(slidedField)
                 .returns(FieldFactory.createField("" +
                         "X_________" +

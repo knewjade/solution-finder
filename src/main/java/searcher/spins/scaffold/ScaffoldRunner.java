@@ -3,7 +3,6 @@ package searcher.spins.scaffold;
 import common.datastore.PieceCounter;
 import core.neighbor.SimpleOriginalPiece;
 import searcher.spins.Solutions;
-import searcher.spins.TargetY;
 import searcher.spins.candidates.CandidateWithMask;
 import searcher.spins.pieces.Scaffolds;
 import searcher.spins.results.Result;
@@ -30,6 +29,14 @@ public class ScaffoldRunner {
         return localSearch(scaffoldResult, initFilledLine, AddLastScaffoldResultWithoutT::new);
     }
 
+    public Stream<ScaffoldResultWithT> build(Result result, SimpleOriginalPiece tOperation, List<SimpleOriginalPiece> targetOperations) {
+        // 最後のミノを置く前のフィールドで消去されているラインを取得
+        long initFilledLine = result.getAllMergedFilledLine();
+
+        EmptyScaffoldResultWithT2 scaffoldResult = new EmptyScaffoldResultWithT2(result, tOperation, targetOperations);
+        return localSearch(scaffoldResult, initFilledLine, AddLastScaffoldResultWithT::new);
+    }
+
     public Stream<ScaffoldResultWithT> build(CandidateWithMask candidateWithMask, SimpleOriginalPiece operation) {
         Result result = candidateWithMask.getResult();
 
@@ -39,19 +46,6 @@ public class ScaffoldRunner {
         EmptyScaffoldResultWithT scaffoldResult = new EmptyScaffoldResultWithT(candidateWithMask, Collections.singletonList(operation));
         return localSearch(scaffoldResult, initFilledLine, AddLastScaffoldResultWithT::new);
     }
-
-        /*
- public Stream<ScaffoldResultWithoutT> build(Result initResult, SimpleOriginalPiece operation) {
-        // 最後のミノを置く前のフィールドで消去されているラインを取得
-        long initFilledLine = initResult.getAllMergedFilledLine();
-
-        Result result = AddLastResult.create(initResult, operation);
-        EmptyScaffoldResultWithoutT scaffoldResult = new EmptyScaffoldResultWithoutT(result, Collections.singletonList(operation));
-        return localSearch(scaffoldResult, initFilledLine, AddLastScaffoldResultWithoutT::new);
-    }
-
-
-    */
 
     private <T extends ScaffoldResult> Stream<T> localSearch(T scaffoldResult, long initFilledLine, BiFunction<T, SimpleOriginalPiece, T> factory) {
         // すでに完成している
@@ -162,6 +156,7 @@ public class ScaffoldRunner {
         return candidates;
     }
 
+    /*
     Stream<ScaffoldResultWithoutT> buildToAllowFilledLine(
             Result result, TargetY target, List<SimpleOriginalPiece> targetOperations
     ) {
@@ -284,4 +279,5 @@ public class ScaffoldRunner {
 
         return candidates;
     }
+    */
 }
