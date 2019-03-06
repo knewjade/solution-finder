@@ -28,9 +28,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class FillRunnerTest {
     @Test
     void case1() {
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new MinoShifter();
-
         int fieldHeight = 7;
 
         Field initField = FieldFactory.createField("" +
@@ -52,8 +49,8 @@ class FillRunnerTest {
         Stream<FillResult> stream = fillRunner.search(emptyResult);
         List<FillResult> results = stream.collect(Collectors.toList());
 
-        assertThat(results).hasSize(17016);
-        assertThat(results.stream().filter(FillResult::containsT)).hasSize(13592);
+        assertThat(results).hasSize(25255);
+        assertThat(results.stream().filter(FillResult::containsT)).hasSize(20560);
     }
 
     private LineFillRunner createLineFillRunner(int maxPieceNum, int maxTargetHeight, int fieldHeight) {

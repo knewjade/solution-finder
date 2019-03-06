@@ -3,8 +3,6 @@ package searcher.spins.pieces;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import org.junit.jupiter.api.Test;
-import searcher.spins.pieces.AllSimpleOriginalPieces;
-import searcher.spins.pieces.SimpleOriginalPieceFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -16,7 +14,7 @@ class SimpleOriginalPieceFactoryTest {
         MinoShifter minoShifter = new MinoShifter();
         SimpleOriginalPieceFactory factory = new SimpleOriginalPieceFactory(minoFactory, minoShifter, fieldHeight);
         AllSimpleOriginalPieces allPieces = factory.createAllPieces();
-        assertThat(allPieces.getOriginalPieces()).hasSize(87);
+        assertThat(allPieces.getOriginalPieces()).hasSize(4452);  // height=7として扱う
     }
 
     @Test

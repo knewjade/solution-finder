@@ -26,7 +26,7 @@ class MainRunnerTest {
         MainRunner runner = new MainRunner(5, 8);
         PieceCounter pieceCounter = new PieceCounter(Piece.valueList());
         List<RoofResult> results = runner.search(initField, pieceCounter).collect(Collectors.toList());
-        assertThat(results).hasSize(110);
+        assertThat(results).hasSize(105);
     }
 
     @Test
@@ -42,6 +42,6 @@ class MainRunnerTest {
         MainRunner runner = new MainRunner(5, 8);
         PieceCounter pieceCounter = new PieceCounter(Piece.valueList());
         List<RoofResult> results = runner.search(initField, pieceCounter).collect(Collectors.toList());
-        assertThat(results).hasSize(110);
+        assertThat(results).hasSize(272);
     }
 }
