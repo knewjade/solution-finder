@@ -144,8 +144,17 @@ public interface Field extends Comparable<Field> {
     // フィールドを右に指定したブロック分スライドさせる
     void slideRight(int slide);
 
-    // フィールドを下にスライドさせる
+    // フィールドを下に1段スライドさせる
     void slideDown();
+
+    // フィールドを下に指定したブロック分スライドさせる
+    void slideDown(int slide);
+
+    // フィールドを上に指定したブロック分スライドさせる。空のラインを追加する
+    void slideUpWithWhiteLine(int slide);
+
+    // フィールドを上に指定したブロック分スライドさせる。ブロックで埋まったラインを追加する
+    void slideUpWithBlackLine(int slide);
 
     // 最も小さいx座標を取得。ブロックが存在しないとき -1 を返却
     int getMinX();
