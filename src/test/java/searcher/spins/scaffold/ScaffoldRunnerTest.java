@@ -15,7 +15,6 @@ import core.neighbor.SimpleOriginalPiece;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
 import org.junit.jupiter.api.Test;
-import searcher.spins.TargetY;
 import searcher.spins.pieces.Scaffolds;
 import searcher.spins.pieces.SimpleOriginalPieceFactory;
 import searcher.spins.results.AddLastResult;
@@ -34,7 +33,6 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ScaffoldRunnerTest {
-    /*
     @Test
     void case1() {
         MinoFactory minoFactory = new MinoFactory();
@@ -50,7 +48,7 @@ class ScaffoldRunnerTest {
                 , fieldHeight);
 
         SimpleOriginalPieceFactory factory = new SimpleOriginalPieceFactory(minoFactory, minoShifter, fieldHeight);
-        ScaffoldRunner runner = new ScaffoldRunner( Scaffolds.create(factory.createMinimalPieces(initField)));
+        ScaffoldRunner runner = new ScaffoldRunner(Scaffolds.create(factory.createMinimalPieces(initField)));
 
         EmptyResult emptyResult = new EmptyResult(initField, new PieceCounter(Piece.valueList()), fieldHeight);
 
@@ -60,12 +58,9 @@ class ScaffoldRunnerTest {
         );
         Result result = AddLastsResult.create(emptyResult, operations);
 
-        int targetY = 2;
-        TargetY target = new TargetY(targetY);
-        List<ScaffoldResultWithoutT> results = runner.buildToAllowFilledLine(result, target, operations)
-                .collect(Collectors.toList());
+        List<ScaffoldResultWithoutT> results = runner.build(result, operations).collect(Collectors.toList());
 
-        assertThat(results).hasSize(35);
+        assertThat(results).hasSize(31);
 
         verify(results, initField, fieldHeight);
     }
@@ -85,7 +80,7 @@ class ScaffoldRunnerTest {
         );
 
         SimpleOriginalPieceFactory factory = new SimpleOriginalPieceFactory(minoFactory, minoShifter, fieldHeight);
-        ScaffoldRunner runner = new ScaffoldRunner( Scaffolds.create(factory.createMinimalPieces(initField)));
+        ScaffoldRunner runner = new ScaffoldRunner(Scaffolds.create(factory.createMinimalPieces(initField)));
 
         EmptyResult emptyResult = new EmptyResult(initField, new PieceCounter(
                 Stream.concat(Piece.valueList().stream(), Stream.of(Piece.I))
@@ -98,12 +93,9 @@ class ScaffoldRunnerTest {
         );
         Result result = AddLastsResult.create(result1, operations);
 
-        int targetY = 3;
-        TargetY target = new TargetY(targetY);
-        List<ScaffoldResultWithoutT> results = runner.buildToAllowFilledLine(result, target, operations)
-                .collect(Collectors.toList());
+        List<ScaffoldResultWithoutT> results = runner.build(result, operations).collect(Collectors.toList());
 
-        assertThat(results).hasSize(35);
+        assertThat(results).hasSize(31);
 
         verify(results, initField, fieldHeight);
     }
@@ -137,16 +129,13 @@ class ScaffoldRunnerTest {
         );
         Result result = AddLastsResult.create(emptyResult, operations);
 
-        int targetY = 3;
-        TargetY target = new TargetY(targetY);
-        List<ScaffoldResultWithoutT> results = runner.build(result, target, operations)
-                .collect(Collectors.toList());
+        List<ScaffoldResultWithoutT> results = runner.build(result, operations).collect(Collectors.toList());
 
         assertThat(results).hasSize(72);
 
         verify(results, initField, fieldHeight);
     }
-*/
+
     private SimpleOriginalPiece to(Piece piece, Rotate rotate, int x, int y, int fieldHeight) {
         return new SimpleOriginalPiece(
                 OperationTransform.toFullOperationWithKey(new Mino(piece, rotate), x, y, 0L), fieldHeight
