@@ -15,7 +15,7 @@ public class RenSettings {
     private boolean isUsingHold = true;
     private String logFilePath = DEFAULT_LOG_FILE_PATH;
     private String outputBaseFilePath = DEFAULT_OUTPUT_BASE_FILE_PATH;
-    private Field field = FieldFactory.createField(4);
+    private Field field = FieldFactory.createField(24);
     private List<String> patterns = new ArrayList<>();
     private DropType dropType = DropType.Softdrop;
 

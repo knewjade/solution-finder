@@ -31,25 +31,32 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MainRunner {
+public class SpinRunner {
     private final SimpleOriginalPieceFactory factory;
     private final int allowFillMaxHeight;
     private final int maxTargetHeight;
     private final int fieldHeight;
+    private final int allowFillMinY;
     private final SimpleOriginalPieces simpleOriginalPieces;
     private final LinePools pools;
     private final RotateReachableThreadLocal rotateReachableThreadLocal;
 
-    MainRunner(int allowFillMaxHeight, int fieldHeight) {
-        int maxTargetHeight = allowFillMaxHeight + 2;
+    SpinRunner(int allowFillMaxHeight, int fieldHeight) {
+        this(new MinoFactory(), new MinoShifter(), allowFillMaxHeight, fieldHeight);
+    }
+
+    private SpinRunner(MinoFactory minoFactory, MinoShifter minoShifter, int allowFillMaxHeight, int fieldHeight) {
+        this(minoFactory, minoShifter, 0, allowFillMaxHeight, allowFillMaxHeight + 2, fieldHeight);
+    }
+
+    public SpinRunner(MinoFactory minoFactory, MinoShifter minoShifter, int allowFillMinY, int allowFillMaxHeight, int maxTargetHeight, int fieldHeight) {
         assert allowFillMaxHeight + 2 <= maxTargetHeight;
         assert maxTargetHeight <= fieldHeight;
 
         this.allowFillMaxHeight = allowFillMaxHeight;
         this.maxTargetHeight = maxTargetHeight;
         this.fieldHeight = fieldHeight;
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new MinoShifter();
+        this.allowFillMinY = allowFillMinY;
 
         this.pools = LinePools.create(minoFactory, minoShifter);
 
@@ -72,7 +79,7 @@ public class MainRunner {
         MinimalSimpleOriginalPieces minimalPieces = factory.createMinimalPieces(initField);
         Scaffolds scaffolds = Scaffolds.create(minimalPieces);
         ScaffoldRunner scaffoldRunner = new ScaffoldRunner(scaffolds);
-        FillRunner fillRunner = new FillRunner(lineFillRunner, allowFillMaxHeight);
+        FillRunner fillRunner = new FillRunner(lineFillRunner, allowFillMinY, allowFillMaxHeight);
 
         BitBlocks bitBlocks = BitBlocks.create(minimalPieces);
         WallRunner wallRunner = WallRunner.create(bitBlocks, scaffoldRunner, allowFillMaxHeight, fieldHeight);

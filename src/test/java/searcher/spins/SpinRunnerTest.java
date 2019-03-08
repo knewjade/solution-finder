@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class MainRunnerTest {
+class SpinRunnerTest {
     @Test
     void case1_h4() {
         int fieldHeight = 8;
@@ -28,7 +28,7 @@ class MainRunnerTest {
                         "XXXXXXXXX_" +
                         ""
                 , fieldHeight);
-        MainRunner runner = new MainRunner(4, fieldHeight);
+        SpinRunner runner = new SpinRunner(4, fieldHeight);
         PieceCounter pieceCounter = new PieceCounter(Piece.valueList());
         List<RoofResult> results = runner.search(initField, pieceCounter, 1).parallel().collect(Collectors.toList());
         assertThat(results).hasSize(350);
@@ -61,7 +61,7 @@ class MainRunnerTest {
                         "XXXXXXXXX_" +
                         ""
                 , fieldHeight);
-        MainRunner runner = new MainRunner(5, fieldHeight);
+        SpinRunner runner = new SpinRunner(5, fieldHeight);
         PieceCounter pieceCounter = new PieceCounter(Piece.valueList());
         List<RoofResult> results = runner.search(initField, pieceCounter, 1).parallel().collect(Collectors.toList());
 
@@ -82,7 +82,7 @@ class MainRunnerTest {
                         "__________" +
                         ""
                 , fieldHeight);
-        MainRunner runner = new MainRunner(4, fieldHeight);
+        SpinRunner runner = new SpinRunner(4, fieldHeight);
         PieceCounter pieceCounter = new PieceCounter(Piece.valueList());
         List<RoofResult> results = runner.search(initField, pieceCounter, 2).parallel().collect(Collectors.toList());
 
