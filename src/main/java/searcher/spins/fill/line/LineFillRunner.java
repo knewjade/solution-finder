@@ -25,7 +25,7 @@ import java.util.stream.StreamSupport;
 
 public class LineFillRunner {
     private static final Set<PieceBlockCount> EMPTY_PIECE_BLOCK_COUNT_SET = Collections.emptySet();
-    private static final int MAX_SIZE = 4;
+    private static final int MAX_SIZE = 3;
 
     private final RemainderFieldRunner remainderFieldRunner;
     private final SpotRunner spotRunner;
@@ -179,23 +179,21 @@ public class LineFillRunner {
                     Integer i1 = selectedIndexes.get(0);
                     Integer i2 = selectedIndexes.get(1);
                     Integer i3 = selectedIndexes.get(2);
-                    Integer i4 = selectedIndexes.get(3);
 
                     PieceBlockCounts pieceBlockCounts = new PieceBlockCounts(
-                            Arrays.asList(pieceBlockCountList.get(i1), pieceBlockCountList.get(i2), pieceBlockCountList.get(i3), pieceBlockCountList.get(i4))
+                            Arrays.asList(pieceBlockCountList.get(i1), pieceBlockCountList.get(i2), pieceBlockCountList.get(i3))
                     );
 
                     if (!visited.add(pieceBlockCounts.getKey())) {
                         return Stream.empty();
                     }
 
-                    int[] indexArray = new int[]{i1, i2, i3, i4};
+                    int[] indexArray = new int[]{i1, i2, i3};
                     Arrays.sort(indexArray);
 
                     List<PieceBlockCount> remain = new LinkedList<>(pieceBlockCountList);
 
                     // 要素がスライドされないようにindexが大きい順に取り除いていく
-                    remain.remove(indexArray[3]);
                     remain.remove(indexArray[2]);
                     remain.remove(indexArray[1]);
                     remain.remove(indexArray[0]);
