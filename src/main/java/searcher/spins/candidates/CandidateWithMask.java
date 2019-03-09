@@ -16,7 +16,7 @@ public class CandidateWithMask {
         this.tOperation = operationT;
         this.notAllowed = notAllowed;
 
-        Field allMergedFieldWithoutT = result.freezeAllMergedField();
+        Field allMergedFieldWithoutT = result.getAllMergedField().freeze();
         allMergedFieldWithoutT.reduce(operationT.getMinoField());
         this.allMergedFieldWithoutT = allMergedFieldWithoutT;
         this.allMergedFilledLineWithoutT = allMergedFieldWithoutT.getFilledLine();

@@ -22,7 +22,7 @@ public class EmptyResult extends Result {
     }
 
     @Override
-    Field getUsingField() {
+    public Field getUsingField() {
         return FieldFactory.createField(fieldHeight);
     }
 

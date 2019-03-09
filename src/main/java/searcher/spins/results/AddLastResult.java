@@ -11,7 +11,7 @@ public class AddLastResult extends Result {
         PieceCounter reminderPieceCounter = prev.getRemainderPieceCounter().removeAndReturnNew(PieceCounter.getSinglePieceCounter(operation.getPiece()));
 
         // すでに使われているブロックを計算
-        Field usingField = prev.freezeUsingField();
+        Field usingField = prev.getUsingField().freeze();
         usingField.merge(operation.getMinoField());
 
         return new AddLastResult(prev, operation, reminderPieceCounter, usingField);
@@ -31,7 +31,7 @@ public class AddLastResult extends Result {
         this.reminderPieceCounter = reminderPieceCounter;
         this.usingField = usingField;
 
-        Field allMergedField = freezeInitField();
+        Field allMergedField = getInitField().freeze();
         allMergedField.merge(usingField);
         this.allMergedField = allMergedField;
         this.allMergedFilledLine = allMergedField.getFilledLine();

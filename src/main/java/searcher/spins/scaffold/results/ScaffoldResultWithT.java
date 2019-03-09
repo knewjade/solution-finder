@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 public abstract class ScaffoldResultWithT extends ScaffoldResult {
     static List<SimpleOriginalPiece> extractAirOperations(Result result, SimpleOriginalPiece operationT, Stream<SimpleOriginalPiece> targetOperationStream) {
         // 地形からTミノを除く
-        Field field = result.freezeAllMergedField();
+        Field field = result.getAllMergedField().freeze();
         field.reduce(operationT.getMinoField());
 
         long filledLine = result.getAllMergedFilledLine();

@@ -120,7 +120,7 @@ public class WallRunner {
         Result initLastResult = initResult.getLastResult();
 
         // 置けない場所
-        Field notAllowed = lastResult.freezeAllMergedField();
+        Field notAllowed = lastResult.getAllMergedField().freeze();
         notAllowed.merge(initResult.getNotAllowed());
 
         // 置くことができない領域

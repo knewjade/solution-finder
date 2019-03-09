@@ -14,7 +14,7 @@ public class Candidate {
         this.result = result;
         this.tOperation = tOperation;
 
-        Field allMergedFieldWithoutT = result.freezeAllMergedField();
+        Field allMergedFieldWithoutT = result.getAllMergedField().freeze();
         allMergedFieldWithoutT.reduce(tOperation.getMinoField());
         this.allMergedFieldWithoutT = allMergedFieldWithoutT;
         this.allMergedFilledLineWithoutT = allMergedFieldWithoutT.getFilledLine();

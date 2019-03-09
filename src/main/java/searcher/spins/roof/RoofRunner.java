@@ -75,7 +75,7 @@ public class RoofRunner {
         RotateReachable rotateReachable = rotateReachableThreadLocal.get();
 
         Result result = roofResult.getLastResult();
-        Field field = result.freezeAllMergedField();
+        Field field = result.getAllMergedField().freeze();
         SimpleOriginalPiece operationT = roofResult.getOperationT();
 
         // Tが回転入れで終了する
