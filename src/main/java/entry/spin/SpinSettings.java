@@ -53,7 +53,7 @@ public class SpinSettings {
 
     public int getMarginHeight() {
         if (marginHeight == -1)
-            return getFillTop() + 4;
+            return getFillTop() + 2;
         return marginHeight;
     }
 
@@ -109,49 +109,11 @@ public class SpinSettings {
         this.marginHeight = maxTargetHeight;
     }
 
-    void setFieldHeight(int fieldHeight) {
-        this.fieldHeight = fieldHeight;
-    }
+//    void setFieldHeight(int fieldHeight) {
+//        this.fieldHeight = fieldHeight;
+//    }
 
     void setRequiredClearLine(int requiredClearLine) {
         this.requiredClearLine = requiredClearLine;
     }
-
-    /**
-     private boolean isUsingHold = true;
-     private DropType dropType = DropType.Softdrop;
-
-     // ********* Getter ************
-     public boolean isUsingHold() {
-     return isUsingHold;
-     }
-
-     DropType getDropType() {
-     return dropType;
-     }
-
-     // ********* Setter ************
-     void setUsingHold(Boolean isUsingHold) {
-     this.isUsingHold = isUsingHold;
-     }
-
-     void setField(Field field) {
-     this.field = field;
-     }
-
-     void setDropType(String type) throws FinderParseException {
-     switch (type.trim().toLowerCase()) {
-     case "soft":
-     case "softdrop":
-     this.dropType = DropType.Softdrop;
-     return;
-     case "hard":
-     case "harddrop":
-     this.dropType = DropType.Harddrop;
-     return;
-     default:
-     throw new FinderParseException("Unsupported droptype: type=" + type);
-     }
-     }
-     */
 }

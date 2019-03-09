@@ -92,8 +92,8 @@ public class SpinSettingParser extends SettingParser<SpinSettings> {
         marginHeight.ifPresent(settings::setMarginHeight);
 
         // フィールドの高さ
-        Optional<Integer> fieldHeight = wrapper.getIntegerOption(SpinOptions.FieldHeight.optName());
-        fieldHeight.ifPresent(settings::setFieldHeight);
+//        Optional<Integer> fieldHeight = wrapper.getIntegerOption(SpinOptions.FieldHeight.optName());
+//        fieldHeight.ifPresent(settings::setFieldHeight);
 
         // 消去するライン数
         Optional<Integer> clearLineByT = wrapper.getIntegerOption(SpinOptions.ClearLineByT.optName());
@@ -107,29 +107,6 @@ public class SpinSettingParser extends SettingParser<SpinSettings> {
         Optional<String> outputBaseFilePath = wrapper.getStringOption(SpinOptions.OutputBase.optName());
         outputBaseFilePath.ifPresent(settings::setOutputBaseFilePath);
 
-
-        /**
-
-         // ホールドの設定
-         Optional<Boolean> isUsingHold = wrapper.getBoolOption(RenOptions.Hold.optName());
-         isUsingHold.ifPresent(settings::setUsingHold);
-
-         // ドロップの設定
-         Optional<String> dropType = wrapper.getStringOption(RenOptions.Drop.optName());
-         try {
-         dropType.ifPresent(type -> {
-         String key = dropType.orElse("softdrop");
-         try {
-         settings.setDropType(key);
-         } catch (FinderParseException e) {
-         throw new RuntimeException(e);
-         }
-         });
-         } catch (Exception e) {
-         throw new FinderParseException("Unsupported format: format=" + dropType.orElse("<empty>"));
-         }
-
-         */
         return Optional.of(settings);
     }
 }
