@@ -37,8 +37,7 @@ public class MinoRotationDetail {
             if (minX <= toX && toX < maxX && minY <= toY && field.canPut(after, toX, toY)) {
                 Field freeze = field.freeze();
                 freeze.put(after, toX, toY);
-                int clearLine = freeze.clearLine();
-                return new SuccessSpinResult(after, toX, toY, clearLine, index, direction);
+                return new SuccessSpinResult(after, toX, toY, index, direction);
             }
         }
         return SpinResult.NONE;

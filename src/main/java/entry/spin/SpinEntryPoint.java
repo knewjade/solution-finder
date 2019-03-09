@@ -1,9 +1,12 @@
 package entry.spin;
 
 import common.datastore.MinoOperationWithKey;
+import common.datastore.Operation;
 import common.datastore.PieceCounter;
 import common.pattern.PatternGenerator;
 import common.tetfu.common.ColorConverter;
+import concurrent.LockedReachableThreadLocal;
+import core.action.reachable.LockedReachable;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
@@ -24,9 +27,11 @@ import exceptions.FinderTerminateException;
 import lib.Stopwatch;
 import output.HTMLBuilder;
 import output.HTMLColumn;
+import searcher.spins.SpinCommons;
 import searcher.spins.SpinRunner;
 import searcher.spins.results.Result;
 import searcher.spins.roof.results.RoofResult;
+import searcher.spins.spin.Spin;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -140,7 +145,6 @@ public class SpinEntryPoint implements EntryPoint {
 
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
-        // TODO: Tスピンに関係あるミノで抜くことができれば他の解で十分
         Field initField = FieldFactory.createField(fieldHeight);
         initField.merge(field);
         List<RoofResult> results = spinRunner.search(initField, pieceCounter, requiredClearLine).collect(Collectors.toList());
@@ -157,35 +161,48 @@ public class SpinEntryPoint implements EntryPoint {
         output("# Output");
 
         HTMLBuilder<K> htmlBuilder = new HTMLBuilder<>("Spin Result");
-        htmlBuilder.addHeader("Spin Result");
+        htmlBuilder.addHeader(String.format("%d solutions", results.size()));
 
         System.out.println(results.size());
-        HashMap<Integer, K> keyMap = new HashMap<>();
+        HashMap<Spin, K> keyMap = new HashMap<>();
+        LockedReachableThreadLocal lockedReachableThreadLocal = new LockedReachableThreadLocal(minoFactory, minoShifter, minoRotation, fieldHeight);
         try (BufferedWriter writer = this.base.newBufferedWriter()) {
             for (RoofResult result : results) {
                 Result lastResult = result.getLastResult();
 
                 SimpleOriginalPiece operationT = result.getOperationT();
-                Mino mino = operationT.getMino();
-                Piece piece = mino.getPiece();
-                int x = operationT.getX();
-                int y = operationT.getY();
 
-                ArrayList<SpinResult> spinResults = new ArrayList<>();
-                for (RotateDirection rotateDirection : RotateDirection.values()) {
-                    int[][] patternsFrom = minoRotationDetail.getPatternsFrom(mino, rotateDirection);
-                    for (int[] pattern : patternsFrom) {
-                        Rotate beforeRotate = mino.getRotate().get(rotateDirection);
-                        Mino minoBefore = minoFactory.create(piece, beforeRotate);
-                        SpinResult kicks = minoRotationDetail.getKicks(field, rotateDirection, minoBefore, x + pattern[0], y + pattern[1]);
-                        if (kicks != SpinResult.NONE) {
-                            spinResults.add(kicks);
+                Field fieldWithoutT = lastResult.getAllMergedField().freeze();
+                fieldWithoutT.reduce(operationT.getMinoField());
+
+                int clearedLine = Long.bitCount(lastResult.getAllMergedFilledLine() & operationT.getUsingKey());
+
+                Spin maxSpin = null;
+                int priority = -1;
+                // 左回転, 右回転
+                for (RotateDirection direction : RotateDirection.values()) {
+                    RotateDirection beforeDirection = RotateDirection.reverse(direction);
+
+                    Piece piece = operationT.getPiece();
+                    Rotate rotate = operationT.getRotate();
+                    Mino before = minoFactory.create(piece, rotate.get(beforeDirection));
+                    int[][] patterns2 = minoRotationDetail.getPatternsFrom(before, direction);
+
+                    LockedReachable lockedReachable = lockedReachableThreadLocal.get();
+                    List<Spin> spins = get(minoRotationDetail, lockedReachable, fieldWithoutT, operationT, before, patterns2, direction, fieldHeight, clearedLine);
+                    for (Spin spin : spins) {
+                        int p = getPriority(spin);
+                        if (maxSpin == null || priority < p) {
+                            maxSpin = spin;
+                            priority = p;
                         }
                     }
                 }
 
-                int clearedLine = Long.bitCount(lastResult.getAllMergedFilledLine() & operationT.getUsingKey());
-                K column = keyMap.computeIfAbsent(clearedLine, K::new);
+                assert maxSpin != null;
+
+                final int priority2 = priority;
+                K column = keyMap.computeIfAbsent(maxSpin, spin -> new K(spin, priority2, getString(spin)));
 
                 List<MinoOperationWithKey> operations = lastResult.operationStream().collect(Collectors.toList());
                 String fumenData = oneFumenParser.parse(operations, field, fieldHeight);
@@ -214,6 +231,105 @@ public class SpinEntryPoint implements EntryPoint {
         } catch (Exception e) {
             throw new FinderExecuteException("Failed to output file", e);
         }
+    }
+
+    private List<Spin> get(MinoRotationDetail minoRotationDetail, LockedReachable lockedReachable, Field fieldWithoutT, Operation operation, Mino before, int[][] patterns, RotateDirection direction, int maxHeight, int clearedLine) {
+        List<Spin> spins = new ArrayList<>();
+
+        for (int[] pattern : patterns) {
+            // 開店前の位置に移動
+            int beforeX = operation.getX() - pattern[0];
+            int beforeY = operation.getY() - pattern[1];
+
+            if (beforeX + before.getMinX() < 0 || 10 <= beforeX + before.getMaxX()) {
+                continue;
+            }
+
+            if (beforeY + before.getMinY() < 0) {
+                continue;
+            }
+
+            if (!fieldWithoutT.canPut(before, beforeX, beforeY)) {
+                continue;
+            }
+
+            SpinResult spinResult = minoRotationDetail.getKicks(fieldWithoutT, direction, before, beforeX, beforeY);
+
+            if (spinResult == SpinResult.NONE) {
+                continue;
+            }
+
+            // 回転後に元の場所に戻る
+            if (spinResult.getToX() != operation.getX() || spinResult.getToY() != operation.getY()) {
+                continue;
+            }
+
+            // 回転前の位置に移動できる
+            if (!lockedReachable.checks(fieldWithoutT, before, beforeX, beforeY, maxHeight)) {
+                continue;
+            }
+
+            Spin spin = SpinCommons.getSpins(fieldWithoutT, spinResult, clearedLine);
+            spins.add(spin);
+        }
+
+        return spins;
+    }
+
+    private int getPriority(Spin spin) {
+        int clearedLine = spin.getClearedLine();
+
+        switch (spin.getSpin()) {
+            case Mini: {
+                return clearedLine * 10 + 1;
+            }
+            case Regular: {
+                switch (spin.getName()) {
+                    case Iso: {
+                        return clearedLine * 10 + 2;
+                    }
+                    case Fin: {
+                        return clearedLine * 10 + 3;
+                    }
+                    case Neo: {
+                        return clearedLine * 10 + 4;
+                    }
+                    case NoName: {
+                        return clearedLine * 10 + 5;
+                    }
+                }
+            }
+        }
+
+        throw new IllegalStateException();
+    }
+
+    private String getString(Spin spin) {
+        int clearedLine = spin.getClearedLine();
+        String lineString = getLineString(clearedLine);
+        switch (spin.getSpin()) {
+            case Mini: {
+                return lineString + " [Mini]";
+            }
+            case Regular: {
+                return lineString + " [" + spin.getName().getName() + "]";
+            }
+        }
+
+        throw new IllegalStateException();
+    }
+
+    private String getLineString(int clearedLine) {
+        assert 1 <= clearedLine && clearedLine <= 3;
+        switch (clearedLine) {
+            case 1:
+                return "Single";
+            case 2:
+                return "Double";
+            case 3:
+                return "Triple";
+        }
+        throw new IllegalStateException();
     }
 
     private void verifyTarget() throws FinderInitializeException {
@@ -296,20 +412,24 @@ public class SpinEntryPoint implements EntryPoint {
     }
 
     static class K implements HTMLColumn, Comparable<K> {
-        private final int clearedLine;
+        private final Spin spin;
+        private final int priority;
+        private final String title;
 
-        K(int clearedLine) {
-            this.clearedLine = clearedLine;
+        K(Spin spin, int priority, String title) {
+            this.spin = spin;
+            this.title = title;
+            this.priority = priority;
         }
 
         @Override
         public String getTitle() {
-            return clearedLine + " Lines";
+            return title;
         }
 
         @Override
         public String getId() {
-            return clearedLine + "line";
+            return title.toLowerCase().replace(' ', '-');
         }
 
         @Override
@@ -319,7 +439,7 @@ public class SpinEntryPoint implements EntryPoint {
 
         @Override
         public int compareTo(K o) {
-            return Integer.compare(this.clearedLine, o.clearedLine);
+            return Integer.compare(this.priority, o.priority);
         }
     }
 }

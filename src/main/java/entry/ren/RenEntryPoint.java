@@ -150,7 +150,7 @@ public class RenEntryPoint implements EntryPoint {
         // HTMLを出力
         {
             HTMLBuilder<HTMLColumn> htmlBuilder = new HTMLBuilder<>("Ren Result");
-            htmlBuilder.addHeader("Ren Result");
+            htmlBuilder.addHeader(String.format("%d solutions", results.size()));
 
             ColorConverter colorConverter = new ColorConverter();
             SequenceFumenParser fumenParser = new SequenceFumenParser(minoFactory, colorConverter);
