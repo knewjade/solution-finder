@@ -13,26 +13,6 @@ import searcher.spins.spin.TSpins;
 import java.util.stream.Stream;
 
 public class SpinCommons {
-    public static boolean existsOnGround(Field allMergedField, long allMergedFillLine, SimpleOriginalPiece operation) {
-        // operationで使われているラインは揃わない
-        long fillLine = allMergedFillLine & ~operation.getUsingKey();
-
-        // operationを置くのに消えている必要があるライン
-        long needDeletedKey = operation.getNeedDeletedKey();
-        if ((fillLine & needDeletedKey) != needDeletedKey) {
-            return false;
-        }
-
-        // operationが地面の上なのか
-        Field freeze = allMergedField.freeze();
-        freeze.deleteLineWithKey(needDeletedKey);
-        Mino mino = operation.getMino();
-        int x = operation.getX();
-        int y = operation.getY();
-        freeze.remove(mino, x, y);
-        return freeze.isOnGround(mino, x, y);
-    }
-
     public static boolean existsOnGround(Field initField, Field allMergedField, long allMergedFillLine, long onePieceFilledLine, SimpleOriginalPiece operation) {
         long usingKey = operation.getUsingKey();
 

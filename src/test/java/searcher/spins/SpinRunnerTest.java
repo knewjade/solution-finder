@@ -40,7 +40,7 @@ class SpinRunnerTest {
         SpinRunner runner = new SpinRunner(4, fieldHeight);
         PieceCounter pieceCounter = new PieceCounter(Piece.valueList());
         List<RoofResult> results = runner.search(initField, pieceCounter, 1).parallel().collect(Collectors.toList());
-        assertThat(results).hasSize(316);
+        assertThat(results).hasSize(288);
 
         verify(results);
     }
@@ -75,7 +75,7 @@ class SpinRunnerTest {
         PieceCounter pieceCounter = new PieceCounter(Piece.valueList());
         List<RoofResult> results = runner.search(initField, pieceCounter, 1).parallel().collect(Collectors.toList());
 
-        assertThat(results).hasSize(5195);
+        assertThat(results).hasSize(4640);
 
         verify(results);
     }
@@ -119,7 +119,7 @@ class SpinRunnerTest {
 
         showTetfu(fieldHeight, initField, results);
 
-        assertThat(results).hasSize(36);
+        assertThat(results).hasSize(35);
 
         verify(results);
     }

@@ -140,6 +140,7 @@ public class SpinRunner {
 
                     RotateReachable rotateReachable = rotateReachableThreadLocal.get();
                     Field allMergedFieldWithoutT = roofResult.getAllMergedFieldWithoutT();
+                    long onePieceFilledKeyWithoutT = roofResult.getOnePieceFilledKeyWithoutT();
 
                     Mino mino = operationT.getMino();
                     int tx = operationT.getX();
@@ -152,6 +153,8 @@ public class SpinRunner {
                                 Field fieldWithout = allMergedFieldWithoutT.freeze();
                                 fieldWithout.reduce(operation.getMinoField());
 
+
+
                                 // Tスピンではなくなるとき、必要なミノである
                                 if (!SpinCommons.canTSpin(fieldWithout, tx, ty)) {
                                     return true;
@@ -161,7 +164,7 @@ public class SpinRunner {
 
                                 // 宙に浮くミノがあるとき、必要なミノである
                                 boolean existsOnGround = allOperations.stream()
-                                        .allMatch(operation2 -> SpinCommons.existsOnGround(fieldWithout, fieldWithout.getFilledLine(), operation2));
+                                        .allMatch(operation2 -> SpinCommons.existsOnGround(initField, fieldWithout, fieldWithout.getFilledLine(), onePieceFilledKeyWithoutT, operation2));
 
                                 if (!existsOnGround) {
                                     return true;

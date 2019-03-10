@@ -11,14 +11,18 @@ import java.util.stream.Stream;
 
 public abstract class ScaffoldResultWithT extends ScaffoldResult {
     static List<SimpleOriginalPiece> extractAirOperations(Result result, SimpleOriginalPiece operationT, Stream<SimpleOriginalPiece> targetOperationStream) {
+        Field initField = result.getInitField();
+
         // 地形からTミノを除く
         Field field = result.getAllMergedField().freeze();
         field.reduce(operationT.getMinoField());
 
         long filledLine = result.getAllMergedFilledLine();
 
+        long onePieceFilledKeyWithoutT = result.getOnePieceFilledKey() & ~operationT.getUsingKey();
+
         return targetOperationStream
-                .filter(operation -> !SpinCommons.existsOnGround(field, filledLine, operation))
+                .filter(operation -> !SpinCommons.existsOnGround(initField, field, filledLine, onePieceFilledKeyWithoutT, operation))
                 .collect(Collectors.toList());
     }
 

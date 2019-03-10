@@ -10,6 +10,7 @@ public class CandidateWithMask {
     private final Field notAllowed;
     private final Field allMergedFieldWithoutT;
     private final long allMergedFilledLineWithoutT;
+    private final long onePieceFilledKeyWithoutT;
 
     public CandidateWithMask(Result result, SimpleOriginalPiece operationT, Field notAllowed) {
         this.result = result;
@@ -20,6 +21,7 @@ public class CandidateWithMask {
         allMergedFieldWithoutT.reduce(operationT.getMinoField());
         this.allMergedFieldWithoutT = allMergedFieldWithoutT;
         this.allMergedFilledLineWithoutT = allMergedFieldWithoutT.getFilledLine();
+        this.onePieceFilledKeyWithoutT = result.getOnePieceFilledKey() & ~operationT.getUsingKey();
     }
 
     public Result getResult() {
@@ -40,5 +42,9 @@ public class CandidateWithMask {
 
     public long getAllMergedFilledLineWithoutT() {
         return allMergedFilledLineWithoutT;
+    }
+
+    public long getOnePieceFilledKeyWithoutT() {
+        return onePieceFilledKeyWithoutT;
     }
 }

@@ -13,6 +13,7 @@ public class AddLastRoofResult extends RoofResult {
     private final SimpleOriginalPiece originalPiece;
     private final Field notAllowedWithT;
     private final Field allMergedFieldWithoutT;
+    private final long onePieceFilledKeyWithoutT;
 
     public AddLastRoofResult(RoofResult prevRoofResult, SimpleOriginalPiece originalPiece) {
         this.prevRoofResult = prevRoofResult;
@@ -26,6 +27,8 @@ public class AddLastRoofResult extends RoofResult {
         Field freezeAllMergedFieldWithoutT = prevRoofResult.getAllMergedFieldWithoutT().freeze();
         freezeAllMergedFieldWithoutT.merge(originalPiece.getMinoField());
         this.allMergedFieldWithoutT = freezeAllMergedFieldWithoutT;
+
+        this.onePieceFilledKeyWithoutT = result.getOnePieceFilledKey() & ~getOperationT().getUsingKey();
     }
 
     @Override
@@ -61,5 +64,10 @@ public class AddLastRoofResult extends RoofResult {
     @Override
     public Stream<Long> toKeyStream() {
         return Stream.concat(prevRoofResult.toKeyStream(), Stream.of(originalPiece.toUniqueKey()));
+    }
+
+    @Override
+    public long getOnePieceFilledKeyWithoutT() {
+        return onePieceFilledKeyWithoutT;
     }
 }
