@@ -14,8 +14,12 @@ public abstract class ScaffoldResultWithoutT extends ScaffoldResult {
     static List<SimpleOriginalPiece> extractAirOperations(Result result, Stream<SimpleOriginalPiece> targetOperationStream) {
         long filledLine = result.getAllMergedFilledLine();
         Field field = result.getAllMergedField();
+        long onePieceFilledKey = result.getOnePieceFilledKey();
         return targetOperationStream
-                .filter(operation -> !SpinCommons.existsOnGround(field, filledLine, operation))
+                .filter(operation -> {
+                    long l = filledLine & operation.getMinoField().getFilledLine();
+                    return !SpinCommons.existsOnGround(result.getInitField(), field, filledLine, onePieceFilledKey, operation);
+                })
                 .collect(Collectors.toList());
     }
 }

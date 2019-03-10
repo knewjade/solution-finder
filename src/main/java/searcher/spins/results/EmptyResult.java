@@ -55,4 +55,14 @@ public class EmptyResult extends Result {
     public Field getInitField() {
         return initField;
     }
+
+    @Override
+    public long getUsingKey() {
+        return 0L;
+    }
+
+    @Override
+    public long getOnePieceFilledKey() {
+        return 0L;
+    }
 }

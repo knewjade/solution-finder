@@ -210,9 +210,17 @@ public class SpinEntryPoint implements EntryPoint {
                 String name = operations.stream()
                         .map(operation -> String.format("%s-%s", operation.getPiece(), operation.getRotate()))
                         .collect(Collectors.joining(" "));
-                String aLink = String.format("<div><a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a></div>", fumenData, name);
 
-                htmlBuilder.addColumn(column, aLink);
+                Field allMergedField = result.getLastResult().getAllMergedField();
+                Field freeze = allMergedField.freeze();
+                freeze.clearLine();
+                int numOfHoles = getNumOfHoles(freeze);
+
+                int p1 = numOfHoles * 100 * 100 + (Long.bitCount(allMergedField.getFilledLine())- clearedLine) * 100 + operationT.getY();
+
+                String aLink = String.format("<div><a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a> %d</div>", fumenData, name, p1);
+
+                htmlBuilder.addColumn(column, aLink, p1);
 //                System.out.println(BlockFieldView.toString(result.getLastResult().parseToBlockField()));
             }
 
@@ -330,6 +338,13 @@ public class SpinEntryPoint implements EntryPoint {
                 return "Triple";
         }
         throw new IllegalStateException();
+    }
+
+    private int getNumOfHoles(Field field) {
+        Field freeze = field.freeze();
+        freeze.slideDown();
+        freeze.reduce(field);
+        return freeze.getNumOfAllBlocks();
     }
 
     private void verifyTarget() throws FinderInitializeException {

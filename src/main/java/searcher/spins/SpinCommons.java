@@ -1,8 +1,8 @@
 package searcher.spins;
 
-import common.datastore.MinoOperationWithKey;
 import core.field.Field;
 import core.mino.Mino;
+import core.neighbor.SimpleOriginalPiece;
 import core.srs.Rotate;
 import core.srs.RotateDirection;
 import core.srs.SpinResult;
@@ -13,7 +13,7 @@ import searcher.spins.spin.TSpins;
 import java.util.stream.Stream;
 
 public class SpinCommons {
-    public static boolean existsOnGround(Field allMergedField, long allMergedFillLine, MinoOperationWithKey operation) {
+    public static boolean existsOnGround(Field allMergedField, long allMergedFillLine, SimpleOriginalPiece operation) {
         // operationで使われているラインは揃わない
         long fillLine = allMergedFillLine & ~operation.getUsingKey();
 
@@ -31,6 +31,51 @@ public class SpinCommons {
         int y = operation.getY();
         freeze.remove(mino, x, y);
         return freeze.isOnGround(mino, x, y);
+    }
+
+    public static boolean existsOnGround(Field initField, Field allMergedField, long allMergedFillLine, long onePieceFilledLine, SimpleOriginalPiece operation) {
+        long usingKey = operation.getUsingKey();
+
+        // operationで使われているラインは揃わない
+        long fillLine = allMergedFillLine & ~usingKey;
+
+        // operationを置くのに消えている必要があるライン
+        long needDeletedKey = operation.getNeedDeletedKey();
+        if ((fillLine & needDeletedKey) != needDeletedKey) {
+            return false;
+        }
+
+        // operationより下で消えるラインで、1ミノで即消えるライン上にはおけないので消去する
+        long onePieceFilledBelowOperation = (~usingKey & (usingKey - 1)) & onePieceFilledLine;
+        Mino mino = operation.getMino();
+        int x = operation.getX();
+        int y = operation.getY();
+
+        // 最初から置くことができる
+        {
+            Field freeze = initField.freeze();
+            freeze.deleteLineWithKey(needDeletedKey);
+            freeze.remove(mino, x, y);
+            boolean isOnGround = freeze.isOnGround(mino, x, y);
+            if (isOnGround) {
+                return true;
+            }
+        }
+
+        // operationが地面の上なのか
+        {
+            Field freeze = allMergedField.freeze();
+            freeze.deleteLineWithKey(needDeletedKey | onePieceFilledBelowOperation);
+            int ny = y - Long.bitCount(onePieceFilledBelowOperation);
+            assert 0 <= ny + mino.getMinY();
+            freeze.remove(mino, x, ny);
+            boolean isOnGround = freeze.isOnGround(mino, x, ny);
+            if (isOnGround) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // Tスピンか判定

@@ -37,4 +37,10 @@ public abstract class Result {
 
     // 最終的なフィールドで消去されているライン
     public abstract long getAllMergedFilledLine();
+
+    // ミノが置かれているライン
+    public abstract long getUsingKey();
+
+    // 1ミノだけで削除されるライン
+    public abstract long getOnePieceFilledKey();
 }

@@ -23,6 +23,8 @@ public class AddLastResult extends Result {
     private final Field usingField;
     private final Field allMergedField;
     private final long allMergedFilledLine;
+    private final long usingKey;
+    private final long onePieceFilledKey;
 
     private AddLastResult(Result prev, SimpleOriginalPiece operation, PieceCounter reminderPieceCounter, Field usingField) {
         super();
@@ -35,6 +37,12 @@ public class AddLastResult extends Result {
         allMergedField.merge(usingField);
         this.allMergedField = allMergedField;
         this.allMergedFilledLine = allMergedField.getFilledLine();
+
+        long prevUsingKey = prev.getUsingKey();
+        this.usingKey = prevUsingKey | operation.getUsingKey();
+
+        long currentOnePieceFilledKey = allMergedFilledLine & operation.getUsingKey() & ~prevUsingKey;
+        this.onePieceFilledKey = prev.getOnePieceFilledKey() | currentOnePieceFilledKey;
     }
 
     @Override
@@ -72,7 +80,17 @@ public class AddLastResult extends Result {
         return allMergedFilledLine;
     }
 
-    public SimpleOriginalPiece getCurrentOperation() {
+    @Override
+    public long getUsingKey() {
+        return usingKey;
+    }
+
+    @Override
+    public long getOnePieceFilledKey() {
+        return onePieceFilledKey;
+    }
+
+    SimpleOriginalPiece getCurrentOperation() {
         return operation;
     }
 }

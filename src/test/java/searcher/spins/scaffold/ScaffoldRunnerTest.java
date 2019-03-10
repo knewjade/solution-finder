@@ -5,6 +5,7 @@ import common.datastore.BlockField;
 import common.datastore.PieceCounter;
 import common.parser.OperationTransform;
 import core.action.reachable.LockedReachable;
+import core.field.BlockFieldView;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Mino;
@@ -24,6 +25,7 @@ import searcher.spins.results.Result;
 import searcher.spins.scaffold.results.ScaffoldResult;
 import searcher.spins.scaffold.results.ScaffoldResultWithoutT;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
@@ -77,7 +79,7 @@ class ScaffoldRunnerTest {
                 "XXXX______" +
                 "XXX____XXX" +
                 "XXXX______"
-        );
+                , fieldHeight);
 
         SimpleOriginalPieceFactory factory = new SimpleOriginalPieceFactory(minoFactory, minoShifter, fieldHeight);
         ScaffoldRunner runner = new ScaffoldRunner(Scaffolds.create(factory.createMinimalPieces(initField)));
@@ -112,7 +114,7 @@ class ScaffoldRunnerTest {
                 "__________" +
                 "__________" +
                 "__________"
-        );
+                , fieldHeight);
 
         SimpleOriginalPieceFactory factory = new SimpleOriginalPieceFactory(minoFactory, minoShifter, fieldHeight);
         ScaffoldRunner runner = new ScaffoldRunner(Scaffolds.create(factory.createMinimalPieces(initField)));
@@ -134,6 +136,40 @@ class ScaffoldRunnerTest {
         assertThat(results).hasSize(72);
 
         verify(results, initField, fieldHeight);
+    }
+
+    @Test
+    void case4() {
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+
+        int fieldHeight = 7;
+        Field initField = FieldFactory.createField("" +
+                "XXXXXXX___" +
+                "XXXXXX____" +
+                "XXXXXXX___" +
+                "XXXXXXX___" +
+                "XXXXXXX___" +
+                "XXXXXXXX__"
+        , fieldHeight);
+
+        SimpleOriginalPieceFactory factory = new SimpleOriginalPieceFactory(minoFactory, minoShifter, fieldHeight);
+        ScaffoldRunner runner = new ScaffoldRunner(Scaffolds.create(factory.createMinimalPieces(initField)));
+
+        EmptyResult emptyResult = new EmptyResult(initField, new PieceCounter(
+                Stream.of(Piece.J, Piece.Z, Piece.T)
+        ), fieldHeight);
+
+        List<SimpleOriginalPiece> operations = Arrays.asList(
+                to(Piece.J, Rotate.Reverse, 8, 1, fieldHeight),
+                to(Piece.Z, Rotate.Right, 8, 3, fieldHeight),
+                to(Piece.T, Rotate.Reverse, 7, 4, fieldHeight)
+        );
+        Result result = AddLastsResult.create(emptyResult, operations);
+
+        List<ScaffoldResultWithoutT> results = runner.build(result, operations).collect(Collectors.toList());
+
+        assertThat(results).hasSize(0);
     }
 
     private SimpleOriginalPiece to(Piece piece, Rotate rotate, int x, int y, int fieldHeight) {
