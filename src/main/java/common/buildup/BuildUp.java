@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class BuildUp {
@@ -48,6 +49,11 @@ public class BuildUp {
     }
 
     // 組み立てられる手順が存在するか確認
+    public static boolean existsValidBuildPattern(Field fieldOrigin, Stream<? extends MinoOperationWithKey> operationWithKeys, int height, Reachable reachable) {
+        LinkedList<MinoOperationWithKey> keys = operationWithKeys.collect(Collectors.toCollection(LinkedList::new));
+        return existsValidBuildPatternDirectly(fieldOrigin, keys, height, reachable);
+    }
+
     public static boolean existsValidBuildPattern(Field fieldOrigin, List<? extends MinoOperationWithKey> operationWithKeys, int height, Reachable reachable) {
         LinkedList<MinoOperationWithKey> keys = new LinkedList<>(operationWithKeys);
         return existsValidBuildPatternDirectly(fieldOrigin, keys, height, reachable);

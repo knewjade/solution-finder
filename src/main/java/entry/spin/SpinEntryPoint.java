@@ -1,5 +1,6 @@
 package entry.spin;
 
+import common.buildup.BuildUp;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.Operation;
 import common.datastore.PieceCounter;
@@ -170,6 +171,8 @@ public class SpinEntryPoint implements EntryPoint {
             for (RoofResult result : results) {
                 Result lastResult = result.getLastResult();
 
+                LockedReachable lockedReachable = lockedReachableThreadLocal.get();
+
                 SimpleOriginalPiece operationT = result.getOperationT();
 
                 Field fieldWithoutT = lastResult.getAllMergedField().freeze();
@@ -188,7 +191,6 @@ public class SpinEntryPoint implements EntryPoint {
                     Mino before = minoFactory.create(piece, rotate.get(beforeDirection));
                     int[][] patterns2 = minoRotationDetail.getPatternsFrom(before, direction);
 
-                    LockedReachable lockedReachable = lockedReachableThreadLocal.get();
                     List<Spin> spins = get(minoRotationDetail, lockedReachable, fieldWithoutT, operationT, before, patterns2, direction, fieldHeight, clearedLine);
                     for (Spin spin : spins) {
                         int p = getPriority(spin);
@@ -215,12 +217,18 @@ public class SpinEntryPoint implements EntryPoint {
                 Field freeze = allMergedField.freeze();
                 freeze.clearLine();
                 int numOfHoles = getNumOfHoles(freeze);
+                int numOfPieces = operations.size();
 
-                int p1 = numOfHoles * 100 * 100 + (Long.bitCount(allMergedField.getFilledLine())- clearedLine) * 100 + operationT.getY();
+                int p1 = numOfHoles * 100 * 100 * 100
+                        + (Long.bitCount(allMergedField.getFilledLine()) - clearedLine) * 100 * 100
+                        + operationT.getY() * 100
+                        + numOfPieces;
 
-                String aLink = String.format("<div><a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a> %d</div>", fumenData, name, p1);
+                boolean b = BuildUp.existsValidBuildPattern(initField, operations.stream().filter(op -> !operationT.equals(op)), fieldHeight, lockedReachable);
+                String aLink = String.format("<div><a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a> %s %d</div>", fumenData, name, b, p1);
 
                 htmlBuilder.addColumn(column, aLink, p1);
+                // answer: 196 solutions
 //                System.out.println(BlockFieldView.toString(result.getLastResult().parseToBlockField()));
             }
 
