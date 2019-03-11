@@ -65,4 +65,8 @@ public class EmptyResult extends Result {
     public long getOnePieceFilledKey() {
         return 0L;
     }
+
+    public int getFieldHeight() {
+        return fieldHeight;
+    }
 }

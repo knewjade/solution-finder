@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class SpinRunnerTest {
+class FullSpinRunnerTest {
     @Test
     void case1_h4() {
         int fieldHeight = 8;
@@ -37,9 +37,12 @@ class SpinRunnerTest {
                         "XXXXXXXXX_" +
                         ""
                 , fieldHeight);
-        SpinRunner runner = new SpinRunner(4, fieldHeight);
         PieceCounter pieceCounter = new PieceCounter(Piece.valueList());
-        List<Candidate> results = runner.search(initField, pieceCounter, 1, false, Integer.MAX_VALUE).parallel().collect(Collectors.toList());
+
+        FirstPreSpinRunner firstPreSpinRunner = new FirstPreSpinRunner(4, fieldHeight);
+        SecondPreSpinRunner secondPreSpinRunner = new SecondPreSpinRunner(firstPreSpinRunner, initField, pieceCounter);
+        FullSpinRunner runner = new FullSpinRunner();
+        List<Candidate> results = runner.search(secondPreSpinRunner, 1).parallel().collect(Collectors.toList());
         assertThat(results).hasSize(303);
 
         verify(results);
@@ -71,9 +74,12 @@ class SpinRunnerTest {
                         "XXXXXXXXX_" +
                         ""
                 , fieldHeight);
-        SpinRunner runner = new SpinRunner(5, fieldHeight);
         PieceCounter pieceCounter = new PieceCounter(Piece.valueList());
-        List<Candidate> results = runner.search(initField, pieceCounter, 1, false, Integer.MAX_VALUE).parallel().collect(Collectors.toList());
+
+        FirstPreSpinRunner firstPreSpinRunner = new FirstPreSpinRunner(5, fieldHeight);
+        SecondPreSpinRunner secondPreSpinRunner = new SecondPreSpinRunner(firstPreSpinRunner, initField, pieceCounter);
+        FullSpinRunner runner = new FullSpinRunner();
+        List<Candidate> results = runner.search(secondPreSpinRunner, 1).parallel().collect(Collectors.toList());
 
         assertThat(results).hasSize(5000);
 
@@ -92,9 +98,12 @@ class SpinRunnerTest {
                         "__________" +
                         ""
                 , fieldHeight);
-        SpinRunner runner = new SpinRunner(4, fieldHeight);
         PieceCounter pieceCounter = new PieceCounter(Piece.valueList());
-        List<Candidate> results = runner.search(initField, pieceCounter, 2, false, Integer.MAX_VALUE).parallel().collect(Collectors.toList());
+
+        FirstPreSpinRunner firstPreSpinRunner = new FirstPreSpinRunner(4, fieldHeight);
+        SecondPreSpinRunner secondPreSpinRunner = new SecondPreSpinRunner(firstPreSpinRunner, initField, pieceCounter);
+        FullSpinRunner runner = new FullSpinRunner();
+        List<Candidate> results = runner.search(secondPreSpinRunner, 2).parallel().collect(Collectors.toList());
 
         assertThat(results).hasSize(272);
 
@@ -113,9 +122,12 @@ class SpinRunnerTest {
                         "XXXXXXXX__" +
                         ""
                 , fieldHeight);
-        SpinRunner runner = new SpinRunner(5, fieldHeight);
         PieceCounter pieceCounter = new PieceCounter(Arrays.asList(Piece.L, Piece.S, Piece.T));
-        List<Candidate> results = runner.search(initField, pieceCounter, 1, false, Integer.MAX_VALUE).parallel().collect(Collectors.toList());
+
+        FirstPreSpinRunner firstPreSpinRunner = new FirstPreSpinRunner(5, fieldHeight);
+        SecondPreSpinRunner secondPreSpinRunner = new SecondPreSpinRunner(firstPreSpinRunner, initField, pieceCounter);
+        FullSpinRunner runner = new FullSpinRunner();
+        List<Candidate> results = runner.search(secondPreSpinRunner, 1).parallel().collect(Collectors.toList());
 
         showTetfu(fieldHeight, initField, results);
 

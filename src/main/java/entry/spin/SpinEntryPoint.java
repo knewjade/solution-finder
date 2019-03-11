@@ -28,8 +28,7 @@ import exceptions.FinderTerminateException;
 import lib.Stopwatch;
 import output.HTMLBuilder;
 import output.HTMLColumn;
-import searcher.spins.SpinCommons;
-import searcher.spins.SpinRunner;
+import searcher.spins.*;
 import searcher.spins.candidates.Candidate;
 import searcher.spins.results.Result;
 import searcher.spins.spin.Spin;
@@ -142,7 +141,12 @@ public class SpinEntryPoint implements EntryPoint {
         ColorConverter colorConverter = new ColorConverter();
         OneFumenParser oneFumenParser = new OneFumenParser(minoFactory, colorConverter);
 
-        SpinRunner spinRunner = new SpinRunner(minoFactory, minoShifter, fillBottom, fillTop, marginHeight, fieldHeight);
+        Field initField = FieldFactory.createField(fieldHeight);
+        initField.merge(settings.getField());
+
+        FirstPreSpinRunner firstPreSpinRunner = new FirstPreSpinRunner(minoFactory, minoShifter, fillBottom, fillTop, marginHeight, fieldHeight);
+        SecondPreSpinRunner secondPreSpinRunner = new SecondPreSpinRunner(firstPreSpinRunner, initField, pieceCounter, maxRoofNum);
+        SpinRunner spinRunner = skipRoof ? new NoRoofSpinRunner() : new FullSpinRunner();
 
         // ========================================
 
@@ -152,9 +156,7 @@ public class SpinEntryPoint implements EntryPoint {
 
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
-        Field initField = FieldFactory.createField(fieldHeight);
-        initField.merge(field);
-        List<Candidate> results = spinRunner.search(initField, pieceCounter, requiredClearLine, skipRoof, maxRoofNum).collect(Collectors.toList());
+        List<Candidate> results = spinRunner.search(secondPreSpinRunner, requiredClearLine).collect(Collectors.toList());
 
         stopwatch.stop();
 
