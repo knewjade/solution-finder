@@ -106,7 +106,7 @@ public class SpinEntryPoint implements EntryPoint {
         int marginHeight = settings.getMarginHeight();
         int fieldHeight = settings.getFieldHeight();
         int requiredClearLine = settings.getRequiredClearLine();
-        boolean skipRoof = settings.getSkipRoof();
+        boolean searchRoof = settings.getSearchRoof();
         int maxRoofNum = settings.setMaxRoofNum();
 
         output("# Initialize / User-defined");
@@ -114,7 +114,7 @@ public class SpinEntryPoint implements EntryPoint {
         output("Margin height: " + marginHeight);
         output("Field height: " + fieldHeight);
         output("Required clear line: " + requiredClearLine);
-        output("Skip roof: " + skipRoof);
+        output("Search roof: " + (searchRoof ? "yes" : "no"));
         output("Max roof num: " + (maxRoofNum != Integer.MAX_VALUE ? maxRoofNum : "no limit"));
 
 //        output("Using hold: " + (settings.isUsingHold() ? "use" : "avoid"));
@@ -146,7 +146,7 @@ public class SpinEntryPoint implements EntryPoint {
 
         FirstPreSpinRunner firstPreSpinRunner = new FirstPreSpinRunner(minoFactory, minoShifter, fillBottom, fillTop, marginHeight, fieldHeight);
         SecondPreSpinRunner secondPreSpinRunner = new SecondPreSpinRunner(firstPreSpinRunner, initField, pieceCounter, maxRoofNum);
-        SpinRunner spinRunner = skipRoof ? new NoRoofSpinRunner() : new FullSpinRunner();
+        SpinRunner spinRunner = searchRoof ? new FullSpinRunner() : new NoRoofSpinRunner();
 
         // ========================================
 
@@ -191,7 +191,7 @@ public class SpinEntryPoint implements EntryPoint {
                 Spin maxSpin = null;
                 int priority = -1;
                 // 左回転, 右回転
-                if (!skipRoof) {
+                if (searchRoof) {
                     for (RotateDirection direction : RotateDirection.values()) {
                         RotateDirection beforeDirection = RotateDirection.reverse(direction);
 

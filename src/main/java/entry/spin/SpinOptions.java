@@ -18,7 +18,7 @@ public enum SpinOptions {
     MarginHeight(SingleArgOption.full("m", "margin-height", "number", "Specify max margin height")),
     // FieldHeight(SingleArgOption.full("l", "field-height", "number", "'Specify max height")),
     ClearLineByT(SingleArgOption.full("c", "line", "number", "'Specify number of required clear line by T-piece")),
-    SkipRoof(SingleArgOption.full("sr", "skip-roof", "boolean", "'If true, skip searching for roof")),
+    Roof(SingleArgOption.full("r", "roof", "boolean", "'If this option is true, search for roof")),
     MaxRoof(SingleArgOption.full("mr", "max-roof", "number", "'Specify the maximum number of pieces that can be used as a roof")),
     LogPath(SingleArgOption.full("lp", "log-path", "path", "File path of output log")),
     OutputBase(SingleArgOption.full("o", "output-base", "path", "Base file path of result to output")),

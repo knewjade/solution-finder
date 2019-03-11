@@ -100,8 +100,8 @@ public class SpinSettingParser extends SettingParser<SpinSettings> {
         clearLineByT.ifPresent(settings::setRequiredClearLine);
 
         // 屋根の探索をスキップ
-        Optional<Boolean> skipRoof = wrapper.getBoolOption(SpinOptions.SkipRoof.optName());
-        skipRoof.ifPresent(settings::setSkipRoof);
+        Optional<Boolean> searchRoof = wrapper.getBoolOption(SpinOptions.Roof.optName());
+        searchRoof.ifPresent(settings::setSearchRoof);
 
         // 屋根として使える最大のミノ数
         Optional<Integer> maxRoofNum = wrapper.getIntegerOption(SpinOptions.MaxRoof.optName());
