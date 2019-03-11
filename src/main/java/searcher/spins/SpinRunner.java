@@ -11,6 +11,8 @@ import core.mino.Piece;
 import core.neighbor.SimpleOriginalPiece;
 import core.srs.MinoRotation;
 import searcher.spins.candidates.Candidate;
+import searcher.spins.candidates.CandidateWithMask;
+import searcher.spins.candidates.SimpleCandidate;
 import searcher.spins.fill.FillRunner;
 import searcher.spins.fill.line.LineFillRunner;
 import searcher.spins.fill.line.spot.LinePools;
@@ -23,7 +25,6 @@ import searcher.spins.results.EmptyResult;
 import searcher.spins.results.Result;
 import searcher.spins.roof.RoofRunner;
 import searcher.spins.roof.Roofs;
-import searcher.spins.roof.results.RoofResult;
 import searcher.spins.scaffold.ScaffoldRunner;
 import searcher.spins.wall.WallRunner;
 
@@ -71,7 +72,7 @@ public class SpinRunner {
         this.rotateReachableThreadLocal = new RotateReachableThreadLocal(minoFactory, minoShifter, minoRotation, fieldHeight);
     }
 
-    public Stream<RoofResult> search(Field initField, PieceCounter pieceCounter, int minClearedLine) {
+    public Stream<? extends Candidate> search(Field initField, PieceCounter pieceCounter, int minClearedLine, boolean skipRoof, int maxRoofNum) {
         Map<PieceBlockCount, List<MinoDiff>> pieceBlockCountToMinoDiffs = pools.getPieceBlockCountToMinoDiffs();
         Map<Piece, Set<PieceBlockCount>> pieceToPieceBlockCounts = pools.getPieceToPieceBlockCounts();
 
@@ -88,19 +89,19 @@ public class SpinRunner {
 
         Roofs roofs = new Roofs(minimalPieces);
 
-        RoofRunner roofRunner = new RoofRunner(roofs, rotateReachableThreadLocal, fieldHeight);
+        RoofRunner roofRunner = new RoofRunner(roofs, rotateReachableThreadLocal, maxRoofNum, fieldHeight);
 
-        return search(initField, fillRunner, scaffoldRunner, wallRunner, roofRunner, pieceCounter, minClearedLine);
+        return search(initField, fillRunner, scaffoldRunner, wallRunner, roofRunner, pieceCounter, minClearedLine, skipRoof);
     }
 
-    private Stream<RoofResult> search(
+    private Stream<? extends Candidate> search(
             Field initField, FillRunner fillRunner, ScaffoldRunner scaffoldRunner,
             WallRunner wallRunner, RoofRunner roofRunner, PieceCounter pieceCounter,
-            int minClearedLine
+            int minClearedLine, boolean skipRoof
     ) {
         EmptyResult emptyResult = new EmptyResult(initField, pieceCounter, fieldHeight);
 
-        return fillRunner.search(emptyResult).parallel()
+        Stream<CandidateWithMask> stream = fillRunner.search(emptyResult).parallel()
                 .filter(FillResult::containsT)
                 .flatMap(fillResult -> {
                     Result lastResult = fillResult.getLastResult();
@@ -118,11 +119,17 @@ public class SpinRunner {
 
                                 return scaffoldRunner.build(lastResult, tOperation, targetOperations)
                                         .flatMap(scaffoldResult -> {
-                                            Candidate candidate = new Candidate(scaffoldResult.getLastResult(), tOperation);
+                                            Candidate candidate = new SimpleCandidate(scaffoldResult.getLastResult(), tOperation);
                                             return wallRunner.search(candidate);
                                         });
                             });
-                })
+                });
+
+        if (skipRoof) {
+            return stream;
+        }
+
+        return stream
                 .flatMap(roofRunner::search)
                 .filter(roofResult -> {
                     Result lastResult = roofResult.getLastResult();
@@ -175,6 +182,8 @@ public class SpinRunner {
                                 // Tの回転入れに影響を与えるとき、必要なミノである
                                 return !rotateReachable.checks(fieldWithout, mino, tx, ty, fieldHeight);
                             });
-                });
+                })
+                .map(roofResult -> new SimpleCandidate(roofResult.getLastResult(), roofResult.getOperationT()))
+                ;
     }
 }

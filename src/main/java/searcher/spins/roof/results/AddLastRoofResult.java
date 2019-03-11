@@ -14,6 +14,7 @@ public class AddLastRoofResult extends RoofResult {
     private final Field notAllowedWithT;
     private final Field allMergedFieldWithoutT;
     private final long onePieceFilledKeyWithoutT;
+    private final int numOfRoofPieces;
 
     public AddLastRoofResult(RoofResult prevRoofResult, SimpleOriginalPiece originalPiece) {
         this.prevRoofResult = prevRoofResult;
@@ -29,6 +30,7 @@ public class AddLastRoofResult extends RoofResult {
         this.allMergedFieldWithoutT = freezeAllMergedFieldWithoutT;
 
         this.onePieceFilledKeyWithoutT = result.getOnePieceFilledKey() & ~getOperationT().getUsingKey();
+        this.numOfRoofPieces = result.getNumOfUsingPiece() + 1;
     }
 
     @Override
@@ -69,5 +71,10 @@ public class AddLastRoofResult extends RoofResult {
     @Override
     public long getOnePieceFilledKeyWithoutT() {
         return onePieceFilledKeyWithoutT;
+    }
+
+    @Override
+    public int getNumOfRoofPieces() {
+        return numOfRoofPieces;
     }
 }

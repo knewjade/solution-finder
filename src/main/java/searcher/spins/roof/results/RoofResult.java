@@ -32,4 +32,7 @@ public abstract class RoofResult {
 
     // 1ミノだけで削除されるライン
     public abstract long getOnePieceFilledKeyWithoutT();
+
+    // 屋根として利用したミノ数
+    public abstract int getNumOfRoofPieces();
 }

@@ -21,14 +21,17 @@ public class RoofRunner {
     private final Roofs roofs;
     private final ThreadLocal<? extends RotateReachable> rotateReachableThreadLocal;
     private final int fieldHeight;
+    private final int maxRoofNum;
 
     public RoofRunner(
             Roofs roofs,
             ThreadLocal<? extends RotateReachable> rotateReachableThreadLocal,
+            int maxRoofNum,
             int fieldHeight
     ) {
         this.roofs = roofs;
         this.rotateReachableThreadLocal = rotateReachableThreadLocal;
+        this.maxRoofNum = maxRoofNum;
         this.fieldHeight = fieldHeight;
     }
 
@@ -42,6 +45,11 @@ public class RoofRunner {
         // 解であるか確認
         if (isSolution(roofResult)) {
             return Stream.of(roofResult);
+        }
+
+        // 屋根として使える個数を満たしていないか
+        if (maxRoofNum <= roofResult.getNumOfRoofPieces()) {
+            return Stream.empty();
         }
 
         // 残りのミノがある
@@ -127,6 +135,11 @@ public class RoofRunner {
                 solutions.add(currentKeys);
                 builder.accept(nextResult);
             } else {
+                // 屋根として使える個数を満たしていないか
+                if (maxRoofNum <= nextResult.getNumOfRoofPieces()) {
+                    return;
+                }
+
                 // まだ使用していないミノが残っている
                 if (nextResult.getLastResult().getRemainderPieceCounter().isEmpty()) {
                     return;

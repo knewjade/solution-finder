@@ -15,8 +15,8 @@ import core.mino.Piece;
 import entry.path.output.OneFumenParser;
 import module.LongTest;
 import org.junit.jupiter.api.Test;
+import searcher.spins.candidates.Candidate;
 import searcher.spins.results.Result;
-import searcher.spins.roof.results.RoofResult;
 
 import java.util.Arrays;
 import java.util.List;
@@ -39,24 +39,24 @@ class SpinRunnerTest {
                 , fieldHeight);
         SpinRunner runner = new SpinRunner(4, fieldHeight);
         PieceCounter pieceCounter = new PieceCounter(Piece.valueList());
-        List<RoofResult> results = runner.search(initField, pieceCounter, 1).parallel().collect(Collectors.toList());
+        List<Candidate> results = runner.search(initField, pieceCounter, 1, false, Integer.MAX_VALUE).parallel().collect(Collectors.toList());
         assertThat(results).hasSize(303);
 
         verify(results);
     }
 
-    private void verify(List<RoofResult> results) {
+    private void verify(List<Candidate> candidates) {
         // 重複がない
         TreeSet<BlockField> blockFields = new TreeSet<>(BlockField::compareTo);
-        for (RoofResult result : results) {
-            BlockField e = result.getLastResult().parseToBlockField();
+        for (Candidate candidate : candidates) {
+            BlockField e = candidate.getResult().parseToBlockField();
             boolean add = blockFields.add(e);
             if (!add) {
                 System.out.println(BlockFieldView.toString(e));
             }
         }
 
-        assertThat(blockFields).hasSize(results.size());
+        assertThat(blockFields).hasSize(candidates.size());
     }
 
     @Test
@@ -73,7 +73,7 @@ class SpinRunnerTest {
                 , fieldHeight);
         SpinRunner runner = new SpinRunner(5, fieldHeight);
         PieceCounter pieceCounter = new PieceCounter(Piece.valueList());
-        List<RoofResult> results = runner.search(initField, pieceCounter, 1).parallel().collect(Collectors.toList());
+        List<Candidate> results = runner.search(initField, pieceCounter, 1, false, Integer.MAX_VALUE).parallel().collect(Collectors.toList());
 
         assertThat(results).hasSize(5000);
 
@@ -94,7 +94,7 @@ class SpinRunnerTest {
                 , fieldHeight);
         SpinRunner runner = new SpinRunner(4, fieldHeight);
         PieceCounter pieceCounter = new PieceCounter(Piece.valueList());
-        List<RoofResult> results = runner.search(initField, pieceCounter, 2).parallel().collect(Collectors.toList());
+        List<Candidate> results = runner.search(initField, pieceCounter, 2, false, Integer.MAX_VALUE).parallel().collect(Collectors.toList());
 
         assertThat(results).hasSize(272);
 
@@ -115,7 +115,7 @@ class SpinRunnerTest {
                 , fieldHeight);
         SpinRunner runner = new SpinRunner(5, fieldHeight);
         PieceCounter pieceCounter = new PieceCounter(Arrays.asList(Piece.L, Piece.S, Piece.T));
-        List<RoofResult> results = runner.search(initField, pieceCounter, 1).parallel().collect(Collectors.toList());
+        List<Candidate> results = runner.search(initField, pieceCounter, 1, false, Integer.MAX_VALUE).parallel().collect(Collectors.toList());
 
         showTetfu(fieldHeight, initField, results);
 
@@ -124,13 +124,13 @@ class SpinRunnerTest {
         verify(results);
     }
 
-    private void showTetfu(int fieldHeight, Field initField, List<RoofResult> results) {
+    private void showTetfu(int fieldHeight, Field initField, List<Candidate> candidates) {
         MinoFactory minoFactory = new MinoFactory();
         ColorConverter colorConverter = new ColorConverter();
         OneFumenParser oneFumenParser = new OneFumenParser(minoFactory, colorConverter);
-        List<TetfuElement> elements = results.stream()
-                .map(roofResult -> {
-                    Result result = roofResult.getLastResult();
+        List<TetfuElement> elements = candidates.stream()
+                .map(candidate -> {
+                    Result result = candidate.getResult();
                     List<MinoOperationWithKey> operations = result.operationStream().collect(Collectors.toList());
                     ColoredField coloredField = oneFumenParser.parseToColoredField(operations, initField, fieldHeight);
                     return new TetfuElement(coloredField, "");

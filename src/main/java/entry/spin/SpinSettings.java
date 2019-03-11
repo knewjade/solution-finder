@@ -21,6 +21,8 @@ public class SpinSettings {
     private int marginHeight = -1;
     private int fieldHeight = -1;
     private int requiredClearLine = 2;
+    private boolean skipRoof = false;
+    private int maxRoofNum = 1;
 
     // ********* Getter ************
     Field getField() {
@@ -43,21 +45,21 @@ public class SpinSettings {
         return true;
     }
 
-    public int getFillBottom() {
+    int getFillBottom() {
         return fillBottom;
     }
 
-    public int getFillTop() {
+    int getFillTop() {
         return fillTop;
     }
 
-    public int getMarginHeight() {
+    int getMarginHeight() {
         if (marginHeight == -1)
             return getFillTop() + 2;
         return marginHeight;
     }
 
-    public int getFieldHeight() {
+    int getFieldHeight() {
         if (fieldHeight == -1) {
             int maxUsingHeight = getMaxUsingHeight(getField());
             int maxTargetHeight = getMarginHeight();
@@ -76,8 +78,19 @@ public class SpinSettings {
         return -1;
     }
 
-    public int getRequiredClearLine() {
+     int getRequiredClearLine() {
         return requiredClearLine;
+    }
+
+    boolean getSkipRoof() {
+        return skipRoof;
+    }
+
+    int setMaxRoofNum() {
+        if (maxRoofNum < 0) {
+            return Integer.MAX_VALUE;
+        }
+        return maxRoofNum;
     }
 
     // ********* Setter ************
@@ -115,5 +128,13 @@ public class SpinSettings {
 
     void setRequiredClearLine(int requiredClearLine) {
         this.requiredClearLine = requiredClearLine;
+    }
+
+    void setSkipRoof(Boolean skipRoof) {
+        this.skipRoof = skipRoof;
+    }
+
+    void setMaxRoofNum(int maxRoofNum) {
+        this.maxRoofNum = maxRoofNum;
     }
 }

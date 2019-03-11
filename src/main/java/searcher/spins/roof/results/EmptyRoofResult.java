@@ -58,4 +58,9 @@ public class EmptyRoofResult extends RoofResult {
     public long getOnePieceFilledKeyWithoutT() {
         return candidateWithMask.getOnePieceFilledKeyWithoutT();
     }
+
+    @Override
+    public int getNumOfRoofPieces() {
+        return 0;
+    }
 }

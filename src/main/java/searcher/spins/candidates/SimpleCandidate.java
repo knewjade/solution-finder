@@ -4,24 +4,20 @@ import core.field.Field;
 import core.neighbor.SimpleOriginalPiece;
 import searcher.spins.results.Result;
 
-public class CandidateWithMask implements Candidate {
+public class SimpleCandidate implements Candidate {
     private final Result result;
     private final SimpleOriginalPiece tOperation;
-    private final Field notAllowed;
     private final Field allMergedFieldWithoutT;
     private final long allMergedFilledLineWithoutT;
-    private final long onePieceFilledKeyWithoutT;
 
-    public CandidateWithMask(Result result, SimpleOriginalPiece operationT, Field notAllowed) {
+    public SimpleCandidate(Result result, SimpleOriginalPiece tOperation) {
         this.result = result;
-        this.tOperation = operationT;
-        this.notAllowed = notAllowed;
+        this.tOperation = tOperation;
 
         Field allMergedFieldWithoutT = result.getAllMergedField().freeze();
-        allMergedFieldWithoutT.reduce(operationT.getMinoField());
+        allMergedFieldWithoutT.reduce(tOperation.getMinoField());
         this.allMergedFieldWithoutT = allMergedFieldWithoutT;
         this.allMergedFilledLineWithoutT = allMergedFieldWithoutT.getFilledLine();
-        this.onePieceFilledKeyWithoutT = result.getOnePieceFilledKey() & ~operationT.getUsingKey();
     }
 
     @Override
@@ -42,13 +38,5 @@ public class CandidateWithMask implements Candidate {
     @Override
     public long getAllMergedFilledLineWithoutT() {
         return allMergedFilledLineWithoutT;
-    }
-
-    public Field getNotAllowed() {
-        return notAllowed;
-    }
-
-    public long getOnePieceFilledKeyWithoutT() {
-        return onePieceFilledKeyWithoutT;
     }
 }

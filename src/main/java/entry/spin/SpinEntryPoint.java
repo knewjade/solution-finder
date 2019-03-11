@@ -30,9 +30,11 @@ import output.HTMLBuilder;
 import output.HTMLColumn;
 import searcher.spins.SpinCommons;
 import searcher.spins.SpinRunner;
+import searcher.spins.candidates.Candidate;
 import searcher.spins.results.Result;
-import searcher.spins.roof.results.RoofResult;
 import searcher.spins.spin.Spin;
+import searcher.spins.spin.TSpinNames;
+import searcher.spins.spin.TSpins;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -105,12 +107,16 @@ public class SpinEntryPoint implements EntryPoint {
         int marginHeight = settings.getMarginHeight();
         int fieldHeight = settings.getFieldHeight();
         int requiredClearLine = settings.getRequiredClearLine();
+        boolean skipRoof = settings.getSkipRoof();
+        int maxRoofNum = settings.setMaxRoofNum();
 
         output("# Initialize / User-defined");
         output("Fill: [" + fillBottom + "," + fillTop + ")");
         output("Margin height: " + marginHeight);
         output("Field height: " + fieldHeight);
         output("Required clear line: " + requiredClearLine);
+        output("Skip roof: " + skipRoof);
+        output("Max roof num: " + (maxRoofNum != Integer.MAX_VALUE ? maxRoofNum : "no limit"));
 
 //        output("Using hold: " + (settings.isUsingHold() ? "use" : "avoid"));
 //        output("Drop: " + settings.getDropType().name().toLowerCase());
@@ -148,7 +154,7 @@ public class SpinEntryPoint implements EntryPoint {
 
         Field initField = FieldFactory.createField(fieldHeight);
         initField.merge(field);
-        List<RoofResult> results = spinRunner.search(initField, pieceCounter, requiredClearLine).collect(Collectors.toList());
+        List<Candidate> results = spinRunner.search(initField, pieceCounter, requiredClearLine, skipRoof, maxRoofNum).collect(Collectors.toList());
 
         stopwatch.stop();
 
@@ -168,37 +174,42 @@ public class SpinEntryPoint implements EntryPoint {
         HashMap<Spin, K> keyMap = new HashMap<>();
         LockedReachableThreadLocal lockedReachableThreadLocal = new LockedReachableThreadLocal(minoFactory, minoShifter, minoRotation, fieldHeight);
         try (BufferedWriter writer = this.base.newBufferedWriter()) {
-            for (RoofResult result : results) {
-                Result lastResult = result.getLastResult();
+            for (Candidate candidate : results) {
+                Result lastResult = candidate.getResult();
 
                 LockedReachable lockedReachable = lockedReachableThreadLocal.get();
 
-                SimpleOriginalPiece operationT = result.getOperationT();
+                SimpleOriginalPiece operationT = candidate.getOperationT();
 
                 Field fieldWithoutT = lastResult.getAllMergedField().freeze();
                 fieldWithoutT.reduce(operationT.getMinoField());
 
-                int clearedLine = Long.bitCount(lastResult.getAllMergedFilledLine() & operationT.getUsingKey());
+                int clearedLineOnlyT = Long.bitCount(lastResult.getAllMergedFilledLine() & operationT.getUsingKey());
 
                 Spin maxSpin = null;
                 int priority = -1;
                 // 左回転, 右回転
-                for (RotateDirection direction : RotateDirection.values()) {
-                    RotateDirection beforeDirection = RotateDirection.reverse(direction);
+                if (!skipRoof) {
+                    for (RotateDirection direction : RotateDirection.values()) {
+                        RotateDirection beforeDirection = RotateDirection.reverse(direction);
 
-                    Piece piece = operationT.getPiece();
-                    Rotate rotate = operationT.getRotate();
-                    Mino before = minoFactory.create(piece, rotate.get(beforeDirection));
-                    int[][] patterns2 = minoRotationDetail.getPatternsFrom(before, direction);
+                        Piece piece = operationT.getPiece();
+                        Rotate rotate = operationT.getRotate();
+                        Mino before = minoFactory.create(piece, rotate.get(beforeDirection));
+                        int[][] patterns2 = minoRotationDetail.getPatternsFrom(before, direction);
 
-                    List<Spin> spins = get(minoRotationDetail, lockedReachable, fieldWithoutT, operationT, before, patterns2, direction, fieldHeight, clearedLine);
-                    for (Spin spin : spins) {
-                        int p = getPriority(spin);
-                        if (maxSpin == null || priority < p) {
-                            maxSpin = spin;
-                            priority = p;
+                        List<Spin> spins = get(minoRotationDetail, lockedReachable, fieldWithoutT, operationT, before, patterns2, direction, fieldHeight, clearedLineOnlyT);
+                        for (Spin spin : spins) {
+                            int p = getPriority(spin);
+                            if (maxSpin == null || priority < p) {
+                                maxSpin = spin;
+                                priority = p;
+                            }
                         }
                     }
+                } else {
+                    maxSpin = new Spin(TSpins.Regular, TSpinNames.NoName, clearedLineOnlyT);
+                    priority = getPriority(maxSpin);
                 }
 
                 assert maxSpin != null;
@@ -213,14 +224,14 @@ public class SpinEntryPoint implements EntryPoint {
                         .map(operation -> String.format("%s-%s", operation.getPiece(), operation.getRotate()))
                         .collect(Collectors.joining(" "));
 
-                Field allMergedField = result.getLastResult().getAllMergedField();
+                Field allMergedField = lastResult.getAllMergedField();
                 Field freeze = allMergedField.freeze();
                 freeze.clearLine();
                 int numOfHoles = getNumOfHoles(freeze);
                 int numOfPieces = operations.size();
 
                 int p1 = numOfHoles * 100 * 100 * 100
-                        + (Long.bitCount(allMergedField.getFilledLine()) - clearedLine) * 100 * 100
+                        + (Long.bitCount(allMergedField.getFilledLine()) - clearedLineOnlyT) * 100 * 100
                         + operationT.getY() * 100
                         + numOfPieces;
 
@@ -228,8 +239,8 @@ public class SpinEntryPoint implements EntryPoint {
                 String aLink = String.format("<div><a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a> %s %d</div>", fumenData, name, b, p1);
 
                 htmlBuilder.addColumn(column, aLink, p1);
-                // answer: 196 solutions
-//                System.out.println(BlockFieldView.toString(result.getLastResult().parseToBlockField()));
+
+                //                System.out.println(BlockFieldView.toString(result.getLastResult().parseToBlockField()));
             }
 
             ArrayList<K> sorted = new ArrayList<>(htmlBuilder.getRegisteredColumns());

@@ -2,7 +2,6 @@ package searcher.spins.wall;
 
 import common.datastore.PieceCounter;
 import common.parser.OperationTransform;
-import core.field.BlockFieldView;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.KeyOperators;
@@ -15,7 +14,7 @@ import core.srs.Rotate;
 import module.LongTest;
 import org.junit.jupiter.api.Test;
 import searcher.spins.SpinCommons;
-import searcher.spins.candidates.Candidate;
+import searcher.spins.candidates.SimpleCandidate;
 import searcher.spins.candidates.CandidateWithMask;
 import searcher.spins.pieces.MinimalSimpleOriginalPieces;
 import searcher.spins.pieces.Scaffolds;
@@ -52,7 +51,7 @@ class WallRunnerTest {
         );
 
         Result result = AddLastsResult.create(emptyResult, operations);
-        List<CandidateWithMask> results = runner.search(new Candidate(result, tOperation)).collect(Collectors.toList());
+        List<CandidateWithMask> results = runner.search(new SimpleCandidate(result, tOperation)).collect(Collectors.toList());
 
         assertThat(results).hasSize(2);
 
@@ -83,7 +82,7 @@ class WallRunnerTest {
         );
         Result result = AddLastsResult.create(emptyResult, operations);
 
-        List<CandidateWithMask> results = runner.search(new Candidate(result, tOperation)).collect(Collectors.toList());
+        List<CandidateWithMask> results = runner.search(new SimpleCandidate(result, tOperation)).collect(Collectors.toList());
 
         assertThat(results).hasSize(1);
 
@@ -115,7 +114,7 @@ class WallRunnerTest {
         );
         Result result = AddLastsResult.create(emptyResult, operations);
 
-        List<CandidateWithMask> results = runner.search(new Candidate(result, tOperation)).collect(Collectors.toList());
+        List<CandidateWithMask> results = runner.search(new SimpleCandidate(result, tOperation)).collect(Collectors.toList());
 
         assertThat(results).hasSize(1);
 
@@ -145,7 +144,7 @@ class WallRunnerTest {
         );
         Result result = AddLastsResult.create(emptyResult, operations);
 
-        List<CandidateWithMask> results = runner.search(new Candidate(result, tOperation)).collect(Collectors.toList());
+        List<CandidateWithMask> results = runner.search(new SimpleCandidate(result, tOperation)).collect(Collectors.toList());
 
         assertThat(results).hasSize(4);
 
@@ -180,7 +179,7 @@ class WallRunnerTest {
         );
         Result result = AddLastsResult.create(emptyResult, operations);
 
-        List<CandidateWithMask> results = runner.search(new Candidate(result, tOperation)).collect(Collectors.toList());
+        List<CandidateWithMask> results = runner.search(new SimpleCandidate(result, tOperation)).collect(Collectors.toList());
 
         assertThat(results).hasSize(104);
 
@@ -206,7 +205,7 @@ class WallRunnerTest {
         );
         Result result = AddLastsResult.create(emptyResult, operations);
 
-        List<CandidateWithMask> results = runner.search(new Candidate(result, tOperation)).collect(Collectors.toList());
+        List<CandidateWithMask> results = runner.search(new SimpleCandidate(result, tOperation)).collect(Collectors.toList());
 
         assertThat(results).hasSize(1);
 
@@ -239,7 +238,7 @@ class WallRunnerTest {
         );
         Result result = AddLastsResult.create(emptyResult, operations);
 
-        List<CandidateWithMask> results = runner.search(new Candidate(result, tOperation)).collect(Collectors.toList());
+        List<CandidateWithMask> results = runner.search(new SimpleCandidate(result, tOperation)).collect(Collectors.toList());
 
         assertThat(results).hasSize(1);
 

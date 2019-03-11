@@ -99,6 +99,14 @@ public class SpinSettingParser extends SettingParser<SpinSettings> {
         Optional<Integer> clearLineByT = wrapper.getIntegerOption(SpinOptions.ClearLineByT.optName());
         clearLineByT.ifPresent(settings::setRequiredClearLine);
 
+        // 屋根の探索をスキップ
+        Optional<Boolean> skipRoof = wrapper.getBoolOption(SpinOptions.SkipRoof.optName());
+        skipRoof.ifPresent(settings::setSkipRoof);
+
+        // 屋根として使える最大のミノ数
+        Optional<Integer> maxRoofNum = wrapper.getIntegerOption(SpinOptions.MaxRoof.optName());
+        maxRoofNum.ifPresent(settings::setMaxRoofNum);
+
         // ログファイルの設定
         Optional<String> logFilePath = wrapper.getStringOption(SpinOptions.LogPath.optName());
         logFilePath.ifPresent(settings::setLogFilePath);
