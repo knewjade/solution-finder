@@ -50,7 +50,8 @@ public class DevMain {
 //        String command = "spin -p *! -t v115@PhA8IeA8BeA8AeB8BeC8JeAgH -fb 0 -ft 4 -c 3";  // 2 solutions
 //        String command = "spin -p *! -t v115@ThB8EeA8CeB8DeA8JeAgH -fb 0 -ft 4 -c 3";  // 0 solution
 //        String command = "spin -p *! -t v115@zgD8FeE8EeF8DeG8CeH8LeAgH -mr -1";  // 196 solutions
-        String command = "spin -p *! -t v115@zgD8FeE8EeF8DeG8CeH8LeAgH -r no -mr 1";  // 1869 solutions
+//        String command = "spin -p *! -t v115@zgD8FeE8EeF8DeG8CeH8LeAgH -r no -mr 1";  // 1869 solutions
+        String command = "spin -p *! -t v115@zgD8FeE8EeF8DeG8CeH8LeAgH -mr 1";  // 196 solutions
 //        String command = "spin -p *! -t v115@zgD8FeE8EeF8DeG8CeH8LeAgH -mr 0";  // 191 solutions
 //        String command = "spin -p *! -t v115@zgD8FeE8EeF8DeG8CeH8LeAgH -mr 1";  // 196 solutions
 

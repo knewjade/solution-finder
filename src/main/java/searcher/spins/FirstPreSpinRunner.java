@@ -24,11 +24,11 @@ public class FirstPreSpinRunner {
     }
 
     private FirstPreSpinRunner(MinoFactory minoFactory, MinoShifter minoShifter, int allowFillMaxHeight, int fieldHeight) {
-        this(minoFactory, minoShifter, 0, allowFillMaxHeight, allowFillMaxHeight + 2, fieldHeight);
+        this(minoFactory, minoShifter, new RotateReachableThreadLocal(minoFactory, minoShifter, new MinoRotation(), fieldHeight), 0, allowFillMaxHeight, allowFillMaxHeight + 2, fieldHeight);
     }
 
     public FirstPreSpinRunner(
-            MinoFactory minoFactory, MinoShifter minoShifter,
+            MinoFactory minoFactory, MinoShifter minoShifter, RotateReachableThreadLocal rotateReachableThreadLocal,
             int allowFillMinY, int allowFillMaxHeight, int maxTargetHeight, int fieldHeight
     ) {
         assert allowFillMaxHeight + 2 <= maxTargetHeight;
@@ -46,8 +46,7 @@ public class FirstPreSpinRunner {
 
         this.simpleOriginalPieces = SimpleOriginalPieces.create(allPieces);
 
-        MinoRotation minoRotation = new MinoRotation();
-        this.rotateReachableThreadLocal = new RotateReachableThreadLocal(minoFactory, minoShifter, minoRotation, fieldHeight);
+        this.rotateReachableThreadLocal = rotateReachableThreadLocal;
     }
 
     SimpleOriginalPieceFactory getFactory() {
