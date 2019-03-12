@@ -395,10 +395,10 @@ public class MiddleField implements Field {
     @Override
     public void merge(Field other) {
         int otherBoardCount = other.getBoardCount();
-        assert 0 < otherBoardCount && otherBoardCount <= 2 : otherBoardCount;
+        assert 0 < otherBoardCount && otherBoardCount <= 4 : otherBoardCount;
 
         xBoardLow |= other.getBoard(0);
-        if (otherBoardCount == 2)
+        if (1 < otherBoardCount)
             xBoardHigh |= other.getBoard(1);
     }
 

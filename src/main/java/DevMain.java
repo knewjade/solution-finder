@@ -51,7 +51,6 @@ public class DevMain {
 //        String command = "spin -p *! -t v115@ThB8EeA8CeB8DeA8JeAgH -fb 0 -ft 4 -c 3";  // 0 solution
 //        String command = "spin -p *! -t v115@zgD8FeE8EeF8DeG8CeH8LeAgH -mr -1";  // 196 solutions
 //        String command = "spin -p *! -t v115@zgD8FeE8EeF8DeG8CeH8LeAgH -r no -mr 1";  // 1869 solutions
-        String command = "spin -p *! -t v115@zgD8FeE8EeF8DeG8CeH8LeAgH -mr 1";  // 196 solutions
 //        String command = "spin -p *! -t v115@zgD8FeE8EeF8DeG8CeH8LeAgH -mr 0";  // 191 solutions
 //        String command = "spin -p *! -t v115@zgD8FeE8EeF8DeG8CeH8LeAgH -mr 1";  // 196 solutions
 
@@ -59,6 +58,8 @@ public class DevMain {
 //        String command = "spin -p *! -t v115@HhB8AeH8BeI8AeG8JeAgH -mr 1";  // 46 solutions
 
 //        String command = "ren -p TSLI -t v115@zgD8FeF8DeG8CeH8BeI8KeAgH";
+
+        String command = "spin -p *! -t v115@PgF8DeF8DeH8AeI8AeI8AeI8AeI8AeI8AeG8JeAgH -r no -mr -1 -m 12";  //  solutions
 
         int returnCode = EntryPointMain.main(command.split(" "));
         System.exit(returnCode);

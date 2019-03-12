@@ -41,7 +41,7 @@ public class FirstPreSpinRunner {
 
         this.pools = LinePools.create(minoFactory, minoShifter);
 
-        this.factory = new SimpleOriginalPieceFactory(minoFactory, minoShifter, this.maxTargetHeight);
+        this.factory = new SimpleOriginalPieceFactory(minoFactory, minoShifter, maxTargetHeight);
         AllSimpleOriginalPieces allPieces = factory.createAllPieces();
 
         this.simpleOriginalPieces = SimpleOriginalPieces.create(allPieces);

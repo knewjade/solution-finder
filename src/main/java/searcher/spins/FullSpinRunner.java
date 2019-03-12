@@ -3,6 +3,7 @@ package searcher.spins;
 import concurrent.RotateReachableThreadLocal;
 import core.action.reachable.RotateReachable;
 import core.field.Field;
+import core.field.KeyOperators;
 import core.mino.Mino;
 import core.neighbor.SimpleOriginalPiece;
 import searcher.spins.candidates.Candidate;
@@ -80,7 +81,13 @@ public class FullSpinRunner implements SpinRunner {
                                 // 宙に浮くミノがない
 
                                 // Tの回転入れに影響を与えるとき、必要なミノである
-                                return !rotateReachable.checks(fieldWithout, mino, tx, ty, fieldHeight);
+                                Field freeze = fieldWithout.freeze();
+                                assert (filledLineWithout & operationT.getNeedDeletedKey()) != 0L;
+                                freeze.clearLine();
+
+                                int slideY = Long.bitCount(filledLineWithout & KeyOperators.getMaskForKeyBelowY(ty + mino.getMinY()));
+
+                                return !rotateReachable.checks(freeze, mino, tx, ty - slideY, fieldHeight);
                             });
                 })
                 .map(roofResult -> new SimpleCandidate(roofResult.getLastResult(), roofResult.getOperationT()))

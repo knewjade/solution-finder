@@ -3,6 +3,8 @@ package searcher.spins.roof;
 import common.datastore.PieceCounter;
 import core.action.reachable.RotateReachable;
 import core.field.Field;
+import core.field.KeyOperators;
+import core.mino.Mino;
 import core.neighbor.SimpleOriginalPiece;
 import searcher.spins.Solutions;
 import searcher.spins.candidates.CandidateWithMask;
@@ -88,8 +90,14 @@ public class RoofRunner {
 
         // Tが回転入れで終了する
         field.reduce(operationT.getMinoField());
-        field.deleteLineWithKey(operationT.getNeedDeletedKey());
-        return rotateReachable.checks(field, operationT.getMino(), operationT.getX(), operationT.getY(), fieldHeight);
+        long filledLineWithoutT = field.getFilledLine();
+        assert (filledLineWithoutT & operationT.getNeedDeletedKey()) != 0L;
+        field.clearLine();
+
+        Mino mino = operationT.getMino();
+        int y = operationT.getY();
+        int slideY = Long.bitCount(filledLineWithoutT & KeyOperators.getMaskForKeyBelowY(y + mino.getMinY()));
+        return rotateReachable.checks(field, mino, operationT.getX(), y - slideY, fieldHeight);
     }
 
     private List<RoofResult> localSearch(

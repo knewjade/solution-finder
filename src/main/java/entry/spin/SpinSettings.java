@@ -17,7 +17,7 @@ public class SpinSettings {
     private List<String> patterns = new ArrayList<>();
 
     private int fillBottom = 0;
-    private int fillTop = 4;
+    private int fillTop = -1;
     private int marginHeight = -1;
     private int fieldHeight = -1;
     private int requiredClearLine = 2;
@@ -50,17 +50,19 @@ public class SpinSettings {
     }
 
     int getFillTop() {
+        if (fillTop < 0)
+            return getMaxUsingHeight(getField());
         return fillTop;
     }
 
     int getMarginHeight() {
-        if (marginHeight == -1)
+        if (marginHeight < 0)
             return getFillTop() + 2;
         return marginHeight;
     }
 
     int getFieldHeight() {
-        if (fieldHeight == -1) {
+        if (fieldHeight < 0) {
             int maxUsingHeight = getMaxUsingHeight(getField());
             int maxTargetHeight = getMarginHeight();
             return maxTargetHeight < maxUsingHeight ? maxUsingHeight : maxTargetHeight;
@@ -78,7 +80,7 @@ public class SpinSettings {
         return -1;
     }
 
-     int getRequiredClearLine() {
+    int getRequiredClearLine() {
         return requiredClearLine;
     }
 

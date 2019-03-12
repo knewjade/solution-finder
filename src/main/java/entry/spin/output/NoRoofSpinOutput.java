@@ -6,6 +6,8 @@ import concurrent.LockedReachableThreadLocal;
 import concurrent.RotateReachableThreadLocal;
 import core.action.reachable.LockedReachable;
 import core.field.Field;
+import core.field.KeyOperators;
+import core.mino.Mino;
 import core.neighbor.SimpleOriginalPiece;
 import entry.path.output.MyFile;
 import entry.path.output.OneFumenParser;
@@ -89,9 +91,17 @@ public class NoRoofSpinOutput implements SpinOutput {
         boolean cansBuildWithoutT = BuildUp.existsValidBuildPattern(initField, operations.stream().filter(op -> !operationT.equals(op)), fieldHeight, lockedReachable);
 
         // そのままTスピンできるか
-        Field fieldWithoutT = candidate.getAllMergedFieldWithoutT();
+        Field freeze = candidate.getAllMergedFieldWithoutT().freeze();
+        long filledLineWithoutT = candidate.getAllMergedFilledLineWithoutT();
+        assert (filledLineWithoutT & operationT.getNeedDeletedKey()) != 0L;
+        freeze.clearLine();
+
+        Mino mino = operationT.getMino();
+        int y = operationT.getY();
+        int slideY = Long.bitCount(filledLineWithoutT & KeyOperators.getMaskForKeyBelowY(y + mino.getMinY()));
+
         String mark = cansBuildWithoutT ? (
-                rotateReachableThreadLocal.get().checks(fieldWithoutT, operationT.getMino(), operationT.getX(), operationT.getY(), fieldHeight) ? "O" : "X"
+                rotateReachableThreadLocal.get().checks(freeze, mino, operationT.getX(), y - slideY, fieldHeight) ? "O" : "X"
         ) : " ";
         String aLink = String.format(
                 "<div>[%s] <a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a></div>",
