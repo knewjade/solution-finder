@@ -1,7 +1,5 @@
 package core.action.reachable;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Mino;
@@ -14,7 +12,6 @@ import core.neighbor.OriginalPieceFactory;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
 import lib.Randoms;
-import module.BasicModule;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
@@ -22,24 +19,26 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class LockedNeighborReachableTest {
-    private LockedReachable createLockedReachable(Injector injector, int maxClearLine) {
-        MinoFactory minoFactory = injector.getInstance(MinoFactory.class);
-        MinoShifter minoShifter = injector.getInstance(MinoShifter.class);
-        MinoRotation minoRotation = injector.getInstance(MinoRotation.class);
+    private LockedReachable createLockedReachable(int maxClearLine) {
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        MinoRotation minoRotation = new MinoRotation();
         return new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
     }
 
-    private LockedNeighborReachable createLockedNeighborReachable(Injector injector, int maxClearLine) {
-        MinoShifter minoShifter = injector.getInstance(MinoShifter.class);
-        Neighbors neighbors = injector.getInstance(Neighbors.class);
+    private LockedNeighborReachable createLockedNeighborReachable(int maxClearLine) {
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        MinoRotation minoRotation = new MinoRotation();
+        OriginalPieceFactory pieceFactory = new OriginalPieceFactory(maxClearLine + 3);
+        Neighbors neighbors = new Neighbors(minoFactory, minoRotation, pieceFactory);
         return new LockedNeighborReachable(minoShifter, neighbors, maxClearLine);
     }
 
     @Test
     void checks1() {
         int maxClearLine = 4;
-        Injector injector = Guice.createInjector(new BasicModule(maxClearLine));
-        LockedNeighborReachable reachable = createLockedNeighborReachable(injector, maxClearLine);
+        LockedNeighborReachable reachable = createLockedNeighborReachable(maxClearLine);
 
         Field field = FieldFactory.createField("" +
                 "XXXX______" +
@@ -54,8 +53,7 @@ class LockedNeighborReachableTest {
     @Test
     void checks2() {
         int maxClearLine = 4;
-        Injector injector = Guice.createInjector(new BasicModule(maxClearLine));
-        LockedNeighborReachable reachable = createLockedNeighborReachable(injector, maxClearLine);
+        LockedNeighborReachable reachable = createLockedNeighborReachable(maxClearLine);
 
         Field field = FieldFactory.createField("" +
                 "X______XXX" +
@@ -71,11 +69,10 @@ class LockedNeighborReachableTest {
     @Test
     void randoms() {
         int maxClearLine = 4;
-        Injector injector = Guice.createInjector(new BasicModule(maxClearLine));
-        LockedReachable reachable1 = createLockedReachable(injector, maxClearLine);
-        LockedNeighborReachable reachable2 = createLockedNeighborReachable(injector, maxClearLine);
+        LockedReachable reachable1 = createLockedReachable(maxClearLine);
+        LockedNeighborReachable reachable2 = createLockedNeighborReachable(maxClearLine);
 
-        OriginalPieceFactory pieceFactory = injector.getInstance(OriginalPieceFactory.class);
+        OriginalPieceFactory pieceFactory = new OriginalPieceFactory(maxClearLine + 3);
         Set<OriginalPiece> pieces = pieceFactory.createPieces();
 
         Randoms randoms = new Randoms();

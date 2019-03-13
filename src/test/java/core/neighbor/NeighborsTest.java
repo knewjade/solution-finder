@@ -1,29 +1,25 @@
 package core.neighbor;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import core.mino.MinoFactory;
 import core.mino.Piece;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
-import module.BasicModule;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 
 class NeighborsTest {
-    private Neighbors createNeighbors(Injector injector) {
-        MinoFactory minoFactory = injector.getInstance(MinoFactory.class);
-        MinoRotation minoRotation = injector.getInstance(MinoRotation.class);
-        OriginalPieceFactory pieceFactory = injector.getInstance(OriginalPieceFactory.class);
+    private Neighbors createNeighbors(int maxClearLine) {
+        MinoFactory minoFactory = new MinoFactory();
+        MinoRotation minoRotation = new MinoRotation();
+        OriginalPieceFactory pieceFactory = new OriginalPieceFactory(maxClearLine + 3);
         return new Neighbors(minoFactory, minoRotation, pieceFactory);
     }
 
     @Test
     void getT() {
-        Injector injector = Guice.createInjector(new BasicModule());
-        Neighbors neighbors = createNeighbors(injector);
+        Neighbors neighbors = createNeighbors(4);
 
         Neighbor neighbor = neighbors.get(Piece.O, Rotate.Spawn, 1, 0);
         assertThat(neighbor.getPiece())
@@ -35,8 +31,7 @@ class NeighborsTest {
 
     @Test
     void getJ() {
-        Injector injector = Guice.createInjector(new BasicModule());
-        Neighbors neighbors = createNeighbors(injector);
+        Neighbors neighbors = createNeighbors(4);
 
         Neighbor neighbor = neighbors.get(Piece.J, Rotate.Left, 3, 2);
         assertThat(neighbor.getPiece())
@@ -48,8 +43,7 @@ class NeighborsTest {
 
     @Test
     void getS() {
-        Injector injector = Guice.createInjector(new BasicModule());
-        Neighbors neighbors = createNeighbors(injector);
+        Neighbors neighbors = createNeighbors(4);
 
         Neighbor neighbor = neighbors.get(Piece.S, Rotate.Reverse, 8, 3);
         assertThat(neighbor.getPiece())
@@ -61,8 +55,7 @@ class NeighborsTest {
 
     @Test
     void nextMovesSources() {
-        Injector injector = Guice.createInjector(new BasicModule());
-        Neighbors neighbors = createNeighbors(injector);
+        Neighbors neighbors = createNeighbors(4);
 
         Neighbor neighbor = neighbors.get(Piece.T, Rotate.Spawn, 4, 1);
         assertThat(neighbor.getNextMovesSources())
@@ -75,8 +68,7 @@ class NeighborsTest {
 
     @Test
     void nextRightRotateDestinations() {
-        Injector injector = Guice.createInjector(new BasicModule(6));
-        Neighbors neighbors = createNeighbors(injector);
+        Neighbors neighbors = createNeighbors(4);
 
         Neighbor neighbor = neighbors.get(Piece.T, Rotate.Spawn, 4, 3);
         assertThat(neighbor.getNextRightRotateDestinations())
@@ -91,8 +83,7 @@ class NeighborsTest {
 
     @Test
     void nextRightRotateSources() {
-        Injector injector = Guice.createInjector(new BasicModule(6));
-        Neighbors neighbors = createNeighbors(injector);
+        Neighbors neighbors = createNeighbors(4);
 
         Neighbor neighbor = neighbors.get(Piece.T, Rotate.Spawn, 4, 3);
         assertThat(neighbor.getNextRightRotateSources())
@@ -107,8 +98,7 @@ class NeighborsTest {
 
     @Test
     void nextLeftRotateDestinations() {
-        Injector injector = Guice.createInjector(new BasicModule(6));
-        Neighbors neighbors = createNeighbors(injector);
+        Neighbors neighbors = createNeighbors(4);
 
         Neighbor neighbor = neighbors.get(Piece.T, Rotate.Spawn, 4, 3);
         assertThat(neighbor.getNextLeftRotateDestinations())
@@ -123,8 +113,7 @@ class NeighborsTest {
 
     @Test
     void nextLeftRotateSources() {
-        Injector injector = Guice.createInjector(new BasicModule(6));
-        Neighbors neighbors = createNeighbors(injector);
+        Neighbors neighbors = createNeighbors(4);
 
         Neighbor neighbor = neighbors.get(Piece.T, Rotate.Spawn, 4, 3);
         assertThat(neighbor.getNextLeftRotateSources())
