@@ -82,7 +82,7 @@ public class FullSpinRunner implements SpinRunner {
 
                                 // Tの回転入れに影響を与えるとき、必要なミノである
                                 Field freeze = fieldWithout.freeze();
-                                assert filledLineWithout == 0L || (filledLineWithout & operationT.getNeedDeletedKey()) != 0L;
+                                assert operationT.getNeedDeletedKey() == 0L || (filledLineWithout & operationT.getNeedDeletedKey()) != 0L;
                                 freeze.clearLine();
 
                                 int slideY = Long.bitCount(filledLineWithout & KeyOperators.getMaskForKeyBelowY(ty + mino.getMinY()));
