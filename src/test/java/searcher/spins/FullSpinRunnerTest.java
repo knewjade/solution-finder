@@ -14,6 +14,7 @@ import core.mino.MinoFactory;
 import core.mino.Piece;
 import entry.path.output.OneFumenParser;
 import module.LongTest;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import searcher.spins.candidates.Candidate;
 import searcher.spins.results.Result;
@@ -88,6 +89,7 @@ class FullSpinRunnerTest {
 
     @Test
     @LongTest
+    @Disabled
     void caseTSDOpening() {
         int fieldHeight = 8;
         Field initField = FieldFactory.createField("" +

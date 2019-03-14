@@ -312,7 +312,7 @@ class CheckerNoHoldTest {
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws IOException {
             List<Pair<Pieces, Boolean>> testCases = loadTestCases();
-            return testCases.stream().map(this::toArguments);
+            return testCases.stream().limit(80L).map(this::toArguments);
         }
 
         private List<Pair<Pieces, Boolean>> loadTestCases() throws IOException {

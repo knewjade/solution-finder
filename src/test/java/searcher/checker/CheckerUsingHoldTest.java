@@ -231,7 +231,7 @@ class CheckerUsingHoldTest {
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws IOException {
             List<LongPieces> testCases = loadTestCases();
-            return testCases.stream().map(Arguments::of).limit(40L);
+            return testCases.stream().map(Arguments::of).limit(10L);
         }
 
         private List<LongPieces> loadTestCases() throws IOException {

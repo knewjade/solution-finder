@@ -85,7 +85,12 @@ public class NoRoofSpinOutput implements SpinOutput {
                 .collect(Collectors.joining(" "));
 
         // 解の優先度
-        int solutionPriority = calcSolutionPriority(result, operationT, clearedLineOnlyT, operations);
+        Field freezeForClearedLineAll = result.getAllMergedField().freeze();
+        int clearedLineAll = freezeForClearedLineAll.clearLine();
+
+        int numOfHoles = getNumOfHoles(freezeForClearedLineAll);
+        int numOfPieces = operations.size();
+        int solutionPriority = calcSolutionPriority(operationT, clearedLineOnlyT, clearedLineAll, numOfHoles, numOfPieces);
 
         // その解をそのまま組み立てられるか
         boolean cansBuildWithoutT = BuildUp.existsValidBuildPattern(initField, operations.stream().filter(op -> !operationT.equals(op)), fieldHeight, lockedReachable);
@@ -104,20 +109,14 @@ public class NoRoofSpinOutput implements SpinOutput {
                 rotateReachableThreadLocal.get().checks(freeze, mino, operationT.getX(), y - slideY, fieldHeight) ? "O" : "X"
         ) : " ";
         String aLink = String.format(
-                "<div>[%s] <a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a></div>",
-                mark, fumen, name
+                "<div>[%s] <a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a> [clear=%d, hole=%d, piece=%d]</div>",
+                mark, fumen, name, clearedLineAll, numOfHoles, numOfPieces
         );
 
         htmlBuilder.addColumn(column, aLink, solutionPriority);
     }
 
-    private int calcSolutionPriority(Result result, SimpleOriginalPiece operationT, int clearedLineOnlyT, List<MinoOperationWithKey> operations) {
-        Field freeze = result.getAllMergedField().freeze();
-        int clearedLineAll = freeze.clearLine();
-
-        int numOfHoles = getNumOfHoles(freeze);
-        int numOfPieces = operations.size();
-
+    private int calcSolutionPriority(SimpleOriginalPiece operationT, int clearedLineOnlyT, int clearedLineAll, int numOfHoles, int numOfPieces) {
         // 優先度高: 使用ミノが少ない -> Tミノのy座標が低い -> Tスピン以外での消去ライン数が小さい -> ホール数が小さい
         return numOfHoles * 100 * 100 * 100
                 + (clearedLineAll - clearedLineOnlyT) * 100 * 100
