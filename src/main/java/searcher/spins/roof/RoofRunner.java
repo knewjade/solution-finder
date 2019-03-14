@@ -3,6 +3,7 @@ package searcher.spins.roof;
 import common.datastore.PieceCounter;
 import core.action.reachable.RotateReachable;
 import core.field.Field;
+import core.field.FieldView;
 import core.field.KeyOperators;
 import core.mino.Mino;
 import core.neighbor.SimpleOriginalPiece;
@@ -91,7 +92,7 @@ public class RoofRunner {
         // Tが回転入れで終了する
         field.reduce(operationT.getMinoField());
         long filledLineWithoutT = field.getFilledLine();
-        assert (filledLineWithoutT & operationT.getNeedDeletedKey()) != 0L;
+        assert operationT.getNeedDeletedKey() == 0L || (filledLineWithoutT & operationT.getNeedDeletedKey()) != 0L;
         field.clearLine();
 
         Mino mino = operationT.getMino();
