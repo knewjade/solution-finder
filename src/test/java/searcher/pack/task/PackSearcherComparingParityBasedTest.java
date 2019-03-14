@@ -9,9 +9,9 @@ import concurrent.LockedReachableThreadLocal;
 import core.column_field.ColumnField;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import core.mino.Piece;
 import org.junit.jupiter.api.Test;
 import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
@@ -60,7 +60,9 @@ class PackSearcherComparingParityBasedTest {
         int height = 4;
 
         String resultPath = ClassLoader.getSystemResource("perfects/pack_height4.txt").getPath();
-        List<TestData> testCases = Files.lines(Paths.get(resultPath))
+        List<String> lines = Files.lines(Paths.get(resultPath)).collect(Collectors.toList());
+        Collections.shuffle(lines);
+        List<TestData> testCases = lines.subList(0, 50).stream()
                 .map(line -> line.split("//")[0])
                 .map(String::trim)
                 .filter(line -> !line.isEmpty())
@@ -106,7 +108,9 @@ class PackSearcherComparingParityBasedTest {
         int height = 6;
 
         String resultPath = ClassLoader.getSystemResource("perfects/pack_height6.txt").getPath();
-        List<TestData> testCases = Files.lines(Paths.get(resultPath))
+        List<String> lines = Files.lines(Paths.get(resultPath)).collect(Collectors.toList());
+        Collections.shuffle(lines);
+        List<TestData> testCases = lines.subList(0, 30).stream()
                 .map(line -> line.split("//")[0])
                 .map(String::trim)
                 .filter(line -> !line.isEmpty())

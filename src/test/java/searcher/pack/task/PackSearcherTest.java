@@ -107,7 +107,7 @@ class PackSearcherTest {
                 add(new Pair<>(5, 6953L));
                 add(new Pair<>(6, 53418L));
                 add(new Pair<>(7, 388293L));
-                add(new Pair<>(8, 3195227L));
+//                add(new Pair<>(8, 3195227L));
             }
         };
 
