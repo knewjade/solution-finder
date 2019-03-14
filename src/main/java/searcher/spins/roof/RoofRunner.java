@@ -91,7 +91,7 @@ public class RoofRunner {
         // Tが回転入れで終了する
         field.reduce(operationT.getMinoField());
         long filledLineWithoutT = field.getFilledLine();
-        assert (filledLineWithoutT & operationT.getNeedDeletedKey()) != 0L;
+        assert filledLineWithoutT == 0L || (filledLineWithoutT & operationT.getNeedDeletedKey()) != 0L;
         field.clearLine();
 
         Mino mino = operationT.getMino();
