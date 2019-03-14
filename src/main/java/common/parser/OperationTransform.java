@@ -48,7 +48,6 @@ public class OperationTransform {
         long usingKey = keyLine & ~needDeletedKey;
 
         // 操作・消去されている必要がある行をセットで記録
-        assert needDeletedKey == deleteKey : "needDeletedKey=" + needDeletedKey + ", " + "deletedKey=" + deleteKey;
         return new FullOperationWithKey(mino, x, needDeletedKey, usingKey, lowerY);
     }
 
