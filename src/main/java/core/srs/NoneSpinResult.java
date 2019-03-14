@@ -25,9 +25,4 @@ public class NoneSpinResult implements SpinResult {
     public int getTestPatternIndex() {
         throw new IllegalStateException();
     }
-
-    @Override
-    public int getClearedLine() {
-        throw new IllegalStateException();
-    }
 }

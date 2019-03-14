@@ -180,6 +180,10 @@ public class LongPieces implements Pieces, Comparable<LongPieces> {
         return String.format("LongPieces{%s}", getPieces());
     }
 
+    public long getLong() {
+        return pieces;
+    }
+
     private static class TemporaryCount {
         private long value = 0L;
         private int index = 0;

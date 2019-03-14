@@ -3,25 +3,30 @@ package searcher.spins.scaffold.results;
 import common.datastore.PieceCounter;
 import core.field.Field;
 import core.neighbor.SimpleOriginalPiece;
+import searcher.spins.candidates.CandidateWithMask;
 import searcher.spins.results.Result;
 
 import java.util.List;
 import java.util.stream.Stream;
 
-public class EmptyScaffoldResultWithT2 extends ScaffoldResultWithT {
+public class EmptyScaffoldResultWithTFromCandidate extends ScaffoldResultWithT {
     private final Result result;
-    private final SimpleOriginalPiece tOperation;
+    private final CandidateWithMask candidateWithMask;
     private final List<SimpleOriginalPiece> operations;
     private final List<SimpleOriginalPiece> airOperations;
+    private final Field notAllowed;
 
     // operations = 空中に浮かないようにするミノの一覧
-    public EmptyScaffoldResultWithT2(Result result, SimpleOriginalPiece tOperation, List<SimpleOriginalPiece> operations) {
+    public EmptyScaffoldResultWithTFromCandidate(CandidateWithMask candidateWithMask, List<SimpleOriginalPiece> operations) {
         super();
-        assert !operations.contains(tOperation);
-        this.result = result;
-        this.tOperation = tOperation;
+        this.result = candidateWithMask.getResult();
+        this.candidateWithMask = candidateWithMask;
         this.operations = operations;
-        this.airOperations = ScaffoldResultWithT.extractAirOperations(result, tOperation, operations.stream());
+        this.airOperations = ScaffoldResultWithT.extractAirOperations(result, candidateWithMask.getOperationT(), operations.stream());
+
+        Field freezeNotAllowed = result.getAllMergedField().freeze();
+        freezeNotAllowed.merge(candidateWithMask.getNotAllowed());
+        this.notAllowed = freezeNotAllowed;
     }
 
     @Override
@@ -36,7 +41,7 @@ public class EmptyScaffoldResultWithT2 extends ScaffoldResultWithT {
 
     @Override
     public boolean canPut(SimpleOriginalPiece piece) {
-        return result.getAllMergedField().canMerge(piece.getMinoField());
+        return notAllowed.canMerge(piece.getMinoField());
     }
 
     @Override
@@ -66,11 +71,11 @@ public class EmptyScaffoldResultWithT2 extends ScaffoldResultWithT {
 
     @Override
     public SimpleOriginalPiece getOperationT() {
-        return tOperation;
+        return candidateWithMask.getOperationT();
     }
 
     @Override
     Field getNotAllowed() {
-        return result.getAllMergedField();
+        return notAllowed;
     }
 }

@@ -53,4 +53,14 @@ public class EmptyRoofResult extends RoofResult {
     public Stream<Long> toKeyStream() {
         return Stream.empty();
     }
+
+    @Override
+    public long getOnePieceFilledKeyWithoutT() {
+        return candidateWithMask.getOnePieceFilledKeyWithoutT();
+    }
+
+    @Override
+    public int getNumOfRoofPieces() {
+        return 0;
+    }
 }

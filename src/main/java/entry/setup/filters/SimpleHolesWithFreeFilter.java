@@ -17,9 +17,9 @@ public class SimpleHolesWithFreeFilter implements SetupSolutionFilter {
         Field freeze = field.freeze(maxHeight);
 
         // freezeをホールがない状態にする
-        for (int y = 0; y < maxHeight; y++) {
+        for (int y = 1; y < maxHeight; y *= 2) {
             Field down = freeze.freeze(maxHeight);
-            down.slideDown();
+            down.slideDown(y);
             freeze.merge(down);
         }
 

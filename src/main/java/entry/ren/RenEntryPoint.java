@@ -73,7 +73,7 @@ public class RenEntryPoint implements EntryPoint {
 
             // pathが空 または ディレクトリであるとき、pathを追加して、ファイルにする
             if (namePath.isEmpty() || namePath.endsWith(String.valueOf(File.separatorChar)))
-                namePath += "path";
+                namePath += "ren";
 
             // baseファイル
             String outputFilePath = String.format("%s%s", namePath, FILE_EXTENSION);
@@ -133,9 +133,10 @@ public class RenEntryPoint implements EntryPoint {
         output("     ... searching");
 
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
-        stopwatch.stop();
 
         List<RenResult> results = renSearcher.check(field, pieceList, candidate, pieceList.size());
+
+        stopwatch.stop();
 
         output("     ... done");
         output("  -> Stopwatch stop : " + stopwatch.toMessage(TimeUnit.MILLISECONDS));
@@ -149,7 +150,7 @@ public class RenEntryPoint implements EntryPoint {
         // HTMLを出力
         {
             HTMLBuilder<HTMLColumn> htmlBuilder = new HTMLBuilder<>("Ren Result");
-            htmlBuilder.addHeader("Ren Result");
+            htmlBuilder.addHeader(String.format("%d solutions", results.size()));
 
             ColorConverter colorConverter = new ColorConverter();
             SequenceFumenParser fumenParser = new SequenceFumenParser(minoFactory, colorConverter);

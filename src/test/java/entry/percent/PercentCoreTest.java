@@ -1,7 +1,5 @@
 package entry.percent;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import common.datastore.blocks.LongPieces;
 import common.pattern.LoadedPatternGenerator;
 import common.pattern.PatternGenerator;
@@ -11,11 +9,11 @@ import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.MinoFactory;
 import entry.searching_pieces.NormalEnumeratePieces;
-import module.BasicModule;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -55,11 +53,10 @@ class PercentCoreTest {
         NormalEnumeratePieces enumeratePieces = new NormalEnumeratePieces(generator, obj.maxDepth, obj.isUsingHold);
         Set<LongPieces> blocks = enumeratePieces.enumerate();
 
-        Injector injector = Guice.createInjector(new BasicModule(obj.maxClearLine));
-        Optional<ExecutorService> executorService = obj.isSingleThread ? Optional.empty() : Optional.of(injector.getInstance(ExecutorService.class));
-        LockedCandidateThreadLocal candidateThreadLocal = injector.getInstance(LockedCandidateThreadLocal.class);
-        LockedReachableThreadLocal reachableThreadLocal = injector.getInstance(LockedReachableThreadLocal.class);
-        MinoFactory minoFactory = injector.getInstance(MinoFactory.class);
+        Optional<ExecutorService> executorService = obj.isSingleThread ? Optional.empty() : Optional.of(Executors.newCachedThreadPool());
+        LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(obj.maxClearLine);
+        LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(obj.maxClearLine);
+        MinoFactory minoFactory = new MinoFactory();
 
         PercentCore percentCore = getPercentCore(obj, executorService.orElse(null), candidateThreadLocal, reachableThreadLocal, minoFactory);
         Field field = FieldFactory.createField(obj.marks);

@@ -7,8 +7,8 @@ import core.mino.Piece;
 import core.neighbor.SimpleOriginalPiece;
 import searcher.spins.Solutions;
 import searcher.spins.SpinCommons;
-import searcher.spins.candidates.Candidate;
 import searcher.spins.candidates.CandidateWithMask;
+import searcher.spins.candidates.Candidate;
 import searcher.spins.pieces.bits.BitBlocks;
 import searcher.spins.results.AddLastResult;
 import searcher.spins.results.Result;
@@ -120,7 +120,7 @@ public class WallRunner {
         Result initLastResult = initResult.getLastResult();
 
         // 置けない場所
-        Field notAllowed = lastResult.freezeAllMergedField();
+        Field notAllowed = lastResult.getAllMergedField().freeze();
         notAllowed.merge(initResult.getNotAllowed());
 
         // 置くことができない領域

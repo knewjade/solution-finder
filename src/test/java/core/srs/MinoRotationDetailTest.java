@@ -25,7 +25,6 @@ class MinoRotationDetailTest {
         assertThat(result)
                 .returns(2, SpinResult::getToX)
                 .returns(1, SpinResult::getToY)
-                .returns(2, SpinResult::getClearedLine)
                 .returns(RotateDirection.Right, SpinResult::getDirection)
                 .returns(Rotate.Reverse, SpinResult::getToRotate)
                 .returns(2, SpinResult::getTestPatternIndex);
@@ -47,7 +46,6 @@ class MinoRotationDetailTest {
         assertThat(result)
                 .returns(9, SpinResult::getToX)
                 .returns(2, SpinResult::getToY)
-                .returns(1, SpinResult::getClearedLine)
                 .returns(RotateDirection.Left, SpinResult::getDirection)
                 .returns(Rotate.Left, SpinResult::getToRotate)
                 .returns(1, SpinResult::getTestPatternIndex);
@@ -71,7 +69,6 @@ class MinoRotationDetailTest {
         assertThat(result)
                 .returns(4, SpinResult::getToX)
                 .returns(1, SpinResult::getToY)
-                .returns(3, SpinResult::getClearedLine)
                 .returns(RotateDirection.Right, SpinResult::getDirection)
                 .returns(Rotate.Right, SpinResult::getToRotate)
                 .returns(4, SpinResult::getTestPatternIndex);
@@ -95,7 +92,6 @@ class MinoRotationDetailTest {
         assertThat(result)
                 .returns(3, SpinResult::getToX)
                 .returns(1, SpinResult::getToY)
-                .returns(2, SpinResult::getClearedLine)
                 .returns(RotateDirection.Right, SpinResult::getDirection)
                 .returns(Rotate.Left, SpinResult::getToRotate)
                 .returns(3, SpinResult::getTestPatternIndex);
@@ -119,7 +115,6 @@ class MinoRotationDetailTest {
         assertThat(result)
                 .returns(4, SpinResult::getToX)
                 .returns(1, SpinResult::getToY)
-                .returns(2, SpinResult::getClearedLine)
                 .returns(RotateDirection.Left, SpinResult::getDirection)
                 .returns(Rotate.Right, SpinResult::getToRotate)
                 .returns(4, SpinResult::getTestPatternIndex);
@@ -143,7 +138,6 @@ class MinoRotationDetailTest {
         assertThat(result)
                 .returns(5, SpinResult::getToX)
                 .returns(1, SpinResult::getToY)
-                .returns(2, SpinResult::getClearedLine)
                 .returns(RotateDirection.Right, SpinResult::getDirection)
                 .returns(Rotate.Left, SpinResult::getToRotate)
                 .returns(3, SpinResult::getTestPatternIndex);

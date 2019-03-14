@@ -17,26 +17,14 @@ public abstract class Result {
         return blockField;
     }
 
-    // 設定された初期フィールドのコピー
+    // 設定された初期フィールド
     public abstract Field getInitField();
 
-    public Field freezeInitField() {
-        return getInitField().freeze();
-    }
-
     // すでに使用されたブロックを表すフィールド
-    abstract Field getUsingField();
-
-    public Field freezeUsingField() {
-        return getUsingField().freeze();
-    }
+    public abstract Field getUsingField();
 
     // initField + usingField
     public abstract Field getAllMergedField();
-
-    public Field freezeAllMergedField() {
-        return getAllMergedField().freeze();
-    }
 
     // 利用可能なミノを取得する
     public abstract PieceCounter getRemainderPieceCounter();
@@ -47,6 +35,12 @@ public abstract class Result {
     // 利用したミノの数
     public abstract int getNumOfUsingPiece();
 
-    // 消去されているライン
+    // 最終的なフィールドで消去されているライン
     public abstract long getAllMergedFilledLine();
+
+    // ミノが置かれているライン
+    public abstract long getUsingKey();
+
+    // 1ミノだけで削除されるライン
+    public abstract long getOnePieceFilledKey();
 }

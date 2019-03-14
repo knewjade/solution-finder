@@ -21,6 +21,10 @@ import entry.setup.SetupEntryPoint;
 import entry.setup.SetupOptions;
 import entry.setup.SetupSettingParser;
 import entry.setup.SetupSettings;
+import entry.spin.SpinEntryPoint;
+import entry.spin.SpinOptions;
+import entry.spin.SpinSettingParser;
+import entry.spin.SpinSettings;
 import entry.util.fig.FigUtilEntryPoint;
 import entry.util.fig.FigUtilSettingParser;
 import entry.util.fig.FigUtilSettings;
@@ -44,6 +48,7 @@ public class EntryPointMain {
             "ren",
             "combo",
             "move",
+            "spin",
             "util fig",
     };
 
@@ -201,6 +206,8 @@ public class EntryPointMain {
                 return getRenEntryPoint(commands);
             case "dev":
                 return getDevEntryPoint(commands);
+            case "spin":
+                return getSpinEntryPoint(commands);
             default:
                 throw new IllegalArgumentException("Invalid type: Use percent, path, util");
         }
@@ -280,6 +287,19 @@ public class EntryPointMain {
         if (settingsOptional.isPresent()) {
             RenSettings settings = settingsOptional.get();
             return Optional.of(new RenEntryPoint(settings));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    private static Optional<EntryPoint> getSpinEntryPoint(List<String> commands) throws FinderParseException, FinderInitializeException {
+        Options options = SpinOptions.create();
+        CommandLineParser parser = new DefaultParser();
+        SpinSettingParser settingParser = new SpinSettingParser(options, parser);
+        Optional<SpinSettings> settingsOptional = settingParser.parse(commands);
+        if (settingsOptional.isPresent()) {
+            SpinSettings settings = settingsOptional.get();
+            return Optional.of(new SpinEntryPoint(settings));
         } else {
             return Optional.empty();
         }

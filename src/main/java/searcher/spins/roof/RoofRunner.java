@@ -3,6 +3,8 @@ package searcher.spins.roof;
 import common.datastore.PieceCounter;
 import core.action.reachable.RotateReachable;
 import core.field.Field;
+import core.field.KeyOperators;
+import core.mino.Mino;
 import core.neighbor.SimpleOriginalPiece;
 import searcher.spins.Solutions;
 import searcher.spins.candidates.CandidateWithMask;
@@ -21,14 +23,17 @@ public class RoofRunner {
     private final Roofs roofs;
     private final ThreadLocal<? extends RotateReachable> rotateReachableThreadLocal;
     private final int fieldHeight;
+    private final int maxRoofNum;
 
     public RoofRunner(
             Roofs roofs,
             ThreadLocal<? extends RotateReachable> rotateReachableThreadLocal,
+            int maxRoofNum,
             int fieldHeight
     ) {
         this.roofs = roofs;
         this.rotateReachableThreadLocal = rotateReachableThreadLocal;
+        this.maxRoofNum = maxRoofNum;
         this.fieldHeight = fieldHeight;
     }
 
@@ -42,6 +47,11 @@ public class RoofRunner {
         // 解であるか確認
         if (isSolution(roofResult)) {
             return Stream.of(roofResult);
+        }
+
+        // 屋根として使える個数を満たしていないか
+        if (maxRoofNum <= roofResult.getNumOfRoofPieces()) {
+            return Stream.empty();
         }
 
         // 残りのミノがある
@@ -75,13 +85,19 @@ public class RoofRunner {
         RotateReachable rotateReachable = rotateReachableThreadLocal.get();
 
         Result result = roofResult.getLastResult();
-        Field field = result.freezeAllMergedField();
+        Field field = result.getAllMergedField().freeze();
         SimpleOriginalPiece operationT = roofResult.getOperationT();
 
         // Tが回転入れで終了する
         field.reduce(operationT.getMinoField());
-        field.deleteLineWithKey(operationT.getNeedDeletedKey());
-        return rotateReachable.checks(field, operationT.getMino(), operationT.getX(), operationT.getY(), fieldHeight);
+        long filledLineWithoutT = field.getFilledLine();
+        assert operationT.getNeedDeletedKey() == 0L || (filledLineWithoutT & operationT.getNeedDeletedKey()) != 0L;
+        field.clearLine();
+
+        Mino mino = operationT.getMino();
+        int y = operationT.getY();
+        int slideY = Long.bitCount(filledLineWithoutT & KeyOperators.getMaskForKeyBelowY(y + mino.getMinY()));
+        return rotateReachable.checks(field, mino, operationT.getX(), y - slideY, fieldHeight);
     }
 
     private List<RoofResult> localSearch(
@@ -127,6 +143,11 @@ public class RoofRunner {
                 solutions.add(currentKeys);
                 builder.accept(nextResult);
             } else {
+                // 屋根として使える個数を満たしていないか
+                if (maxRoofNum <= nextResult.getNumOfRoofPieces()) {
+                    return;
+                }
+
                 // まだ使用していないミノが残っている
                 if (nextResult.getLastResult().getRemainderPieceCounter().isEmpty()) {
                     return;

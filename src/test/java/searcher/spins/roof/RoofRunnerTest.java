@@ -43,7 +43,7 @@ class RoofRunnerTest {
         Roofs roofs = new Roofs(minimalPieces);
 //        LockedReachableThreadLocal lockedReachableThreadLocal = new LockedReachableThreadLocal(minoFactory, minoShifter, minoRotation, fieldHeight);
         RotateReachableThreadLocal rotateReachableThreadLocal = new RotateReachableThreadLocal(minoFactory, minoShifter, minoRotation, fieldHeight);
-        RoofRunner runner = new RoofRunner(roofs, rotateReachableThreadLocal, fieldHeight);
+        RoofRunner runner = new RoofRunner(roofs, rotateReachableThreadLocal, Integer.MAX_VALUE, fieldHeight);
 
         EmptyResult emptyResult = new EmptyResult(initField, new PieceCounter(Arrays.asList(
                 Piece.L, Piece.T,

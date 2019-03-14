@@ -1,8 +1,6 @@
 package searcher.spins.fill;
 
-import common.datastore.BlockField;
 import common.datastore.PieceCounter;
-import core.field.BlockFieldView;
 import core.field.Field;
 import core.field.KeyOperators;
 import core.neighbor.SimpleOriginalPiece;
@@ -19,17 +17,23 @@ import java.util.stream.Stream;
 
 public class FillRunner {
     private final LineFillRunner lineFillRunner;
+    private final int allowFillMinY;
     private final int allowFillMaxHeight;
 
-    public FillRunner(LineFillRunner lineFillRunner, int allowFillMaxHeight) {
+    FillRunner(LineFillRunner lineFillRunner, int allowFillMaxHeight) {
+        this(lineFillRunner, 0, allowFillMaxHeight);
+    }
+
+    public FillRunner(LineFillRunner lineFillRunner, int allowFillMinY, int allowFillMaxHeight) {
         this.lineFillRunner = lineFillRunner;
+        this.allowFillMinY = allowFillMinY;
         this.allowFillMaxHeight = allowFillMaxHeight;
     }
 
     public Stream<FillResult> search(Result result) {
         EmptyFillResult emptyFillResult = new EmptyFillResult(result);
         long filledLine = result.getAllMergedFilledLine();
-        return search(emptyFillResult, 0, filledLine);
+        return search(emptyFillResult, allowFillMinY, filledLine);
     }
 
     private Stream<FillResult> search(FillResult fillResult, int lowerY, long initFilledLine) {

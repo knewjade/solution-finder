@@ -14,12 +14,20 @@ public class AddLastsResult extends Result {
         PieceCounter reminderPieceCounter = prev.getRemainderPieceCounter().removeAndReturnNew(usingPiceCounter);
 
         // すでに使われているブロックを計算
-        Field usingField = prev.freezeUsingField();
+        Field usingField = prev.getUsingField().freeze();
+        long prevUsingKey = prev.getUsingKey();
+        long allUsingKey = prevUsingKey;
+        long duplicateUsingKey = 0L;
         for (SimpleOriginalPiece operation : operations) {
             usingField.merge(operation.getMinoField());
+
+            long usingKey = operation.getUsingKey();
+            duplicateUsingKey |= allUsingKey & usingKey;
+            allUsingKey |= usingKey;
         }
 
-        return new AddLastsResult(prev, operations, reminderPieceCounter, usingField);
+        long newOnePieceUsingKey = allUsingKey - (duplicateUsingKey | prevUsingKey);  // 新しく追加された、1ミノしかないライン
+        return new AddLastsResult(prev, operations, reminderPieceCounter, usingField, allUsingKey, newOnePieceUsingKey);
     }
 
     private final Result prev;
@@ -28,18 +36,23 @@ public class AddLastsResult extends Result {
     private final Field usingField;
     private final Field allMergedField;
     private final long allMergedFilledLine;
+    private final long usingKey;
+    private final long onePieceFilledKey;
 
-    private AddLastsResult(Result prev, List<SimpleOriginalPiece> operations, PieceCounter reminderPieceCounter, Field usingField) {
+    private AddLastsResult(Result prev, List<SimpleOriginalPiece> operations, PieceCounter reminderPieceCounter, Field usingField, long usingKey, long newOnePieceUsingKey) {
         super();
         this.prev = prev;
         this.operations = operations;
         this.reminderPieceCounter = reminderPieceCounter;
         this.usingField = usingField;
 
-        Field allMergedField = freezeInitField();
+        Field allMergedField = getInitField().freeze();
         allMergedField.merge(usingField);
         this.allMergedField = allMergedField;
         this.allMergedFilledLine = allMergedField.getFilledLine();
+
+        this.usingKey = usingKey;
+        this.onePieceFilledKey = prev.getOnePieceFilledKey() | (allMergedFilledLine & newOnePieceUsingKey);
     }
 
     @Override
@@ -75,5 +88,15 @@ public class AddLastsResult extends Result {
     @Override
     public long getAllMergedFilledLine() {
         return allMergedFilledLine;
+    }
+
+    @Override
+    public long getUsingKey() {
+        return usingKey;
+    }
+
+    @Override
+    public long getOnePieceFilledKey() {
+        return onePieceFilledKey;
     }
 }

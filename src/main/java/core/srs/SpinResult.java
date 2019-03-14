@@ -12,6 +12,4 @@ public interface SpinResult {
     Rotate getToRotate();
 
     int getTestPatternIndex();
-
-    int getClearedLine();
 }

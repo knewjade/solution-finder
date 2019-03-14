@@ -14,12 +14,12 @@ class RenHTMLColumn implements HTMLColumn {
 
     @Override
     public String getTitle() {
-        return String.valueOf(count) + " Ren";
+        return count + " Ren";
     }
 
     @Override
     public String getId() {
-        return String.valueOf(count) + "ren";
+        return count + "ren";
     }
 
     @Override

@@ -22,6 +22,7 @@ public class HTMLBuilder<T extends HTMLColumn> {
     private final List<String> header = new ArrayList<>();
     private final HashMap<T, List<PriorityString>> maps = new HashMap<>();
     private final String pageTitle;
+    private int size = 0;
 
     public HTMLBuilder(String pageTitle) {
         this.pageTitle = pageTitle;
@@ -44,6 +45,7 @@ public class HTMLBuilder<T extends HTMLColumn> {
     public synchronized void addColumn(T column, String line, Long priority) {
         List<PriorityString> list = maps.computeIfAbsent(column, t -> new ArrayList<>());
         list.add(new PriorityString(priority, line));
+        size += 1;
     }
 
     public List<String> toList(List<T> columnPriorityList, boolean isNavigator) {
@@ -133,5 +135,9 @@ public class HTMLBuilder<T extends HTMLColumn> {
 
     public Set<T> getRegisteredColumns() {
         return maps.keySet();
+    }
+
+    public int getSize() {
+        return size;
     }
 }

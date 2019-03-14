@@ -22,7 +22,7 @@ public class EmptyResult extends Result {
     }
 
     @Override
-    Field getUsingField() {
+    public Field getUsingField() {
         return FieldFactory.createField(fieldHeight);
     }
 
@@ -54,5 +54,19 @@ public class EmptyResult extends Result {
     @Override
     public Field getInitField() {
         return initField;
+    }
+
+    @Override
+    public long getUsingKey() {
+        return 0L;
+    }
+
+    @Override
+    public long getOnePieceFilledKey() {
+        return 0L;
+    }
+
+    public int getFieldHeight() {
+        return fieldHeight;
     }
 }

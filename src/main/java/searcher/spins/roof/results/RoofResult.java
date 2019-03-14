@@ -29,4 +29,10 @@ public abstract class RoofResult {
 
     // 使用されているミノをKeyに変換
     public abstract Stream<Long> toKeyStream();
+
+    // 1ミノだけで削除されるライン
+    public abstract long getOnePieceFilledKeyWithoutT();
+
+    // 屋根として利用したミノ数
+    public abstract int getNumOfRoofPieces();
 }
