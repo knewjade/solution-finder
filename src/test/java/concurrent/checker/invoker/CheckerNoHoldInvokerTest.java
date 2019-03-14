@@ -1,9 +1,5 @@
 package concurrent.checker.invoker;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
 import common.SyntaxException;
 import common.datastore.Pair;
 import common.datastore.action.Action;
@@ -25,7 +21,6 @@ import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import exceptions.FinderExecuteException;
 import lib.Randoms;
-import module.BasicModule;
 import module.LongTest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -433,23 +428,19 @@ class CheckerNoHoldInvokerTest {
         }
 
         private ConcurrentCheckerInvoker createConcurrentCheckerUsingHoldInvoker(int maxClearLine) {
-            Injector injector = Guice.createInjector(new BasicModule(maxClearLine));
-            MinoFactory minoFactory = injector.getInstance(MinoFactory.class);
-            CheckerNoHoldThreadLocal<Action> checkerThreadLocal = injector.getInstance(Key.get(new TypeLiteral<CheckerNoHoldThreadLocal<Action>>() {
-            }));
-            LockedCandidateThreadLocal candidateThreadLocal = injector.getInstance(LockedCandidateThreadLocal.class);
-            LockedReachableThreadLocal reachableThreadLocal = injector.getInstance(LockedReachableThreadLocal.class);
+            MinoFactory minoFactory = new MinoFactory();
+            CheckerNoHoldThreadLocal<Action> checkerThreadLocal = new CheckerNoHoldThreadLocal<>();
+            LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
+            LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(maxClearLine);
             CheckerCommonObj commonObj = new CheckerCommonObj(minoFactory, candidateThreadLocal, checkerThreadLocal, reachableThreadLocal);
             return new ConcurrentCheckerNoHoldInvoker(executorService, commonObj);
         }
 
         private ConcurrentCheckerInvoker createSingleCheckerNoHoldInvoker(int maxClearLine) {
-            Injector injector = Guice.createInjector(new BasicModule(maxClearLine));
-            MinoFactory minoFactory = injector.getInstance(MinoFactory.class);
-            CheckerNoHoldThreadLocal<Action> checkerThreadLocal = injector.getInstance(Key.get(new TypeLiteral<CheckerNoHoldThreadLocal<Action>>() {
-            }));
-            LockedCandidateThreadLocal candidateThreadLocal = injector.getInstance(LockedCandidateThreadLocal.class);
-            LockedReachableThreadLocal reachableThreadLocal = injector.getInstance(LockedReachableThreadLocal.class);
+            MinoFactory minoFactory = new MinoFactory();
+            CheckerNoHoldThreadLocal<Action> checkerThreadLocal = new CheckerNoHoldThreadLocal<>();
+            LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
+            LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(maxClearLine);
             CheckerCommonObj commonObj = new CheckerCommonObj(minoFactory, candidateThreadLocal, checkerThreadLocal, reachableThreadLocal);
             return new SingleCheckerNoHoldInvoker(commonObj);
         }

@@ -1,7 +1,5 @@
 package core.action.candidate;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import common.datastore.action.Action;
 import common.datastore.action.MinimalAction;
 import core.field.Field;
@@ -15,7 +13,6 @@ import core.neighbor.OriginalPieceFactory;
 import core.srs.MinoRotation;
 import lib.Randoms;
 import lib.Stopwatch;
-import module.BasicModule;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,17 +28,17 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class LockedNeighborCandidateTest {
-    private LockedCandidate createLockedCandidate(Injector injector, int maxClearLine) {
-        MinoFactory minoFactory = injector.getInstance(MinoFactory.class);
-        MinoShifter minoShifter = injector.getInstance(MinoShifter.class);
-        MinoRotation minoRotation = injector.getInstance(MinoRotation.class);
+    private LockedCandidate createLockedCandidate(int maxClearLine) {
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        MinoRotation minoRotation = new MinoRotation();
         return new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
     }
 
-    private LockedNeighborCandidate createLockedNeighborCandidate(Injector injector, int maxClearLine) {
-        MinoFactory minoFactory = injector.getInstance(MinoFactory.class);
-        MinoShifter minoShifter = injector.getInstance(MinoShifter.class);
-        MinoRotation minoRotation = injector.getInstance(MinoRotation.class);
+    private LockedNeighborCandidate createLockedNeighborCandidate(int maxClearLine) {
+        MinoFactory minoFactory = new MinoFactory();
+        MinoShifter minoShifter = new MinoShifter();
+        MinoRotation minoRotation = new MinoRotation();
         OriginalPieceFactory pieceFactory = new OriginalPieceFactory(maxClearLine + 3);
         return new LockedNeighborCandidate(minoFactory, minoShifter, minoRotation, pieceFactory);
     }
@@ -52,12 +49,10 @@ class LockedNeighborCandidateTest {
 
     @Test
     void random() {
-        Injector injector = Guice.createInjector(new BasicModule());
-
         int maxClearLine = 3;
-        LockedCandidate candidate1 = createLockedCandidate(injector, maxClearLine);
-        LockedNeighborCandidate candidate2 = createLockedNeighborCandidate(injector, maxClearLine);
-        MinoShifter minoShifter = injector.getInstance(MinoShifter.class);
+        LockedCandidate candidate1 = createLockedCandidate(maxClearLine);
+        LockedNeighborCandidate candidate2 = createLockedNeighborCandidate(maxClearLine);
+        MinoShifter minoShifter = new MinoShifter();
 
         Stopwatch stopwatch1 = Stopwatch.createStartedStopwatch();
         Stopwatch stopwatch2 = Stopwatch.createStartedStopwatch();
@@ -92,12 +87,10 @@ class LockedNeighborCandidateTest {
     @ParameterizedTest
     @ArgumentsSource(FieldTestCase.class)
     void testField(Field field, Piece piece) {
-        Injector injector = Guice.createInjector(new BasicModule());
-
         int maxClearLine = 4;
-        LockedCandidate candidate1 = createLockedCandidate(injector, maxClearLine);
-        LockedNeighborCandidate candidate2 = createLockedNeighborCandidate(injector, maxClearLine);
-        MinoShifter minoShifter = injector.getInstance(MinoShifter.class);
+        LockedCandidate candidate1 = createLockedCandidate(maxClearLine);
+        LockedNeighborCandidate candidate2 = createLockedNeighborCandidate(maxClearLine);
+        MinoShifter minoShifter = new MinoShifter();
 
         // LockedCandidate
         Set<Action> search1 = candidate1.search(field, piece, maxClearLine);

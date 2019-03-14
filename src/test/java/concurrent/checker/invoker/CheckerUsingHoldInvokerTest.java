@@ -1,9 +1,5 @@
 package concurrent.checker.invoker;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
 import common.SyntaxException;
 import common.datastore.Pair;
 import common.datastore.action.Action;
@@ -25,7 +21,6 @@ import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 import exceptions.FinderExecuteException;
 import lib.Randoms;
-import module.BasicModule;
 import module.LongTest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -323,6 +318,8 @@ class CheckerUsingHoldInvokerTest {
         PerfectValidator validator = new PerfectValidator();
         CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
 
+        ExecutorService executorService = Executors.newCachedThreadPool();
+
         for (int count = 0; count < 10; count++) {
             int maxClearLine = randoms.nextIntOpen(3, 6);
             int maxDepth = randoms.nextIntClosed(3, 5);
@@ -331,9 +328,7 @@ class CheckerUsingHoldInvokerTest {
 
             PatternGenerator blocksGenerator = createPiecesGenerator(maxDepth);
             List<Pieces> searchingPieces = blocksGenerator.blocksStream().collect(Collectors.toList());
-            Injector injector = Guice.createInjector(new BasicModule(maxClearLine));
 
-            ExecutorService executorService = injector.getInstance(ExecutorService.class);
             ConcurrentCheckerInvoker invoker = invokerGenerator.apply(maxClearLine);
             List<Pair<Pieces, Boolean>> resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
 
@@ -345,8 +340,6 @@ class CheckerUsingHoldInvokerTest {
                 tree1.set(result, pieces1);
             }
 
-            executorService.shutdown();
-
             AnalyzeTree tree = tree1;
 
             for (Pieces pieces : searchingPieces) {
@@ -354,6 +347,8 @@ class CheckerUsingHoldInvokerTest {
                 assertThat(tree.isSucceed(pieces)).isEqualTo(check);
             }
         }
+
+        executorService.shutdown();
     }
 
     private PatternGenerator createPiecesGenerator(int maxDepth) throws SyntaxException {
@@ -379,23 +374,19 @@ class CheckerUsingHoldInvokerTest {
         }
 
         private ConcurrentCheckerInvoker createConcurrentCheckerUsingHoldInvoker(int maxClearLine) {
-            Injector injector = Guice.createInjector(new BasicModule(maxClearLine));
-            MinoFactory minoFactory = injector.getInstance(MinoFactory.class);
-            LockedCandidateThreadLocal candidateThreadLocal = injector.getInstance(LockedCandidateThreadLocal.class);
-            CheckerUsingHoldThreadLocal<Action> checkerThreadLocal = injector.getInstance(Key.get(new TypeLiteral<CheckerUsingHoldThreadLocal<Action>>() {
-            }));
-            LockedReachableThreadLocal reachableThreadLocal = injector.getInstance(LockedReachableThreadLocal.class);
+            MinoFactory minoFactory = new MinoFactory();
+            CheckerUsingHoldThreadLocal<Action> checkerThreadLocal = new CheckerUsingHoldThreadLocal<>();
+            LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
+            LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(maxClearLine);
             CheckerCommonObj commonObj = new CheckerCommonObj(minoFactory, candidateThreadLocal, checkerThreadLocal, reachableThreadLocal);
             return new ConcurrentCheckerUsingHoldInvoker(executorService, commonObj);
         }
 
         private ConcurrentCheckerInvoker createSingleCheckerUsingHoldInvoker(int maxClearLine) {
-            Injector injector = Guice.createInjector(new BasicModule(maxClearLine));
-            MinoFactory minoFactory = injector.getInstance(MinoFactory.class);
-            LockedCandidateThreadLocal candidateThreadLocal = injector.getInstance(LockedCandidateThreadLocal.class);
-            CheckerUsingHoldThreadLocal<Action> checkerThreadLocal = injector.getInstance(Key.get(new TypeLiteral<CheckerUsingHoldThreadLocal<Action>>() {
-            }));
-            LockedReachableThreadLocal reachableThreadLocal = injector.getInstance(LockedReachableThreadLocal.class);
+            MinoFactory minoFactory = new MinoFactory();
+            CheckerUsingHoldThreadLocal<Action> checkerThreadLocal = new CheckerUsingHoldThreadLocal<>();
+            LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
+            LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(maxClearLine);
             CheckerCommonObj commonObj = new CheckerCommonObj(minoFactory, candidateThreadLocal, checkerThreadLocal, reachableThreadLocal);
             return new SingleCheckerUsingHoldInvoker(commonObj);
         }
