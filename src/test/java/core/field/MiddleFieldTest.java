@@ -1029,7 +1029,7 @@ class MiddleFieldTest {
     @Test
     void containsRandom() {
         Randoms randoms = new Randoms();
-        for (int count = 0; count < 100000; count++) {
+        for (int count = 0; count < 50000; count++) {
             Field initField = randoms.field(FIELD_HEIGHT, randoms.nextIntOpen(4, 15));
 
             {

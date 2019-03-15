@@ -76,7 +76,7 @@ class LockedNeighborReachableTest {
         Set<OriginalPiece> pieces = pieceFactory.createPieces();
 
         Randoms randoms = new Randoms();
-        for (int count = 0; count < 10000; count++) {
+        for (int count = 0; count < 5000; count++) {
             Field field = randoms.field(4, 5);
             for (OriginalPiece piece : pieces) {
                 // フィールドにそもそも置けないときは前提条件が合わないためスキップ

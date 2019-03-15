@@ -293,7 +293,7 @@ class CheckmateUsingHoldTest {
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws IOException {
             List<Pair<Pieces, Integer>> testCases = loadTestCases();
-            return testCases.stream().map(this::toArguments).limit(4L);
+            return testCases.stream().map(this::toArguments).limit(3L);
         }
 
         private List<Pair<Pieces, Integer>> loadTestCases() throws IOException {

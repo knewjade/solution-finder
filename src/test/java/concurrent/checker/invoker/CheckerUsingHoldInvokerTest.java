@@ -320,7 +320,7 @@ class CheckerUsingHoldInvokerTest {
 
         ExecutorService executorService = Executors.newCachedThreadPool();
 
-        for (int count = 0; count < 10; count++) {
+        for (int count = 0; count < 7; count++) {
             int maxClearLine = randoms.nextIntOpen(3, 6);
             int maxDepth = randoms.nextIntClosed(3, 5);
             Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);

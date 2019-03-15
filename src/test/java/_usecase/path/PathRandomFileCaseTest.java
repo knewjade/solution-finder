@@ -76,7 +76,7 @@ class PathRandomFileCaseTest extends PathUseCaseBaseTest {
 
     private static class NoHold1TestCase extends TestCase {
         public NoHold1TestCase() {
-            super("usecase/path/nohold1.csv", 20);
+            super("usecase/path/nohold1.csv", 10);
         }
     }
 
@@ -93,7 +93,7 @@ class PathRandomFileCaseTest extends PathUseCaseBaseTest {
 
     private static class NoHold2TestCase extends TestCase {
         public NoHold2TestCase() {
-            super("usecase/path/nohold2.csv", 20);
+            super("usecase/path/nohold2.csv", 10);
         }
     }
 

@@ -130,7 +130,7 @@ class BuildUpStreamTest {
 
         AtomicInteger counter = new AtomicInteger();
 
-        for (int count = 0; count < 10000; count++) {
+        for (int count = 0; count < 5000; count++) {
             // Create field
             int numOfMinos = randoms.nextIntOpen(1, 7);
             Field field = randoms.field(height, numOfMinos);

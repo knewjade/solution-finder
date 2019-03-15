@@ -292,7 +292,7 @@ class LargeFieldTest {
     @Test
     void clearLine() {
         Randoms randoms = new Randoms();
-        for (int count = 0; count < 100000; count++) {
+        for (int count = 0; count < 50000; count++) {
             Field field = randoms.field(FIELD_HEIGHT, randoms.nextIntOpen(5, 20));
             String format = String.format("%dL, %dL, %dL, %dL%n", field.getBoard(0), field.getBoard(1), field.getBoard(2), field.getBoard(3));
 
@@ -318,7 +318,7 @@ class LargeFieldTest {
     @Test
     void insertBlackLineWithKey() {
         Randoms randoms = new Randoms();
-        for (int count = 0; count < 1000000; count++) {
+        for (int count = 0; count < 100000; count++) {
             Field field = randoms.field(FIELD_HEIGHT, randoms.nextIntOpen(5, 20));
             String format = String.format("%dL, %dL, %dL, %dL%n", field.getBoard(0), field.getBoard(1), field.getBoard(2), field.getBoard(3));
 
@@ -336,7 +336,7 @@ class LargeFieldTest {
     @Test
     void insertWhiteLineWithKey() {
         Randoms randoms = new Randoms();
-        for (int count = 0; count < 500000; count++) {
+        for (int count = 0; count < 100000; count++) {
             Field field = randoms.field(FIELD_HEIGHT, randoms.nextIntOpen(5, 20));
             String format = String.format("%dL, %dL, %dL, %dL%n", field.getBoard(0), field.getBoard(1), field.getBoard(2), field.getBoard(3));
 
@@ -422,7 +422,7 @@ class LargeFieldTest {
     @Test
     void contains() {
         Randoms randoms = new Randoms();
-        for (int count = 0; count < 100000; count++) {
+        for (int count = 0; count < 50000; count++) {
             Field initField = randoms.field(FIELD_HEIGHT, randoms.nextIntOpen(5, 20));
 
             {

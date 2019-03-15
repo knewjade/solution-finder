@@ -131,7 +131,7 @@ class BuildUpTest {
 
         AtomicInteger counter = new AtomicInteger();
 
-        for (int count = 0; count < 100; count++) {
+        for (int count = 0; count < 50; count++) {
             // Pickup solution from checker
             int numOfMinos = randoms.nextIntClosed(7, 10);
             Field field = randoms.field(height, numOfMinos);
@@ -302,7 +302,7 @@ class BuildUpTest {
 
         AtomicInteger counter = new AtomicInteger();
 
-        for (int count = 0; count < 100; count++) {
+        for (int count = 0; count < 50; count++) {
             // Create field
             int numOfMinos = randoms.nextIntClosed(7, 10);
             Field field = randoms.field(height, numOfMinos);

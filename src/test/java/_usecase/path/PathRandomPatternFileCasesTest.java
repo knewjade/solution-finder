@@ -35,7 +35,7 @@ class PathRandomPatternFileCasesTest extends PathUseCaseBaseTest {
 
     private static class PatternTestCase extends TestCase {
         public PatternTestCase() {
-            super("usecase/path/pattern.csv", 5);
+            super("usecase/path/pattern.csv", 4);
         }
     }
 
@@ -52,7 +52,7 @@ class PathRandomPatternFileCasesTest extends PathUseCaseBaseTest {
 
     private static class ReservedTestCase extends TestCase {
         public ReservedTestCase() {
-            super("usecase/path/reserved.csv", 10);
+            super("usecase/path/reserved.csv", 6);
         }
     }
 

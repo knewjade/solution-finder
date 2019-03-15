@@ -185,7 +185,7 @@ class CheckerUsingHoldTest {
 
         // Assertion
         Randoms randoms = new Randoms();
-        for (int count = 0; count < 100; count++) {
+        for (int count = 0; count < 75; count++) {
             // Set test case
             int cycle = randoms.nextIntClosed(0, 8);
             List<Piece> pieces = randoms.block11InCycle(cycle);
@@ -231,7 +231,7 @@ class CheckerUsingHoldTest {
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws IOException {
             List<LongPieces> testCases = loadTestCases();
-            return testCases.stream().map(Arguments::of).limit(10L);
+            return testCases.stream().map(Arguments::of).limit(8L);
         }
 
         private List<LongPieces> loadTestCases() throws IOException {

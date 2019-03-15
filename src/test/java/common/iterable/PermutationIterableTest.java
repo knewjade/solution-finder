@@ -79,7 +79,7 @@ class PermutationIterableTest {
                     .collect(Collectors.toCollection(HashSet::new));
 
             // ランダムにサンプルを選択し、必ず列挙したセットの中にあることを確認
-            for (int count = 0; count < 1000; count++) {
+            for (int count = 0; count < 500; count++) {
                 List<Piece> sample = randoms.sample(allPieces, pop);
                 LongPieces pieces = new LongPieces(sample);
                 assertThat(pieces).isIn(sets);

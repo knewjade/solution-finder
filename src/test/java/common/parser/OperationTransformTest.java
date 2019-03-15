@@ -114,7 +114,7 @@ class OperationTransformTest {
         Predicate<ColumnField> memorizedPredicate = (columnField) -> true;
         OnDemandBasicSolutions basicSolutions = new OnDemandBasicSolutions(separableMinos, sizedBit, memorizedPredicate);
 
-        for (int count = 0; count < 100; count++) {
+        for (int count = 0; count < 50; count++) {
             // Create field
             int numOfMinos = randoms.nextIntOpen(6, 10);
             Field field = randoms.field(height, numOfMinos);

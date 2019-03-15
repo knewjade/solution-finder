@@ -117,7 +117,7 @@ class PackSearcherComparingParityBasedOnDemandTest {
         String resultPath = ClassLoader.getSystemResource("perfects/pack_height6.txt").getPath();
         List<String> lines = Files.lines(Paths.get(resultPath)).collect(Collectors.toList());
         Collections.shuffle(lines);
-        List<TestData> testCases = lines.subList(0, 30).stream()
+        List<TestData> testCases = lines.subList(0, 25).stream()
                 .map(line -> line.split("//")[0])
                 .map(String::trim)
                 .filter(line -> !line.isEmpty())
