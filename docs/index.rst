@@ -35,6 +35,8 @@ solution-finderは、探索ツールとして次の特徴を持っています�
 * ren (βバージョン): ある地形からRENが続く手順を列挙する
     - 指定したミノ順から、RENを列挙してファイルに出力
 
+* spin (βバージョン): ある地形からTスピンできる手順を列挙する
+
 * util: solution-finderの機能を補助するユーティリティ
    - fig: テト譜をもとに画像を生成
 
@@ -102,6 +104,7 @@ solution-finderを操作しやすくするGUIを `@kitsune_fuchi (twitter) <http
    contents/path/main
    contents/setup/main
    contents/ren/main
+   contents/spin/main
    contents/util/main
    contents/caution
    contents/contact

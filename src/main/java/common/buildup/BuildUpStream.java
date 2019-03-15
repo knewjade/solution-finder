@@ -34,7 +34,7 @@ public class BuildUpStream {
     }
 
     // 組み立てられる手順が存在するか確認
-    public Stream<List<MinoOperationWithKey>> existsValidBuildPattern(Field fieldOrigin, List<MinoOperationWithKey> operationWithKeys) {
+    public Stream<List<MinoOperationWithKey>> existsValidBuildPattern(Field fieldOrigin, List<? extends MinoOperationWithKey> operationWithKeys) {
         LinkedList<MinoOperationWithKey> keys = new LinkedList<>(operationWithKeys);
         return existsValidBuildPatternDirectly(fieldOrigin, keys);
     }
