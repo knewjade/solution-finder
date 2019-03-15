@@ -51,7 +51,7 @@ public class SpinSettings {
 
     int getFillTop() {
         if (fillTop < 0)
-            return getMaxUsingHeight(getField());
+            return getMaxUsingHeight(getField()) + 1;
         return fillTop;
     }
 

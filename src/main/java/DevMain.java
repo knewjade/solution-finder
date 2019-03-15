@@ -45,21 +45,20 @@ public class DevMain {
 //        String command = "path -t v115@RhA8GeE8EeB8JeAgH -p LZZSITSO";
 //        String command = "path -p J,Z,O,S,L,I,I,J,S,O,Z -t v115@vhAAgH";
 
-//        String command = "spin -p TSLI -t v115@zgD8FeF8DeG8CeH8BeI8KeAgH -ft 5 -c 2";  // 4 solutions
-//        String command = "spin -p TSZLJI -t v115@CgA8HeD8BeA8AeE8DeF8DeF8DeF8DeF8DeF8DeF8De?F8DeC8JeAgH -fb 8 -ft 10 -c 2";  // 9 solutions
+//        String command = "spin -p TSLI -t v115@zgD8FeF8DeG8CeH8BeI8KeAgH -ft 5 -c 2";  // 5 solutions
+//        String command = "spin -p TSZLJI -t v115@CgA8HeD8BeA8AeE8DeF8DeF8DeF8DeF8DeF8DeF8De?F8DeC8JeAgH -fb 8 -ft 10 -c 2";  // 1 solutions
 //        String command = "spin -p *! -t v115@PhA8IeA8BeA8AeB8BeC8JeAgH -fb 0 -ft 4 -c 3";  // 2 solutions
 //        String command = "spin -p *! -t v115@ThB8EeA8CeB8DeA8JeAgH -fb 0 -ft 4 -c 3";  // 0 solution
-//        String command = "spin -p *! -t v115@zgD8FeE8EeF8DeG8CeH8LeAgH -mr -1";  // 196 solutions
+//        String command = "spin -p *! -t v115@zgD8FeE8EeF8DeG8CeH8LeAgH -mr -1";  // 205 solutions
 //        String command = "spin -p *! -t v115@zgD8FeE8EeF8DeG8CeH8LeAgH -r no -mr 1";  // 1869 solutions
-//        String command = "spin -p *! -t v115@zgD8FeE8EeF8DeG8CeH8LeAgH -mr 0";  // 191 solutions
-//        String command = "spin -p *! -t v115@zgD8FeE8EeF8DeG8CeH8LeAgH -mr 1";  // 196 solutions
+//        String command = "spin -p *! -t v115@zgD8FeE8EeF8DeG8CeH8LeAgH -mr 0";  // 200 solutions
+//        String command = "spin -p *! -t v115@zgD8FeE8EeF8DeG8CeH8LeAgH -mr 1";  // 205 solutions
 
-//        String command = "spin -p *! -t v115@HhB8AeH8BeI8AeG8JeAgH -mr 0";  // 43 solutions
-//        String command = "spin -p *! -t v115@HhB8AeH8BeI8AeG8JeAgH -mr 1";  // 46 solutions
+//        String command = "spin -p *! -t v115@HhB8AeH8BeI8AeG8JeAgH -mr 0";  // 0 solutions
+//        String command = "spin -p *! -t v115@HhB8AeH8BeI8AeG8JeAgH -mr 1";  // 2 solutions
+//        String command = "spin -p *! -t v115@HhB8AeH8BeI8AeG8JeAgH -r no";  // 1 solutions
 
-//        String command = "ren -p TSLI -t v115@zgD8FeF8DeG8CeH8BeI8KeAgH";
-
-        String command = "spin -p *! -t v115@PgF8DeF8DeH8AeI8AeI8AeI8AeI8AeI8AeG8JeAgH -r no -mr -1 -m 12";  //  solutions
+        String command = "spin --tetfu v115@zgD8FeE8EeF8DeG8CeH8LeAgH --patterns *p7 -ft 4";  // 205 solutions
 
         int returnCode = EntryPointMain.main(command.split(" "));
         System.exit(returnCode);

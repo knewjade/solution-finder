@@ -3,9 +3,11 @@ package entry.spin.output;
 import common.buildup.BuildUp;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.Operation;
+import common.datastore.SimpleOperation;
 import concurrent.LockedReachableThreadLocal;
 import concurrent.RotateReachableThreadLocal;
 import core.action.reachable.LockedReachable;
+import core.field.BlockFieldView;
 import core.field.Field;
 import core.field.KeyOperators;
 import core.mino.Mino;
@@ -85,19 +87,30 @@ public class FullSpinOutput implements SpinOutput {
         SimpleOriginalPiece operationT = candidate.getOperationT();
         int clearedLineOnlyT = Long.bitCount(result.getAllMergedFilledLine() & operationT.getUsingKey());
 
+        // Tミノを除いた地形で揃っているラインを消去する
+        Field freeze = candidate.getAllMergedFieldWithoutT().freeze().freeze();
+        long filledLineWithoutT = candidate.getAllMergedFilledLineWithoutT();
+        assert (filledLineWithoutT & operationT.getNeedDeletedKey()) != 0L;
+        freeze.clearLine();
+
+        // 消去されたラインに合わせてyを移動
+        Mino mino = operationT.getMino();
+        int y = operationT.getY();
+        int slideY = Long.bitCount(filledLineWithoutT & KeyOperators.getMaskForKeyBelowY(y + mino.getMinY()));
+        SimpleOperation slideOperation = new SimpleOperation(operationT.getPiece(), operationT.getRotate(), operationT.getX(), y - slideY);
+
         // 優先度の高いスピンを探索
         Spin maxSpin = null;
         int maxPriority = -1;
 
         // 左回転, 右回転
-        Field fieldWithoutT = candidate.getAllMergedFieldWithoutT();
         for (RotateDirection direction : RotateDirection.values()) {
             RotateDirection beforeDirection = RotateDirection.reverse(direction);
 
-            Mino before = minoFactory.create(operationT.getPiece(), operationT.getRotate().get(beforeDirection));
+            Mino before = minoFactory.create(slideOperation.getPiece(), slideOperation.getRotate().get(beforeDirection));
             int[][] patterns = minoRotationDetail.getPatternsFrom(before, direction);
 
-            List<Spin> spins = getSpins(lockedReachable, fieldWithoutT, operationT, before, patterns, direction, fieldHeight, clearedLineOnlyT);
+            List<Spin> spins = getSpins(lockedReachable, freeze, slideOperation, before, patterns, direction, fieldHeight, clearedLineOnlyT);
             for (Spin spin : spins) {
                 int priority = getSpinPriority(spin);
                 if (maxSpin == null || maxPriority < priority) {
@@ -133,15 +146,6 @@ public class FullSpinOutput implements SpinOutput {
         boolean cansBuildWithoutT = BuildUp.existsValidBuildPattern(initField, operations.stream().filter(op -> !operationT.equals(op)), fieldHeight, lockedReachable);
 
         // そのままTスピンできるか
-        Field freeze = fieldWithoutT.freeze();
-        long filledLineWithoutT = candidate.getAllMergedFilledLineWithoutT();
-        assert (filledLineWithoutT & operationT.getNeedDeletedKey()) != 0L;
-        freeze.clearLine();
-
-        Mino mino = operationT.getMino();
-        int y = operationT.getY();
-        int slideY = Long.bitCount(filledLineWithoutT & KeyOperators.getMaskForKeyBelowY(y + mino.getMinY()));
-
         String mark = cansBuildWithoutT ? (
                 rotateReachableThreadLocal.get().checks(freeze, mino, operationT.getX(), y - slideY, fieldHeight) ? "O" : "X"
         ) : " ";
