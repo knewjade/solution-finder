@@ -113,6 +113,7 @@ class FullSpinRunnerTest {
     }
 
     @Test
+    @Disabled
     void case2() {
         int fieldHeight = 8;
         Field initField = FieldFactory.createField("" +

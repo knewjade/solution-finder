@@ -9,6 +9,7 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.mino.Piece;
 import module.LongTest;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import searcher.spins.fill.line.spot.LinePools;
 import searcher.spins.fill.line.spot.MinoDiff;
@@ -107,6 +108,7 @@ class LineFillRunnerTest {
 
     @Test
     @LongTest
+    @Disabled
     void case4() {
         int targetY = 2;
         int maxTargetHeight = 5;
