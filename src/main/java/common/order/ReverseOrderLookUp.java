@@ -55,11 +55,11 @@ public class ReverseOrderLookUp {
                 .collect(Collectors.toList());
     }
 
-    public Stream<Stream<Piece>> parse(List<Piece> pieces) {
+    public <T> Stream<Stream<T>> parse(List<T> pieces) {
         return parse(pieces, null);
     }
 
-    private Stream<Stream<Piece>> parse(List<Piece> pieces, Piece nullPiece) {
+    private <T> Stream<Stream<T>> parse(List<T> pieces, T nullPiece) {
         assert pieces.size() <= indexesList.get(0).size();
         return indexesList.stream()
                 .map(indexes -> indexes.stream().map(index -> index != -1 ? pieces.get(index) : nullPiece));
