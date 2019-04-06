@@ -4,6 +4,9 @@ import java.util.*;
 
 /**
  * original by Apache Commons Collections 4.1 API
+ * refer to https://github.com/apache/commons-collections/blob/42d42b2397bd4cd96dcba38165f59973cd04cf69/src/main/java/org/apache/commons/collections4/iterators/PermutationIterator.java
+ *
+ *  -> Iterableに対応するよう変更
  *
  * 指定した要素の順列をすべて列挙する
  */
