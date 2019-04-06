@@ -2,18 +2,16 @@ package common.iterable;
 
 import java.util.*;
 
-/**
- * original by Apache Commons Collections 4.1 API
- */
+
 public class CombinationIterable<T> implements Iterable<List<T>> {
     private static class CombinationIterator<T> implements Iterator<List<T>> {
-        private final int[] keys;  // Permutation check done on theses keys to handle equal objects.
-        private final List<? extends T> objectMap; // Mapping between keys and objects.
+        private final int[] keys;
+        private final List<? extends T> objectMap;
         private final boolean isReverse;
 
         private List<T> nextCombination;
 
-        public CombinationIterator(Collection<? extends T> coll, int popCount) {
+        private CombinationIterator(Collection<? extends T> coll, int popCount) {
             this(coll, popCount < coll.size() - popCount ? popCount : coll.size() - popCount, coll.size() - popCount < popCount);
         }
 

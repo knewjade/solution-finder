@@ -1,10 +1,11 @@
 package common.iterable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
- * original by Apache Commons Collections 4.1 API
- *
  * 指定した要素からn個選択するすべての組み合わせを列挙し、その順列をすべて列挙する
  */
 public class PermutationIterable<T> implements Iterable<List<T>> {
@@ -12,7 +13,7 @@ public class PermutationIterable<T> implements Iterable<List<T>> {
         private final Iterator<? extends List<E>> combination;
         private Iterator<? extends List<E>> permutation;
 
-        PermutationIterator(Collection<E> coll, int popCount) {
+        private PermutationIterator(Collection<E> coll, int popCount) {
             this.combination = new CombinationIterable<>(coll, popCount).iterator();
             if (combination.hasNext())
                 this.permutation = new AllPermutationIterable<>(combination.next()).iterator();

@@ -9,7 +9,8 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 // 「あるミノ列」からホールドを利用して指定したミノ列にできるとき、その「あるミノ列」をすべて逆算して列挙
-public class ReverseOrderLookUp {
+// ホールドを使用せずに指定したミノ列になるパターン（最後にホールド[任意のミノ]を追加しただけのミノ列は除く）
+public class ReverseOrderExcludingNoHoldLookUp {
     private final List<List<Integer>> indexesList;
     private final boolean containsNull;
 
@@ -17,7 +18,7 @@ public class ReverseOrderLookUp {
      * @param toDepth   ホールドした後のミノ列の長さ
      * @param fromDepth 元のミノ列の長さ（ホールド前のミノ列）
      */
-    public ReverseOrderLookUp(int toDepth, int fromDepth) {
+    public ReverseOrderExcludingNoHoldLookUp(int toDepth, int fromDepth) {
         this.indexesList = reverse(toDepth, fromDepth);
         this.containsNull = toDepth < fromDepth;
     }
@@ -33,9 +34,8 @@ public class ReverseOrderLookUp {
 
         for (int depth = 0; depth < fromDepth; depth++) {
             Integer number = depth < indexes.size() ? indexes.get(depth) : -1;
-            int size = candidates.size();
             if (depth < fromDepth - 1) {
-                for (int index = 0; index < size; index++) {
+                for (int index = 0, size = candidates.size(); index < size; index++) {
                     StackOrder<Integer> pieces = candidates.get(index);
                     StackOrder<Integer> freeze = pieces.freeze();
 
@@ -50,8 +50,13 @@ public class ReverseOrderLookUp {
             }
         }
 
+        // ホールドせずに置けるパターンを除く
+        List<Integer> candidateWithoutHold = new ArrayList<>(indexes);
+        candidateWithoutHold.add(-1);
+
         return candidates.stream()
                 .map(StackOrder::toList)
+                .filter(it -> !candidateWithoutHold.equals(it))
                 .collect(Collectors.toList());
     }
 
