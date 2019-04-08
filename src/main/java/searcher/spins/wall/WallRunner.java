@@ -3,12 +3,14 @@ package searcher.spins.wall;
 import common.datastore.PieceCounter;
 import core.field.Field;
 import core.field.FieldFactory;
+import core.field.KeyOperators;
+import core.mino.Mino;
 import core.mino.Piece;
 import core.neighbor.SimpleOriginalPiece;
 import searcher.spins.Solutions;
 import searcher.spins.SpinCommons;
-import searcher.spins.candidates.CandidateWithMask;
 import searcher.spins.candidates.Candidate;
+import searcher.spins.candidates.CandidateWithMask;
 import searcher.spins.pieces.bits.BitBlocks;
 import searcher.spins.results.AddLastResult;
 import searcher.spins.results.Result;
@@ -92,8 +94,17 @@ public class WallRunner {
 
     private boolean canSpin(Candidate candidate) {
         SimpleOriginalPiece operationT = candidate.getOperationT();
-        Field fieldWithoutT = candidate.getAllMergedFieldWithoutT();
-        return SpinCommons.canTSpin(fieldWithoutT, operationT.getX(), operationT.getY(), operationT.getNeedDeletedKey());
+        Field freeze = candidate.getAllMergedFieldWithoutT().freeze();
+
+        // ラインを消去する
+        long filledLineWithoutT = freeze.clearLineReturnKey();
+
+        // 消去されたラインに合わせてyを移動
+        Mino mino = operationT.getMino();
+        int y = operationT.getY();
+        int slideY = Long.bitCount(filledLineWithoutT & KeyOperators.getMaskForKeyBelowY(y + mino.getMinY()));
+
+        return SpinCommons.canTSpin(freeze, operationT.getX(), y - slideY);
     }
 
     private Stream<WallResult> next(
