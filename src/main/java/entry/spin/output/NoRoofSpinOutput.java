@@ -47,7 +47,7 @@ public class NoRoofSpinOutput implements SpinOutput {
             add(htmlBuilder, candidate, initField, fieldHeight);
         }
 
-        System.out.println("solutions = " + htmlBuilder.getSize());
+        System.out.println("Found solutions = " + htmlBuilder.getSize());
 
         // 書き込み
         try (BufferedWriter writer = myFile.newBufferedWriter()) {
@@ -98,7 +98,7 @@ public class NoRoofSpinOutput implements SpinOutput {
         // そのままTスピンできるか
         Field freeze = candidate.getAllMergedFieldWithoutT().freeze();
         long filledLineWithoutT = candidate.getAllMergedFilledLineWithoutT();
-        assert (filledLineWithoutT & operationT.getNeedDeletedKey()) != 0L;
+        assert operationT.getNeedDeletedKey() == 0L || (filledLineWithoutT & operationT.getNeedDeletedKey()) != 0L;
         freeze.clearLine();
 
         Mino mino = operationT.getMino();

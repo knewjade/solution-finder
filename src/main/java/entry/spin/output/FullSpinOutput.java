@@ -7,7 +7,6 @@ import common.datastore.SimpleOperation;
 import concurrent.LockedReachableThreadLocal;
 import concurrent.RotateReachableThreadLocal;
 import core.action.reachable.LockedReachable;
-import core.field.BlockFieldView;
 import core.field.Field;
 import core.field.KeyOperators;
 import core.mino.Mino;
@@ -61,7 +60,7 @@ public class FullSpinOutput implements SpinOutput {
             add(htmlBuilder, candidate, initField, fieldHeight);
         }
 
-        System.out.println("solutions = " + htmlBuilder.getSize());
+        System.out.println("Found solutions = " + htmlBuilder.getSize());
 
         // 書き込み
         try (BufferedWriter writer = myFile.newBufferedWriter()) {
@@ -88,9 +87,10 @@ public class FullSpinOutput implements SpinOutput {
         int clearedLineOnlyT = Long.bitCount(result.getAllMergedFilledLine() & operationT.getUsingKey());
 
         // Tミノを除いた地形で揃っているラインを消去する
-        Field freeze = candidate.getAllMergedFieldWithoutT().freeze().freeze();
+        Field freeze = candidate.getAllMergedFieldWithoutT().freeze();
         long filledLineWithoutT = candidate.getAllMergedFilledLineWithoutT();
-        assert (filledLineWithoutT & operationT.getNeedDeletedKey()) != 0L;
+
+        assert operationT.getNeedDeletedKey() == 0L || (filledLineWithoutT & operationT.getNeedDeletedKey()) != 0L;
         freeze.clearLine();
 
         // 消去されたラインに合わせてyを移動

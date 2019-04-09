@@ -42,11 +42,9 @@ public class NoRoofSpinRunner implements SpinRunner {
                                 return minClearedLine <= Long.bitCount(filledLine & usingKey);
                             })
                             .flatMap(tOperation -> {
-                                List<SimpleOriginalPiece> targetOperations = fillResult.operationStream()
-                                        .filter(operation -> operation != tOperation)
-                                        .collect(Collectors.toList());
+                                List<SimpleOriginalPiece> operations = fillResult.operationStream().collect(Collectors.toList());
 
-                                return scaffoldRunner.build(lastResult, tOperation, targetOperations)
+                                return scaffoldRunner.build(lastResult, tOperation, operations)
                                         .flatMap(scaffoldResult -> {
                                             Candidate candidate = new SimpleCandidate(scaffoldResult.getLastResult(), tOperation);
                                             return wallRunner.search(candidate);
