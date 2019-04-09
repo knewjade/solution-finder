@@ -107,7 +107,7 @@ public class NoRoofSpinOutput implements SpinOutput {
 
         String mark = cansBuildWithoutT ? (
                 rotateReachableThreadLocal.get().checks(freeze, mino, operationT.getX(), y - slideY, fieldHeight) ? "O" : "X"
-        ) : " ";
+        ) : "-";
         String aLink = String.format(
                 "<div>[%s] <a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a> [clear=%d, hole=%d, piece=%d]</div>",
                 mark, fumen, name, clearedLineAll, numOfHoles, numOfPieces
