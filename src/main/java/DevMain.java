@@ -49,7 +49,8 @@ public class DevMain {
 //        String command = "spin -p *! -t v115@HhB8AeH8BeI8AeG8JeAgH -mr 1";  // 2 solutions
 //        String command = "spin -p *! -t v115@HhB8AeH8BeI8AeG8JeAgH -r no";  // 1 solutions
 
-        String command = "spin --tetfu v115@KhB8DeB8BeB8AeI8BeC8JeAgH --patterns *p7 -ft 7";
+//        String command = "spin --tetfu v115@KhB8DeB8BeB8AeI8BeC8JeAgH --patterns *p7 -ft 7";
+        String command = "util fig --tetfu v115@BgC8GeC8BeglDeD8AeglDeE8hlCeF8ywAtG8wwBtH8?AtAeI8AeI8AeI8KeAgH -F png -f no";
 
         int returnCode = EntryPointMain.main(command.split(" "));
         System.exit(returnCode);

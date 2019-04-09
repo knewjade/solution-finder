@@ -64,7 +64,7 @@ public class FullSpinRunner implements SpinRunner {
                                 long onePieceFilledKeyWithout = onePieceFilledKeyWithoutT & ~operation.getUsingKey();
 
                                 // Tスピンではなくなるとき、必要なミノである
-                                if (!SpinCommons.canTSpin(fieldWithout, tx, ty)) {
+                                if (!SpinCommons.canTSpinWithFilledLine(fieldWithout, operationT)) {
                                     return true;
                                 }
 

@@ -82,7 +82,7 @@ class FullSpinRunnerTest {
         FullSpinRunner runner = new FullSpinRunner();
         List<Candidate> results = runner.search(secondPreSpinRunner, 1).parallel().collect(Collectors.toList());
 
-        assertThat(results).hasSize(4956);
+        assertThat(results).hasSize(4986);
 
         verify(results);
     }
@@ -113,7 +113,6 @@ class FullSpinRunnerTest {
     }
 
     @Test
-    @Disabled
     void case2() {
         int fieldHeight = 8;
         Field initField = FieldFactory.createField("" +

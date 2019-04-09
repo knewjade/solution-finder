@@ -112,14 +112,14 @@ class SpinTetfuCaseTest {
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
-            assertThat(log.getOutput()).contains(Messages.foundSolutions(1612));
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(1713));
             assertThat(log.getError()).isEmpty();
 
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
             assertThat(html.getFumens())
-                    .hasSize(1612)
+                    .hasSize(1713)
                     .contains("kgg0Ieg0DeD8h0DeE8ywR4F8wwR4glG8ilH8LeAgWE?As+jPC")
                     .contains("ogwhDeilBewhD8glQ4ywwhE8R4wwAtwhF8Q4Btg0G8?AtAeg0H8h0JeAgWGAKtjxCpCBAA")
                     .contains("qgzhCeQ4AeD8ywAtR4E8wwBtg0Q4F8AtAeg0AeG8h0?AeH8LeAgWFA03ntCpAAAA")
@@ -157,14 +157,14 @@ class SpinTetfuCaseTest {
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
-            assertThat(log.getOutput()).contains(Messages.foundSolutions(1423));
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(1524));
             assertThat(log.getError()).isEmpty();
 
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
             assertThat(html.getFumens())
-                    .hasSize(1423)
+                    .hasSize(1524)
                     .contains("kgwhglHewhglCeD8AewhhlBeE8whQ4ywF8R4wwAtG8?Q4BtH8AtKeAgWFAzXOMCsAAAA")
                     .contains("lgQ4BewhFeR4AewhD8ywQ4glwhE8wwRpglwhF8Rphl?G8i0H8Aeg0JeAgWGAKHExCJNBAA")
                     .contains("tgRpBeh0D8RpBeg0AeE8ywg0whF8wwhlwhG8Aeglwh?H8glwhJeAgWFAM+lPCvAAAA")
@@ -184,14 +184,14 @@ class SpinTetfuCaseTest {
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
-            assertThat(log.getOutput()).contains(Messages.foundSolutions(1583));
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(1684));
             assertThat(log.getError()).isEmpty();
 
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
             assertThat(html.getFumens())
-                    .hasSize(1583)
+                    .hasSize(1684)
 
                     // -mr 0の結果が含まれている
                     .contains("kgwhglHewhglCeD8AewhhlBeE8whQ4ywF8R4wwAtG8?Q4BtH8AtKeAgWFAzXOMCsAAAA")
@@ -292,6 +292,28 @@ class SpinTetfuCaseTest {
             assertThat(html.getFumens())
                     .hasSize(1)
                     .contains("XgA8IeB8IeA8AeB8Ceh0wwG8g0xwG8g0Q4wwB8DeB8?R4B8AeF8Q4B8BeC8JeAgWDAq+zBA");
+        }
+
+        @Test
+        void case10() throws Exception {
+            // ライン消去の上の段に屋根を作る
+            String fumen = "v115@HhE8CeF8DeG8AeD8JeAgH";
+            String command = buildCommand(fumen, "-p JTO -ft 3 -m 5");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(4));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SpinHTML html = OutputFileHelper.loadSpinHTML();
+
+            assertThat(html.getFumens())
+                    .hasSize(4)
+                    .contains("4gi0Ieg0BeE8wwRpF8xwRpG8wwD8JeAgWDAUnfBA")
+                    .contains("Ehh0AeE8Beg0F8ywg0G8wwD8JeAgWCA0/AAA")
+                    .contains("5gRpHeRpBeE8i0F8ywg0G8wwD8JeAgWDA0vqBA")
+                    .contains("2gRpHeRpEeE8i0F8ywg0G8wwD8JeAgWDA0vqBA");
         }
     }
 
