@@ -260,9 +260,9 @@ class SpinTetfuCaseTest {
         }
 
         @Test
-        void case9() throws Exception {
+        void case9_1() throws Exception {
             // 空中に浮いたTスピンが見つかる不具合に対するテスト
-            String fumen = "v115@XgA8IeB8IeA8AeB8FeG8CeG8CeB8DeB8BeB8AeI8Be?C8JeAgH";
+            String fumen = "v115@XgA8IeB8IeA8AeB8FeG8CeG8CeB8DeB8BeB8AeF8Ae?B8BeC8JeAgH";
             String command = buildCommand(fumen, "-p JT -ft 7");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
@@ -274,6 +274,24 @@ class SpinTetfuCaseTest {
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
             assertThat(html.getFumens()).isEmpty();
+        }
+
+        @Test
+        void case9_2() throws Exception {
+            String fumen = "v115@XgA8IeB8IeA8AeB8FeG8CeG8CeB8DeB8BeB8AeF8Ae?B8BeC8JeAgH";
+            String command = buildCommand(fumen, "-p JTS -ft 7");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(1));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SpinHTML html = OutputFileHelper.loadSpinHTML();
+
+            assertThat(html.getFumens())
+                    .hasSize(1)
+                    .contains("XgA8IeB8IeA8AeB8Ceh0wwG8g0xwG8g0Q4wwB8DeB8?R4B8AeF8Q4B8BeC8JeAgWDAq+zBA");
         }
     }
 
