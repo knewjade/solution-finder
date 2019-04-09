@@ -258,6 +258,23 @@ class SpinTetfuCaseTest {
                     .hasSize(1)
                     .contains("HhB8wwH8xwI8wwG8JeAgWBA0AAAA");
         }
+
+        @Test
+        void case9() throws Exception {
+            // 空中に浮いたTスピンが見つかる不具合に対するテスト
+            String fumen = "v115@XgA8IeB8IeA8AeB8FeG8CeG8CeB8DeB8BeB8AeI8Be?C8JeAgH";
+            String command = buildCommand(fumen, "-p JT -ft 7");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(0));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SpinHTML html = OutputFileHelper.loadSpinHTML();
+
+            assertThat(html.getFumens()).isEmpty();
+        }
     }
 
     @Nested
