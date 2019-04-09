@@ -14,8 +14,8 @@ import core.srs.Rotate;
 import module.LongTest;
 import org.junit.jupiter.api.Test;
 import searcher.spins.SpinCommons;
-import searcher.spins.candidates.SimpleCandidate;
 import searcher.spins.candidates.CandidateWithMask;
+import searcher.spins.candidates.SimpleCandidate;
 import searcher.spins.pieces.MinimalSimpleOriginalPieces;
 import searcher.spins.pieces.Scaffolds;
 import searcher.spins.pieces.SimpleOriginalPieceFactory;
@@ -241,6 +241,74 @@ class WallRunnerTest {
         List<CandidateWithMask> results = runner.search(new SimpleCandidate(result, tOperation)).collect(Collectors.toList());
 
         assertThat(results).hasSize(1);
+
+        verify(results, fieldHeight);
+    }
+
+    @Test
+    void case8() {
+        int allowFillMaxHeight = 5;
+        int fieldHeight = 7;
+        Field initField = FieldFactory.createField("" +
+                        "XXXX______" +
+                        "XXXXX_____" +
+                        "XXXXXX____" +
+                        "XXXXXXX___" +
+                        "_XXXXXXX__" +
+                        ""
+                , fieldHeight);
+        WallRunner runner = createWallRunner(initField, allowFillMaxHeight, allowFillMaxHeight + 1, fieldHeight);
+
+        PieceCounter reminderPieceCounter = new PieceCounter(Arrays.asList(
+                Piece.Z, Piece.J, Piece.T, Piece.O
+        ));
+        EmptyResult emptyResult = new EmptyResult(initField, reminderPieceCounter, fieldHeight);
+        SimpleOriginalPiece tOperation = to(Piece.T, Rotate.Reverse, 7, 2, fieldHeight);
+        List<SimpleOriginalPiece> operations = Arrays.asList(
+                to(Piece.Z, Rotate.Spawn, 5, 3, fieldHeight),
+                to(Piece.J, Rotate.Reverse, 8, 3, fieldHeight),
+                to(Piece.O, Rotate.Spawn, 8, 0, fieldHeight),
+                tOperation
+        );
+        Result result = AddLastsResult.create(emptyResult, operations);
+
+        List<CandidateWithMask> results = runner.search(new SimpleCandidate(result, tOperation)).collect(Collectors.toList());
+
+        assertThat(results).hasSize(0);
+
+        verify(results, fieldHeight);
+    }
+
+    @Test
+    void case8_LeftL() {
+        int allowFillMaxHeight = 5;
+        int fieldHeight = 7;
+        Field initField = FieldFactory.createField("" +
+                        "XXXX______" +
+                        "XXXXX_____" +
+                        "XXXXXX____" +
+                        "XXXXXXX___" +
+                        "_XXXXXXX__" +
+                        ""
+                , fieldHeight);
+        WallRunner runner = createWallRunner(initField, allowFillMaxHeight, allowFillMaxHeight + 1, fieldHeight);
+
+        PieceCounter reminderPieceCounter = new PieceCounter(Arrays.asList(
+                Piece.Z, Piece.J, Piece.T, Piece.O, Piece.L
+        ));
+        EmptyResult emptyResult = new EmptyResult(initField, reminderPieceCounter, fieldHeight);
+        SimpleOriginalPiece tOperation = to(Piece.T, Rotate.Reverse, 7, 2, fieldHeight);
+        List<SimpleOriginalPiece> operations = Arrays.asList(
+                to(Piece.Z, Rotate.Spawn, 5, 3, fieldHeight),
+                to(Piece.J, Rotate.Reverse, 8, 3, fieldHeight),
+                to(Piece.O, Rotate.Spawn, 8, 0, fieldHeight),
+                tOperation
+        );
+        Result result = AddLastsResult.create(emptyResult, operations);
+
+        List<CandidateWithMask> results = runner.search(new SimpleCandidate(result, tOperation)).collect(Collectors.toList());
+
+        assertThat(results).hasSize(3);
 
         verify(results, fieldHeight);
     }

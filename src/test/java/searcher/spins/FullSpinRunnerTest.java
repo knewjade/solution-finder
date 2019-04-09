@@ -44,7 +44,7 @@ class FullSpinRunnerTest {
         SecondPreSpinRunner secondPreSpinRunner = new SecondPreSpinRunner(firstPreSpinRunner, initField, pieceCounter);
         FullSpinRunner runner = new FullSpinRunner();
         List<Candidate> results = runner.search(secondPreSpinRunner, 1).parallel().collect(Collectors.toList());
-        assertThat(results).hasSize(304);
+        assertThat(results).hasSize(301);
 
         verify(results);
     }
@@ -82,7 +82,7 @@ class FullSpinRunnerTest {
         FullSpinRunner runner = new FullSpinRunner();
         List<Candidate> results = runner.search(secondPreSpinRunner, 1).parallel().collect(Collectors.toList());
 
-        assertThat(results).hasSize(5073);
+        assertThat(results).hasSize(4956);
 
         verify(results);
     }

@@ -59,13 +59,12 @@ public class SpinCommons {
     }
 
     // Tスピンか判定
-    public static boolean canTSpin(Field field, int x, int y, long needDeletedKey) {
-        int slide = Long.bitCount(needDeletedKey);
+    public static boolean canTSpin(Field field, int x, int y) {
         return 3L <= Stream.of(
                 isBlock(field, x - 1, y - 1),
-                isBlock(field, x - 1, y + 1 + slide),
+                isBlock(field, x - 1, y + 1),
                 isBlock(field, x + 1, y - 1),
-                isBlock(field, x + 1, y + 1 + slide)
+                isBlock(field, x + 1, y + 1)
         ).filter(Boolean::booleanValue).count();
     }
 
@@ -76,19 +75,9 @@ public class SpinCommons {
         return !field.isEmpty(x, y);
     }
 
-    // Tスピンか判定
-    public static boolean canTSpin(Field field, int x, int y) {
-        return 3L <= Stream.of(
-                isBlock(field, x - 1, y - 1),
-                isBlock(field, x - 1, y + 1),
-                isBlock(field, x + 1, y - 1),
-                isBlock(field, x + 1, y + 1)
-        ).filter(Boolean::booleanValue).count();
-    }
-
     public static Spin getSpins(Field before, SpinResult spinResult, int clearedLine) {
         assert spinResult != SpinResult.NONE;
-        assert canTSpin(before, spinResult.getToX(), spinResult.getToY());
+//        assert canTSpin(before, spinResult.getToX(), spinResult.getToY());
 
         Rotate toRotate = spinResult.getToRotate();
         int toX = spinResult.getToX();

@@ -17,7 +17,6 @@ public class EmptyScaffoldResultWithT extends ScaffoldResultWithT {
     // operations = 空中に浮かないようにするミノの一覧
     public EmptyScaffoldResultWithT(Result result, SimpleOriginalPiece tOperation, List<SimpleOriginalPiece> operations) {
         super();
-        assert !operations.contains(tOperation);
         this.result = result;
         this.tOperation = tOperation;
         this.operations = operations;
