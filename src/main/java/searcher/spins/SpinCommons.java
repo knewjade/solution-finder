@@ -1,6 +1,7 @@
 package searcher.spins;
 
 import core.field.Field;
+import core.field.KeyOperators;
 import core.mino.Mino;
 import core.neighbor.SimpleOriginalPiece;
 import core.srs.Rotate;
@@ -59,6 +60,20 @@ public class SpinCommons {
     }
 
     // Tスピンか判定
+    public static boolean canTSpinWithFilledLine(Field fieldWithoutT, SimpleOriginalPiece operationT) {
+        Field freeze = fieldWithoutT.freeze();
+
+        // ラインを消去する
+        long filledLineWithoutT = freeze.clearLineReturnKey();
+
+        // 消去されたラインに合わせてyを移動
+        Mino mino = operationT.getMino();
+        int y = operationT.getY();
+        int slideY = Long.bitCount(filledLineWithoutT & KeyOperators.getMaskForKeyBelowY(y + mino.getMinY()));
+
+        return SpinCommons.canTSpin(freeze, operationT.getX(), y - slideY);
+    }
+
     public static boolean canTSpin(Field field, int x, int y) {
         return 3L <= Stream.of(
                 isBlock(field, x - 1, y - 1),

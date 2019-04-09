@@ -93,18 +93,7 @@ public class WallRunner {
     }
 
     private boolean canSpin(Candidate candidate) {
-        SimpleOriginalPiece operationT = candidate.getOperationT();
-        Field freeze = candidate.getAllMergedFieldWithoutT().freeze();
-
-        // ラインを消去する
-        long filledLineWithoutT = freeze.clearLineReturnKey();
-
-        // 消去されたラインに合わせてyを移動
-        Mino mino = operationT.getMino();
-        int y = operationT.getY();
-        int slideY = Long.bitCount(filledLineWithoutT & KeyOperators.getMaskForKeyBelowY(y + mino.getMinY()));
-
-        return SpinCommons.canTSpin(freeze, operationT.getX(), y - slideY);
+        return SpinCommons.canTSpinWithFilledLine(candidate.getAllMergedFieldWithoutT(), candidate.getOperationT());
     }
 
     private Stream<WallResult> next(
