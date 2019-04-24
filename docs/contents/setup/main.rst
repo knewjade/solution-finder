@@ -304,7 +304,7 @@ v115のテト譜データにのみ対応。
 * ``L`` or ``orange`` or ``or`` → Lブロック
 * ``O`` or ``yellow`` or ``ye`` → Oブロック
 * ``S`` or ``green`` or ``gr`` → Sブロック
-* ``Z`` or ``red`` or ``re`` → Sブロック
+* ``Z`` or ``red`` or ``re`` → Zブロック
 * ``T`` or ``purple`` or ``pu`` → Tブロック
 * ``none`` → 指定なし（マージンエリアなし）
 
