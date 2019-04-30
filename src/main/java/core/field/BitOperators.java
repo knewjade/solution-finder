@@ -54,7 +54,7 @@ public class BitOperators {
     }
 
     // TODO: write unittest
-    // x列より左の列を選択するマスクを作成（x列を含む）
+    // x列より左の列を選択するマスクを作成（x列を含まない）
     static long getColumnMaskLeftX(int minX) {
         assert 0 <= minX && minX <= 10 : minX;
         switch (minX) {
