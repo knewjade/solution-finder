@@ -2,9 +2,7 @@ package searcher.spins.wall;
 
 import common.datastore.PieceCounter;
 import common.parser.OperationTransform;
-import core.field.Field;
-import core.field.FieldFactory;
-import core.field.KeyOperators;
+import core.field.*;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
@@ -26,6 +24,7 @@ import searcher.spins.results.Result;
 import searcher.spins.scaffold.ScaffoldRunner;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,7 +54,7 @@ class WallRunnerTest {
 
         assertThat(results).hasSize(2);
 
-        verify(results, fieldHeight);
+        verify(results, initField, fieldHeight);
     }
 
     @Test
@@ -86,7 +85,7 @@ class WallRunnerTest {
 
         assertThat(results).hasSize(1);
 
-        verify(results, fieldHeight);
+        verify(results, initField, fieldHeight);
     }
 
     @Test
@@ -118,7 +117,7 @@ class WallRunnerTest {
 
         assertThat(results).hasSize(1);
 
-        verify(results, fieldHeight);
+        verify(results, initField, fieldHeight);
     }
 
     @Test
@@ -148,7 +147,7 @@ class WallRunnerTest {
 
         assertThat(results).hasSize(4);
 
-        verify(results, fieldHeight);
+        verify(results, initField, fieldHeight);
     }
 
     @Test
@@ -183,7 +182,7 @@ class WallRunnerTest {
 
         assertThat(results).hasSize(104);
 
-        verify(results, fieldHeight);
+        verify(results, initField, fieldHeight);
     }
 
     @Test
@@ -209,7 +208,7 @@ class WallRunnerTest {
 
         assertThat(results).hasSize(1);
 
-        verify(results, fieldHeight);
+        verify(results, initField, fieldHeight);
     }
 
     @Test
@@ -242,7 +241,7 @@ class WallRunnerTest {
 
         assertThat(results).hasSize(1);
 
-        verify(results, fieldHeight);
+        verify(results, initField, fieldHeight);
     }
 
     @Test
@@ -276,7 +275,7 @@ class WallRunnerTest {
 
         assertThat(results).hasSize(0);
 
-        verify(results, fieldHeight);
+        verify(results, initField, fieldHeight);
     }
 
     @Test
@@ -310,10 +309,40 @@ class WallRunnerTest {
 
         assertThat(results).hasSize(3);
 
-        verify(results, fieldHeight);
+        verify(results, initField, fieldHeight);
     }
 
-    private void verify(List<CandidateWithMask> results, int height) {
+    @Test
+    void case9() {
+        int allowFillMaxHeight = 5;
+        int fieldHeight = 7;
+        Field initField = FieldFactory.createField("" +
+                        "________XX" +
+                        "XXXX___XXX" +
+                        "XXXXX_XXXX" +
+                        "XXXX____XX" +
+                        ""
+                , fieldHeight);
+        WallRunner runner = createWallRunner(initField, allowFillMaxHeight, allowFillMaxHeight + 1, fieldHeight);
+
+        PieceCounter reminderPieceCounter = new PieceCounter(Arrays.asList(
+                Piece.Z, Piece.L, Piece.T
+        ));
+        EmptyResult emptyResult = new EmptyResult(initField, reminderPieceCounter, fieldHeight);
+        SimpleOriginalPiece tOperation = to(Piece.T, Rotate.Reverse, 5, 2, fieldHeight);
+        List<SimpleOriginalPiece> operations = Collections.singletonList(
+                tOperation
+        );
+        Result result = AddLastsResult.create(emptyResult, operations);
+
+        List<CandidateWithMask> results = runner.search(new SimpleCandidate(result, tOperation)).collect(Collectors.toList());
+
+        assertThat(results).hasSize(10);
+
+        verify(results, initField, fieldHeight);
+    }
+
+    private void verify(List<CandidateWithMask> results, Field initField, int height) {
         assertThat(results)
                 .allSatisfy(candidateWithMask -> {
                     SimpleOriginalPiece operationT = candidateWithMask.getOperationT();
@@ -323,7 +352,7 @@ class WallRunnerTest {
                             .collect(Collectors.toList());
 
                     // Tミノ以外でフィールドを組み立てられる
-                    Field fieldWithoutT = FieldFactory.createField(height);
+                    Field fieldWithoutT = initField.freeze(height);
                     for (SimpleOriginalPiece originalPiece : operationsWithoutT) {
                         if (fieldWithoutT.canMerge(originalPiece.getMinoField())) {
                             fieldWithoutT.merge(originalPiece.getMinoField());
@@ -341,6 +370,9 @@ class WallRunnerTest {
                     assertThat(fieldWithoutT.canPut(operationT.getMino(), operationT.getX(), operationT.getY())).isTrue();
 
                     // Tスピンできる
+                    System.out.println(FieldView.toString(fieldWithoutT));
+                    System.out.println();
+
                     assertThat(SpinCommons.canTSpin(fieldWithoutT, operationT.getX(), operationT.getY())).isTrue();
                 });
     }

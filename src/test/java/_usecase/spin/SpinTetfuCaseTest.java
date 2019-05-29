@@ -315,6 +315,29 @@ class SpinTetfuCaseTest {
                     .contains("5gRpHeRpBeE8i0F8ywg0G8wwD8JeAgWDA0vqBA")
                     .contains("2gRpHeRpEeE8i0F8ywg0G8wwD8JeAgWDA0vqBA");
         }
+
+        @Test
+        void case12() throws Exception {
+            // ライン消去の上の段に屋根を作る
+            String fumen = "v115@FhF8CeH8AeH8DeB8JeAgH";
+            String command = buildCommand(fumen, "-p ZLT -ft 3 -m 6");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(5));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SpinHTML html = OutputFileHelper.loadSpinHTML();
+
+            assertThat(html.getFumens())
+                    .hasSize(5)
+                    .contains("sgglIeglIehlCeF8ywH8wwH8DeB8JeAgWCA0CBAA")
+                    .contains("3gglGeilCeF8ywH8wwH8DeB8JeAgWCA0CBAA")
+                    .contains("vgglIeglIehlF8ywH8wwH8DeB8JeAgWCA0CBAA")
+                    .contains("5gilGeglAeF8ywH8wwH8DeB8JeAgWCA0CBAA")
+                    .contains("1gBtIeBtCeF8ywH8wwH8DeB8JeAgWCA0XBAA");
+        }
     }
 
     @Nested
