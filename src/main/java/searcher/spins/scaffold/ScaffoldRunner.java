@@ -22,32 +22,40 @@ public class ScaffoldRunner {
     }
 
     public Stream<ScaffoldResultWithoutT> build(Result result, List<SimpleOriginalPiece> targetOperations) {
-        // 最後のミノを置く前のフィールドで消去されているラインを取得
+        // 最後のフィールドで消去されているラインを取得
         long initFilledLine = result.getAllMergedFilledLine();
 
         EmptyScaffoldResultWithoutT scaffoldResult = new EmptyScaffoldResultWithoutT(result, targetOperations);
-        return localSearch(scaffoldResult, initFilledLine, AddLastScaffoldResultWithoutT::new);
+        return localSearch(scaffoldResult, initFilledLine, initFilledLine, AddLastScaffoldResultWithoutT::new);
     }
 
     public Stream<ScaffoldResultWithT> build(Result result, SimpleOriginalPiece tOperation, List<SimpleOriginalPiece> targetOperations) {
-        // 最後のミノを置く前のフィールドで消去されているラインを取得
+        // 最後のフィールドで消去されているラインを取得
         long initFilledLine = result.getAllMergedFilledLine();
 
+        // 最後のミノを置く前のフィールドで消去されているラインを取得
+        long filledLineWithoutT = initFilledLine & ~tOperation.getUsingKey();
+
         EmptyScaffoldResultWithT scaffoldResult = new EmptyScaffoldResultWithT(result, tOperation, targetOperations);
-        return localSearch(scaffoldResult, initFilledLine, AddLastScaffoldResultWithT::new);
+        return localSearch(scaffoldResult, initFilledLine, filledLineWithoutT, AddLastScaffoldResultWithT::new);
     }
 
     public Stream<ScaffoldResultWithT> build(CandidateWithMask candidateWithMask, SimpleOriginalPiece operation) {
-        Result result = candidateWithMask.getResult();
 
-        // 最後のミノを置く前のフィールドで消去されているラインを取得
+        // 最後のフィールドで消去されているラインを取得
+        Result result = candidateWithMask.getResult();
         long initFilledLine = result.getAllMergedFilledLine();
 
+        // 最後のミノを置く前のフィールドで消去されているラインを取得
+        long filledLineWithoutT = candidateWithMask.getAllMergedFilledLineWithoutT();
+
         EmptyScaffoldResultWithTFromCandidate scaffoldResult = new EmptyScaffoldResultWithTFromCandidate(candidateWithMask, Collections.singletonList(operation));
-        return localSearch(scaffoldResult, initFilledLine, AddLastScaffoldResultWithT::new);
+        return localSearch(scaffoldResult, initFilledLine, filledLineWithoutT, AddLastScaffoldResultWithT::new);
     }
 
-    private <T extends ScaffoldResult> Stream<T> localSearch(T scaffoldResult, long initFilledLine, BiFunction<T, SimpleOriginalPiece, T> factory) {
+    private <T extends ScaffoldResult> Stream<T> localSearch(
+            T scaffoldResult, long initFilledLine, long filledLineWithoutT, BiFunction<T, SimpleOriginalPiece, T> factory
+    ) {
         // すでに完成している
         if (scaffoldResult.existsAllOnGround()) {
             return Stream.of(scaffoldResult);
@@ -71,7 +79,7 @@ public class ScaffoldRunner {
 
         while (!candidates.isEmpty()) {
             T next = candidates.poll();
-            List<T> nextCandidates = this.localSearch(next, initFilledLine, solutions, results, factory);
+            List<T> nextCandidates = this.localSearch(next, initFilledLine, filledLineWithoutT, solutions, results, factory);
             candidates.addAll(nextCandidates);
         }
 
@@ -80,8 +88,8 @@ public class ScaffoldRunner {
 
     // 空中に浮いているミノの下にミノを置いて探索
     private <T extends ScaffoldResult> List<T> localSearch(
-            T scaffoldResult, long initFilledLine, Solutions<Long> solutions, Stream.Builder<T> builder,
-            BiFunction<T, SimpleOriginalPiece, T> factory
+            T scaffoldResult, long initFilledLine, long filledLineWithoutT,
+            Solutions<Long> solutions, Stream.Builder<T> builder, BiFunction<T, SimpleOriginalPiece, T> factory
     ) {
         // 浮いているミノを取得する
         List<SimpleOriginalPiece> airOperations = scaffoldResult.getAirOperations();
@@ -100,7 +108,7 @@ public class ScaffoldRunner {
             Stream<SimpleOriginalPiece> scaffoldPieces = scaffolds.get(air)
                     .filter(it -> {
                         long needDeletedKey = it.getNeedDeletedKey();
-                        return (initFilledLine & needDeletedKey) == needDeletedKey;
+                        return (filledLineWithoutT & needDeletedKey) == needDeletedKey;
                     });
 
             scaffoldPieces
