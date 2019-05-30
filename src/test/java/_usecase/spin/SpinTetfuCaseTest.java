@@ -119,7 +119,7 @@ class SpinTetfuCaseTest {
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
             assertThat(html.getFumens())
-                    .hasSize(1713)
+                    .hasSize(1709)
                     .contains("kgg0Ieg0DeD8h0DeE8ywR4F8wwR4glG8ilH8LeAgWE?As+jPC")
                     .contains("ogwhDeilBewhD8glQ4ywwhE8R4wwAtwhF8Q4Btg0G8?AtAeg0H8h0JeAgWGAKtjxCpCBAA")
                     .contains("qgzhCeQ4AeD8ywAtR4E8wwBtg0Q4F8AtAeg0AeG8h0?AeH8LeAgWFA03ntCpAAAA")
@@ -141,7 +141,7 @@ class SpinTetfuCaseTest {
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
             assertThat(html.getFumens())
-                    .hasSize(16005)
+                    .hasSize(15938)
                     .contains("xgh0D8BeR4g0whE8R4wwg0whF8xwglwhG8wwglwhH8?hlJeAgWFAseltCqAAAA")
                     .contains("rgi0glRpBeD8g0glRpR4E8hlR4wwF8BtxwG8BtwwH8?LeAgWGA6OstCKHBAA")
                     .contains("tgilg0BeD8glRpi0E8RpR4whF8R4wwwhG8xwwhH8ww?whJeAgWGAUubgCs/AAA")
@@ -164,7 +164,7 @@ class SpinTetfuCaseTest {
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
             assertThat(html.getFumens())
-                    .hasSize(1524)
+                    .hasSize(1520)
                     .contains("kgwhglHewhglCeD8AewhhlBeE8whQ4ywF8R4wwAtG8?Q4BtH8AtKeAgWFAzXOMCsAAAA")
                     .contains("lgQ4BewhFeR4AewhD8ywQ4glwhE8wwRpglwhF8Rphl?G8i0H8Aeg0JeAgWGAKHExCJNBAA")
                     .contains("tgRpBeh0D8RpBeg0AeE8ywg0whF8wwhlwhG8Aeglwh?H8glwhJeAgWFAM+lPCvAAAA")
@@ -191,7 +191,7 @@ class SpinTetfuCaseTest {
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
             assertThat(html.getFumens())
-                    .hasSize(1684)
+                    .hasSize(1680)
 
                     // -mr 0の結果が含まれている
                     .contains("kgwhglHewhglCeD8AewhhlBeE8whQ4ywF8R4wwAtG8?Q4BtH8AtKeAgWFAzXOMCsAAAA")

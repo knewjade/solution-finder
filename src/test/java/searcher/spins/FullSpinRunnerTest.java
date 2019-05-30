@@ -82,7 +82,7 @@ class FullSpinRunnerTest {
         FullSpinRunner runner = new FullSpinRunner();
         List<Candidate> results = runner.search(secondPreSpinRunner, 1).parallel().collect(Collectors.toList());
 
-        assertThat(results).hasSize(4986);
+        assertThat(results).hasSize(4953);
 
         verify(results);
     }
