@@ -112,7 +112,7 @@ class SpinTetfuCaseTest {
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
-            assertThat(log.getOutput()).contains(Messages.foundSolutions(1713));
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(1709));
             assertThat(log.getError()).isEmpty();
 
             // HTML
@@ -134,7 +134,7 @@ class SpinTetfuCaseTest {
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
-            assertThat(log.getOutput()).contains(Messages.foundSolutions(16005));
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(15938));
             assertThat(log.getError()).isEmpty();
 
             // HTML
@@ -157,7 +157,7 @@ class SpinTetfuCaseTest {
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
-            assertThat(log.getOutput()).contains(Messages.foundSolutions(1524));
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(1520));
             assertThat(log.getError()).isEmpty();
 
             // HTML
@@ -184,7 +184,7 @@ class SpinTetfuCaseTest {
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
-            assertThat(log.getOutput()).contains(Messages.foundSolutions(1684));
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(1680));
             assertThat(log.getError()).isEmpty();
 
             // HTML
