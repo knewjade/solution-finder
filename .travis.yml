@@ -1,19 +1,10 @@
 stages:
-  - name: test_in_oraclejdk8
-    if: branch = master
   - name: test_in_oraclejdk11
-    if: branch != master
   - name: deploy
     if: tag =~ ^v0\.
 
 jobs:
   include:
-  - stage: test_in_oraclejdk8
-    language: java
-    jdk: oraclejdk8
-    script:
-    - travis_wait 45 ./gradlew check
-
   - stage: test_in_oraclejdk11
     language: java
     jdk: oraclejdk11
