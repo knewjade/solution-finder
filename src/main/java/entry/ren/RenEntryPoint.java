@@ -1,11 +1,9 @@
 package entry.ren;
 
-import common.datastore.MinoOperationWithKey;
 import common.datastore.Operations;
 import common.datastore.RenResult;
 import common.datastore.action.Action;
 import common.datastore.blocks.Pieces;
-import common.parser.OperationTransform;
 import common.pattern.PatternGenerator;
 import common.tetfu.common.ColorConverter;
 import core.action.candidate.Candidate;
@@ -158,11 +156,10 @@ public class RenEntryPoint implements EntryPoint {
             HashSet<Integer> renKeys = new HashSet<>();
             for (RenResult result : results) {
                 Operations operations = new Operations(result.getRenOrder().getHistory().getOperationStream());
-                List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, 24);
 
-                String fumenData = fumenParser.parse(operationWithKeys, field, 24);
+                String fumenData = fumenParser.parse(operations, field, 24);
 
-                String name = operationWithKeys.stream()
+                String name = operations.getOperations().stream()
                         .map(operation -> String.format("%s-%s", operation.getPiece(), operation.getRotate()))
                         .collect(Collectors.joining(" "));
                 String aLink = String.format("<div><a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a></div>", fumenData, name);
