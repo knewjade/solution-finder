@@ -30,6 +30,10 @@ public class SequenceFumenParser implements FumenParser {
     @Override
     public String parse(List<MinoOperationWithKey> operationsWithKey, Field field, int maxClearLine) {
         Operations operations = OperationTransform.parseToOperationsBeforeNoClearLine(field, operationsWithKey, maxClearLine);
+        return parse(operations, field, maxClearLine);
+    }
+
+    public String parse(Operations operations, Field field, int maxClearLine) {
         List<? extends Operation> operationsList = operations.getOperations();
 
         // ブロック順に変換

@@ -3,6 +3,7 @@ package entry.path.output;
 import common.datastore.BlockField;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.OperationWithKey;
+import common.datastore.Operations;
 import common.tetfu.Tetfu;
 import common.tetfu.TetfuElement;
 import common.tetfu.common.ColorConverter;
@@ -38,6 +39,11 @@ public class OneFumenParser implements FumenParser {
                 .map(Piece::getName)
                 .collect(Collectors.joining());
         return parse(operations, field, maxClearLine, blocksName);
+    }
+
+    @Override
+    public String parse(Operations operations, Field field, int maxClearLine) {
+        throw new UnsupportedOperationException();
     }
 
     public String parse(List<MinoOperationWithKey> operations, Field field, int maxClearLine, String comment) {

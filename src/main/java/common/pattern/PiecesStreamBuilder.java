@@ -1,6 +1,7 @@
 package common.pattern;
 
 import common.datastore.PieceCounter;
+import common.datastore.blocks.LongLongPieces;
 import common.datastore.blocks.LongPieces;
 import common.datastore.blocks.Pieces;
 
@@ -11,17 +12,20 @@ import java.util.stream.Stream;
 class PiecesStreamBuilder {
     private final List<Element> elements;
     private final int lastIndex;
+    private final int depth;
 
-    PiecesStreamBuilder(List<Element> elements) {
+    PiecesStreamBuilder(List<Element> elements, int depth) {
         this.elements = elements;
         this.lastIndex = elements.size() - 1;
+        this.depth = depth;
+        assert 0 <= depth && depth <= 44 : depth;
     }
 
     Stream<Pieces> blocksStream() {
         List<List<Pieces>> combinations = createPermutations();
         Stream.Builder<Pieces> builder = Stream.builder();
         if (!combinations.isEmpty())
-            enumerate(combinations, builder, new LongPieces(), 0);
+            enumerate(combinations, builder, depth < 22 ? new LongPieces() : new LongLongPieces(), 0);
         return builder.build();
     }
 
@@ -42,7 +46,7 @@ class PiecesStreamBuilder {
         }
     }
 
-    public Stream<PieceCounter> blockCountersStream() {
+    Stream<PieceCounter> blockCountersStream() {
         List<List<PieceCounter>> blockCounters = createBlockCounters();
         Stream.Builder<PieceCounter> builder = Stream.builder();
         if (!blockCounters.isEmpty())
