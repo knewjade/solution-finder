@@ -49,8 +49,8 @@ public class Verify {
         PatternGenerator patternGenerator = createBlocksGenerator(patterns);
 
         int depth = patternGenerator.getDepth();
-        if (22 < depth)
-            throw new FinderInitializeException("Length of sequence should be <= 22: depth=" + depth);
+        if (44 < depth)
+            throw new FinderInitializeException("Length of sequence should be <= 44: depth=" + depth);
 
         return patternGenerator;
     }
@@ -78,7 +78,7 @@ public class Verify {
         return emptyCount / 4;
     }
 
-    public static int depth(Field field) throws FinderInitializeException {
+    public static int depth(Field field) {
         return (int) Math.ceil(field.getNumOfAllBlocks() / 4.0);
     }
 

@@ -47,6 +47,30 @@ class RenTetfuCaseTest {
         }
 
         @Test
+        void case2() throws Exception {
+            String fumen = "v115@XeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8De?F8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8AeI8JeAgH?";
+            String command = String.format("ren -t %s -p tilsojztilsojztilsojztilsojz", fumen);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            System.out.println(log.getError());
+            // Log
+            assertThat(log.getOutput())
+                    .contains(Messages.foundSolutions(228))
+                    .contains(Messages.maxRen(21))
+                    .contains("TILSOJZTILSOJZ");
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SetupHTML html = OutputFileHelper.loadRenHTML();
+            assertThat(html.getHtml())
+                    .contains("21 Ren");
+
+            assertThat(html.getFumens())
+                    .hasSize(228)
+                    .contains("XeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8De?F8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8AeI8JeZEY?nAFLDmClcJSAVDEHBEooRBJoAVBMNegCqn9VCU3jPCa+DxC?vfDCAvhSSvBXqB9pBTqBOpBUlBxkBSvBNpBTqB/pBGqBMqB?xkBipB9pBTqBOpBUlB");
+        }
+
+        @Test
         void quizTetfu() throws Exception {
             /*
             comment: #Q=[T](I)SZJLOSLT
