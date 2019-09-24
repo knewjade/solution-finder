@@ -17,7 +17,7 @@ public class LockedBuildUpListUpThreadLocal extends ThreadLocal<BuildUpStream> {
     protected BuildUpStream initialValue() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
         return new BuildUpStream(reachable, height);
     }

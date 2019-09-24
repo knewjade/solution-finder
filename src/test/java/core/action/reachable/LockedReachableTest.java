@@ -18,7 +18,7 @@ class LockedReachableTest {
     private LockedReachable createLockedReachable() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new PassedMinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
         return new LockedReachable(minoFactory, minoShifter, minoRotation, 8);
     }
 

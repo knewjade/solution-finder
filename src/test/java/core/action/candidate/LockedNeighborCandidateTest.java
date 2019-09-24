@@ -31,14 +31,14 @@ class LockedNeighborCandidateTest {
     private LockedCandidate createLockedCandidate(int maxClearLine) {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
         return new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
     }
 
     private LockedNeighborCandidate createLockedNeighborCandidate(int maxClearLine) {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
         OriginalPieceFactory pieceFactory = new OriginalPieceFactory(maxClearLine + 3);
         return new LockedNeighborCandidate(minoFactory, minoShifter, minoRotation, pieceFactory);
     }

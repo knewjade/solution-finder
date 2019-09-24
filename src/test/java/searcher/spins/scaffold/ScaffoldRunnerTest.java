@@ -5,7 +5,6 @@ import common.datastore.BlockField;
 import common.datastore.PieceCounter;
 import common.parser.OperationTransform;
 import core.action.reachable.LockedReachable;
-import core.field.BlockFieldView;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Mino;
@@ -25,7 +24,6 @@ import searcher.spins.results.Result;
 import searcher.spins.scaffold.results.ScaffoldResult;
 import searcher.spins.scaffold.results.ScaffoldResultWithoutT;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
@@ -74,11 +72,11 @@ class ScaffoldRunnerTest {
 
         int fieldHeight = 7;
         Field initField = FieldFactory.createField("" +
-                "XXXX______" +
-                "XXXX______" +
-                "XXXX______" +
-                "XXX____XXX" +
-                "XXXX______"
+                        "XXXX______" +
+                        "XXXX______" +
+                        "XXXX______" +
+                        "XXX____XXX" +
+                        "XXXX______"
                 , fieldHeight);
 
         SimpleOriginalPieceFactory factory = new SimpleOriginalPieceFactory(minoFactory, minoShifter, fieldHeight);
@@ -109,11 +107,11 @@ class ScaffoldRunnerTest {
 
         int fieldHeight = 7;
         Field initField = FieldFactory.createField("" +
-                "__________" +
-                "__________" +
-                "__________" +
-                "__________" +
-                "__________"
+                        "__________" +
+                        "__________" +
+                        "__________" +
+                        "__________" +
+                        "__________"
                 , fieldHeight);
 
         SimpleOriginalPieceFactory factory = new SimpleOriginalPieceFactory(minoFactory, minoShifter, fieldHeight);
@@ -145,13 +143,13 @@ class ScaffoldRunnerTest {
 
         int fieldHeight = 7;
         Field initField = FieldFactory.createField("" +
-                "XXXXXXX___" +
-                "XXXXXX____" +
-                "XXXXXXX___" +
-                "XXXXXXX___" +
-                "XXXXXXX___" +
-                "XXXXXXXX__"
-        , fieldHeight);
+                        "XXXXXXX___" +
+                        "XXXXXX____" +
+                        "XXXXXXX___" +
+                        "XXXXXXX___" +
+                        "XXXXXXX___" +
+                        "XXXXXXXX__"
+                , fieldHeight);
 
         SimpleOriginalPieceFactory factory = new SimpleOriginalPieceFactory(minoFactory, minoShifter, fieldHeight);
         ScaffoldRunner runner = new ScaffoldRunner(Scaffolds.create(factory.createMinimalPieces(initField)));
@@ -179,7 +177,7 @@ class ScaffoldRunnerTest {
     }
 
     private void verify(List<? extends ScaffoldResult> results, Field initField, int fieldHeight) {
-        LockedReachable reachable = new LockedReachable(new MinoFactory(), new MinoShifter(), new MinoRotation(), fieldHeight);
+        LockedReachable reachable = new LockedReachable(new MinoFactory(), new MinoShifter(), MinoRotation.create(), fieldHeight);
 
         // BlockFieldに重複がない
         TreeSet<BlockField> blockFields = new TreeSet<>(BlockField::compareTo);

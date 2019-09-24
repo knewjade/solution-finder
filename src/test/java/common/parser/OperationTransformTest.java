@@ -100,7 +100,7 @@ class OperationTransformTest {
         Randoms randoms = new Randoms();
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
 
         // Define size
         int height = 4;

@@ -13,7 +13,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class MinoRotationTest {
-    private final MinoRotation minoRotation = new MinoRotation();
+    private final MinoRotation minoRotation = MinoRotation.create();
 
     private int[] kicksLeft(String marks, Mino mino, int x, int y) {
         Field field = FieldFactory.createField(marks);

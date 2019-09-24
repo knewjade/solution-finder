@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class NeighborsTest {
     private Neighbors createNeighbors(int maxClearLine) {
         MinoFactory minoFactory = new MinoFactory();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
         OriginalPieceFactory pieceFactory = new OriginalPieceFactory(maxClearLine + 3);
         return new Neighbors(minoFactory, minoRotation, pieceFactory);
     }

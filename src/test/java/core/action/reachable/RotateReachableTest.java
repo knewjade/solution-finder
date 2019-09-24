@@ -18,7 +18,7 @@ class RotateReachableTest {
     private RotateReachable createRotateReachable() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new PassedMinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
         return new RotateReachable(minoFactory, minoShifter, minoRotation, 8);
     }
 

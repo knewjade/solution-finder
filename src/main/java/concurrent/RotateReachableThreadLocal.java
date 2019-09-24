@@ -12,7 +12,7 @@ public class RotateReachableThreadLocal extends ThreadLocal<RotateReachable> {
     private final int maxY;
 
     public RotateReachableThreadLocal(int maxY) {
-        this(new MinoFactory(), new MinoShifter(), new MinoRotation(), maxY);
+        this(new MinoFactory(), new MinoShifter(), MinoRotation.create(), maxY);
     }
 
     public RotateReachableThreadLocal(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY) {

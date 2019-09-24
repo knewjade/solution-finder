@@ -42,7 +42,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CheckerNoHoldTest {
     private final MinoFactory minoFactory = new MinoFactory();
     private final MinoShifter minoShifter = new MinoShifter();
-    private final MinoRotation minoRotation = new MinoRotation();
+    private final MinoRotation minoRotation = MinoRotation.create();
     private final PerfectValidator validator = new PerfectValidator();
     private final CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
 

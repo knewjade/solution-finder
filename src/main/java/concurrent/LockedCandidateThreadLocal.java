@@ -1,11 +1,11 @@
 package concurrent;
 
+import common.datastore.action.Action;
 import core.action.candidate.Candidate;
 import core.action.candidate.LockedCandidate;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
-import common.datastore.action.Action;
 
 public class LockedCandidateThreadLocal extends ThreadLocal<Candidate<Action>> {
     private final int maxY;
@@ -18,7 +18,7 @@ public class LockedCandidateThreadLocal extends ThreadLocal<Candidate<Action>> {
     protected Candidate<Action> initialValue() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
         return new LockedCandidate(minoFactory, minoShifter, minoRotation, maxY);
     }
 }

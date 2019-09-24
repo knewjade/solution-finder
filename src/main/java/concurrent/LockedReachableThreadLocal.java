@@ -12,7 +12,7 @@ public class LockedReachableThreadLocal extends ThreadLocal<LockedReachable> {
     private final int maxY;
 
     public LockedReachableThreadLocal(int maxY) {
-        this(new MinoFactory(), new MinoShifter(), new MinoRotation(), maxY);
+        this(new MinoFactory(), new MinoShifter(), MinoRotation.create(), maxY);
     }
 
     public LockedReachableThreadLocal(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY) {

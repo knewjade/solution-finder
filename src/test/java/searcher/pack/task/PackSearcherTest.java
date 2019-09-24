@@ -58,7 +58,7 @@ class PackSearcherTest {
 
     private final MinoFactory minoFactory = new MinoFactory();
     private final MinoShifter minoShifter = new MinoShifter();
-    private final MinoRotation minoRotation = new MinoRotation();
+    private final MinoRotation minoRotation = MinoRotation.create();
 
     private BasicSolutions createMappedBasicSolutions(SizedBit sizedBit) {
         SeparableMinos separableMinos = SeparableMinos.createSeparableMinos(minoFactory, minoShifter, sizedBit);

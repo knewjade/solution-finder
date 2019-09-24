@@ -21,7 +21,7 @@ class LockedCandidateTest {
     void testSearch1() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, 4);
 
         String marks = "" +
@@ -41,7 +41,7 @@ class LockedCandidateTest {
     void testSearch2() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, 4);
 
         String marks = "" +
@@ -62,7 +62,7 @@ class LockedCandidateTest {
     void testSearch3() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, 4);
 
         String marks = "" +
@@ -92,7 +92,7 @@ class LockedCandidateTest {
     void testSearch4() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new PassedMinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, 4);
 
         String marks = "" +
@@ -118,7 +118,7 @@ class LockedCandidateTest {
 
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new PassedMinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
 
         for (int count = 0; count < 10000; count++) {
             int randomHeight = randoms.nextIntClosed(2, 12);

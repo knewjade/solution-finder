@@ -24,7 +24,7 @@ public class FirstPreSpinRunner {
     }
 
     private FirstPreSpinRunner(MinoFactory minoFactory, MinoShifter minoShifter, int allowFillMaxHeight, int fieldHeight) {
-        this(minoFactory, minoShifter, new RotateReachableThreadLocal(minoFactory, minoShifter, new MinoRotation(), fieldHeight), 0, allowFillMaxHeight, allowFillMaxHeight + 2, fieldHeight);
+        this(minoFactory, minoShifter, new RotateReachableThreadLocal(minoFactory, minoShifter, MinoRotation.create(), fieldHeight), 0, allowFillMaxHeight, allowFillMaxHeight + 2, fieldHeight);
     }
 
     public FirstPreSpinRunner(

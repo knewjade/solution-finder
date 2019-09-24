@@ -32,7 +32,7 @@ class RoofRunnerTest {
         int fieldHeight = 8;
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
         SimpleOriginalPieceFactory factory = new SimpleOriginalPieceFactory(minoFactory, minoShifter, fieldHeight);
         Field initField = FieldFactory.createField("" +
                         "XX_XXXX_XX" +

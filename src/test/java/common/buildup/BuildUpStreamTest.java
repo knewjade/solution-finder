@@ -50,7 +50,7 @@ class BuildUpStreamTest {
         int height = 4;
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
 
         // Create OperationWithKey List
@@ -81,7 +81,7 @@ class BuildUpStreamTest {
         int height = 4;
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
 
         // Create OperationWithKey List
@@ -114,7 +114,7 @@ class BuildUpStreamTest {
         Randoms randoms = new Randoms();
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
 
         // Define size
         int height = 4;
@@ -180,7 +180,7 @@ class BuildUpStreamTest {
         Randoms randoms = new Randoms();
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
 
         // Define size
         int height = 4;

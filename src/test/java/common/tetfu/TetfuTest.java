@@ -511,7 +511,7 @@ class TetfuTest {
         Randoms randoms = new Randoms();
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
         ColorConverter colorConverter = new ColorConverter();
 
         // Define size

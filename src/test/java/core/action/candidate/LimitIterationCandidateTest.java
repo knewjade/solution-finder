@@ -21,7 +21,7 @@ class LimitIterationCandidateTest {
     void testSearch1() throws Exception {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
         Candidate<Action> candidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 3);
 
         String marks = "" +
@@ -41,7 +41,7 @@ class LimitIterationCandidateTest {
     void testSearch2() throws Exception {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
         Candidate<Action> candidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 3);
 
         String marks = "" +
@@ -62,7 +62,7 @@ class LimitIterationCandidateTest {
     void testSearch3When3Iteration() throws Exception {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
         Candidate<Action> candidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 3);
 
         String marks = "" +
@@ -90,7 +90,7 @@ class LimitIterationCandidateTest {
     void testSearch3When4Iteration() throws Exception {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
         Candidate<Action> candidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 4);
 
         String marks = "" +
@@ -113,7 +113,7 @@ class LimitIterationCandidateTest {
     void testSearch4() throws Exception {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
         Candidate<Action> candidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 4);
 
         String marks = "" +
@@ -139,7 +139,7 @@ class LimitIterationCandidateTest {
 
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
         HarddropCandidate harddropCandidate = new HarddropCandidate(minoFactory, minoShifter);
         LimitIterationCandidate limitIterationCandidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 0);
 

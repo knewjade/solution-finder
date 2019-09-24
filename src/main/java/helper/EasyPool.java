@@ -18,7 +18,7 @@ public class EasyPool {
     public EasyPool() {
         this.minoFactory = new MinoFactory();
         this.minoShifter = new MinoShifter();
-        this.minoRotation = new MinoRotation();
+        this.minoRotation = MinoRotation.create();
         this.colorConverter = new ColorConverter();
     }
 
@@ -51,6 +51,6 @@ public class EasyPool {
     }
 
     public MinoRotation getMinoRotation() {
-        return new MinoRotation();
+        return MinoRotation.create();
     }
 }

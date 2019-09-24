@@ -395,7 +395,7 @@ class CheckerNoHoldInvokerTest {
 
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
 
         PerfectValidator validator = new PerfectValidator();
         CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);

@@ -313,7 +313,7 @@ class CheckerUsingHoldInvokerTest {
 
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
 
         PerfectValidator validator = new PerfectValidator();
         CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);

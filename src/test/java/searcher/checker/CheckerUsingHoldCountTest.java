@@ -9,12 +9,11 @@ import core.action.candidate.Candidate;
 import core.action.candidate.LockedCandidate;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import core.mino.Piece;
 import core.srs.MinoRotation;
 import module.LongTest;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.common.validator.PerfectValidator;
 
@@ -31,7 +30,7 @@ class CheckerUsingHoldCountTest {
         // Initialize
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
         PerfectValidator validator = new PerfectValidator();
         CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
 
@@ -90,7 +89,7 @@ class CheckerUsingHoldCountTest {
         // Initialize
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
         PerfectValidator validator = new PerfectValidator();
         CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
 
@@ -126,7 +125,7 @@ class CheckerUsingHoldCountTest {
         // Initialize
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
         PerfectValidator validator = new PerfectValidator();
         CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
 
@@ -167,7 +166,7 @@ class CheckerUsingHoldCountTest {
         // Initialize
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
         PerfectValidator validator = new PerfectValidator();
         CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
 
@@ -207,7 +206,7 @@ class CheckerUsingHoldCountTest {
         // Initialize
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = new MinoRotation();
+        MinoRotation minoRotation = MinoRotation.create();
         PerfectValidator validator = new PerfectValidator();
         CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
 
