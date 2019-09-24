@@ -5,7 +5,8 @@ import core.mino.Mino;
 
 public interface MinoRotation {
     static MinoRotation create() {
-        return new MinoRotationImpl();
+//        return new MinoRotationImpl();
+        return new AscMinoRotationImpl();
     }
 
     int[] getKicks(Field field, Mino before, Mino after, int x, int y, RotateDirection direction);
