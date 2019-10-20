@@ -1,27 +1,25 @@
 package common.buildup;
 
 import common.datastore.MinoOperationWithKey;
+import common.datastore.OperationWithKey;
+import common.datastore.action.Action;
 import core.action.reachable.Reachable;
 import core.field.Field;
 import core.field.KeyOperators;
 import core.mino.Mino;
+import core.mino.Piece;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.function.ToIntFunction;
 import java.util.stream.Stream;
 
 /**
  * マルチスレッド非対応
  */
 public class BuildUpStream {
-    private static final Comparator<MinoOperationWithKey> KEY_COMPARATOR = (o1, o2) -> {
-        int compare = Integer.compare(o1.getY(), o2.getY());
-        if (compare != 0)
-            return compare;
-        return Long.compare(o1.getNeedDeletedKey(), o2.getNeedDeletedKey());
-    };
+    private static final Comparator<MinoOperationWithKey> KEY_COMPARATOR = Comparator
+            .comparingInt((ToIntFunction<MinoOperationWithKey>) Action::getY)
+            .thenComparingLong(OperationWithKey::getNeedDeletedKey);
 
     private final Reachable reachable;
     private final int height;
@@ -85,5 +83,78 @@ public class BuildUpStream {
         }
 
         field.insertBlackLineWithKey(deleteKey);
+    }
+
+    // block順番で組み立てられる手順が存在するかチェックする
+    // operationsで使用するミノとblocksが一致していること
+    // 4ライン消し（テトリス）限定
+    public Optional<List<MinoOperationWithKey>> existsValidByOrderForTetris(Field field, Stream<? extends MinoOperationWithKey> operations, List<Piece> pieces) {
+        return existsValidByOrderForTetris(field, operations, pieces, pieces.size());
+    }
+
+    public Optional<List<MinoOperationWithKey>> existsValidByOrderForTetris(Field field, Stream<? extends MinoOperationWithKey> operations, List<Piece> pieces, int maxDepth) {
+        EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks = operations.sequential().collect(() -> new EnumMap<>(Piece.class), (blockLinkedListEnumMap, operationWithKey) -> {
+            Piece piece = operationWithKey.getPiece();
+            LinkedList<MinoOperationWithKey> operationWithKeys = blockLinkedListEnumMap.computeIfAbsent(piece, b -> new LinkedList<>());
+            operationWithKeys.add(operationWithKey);
+        }, EnumMap::putAll);
+
+        LinkedList<MinoOperationWithKey> results = new LinkedList<>();
+
+        return existsValidByOrderForTetris(field.freeze(height), eachBlocks, pieces, 0, maxDepth, results);
+    }
+
+    private Optional<List<MinoOperationWithKey>> existsValidByOrderForTetris(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int depth, int maxDepth, LinkedList<MinoOperationWithKey> results) {
+        long deleteKey = field.clearLineReturnKey();
+        Piece piece = pieces.get(depth);
+        LinkedList<MinoOperationWithKey> operationWithKeys = eachBlocks.get(piece);
+
+        if (operationWithKeys != null) {
+            for (int index = 0; index < operationWithKeys.size(); index++) {
+                MinoOperationWithKey key = operationWithKeys.remove(index);
+
+                long needDeletedKey = key.getNeedDeletedKey();
+                if ((deleteKey & needDeletedKey) != needDeletedKey) {
+                    // 必要な列が消えていない
+                    operationWithKeys.add(index, key);
+                    continue;
+                }
+
+                // すでに下のラインが消えているときは、その分スライドさせる
+                int originalY = key.getY();
+                int deletedLines = Long.bitCount(KeyOperators.getMaskForKeyBelowY(originalY) & deleteKey);
+                
+                // テトリス以外のとき
+                if (0 < deletedLines && deletedLines < 4) {
+                    operationWithKeys.add(index, key);
+                    continue;
+                }
+
+                Mino mino = key.getMino();
+                int x = key.getX();
+                int y = originalY - deletedLines;
+
+                if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY())) {
+                    results.addLast(key);
+
+                    if (maxDepth == depth + 1)
+                        return Optional.of(results);
+
+                    Field nextField = field.freeze(height);
+                    nextField.put(mino, x, y);
+                    nextField.insertBlackLineWithKey(deleteKey);
+
+                    Optional<List<MinoOperationWithKey>> exists = existsValidByOrderForTetris(nextField, eachBlocks, pieces, depth + 1, maxDepth, results);
+                    if (exists.isPresent())
+                        return Optional.of(results);
+
+                    results.removeLast();
+                }
+
+                operationWithKeys.add(index, key);
+            }
+        }
+
+        return Optional.empty();
     }
 }
