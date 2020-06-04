@@ -21,8 +21,8 @@ public class PathPairs {
         return pathPairList;
     }
 
-    public List<PathPair> getMinimalPathPairList() {
+    public List<PathPair> getMinimalPathPairList(boolean specified_only) {
         Selector<PathPair, LongPieces> selector = new Selector<>(pathPairList);
-        return selector.select();
+        return selector.select(specified_only);
     }
 }

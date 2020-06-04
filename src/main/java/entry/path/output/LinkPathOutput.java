@@ -96,7 +96,7 @@ public class LinkPathOutput implements PathOutput {
 
         // 少ないパターンでカバーできるパスを出力
         if (pathLayer.contains(PathLayer.Minimal)) {
-            List<PathPair> pathPairList = pathPairs.getMinimalPathPairList();
+            List<PathPair> pathPairList = pathPairs.getMinimalPathPairList(settings.getMinimalSpecifiedOnly());
 
             outputLog("Found path [minimal] = " + pathPairList.size());
             outputOperationsToSimpleHTML(field, outputMinimalFile, pathPairList, sizedBit, numOfAllPatternSequences);

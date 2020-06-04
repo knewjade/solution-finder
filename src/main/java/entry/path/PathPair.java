@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PathPair implements HaveSet<LongPieces> {
-    static final PathPair EMPTY_PAIR = new PathPair(null, new HashSet<>(), null, "", Collections.emptyList(), new HashSet<>(), 0L);
+    static final PathPair EMPTY_PAIR = new PathPair(null, new HashSet<>(), null, "", Collections.emptyList(), new HashSet<>(), new HashSet<>());
 
     private final Result result;
     private final HashSet<LongPieces> piecesSolution;
@@ -25,9 +25,9 @@ public class PathPair implements HaveSet<LongPieces> {
     private final boolean deletedLine;
     private final HashSet<LongPieces> validPieces;
 
-    private final long numOfValidSpecifiedPatterns;
+    private final HashSet<LongPieces> validSpecifiedPatterns;
 
-    public PathPair(Result result, HashSet<LongPieces> piecesSolution, HashSet<LongPieces> piecesPattern, String fumen, List<MinoOperationWithKey> sampleOperations, HashSet<LongPieces> validPieces, long numOfValidSpecifiedPatterns) {
+    public PathPair(Result result, HashSet<LongPieces> piecesSolution, HashSet<LongPieces> piecesPattern, String fumen, List<MinoOperationWithKey> sampleOperations, HashSet<LongPieces> validPieces, HashSet<LongPieces> validSpecifiedPatterns) {
         this.result = result;
         this.piecesSolution = piecesSolution;
         this.piecesPattern = piecesPattern;
@@ -35,7 +35,7 @@ public class PathPair implements HaveSet<LongPieces> {
         this.sampleOperations = sampleOperations;
         this.deletedLine = result != null && containsDeletedLine();
         this.validPieces = validPieces;
-        this.numOfValidSpecifiedPatterns = numOfValidSpecifiedPatterns;
+        this.validSpecifiedPatterns = validSpecifiedPatterns;
     }
 
     private boolean containsDeletedLine() {
@@ -44,8 +44,8 @@ public class PathPair implements HaveSet<LongPieces> {
     }
 
     @Override
-    public Set<LongPieces> getSet() {
-        return blocksHashSetForPattern();
+    public Set<LongPieces> getSet(boolean specified_only) {
+        return specified_only ? blocksHashSetForSpecified() : blocksHashSetForPattern();
     }
 
     public Result getResult() {
@@ -56,7 +56,7 @@ public class PathPair implements HaveSet<LongPieces> {
         return fumen;
     }
 
-    // すべての入力パターンの中で、その手順で対応できるツモ
+    // （未知のホールドも考慮した上で）入力される可能性のあるすべてのパターンの中で、その手順で対応できるツモ
     // パターンで6ミノを設定したとき、このツモは6ミノになる
     public HashSet<LongPieces> blocksHashSetForPattern() {
         return piecesPattern;
@@ -80,6 +80,12 @@ public class PathPair implements HaveSet<LongPieces> {
     // パターンで6ミノを設定した場合でも、地形で5ミノしか使わないときは、このツモは5ミノになる
     public Stream<LongPieces> blocksStreamForValidSolution() {
         return piecesSolution.stream().filter(validPieces::contains);
+    }
+
+    // 厳密に指定されたパターンの中で、その手順で対応できるツモ
+    // パターンで6ミノを設定したとき、このツモは6ミノになる
+    public HashSet<LongPieces> blocksHashSetForSpecified() {
+        return validSpecifiedPatterns;
     }
 
     public List<MinoOperationWithKey> getSampleOperations() {
@@ -107,6 +113,6 @@ public class PathPair implements HaveSet<LongPieces> {
     }
 
     public long getNumOfValidSpecifiedPatterns() {
-        return numOfValidSpecifiedPatterns;
+        return validSpecifiedPatterns.size();
     }
 }

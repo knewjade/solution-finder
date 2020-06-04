@@ -1013,6 +1013,23 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
     }
 
     @Test
+    void caseMinimalSpecified() throws Exception {
+        String tetfu = "v115@GhA8HeD8DeF8CeE8JeAgWhANI98AwXfzBKOEHBEoA6?AFLHSAVjjFDUHcSAVG88ARAAAA";
+
+        String command = String.format("path -t %s -ms true", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+        assertThat(log.getReturnCode()).isEqualTo(0);
+
+        // minimal
+        PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
+        assertThat(minimalHTML.getHtml())
+                .contains("I-Spawn J-Spawn S-Spawn O-Spawn Z-Spawn T-Reverse");
+
+        assertThat(minimalHTML.allFumens())
+                .hasSize(1);
+    }
+
+    @Test
     void lastS() throws Exception {
         // 入力パターン以上のミノ順でパフェができていないかをチェック
         // Issue #1

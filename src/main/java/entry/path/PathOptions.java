@@ -14,6 +14,7 @@ public enum PathOptions {
     PatternsPath(SingleArgOption.full("pp", "patterns-path", "path", "File path of pattern definition")),
     Drop(SingleArgOption.full("d", "drop", "hard or soft", "Specify drop")),
     Hold(SingleArgOption.full("H", "hold", "use or avoid", "If use hold, set 'use'. If not use hold, set 'avoid'")),
+    MinimalSpecifiedOnly(SingleArgOption.full("ms", "minimal-specified", "yes or no", "Set 'yes' if refine the minimal solutions from the specified patterns, or 'no' from the patterns extended with hold")),
     ClearLine(SingleArgOption.full("c", "clear-line", "number", "'Specify max clear line")),
     MaxLayer(SingleArgOption.full("L", "max-layer", "int", "Specify max layer")),
     Format(SingleArgOption.full("f", "format", "string", "Format type for output")),
