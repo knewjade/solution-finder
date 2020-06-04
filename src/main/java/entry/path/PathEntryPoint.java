@@ -151,7 +151,16 @@ public class PathEntryPoint implements EntryPoint {
         output("# Enumerate pieces");
         boolean isUsingHold = settings.isUsingHold();
         int piecesDepth = generator.getDepth();
-        output("Piece pop count = " + (isUsingHold && maxDepth < piecesDepth ? maxDepth + 1 : maxDepth));
+        int popCount = isUsingHold && maxDepth < piecesDepth ? maxDepth + 1 : maxDepth;
+        output("Piece pop count = " + popCount);
+        if (popCount < piecesDepth) {
+            output();
+            output("####################################################################");
+            output("WARNING: more pieces is inputted than necessary.");
+            output("         so redundant results may be obtained.");
+            output("####################################################################");
+            output();
+        }
 
         output();
 
