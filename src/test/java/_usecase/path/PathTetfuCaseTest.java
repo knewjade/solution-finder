@@ -1016,7 +1016,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
     void caseMinimalSpecified() throws Exception {
         String tetfu = "v115@GhA8HeD8DeF8CeE8JeAgWhANI98AwXfzBKOEHBEoA6?AFLHSAVjjFDUHcSAVG88ARAAAA";
 
-        String command = String.format("path -t %s -ms true", tetfu);
+        String command = String.format("path -t %s -so no", tetfu);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
         assertThat(log.getReturnCode()).isEqualTo(0);
 
@@ -1026,7 +1026,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
                 .contains("I-Spawn J-Spawn S-Spawn O-Spawn Z-Spawn T-Reverse");
 
         assertThat(minimalHTML.allFumens())
-                .hasSize(1);
+                .hasSize(9);
     }
 
     @Test
