@@ -114,7 +114,7 @@ public class LinkSetupOutput implements SetupOutput {
         }
 
         String mergedFumen = bufferedFumenParser.parse();
-        htmlBuilder.addHeader(String.format("<div><a href='http://fumen.zui.jp/?v115@%s'>All solutions<a></div>", mergedFumen));
+        htmlBuilder.addHeader(String.format("<div><a href='http://fumen.zui.jp/?v115@%s'>All solutions</a></div>", mergedFumen));
 
         ArrayList<HTMLColumn> columns = new ArrayList<>(htmlBuilder.getRegisteredColumns());
         columns.sort(Comparator.comparing(HTMLColumn::getTitle).reversed());

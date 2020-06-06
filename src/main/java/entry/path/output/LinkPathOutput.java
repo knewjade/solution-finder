@@ -155,7 +155,7 @@ public class LinkPathOutput implements PathOutput {
 
         if (!pathPairs.isEmpty()) {
             String mergedFumen = bufferedFumenParser.parse();
-            htmlBuilder.addHeader(String.format("<div><a href='http://fumen.zui.jp/?v115@%s'>All solutions<a></div>", mergedFumen));
+            htmlBuilder.addHeader(String.format("<div><a href='http://fumen.zui.jp/?v115@%s'>All solutions</a></div>", mergedFumen));
         }
 
         // 出力
