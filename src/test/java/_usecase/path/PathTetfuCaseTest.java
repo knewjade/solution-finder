@@ -140,7 +140,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(log.getOutput())
                 .contains("T,[^T]p5")
                 .contains(Messages.uniqueCount(35))
-                .contains(Messages.minimalCount(27))
+                .contains(Messages.minimalCount(20))
                 .contains(Messages.useHold());
 
         // unique
@@ -179,32 +179,32 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // minimal
         PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
         assertThat(minimalHTML)
-                .returns(27, PathHTML::pattern);
+                .returns(20, PathHTML::pattern);
 
         // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens()).isEmpty();
 
         // ライン消去あり
         assertThat(minimalHTML.deletedLineFumens())
-                .hasSize(27)
-                .contains("9gB8zhQ4BtwwC8i0R4xwE8g0ilwwF8glQ4BtJeAgWG?AsuntCa+AAA")
+                .hasSize(20)
+                .contains("9gB8ywQ4BtRpC8wwzhRpE8R4i0F8Q4Btg0JeAgWGAK?X9wCzXBAA")
                 .contains("9gB8zhBthlC8i0wwBtglE8g0xwR4F8wwR4glJeAgWG?AzuzPCM+AAA")
                 .contains("9gB8BthlzhC8Btgli0wwE8glRpxwF8Rpg0wwJeAgWG?AvOUPCa+AAA");
 
         // すべての譜面
         assertThat(parseLastPageTetfu(minimalHTML.allFumens()))
-                .hasSize(27)
+                .hasSize(20)
                 .allMatch(coloredField -> isFilled(height, coloredField));
 
         assertThat(minimalHTML)
                 .returns(720, PathHTML::sequence)
-                .returns(27, path -> path.allFumens().size());
+                .returns(20, path -> path.allFumens().size());
 
         assertThat(minimalHTML.getHtml())
                 .contains("T-Left S-Spawn L-Left J-Spawn Z-Spawn I-Spawn")
                 .contains("15.0 %")
                 .contains("[108]")
-                .contains("S-Spawn T-Right L-Left J-Reverse Z-Spawn I-Spawn")
+                .contains("O-Spawn T-Left L-Left J-Reverse Z-Spawn I-Spawn")
                 .contains("14.4 %")
                 .contains("[104]");
     }
@@ -1013,6 +1013,23 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
     }
 
     @Test
+    void caseMinimalSpecified() throws Exception {
+        String tetfu = "v115@GhA8HeD8DeF8CeE8JeAgWhANI98AwXfzBKOEHBEoA6?AFLHSAVjjFDUHcSAVG88ARAAAA";
+
+        String command = String.format("path -t %s -so no", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+        assertThat(log.getReturnCode()).isEqualTo(0);
+
+        // minimal
+        PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
+        assertThat(minimalHTML.getHtml())
+                .contains("I-Spawn J-Spawn S-Spawn O-Spawn Z-Spawn T-Reverse");
+
+        assertThat(minimalHTML.allFumens())
+                .hasSize(9);
+    }
+
+    @Test
     void lastS() throws Exception {
         // 入力パターン以上のミノ順でパフェができていないかをチェック
         // Issue #1
@@ -1033,7 +1050,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(log.getOutput())
                 .contains("[IJLOS]p5,S")
                 .contains(Messages.uniqueCount(10))
-                .contains(Messages.minimalCount(9))
+                .contains(Messages.minimalCount(8))
                 .contains(Messages.useHold());
 
         // unique
@@ -1083,7 +1100,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(log.getOutput())
                 .contains("[^IL]!,*p2")
                 .contains(Messages.uniqueCount(215))
-                .contains(Messages.minimalCount(101))
+                .contains(Messages.minimalCount(51))
                 .contains(Messages.useHold());
 
         // unique
@@ -1104,16 +1121,16 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // minimal
         PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
         assertThat(minimalHTML.getHtml())
-                .contains("O-Spawn S-Left T-Spawn Z-Spawn L-Left I-Spawn");
+                .contains("O-Spawn Z-Spawn T-Spawn S-Spawn J-Right O-Spawn");
 
         // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens())
-                .hasSize(27)
+                .hasSize(15)
                 .contains("wgC8HeB8EeF8DeY8JeTAYZAFLDmClcJSAVDEHBEooR?BPoAVBKtzFD0AAAAvhEOrB/pBUsB0pBlqB");
 
         // ライン消去あり
         assertThat(minimalHTML.deletedLineFumens())
-                .hasSize(74)
+                .hasSize(36)
                 .contains("wgC8HeB8EeF8DeY8JeTAYZAFLDmClcJSAVDEHBEooR?BPoAVBqHUxCqAAAAvhEOrBUiB3gBNkBupB");
     }
 
@@ -1163,7 +1180,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         assertThat(log.getOutput())
                 .contains("#Q=[T](*)IJOZS")
                 .contains(Messages.uniqueCount(7))
-                .contains(Messages.minimalCount(5))
+                .contains(Messages.minimalCount(3))
                 .contains(Messages.useHold());
 
         assertThat(log.getError()).isEmpty();

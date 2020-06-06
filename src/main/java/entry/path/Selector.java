@@ -1,6 +1,9 @@
 package entry.path;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 public class Selector<K extends HaveSet<V>, V> {
     private final List<K> candidates;
@@ -9,19 +12,19 @@ public class Selector<K extends HaveSet<V>, V> {
         this.candidates = candidates;
     }
 
-    public List<K> select() {
+    public List<K> select(boolean specified_only) {
         // 他のパターンではカバーできないものだけを列挙する
         LinkedList<K> selected = new LinkedList<>();
 
         for (K pair : candidates) {
-            Set<V> canBuildBlocks = pair.getSet();
+            Set<V> canBuildBlocks = pair.getSet(specified_only);
             boolean isSetNeed = true;
             LinkedList<K> nextMasters = new LinkedList<>();
 
             // すでに登録済みのパターンでカバーできるか確認
             while (!selected.isEmpty()) {
                 K targetPair = selected.pollFirst();
-                Set<V> registeredBlocks = targetPair.getSet();
+                Set<V> registeredBlocks = targetPair.getSet(specified_only);
 
                 if (registeredBlocks.size() < canBuildBlocks.size()) {
                     // 新しいパターンの方が多く対応できる  // 新パターンが残る

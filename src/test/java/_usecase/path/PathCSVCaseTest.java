@@ -54,7 +54,7 @@ class PathCSVCaseTest extends PathUseCaseBaseTest {
                 .contains("I,*p6")
                 .contains(Messages.clearLine(4))
                 .contains(Messages.uniqueCount(186))
-                .contains(Messages.minimalCount(142))
+                .contains(Messages.minimalCount(127))
                 .contains(Messages.useHold());
 
         assertThat(log.getReturnCode()).isEqualTo(0);
@@ -91,7 +91,7 @@ class PathCSVCaseTest extends PathUseCaseBaseTest {
                     }
                     return freeze;
                 }))
-                .hasSize(142)
+                .hasSize(127)
                 .allMatch(Field::isPerfect);
     }
 

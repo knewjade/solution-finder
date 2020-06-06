@@ -88,8 +88,7 @@ public class CSVPathOutput implements PathOutput {
 
         // 少ないパターンでカバーできるパスを出力
         if (pathLayer.contains(PathLayer.Minimal)) {
-            Selector<PathPair, LongPieces> selector = new Selector<>(pathPairList);
-            List<PathPair> minimal = selector.select();
+            List<PathPair> minimal = pathPairs.getMinimalPathPairList(settings.getMinimalSpecifiedOnly());
             outputLog("Found path [minimal] = " + minimal.size());
             outputOperationsToCSV(field, outputMinimalFile, minimal, sizedBit);
         }

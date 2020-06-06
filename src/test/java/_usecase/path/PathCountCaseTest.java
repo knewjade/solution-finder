@@ -177,7 +177,7 @@ class PathCountCaseTest extends PathUseCaseBaseTest {
         assertThat(log.getOutput())
                 .contains("*,*p4")
                 .contains(Messages.uniqueCount(298))
-                .contains(Messages.minimalCount(239))
+                .contains(Messages.minimalCount(172))
                 .contains(Messages.useHold());
     }
 
@@ -200,7 +200,7 @@ class PathCountCaseTest extends PathUseCaseBaseTest {
         assertThat(log.getOutput())
                 .contains("S,L,O,I,T")
                 .contains(Messages.uniqueCount(3))
-                .contains(Messages.minimalCount(3))
+                .contains(Messages.minimalCount(1))
                 .contains(Messages.useHold());
     }
 

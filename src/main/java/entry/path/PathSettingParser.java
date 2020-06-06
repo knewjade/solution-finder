@@ -126,6 +126,12 @@ public class PathSettingParser extends SettingParser<PathSettings> {
         Optional<Boolean> isUsingHold = wrapper.getBoolOption(PathOptions.Hold.optName());
         isUsingHold.ifPresent(settings::setUsingHold);
 
+        // Minimalの厳密化
+        Optional<Boolean> isMinimalSpecifiedOnly = wrapper.getBoolOption(
+                PathOptions.MinimalSpecifiedOnly.optName()
+        );
+        isMinimalSpecifiedOnly.ifPresent(settings::setMinimalSpecifiedOnly);
+
         // キャッシュ
         Optional<Integer> cachedMinBit = wrapper.getIntegerOption(PathOptions.CachedBit.optName());
         cachedMinBit.ifPresent(settings::setCachedMinBit);

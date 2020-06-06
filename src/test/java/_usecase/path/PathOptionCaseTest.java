@@ -89,7 +89,7 @@ class PathOptionCaseTest extends PathUseCaseBaseTest {
                 .contains("S,[TIOJLZ]p6")
                 .contains(Messages.clearLine(4))
                 .contains(Messages.uniqueCount(95))
-                .contains(Messages.minimalCount(47))
+                .contains(Messages.minimalCount(42))
                 .contains(Messages.useHold());
     }
 
@@ -149,7 +149,7 @@ class PathOptionCaseTest extends PathUseCaseBaseTest {
                 .contains(Messages.singleThread())
                 .contains(Messages.clearLine(4))
                 .contains(Messages.uniqueCount(186))
-                .contains(Messages.minimalCount(144))
+                .contains(Messages.minimalCount(138))
                 .contains(Messages.useHold());
     }
 }

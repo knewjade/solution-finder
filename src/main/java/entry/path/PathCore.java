@@ -96,9 +96,9 @@ class PathCore {
                     // 譜面の作成
                     String fumen = fumenParser.parse(operationsToUrl, field, maxClearLine);
 
-                    long numOfValidSpecifiedPatterns = getNumOfValidSpecifiedPatterns(field, operations, maxClearLine);
+                    HashSet<LongPieces> validSpecifiedPatterns = getValidSpecifiedPatterns(field, operations, maxClearLine);
 
-                    return new PathPair(result, piecesSolution, piecesPattern, fumen, new ArrayList<>(operationsToUrl), validPieces, numOfValidSpecifiedPatterns);
+                    return new PathPair(result, piecesSolution, piecesPattern, fumen, new ArrayList<>(operationsToUrl), validPieces, validSpecifiedPatterns);
                 })
                 .filter(pathPair -> pathPair != PathPair.EMPTY_PAIR)
                 .collect(Collectors.toList());
@@ -163,9 +163,10 @@ class PathCore {
                     String fumen = fumenParser.parse(sampleOperations, field, maxClearLine);
 
                     HashSet<LongPieces> validPieces = piecesPool.getValidPieces();
-                    long numOfValidSpecifiedPatterns = getNumOfValidSpecifiedPatterns(field, operations, maxClearLine);
 
-                    return new PathPair(result, piecesSolution, piecesPattern, fumen, new ArrayList<>(sampleOperations), validPieces, numOfValidSpecifiedPatterns);
+                    HashSet<LongPieces> validSpecifiedPatterns = getValidSpecifiedPatterns(field, operations, maxClearLine);
+
+                    return new PathPair(result, piecesSolution, piecesPattern, fumen, new ArrayList<>(sampleOperations), validPieces, validSpecifiedPatterns);
                 })
                 .filter(pathPair -> pathPair != PathPair.EMPTY_PAIR)
                 .collect(Collectors.toList());
@@ -237,7 +238,7 @@ class PathCore {
         }
     }
 
-    private long getNumOfValidSpecifiedPatterns(Field field, LinkedList<MinoOperationWithKey> operations, int maxClearLine) {
+    private HashSet<LongPieces> getValidSpecifiedPatterns(Field field, LinkedList<MinoOperationWithKey> operations, int maxClearLine) {
         HashSet<LongPieces> allSpecifiedPieces = piecesPool.getAllSpecifiedPieces();
 
         Reachable reachable = reachableThreadLocal.get();
@@ -248,14 +249,14 @@ class PathCore {
                     .filter(pieces -> {
                         return BuildUp.existsValidByOrderWithHold(field, operations.stream(), pieces.getPieces(), maxClearLine, reachable, maxDepth);
                     })
-                    .count();
+                    .collect(Collectors.toCollection(HashSet::new));
         } else {
             // そのまま絞り込む
             return allSpecifiedPieces.stream()
                     .filter(pieces -> {
                         return BuildUp.existsValidByOrder(field, operations.stream(), pieces.getPieces(), maxClearLine, reachable, maxDepth);
                     })
-                    .count();
+                    .collect(Collectors.toCollection(HashSet::new));
         }
     }
 }

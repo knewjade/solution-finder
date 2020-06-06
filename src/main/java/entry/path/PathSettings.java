@@ -31,6 +31,7 @@ public class PathSettings {
     private boolean isReserved = false;
     private DropType dropType = DropType.Softdrop;
     private int threadCount = -1;
+    private boolean isMinimalSpecifiedOnly = true;
 
     // ********* Getter ************
     public boolean isUsingHold() {
@@ -91,6 +92,10 @@ public class PathSettings {
 
     DropType getDropType() {
         return dropType;
+    }
+
+    public boolean getMinimalSpecifiedOnly() {
+        return isMinimalSpecifiedOnly;
     }
 
     // ********* Setter ************
@@ -230,5 +235,9 @@ public class PathSettings {
             default:
                 throw new FinderParseException("Unsupported droptype: type=" + type);
         }
+    }
+
+    public void setMinimalSpecifiedOnly(boolean isMinimalSpecifiedOnly) {
+        this.isMinimalSpecifiedOnly = isMinimalSpecifiedOnly;
     }
 }

@@ -96,7 +96,7 @@ public class LinkPathOutput implements PathOutput {
 
         // 少ないパターンでカバーできるパスを出力
         if (pathLayer.contains(PathLayer.Minimal)) {
-            List<PathPair> pathPairList = pathPairs.getMinimalPathPairList();
+            List<PathPair> pathPairList = pathPairs.getMinimalPathPairList(settings.getMinimalSpecifiedOnly());
 
             outputLog("Found path [minimal] = " + pathPairList.size());
             outputOperationsToSimpleHTML(field, outputMinimalFile, pathPairList, sizedBit, numOfAllPatternSequences);
@@ -155,7 +155,7 @@ public class LinkPathOutput implements PathOutput {
 
         if (!pathPairs.isEmpty()) {
             String mergedFumen = bufferedFumenParser.parse();
-            htmlBuilder.addHeader(String.format("<div><a href='http://fumen.zui.jp/?v115@%s'>All solutions<a></div>", mergedFumen));
+            htmlBuilder.addHeader(String.format("<div><a href='http://fumen.zui.jp/?v115@%s'>All solutions</a></div>", mergedFumen));
         }
 
         // 出力
