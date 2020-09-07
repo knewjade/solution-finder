@@ -13,6 +13,7 @@ import searcher.core.RenSearcherCore;
 
 import java.util.List;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public class RenUsingHold<T extends Action> implements RenSearcher<T> {
     private static final int MAX_FIELD_HEIGHT = 24;
@@ -40,7 +41,7 @@ public class RenUsingHold<T extends Action> implements RenSearcher<T> {
         Field freeze = initField.freeze(MAX_FIELD_HEIGHT);
         freeze.clearLine();
 
-        dataPool.initFirst(new RenNormalOrder(freeze, pieces[0], 0, maxDepth));
+        dataPool.initFirst(new RenNormalOrder(freeze, pieces[0], -1, maxDepth));
 
         for (int depth = 1; depth <= maxDepth; depth++) {
             TreeSet<RenOrder> orders = dataPool.getNexts();
@@ -64,6 +65,8 @@ public class RenUsingHold<T extends Action> implements RenSearcher<T> {
             }
         }
 
-        return dataPool.getResults();
+        return dataPool.getResults().stream()
+                .filter(result -> 0 <= result.getRenCount())
+                .collect(Collectors.toList());
     }
 }

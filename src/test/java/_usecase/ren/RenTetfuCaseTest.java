@@ -31,15 +31,15 @@ class RenTetfuCaseTest {
             // Log
             assertThat(log.getOutput())
                     .contains(Messages.foundSolutions(410))
-                    .contains(Messages.maxRen(14))
+                    .contains(Messages.maxRen(13))
                     .contains("TILSOJZTILSOJZ");
             assertThat(log.getError()).isEmpty();
 
             // HTML
             SetupHTML html = OutputFileHelper.loadRenHTML();
             assertThat(html.getHtml())
-                    .contains("14 Ren")
-                    .doesNotContain("15 Ren");
+                    .contains("13 Ren")
+                    .doesNotContain("14 Ren");
 
             assertThat(html.getFumens())
                     .hasSize(410)
@@ -55,14 +55,14 @@ class RenTetfuCaseTest {
             // Log
             assertThat(log.getOutput())
                     .contains(Messages.foundSolutions(263))
-                    .contains(Messages.maxRen(23))
+                    .contains(Messages.maxRen(22))
                     .contains("TILSOJZTILSOJZ");
             assertThat(log.getError()).isEmpty();
 
             // HTML
             SetupHTML html = OutputFileHelper.loadRenHTML();
             assertThat(html.getHtml())
-                    .contains("23 Ren");
+                    .contains("22 Ren");
 
             assertThat(html.getFumens())
                     .hasSize(263)
@@ -82,15 +82,15 @@ class RenTetfuCaseTest {
             // Log
             assertThat(log.getOutput())
                     .contains(Messages.foundSolutions(5))
-                    .contains(Messages.maxRen(2))
+                    .contains(Messages.maxRen(1))
                     .contains("TISZJLOSLT");
             assertThat(log.getError()).isEmpty();
 
             // HTML
             SetupHTML html = OutputFileHelper.loadRenHTML();
             assertThat(html.getHtml())
-                    .contains("2 Ren")
-                    .doesNotContain("3 Ren");
+                    .contains("1 Ren")
+                    .doesNotContain("2 Ren");
 
             assertThat(html.getFumens())
                     .hasSize(5)
@@ -110,15 +110,15 @@ class RenTetfuCaseTest {
             // Log
             assertThat(log.getOutput())
                     .contains(Messages.foundSolutions(4))
-                    .contains(Messages.maxRen(3))
+                    .contains(Messages.maxRen(2))
                     .contains("IIJIILJIII");
             assertThat(log.getError()).isEmpty();
 
             // HTML
             SetupHTML html = OutputFileHelper.loadRenHTML();
             assertThat(html.getHtml())
-                    .contains("3 Ren")
-                    .doesNotContain("4 Ren");
+                    .contains("2 Ren")
+                    .doesNotContain("3 Ren");
 
             assertThat(html.getFumens())
                     .hasSize(4)
