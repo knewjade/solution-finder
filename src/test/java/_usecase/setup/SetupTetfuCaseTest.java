@@ -762,6 +762,45 @@ class SetupTetfuCaseTest {
                     .contains(Messages.foundSolutions(3))
                     .contains(Messages.foundSubSolutions(3));
         }
+
+        @Test
+        void case5Hold() throws Exception {
+            String fumen = "v115@HhwhBexhAewhCewhCe3hAe2hJeAgH";
+            String command = String.format("setup --fill i -d harddrop -p I,L,Z,J,O,S,T -t %s", fumen);
+            EntryPointMain.main(command.split(" "));
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput())
+                    .contains(Messages.foundSolutions(1))
+                    .contains(Messages.foundSubSolutions(1));
+        }
+
+        @Test
+        void case5NoHold() throws Exception {
+            String fumen = "v115@HhwhBexhAewhCewhCe3hAe2hJeAgH";
+            String command = String.format("setup --fill i -d harddrop -p I,L,Z,J,O,S,T -t %s --hold no", fumen);
+            EntryPointMain.main(command.split(" "));
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput())
+                    .contains(Messages.foundSolutions(0))
+                    .contains(Messages.foundSubSolutions(0));
+        }
+
+        @Test
+        void case5Hold2() throws Exception {
+            String fumen = "v115@HhwhBexhAewhCewhCe3hAe2hJeAgH";
+            String command = String.format("setup --fill i -d harddrop -p I,L,Z,O,S,J,T -t %s --hold yes", fumen);
+            EntryPointMain.main(command.split(" "));
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput())
+                    .contains(Messages.foundSolutions(1))
+                    .contains(Messages.foundSubSolutions(1));
+        }
     }
 
     @Nested
