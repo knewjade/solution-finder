@@ -28,6 +28,10 @@ import entry.spin.SpinSettings;
 import entry.util.fig.FigUtilEntryPoint;
 import entry.util.fig.FigUtilSettingParser;
 import entry.util.fig.FigUtilSettings;
+import entry.util.seq.SeqUtilEntryPoint;
+import entry.util.seq.SeqUtilOptions;
+import entry.util.seq.SeqUtilSettingParser;
+import entry.util.seq.SeqUtilSettings;
 import exceptions.FinderInitializeException;
 import exceptions.FinderParseException;
 import org.apache.commons.cli.CommandLineParser;
@@ -239,20 +243,41 @@ public class EntryPointMain {
         }
     }
 
-    private static Optional<EntryPoint> getUtilEntryPoint(List<String> commands) throws FinderParseException {
-        if (!commands.get(0).equals("fig"))
-            throw new IllegalArgumentException("util: Invalid type: Use fig");
+    private static Optional<EntryPoint> getUtilEntryPoint(List<String> commands) throws FinderParseException, FinderInitializeException {
+        String subcommand = commands.get(0);
+        List<String> parameters = commands.subList(1, commands.size());
 
-        List<String> figCommands = commands.subList(1, commands.size());
-        FigUtilSettingParser settingParser = new FigUtilSettingParser(figCommands);
-        Optional<FigUtilSettings> settingsOptional = settingParser.parse();
+        switch (subcommand) {
+            case "fig": {
+                FigUtilSettingParser settingParser = new FigUtilSettingParser(parameters);
+                Optional<FigUtilSettings> settingsOptional = settingParser.parse();
 
-        if (settingsOptional.isPresent()) {
-            FigUtilSettings settings = settingsOptional.get();
-            return Optional.of(new FigUtilEntryPoint(settings));
-        } else {
-            return Optional.empty();
+                if (settingsOptional.isPresent()) {
+                    FigUtilSettings settings = settingsOptional.get();
+                    return Optional.of(new FigUtilEntryPoint(settings));
+                }
+
+                break;
+            }
+            case "seq": {
+                Options options = SeqUtilOptions.create();
+                CommandLineParser parser = new DefaultParser();
+
+                SeqUtilSettingParser settingParser = new SeqUtilSettingParser(options, parser);
+                Optional<SeqUtilSettings> settingsOptional = settingParser.parse(parameters);
+
+                if (settingsOptional.isPresent()) {
+                    SeqUtilSettings settings = settingsOptional.get();
+                    return Optional.of(new SeqUtilEntryPoint(settings));
+                }
+
+                break;
+            }
+            default:
+                throw new IllegalArgumentException("util: Invalid type: Use fig or seq");
         }
+
+        return Optional.empty();
     }
 
     private static Optional<EntryPoint> getSetupEntryPoint(List<String> commands) throws FinderParseException, FinderInitializeException {
