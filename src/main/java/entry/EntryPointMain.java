@@ -17,6 +17,10 @@ import entry.ren.RenEntryPoint;
 import entry.ren.RenOptions;
 import entry.ren.RenSettingParser;
 import entry.ren.RenSettings;
+import entry.sequence.SequenceEntryPoint;
+import entry.sequence.SequenceOptions;
+import entry.sequence.SequenceSettingParser;
+import entry.sequence.SequenceSettings;
 import entry.setup.SetupEntryPoint;
 import entry.setup.SetupOptions;
 import entry.setup.SetupSettingParser;
@@ -204,6 +208,9 @@ public class EntryPointMain {
             case "ren":
             case "combo":
                 return getRenEntryPoint(commands);
+            case "seq":
+            case "sequence":
+                return getSequenceEntryPoint(commands);
             case "dev":
                 return getDevEntryPoint(commands);
             case "spin":
@@ -239,20 +246,42 @@ public class EntryPointMain {
         }
     }
 
-    private static Optional<EntryPoint> getUtilEntryPoint(List<String> commands) throws FinderParseException {
-        if (!commands.get(0).equals("fig"))
-            throw new IllegalArgumentException("util: Invalid type: Use fig");
-
-        List<String> figCommands = commands.subList(1, commands.size());
-        FigUtilSettingParser settingParser = new FigUtilSettingParser(figCommands);
-        Optional<FigUtilSettings> settingsOptional = settingParser.parse();
-
+    private static Optional<EntryPoint> getSequenceEntryPoint(
+            List<String> commands
+    ) throws FinderInitializeException, FinderParseException {
+        Options options = SequenceOptions.create();
+        CommandLineParser parser = new DefaultParser();
+        SequenceSettingParser settingParser = new SequenceSettingParser(options, parser);
+        Optional<SequenceSettings> settingsOptional = settingParser.parse(commands);
         if (settingsOptional.isPresent()) {
-            FigUtilSettings settings = settingsOptional.get();
-            return Optional.of(new FigUtilEntryPoint(settings));
+            SequenceSettings settings = settingsOptional.get();
+            return Optional.of(new SequenceEntryPoint(settings));
         } else {
             return Optional.empty();
         }
+    }
+
+    private static Optional<EntryPoint> getUtilEntryPoint(List<String> commands) throws FinderParseException, FinderInitializeException {
+        String subcommand = commands.get(0);
+        List<String> parameters = commands.subList(1, commands.size());
+
+        switch (subcommand) {
+            case "fig": {
+                FigUtilSettingParser settingParser = new FigUtilSettingParser(parameters);
+                Optional<FigUtilSettings> settingsOptional = settingParser.parse();
+
+                if (settingsOptional.isPresent()) {
+                    FigUtilSettings settings = settingsOptional.get();
+                    return Optional.of(new FigUtilEntryPoint(settings));
+                }
+
+                break;
+            }
+            default:
+                throw new IllegalArgumentException("util: Invalid type: Use fig or seq");
+        }
+
+        return Optional.empty();
     }
 
     private static Optional<EntryPoint> getSetupEntryPoint(List<String> commands) throws FinderParseException, FinderInitializeException {
