@@ -287,5 +287,40 @@ class SequenceTetfuCaseTest {
             assertThat(log.getOutput()).contains(Messages.foundOrSolutions(5040, all));
             assertThat(log.getOutput()).contains(Messages.foundAndSolutions(2580, all));
         }
+
+        @Test
+        void case4_7p6() throws Exception {
+            // 2連パフェ OLZT
+            String fumen1 = "v115@JhA8GeE8BeA8BeI8KeXHJvhEaIJT/I0AJlBJpIJ";
+            String fumen2 = "v115@JhA8GeE8BeA8BeI8Ke0AJvhET/I6GJOHJdIJpIJ";
+
+            String command = String.format("seq -t %s %s -p *p6", fumen1, fumen2);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            int all = 5040;
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(720, all, fumen1));
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(720, all, fumen2));
+            assertThat(log.getOutput()).contains(Messages.foundOrSolutions(1440, all));
+            assertThat(log.getOutput()).contains(Messages.foundAndSolutions(0, all));
+        }
+
+        @Test
+        void lessThanRequired() throws Exception {
+            // パターンのミノ数が、必要なミノ数より少ない場合
+            // 「途中までおけたとき成功」とするユースケースが思いつかず、間違えて入力したとき判断が難しくなるので現時点では必ず失敗とする
+            String fumen1 = "v115@JhA8GeE8BeA8BeI8KeXHJvhEaIJT/I0AJlBJpIJ";
+            String fumen2 = "v115@JhA8GeE8BeA8BeI8Ke0AJvhET/I6GJOHJdIJpIJ";
+
+            String command = String.format("seq -t %s %s -p *p5", fumen1, fumen2);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            int all = 2520;
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(0, all, fumen1));
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(0, all, fumen2));
+            assertThat(log.getOutput()).contains(Messages.foundOrSolutions(0, all));
+            assertThat(log.getOutput()).contains(Messages.foundAndSolutions(0, all));
+        }
     }
 }

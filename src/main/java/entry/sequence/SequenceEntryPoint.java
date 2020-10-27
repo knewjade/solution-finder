@@ -141,13 +141,14 @@ public class SequenceEntryPoint implements EntryPoint {
         piecesList.forEach(pieces -> {
             BitSet result = new BitSet(parameterSize);
 
+            List<Piece> pieceList = pieces.blockStream().collect(Collectors.toList());
+
             for (int index = 0; index < parameterSize; index++) {
                 SequenceParameter parameter = parameters.get(index);
                 List<MinoOperationWithKey> operations = parameter.getOperationList();
                 Field field = parameter.getField();
 
                 int maxDepth = operations.size();
-                List<Piece> pieceList = pieces.blockStream().collect(Collectors.toList());
                 boolean success = settings.isUsingHold() ? BuildUp.existsValidByOrderWithHold(
                         field, operations.stream(), pieceList, height, reachable, maxDepth
                 ) : BuildUp.existsValidByOrder(
