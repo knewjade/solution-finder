@@ -1,8 +1,8 @@
-package _usecase.util.seq;
+package _usecase.sequence;
 
 import _usecase.Log;
 import _usecase.RunnerHelper;
-import _usecase.util.seq.files.OutputFileHelper;
+import _usecase.sequence.files.OutputFileHelper;
 import entry.EntryPointMain;
 import helper.CSVStore;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,13 +14,9 @@ import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class UtilSeqTetfuCaseTest {
+class SequenceTetfuCaseTest {
     @Nested
-    class FumenTest extends UtilSeqUseCaseBaseTest {
-        private String buildCommand(String fumen, String options) {
-            return String.format("spin -t %s %s", fumen, options);
-        }
-
+    class FumenTest extends SequenceUseCaseBaseTest {
         @Override
         @BeforeEach
         void setUp() throws IOException {
@@ -32,7 +28,7 @@ class UtilSeqTetfuCaseTest {
             String fumen1 = "v115@vhFRQJUGJKJJvMJTNJGBJ";
             String fumen2 = "v115@vhFRQJPGJKJJGMJTNJ0BJ";
 
-            String command = String.format("util seq -t %s %s -p *!", fumen1, fumen2);
+            String command = String.format("seq -t %s %s -p *!", fumen1, fumen2);
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -68,9 +64,8 @@ class UtilSeqTetfuCaseTest {
             String fumen1 = "v115@vhFRQJUGJKJJvMJTNJGBJ";
             String fumen2 = "v115@vhFRQJPGJKJJGMJTNJ0BJ";
 
-            String command = String.format("util seq -t %s %s -p *! --hold no", fumen1, fumen2);
+            String command = String.format("seq -t %s %s -p *! --hold no", fumen1, fumen2);
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
-            System.out.println(log.getOutput());
 
             // Log
             int all = 5040;
@@ -105,9 +100,8 @@ class UtilSeqTetfuCaseTest {
             String fumen1 = "v115@vhFRQJUGJKJJvMJTNJGBJ";
             String fumen2 = "v115@vhFRQJPGJKJJGMJTNJ0BJ";
 
-            String command = String.format("util seq -t %s %s -p *! --drop harddrop", fumen1, fumen2);
+            String command = String.format("seq -t %s %s -p *! --drop harddrop", fumen1, fumen2);
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
-            System.out.println(log.getOutput());
 
             // Log
             int all = 5040;
@@ -142,9 +136,8 @@ class UtilSeqTetfuCaseTest {
             String fumen1 = "v115@vhFRQJUGJKJJvMJTNJGBJ";
             String fumen2 = "v115@vhFRQJPGJKJJGMJTNJ0BJ";
 
-            String command = String.format("util seq -t %s %s -p *! --hold no --drop harddrop", fumen1, fumen2);
+            String command = String.format("seq -t %s %s -p *! --hold no --drop harddrop", fumen1, fumen2);
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
-            System.out.println(log.getOutput());
 
             // Log
             int all = 5040;
@@ -175,7 +168,7 @@ class UtilSeqTetfuCaseTest {
             String fumen1 = "v115@vhFRQJUGJKJJvMJTNJGBJ#1:6";
             String fumen2 = "v115@vhFRQJPGJKJJGMJTNJ0BJ#1:-1";
 
-            String command = String.format("util seq -t %s %s -p *!", fumen1, fumen2);
+            String command = String.format("seq -t %s %s -p *!", fumen1, fumen2);
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             String fumen1d = "v115@vhFRQJUGJKJJvMJTNJGBJ";
@@ -194,7 +187,7 @@ class UtilSeqTetfuCaseTest {
             String fumen1 = "v115@vhFRQJUGJKJJvMJTNJGBJ#:";
             String fumen2 = "v115@vhFRQJPGJKJJGMJTNJ0BJ#1:";
 
-            String command = String.format("util seq -t %s %s -p *!", fumen1, fumen2);
+            String command = String.format("seq -t %s %s -p *!", fumen1, fumen2);
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             String fumen1d = "v115@vhFRQJUGJKJJvMJTNJGBJ";
@@ -213,7 +206,7 @@ class UtilSeqTetfuCaseTest {
             String fumen1 = "v115@vhFRQJUGJKJJvMJTNJGBJ#";
             String fumen2 = "v115@vhFRQJPGJKJJGMJTNJ0BJ#:-1";
 
-            String command = String.format("util seq -t %s %s -p *!", fumen1, fumen2);
+            String command = String.format("seq -t %s %s -p *!", fumen1, fumen2);
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             String fumen1d = "v115@vhFRQJUGJKJJvMJTNJGBJ";
@@ -232,7 +225,7 @@ class UtilSeqTetfuCaseTest {
             String fumen1 = "v115@vhFRQJUGJKJJvMJTNJGBJ#1:5";
             String fumen2 = "v115@vhFRQJPGJKJJGMJTNJ0BJ#1:5";
 
-            String command = String.format("util seq -t %s %s -p *!", fumen1, fumen2);
+            String command = String.format("seq -t %s %s -p *!", fumen1, fumen2);
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             String fumen1d = "v115@vhFRQJUGJKJJvMJTNJGBJ";
@@ -250,7 +243,7 @@ class UtilSeqTetfuCaseTest {
         void case2() throws Exception {
             String fumen = "v115@vhGRQJWLJSBJTyIXoIVjIUUI";
 
-            String command = String.format("util seq -t %s -p *!", fumen);
+            String command = String.format("seq -t %s -p *!", fumen);
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -265,7 +258,7 @@ class UtilSeqTetfuCaseTest {
             String fumen1 = "http://fumen.zui.jp/?v115@vhGTJJSQJJHJWSJUIJXGJVBJ";
             String fumen2 = "v115@vhGJHJqMJvNJ+LJsKJVBJTJJ";
 
-            String command = String.format("util seq -t %s %s -p *!", fumen1, fumen2);
+            String command = String.format("seq -t %s %s -p *!", fumen1, fumen2);
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             String fumen1d = "v115@vhGTJJSQJJHJWSJUIJXGJVBJ";
@@ -276,6 +269,23 @@ class UtilSeqTetfuCaseTest {
             assertThat(log.getOutput()).contains(Messages.foundSolutions(3822, all, fumen2));
             assertThat(log.getOutput()).contains(Messages.foundOrSolutions(4102, all));
             assertThat(log.getOutput()).contains(Messages.foundAndSolutions(2240, all));
+        }
+
+        @Test
+        void case4() throws Exception {
+            // 2連パフェ OLZT
+            String fumen1 = "v115@JhA8GeE8BeA8BeI8KeXHJvhEaIJT/I0AJlBJpIJ";
+            String fumen2 = "v115@JhA8GeE8BeA8BeI8Ke0AJvhET/I6GJOHJdIJpIJ";
+
+            String command = String.format("seq -t %s %s -p *!", fumen1, fumen2);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            int all = 5040;
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(3840, all, fumen1));
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(3780, all, fumen2));
+            assertThat(log.getOutput()).contains(Messages.foundOrSolutions(5040, all));
+            assertThat(log.getOutput()).contains(Messages.foundAndSolutions(2580, all));
         }
     }
 }

@@ -1,4 +1,4 @@
-package entry.util.seq;
+package entry.sequence;
 
 import common.datastore.MinoOperationWithKey;
 import common.datastore.Operations;
@@ -18,6 +18,7 @@ import entry.CommandLineWrapper;
 import entry.common.Loader;
 import entry.common.SettingParser;
 import entry.path.PathOptions;
+import entry.ren.RenOptions;
 import exceptions.FinderParseException;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Options;
@@ -34,19 +35,19 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class SeqUtilSettingParser extends SettingParser<SeqUtilSettings> {
+public class SequenceSettingParser extends SettingParser<SequenceSettings> {
     private static final String CHARSET_NAME = "utf-8";
     private static final String DEFAULT_PATTERNS_TXT = "input/patterns.txt";
     private static final String DEFAULT_FIELD_TXT = "input/field.txt";
     private static final String PATTERN_DELIMITER = ";";
 
-    public SeqUtilSettingParser(Options options, CommandLineParser parser) {
+    public SequenceSettingParser(Options options, CommandLineParser parser) {
         super(options, parser);
     }
 
     @Override
-    protected Optional<SeqUtilSettings> parse(CommandLineWrapper wrapper) throws FinderParseException {
-        SeqUtilSettings settings = new SeqUtilSettings();
+    protected Optional<SequenceSettings> parse(CommandLineWrapper wrapper) throws FinderParseException {
+        SequenceSettings settings = new SequenceSettings();
 
         MinoFactory minoFactory = new MinoFactory();
         ColorConverter colorConverter = new ColorConverter();
@@ -54,8 +55,8 @@ public class SeqUtilSettingParser extends SettingParser<SeqUtilSettings> {
         // テト譜の読み込み
         List<String> fumens = loadFumenData(
                 wrapper,
-                SeqUtilOptions.Fumen.optName(),
-                SeqUtilOptions.FieldPath.optName(),
+                SequenceOptions.Fumen.optName(),
+                SequenceOptions.FieldPath.optName(),
                 DEFAULT_FIELD_TXT,
                 Charset.forName(CHARSET_NAME)
         ).stream()
@@ -68,11 +69,11 @@ public class SeqUtilSettingParser extends SettingParser<SeqUtilSettings> {
             throw new FinderParseException("Cannot load fumen" + fumens);
         }
 
-        ArrayList<SeqUtilParameter> parameters = new ArrayList<>();
+        ArrayList<SequenceParameter> parameters = new ArrayList<>();
 
         for (String input : fumens) {
-            int start = wrapper.getIntegerOption(SeqUtilOptions.StartPage.optName()).orElse(1);
-            int end = wrapper.getIntegerOption(SeqUtilOptions.EndPage.optName()).orElse(-1);
+            int start = 1;
+            int end = -1;
 
             String data = input;
 
@@ -135,7 +136,7 @@ public class SeqUtilSettingParser extends SettingParser<SeqUtilSettings> {
                     field, new Operations(operationList), minoFactory, height
             );
 
-            parameters.add(new SeqUtilParameter(input, data, field, operationsWithKey, start, end));
+            parameters.add(new SequenceParameter(input, data, field, operationsWithKey, start, end));
         }
 
         settings.setParameters(parameters);
@@ -143,16 +144,16 @@ public class SeqUtilSettingParser extends SettingParser<SeqUtilSettings> {
         // パターンの読み込み
         List<String> patterns = Loader.loadPatterns(
                 wrapper,
-                PathOptions.Patterns.optName(),
+                SequenceOptions.Patterns.optName(),
                 PATTERN_DELIMITER,
-                PathOptions.PatternsPath.optName(),
+                SequenceOptions.PatternsPath.optName(),
                 DEFAULT_PATTERNS_TXT,
                 Charset.forName(CHARSET_NAME)
         );
         settings.setPatterns(patterns);
 
         // ドロップの設定
-        Optional<String> dropType = wrapper.getStringOption(SeqUtilOptions.Drop.optName());
+        Optional<String> dropType = wrapper.getStringOption(SequenceOptions.Drop.optName());
         try {
             dropType.ifPresent(type -> {
                 String key = dropType.orElse("softdrop");
@@ -167,15 +168,15 @@ public class SeqUtilSettingParser extends SettingParser<SeqUtilSettings> {
         }
 
         // ホールドの設定
-        Optional<Boolean> isUsingHold = wrapper.getBoolOption(SeqUtilOptions.Hold.optName());
+        Optional<Boolean> isUsingHold = wrapper.getBoolOption(SequenceOptions.Hold.optName());
         isUsingHold.ifPresent(settings::setUsingHold);
 
         // ログファイルの設定
-        Optional<String> logFilePath = wrapper.getStringOption(SeqUtilOptions.LogPath.optName());
+        Optional<String> logFilePath = wrapper.getStringOption(SequenceOptions.LogPath.optName());
         logFilePath.ifPresent(settings::setLogFilePath);
 
         // アウトプットファイルの設定
-        Optional<String> outputBaseFilePath = wrapper.getStringOption(SeqUtilOptions.OutputBase.optName());
+        Optional<String> outputBaseFilePath = wrapper.getStringOption(SequenceOptions.OutputBase.optName());
         outputBaseFilePath.ifPresent(settings::setOutputBaseFilePath);
 
         return Optional.of(settings);

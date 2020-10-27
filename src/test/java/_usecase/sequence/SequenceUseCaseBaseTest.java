@@ -1,11 +1,11 @@
-package _usecase.util.seq;
+package _usecase.sequence;
 
 import _usecase.ConfigFileHelper;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.IOException;
 
-abstract class UtilSeqUseCaseBaseTest {
+abstract class SequenceUseCaseBaseTest {
     @BeforeEach
     void setUp() throws IOException {
         ConfigFileHelper.deleteFieldFile();

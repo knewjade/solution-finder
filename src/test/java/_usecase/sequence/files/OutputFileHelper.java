@@ -1,4 +1,4 @@
-package _usecase.util.seq.files;
+package _usecase.sequence.files;
 
 import _usecase.FileHelper;
 import helper.CSVStore;

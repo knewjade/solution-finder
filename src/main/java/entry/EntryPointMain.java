@@ -17,6 +17,10 @@ import entry.ren.RenEntryPoint;
 import entry.ren.RenOptions;
 import entry.ren.RenSettingParser;
 import entry.ren.RenSettings;
+import entry.sequence.SequenceEntryPoint;
+import entry.sequence.SequenceOptions;
+import entry.sequence.SequenceSettingParser;
+import entry.sequence.SequenceSettings;
 import entry.setup.SetupEntryPoint;
 import entry.setup.SetupOptions;
 import entry.setup.SetupSettingParser;
@@ -28,10 +32,6 @@ import entry.spin.SpinSettings;
 import entry.util.fig.FigUtilEntryPoint;
 import entry.util.fig.FigUtilSettingParser;
 import entry.util.fig.FigUtilSettings;
-import entry.util.seq.SeqUtilEntryPoint;
-import entry.util.seq.SeqUtilOptions;
-import entry.util.seq.SeqUtilSettingParser;
-import entry.util.seq.SeqUtilSettings;
 import exceptions.FinderInitializeException;
 import exceptions.FinderParseException;
 import org.apache.commons.cli.CommandLineParser;
@@ -208,6 +208,9 @@ public class EntryPointMain {
             case "ren":
             case "combo":
                 return getRenEntryPoint(commands);
+            case "seq":
+            case "sequence":
+                return getSequenceEntryPoint(commands);
             case "dev":
                 return getDevEntryPoint(commands);
             case "spin":
@@ -243,6 +246,21 @@ public class EntryPointMain {
         }
     }
 
+    private static Optional<EntryPoint> getSequenceEntryPoint(
+            List<String> commands
+    ) throws FinderInitializeException, FinderParseException {
+        Options options = SequenceOptions.create();
+        CommandLineParser parser = new DefaultParser();
+        SequenceSettingParser settingParser = new SequenceSettingParser(options, parser);
+        Optional<SequenceSettings> settingsOptional = settingParser.parse(commands);
+        if (settingsOptional.isPresent()) {
+            SequenceSettings settings = settingsOptional.get();
+            return Optional.of(new SequenceEntryPoint(settings));
+        } else {
+            return Optional.empty();
+        }
+    }
+
     private static Optional<EntryPoint> getUtilEntryPoint(List<String> commands) throws FinderParseException, FinderInitializeException {
         String subcommand = commands.get(0);
         List<String> parameters = commands.subList(1, commands.size());
@@ -255,20 +273,6 @@ public class EntryPointMain {
                 if (settingsOptional.isPresent()) {
                     FigUtilSettings settings = settingsOptional.get();
                     return Optional.of(new FigUtilEntryPoint(settings));
-                }
-
-                break;
-            }
-            case "seq": {
-                Options options = SeqUtilOptions.create();
-                CommandLineParser parser = new DefaultParser();
-
-                SeqUtilSettingParser settingParser = new SeqUtilSettingParser(options, parser);
-                Optional<SeqUtilSettings> settingsOptional = settingParser.parse(parameters);
-
-                if (settingsOptional.isPresent()) {
-                    SeqUtilSettings settings = settingsOptional.get();
-                    return Optional.of(new SeqUtilEntryPoint(settings));
                 }
 
                 break;

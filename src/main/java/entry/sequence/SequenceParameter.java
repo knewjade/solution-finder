@@ -1,4 +1,4 @@
-package entry.util.seq;
+package entry.sequence;
 
 import common.datastore.MinoOperationWithKey;
 import core.field.Field;
@@ -6,7 +6,7 @@ import core.field.Field;
 import java.util.Collections;
 import java.util.List;
 
-public class SeqUtilParameter {
+public class SequenceParameter {
     private final String input;
     private final String data;
     private final Field field;
@@ -14,7 +14,7 @@ public class SeqUtilParameter {
     private final int start;
     private final int end;
 
-    SeqUtilParameter(
+    SequenceParameter(
             String input, String data, Field field, List<MinoOperationWithKey> operationList, int start, int end
     ) {
         this.input = input;
