@@ -445,7 +445,8 @@ public class SetupEntryPoint implements EntryPoint {
         if (isCombination)
             return new CombinationFunctions();
 
-        ReducePatternGenerator reduce = new ReducePatternGenerator(generator, maxDepth);
+        int depth = maxDepth + (isUsingHold ? 1 : 0);
+        ReducePatternGenerator reduce = new ReducePatternGenerator(generator, Math.min(generator.getDepth(), depth));
         ValidPiecesPool piecesPool = new ValidPiecesPool(reduce, maxDepth, isUsingHold);
         return new OrderFunctions(buildUpStreamThreadLocal, piecesPool, initField);
     }
