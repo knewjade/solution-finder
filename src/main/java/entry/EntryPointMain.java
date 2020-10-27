@@ -17,10 +17,10 @@ import entry.ren.RenEntryPoint;
 import entry.ren.RenOptions;
 import entry.ren.RenSettingParser;
 import entry.ren.RenSettings;
-import entry.sequence.SequenceEntryPoint;
-import entry.sequence.SequenceOptions;
-import entry.sequence.SequenceSettingParser;
-import entry.sequence.SequenceSettings;
+import entry.cover.CoverEntryPoint;
+import entry.cover.CoverOptions;
+import entry.cover.CoverSettingParser;
+import entry.cover.CoverSettings;
 import entry.setup.SetupEntryPoint;
 import entry.setup.SetupOptions;
 import entry.setup.SetupSettingParser;
@@ -53,6 +53,7 @@ public class EntryPointMain {
             "combo",
             "move",
             "spin",
+            "cover",
             "util fig",
     };
 
@@ -208,9 +209,8 @@ public class EntryPointMain {
             case "ren":
             case "combo":
                 return getRenEntryPoint(commands);
-            case "seq":
-            case "sequence":
-                return getSequenceEntryPoint(commands);
+            case "cover":
+                return getCoverEntryPoint(commands);
             case "dev":
                 return getDevEntryPoint(commands);
             case "spin":
@@ -246,16 +246,16 @@ public class EntryPointMain {
         }
     }
 
-    private static Optional<EntryPoint> getSequenceEntryPoint(
+    private static Optional<EntryPoint> getCoverEntryPoint(
             List<String> commands
     ) throws FinderInitializeException, FinderParseException {
-        Options options = SequenceOptions.create();
+        Options options = CoverOptions.create();
         CommandLineParser parser = new DefaultParser();
-        SequenceSettingParser settingParser = new SequenceSettingParser(options, parser);
-        Optional<SequenceSettings> settingsOptional = settingParser.parse(commands);
+        CoverSettingParser settingParser = new CoverSettingParser(options, parser);
+        Optional<CoverSettings> settingsOptional = settingParser.parse(commands);
         if (settingsOptional.isPresent()) {
-            SequenceSettings settings = settingsOptional.get();
-            return Optional.of(new SequenceEntryPoint(settings));
+            CoverSettings settings = settingsOptional.get();
+            return Optional.of(new CoverEntryPoint(settings));
         } else {
             return Optional.empty();
         }

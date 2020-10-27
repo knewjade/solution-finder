@@ -1,4 +1,4 @@
-package entry.sequence;
+package entry.cover;
 
 import common.SyntaxException;
 import common.buildup.BuildUp;
@@ -41,13 +41,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class SequenceEntryPoint implements EntryPoint {
+public class CoverEntryPoint implements EntryPoint {
     private static final String LINE_SEPARATOR = System.lineSeparator();
 
-    private final SequenceSettings settings;
+    private final CoverSettings settings;
     private final BufferedWriter logWriter;
 
-    public SequenceEntryPoint(SequenceSettings settings) throws FinderInitializeException {
+    public CoverEntryPoint(CoverSettings settings) throws FinderInitializeException {
         this.settings = settings;
 
         // ログファイルの出力先を整備
@@ -70,11 +70,11 @@ public class SequenceEntryPoint implements EntryPoint {
 
         ColorConverter colorConverter = new ColorConverter();
 
-        List<SequenceParameter> parameters = settings.getParameters();
+        List<CoverParameter> parameters = settings.getParameters();
 
         output("# Setup Field");
 
-        for (SequenceParameter parameter : parameters) {
+        for (CoverParameter parameter : parameters) {
             // Setup field
             Field field = parameter.getField();
             Verify.field(field);
@@ -144,7 +144,7 @@ public class SequenceEntryPoint implements EntryPoint {
             List<Piece> pieceList = pieces.blockStream().collect(Collectors.toList());
 
             for (int index = 0; index < parameterSize; index++) {
-                SequenceParameter parameter = parameters.get(index);
+                CoverParameter parameter = parameters.get(index);
                 List<MinoOperationWithKey> operations = parameter.getOperationList();
                 Field field = parameter.getField();
 
@@ -210,7 +210,7 @@ public class SequenceEntryPoint implements EntryPoint {
         int all = piecesList.size();
         for (int index = 0; index < successCounters.size(); index++) {
             AtomicInteger counter = successCounters.get(index);
-            SequenceParameter parameter = parameters.get(index);
+            CoverParameter parameter = parameters.get(index);
 
             int success = counter.get();
             output(String.format("%.2f %% [%d/%d]: http://fumen.zui.jp/?v115@%s#%d:%d",
@@ -238,7 +238,7 @@ public class SequenceEntryPoint implements EntryPoint {
             // Header
             bw.write("sequence,");
             bw.write(
-                    parameters.stream().map(SequenceParameter::getData).collect(Collectors.joining(","))
+                    parameters.stream().map(CoverParameter::getData).collect(Collectors.joining(","))
             );
             bw.newLine();
 

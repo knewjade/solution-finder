@@ -1,8 +1,6 @@
 ============================================================
-コマンド: sequence
+コマンド: cover
 ============================================================
-
-Alias command: seq
 
 概要
 ============================================================
@@ -16,7 +14,7 @@ Alias command: seq
 基本コマンド
 ============================================================
 
-``java -jar sfinder.jar sequence --tetfu v115@vhFRQJUGJKJJvMJTNJGBJ v115@vhFRQJPGJKJJGMJTNJ0BJ --patterns *p7``
+``java -jar sfinder.jar cover --tetfu v115@vhFRQJUGJKJJvMJTNJGBJ v115@vhFRQJPGJKJJGMJTNJ0BJ --patterns *p7``
 
 
 入力フォーマット
@@ -174,7 +172,7 @@ v115のテト譜データにのみ対応。
 * harddrop: ハードドロップのみ
 
 
-``-o``, ``--output-base`` [default: output/seq.csv]
+``-o``, ``--output-base`` [default: output/cover.csv]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 出力結果を保存するファイルのパスを指定する。

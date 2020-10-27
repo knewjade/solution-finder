@@ -1,4 +1,4 @@
-package _usecase.sequence;
+package _usecase.cover;
 
 class Messages {
     static String foundSolutions(int count, int all, String data) {

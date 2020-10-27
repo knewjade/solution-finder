@@ -1,4 +1,4 @@
-package entry.sequence;
+package entry.cover;
 
 import entry.common.option.ListArgOption;
 import entry.common.option.NoArgOption;
@@ -7,7 +7,7 @@ import entry.common.option.SingleArgOption;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
-public enum SequenceOptions {
+public enum CoverOptions {
     Help(NoArgOption.full("h", "help", "Usage")),
     Fumen(ListArgOption.fullSpace("t", "tetfu", "v115@~", "Specify tetfu data for s-finder settings")),
     Patterns(SingleArgOption.full("p", "patterns", "definition", "Specify pattern definition, directly")),
@@ -20,7 +20,7 @@ public enum SequenceOptions {
 
     private final OptionBuilder optionBuilder;
 
-    SequenceOptions(OptionBuilder optionBuilder) {
+    CoverOptions(OptionBuilder optionBuilder) {
         this.optionBuilder = optionBuilder;
     }
 
@@ -31,7 +31,7 @@ public enum SequenceOptions {
     public static Options create() {
         Options allOptions = new Options();
 
-        for (SequenceOptions options : SequenceOptions.values()) {
+        for (CoverOptions options : CoverOptions.values()) {
             Option option = options.optionBuilder.toOption();
             allOptions.addOption(option);
         }

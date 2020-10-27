@@ -1,4 +1,4 @@
-package entry.sequence;
+package entry.cover;
 
 import common.datastore.MinoOperationWithKey;
 import common.datastore.Operations;
@@ -17,8 +17,6 @@ import core.mino.Piece;
 import entry.CommandLineWrapper;
 import entry.common.Loader;
 import entry.common.SettingParser;
-import entry.path.PathOptions;
-import entry.ren.RenOptions;
 import exceptions.FinderParseException;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Options;
@@ -35,19 +33,19 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class SequenceSettingParser extends SettingParser<SequenceSettings> {
+public class CoverSettingParser extends SettingParser<CoverSettings> {
     private static final String CHARSET_NAME = "utf-8";
     private static final String DEFAULT_PATTERNS_TXT = "input/patterns.txt";
     private static final String DEFAULT_FIELD_TXT = "input/field.txt";
     private static final String PATTERN_DELIMITER = ";";
 
-    public SequenceSettingParser(Options options, CommandLineParser parser) {
+    public CoverSettingParser(Options options, CommandLineParser parser) {
         super(options, parser);
     }
 
     @Override
-    protected Optional<SequenceSettings> parse(CommandLineWrapper wrapper) throws FinderParseException {
-        SequenceSettings settings = new SequenceSettings();
+    protected Optional<CoverSettings> parse(CommandLineWrapper wrapper) throws FinderParseException {
+        CoverSettings settings = new CoverSettings();
 
         MinoFactory minoFactory = new MinoFactory();
         ColorConverter colorConverter = new ColorConverter();
@@ -55,8 +53,8 @@ public class SequenceSettingParser extends SettingParser<SequenceSettings> {
         // テト譜の読み込み
         List<String> fumens = loadFumenData(
                 wrapper,
-                SequenceOptions.Fumen.optName(),
-                SequenceOptions.FieldPath.optName(),
+                CoverOptions.Fumen.optName(),
+                CoverOptions.FieldPath.optName(),
                 DEFAULT_FIELD_TXT,
                 Charset.forName(CHARSET_NAME)
         ).stream()
@@ -69,7 +67,7 @@ public class SequenceSettingParser extends SettingParser<SequenceSettings> {
             throw new FinderParseException("Cannot load fumen" + fumens);
         }
 
-        ArrayList<SequenceParameter> parameters = new ArrayList<>();
+        ArrayList<CoverParameter> parameters = new ArrayList<>();
 
         for (String input : fumens) {
             int start = 1;
@@ -136,7 +134,7 @@ public class SequenceSettingParser extends SettingParser<SequenceSettings> {
                     field, new Operations(operationList), minoFactory, height
             );
 
-            parameters.add(new SequenceParameter(input, data, field, operationsWithKey, start, end));
+            parameters.add(new CoverParameter(input, data, field, operationsWithKey, start, end));
         }
 
         settings.setParameters(parameters);
@@ -144,16 +142,16 @@ public class SequenceSettingParser extends SettingParser<SequenceSettings> {
         // パターンの読み込み
         List<String> patterns = Loader.loadPatterns(
                 wrapper,
-                SequenceOptions.Patterns.optName(),
+                CoverOptions.Patterns.optName(),
                 PATTERN_DELIMITER,
-                SequenceOptions.PatternsPath.optName(),
+                CoverOptions.PatternsPath.optName(),
                 DEFAULT_PATTERNS_TXT,
                 Charset.forName(CHARSET_NAME)
         );
         settings.setPatterns(patterns);
 
         // ドロップの設定
-        Optional<String> dropType = wrapper.getStringOption(SequenceOptions.Drop.optName());
+        Optional<String> dropType = wrapper.getStringOption(CoverOptions.Drop.optName());
         try {
             dropType.ifPresent(type -> {
                 String key = dropType.orElse("softdrop");
@@ -168,15 +166,15 @@ public class SequenceSettingParser extends SettingParser<SequenceSettings> {
         }
 
         // ホールドの設定
-        Optional<Boolean> isUsingHold = wrapper.getBoolOption(SequenceOptions.Hold.optName());
+        Optional<Boolean> isUsingHold = wrapper.getBoolOption(CoverOptions.Hold.optName());
         isUsingHold.ifPresent(settings::setUsingHold);
 
         // ログファイルの設定
-        Optional<String> logFilePath = wrapper.getStringOption(SequenceOptions.LogPath.optName());
+        Optional<String> logFilePath = wrapper.getStringOption(CoverOptions.LogPath.optName());
         logFilePath.ifPresent(settings::setLogFilePath);
 
         // アウトプットファイルの設定
-        Optional<String> outputBaseFilePath = wrapper.getStringOption(SequenceOptions.OutputBase.optName());
+        Optional<String> outputBaseFilePath = wrapper.getStringOption(CoverOptions.OutputBase.optName());
         outputBaseFilePath.ifPresent(settings::setOutputBaseFilePath);
 
         return Optional.of(settings);

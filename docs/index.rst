@@ -37,7 +37,7 @@ solution-finderは、探索ツールとして次の特徴を持っています�
 
 * spin: ある地形からTスピンできる手順を列挙する
 
-* sequence: 指定したミノの置き場所通りに置くことができるミノ順をすべて列挙する
+* cover: 指定したミノの置き場所通りに置くことができるミノ順をすべて列挙する
 
 * util: solution-finderの機能を補助するユーティリティ
    - fig: テト譜をもとに画像を生成
@@ -107,7 +107,7 @@ solution-finderを操作しやすくするGUIを `@kitsune_fuchi (twitter) <http
    contents/setup/main
    contents/ren/main
    contents/spin/main
-   contents/sequence/main
+   contents/cover/main
    contents/util/main
    contents/caution
    contents/contact

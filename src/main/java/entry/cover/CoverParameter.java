@@ -1,4 +1,4 @@
-package entry.sequence;
+package entry.cover;
 
 import common.datastore.MinoOperationWithKey;
 import core.field.Field;
@@ -6,7 +6,7 @@ import core.field.Field;
 import java.util.Collections;
 import java.util.List;
 
-public class SequenceParameter {
+public class CoverParameter {
     private final String input;
     private final String data;
     private final Field field;
@@ -14,7 +14,7 @@ public class SequenceParameter {
     private final int start;
     private final int end;
 
-    SequenceParameter(
+    CoverParameter(
             String input, String data, Field field, List<MinoOperationWithKey> operationList, int start, int end
     ) {
         this.input = input;
