@@ -8,7 +8,7 @@ import java.util.List;
 
 public class CoverSettings {
     private static final String DEFAULT_LOG_FILE_PATH = "output/last_output.txt";
-    private static final String DEFAULT_OUTPUT_BASE_FILE_PATH = "output/seq.csv";
+    private static final String DEFAULT_OUTPUT_BASE_FILE_PATH = "output/cover.csv";
 
     private String logFilePath = DEFAULT_LOG_FILE_PATH;
     private String outputBaseFilePath = DEFAULT_OUTPUT_BASE_FILE_PATH;
