@@ -76,19 +76,17 @@ public class SeqUtilSettingParser extends SettingParser<SeqUtilSettings> {
 
             String data = input;
 
-            if (data.contains("#")) {
-                String[] dataPage = data.split("#");
-                data = dataPage[0];
+            String[] dataPage = data.split("#");
+            data = dataPage[0];
 
-                if (dataPage[1].contains(":")) {
-                    String[] startEnd = dataPage[1].split(":");
-                    if (!startEnd[0].isEmpty()) {
-                        start = Integer.parseInt(startEnd[0]);
-                    }
+            if (2 <= dataPage.length) {
+                String[] startEnd = dataPage[1].split(":");
+                if (0 < startEnd.length && !startEnd[0].isEmpty()) {
+                    start = Integer.parseInt(startEnd[0]);
+                }
 
-                    if (!startEnd[1].isEmpty()) {
-                        end = Integer.parseInt(startEnd[1]);
-                    }
+                if (1 < startEnd.length && !startEnd[1].isEmpty()) {
+                    end = Integer.parseInt(startEnd[1]);
                 }
             }
 
@@ -137,7 +135,7 @@ public class SeqUtilSettingParser extends SettingParser<SeqUtilSettings> {
                     field, new Operations(operationList), minoFactory, height
             );
 
-            parameters.add(new SeqUtilParameter(input, data, field, operationsWithKey));
+            parameters.add(new SeqUtilParameter(input, data, field, operationsWithKey, start, end));
         }
 
         settings.setParameters(parameters);
@@ -167,6 +165,10 @@ public class SeqUtilSettingParser extends SettingParser<SeqUtilSettings> {
         } catch (Exception e) {
             throw new FinderParseException("Unsupported format: format=" + dropType.orElse("<empty>"));
         }
+
+        // ホールドの設定
+        Optional<Boolean> isUsingHold = wrapper.getBoolOption(SeqUtilOptions.Hold.optName());
+        isUsingHold.ifPresent(settings::setUsingHold);
 
         // ログファイルの設定
         Optional<String> logFilePath = wrapper.getStringOption(SeqUtilOptions.LogPath.optName());

@@ -15,8 +15,13 @@ public class SeqUtilSettings {
     private List<String> patterns = Collections.emptyList();
     private List<SeqUtilParameter> parameters;
     private DropType dropType = DropType.Softdrop;
+    private boolean isUsingHold = true;
 
     // ********* Getter ************
+    boolean isUsingHold() {
+        return isUsingHold;
+    }
+
     List<SeqUtilParameter> getParameters() {
         return parameters;
     }
@@ -29,7 +34,7 @@ public class SeqUtilSettings {
         return logFilePath;
     }
 
-    public String getOutputBaseFilePath() {
+    String getOutputBaseFilePath() {
         return outputBaseFilePath;
     }
 
@@ -38,6 +43,10 @@ public class SeqUtilSettings {
     }
 
     // ********* Setter ************
+    void setUsingHold(Boolean isUsingHold) {
+        this.isUsingHold = isUsingHold;
+    }
+
     void setLogFilePath(String path) {
         this.logFilePath = path;
     }

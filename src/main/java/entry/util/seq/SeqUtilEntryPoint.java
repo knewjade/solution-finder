@@ -64,14 +64,6 @@ public class SeqUtilEntryPoint implements EntryPoint {
         }
     }
 
-    // TODO OK ページ指定
-    // TODO OK Harddrop only, Hold nouse
-    // TODO OK 実行時間
-    // TODO OK パターン数の表示
-    // TODO マニュアルにコマンドの実行方法リンクを追加
-    // TODO マニュアルにコマンド追加
-    // TODO unittest
-    // TODO util figのテスト実行
     @Override
     public void run() throws FinderException {
         int height = 24;
@@ -103,6 +95,9 @@ public class SeqUtilEntryPoint implements EntryPoint {
             output(String.format("[%s]", parameter.getInput()));
             output(ColoredFieldView.toStringWithType(coloredField, Math.min(coloredField.getUsingHeight() + 1, height)));
         }
+
+        output("Using hold: " + (settings.isUsingHold() ? "use" : "avoid"));
+        output("Drop: " + settings.getDropType().name().toLowerCase());
 
         // ========================================
         output("Searching patterns:");
@@ -153,7 +148,9 @@ public class SeqUtilEntryPoint implements EntryPoint {
 
                 int maxDepth = operations.size();
                 List<Piece> pieceList = pieces.blockStream().collect(Collectors.toList());
-                boolean success = BuildUp.existsValidByOrderWithHold(
+                boolean success = settings.isUsingHold() ? BuildUp.existsValidByOrderWithHold(
+                        field, operations.stream(), pieceList, height, reachable, maxDepth
+                ) : BuildUp.existsValidByOrder(
                         field, operations.stream(), pieceList, height, reachable, maxDepth
                 );
 
@@ -207,23 +204,27 @@ public class SeqUtilEntryPoint implements EntryPoint {
 
         output("# Output");
 
-        int all = piecesList.size();
-        for (int j = 0; j < successCounters.size(); j++) {
-            AtomicInteger counter = successCounters.get(j);
-            SeqUtilParameter parameter = parameters.get(j);
+        output("success:");
 
-            int i = counter.get();
-            output(String.format("%.2f %% [%d/%d]: http://fumen.zui.jp/?v115@%s", i * 100.0 / all, i, all, parameter.getData()));
+        int all = piecesList.size();
+        for (int index = 0; index < successCounters.size(); index++) {
+            AtomicInteger counter = successCounters.get(index);
+            SeqUtilParameter parameter = parameters.get(index);
+
+            int success = counter.get();
+            output(String.format("%.2f %% [%d/%d]: http://fumen.zui.jp/?v115@%s#%d:%d",
+                    success * 100.0 / all, success, all, parameter.getData(), parameter.getStart(), parameter.getEnd()
+            ));
         }
 
         output(">>>");
         {
             int i = orCounter.get();
-            output(String.format("  OR  = %.2f %% [%d/%d]", i * 100.0 / all, i, all));
+            output(String.format("OR  = %.2f %% [%d/%d]", i * 100.0 / all, i, all));
         }
         {
             int i = andCounter.get();
-            output(String.format("  AND = %.2f %% [%d/%d]", i * 100.0 / all, i, all));
+            output(String.format("AND = %.2f %% [%d/%d]", i * 100.0 / all, i, all));
         }
 
         // ========================================

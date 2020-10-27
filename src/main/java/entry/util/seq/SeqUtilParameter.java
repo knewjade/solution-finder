@@ -11,12 +11,18 @@ public class SeqUtilParameter {
     private final String data;
     private final Field field;
     private final List<MinoOperationWithKey> operationList;
+    private final int start;
+    private final int end;
 
-    SeqUtilParameter(String input, String data, Field field, List<MinoOperationWithKey> operationList) {
+    SeqUtilParameter(
+            String input, String data, Field field, List<MinoOperationWithKey> operationList, int start, int end
+    ) {
         this.input = input;
         this.data = data;
         this.field = field;
         this.operationList = operationList;
+        this.start = start;
+        this.end = end;
     }
 
     String getInput() {
@@ -33,5 +39,13 @@ public class SeqUtilParameter {
 
     List<MinoOperationWithKey> getOperationList() {
         return Collections.unmodifiableList(operationList);
+    }
+
+    int getStart() {
+        return start;
+    }
+
+    int getEnd() {
+        return end;
     }
 }
