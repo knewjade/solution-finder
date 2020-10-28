@@ -31,6 +31,10 @@ public class SpinChecker {
     public Optional<Spin> check(Field field, Operation operation, int fieldHeight, int clearedLine) {
         Rotate rotate = operation.getRotate();
 
+        if (!SpinCommons.canTSpin(field, operation.getX(), operation.getY())) {
+            return Optional.empty();
+        }
+
         // 優先度の高いスピンを探索
         Spin maxSpin = null;
         int maxPriority = -1;

@@ -1,4 +1,4 @@
-package common.buildup;
+package common.cover;
 
 import common.SpinChecker;
 import common.datastore.MinoOperationWithKey;
@@ -13,6 +13,7 @@ import core.mino.Piece;
 import core.srs.MinoRotation;
 import core.srs.MinoRotationDetail;
 import searcher.spins.spin.Spin;
+import searcher.spins.spin.TSpins;
 
 import java.util.EnumMap;
 import java.util.LinkedList;
@@ -20,10 +21,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class AnyTSpinCover implements Cover {
+public class RegularTSpinCover implements Cover {
     private final SpinChecker spinChecker;
+    private final int requiredTSpinLine;
 
-    public AnyTSpinCover() {
+    public RegularTSpinCover(int requiredTSpinLine) {
         int maxY = 24;
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
@@ -31,14 +33,16 @@ public class AnyTSpinCover implements Cover {
         MinoRotationDetail minoRotationDetail = new MinoRotationDetail(minoFactory, minoRotation);
         LockedReachable lockedReachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
         this.spinChecker = new SpinChecker(minoFactory, minoRotationDetail, lockedReachable);
+        this.requiredTSpinLine = requiredTSpinLine;
     }
 
-    public AnyTSpinCover(MinoFactory minoFactory, MinoRotationDetail minoRotationDetail, LockedReachable lockedReachable) {
+    public RegularTSpinCover(MinoFactory minoFactory, MinoRotationDetail minoRotationDetail, LockedReachable lockedReachable, int requiredTSpinLine) {
         this.spinChecker = new SpinChecker(minoFactory, minoRotationDetail, lockedReachable);
+        this.requiredTSpinLine = requiredTSpinLine;
     }
 
     @Override
-    public boolean existsValidByOrder(Field field, Stream<? extends MinoOperationWithKey> operations, List<Piece> pieces, int height, Reachable reachable, int maxDepth) {
+    public boolean canBuild(Field field, Stream<? extends MinoOperationWithKey> operations, List<Piece> pieces, int height, Reachable reachable, int maxDepth) {
         if (pieces.size() < maxDepth) {
             return false;
         }
@@ -72,30 +76,40 @@ public class AnyTSpinCover implements Cover {
                 int originalY = key.getY();
                 int deletedLines = Long.bitCount(KeyOperators.getMaskForKeyBelowY(originalY) & deleteKey);
 
-                boolean newSatisfied = satisfied;
-
-                if (0 < deletedLines && key.getPiece() == Piece.T) {
-                    // Tでラインが消去された
-                    Optional<Spin> spinOptional = spinChecker.check(field, key, height, deletedLines);
-                    if (spinOptional.isPresent()) {
-                        newSatisfied = true;
-                    }
-
-                    if (!newSatisfied) {
-                        // まだ条件を満たしていない
-                        if (eachBlocks.get(Piece.T).isEmpty()) {
-                            // Tミノが残っていない
-                            operationWithKeys.add(index, key);
-                            continue;
-                        }
-                    }
-                }
-
                 Mino mino = key.getMino();
                 int x = key.getX();
                 int y = originalY - deletedLines;
 
                 if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY())) {
+                    boolean newSatisfied = satisfied;
+
+                    {
+                        Field freeze = field.freeze(height);
+                        freeze.put(mino, x, y);
+                        int currentDeletedLines = freeze.clearLine();
+
+                        if (0 < currentDeletedLines && key.getPiece() == Piece.T) {
+                            // Tでラインが消去された
+                            Optional<Spin> spinOptional = spinChecker.check(field, key, height, currentDeletedLines);
+                            if (spinOptional.isPresent()) {
+                                Spin spin = spinOptional.get();
+                                if (spin.getSpin() == TSpins.Regular && requiredTSpinLine <= spin.getClearedLine()) {
+                                    newSatisfied = true;
+                                }
+                            }
+
+                            if (!newSatisfied) {
+                                // まだ条件を満たしていない
+                                LinkedList<MinoOperationWithKey> ts = eachBlocks.get(Piece.T);
+                                if (ts != null && ts.isEmpty()) {
+                                    // Tミノが残っていない
+                                    operationWithKeys.add(index, key);
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+
                     if (maxDepth == depth + 1) {
                         if (newSatisfied) {
                             return true;
@@ -123,7 +137,7 @@ public class AnyTSpinCover implements Cover {
     }
 
     @Override
-    public boolean existsValidByOrderWithHold(Field field, Stream<MinoOperationWithKey> operations, List<Piece> pieces, int height, Reachable reachable, int maxDepth) {
+    public boolean canBuildWithHold(Field field, Stream<MinoOperationWithKey> operations, List<Piece> pieces, int height, Reachable reachable, int maxDepth) {
         if (pieces.size() < maxDepth) {
             return false;
         }
@@ -173,31 +187,41 @@ public class AnyTSpinCover implements Cover {
             int originalY = key.getY();
             int deletedLines = Long.bitCount(KeyOperators.getMaskForKeyBelowY(originalY) & deleteKey);
 
-            boolean newSatisfied = satisfied;
-
-            if (0 < deletedLines && key.getPiece() == Piece.T) {
-                // Tでラインが消去された
-                Optional<Spin> spinOptional = spinChecker.check(field, key, height, deletedLines);
-                if (spinOptional.isPresent()) {
-                    newSatisfied = true;
-                }
-
-                if (!newSatisfied) {
-                    // まだ条件を満たしていない
-                    if (eachBlocks.get(Piece.T).isEmpty()) {
-                        // Tミノが残っていない
-                        operationWithKeys.add(index, key);
-                        continue;
-                    }
-                }
-            }
-
             Mino mino = key.getMino();
             int x = key.getX();
             int y = originalY - deletedLines;
 
             if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY())) {
-                if (maxDepth == depth + 1) {
+                boolean newSatisfied = satisfied;
+
+                {
+                    Field freeze = field.freeze(height);
+                    freeze.put(mino, x, y);
+                    int currentDeletedLines = freeze.clearLine();
+
+                    if (0 < currentDeletedLines && key.getPiece() == Piece.T) {
+                        // Tでラインが消去された
+                        Optional<Spin> spinOptional = spinChecker.check(field, key, height, currentDeletedLines);
+                        if (spinOptional.isPresent()) {
+                            Spin spin = spinOptional.get();
+                            if (spin.getSpin() == TSpins.Regular && requiredTSpinLine <= spin.getClearedLine()) {
+                                newSatisfied = true;
+                            }
+                        }
+
+                        if (!newSatisfied) {
+                            // まだ条件を満たしていない
+                            LinkedList<MinoOperationWithKey> ts = eachBlocks.get(Piece.T);
+                            if (ts != null && ts.isEmpty()) {
+                                // Tミノが残っていない
+                                operationWithKeys.add(index, key);
+                                continue;
+                            }
+                        }
+                    }
+                }
+
+                if (maxDepth == depth) {
                     if (newSatisfied) {
                         return true;
                     } else {

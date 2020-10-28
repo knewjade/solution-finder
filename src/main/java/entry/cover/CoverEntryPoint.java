@@ -1,7 +1,7 @@
 package entry.cover;
 
-import common.buildup.*;
 import common.comparator.PiecesNumberComparator;
+import common.cover.*;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.blocks.LongPieces;
 import common.datastore.blocks.Pieces;
@@ -182,9 +182,9 @@ public class CoverEntryPoint implements EntryPoint {
                 Field field = parameter.getField();
 
                 int maxDepth = operations.size();
-                boolean success = settings.isUsingHold() ? cover.existsValidByOrderWithHold(
+                boolean success = settings.isUsingHold() ? cover.canBuildWithHold(
                         field, operations.stream(), pieceList, height, reachable, maxDepth
-                ) : cover.existsValidByOrder(
+                ) : cover.canBuild(
                         field, operations.stream(), pieceList, height, reachable, maxDepth
                 );
 

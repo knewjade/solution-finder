@@ -1,4 +1,4 @@
-package common.buildup;
+package common.cover;
 
 import common.SpinChecker;
 import common.datastore.MinoOperationWithKey;
@@ -13,7 +13,6 @@ import core.mino.Piece;
 import core.srs.MinoRotation;
 import core.srs.MinoRotationDetail;
 import searcher.spins.spin.Spin;
-import searcher.spins.spin.TSpins;
 
 import java.util.EnumMap;
 import java.util.LinkedList;
@@ -21,11 +20,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class RegularTSpinCover implements Cover {
+public class B2BContinuousCover implements Cover {
     private final SpinChecker spinChecker;
-    private final int requiredTSpinLine;
 
-    public RegularTSpinCover(int requiredTSpinLine) {
+    public B2BContinuousCover() {
         int maxY = 24;
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
@@ -33,16 +31,14 @@ public class RegularTSpinCover implements Cover {
         MinoRotationDetail minoRotationDetail = new MinoRotationDetail(minoFactory, minoRotation);
         LockedReachable lockedReachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
         this.spinChecker = new SpinChecker(minoFactory, minoRotationDetail, lockedReachable);
-        this.requiredTSpinLine = requiredTSpinLine;
     }
 
-    public RegularTSpinCover(MinoFactory minoFactory, MinoRotationDetail minoRotationDetail, LockedReachable lockedReachable, int requiredTSpinLine) {
+    public B2BContinuousCover(MinoFactory minoFactory, MinoRotationDetail minoRotationDetail, LockedReachable lockedReachable) {
         this.spinChecker = new SpinChecker(minoFactory, minoRotationDetail, lockedReachable);
-        this.requiredTSpinLine = requiredTSpinLine;
     }
 
     @Override
-    public boolean existsValidByOrder(Field field, Stream<? extends MinoOperationWithKey> operations, List<Piece> pieces, int height, Reachable reachable, int maxDepth) {
+    public boolean canBuild(Field field, Stream<? extends MinoOperationWithKey> operations, List<Piece> pieces, int height, Reachable reachable, int maxDepth) {
         if (pieces.size() < maxDepth) {
             return false;
         }
@@ -53,10 +49,10 @@ public class RegularTSpinCover implements Cover {
             operationWithKeys.add(operationWithKey);
         }, EnumMap::putAll);
 
-        return existsValidByOrder(field.freeze(height), eachBlocks, pieces, height, reachable, 0, maxDepth, false);
+        return existsValidByOrder(field.freeze(height), eachBlocks, pieces, height, reachable, 0, maxDepth);
     }
 
-    private boolean existsValidByOrder(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height, Reachable reachable, int depth, int maxDepth, boolean satisfied) {
+    private boolean existsValidByOrder(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height, Reachable reachable, int depth, int maxDepth) {
         long deleteKey = field.clearLineReturnKey();
         Piece piece = pieces.get(depth);
         LinkedList<MinoOperationWithKey> operationWithKeys = eachBlocks.get(piece);
@@ -76,48 +72,41 @@ public class RegularTSpinCover implements Cover {
                 int originalY = key.getY();
                 int deletedLines = Long.bitCount(KeyOperators.getMaskForKeyBelowY(originalY) & deleteKey);
 
-                boolean newSatisfied = satisfied;
-
-                if (0 < deletedLines && key.getPiece() == Piece.T) {
-                    // Tでラインが消去された
-                    Optional<Spin> spinOptional = spinChecker.check(field, key, height, deletedLines);
-                    if (spinOptional.isPresent()) {
-                        Spin spin = spinOptional.get();
-                        if (spin.getSpin() == TSpins.Regular && requiredTSpinLine <= spin.getClearedLine()) {
-                            newSatisfied = true;
-                        }
-                    }
-
-                    if (!newSatisfied) {
-                        // まだ条件を満たしていない
-                        if (eachBlocks.get(Piece.T).isEmpty()) {
-                            // Tミノが残っていない
-                            operationWithKeys.add(index, key);
-                            continue;
-                        }
-                    }
-                }
-
                 Mino mino = key.getMino();
                 int x = key.getX();
                 int y = originalY - deletedLines;
 
                 if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY())) {
-                    if (maxDepth == depth + 1) {
-                        if (newSatisfied) {
-                            return true;
-                        } else {
-                            // まだ条件を満たしていない
-                            operationWithKeys.add(index, key);
-                            continue;
+                    {
+                        Field freeze = field.freeze(height);
+                        freeze.put(mino, x, y);
+                        int currentDeletedLines = freeze.clearLine();
+
+                        if (0 < currentDeletedLines) {
+                            // ラインが消去された
+                            if (key.getPiece() != Piece.T) {
+                                // Tミノではない
+                                operationWithKeys.add(index, key);
+                                continue;
+                            }
+
+                            Optional<Spin> spinOptional = spinChecker.check(field, key, height, deletedLines);
+                            if (!spinOptional.isPresent()) {
+                                // Tスピンできない
+                                operationWithKeys.add(index, key);
+                                continue;
+                            }
                         }
                     }
+
+                    if (maxDepth == depth + 1)
+                        return true;
 
                     Field nextField = field.freeze(height);
                     nextField.put(mino, x, y);
                     nextField.insertBlackLineWithKey(deleteKey);
 
-                    boolean exists = existsValidByOrder(nextField, eachBlocks, pieces, height, reachable, depth + 1, maxDepth, newSatisfied);
+                    boolean exists = existsValidByOrder(nextField, eachBlocks, pieces, height, reachable, depth + 1, maxDepth);
                     if (exists)
                         return true;
                 }
@@ -130,7 +119,7 @@ public class RegularTSpinCover implements Cover {
     }
 
     @Override
-    public boolean existsValidByOrderWithHold(Field field, Stream<MinoOperationWithKey> operations, List<Piece> pieces, int height, Reachable reachable, int maxDepth) {
+    public boolean canBuildWithHold(Field field, Stream<MinoOperationWithKey> operations, List<Piece> pieces, int height, Reachable reachable, int maxDepth) {
         if (pieces.size() < maxDepth) {
             return false;
         }
@@ -141,26 +130,26 @@ public class RegularTSpinCover implements Cover {
             operationWithKeys.add(operationWithKey);
         }, EnumMap::putAll);
 
-        return existsValidByOrderWithHold(field.freeze(height), eachBlocks, pieces, height, reachable, maxDepth, 1, pieces.get(0), false);
+        return existsValidByOrderWithHold(field.freeze(height), eachBlocks, pieces, height, reachable, maxDepth, 1, pieces.get(0));
     }
 
-    private boolean existsValidByOrderWithHold(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height, Reachable reachable, int maxDepth, int depth, Piece hold, boolean satisfied) {
+    private boolean existsValidByOrderWithHold(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height, Reachable reachable, int maxDepth, int depth, Piece hold) {
         long deleteKey = field.clearLineReturnKey();
 
         Piece piece = depth < pieces.size() ? pieces.get(depth) : null;
 
-        if (hold != null && existsValidByOrderWithHold(field, eachBlocks, pieces, height, reachable, maxDepth, depth, hold, deleteKey, piece, satisfied)) {
+        if (hold != null && existsValidByOrderWithHold(field, eachBlocks, pieces, height, reachable, maxDepth, depth, hold, deleteKey, piece)) {
             return true;
         }
 
-        if (piece != null && existsValidByOrderWithHold(field, eachBlocks, pieces, height, reachable, maxDepth, depth, piece, deleteKey, hold, satisfied)) {
+        if (piece != null && existsValidByOrderWithHold(field, eachBlocks, pieces, height, reachable, maxDepth, depth, piece, deleteKey, hold)) {
             return true;
         }
 
         return false;
     }
 
-    private boolean existsValidByOrderWithHold(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height, Reachable reachable, int maxDepth, int depth, Piece usePiece, long deleteKey, Piece nextHoldPiece, boolean satisfied) {
+    private boolean existsValidByOrderWithHold(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height, Reachable reachable, int maxDepth, int depth, Piece usePiece, long deleteKey, Piece nextHoldPiece) {
         LinkedList<MinoOperationWithKey> operationWithKeys = eachBlocks.get(usePiece);
         if (operationWithKeys == null) {
             return false;
@@ -180,48 +169,41 @@ public class RegularTSpinCover implements Cover {
             int originalY = key.getY();
             int deletedLines = Long.bitCount(KeyOperators.getMaskForKeyBelowY(originalY) & deleteKey);
 
-            boolean newSatisfied = satisfied;
-
-            if (0 < deletedLines && key.getPiece() == Piece.T) {
-                // Tでラインが消去された
-                Optional<Spin> spinOptional = spinChecker.check(field, key, height, deletedLines);
-                if (spinOptional.isPresent()) {
-                    Spin spin = spinOptional.get();
-                    if (spin.getSpin() == TSpins.Regular && requiredTSpinLine <= spin.getClearedLine()) {
-                        newSatisfied = true;
-                    }
-                }
-
-                if (!newSatisfied) {
-                    // まだ条件を満たしていない
-                    if (eachBlocks.get(Piece.T).isEmpty()) {
-                        // Tミノが残っていない
-                        operationWithKeys.add(index, key);
-                        continue;
-                    }
-                }
-            }
-
             Mino mino = key.getMino();
             int x = key.getX();
             int y = originalY - deletedLines;
 
             if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY())) {
-                if (maxDepth == depth + 1) {
-                    if (newSatisfied) {
-                        return true;
-                    } else {
-                        // まだ条件を満たしていない
-                        operationWithKeys.add(index, key);
-                        continue;
+                {
+                    Field freeze = field.freeze(height);
+                    freeze.put(mino, x, y);
+                    int currentDeletedLines = freeze.clearLine();
+
+                    if (0 < currentDeletedLines) {
+                        // ラインが消去された
+                        if (key.getPiece() != Piece.T) {
+                            // Tミノではない
+                            operationWithKeys.add(index, key);
+                            continue;
+                        }
+
+                        Optional<Spin> spinOptional = spinChecker.check(field, key, height, deletedLines);
+                        if (!spinOptional.isPresent()) {
+                            // Tスピンできない
+                            operationWithKeys.add(index, key);
+                            continue;
+                        }
                     }
                 }
+
+                if (depth == maxDepth)
+                    return true;
 
                 Field nextField = field.freeze(height);
                 nextField.put(mino, x, y);
                 nextField.insertBlackLineWithKey(deleteKey);
 
-                boolean exists = existsValidByOrderWithHold(nextField, eachBlocks, pieces, height, reachable, maxDepth, depth + 1, nextHoldPiece, newSatisfied);
+                boolean exists = existsValidByOrderWithHold(nextField, eachBlocks, pieces, height, reachable, maxDepth, depth + 1, nextHoldPiece);
                 if (exists)
                     return true;
             }

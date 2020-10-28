@@ -1,4 +1,4 @@
-package common.buildup;
+package common.cover;
 
 import common.datastore.MinoOperationWithKey;
 import core.action.reachable.Reachable;
@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 
 public class NormalCover implements Cover {
     @Override
-    public boolean existsValidByOrder(Field field, Stream<? extends MinoOperationWithKey> operations, List<Piece> pieces, int height, Reachable reachable, int maxDepth) {
+    public boolean canBuild(Field field, Stream<? extends MinoOperationWithKey> operations, List<Piece> pieces, int height, Reachable reachable, int maxDepth) {
         if (pieces.size() < maxDepth) {
             return false;
         }
@@ -73,7 +73,7 @@ public class NormalCover implements Cover {
     }
 
     @Override
-    public boolean existsValidByOrderWithHold(Field field, Stream<MinoOperationWithKey> operations, List<Piece> pieces, int height, Reachable reachable, int maxDepth) {
+    public boolean canBuildWithHold(Field field, Stream<MinoOperationWithKey> operations, List<Piece> pieces, int height, Reachable reachable, int maxDepth) {
         if (pieces.size() < maxDepth) {
             return false;
         }
