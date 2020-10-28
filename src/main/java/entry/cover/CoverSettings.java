@@ -16,6 +16,7 @@ public class CoverSettings {
     private List<CoverParameter> parameters;
     private DropType dropType = DropType.Softdrop;
     private boolean isUsingHold = true;
+    private CoverModes mode = CoverModes.Completion;
 
     // ********* Getter ************
     boolean isUsingHold() {
@@ -40,6 +41,10 @@ public class CoverSettings {
 
     DropType getDropType() {
         return dropType;
+    }
+
+    CoverModes getCoverModes() {
+        return mode;
     }
 
     // ********* Setter ************
@@ -88,5 +93,9 @@ public class CoverSettings {
             default:
                 throw new FinderParseException("Unsupported droptype: type=" + type);
         }
+    }
+
+    void setCoverModes(CoverModes mode) {
+        this.mode = mode;
     }
 }

@@ -1,12 +1,10 @@
 package entry.cover;
 
-import common.SyntaxException;
 import common.buildup.BuildUp;
 import common.comparator.PiecesNumberComparator;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.blocks.LongPieces;
 import common.datastore.blocks.Pieces;
-import common.pattern.LoadedPatternGenerator;
 import common.pattern.PatternGenerator;
 import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
@@ -137,6 +135,8 @@ public class CoverEntryPoint implements EntryPoint {
         Reachable reachable = createReachable(settings.getDropType(), height);
         List<BitSet> results = new ArrayList<>();
 
+        CoverModes mode = settings.getCoverModes();
+
         // Check
         int parameterSize = parameters.size();
         piecesList.forEach(pieces -> {
@@ -150,11 +150,20 @@ public class CoverEntryPoint implements EntryPoint {
                 Field field = parameter.getField();
 
                 int maxDepth = operations.size();
-                boolean success = settings.isUsingHold() ? BuildUp.existsValidByOrderWithHold(
-                        field, operations.stream(), pieceList, height, reachable, maxDepth
-                ) : BuildUp.existsValidByOrder(
-                        field, operations.stream(), pieceList, height, reachable, maxDepth
-                );
+                boolean success;
+                switch (mode) {
+                    case Completion: {
+                        success = settings.isUsingHold() ? BuildUp.existsValidByOrderWithHold(
+                                field, operations.stream(), pieceList, height, reachable, maxDepth
+                        ) : BuildUp.existsValidByOrder(
+                                field, operations.stream(), pieceList, height, reachable, maxDepth
+                        );
+                        break;
+                    }
+                    default: {
+                        throw new IllegalStateException("Unknown cover mode: " + mode);
+                    }
+                }
 
                 if (success) {
                     result.set(index);
@@ -262,16 +271,6 @@ public class CoverEntryPoint implements EntryPoint {
             bw.flush();
         } catch (IOException e) {
             throw new FinderExecuteException("Failed to output file", e);
-        }
-    }
-
-    private PatternGenerator createPatternGenerator(List<String> patterns) throws FinderInitializeException, FinderExecuteException {
-        try {
-            return new LoadedPatternGenerator(patterns);
-        } catch (SyntaxException e) {
-            output("Pattern syntax error");
-            output(e.getMessage());
-            throw new FinderInitializeException("Pattern syntax error", e);
         }
     }
 
