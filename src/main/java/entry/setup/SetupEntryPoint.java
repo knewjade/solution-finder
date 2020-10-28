@@ -6,6 +6,9 @@ import common.datastore.*;
 import common.iterable.CombinationIterable;
 import common.pattern.PatternGenerator;
 import common.tetfu.common.ColorConverter;
+import concurrent.HarddropReachableThreadLocal;
+import concurrent.LockedReachableThreadLocal;
+import concurrent.SoftdropTOnlyReachableThreadLocal;
 import core.FinderConstant;
 import core.column_field.ColumnField;
 import core.field.Field;
@@ -17,9 +20,8 @@ import core.mino.Piece;
 import entry.DropType;
 import entry.EntryPoint;
 import entry.Verify;
+import entry.path.BuildUpListUpThreadLocal;
 import entry.path.ForPathSolutionFilter;
-import entry.path.HarddropBuildUpListUpThreadLocal;
-import entry.path.LockedBuildUpListUpThreadLocal;
 import entry.path.ReducePatternGenerator;
 import entry.path.output.MyFile;
 import entry.path.output.OneFumenParser;
@@ -489,9 +491,11 @@ public class SetupEntryPoint implements EntryPoint {
     private ThreadLocal<BuildUpStream> createBuildUpStreamThreadLocal(DropType dropType, int maxClearLine) throws FinderInitializeException {
         switch (dropType) {
             case Softdrop:
-                return new LockedBuildUpListUpThreadLocal(maxClearLine);
+                return new BuildUpListUpThreadLocal(new LockedReachableThreadLocal(maxClearLine), maxClearLine);
             case Harddrop:
-                return new HarddropBuildUpListUpThreadLocal(maxClearLine);
+                return new BuildUpListUpThreadLocal(new HarddropReachableThreadLocal(maxClearLine), maxClearLine);
+            case SoftdropTOnly:
+                return new BuildUpListUpThreadLocal(new SoftdropTOnlyReachableThreadLocal(maxClearLine), maxClearLine);
         }
         throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
     }

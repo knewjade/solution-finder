@@ -6,10 +6,7 @@ import common.datastore.blocks.LongPieces;
 import common.datastore.blocks.Pieces;
 import common.pattern.PatternGenerator;
 import common.tree.AnalyzeTree;
-import concurrent.HarddropCandidateThreadLocal;
-import concurrent.HarddropReachableThreadLocal;
-import concurrent.LockedCandidateThreadLocal;
-import concurrent.LockedReachableThreadLocal;
+import concurrent.*;
 import core.FinderConstant;
 import core.action.candidate.Candidate;
 import core.action.reachable.Reachable;
@@ -143,7 +140,7 @@ public class PercentEntryPoint implements EntryPoint {
         output("  -> Stopwatch start");
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
-        ThreadLocal<Candidate<Action>> candidateThreadLocal = createCandidateThreadLocal(settings.getDropType(), maxClearLine);
+        ThreadLocal<? extends Candidate<Action>> candidateThreadLocal = createCandidateThreadLocal(settings.getDropType(), maxClearLine);
         ThreadLocal<? extends Reachable> reachableThreadLocal = createReachableThreadLocal(settings.getDropType(), maxClearLine);
         MinoFactory minoFactory = new MinoFactory();
         PercentCore percentCore = new PercentCore(executorService, candidateThreadLocal, settings.isUsingHold(), reachableThreadLocal, minoFactory);
@@ -225,12 +222,14 @@ public class PercentEntryPoint implements EntryPoint {
         }
     }
 
-    private ThreadLocal<Candidate<Action>> createCandidateThreadLocal(DropType dropType, int maxClearLine) throws FinderInitializeException {
+    private ThreadLocal<? extends Candidate<Action>> createCandidateThreadLocal(DropType dropType, int maxClearLine) throws FinderInitializeException {
         switch (dropType) {
             case Softdrop:
                 return new LockedCandidateThreadLocal(maxClearLine);
             case Harddrop:
                 return new HarddropCandidateThreadLocal();
+            case SoftdropTOnly:
+                return new SoftdropTOnlyCandidateThreadLocal(maxClearLine);
         }
         throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
     }
@@ -241,6 +240,8 @@ public class PercentEntryPoint implements EntryPoint {
                 return new LockedReachableThreadLocal(maxClearLine);
             case Harddrop:
                 return new HarddropReachableThreadLocal(maxClearLine);
+            case SoftdropTOnly:
+                return new SoftdropTOnlyReachableThreadLocal(maxClearLine);
         }
         throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
     }

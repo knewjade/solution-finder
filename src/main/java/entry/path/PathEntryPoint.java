@@ -9,6 +9,7 @@ import common.pattern.PatternGenerator;
 import common.tetfu.common.ColorConverter;
 import concurrent.HarddropReachableThreadLocal;
 import concurrent.LockedReachableThreadLocal;
+import concurrent.SoftdropTOnlyReachableThreadLocal;
 import core.FinderConstant;
 import core.action.reachable.Reachable;
 import core.column_field.ColumnField;
@@ -282,9 +283,11 @@ public class PathEntryPoint implements EntryPoint {
     private ThreadLocal<BuildUpStream> createBuildUpStreamThreadLocal(DropType dropType, int maxClearLine) throws FinderInitializeException {
         switch (dropType) {
             case Softdrop:
-                return new LockedBuildUpListUpThreadLocal(maxClearLine);
+                return new BuildUpListUpThreadLocal(new LockedReachableThreadLocal(maxClearLine), maxClearLine);
             case Harddrop:
-                return new HarddropBuildUpListUpThreadLocal(maxClearLine);
+                return new BuildUpListUpThreadLocal(new HarddropReachableThreadLocal(maxClearLine), maxClearLine);
+            case SoftdropTOnly:
+                return new BuildUpListUpThreadLocal(new SoftdropTOnlyReachableThreadLocal(maxClearLine), maxClearLine);
         }
         throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
     }
@@ -295,6 +298,8 @@ public class PathEntryPoint implements EntryPoint {
                 return new LockedReachableThreadLocal(maxClearLine);
             case Harddrop:
                 return new HarddropReachableThreadLocal(maxClearLine);
+            case SoftdropTOnly:
+                return new SoftdropTOnlyReachableThreadLocal(maxClearLine);
         }
         throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
     }

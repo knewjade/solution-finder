@@ -16,6 +16,7 @@ import common.tetfu.field.ColoredFieldView;
 import core.action.reachable.HarddropReachable;
 import core.action.reachable.LockedReachable;
 import core.action.reachable.Reachable;
+import core.action.reachable.SoftdropTOnlyReachable;
 import core.field.Field;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
@@ -285,6 +286,10 @@ public class CoverEntryPoint implements EntryPoint {
             case Softdrop: {
                 MinoRotation minoRotation = MinoRotation.create();
                 return new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
+            }
+            case SoftdropTOnly: {
+                MinoRotation minoRotation = MinoRotation.create();
+                return new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, maxY);
             }
         }
 

@@ -30,18 +30,18 @@ class PercentCore {
     private AnalyzeTree resultTree;
     private List<Pair<Pieces, Boolean>> resultPairs;
 
-    PercentCore(ThreadLocal<Candidate<Action>> candidateThreadLocal, boolean isUsingHold, ThreadLocal<? extends Reachable> reachableThreadLocal, MinoFactory minoFactory) {
+    PercentCore(ThreadLocal<? extends Candidate<Action>> candidateThreadLocal, boolean isUsingHold, ThreadLocal<? extends Reachable> reachableThreadLocal, MinoFactory minoFactory) {
         this.invoker = createConcurrentCheckerInvoker(null, candidateThreadLocal, isUsingHold, reachableThreadLocal, minoFactory);
     }
 
-    PercentCore(ExecutorService executorService, ThreadLocal<Candidate<Action>> candidateThreadLocal, boolean isUsingHold, ThreadLocal<? extends Reachable> reachableThreadLocal, MinoFactory minoFactory) {
+    PercentCore(ExecutorService executorService, ThreadLocal<? extends Candidate<Action>> candidateThreadLocal, boolean isUsingHold, ThreadLocal<? extends Reachable> reachableThreadLocal, MinoFactory minoFactory) {
         this.invoker = createConcurrentCheckerInvoker(executorService, candidateThreadLocal, isUsingHold, reachableThreadLocal, minoFactory);
     }
 
     /**
      * Pass null to ExecutorService if executing on single thread
      */
-    private ConcurrentCheckerInvoker createConcurrentCheckerInvoker(ExecutorService executorService, ThreadLocal<Candidate<Action>> candidateThreadLocal, boolean isUsingHold, ThreadLocal<? extends Reachable> reachableThreadLocal, MinoFactory minoFactory) {
+    private ConcurrentCheckerInvoker createConcurrentCheckerInvoker(ExecutorService executorService, ThreadLocal<? extends Candidate<Action>> candidateThreadLocal, boolean isUsingHold, ThreadLocal<? extends Reachable> reachableThreadLocal, MinoFactory minoFactory) {
         if (isUsingHold) {
             CheckerUsingHoldThreadLocal<Action> checkerThreadLocal = new CheckerUsingHoldThreadLocal<>();
             CheckerCommonObj commonObj = new CheckerCommonObj(minoFactory, candidateThreadLocal, checkerThreadLocal, reachableThreadLocal);
