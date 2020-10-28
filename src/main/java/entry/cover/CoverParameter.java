@@ -1,6 +1,7 @@
 package entry.cover;
 
 import common.datastore.MinoOperationWithKey;
+import common.tetfu.Tetfu;
 import core.field.Field;
 
 import java.util.Collections;
@@ -15,15 +16,17 @@ public class CoverParameter {
     CoverParameter(
             Field field, List<MinoOperationWithKey> operationList, String input, boolean isMirror
     ) {
+        assert Tetfu.isDataLater115(input);
+
         this.field = field;
         this.operationList = operationList;
 
         if (isMirror) {
-            this.label = String.format("%s/mirror", input);
-            this.url = String.format("http://fumen.zui.jp/?v115@%s (mirror)", input);
+            this.label = String.format("%s#mirror", input);
+            this.url = String.format("http://fumen.zui.jp/?%s (mirror)", input);
         } else {
             this.label = input;
-            this.url = String.format("http://fumen.zui.jp/?v115@%s", input);
+            this.url = String.format("http://fumen.zui.jp/?%s", input);
         }
     }
 
@@ -42,8 +45,4 @@ public class CoverParameter {
     public String getUrl() {
         return url;
     }
-
-//    String getLabel() {
-//        return label;
-//    }
 }

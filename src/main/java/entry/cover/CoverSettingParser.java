@@ -60,7 +60,6 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
         ).stream()
                 .map(Tetfu::removeDomainData)
                 .filter(Tetfu::isDataLater115)
-                .map(Tetfu::removePrefixData)
                 .collect(Collectors.toList());
 
         if (fumens.isEmpty()) {
@@ -76,7 +75,8 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
             int start = 1;
             int end = -1;
 
-            String data = input;
+            assert Tetfu.isDataLater115(input);
+            String data = Tetfu.removePrefixData(input);
 
             String[] dataPage = data.split("#");
             data = dataPage[0];
