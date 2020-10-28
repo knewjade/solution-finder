@@ -126,6 +126,7 @@ short    long                   default
 ``-p``   ``--patterns``         なし
 ``-H``   ``--hold``             use
 ``-d``   ``--drop``             softdrop
+``-m``   ``--mirror``           no
 ``-o``   ``--output-base``      output/path.txt
 ``-lp``  ``--log-path``         output/last_output.txt
 ``-fp``  ``--field-path``       input/field.txt
@@ -170,6 +171,14 @@ v115のテト譜データにのみ対応。
 
 * softdrop: ソフトドロップ＋回転入れ（制限なし）
 * harddrop: ハードドロップのみ
+
+
+``-m``, ``--mirror`` [default: no]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``yes`` の場合、入力した組み方を左右に反転させた組み方も対象に加える。
+
+複数のテト譜を同時に指定した場合、すべての組み方が左右反転されます。
 
 
 ``-o``, ``--output-base`` [default: output/cover.csv]

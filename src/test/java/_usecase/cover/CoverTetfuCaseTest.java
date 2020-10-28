@@ -322,5 +322,83 @@ class CoverTetfuCaseTest {
             assertThat(log.getOutput()).contains(Messages.foundOrSolutions(0, all));
             assertThat(log.getOutput()).contains(Messages.foundAndSolutions(0, all));
         }
+
+        @Test
+        void case5() throws Exception {
+            String fumen1 = "v115@vhERQJKJJUGJvMJTNJ";
+
+            String command = String.format("cover -t %s -p *p7 --drop harddrop", fumen1);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            int all = 5040;
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(720, all, fumen1));
+            assertThat(log.getOutput()).contains(Messages.foundOrSolutions(720, all));
+            assertThat(log.getOutput()).contains(Messages.foundAndSolutions(720, all));
+        }
+
+        @Test
+        void case5Mirror() throws Exception {
+            {
+                String fumen1 = "v115@vhERQJKJJUGJvMJTNJ";
+                String fumen2 = "v115@vhERQJ+NJ3GJMKJTJJ";
+
+                String command = String.format("cover -t %s %s -p *p7", fumen1, fumen2);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 5040;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(960, all, fumen1));
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(960, all, fumen2));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(1536, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(384, all));
+            }
+
+            {
+                String fumen1 = "v115@vhERQJKJJUGJvMJTNJ";
+
+                String command = String.format("cover -t %s -p *p7 --mirror yes", fumen1);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 5040;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(960, all, fumen1));
+                assertThat(log.getOutput()).contains(Messages.foundMirrorSolutions(960, all, fumen1));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(1536, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(384, all));
+            }
+        }
+
+        @Test
+        void case6Right() throws Exception {
+            String fumen1 = "v115@UhA8DeA8AeC8DeC8JeRQJ";
+            String fumen2 = "v115@UhA8DeA8AeC8DeC8JeBQJ";
+
+            String command = String.format("cover -t %s %s -p I", fumen1, fumen2);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            int all = 1;
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(1, all, fumen1));
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(1, all, fumen2));
+            assertThat(log.getOutput()).contains(Messages.foundOrSolutions(1, all));
+            assertThat(log.getOutput()).contains(Messages.foundAndSolutions(1, all));
+        }
+
+        @Test
+        void case6Left() throws Exception {
+            String fumen1 = "v115@ShA8DeA8CeC8DeC8JeRQJ";
+            String fumen2 = "v115@ShA8DeA8CeC8DeC8JeBQJ";
+
+            String command = String.format("cover -t %s %s -p I", fumen1, fumen2);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            int all = 1;
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(0, all, fumen1));
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(0, all, fumen2));
+            assertThat(log.getOutput()).contains(Messages.foundOrSolutions(0, all));
+            assertThat(log.getOutput()).contains(Messages.foundAndSolutions(0, all));
+        }
     }
 }

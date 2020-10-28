@@ -7,30 +7,24 @@ import java.util.Collections;
 import java.util.List;
 
 public class CoverParameter {
-    private final String input;
-    private final String data;
     private final Field field;
     private final List<MinoOperationWithKey> operationList;
-    private final int start;
-    private final int end;
+    private final String label;
+    private final String url;
 
     CoverParameter(
-            String input, String data, Field field, List<MinoOperationWithKey> operationList, int start, int end
+            Field field, List<MinoOperationWithKey> operationList, String input, boolean isMirror
     ) {
-        this.input = input;
-        this.data = data;
         this.field = field;
         this.operationList = operationList;
-        this.start = start;
-        this.end = end;
-    }
 
-    String getInput() {
-        return input;
-    }
-
-    String getData() {
-        return data;
+        if (isMirror) {
+            this.label = String.format("%s/mirror", input);
+            this.url = String.format("http://fumen.zui.jp/?v115@%s (mirror)", input);
+        } else {
+            this.label = input;
+            this.url = String.format("http://fumen.zui.jp/?v115@%s", input);
+        }
     }
 
     Field getField() {
@@ -41,11 +35,15 @@ public class CoverParameter {
         return Collections.unmodifiableList(operationList);
     }
 
-    int getStart() {
-        return start;
+    public String getLabel() {
+        return label;
     }
 
-    int getEnd() {
-        return end;
+    public String getUrl() {
+        return url;
     }
+
+//    String getLabel() {
+//        return label;
+//    }
 }

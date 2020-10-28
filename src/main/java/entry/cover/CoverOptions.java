@@ -13,10 +13,12 @@ public enum CoverOptions {
     Patterns(SingleArgOption.full("p", "patterns", "definition", "Specify pattern definition, directly")),
     Hold(SingleArgOption.full("H", "hold", "use or avoid", "If use hold, set 'use'. If not use hold, set 'avoid'")),
     Drop(SingleArgOption.full("d", "drop", "hard or soft", "Specify drop")),
+    Mirror(SingleArgOption.full("m", "mirror", "yes or no", "Specify expanding mirror")),
     PatternsPath(SingleArgOption.full("pp", "patterns-path", "path", "File path of pattern definition")),
     FieldPath(SingleArgOption.full("fp", "field-path", "path", "File path of field definition")),
     LogPath(SingleArgOption.full("lp", "log-path", "path", "File path of output log")),
-    OutputBase(SingleArgOption.full("o", "output-base", "path", "Base file path of result to output")),;
+    OutputBase(SingleArgOption.full("o", "output-base", "path", "Base file path of result to output")),
+    ;
 
     private final OptionBuilder optionBuilder;
 

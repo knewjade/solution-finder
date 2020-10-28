@@ -1,8 +1,6 @@
 package entry.cover;
 
-import common.datastore.MinoOperationWithKey;
-import common.datastore.Operations;
-import common.datastore.SimpleMinoOperation;
+import common.datastore.*;
 import common.parser.OperationTransform;
 import common.tetfu.Tetfu;
 import common.tetfu.TetfuPage;
@@ -13,6 +11,7 @@ import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Mino;
 import core.mino.MinoFactory;
+import core.mino.MinoTransform;
 import core.mino.Piece;
 import entry.CommandLineWrapper;
 import entry.common.Loader;
@@ -48,6 +47,7 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
         CoverSettings settings = new CoverSettings();
 
         MinoFactory minoFactory = new MinoFactory();
+        MinoTransform minoTransform = new MinoTransform();
         ColorConverter colorConverter = new ColorConverter();
 
         // テト譜の読み込み
@@ -67,7 +67,10 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
             throw new FinderParseException("Cannot load fumen" + fumens);
         }
 
-        ArrayList<CoverParameter> parameters = new ArrayList<>();
+        // ミラーの設定
+        boolean isMirror = wrapper.getBoolOption(CoverOptions.Mirror.optName()).orElse(false);
+
+        List<CoverParameter> parameters = new ArrayList<>();
 
         for (String input : fumens) {
             int start = 1;
@@ -128,13 +131,30 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
                     .collect(Collectors.toList());
 
             int height = 24;
-            Field field = toField(pages.get(0).getField(), height);
 
-            List<MinoOperationWithKey> operationsWithKey = OperationTransform.parseToOperationWithKeys(
-                    field, new Operations(operationList), minoFactory, height
-            );
+            {
+                Field field = toField(pages.get(0).getField(), height);
 
-            parameters.add(new CoverParameter(input, data, field, operationsWithKey, start, end));
+                List<MinoOperationWithKey> operationsWithKey = OperationTransform.parseToOperationWithKeys(
+                        field, new Operations(operationList), minoFactory, height
+                );
+
+                parameters.add(new CoverParameter(field, operationsWithKey, input, false));
+            }
+
+            if (isMirror) {
+                Field field = toField(pages.get(0).getField(), height);
+
+                List<MinoOperationWithKey> operationsWithKey = OperationTransform.parseToOperationWithKeys(
+                        field, new Operations(operationList), minoFactory, height
+                ).stream().map(m -> {
+                    Operation mirror = minoTransform.mirror(m.getPiece(), m.getRotate(), m.getX(), m.getY());
+                    Mino mino = minoFactory.create(mirror.getPiece(), mirror.getRotate());
+                    return new MinimalOperationWithKey(mino, mirror.getX(), mirror.getY(), m.getNeedDeletedKey());
+                }).collect(Collectors.toList());
+
+                parameters.add(new CoverParameter(field, operationsWithKey, input, true));
+            }
         }
 
         settings.setParameters(parameters);

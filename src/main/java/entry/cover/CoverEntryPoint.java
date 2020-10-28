@@ -92,7 +92,7 @@ public class CoverEntryPoint implements EntryPoint {
                 }
             });
 
-            output(String.format("[%s]", parameter.getInput()));
+            output(String.format("[%s]", parameter.getLabel()));
             output(ColoredFieldView.toStringWithType(coloredField, Math.min(coloredField.getUsingHeight() + 1, height)));
         }
 
@@ -213,8 +213,8 @@ public class CoverEntryPoint implements EntryPoint {
             CoverParameter parameter = parameters.get(index);
 
             int success = counter.get();
-            output(String.format("%.2f %% [%d/%d]: http://fumen.zui.jp/?v115@%s#%d:%d",
-                    success * 100.0 / all, success, all, parameter.getData(), parameter.getStart(), parameter.getEnd()
+            output(String.format("%.2f %% [%d/%d]: %s",
+                    success * 100.0 / all, success, all, parameter.getUrl()
             ));
         }
 
@@ -238,7 +238,7 @@ public class CoverEntryPoint implements EntryPoint {
             // Header
             bw.write("sequence,");
             bw.write(
-                    parameters.stream().map(CoverParameter::getData).collect(Collectors.joining(","))
+                    parameters.stream().map(CoverParameter::getLabel).collect(Collectors.joining(","))
             );
             bw.newLine();
 
