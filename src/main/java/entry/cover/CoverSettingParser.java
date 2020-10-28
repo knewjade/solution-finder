@@ -185,6 +185,21 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
             throw new FinderParseException("Unsupported format: format=" + dropType.orElse("<empty>"));
         }
 
+        // モードの設定
+        Optional<String> modeType = wrapper.getStringOption(CoverOptions.Mode.optName());
+        try {
+            modeType.ifPresent(type -> {
+                String key = modeType.orElse("normal");
+                try {
+                    settings.setCoverModes(key);
+                } catch (FinderParseException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            throw new FinderParseException("Unsupported format: format=" + modeType.orElse("<empty>"));
+        }
+
         // ホールドの設定
         Optional<Boolean> isUsingHold = wrapper.getBoolOption(CoverOptions.Hold.optName());
         isUsingHold.ifPresent(settings::setUsingHold);

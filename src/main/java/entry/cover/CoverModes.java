@@ -1,5 +1,10 @@
 package entry.cover;
 
 public enum CoverModes {
-    Completion,
+    Normal,
+    B2BContinuous,
+    AnyTSpin,
+    TSpinSingle,
+    TSpinDouble,
+    TSpinTriple,
 }

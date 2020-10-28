@@ -1,6 +1,6 @@
 package entry.cover;
 
-import common.buildup.BuildUp;
+import common.buildup.*;
 import common.comparator.PiecesNumberComparator;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.blocks.LongPieces;
@@ -97,6 +97,7 @@ public class CoverEntryPoint implements EntryPoint {
 
         output("Using hold: " + (settings.isUsingHold() ? "use" : "avoid"));
         output("Drop: " + settings.getDropType().name().toLowerCase());
+        output("Mode: " + settings.getCoverModes().name().toLowerCase());
 
         // ========================================
         output("Searching patterns:");
@@ -138,6 +139,37 @@ public class CoverEntryPoint implements EntryPoint {
         CoverModes mode = settings.getCoverModes();
 
         // Check
+        Cover cover;
+        switch (mode) {
+            case Normal: {
+                cover = new NormalCover();
+                break;
+            }
+            case B2BContinuous: {
+                cover = new B2BContinuousCover();
+                break;
+            }
+            case AnyTSpin: {
+                cover = new AnyTSpinCover();
+                break;
+            }
+            case TSpinSingle: {
+                cover = new RegularTSpinCover(1);
+                break;
+            }
+            case TSpinDouble: {
+                cover = new RegularTSpinCover(2);
+                break;
+            }
+            case TSpinTriple: {
+                cover = new RegularTSpinCover(3);
+                break;
+            }
+            default: {
+                throw new IllegalStateException("Unknown cover mode: " + mode);
+            }
+        }
+
         int parameterSize = parameters.size();
         piecesList.forEach(pieces -> {
             BitSet result = new BitSet(parameterSize);
@@ -150,20 +182,11 @@ public class CoverEntryPoint implements EntryPoint {
                 Field field = parameter.getField();
 
                 int maxDepth = operations.size();
-                boolean success;
-                switch (mode) {
-                    case Completion: {
-                        success = settings.isUsingHold() ? BuildUp.existsValidByOrderWithHold(
-                                field, operations.stream(), pieceList, height, reachable, maxDepth
-                        ) : BuildUp.existsValidByOrder(
-                                field, operations.stream(), pieceList, height, reachable, maxDepth
-                        );
-                        break;
-                    }
-                    default: {
-                        throw new IllegalStateException("Unknown cover mode: " + mode);
-                    }
-                }
+                boolean success = settings.isUsingHold() ? cover.existsValidByOrderWithHold(
+                        field, operations.stream(), pieceList, height, reachable, maxDepth
+                ) : cover.existsValidByOrder(
+                        field, operations.stream(), pieceList, height, reachable, maxDepth
+                );
 
                 if (success) {
                     result.set(index);
