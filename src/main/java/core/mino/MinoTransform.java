@@ -95,9 +95,9 @@ public class MinoTransform {
                     case Reverse:
                         return new SimpleOperation(piece, Rotate.Spawn, mx09, y);
                     case Left:
-                        return new SimpleOperation(piece, Rotate.Right, mx09, y);
+                        return new SimpleOperation(piece, Rotate.Right, mx09, y + 1);
                     case Right:
-                        return new SimpleOperation(piece, Rotate.Left, mx09, y);
+                        return new SimpleOperation(piece, Rotate.Left, mx09, y - 1);
                 }
                 break;
             }

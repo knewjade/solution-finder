@@ -103,6 +103,7 @@ public class CoverSettings {
             case "b2b":
                 this.mode = CoverModes.B2BContinuous;
                 return;
+            case "any":
             case "any-tspin":
             case "anytspin":
             case "tspin0":

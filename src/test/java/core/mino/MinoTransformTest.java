@@ -32,13 +32,13 @@ class MinoTransformTest {
             assertOperation(operation, expected);
         }
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Right, 0, 1);
+            SimpleOperation operation = new SimpleOperation(piece, Rotate.Right, 0, 2);
             SimpleOperation expected = new SimpleOperation(piece, Rotate.Left, 9, 1);
             assertOperation(operation, expected);
         }
         {
             SimpleOperation operation = new SimpleOperation(piece, Rotate.Left, 0, 1);
-            SimpleOperation expected = new SimpleOperation(piece, Rotate.Right, 9, 1);
+            SimpleOperation expected = new SimpleOperation(piece, Rotate.Right, 9, 2);
             assertOperation(operation, expected);
         }
     }

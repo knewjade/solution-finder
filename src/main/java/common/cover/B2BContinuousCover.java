@@ -1,7 +1,9 @@
 package common.cover;
 
 import common.SpinChecker;
+import common.datastore.MinoOperation;
 import common.datastore.MinoOperationWithKey;
+import common.datastore.SimpleMinoOperation;
 import core.action.reachable.LockedReachable;
 import core.action.reachable.Reachable;
 import core.field.Field;
@@ -77,26 +79,9 @@ public class B2BContinuousCover implements Cover {
                 int y = originalY - deletedLines;
 
                 if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY())) {
-                    {
-                        Field freeze = field.freeze(height);
-                        freeze.put(mino, x, y);
-                        int currentDeletedLines = freeze.clearLine();
-
-                        if (0 < currentDeletedLines) {
-                            // ラインが消去された
-                            if (key.getPiece() != Piece.T) {
-                                // Tミノではない
-                                operationWithKeys.add(index, key);
-                                continue;
-                            }
-
-                            Optional<Spin> spinOptional = spinChecker.check(field, key, height, deletedLines);
-                            if (!spinOptional.isPresent()) {
-                                // Tスピンできない
-                                operationWithKeys.add(index, key);
-                                continue;
-                            }
-                        }
+                    if (!checksB2B(field, height, new SimpleMinoOperation(mino, x, y))) {
+                        operationWithKeys.add(index, key);
+                        continue;
                     }
 
                     if (maxDepth == depth + 1)
@@ -116,6 +101,39 @@ public class B2BContinuousCover implements Cover {
         }
 
         return false;
+    }
+
+    private boolean checksB2B(Field field, int height, MinoOperation key) {
+        Field freeze = field.freeze(height);
+        freeze.put(key.getMino(), key.getX(), key.getY());
+        int currentDeletedLines = freeze.clearLine();
+
+        if (0 < currentDeletedLines) {
+            // ラインが消去された
+            switch (key.getPiece()) {
+                case T: {
+                    Optional<Spin> spinOptional = spinChecker.check(field, key, height, currentDeletedLines);
+                    if (!spinOptional.isPresent()) {
+                        // Tスピンできない
+                        return false;
+                    }
+                    break;
+                }
+                case I: {
+                    if (currentDeletedLines != 4) {
+                        // テトリスできない
+                        return false;
+                    }
+                    break;
+                }
+                default: {
+                    // T,I以外でライン消去された
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     @Override
@@ -174,26 +192,9 @@ public class B2BContinuousCover implements Cover {
             int y = originalY - deletedLines;
 
             if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY())) {
-                {
-                    Field freeze = field.freeze(height);
-                    freeze.put(mino, x, y);
-                    int currentDeletedLines = freeze.clearLine();
-
-                    if (0 < currentDeletedLines) {
-                        // ラインが消去された
-                        if (key.getPiece() != Piece.T) {
-                            // Tミノではない
-                            operationWithKeys.add(index, key);
-                            continue;
-                        }
-
-                        Optional<Spin> spinOptional = spinChecker.check(field, key, height, deletedLines);
-                        if (!spinOptional.isPresent()) {
-                            // Tスピンできない
-                            operationWithKeys.add(index, key);
-                            continue;
-                        }
-                    }
+                if (!checksB2B(field, height, new SimpleMinoOperation(mino, x, y))) {
+                    operationWithKeys.add(index, key);
+                    continue;
                 }
 
                 if (depth == maxDepth)

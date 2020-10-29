@@ -2,6 +2,7 @@ package common.cover;
 
 import common.SpinChecker;
 import common.datastore.MinoOperationWithKey;
+import common.datastore.SimpleMinoOperation;
 import core.action.reachable.LockedReachable;
 import core.action.reachable.Reachable;
 import core.field.Field;
@@ -90,7 +91,7 @@ public class RegularTSpinCover implements Cover {
 
                         if (0 < currentDeletedLines && key.getPiece() == Piece.T) {
                             // Tでラインが消去された
-                            Optional<Spin> spinOptional = spinChecker.check(field, key, height, currentDeletedLines);
+                            Optional<Spin> spinOptional = spinChecker.check(field, new SimpleMinoOperation(mino, x, y), height, currentDeletedLines);
                             if (spinOptional.isPresent()) {
                                 Spin spin = spinOptional.get();
                                 if (spin.getSpin() == TSpins.Regular && requiredTSpinLine <= spin.getClearedLine()) {
@@ -201,7 +202,7 @@ public class RegularTSpinCover implements Cover {
 
                     if (0 < currentDeletedLines && key.getPiece() == Piece.T) {
                         // Tでラインが消去された
-                        Optional<Spin> spinOptional = spinChecker.check(field, key, height, currentDeletedLines);
+                        Optional<Spin> spinOptional = spinChecker.check(field, new SimpleMinoOperation(mino, x, y), height, currentDeletedLines);
                         if (spinOptional.isPresent()) {
                             Spin spin = spinOptional.get();
                             if (spin.getSpin() == TSpins.Regular && requiredTSpinLine <= spin.getClearedLine()) {

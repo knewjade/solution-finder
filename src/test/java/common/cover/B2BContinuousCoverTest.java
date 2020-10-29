@@ -3,6 +3,7 @@ package common.cover;
 import common.datastore.*;
 import common.parser.BlockInterpreter;
 import common.parser.OperationTransform;
+import core.action.reachable.HarddropReachable;
 import core.action.reachable.SoftdropTOnlyReachable;
 import core.field.Field;
 import core.field.FieldFactory;
@@ -148,6 +149,46 @@ class B2BContinuousCoverTest {
             assertThat(
                     cover.canBuildWithHold(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
             ).isFalse();
+        }
+    }
+
+    @Test
+    void cansBuild3() {
+        int height = 4;
+        Field field = FieldFactory.createField("" +
+                        "____XXXXXX" +
+                        "____XXXXXX" +
+                        "___XXXXXXX" +
+                        "_XXXXXXXXX"
+                , height);
+        List<Operation> operationList = Arrays.asList(
+                new SimpleOperation(Piece.Z, Rotate.Left, 3, 2),
+                new SimpleOperation(Piece.J, Rotate.Right, 1, 2),
+                new SimpleOperation(Piece.I, Rotate.Left, 0, 1)
+        );
+        List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
+        HarddropReachable reachable = new HarddropReachable(minoFactory, minoShifter, height);
+
+        {
+            List<Piece> pieces = toPieceList("ZJI");
+
+            assertThat(
+                    cover.canBuild(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+            ).isTrue();
+            assertThat(
+                    cover.canBuildWithHold(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+            ).isTrue();
+        }
+
+        {
+            List<Piece> pieces = toPieceList("ZIJ");
+
+            assertThat(
+                    cover.canBuild(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+            ).isFalse();
+            assertThat(
+                    cover.canBuildWithHold(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+            ).isTrue();
         }
     }
 
