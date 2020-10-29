@@ -6,9 +6,9 @@ import core.action.candidate.HarddropCandidate;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 
-public class HarddropCandidateThreadLocal extends ThreadLocal<Candidate<Action>> {
+public class HarddropCandidateThreadLocal extends ThreadLocal<HarddropCandidate> {
     @Override
-    protected Candidate<Action> initialValue() {
+    protected HarddropCandidate initialValue() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         return new HarddropCandidate(minoFactory, minoShifter);

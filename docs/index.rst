@@ -109,6 +109,7 @@ solution-finderを操作しやすくするGUIを `@kitsune_fuchi (twitter) <http
    contents/spin/main
    contents/cover/main
    contents/util/main
+   contents/workflow
    contents/caution
    contents/contact
 

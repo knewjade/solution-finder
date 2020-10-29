@@ -1,8 +1,6 @@
 package entry.cover;
 
-import common.datastore.MinoOperationWithKey;
-import common.datastore.Operations;
-import common.datastore.SimpleMinoOperation;
+import common.datastore.*;
 import common.parser.OperationTransform;
 import common.tetfu.Tetfu;
 import common.tetfu.TetfuPage;
@@ -13,6 +11,7 @@ import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Mino;
 import core.mino.MinoFactory;
+import core.mino.MinoTransform;
 import core.mino.Piece;
 import entry.CommandLineWrapper;
 import entry.common.Loader;
@@ -48,6 +47,7 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
         CoverSettings settings = new CoverSettings();
 
         MinoFactory minoFactory = new MinoFactory();
+        MinoTransform minoTransform = new MinoTransform();
         ColorConverter colorConverter = new ColorConverter();
 
         // テト譜の読み込み
@@ -60,20 +60,23 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
         ).stream()
                 .map(Tetfu::removeDomainData)
                 .filter(Tetfu::isDataLater115)
-                .map(Tetfu::removePrefixData)
                 .collect(Collectors.toList());
 
         if (fumens.isEmpty()) {
             throw new FinderParseException("Cannot load fumen" + fumens);
         }
 
-        ArrayList<CoverParameter> parameters = new ArrayList<>();
+        // ミラーの設定
+        boolean isMirror = wrapper.getBoolOption(CoverOptions.Mirror.optName()).orElse(false);
+
+        List<CoverParameter> parameters = new ArrayList<>();
 
         for (String input : fumens) {
             int start = 1;
             int end = -1;
 
-            String data = input;
+            assert Tetfu.isDataLater115(input);
+            String data = Tetfu.removePrefixData(input);
 
             String[] dataPage = data.split("#");
             data = dataPage[0];
@@ -128,13 +131,30 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
                     .collect(Collectors.toList());
 
             int height = 24;
-            Field field = toField(pages.get(0).getField(), height);
 
-            List<MinoOperationWithKey> operationsWithKey = OperationTransform.parseToOperationWithKeys(
-                    field, new Operations(operationList), minoFactory, height
-            );
+            {
+                Field field = toField(pages.get(0).getField(), height);
 
-            parameters.add(new CoverParameter(input, data, field, operationsWithKey, start, end));
+                List<MinoOperationWithKey> operationsWithKey = OperationTransform.parseToOperationWithKeys(
+                        field, new Operations(operationList), minoFactory, height
+                );
+
+                parameters.add(new CoverParameter(field, operationsWithKey, input, false));
+            }
+
+            if (isMirror) {
+                Field field = toField(pages.get(0).getField(), height);
+
+                List<MinoOperationWithKey> operationsWithKey = OperationTransform.parseToOperationWithKeys(
+                        field, new Operations(operationList), minoFactory, height
+                ).stream().map(m -> {
+                    Operation mirror = minoTransform.mirror(m.getPiece(), m.getRotate(), m.getX(), m.getY());
+                    Mino mino = minoFactory.create(mirror.getPiece(), mirror.getRotate());
+                    return new MinimalOperationWithKey(mino, mirror.getX(), mirror.getY(), m.getNeedDeletedKey());
+                }).collect(Collectors.toList());
+
+                parameters.add(new CoverParameter(field, operationsWithKey, input, true));
+            }
         }
 
         settings.setParameters(parameters);
@@ -163,6 +183,21 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
             });
         } catch (Exception e) {
             throw new FinderParseException("Unsupported format: format=" + dropType.orElse("<empty>"));
+        }
+
+        // モードの設定
+        Optional<String> modeType = wrapper.getStringOption(CoverOptions.Mode.optName());
+        try {
+            modeType.ifPresent(type -> {
+                String key = modeType.orElse("normal");
+                try {
+                    settings.setCoverModes(key);
+                } catch (FinderParseException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            throw new FinderParseException("Unsupported format: format=" + modeType.orElse("<empty>"));
         }
 
         // ホールドの設定

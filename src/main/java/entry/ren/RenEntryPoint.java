@@ -9,6 +9,7 @@ import common.tetfu.common.ColorConverter;
 import core.action.candidate.Candidate;
 import core.action.candidate.HarddropCandidate;
 import core.action.candidate.LockedCandidate;
+import core.action.candidate.SoftdropTOnlyCandidate;
 import core.field.Field;
 import core.field.FieldView;
 import core.mino.MinoFactory;
@@ -221,6 +222,8 @@ public class RenEntryPoint implements EntryPoint {
                 return new LockedCandidate(minoFactory, minoShifter, minoRotation, 24);
             case Harddrop:
                 return new HarddropCandidate(minoFactory, minoShifter);
+            case SoftdropTOnly:
+                return new SoftdropTOnlyCandidate(minoFactory, minoShifter, minoRotation, 24);
             default:
                 throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
         }

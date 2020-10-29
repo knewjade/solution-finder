@@ -79,6 +79,14 @@ public class RenSettings {
             case "harddrop":
                 this.dropType = DropType.Harddrop;
                 return;
+            case "tsoft":
+            case "tsoftdrop":
+            case "t-soft":
+            case "t-softdrop":
+            case "t_soft":
+            case "t_softdrop":
+                this.dropType = DropType.SoftdropTOnly;
+                return;
             default:
                 throw new FinderParseException("Unsupported droptype: type=" + type);
         }

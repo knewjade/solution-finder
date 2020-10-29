@@ -8,13 +8,13 @@ import searcher.checker.Checker;
 
 public class CheckerCommonObj {
     public final MinoFactory minoFactory;
-    public final ThreadLocal<Candidate<Action>> candidateThreadLocal;
+    public final ThreadLocal<? extends Candidate<Action>> candidateThreadLocal;
     public final ThreadLocal<Checker<Action>> checkerThreadLocal;
     public final ThreadLocal<? extends Reachable> reachableThreadLocal;
 
     public CheckerCommonObj(
             MinoFactory minoFactory,
-            ThreadLocal<Candidate<Action>> candidateThreadLocal,
+            ThreadLocal<? extends Candidate<Action>> candidateThreadLocal,
             ThreadLocal<Checker<Action>> checkerThreadLocal,
             ThreadLocal<? extends Reachable> reachableThreadLocal
     ) {

@@ -7,7 +7,7 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 
-public class LockedCandidateThreadLocal extends ThreadLocal<Candidate<Action>> {
+public class LockedCandidateThreadLocal extends ThreadLocal<LockedCandidate> {
     private final int maxY;
 
     public LockedCandidateThreadLocal(int maxY) {
@@ -15,7 +15,7 @@ public class LockedCandidateThreadLocal extends ThreadLocal<Candidate<Action>> {
     }
 
     @Override
-    protected Candidate<Action> initialValue() {
+    protected LockedCandidate initialValue() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = MinoRotation.create();

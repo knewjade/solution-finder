@@ -16,6 +16,7 @@ public class CoverSettings {
     private List<CoverParameter> parameters;
     private DropType dropType = DropType.Softdrop;
     private boolean isUsingHold = true;
+    private CoverModes mode = CoverModes.Normal;
 
     // ********* Getter ************
     boolean isUsingHold() {
@@ -40,6 +41,10 @@ public class CoverSettings {
 
     DropType getDropType() {
         return dropType;
+    }
+
+    CoverModes getCoverModes() {
+        return mode;
     }
 
     // ********* Setter ************
@@ -77,8 +82,47 @@ public class CoverSettings {
             case "harddrop":
                 this.dropType = DropType.Harddrop;
                 return;
+            case "tsoft":
+            case "tsoftdrop":
+            case "t-soft":
+            case "t-softdrop":
+            case "t_soft":
+            case "t_softdrop":
+                this.dropType = DropType.SoftdropTOnly;
+                return;
             default:
                 throw new FinderParseException("Unsupported droptype: type=" + type);
+        }
+    }
+
+    void setCoverModes(String mode) throws FinderParseException {
+        switch (mode.trim().toLowerCase()) {
+            case "normal":
+                this.mode = CoverModes.Normal;
+                return;
+            case "b2b":
+                this.mode = CoverModes.B2BContinuous;
+                return;
+            case "any":
+            case "any-tspin":
+            case "anytspin":
+            case "tspin0":
+                this.mode = CoverModes.AnyTSpin;
+                return;
+            case "tss":
+            case "tspin1":
+                this.mode = CoverModes.TSpinSingle;
+                return;
+            case "tsd":
+            case "tspin2":
+                this.mode = CoverModes.TSpinDouble;
+                return;
+            case "tst":
+            case "tspin3":
+                this.mode = CoverModes.TSpinTriple;
+                return;
+            default:
+                throw new FinderParseException("Unsupported mode: mode=" + mode);
         }
     }
 }

@@ -1,12 +1,10 @@
 package entry.cover;
 
-import common.SyntaxException;
-import common.buildup.BuildUp;
 import common.comparator.PiecesNumberComparator;
+import common.cover.*;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.blocks.LongPieces;
 import common.datastore.blocks.Pieces;
-import common.pattern.LoadedPatternGenerator;
 import common.pattern.PatternGenerator;
 import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
@@ -16,6 +14,7 @@ import common.tetfu.field.ColoredFieldView;
 import core.action.reachable.HarddropReachable;
 import core.action.reachable.LockedReachable;
 import core.action.reachable.Reachable;
+import core.action.reachable.SoftdropTOnlyReachable;
 import core.field.Field;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
@@ -92,12 +91,13 @@ public class CoverEntryPoint implements EntryPoint {
                 }
             });
 
-            output(String.format("[%s]", parameter.getInput()));
+            output(String.format("[%s]", parameter.getLabel()));
             output(ColoredFieldView.toStringWithType(coloredField, Math.min(coloredField.getUsingHeight() + 1, height)));
         }
 
         output("Using hold: " + (settings.isUsingHold() ? "use" : "avoid"));
         output("Drop: " + settings.getDropType().name().toLowerCase());
+        output("Mode: " + settings.getCoverModes().name().toLowerCase());
 
         // ========================================
         output("Searching patterns:");
@@ -136,7 +136,40 @@ public class CoverEntryPoint implements EntryPoint {
         Reachable reachable = createReachable(settings.getDropType(), height);
         List<BitSet> results = new ArrayList<>();
 
+        CoverModes mode = settings.getCoverModes();
+
         // Check
+        Cover cover;
+        switch (mode) {
+            case Normal: {
+                cover = new NormalCover();
+                break;
+            }
+            case B2BContinuous: {
+                cover = new B2BContinuousCover();
+                break;
+            }
+            case AnyTSpin: {
+                cover = new AnyTSpinCover();
+                break;
+            }
+            case TSpinSingle: {
+                cover = new RegularTSpinCover(1);
+                break;
+            }
+            case TSpinDouble: {
+                cover = new RegularTSpinCover(2);
+                break;
+            }
+            case TSpinTriple: {
+                cover = new RegularTSpinCover(3);
+                break;
+            }
+            default: {
+                throw new IllegalStateException("Unknown cover mode: " + mode);
+            }
+        }
+
         int parameterSize = parameters.size();
         piecesList.forEach(pieces -> {
             BitSet result = new BitSet(parameterSize);
@@ -149,9 +182,9 @@ public class CoverEntryPoint implements EntryPoint {
                 Field field = parameter.getField();
 
                 int maxDepth = operations.size();
-                boolean success = settings.isUsingHold() ? BuildUp.existsValidByOrderWithHold(
+                boolean success = settings.isUsingHold() ? cover.canBuildWithHold(
                         field, operations.stream(), pieceList, height, reachable, maxDepth
-                ) : BuildUp.existsValidByOrder(
+                ) : cover.canBuild(
                         field, operations.stream(), pieceList, height, reachable, maxDepth
                 );
 
@@ -213,8 +246,8 @@ public class CoverEntryPoint implements EntryPoint {
             CoverParameter parameter = parameters.get(index);
 
             int success = counter.get();
-            output(String.format("%.2f %% [%d/%d]: http://fumen.zui.jp/?v115@%s#%d:%d",
-                    success * 100.0 / all, success, all, parameter.getData(), parameter.getStart(), parameter.getEnd()
+            output(String.format("%.2f %% [%d/%d]: %s",
+                    success * 100.0 / all, success, all, parameter.getUrl()
             ));
         }
 
@@ -238,7 +271,7 @@ public class CoverEntryPoint implements EntryPoint {
             // Header
             bw.write("sequence,");
             bw.write(
-                    parameters.stream().map(CoverParameter::getData).collect(Collectors.joining(","))
+                    parameters.stream().map(CoverParameter::getLabel).collect(Collectors.joining(","))
             );
             bw.newLine();
 
@@ -264,16 +297,6 @@ public class CoverEntryPoint implements EntryPoint {
         }
     }
 
-    private PatternGenerator createPatternGenerator(List<String> patterns) throws FinderInitializeException, FinderExecuteException {
-        try {
-            return new LoadedPatternGenerator(patterns);
-        } catch (SyntaxException e) {
-            output("Pattern syntax error");
-            output(e.getMessage());
-            throw new FinderInitializeException("Pattern syntax error", e);
-        }
-    }
-
     private Reachable createReachable(DropType dropType, int maxY) {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
@@ -285,6 +308,10 @@ public class CoverEntryPoint implements EntryPoint {
             case Softdrop: {
                 MinoRotation minoRotation = MinoRotation.create();
                 return new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
+            }
+            case SoftdropTOnly: {
+                MinoRotation minoRotation = MinoRotation.create();
+                return new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, maxY);
             }
         }
 

@@ -6,6 +6,11 @@ class Messages {
         return String.format("%.2f %% [%d/%d]: http://fumen.zui.jp/?%s", p, count, all, data);
     }
 
+    static String foundMirrorSolutions(int count, int all, String data) {
+        double p = (count * 100.0) / all;
+        return String.format("%.2f %% [%d/%d]: http://fumen.zui.jp/?%s (mirror)", p, count, all, data);
+    }
+
     static String foundOrSolutions(int count, int all) {
         double p = (count * 100.0) / all;
         return String.format("OR  = %.2f %% [%d/%d]", p, count, all);
