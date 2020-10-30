@@ -72,28 +72,6 @@ class SpinTetfuCaseTest {
         }
 
         @Test
-        void case1SplitCSV() throws Exception {
-            String fumen = "v115@zgD8FeF8DeG8CeH8BeI8KeAgH";
-            String command = buildCommand(fumen, "-p TSLI -ft 5 -c 2 --split yes ");
-            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
-
-            // Log
-            assertThat(log.getOutput()).contains(Messages.foundSolutions(5));
-            assertThat(log.getError()).isEmpty();
-
-            // HTML
-            SpinHTML html = OutputFileHelper.loadSpinHTML();
-
-            assertThat(html.getFumens())
-                    .hasSize(5)
-                    .contains("zgD8FeF8DeG8CeH8BeI8Ke/NYWAFLDmClcJSAVDEHB?EooRBToAVB0CBAAvhBlsB6tB")
-                    .contains("zgD8FeF8DeG8CeH8BeI8Ke/NYXAFLDmClcJSAVDEHB?EooRBToAVBU+jBAvhClsB5oBywB")
-                    .contains("zgD8FeF8DeG8CeH8BeI8Ke/NYXAFLDmClcJSAVDEHB?EooRBToAVBU+jBAvhClsB5oBqrB")
-                    .contains("zgD8FeF8DeG8CeH8BeI8Ke6NYWAFLDmClcJSAVDEHB?EooRBMoAVBUNBAAvhBlnB/oB")
-                    .contains("zgD8FeF8DeG8CeH8BeI8Ke9NYXAFLDmClcJSAVDEHB?EooRBUoAVBMuzBAvhCahBRnB/jB");
-        }
-
-        @Test
         void case2() throws Exception {
             String fumen = "v115@CgA8HeD8BeA8AeE8DeF8DeF8DeF8DeF8DeF8DeF8De?F8DeC8JeAgH";
             String command = buildCommand(fumen, "-p TSZLJI -fb 8 -ft 10 -c 2");
