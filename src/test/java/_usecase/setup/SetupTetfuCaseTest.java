@@ -67,6 +67,30 @@ class SetupTetfuCaseTest {
         }
 
         @Test
+        void case3Split() throws Exception {
+            // case4の対称系
+            String fumen = "v115@zgTpwhYpAeUpzhAe3hQpAeQpzhTpAeUpJeAgH";
+            String command = buildCommand(fumen, "-p [^T]! --fill i --margin o --split yes");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(7));
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
+        void case3CSVSplit() throws Exception {
+            // case4の対称系
+            String fumen = "v115@zgTpwhYpAeUpzhAe3hQpAeQpzhTpAeUpJeAgH";
+            String command = buildCommand(fumen, "-p [^T]! --fill i --margin o --split yes -fo csv");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(7));
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
         void case3() throws Exception {
             // case4の対称系
             String fumen = "v115@zgTpwhYpAeUpzhAe3hQpAeQpzhTpAeUpJeAgH";

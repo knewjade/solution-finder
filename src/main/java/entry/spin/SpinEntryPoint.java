@@ -15,8 +15,10 @@ import core.srs.MinoRotation;
 import core.srs.MinoRotationDetail;
 import entry.EntryPoint;
 import entry.Verify;
+import entry.path.output.FumenParser;
 import entry.path.output.MyFile;
 import entry.path.output.OneFumenParser;
+import entry.path.output.SequenceFumenParser;
 import entry.spin.output.FullSpinOutput;
 import entry.spin.output.NoRoofSpinOutput;
 import entry.spin.output.SpinOutput;
@@ -132,7 +134,7 @@ public class SpinEntryPoint implements EntryPoint {
         MinoRotationDetail minoRotationDetail = new MinoRotationDetail(minoFactory, minoRotation);
         MinoShifter minoShifter = new MinoShifter();
         ColorConverter colorConverter = new ColorConverter();
-        OneFumenParser oneFumenParser = new OneFumenParser(minoFactory, colorConverter);
+        FumenParser fumenParser = createFumenParser(settings.isTetfuSplit(), minoFactory, colorConverter);
         RotateReachableThreadLocal rotateReachableThreadLocal = new RotateReachableThreadLocal(minoFactory, minoShifter, minoRotation, fieldHeight);
 
         Field initField = FieldFactory.createField(fieldHeight);
@@ -166,9 +168,9 @@ public class SpinEntryPoint implements EntryPoint {
         LockedReachableThreadLocal lockedReachableThreadLocal = new LockedReachableThreadLocal(minoFactory, minoShifter, minoRotation, fieldHeight);
         SpinOutput output;
         if (searchRoof) {
-            output = new FullSpinOutput(oneFumenParser, minoFactory, minoRotationDetail, lockedReachableThreadLocal, rotateReachableThreadLocal);
+            output = new FullSpinOutput(fumenParser, minoFactory, minoRotationDetail, lockedReachableThreadLocal, rotateReachableThreadLocal);
         } else {
-            output = new NoRoofSpinOutput(oneFumenParser, lockedReachableThreadLocal, rotateReachableThreadLocal);
+            output = new NoRoofSpinOutput(fumenParser, lockedReachableThreadLocal, rotateReachableThreadLocal);
         }
         output.output(base, results, initField, fieldHeight);
     }
@@ -217,6 +219,12 @@ public class SpinEntryPoint implements EntryPoint {
 
         // .があるとき
         return path.substring(0, pointIndex);
+    }
+
+    private FumenParser createFumenParser(boolean isTetfuSplit, MinoFactory minoFactory, ColorConverter colorConverter) {
+        if (isTetfuSplit)
+            return new SequenceFumenParser(minoFactory, colorConverter);
+        return new OneFumenParser(minoFactory, colorConverter);
     }
 
     private void output() throws FinderExecuteException {

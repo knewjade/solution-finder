@@ -11,6 +11,7 @@ import entry.common.Loader;
 import entry.common.SettingParser;
 import entry.common.field.FieldData;
 import entry.common.field.FumenLoader;
+import entry.path.PathOptions;
 import exceptions.FinderParseException;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Options;
@@ -91,10 +92,6 @@ public class SpinSettingParser extends SettingParser<SpinSettings> {
         Optional<Integer> marginHeight = wrapper.getIntegerOption(SpinOptions.MarginHeight.optName());
         marginHeight.ifPresent(settings::setMarginHeight);
 
-        // フィールドの高さ
-//        Optional<Integer> fieldHeight = wrapper.getIntegerOption(SpinOptions.FieldHeight.optName());
-//        fieldHeight.ifPresent(settings::setFieldHeight);
-
         // 消去するライン数
         Optional<Integer> clearLineByT = wrapper.getIntegerOption(SpinOptions.ClearLineByT.optName());
         clearLineByT.ifPresent(settings::setRequiredClearLine);
@@ -106,6 +103,10 @@ public class SpinSettingParser extends SettingParser<SpinSettings> {
         // 屋根として使える最大のミノ数
         Optional<Integer> maxRoofNum = wrapper.getIntegerOption(SpinOptions.MaxRoof.optName());
         maxRoofNum.ifPresent(settings::setMaxRoofNum);
+
+        // 出力分割の設定
+        Optional<Boolean> isSplit = wrapper.getBoolOption(PathOptions.Split.optName());
+        isSplit.ifPresent(settings::setTetfuSplit);
 
         // ログファイルの設定
         Optional<String> logFilePath = wrapper.getStringOption(SpinOptions.LogPath.optName());

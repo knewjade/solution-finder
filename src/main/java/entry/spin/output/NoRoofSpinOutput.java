@@ -9,8 +9,8 @@ import core.field.Field;
 import core.field.KeyOperators;
 import core.mino.Mino;
 import core.neighbor.SimpleOriginalPiece;
+import entry.path.output.FumenParser;
 import entry.path.output.MyFile;
-import entry.path.output.OneFumenParser;
 import exceptions.FinderExecuteException;
 import output.HTMLBuilder;
 import searcher.spins.candidates.Candidate;
@@ -23,16 +23,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class NoRoofSpinOutput implements SpinOutput {
-    private final OneFumenParser oneFumenParser;
+    private final FumenParser fumenParser;
     private final LockedReachableThreadLocal lockedReachableThreadLocal;
     private final RotateReachableThreadLocal rotateReachableThreadLocal;
 
     public NoRoofSpinOutput(
-            OneFumenParser oneFumenParser,
+            FumenParser fumenParser,
             LockedReachableThreadLocal lockedReachableThreadLocal,
             RotateReachableThreadLocal rotateReachableThreadLocal
     ) {
-        this.oneFumenParser = oneFumenParser;
+        this.fumenParser = fumenParser;
         this.lockedReachableThreadLocal = lockedReachableThreadLocal;
         this.rotateReachableThreadLocal = rotateReachableThreadLocal;
     }
@@ -77,7 +77,7 @@ public class NoRoofSpinOutput implements SpinOutput {
 
         // テト譜
         List<MinoOperationWithKey> operations = result.operationStream().collect(Collectors.toList());
-        String fumen = oneFumenParser.parse(operations, initField, fieldHeight);
+        String fumen = fumenParser.parse(operations, initField, fieldHeight);
 
         // 表示されるタイトル
         String name = operations.stream()

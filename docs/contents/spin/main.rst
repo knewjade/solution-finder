@@ -21,12 +21,13 @@ short    long                   default
 ``-t``   ``--tetfu``            なし
 ``-P``   ``--page``             1
 ``-p``   ``--patterns``         なし
-``-fb``   ``--fill-bottom``     0
-``-ft``   ``--fill-top``        -1
+``-fb``  ``--fill-bottom``      0
+``-ft``  ``--fill-top``         -1
 ``-m``   ``--margin-height``    -1
 ``-c``   ``--line``             2
 ``-r``   ``--roof``             yes
-``-mr``   ``--max-roof``        -1
+``-mr``  ``--max-roof``         -1
+``-s``   ``--split``            no
 ``-o``   ``--output-base``      output/path.txt
 ``-fp``  ``--field-path``       input/field.txt
 ``-pp``  ``--patterns-path``    input/patterns.txt
@@ -199,6 +200,17 @@ Tミノの回転入れに必要な屋根の探索で置くことができる最�
 そのため、この値が大きいほど実行時間が長くなる。
 
 もし `0` を指定した場合は、屋根が必要ない解が選択される。
+
+
+``-s``, ``--split`` [default: no]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+出力フォーマットがlinkのときに出力されるテト譜で、手順を1ミノずつ分割するか指定する。
+
+ただし ``yes`` で生成されるテト譜はあくまで置き場所を示すものであり、ページ通りに置くとミノが空中に浮いたり、移動できない場所に置かれることもあります。
+
+* yes: 1ページにつき1ミノずつ表示される形で出力
+* no: すべてのミノが1ページに納まった形で出力
 
 
 ``-o``, ``--output-base`` [default: output/ren.html]

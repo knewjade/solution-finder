@@ -37,6 +37,7 @@ public class SetupSettings {
     private DropType dropType = DropType.Softdrop;
     private String outputBaseFilePath = DEFAULT_OUTPUT_BASE_FILE_PATH;
     private OutputType outputType = OutputType.HTML;
+    private boolean isSplit = false;
 
     // ********* Getter ************
     public boolean isUsingHold() {
@@ -113,6 +114,10 @@ public class SetupSettings {
 
     OutputType getOutputType() {
         return outputType;
+    }
+
+    boolean isTetfuSplit() {
+        return isSplit;
     }
 
     // ********* Setter ************
@@ -234,6 +239,10 @@ public class SetupSettings {
         } catch (IllegalArgumentException e) {
             throw new FinderParseException("Unsupported no-holes color: value=" + noHolesColor);
         }
+    }
+
+    void setTetfuSplit(boolean isSplit) {
+        this.isSplit = isSplit;
     }
 
     void setDropType(String type) throws FinderParseException {

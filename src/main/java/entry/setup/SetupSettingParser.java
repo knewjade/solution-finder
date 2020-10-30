@@ -165,6 +165,10 @@ public class SetupSettingParser extends SettingParser<SetupSettings> {
         Optional<Integer> numOfPieces = wrapper.getIntegerOption(SetupOptions.NPieces.optName());
         numOfPieces.ifPresent(settings::setNumOfPieces);
 
+        // 出力分割の設定
+        Optional<Boolean> isSplit = wrapper.getBoolOption(PathOptions.Split.optName());
+        isSplit.ifPresent(settings::setTetfuSplit);
+
         // ログファイルの設定
         Optional<String> logFilePath = wrapper.getStringOption(SetupOptions.LogPath.optName());
         logFilePath.ifPresent(settings::setLogFilePath);

@@ -23,8 +23,10 @@ import entry.Verify;
 import entry.path.BuildUpListUpThreadLocal;
 import entry.path.ForPathSolutionFilter;
 import entry.path.ReducePatternGenerator;
+import entry.path.output.FumenParser;
 import entry.path.output.MyFile;
 import entry.path.output.OneFumenParser;
+import entry.path.output.SequenceFumenParser;
 import entry.setup.filters.*;
 import entry.setup.functions.CombinationFunctions;
 import entry.setup.functions.OrderFunctions;
@@ -205,7 +207,7 @@ public class SetupEntryPoint implements EntryPoint {
         TaskResultHelper taskResultHelper = new BasicMinoPackingHelper();
         SolutionFilter solutionFilter = new ForPathSolutionFilter(generator, maxHeight);
         ThreadLocal<BuildUpStream> buildUpStreamThreadLocal = createBuildUpStreamThreadLocal(dropType, maxHeight);
-        OneFumenParser oneFumenParser = new OneFumenParser(minoFactory, colorConverter);
+        FumenParser oneFumenParser = createFumenParser(settings.isTetfuSplit(), minoFactory, colorConverter);
 
         // ミノリストの作成
         long deleteKeyMask = getDeleteKeyMask(notFilledField, maxHeight);
@@ -324,14 +326,20 @@ public class SetupEntryPoint implements EntryPoint {
         output("done");
     }
 
-    private SetupOutput createOutput(OutputType outputType, MinoFactory minoFactory, ColorConverter colorConverter, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal, OneFumenParser oneFumenParser, SetupFunctions setupFunctions) throws FinderInitializeException, FinderExecuteException {
+    private SetupOutput createOutput(OutputType outputType, MinoFactory minoFactory, ColorConverter colorConverter, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal, FumenParser fumenParser, SetupFunctions setupFunctions) throws FinderInitializeException, FinderExecuteException {
         switch (outputType) {
             case CSV:
-                return new CSVSetupOutput(settings, setupFunctions, oneFumenParser, buildUpStreamThreadLocal);
+                return new CSVSetupOutput(settings, setupFunctions, fumenParser, buildUpStreamThreadLocal);
             case HTML:
-                return new LinkSetupOutput(settings, setupFunctions, oneFumenParser, buildUpStreamThreadLocal, minoFactory, colorConverter);
+                return new LinkSetupOutput(settings, setupFunctions, fumenParser, buildUpStreamThreadLocal, minoFactory, colorConverter);
         }
         throw new FinderExecuteException("Unsupported format: format=" + outputType);
+    }
+
+    private FumenParser createFumenParser(boolean isTetfuSplit, MinoFactory minoFactory, ColorConverter colorConverter) {
+        if (isTetfuSplit)
+            return new SequenceFumenParser(minoFactory, colorConverter);
+        return new OneFumenParser(minoFactory, colorConverter);
     }
 
     private List<SetupTemp> localSearchIfNeed(Field notFilledField, int maxHeight, PatternGenerator generator, boolean isLocalSearch, List<List<MinoOperationWithKey>> resultOperations, int numOfPieces, MinoFactory minoFactory, MinoShifter minoShifter, ThreadLocal<BuildUpStream> buildUpStreamThreadLocal, Field initField) throws FinderExecuteException {

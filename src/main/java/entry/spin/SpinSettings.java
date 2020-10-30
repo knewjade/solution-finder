@@ -23,6 +23,7 @@ public class SpinSettings {
     private int requiredClearLine = 2;
     private boolean searchRoof = true;
     private int maxRoofNum = -1;
+    private boolean isSplit = false;
 
     // ********* Getter ************
     Field getField() {
@@ -95,6 +96,10 @@ public class SpinSettings {
         return maxRoofNum;
     }
 
+    boolean isTetfuSplit() {
+        return isSplit;
+    }
+
     // ********* Setter ************
     void setField(Field field) {
         this.field = field;
@@ -124,9 +129,9 @@ public class SpinSettings {
         this.marginHeight = maxTargetHeight;
     }
 
-//    void setFieldHeight(int fieldHeight) {
-//        this.fieldHeight = fieldHeight;
-//    }
+    void setTetfuSplit(boolean isSplit) {
+        this.isSplit = isSplit;
+    }
 
     void setRequiredClearLine(int requiredClearLine) {
         this.requiredClearLine = requiredClearLine;

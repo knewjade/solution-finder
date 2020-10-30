@@ -15,6 +15,7 @@ import core.neighbor.SimpleOriginalPiece;
 import core.srs.MinoRotationDetail;
 import core.srs.RotateDirection;
 import core.srs.SpinResult;
+import entry.path.output.FumenParser;
 import entry.path.output.MyFile;
 import entry.path.output.OneFumenParser;
 import exceptions.FinderExecuteException;
@@ -31,19 +32,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class FullSpinOutput implements SpinOutput {
-    private final OneFumenParser oneFumenParser;
+    private final FumenParser fumenParser;
     private final MinoFactory minoFactory;
     private final MinoRotationDetail minoRotationDetail;
     private final LockedReachableThreadLocal lockedReachableThreadLocal;
     private final RotateReachableThreadLocal rotateReachableThreadLocal;
 
     public FullSpinOutput(
-            OneFumenParser oneFumenParser,
+            FumenParser fumenParser,
             MinoFactory minoFactory, MinoRotationDetail minoRotationDetail,
             LockedReachableThreadLocal lockedReachableThreadLocal,
             RotateReachableThreadLocal rotateReachableThreadLocal
     ) {
-        this.oneFumenParser = oneFumenParser;
+        this.fumenParser = fumenParser;
         this.minoFactory = minoFactory;
         this.minoRotationDetail = minoRotationDetail;
         this.lockedReachableThreadLocal = lockedReachableThreadLocal;
@@ -127,7 +128,7 @@ public class FullSpinOutput implements SpinOutput {
 
         // テト譜
         List<MinoOperationWithKey> operations = result.operationStream().collect(Collectors.toList());
-        String fumen = oneFumenParser.parse(operations, initField, fieldHeight);
+        String fumen = fumenParser.parse(operations, initField, fieldHeight);
 
         // 表示されるタイトル
         String name = operations.stream()
