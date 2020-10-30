@@ -3,10 +3,10 @@
 テトリスの「パーフェクトクリア」「REN/Combo」「T-Spin」の手順などを探すためのツールです。  
 探索条件には、7種のミノ(ITSZJLO) の組み合わせや地形を自由に設定できます。  
 
-現在の安定版は v0.810 となります。ダウンロードは以下のリンクからお願いします。
+現在の安定版は v0.820 となります。ダウンロードは以下のリンクからお願いします。
 (GUIが入っているパッケージは、[@kitsune_fuchi](https://twitter.com/kitsune_fuchi) さん作成の補助GUIが入っています。
 なお、補助GUIではpercent・path・util figコマンドのみ対応しています)  
-https://github.com/knewjade/solution-finder/releases/tag/v0.810
+https://github.com/knewjade/solution-finder/releases/tag/v0.820
 
 
 ※ プログラムの実行には、Java8 以降を実行できる環境が必要です
