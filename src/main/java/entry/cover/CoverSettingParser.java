@@ -204,9 +204,9 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
         Optional<Boolean> isUsingHold = wrapper.getBoolOption(CoverOptions.Hold.optName());
         isUsingHold.ifPresent(settings::setUsingHold);
 
-        // ホールドの設定
-        Optional<Boolean> isPrioritized = wrapper.getBoolOption(CoverOptions.Prioritized.optName());
-        isPrioritized.ifPresent(settings::setPrioritized);
+        // 優先度の設定
+        Optional<Boolean> isUsingPriority = wrapper.getBoolOption(CoverOptions.Priority.optName());
+        isUsingPriority.ifPresent(settings::setUsingPriority);
 
         // ログファイルの設定
         Optional<String> logFilePath = wrapper.getStringOption(CoverOptions.LogPath.optName());

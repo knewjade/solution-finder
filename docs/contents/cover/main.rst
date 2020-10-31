@@ -128,7 +128,7 @@ short    long                   default
 ``-d``   ``--drop``             softdrop
 ``-m``   ``--mirror``           no
 ``-M``   ``--mode``             normal
-``-P``   ``--prioritized``      no
+``-P``   ``--priority``      no
 ``-o``   ``--output-base``      output/path.txt
 ``-lp``  ``--log-path``         output/last_output.txt
 ``-fp``  ``--field-path``       input/field.txt
@@ -212,7 +212,7 @@ v115のテト譜データにのみ対応。
     - ただし、TST のみが対象となる (Miniは含まれない)
 
 
-``-P``, ``--prioritized`` [default: no]
+``-P``, ``--priority`` [default: no]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 入力されるテト譜に優先度を設定し、1つのツモ順につき1つの組み方だけを成功にします。

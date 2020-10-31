@@ -98,7 +98,7 @@ public class CoverEntryPoint implements EntryPoint {
         output("Using hold: " + (settings.isUsingHold() ? "use" : "avoid"));
         output("Drop: " + settings.getDropType().name().toLowerCase());
         output("Mode: " + settings.getCoverModes().name().toLowerCase());
-        output("Prioritized: " + (settings.isUsingPrioritized() ? "yes" : "no"));
+        output("Priority: " + (settings.isUsingPriority() ? "yes" : "no"));
 
         // ========================================
         output("Searching patterns:");
@@ -171,7 +171,7 @@ public class CoverEntryPoint implements EntryPoint {
             }
         }
 
-        boolean isUsingPrioritized = settings.isUsingPrioritized();
+        boolean isUsingPrioritized = settings.isUsingPriority();
 
         int parameterSize = parameters.size();
         piecesList.forEach(pieces -> {

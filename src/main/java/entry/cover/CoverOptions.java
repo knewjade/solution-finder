@@ -15,7 +15,7 @@ public enum CoverOptions {
     Drop(SingleArgOption.full("d", "drop", "hard or soft", "Specify drop")),
     Mirror(SingleArgOption.full("m", "mirror", "yes or no", "Specify expanding mirror")),
     Mode(SingleArgOption.full("M", "mode", "normal or tspin", "Specify cover mode")),
-    Prioritized(SingleArgOption.full("P", "prioritized", "yes or no", "Specify sing prioritized mode")),
+    Priority(SingleArgOption.full("P", "priority", "yes or no", "Specify sing prioritized mode")),
     PatternsPath(SingleArgOption.full("pp", "patterns-path", "path", "File path of pattern definition")),
     FieldPath(SingleArgOption.full("fp", "field-path", "path", "File path of field definition")),
     LogPath(SingleArgOption.full("lp", "log-path", "path", "File path of output log")),
