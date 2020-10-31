@@ -128,6 +128,7 @@ short    long                   default
 ``-d``   ``--drop``             softdrop
 ``-m``   ``--mirror``           no
 ``-M``   ``--mode``             normal
+``-P``   ``--prioritized``      no
 ``-o``   ``--output-base``      output/path.txt
 ``-lp``  ``--log-path``         output/last_output.txt
 ``-fp``  ``--field-path``       input/field.txt
@@ -209,6 +210,21 @@ v115のテト譜データにのみ対応。
 * tst (tspin3)
     - ``any-tspin`` と同様
     - ただし、TST のみが対象となる (Miniは含まれない)
+
+
+``-P``, ``--prioritized`` [default: no]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+入力されるテト譜に優先度を設定し、1つのツモ順につき1つの組み方だけが成功となるようにします。
+
+たとえば ``-t テト譜A テト譜B テト譜C`` を入力し、``TIOSZLJ`` がすべてのテト譜で組めるとします。
+
+そのとき、``-P no`` ではすべて成功 (``TIOSZLJ,O,O,O``) となりますが、
+``-P yes`` ではテト譜Aのみ成功 (``TIOSZLJ,O,X,X``) となります。
+
+優先度はテト譜の入力順によって決まり、先頭にあるテト譜Aの優先度が最も高く、末尾にあるテト譜Cの優先度が最も低くなります。
+
+成功/失敗の判定は優先度の高い組み方からチェックされ、一番はじめに成功したテト譜のみが成功となります。
 
 
 ``-o``, ``--output-base`` [default: output/cover.csv]

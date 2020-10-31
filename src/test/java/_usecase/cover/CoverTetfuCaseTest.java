@@ -654,5 +654,68 @@ class CoverTetfuCaseTest {
                 assertThat(log.getOutput()).contains(Messages.foundAndSolutions(0, all));
             }
         }
+
+        @Test
+        void case10Prioritized1() throws Exception {
+            // ガムシロ積み 2巡目
+            String fumen1 = "v115@7gA8AeA8FeB8AeB8DeF8AeJ8AeF8Jeu6IvhFJwIUBJ?X9I6+ITvINFJ";
+
+            String command = String.format("cover -t %s -p *! --mode tsd -P yes", fumen1);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            int all = 5040;
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(3864, all, fumen1));
+            assertThat(log.getOutput()).contains(Messages.foundOrSolutions(3864, all));
+            assertThat(log.getOutput()).contains(Messages.foundAndSolutions(3864, all));
+        }
+
+        @Test
+        void case10Prioritized2() throws Exception {
+            // ガムシロ積み 2巡目
+            String fumen1 = "v115@7gA8AeA8FeB8AeB8DeF8AeJ8AeF8Jeu6IvhFJwIUBJ?X9I6+ITvINFJ";
+            String fumen2 = "v115@7gA8AeA8FeB8AeB8DeF8AeJ8AeF8Jeu6IvhFJwIUBJ?X9I6+IzrINFJ";
+            String fumen3 = "v115@7gA8AeA8FeB8AeB8DeF8AeJ8AeF8Jeu6IvhFJwIUBJ?X9I6+ITzINFJ";
+            String fumen4 = "v115@7gA8AeA8FeB8AeB8DeF8AeJ8AeF8Jeu6IvhFUBJp5I?X9IzzIqpINFJ";
+
+            String command = String.format("cover -t %s %s %s %s -p *! --mode tsd -P yes", fumen1, fumen2, fumen3, fumen4);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log: 3864+336+336+504 == 5040
+            int all = 5040;
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(3864, all, fumen1));
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(336, all, fumen2));
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(336, all, fumen3));
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(504, all, fumen4));
+            assertThat(log.getOutput()).contains(Messages.foundOrSolutions(5040, all));
+            assertThat(log.getOutput()).contains(Messages.foundAndSolutions(0, all));
+
+            // CSV
+            CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1, fumen2, fumen3, fumen4));
+
+            assertThat(csv.row("name", "OZLSIJT"))
+                    .containsEntry(fumen1, "O")
+                    .containsEntry(fumen2, "X")
+                    .containsEntry(fumen3, "X")
+                    .containsEntry(fumen4, "X");
+
+            assertThat(csv.row("name", "JITOLSZ"))
+                    .containsEntry(fumen1, "X")
+                    .containsEntry(fumen2, "O")
+                    .containsEntry(fumen3, "X")
+                    .containsEntry(fumen4, "X");
+
+            assertThat(csv.row("name", "STIZOLJ"))
+                    .containsEntry(fumen1, "X")
+                    .containsEntry(fumen2, "X")
+                    .containsEntry(fumen3, "O")
+                    .containsEntry(fumen4, "X");
+
+            assertThat(csv.row("name", "ZTIOSLJ"))
+                    .containsEntry(fumen1, "X")
+                    .containsEntry(fumen2, "X")
+                    .containsEntry(fumen3, "X")
+                    .containsEntry(fumen4, "O");
+        }
     }
 }

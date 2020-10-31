@@ -17,10 +17,15 @@ public class CoverSettings {
     private DropType dropType = DropType.Softdrop;
     private boolean isUsingHold = true;
     private CoverModes mode = CoverModes.Normal;
+    private boolean isPrioritized = false;
 
     // ********* Getter ************
     boolean isUsingHold() {
         return isUsingHold;
+    }
+
+    boolean isUsingPrioritized() {
+        return isPrioritized;
     }
 
     List<CoverParameter> getParameters() {
@@ -50,6 +55,10 @@ public class CoverSettings {
     // ********* Setter ************
     void setUsingHold(Boolean isUsingHold) {
         this.isUsingHold = isUsingHold;
+    }
+
+    void setPrioritized(Boolean prioritized) {
+        this.isPrioritized = prioritized;
     }
 
     void setLogFilePath(String path) {
