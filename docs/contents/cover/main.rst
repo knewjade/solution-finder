@@ -128,7 +128,7 @@ short    long                   default
 ``-d``   ``--drop``             softdrop
 ``-m``   ``--mirror``           no
 ``-M``   ``--mode``             normal
-``-P``   ``--priority``      no
+``-P``   ``--priority``         no
 ``-o``   ``--output-base``      output/path.txt
 ``-lp``  ``--log-path``         output/last_output.txt
 ``-fp``  ``--field-path``       input/field.txt
