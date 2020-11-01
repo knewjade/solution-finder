@@ -130,6 +130,9 @@ public class CoverSettings {
             case "tspin3":
                 this.mode = CoverModes.TSpinTriple;
                 return;
+            case "tetris":
+                this.mode = CoverModes.Tetris;
+                return;
             default:
                 throw new FinderParseException("Unsupported mode: mode=" + mode);
         }

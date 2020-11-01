@@ -717,5 +717,21 @@ class CoverTetfuCaseTest {
                     .containsEntry(fumen3, "X")
                     .containsEntry(fumen4, "O");
         }
+
+        @Test
+        void case11() throws Exception {
+            String fumen1 = "v115@JhA8GeC8BeC8BeI8KeT/IvhE6FJOGJXCJdIJpIJ";
+            String fumen2 = "v115@JhA8GeC8BeC8BeI8KeT/IvhEXGJlAJUCJaIJpIJ";
+
+            String command = String.format("cover -t %s %s -p *! --mode tetris", fumen1, fumen2);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            int all = 5040;
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(1440, all, fumen1));
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(960, all, fumen2));
+            assertThat(log.getOutput()).contains(Messages.foundOrSolutions(1920, all));
+            assertThat(log.getOutput()).contains(Messages.foundAndSolutions(480, all));
+        }
     }
 }

@@ -166,6 +166,10 @@ public class CoverEntryPoint implements EntryPoint {
                 cover = new RegularTSpinCover(3);
                 break;
             }
+            case Tetris: {
+                cover = new TetrisCover();
+                break;
+            }
             default: {
                 throw new IllegalStateException("Unknown cover mode: " + mode);
             }

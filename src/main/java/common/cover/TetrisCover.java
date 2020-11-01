@@ -1,47 +1,18 @@
 package common.cover;
 
-import common.SpinChecker;
 import common.datastore.MinoOperationWithKey;
-import common.datastore.SimpleMinoOperation;
-import core.action.reachable.LockedReachable;
 import core.action.reachable.Reachable;
 import core.field.Field;
 import core.field.KeyOperators;
 import core.mino.Mino;
-import core.mino.MinoFactory;
-import core.mino.MinoShifter;
 import core.mino.Piece;
-import core.srs.MinoRotation;
-import core.srs.MinoRotationDetail;
-import searcher.spins.spin.Spin;
-import searcher.spins.spin.TSpins;
 
 import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
-public class RegularTSpinCover implements Cover {
-    private final SpinChecker spinChecker;
-    private final int requiredTSpinLine;
-
-    public RegularTSpinCover(int requiredTSpinLine) {
-        int maxY = 24;
-        MinoFactory minoFactory = new MinoFactory();
-        MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = MinoRotation.create();
-        MinoRotationDetail minoRotationDetail = new MinoRotationDetail(minoFactory, minoRotation);
-        LockedReachable lockedReachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
-        this.spinChecker = new SpinChecker(minoFactory, minoRotationDetail, lockedReachable);
-        this.requiredTSpinLine = requiredTSpinLine;
-    }
-
-    public RegularTSpinCover(MinoFactory minoFactory, MinoRotationDetail minoRotationDetail, LockedReachable lockedReachable, int requiredTSpinLine) {
-        this.spinChecker = new SpinChecker(minoFactory, minoRotationDetail, lockedReachable);
-        this.requiredTSpinLine = requiredTSpinLine;
-    }
-
+public class TetrisCover implements Cover {
     @Override
     public boolean canBuild(Field field, Stream<? extends MinoOperationWithKey> operations, List<Piece> pieces, int height, Reachable reachable, int maxDepth) {
         if (pieces.size() < maxDepth) {
@@ -89,20 +60,14 @@ public class RegularTSpinCover implements Cover {
                         freeze.put(mino, x, y);
                         int currentDeletedLines = freeze.clearLine();
 
-                        if (0 < currentDeletedLines && key.getPiece() == Piece.T) {
-                            // Tでラインが消去された
-                            Optional<Spin> spinOptional = spinChecker.check(field, new SimpleMinoOperation(mino, x, y), height, currentDeletedLines);
-                            if (spinOptional.isPresent()) {
-                                Spin spin = spinOptional.get();
-                                if (spin.getSpin() == TSpins.Regular && requiredTSpinLine <= spin.getClearedLine()) {
-                                    newSatisfied = true;
-                                }
-                            }
+                        if (currentDeletedLines == 4 && key.getPiece() == Piece.I) {
+                            // テトリスでラインが消去された
+                            newSatisfied = true;
                         }
 
-                        if (key.getPiece() == Piece.T && !newSatisfied) {
+                        if (key.getPiece() == Piece.I && !newSatisfied) {
                             // まだ条件を満たしていない
-                            LinkedList<MinoOperationWithKey> ts = eachBlocks.get(Piece.T);
+                            LinkedList<MinoOperationWithKey> ts = eachBlocks.get(Piece.I);
                             if (ts != null && ts.isEmpty()) {
                                 // Tミノが残っていない
                                 operationWithKeys.add(index, key);
@@ -200,20 +165,14 @@ public class RegularTSpinCover implements Cover {
                     freeze.put(mino, x, y);
                     int currentDeletedLines = freeze.clearLine();
 
-                    if (0 < currentDeletedLines && key.getPiece() == Piece.T) {
-                        // Tでラインが消去された
-                        Optional<Spin> spinOptional = spinChecker.check(field, new SimpleMinoOperation(mino, x, y), height, currentDeletedLines);
-                        if (spinOptional.isPresent()) {
-                            Spin spin = spinOptional.get();
-                            if (spin.getSpin() == TSpins.Regular && requiredTSpinLine <= spin.getClearedLine()) {
-                                newSatisfied = true;
-                            }
-                        }
+                    if (currentDeletedLines == 4 && key.getPiece() == Piece.I) {
+                        // テトリスでラインが消去された
+                        newSatisfied = true;
                     }
 
-                    if (key.getPiece() == Piece.T && !newSatisfied) {
+                    if (key.getPiece() == Piece.I && !newSatisfied) {
                         // まだ条件を満たしていない
-                        LinkedList<MinoOperationWithKey> ts = eachBlocks.get(Piece.T);
+                        LinkedList<MinoOperationWithKey> ts = eachBlocks.get(Piece.I);
                         if (ts != null && ts.isEmpty()) {
                             // Tミノが残っていない
                             operationWithKeys.add(index, key);

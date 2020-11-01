@@ -91,15 +91,15 @@ public class AnyTSpinCover implements Cover {
                             if (spinOptional.isPresent()) {
                                 newSatisfied = true;
                             }
+                        }
 
-                            if (!newSatisfied) {
-                                // まだ条件を満たしていない
-                                LinkedList<MinoOperationWithKey> ts = eachBlocks.get(Piece.T);
-                                if (ts != null && ts.isEmpty()) {
-                                    // Tミノが残っていない
-                                    operationWithKeys.add(index, key);
-                                    continue;
-                                }
+                        if (key.getPiece() == Piece.T && !newSatisfied) {
+                            // まだ条件を満たしていない
+                            LinkedList<MinoOperationWithKey> ts = eachBlocks.get(Piece.T);
+                            if (ts != null && ts.isEmpty()) {
+                                // Tミノが残っていない
+                                operationWithKeys.add(index, key);
+                                continue;
                             }
                         }
                     }
@@ -199,15 +199,15 @@ public class AnyTSpinCover implements Cover {
                         if (spinOptional.isPresent()) {
                             newSatisfied = true;
                         }
+                    }
 
-                        if (!newSatisfied) {
-                            // まだ条件を満たしていない
-                            LinkedList<MinoOperationWithKey> ts = eachBlocks.get(Piece.T);
-                            if (ts != null && ts.isEmpty()) {
-                                // Tミノが残っていない
-                                operationWithKeys.add(index, key);
-                                continue;
-                            }
+                    if (key.getPiece() == Piece.T && !newSatisfied) {
+                        // まだ条件を満たしていない
+                        LinkedList<MinoOperationWithKey> ts = eachBlocks.get(Piece.T);
+                        if (ts != null && ts.isEmpty()) {
+                            // Tミノが残っていない
+                            operationWithKeys.add(index, key);
+                            continue;
                         }
                     }
                 }
