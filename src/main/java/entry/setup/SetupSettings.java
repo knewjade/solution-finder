@@ -31,9 +31,9 @@ public class SetupSettings {
     private Field needFilledField = null;
     private Field notFilledField = null;
     private Field freeField = null;
-    private ColorType marginColorType = null;
-    private ColorType fillColorType = null;
-    private ColorType noHolesColorType = null;
+    private List<ColorType> marginColorType = Collections.emptyList();
+    private List<ColorType> fillColorType = Collections.emptyList();
+    private List<ColorType> noHolesColorType = Collections.emptyList();
     private DropType dropType = DropType.Softdrop;
     private String outputBaseFilePath = DEFAULT_OUTPUT_BASE_FILE_PATH;
     private OutputType outputType = OutputType.HTML;
@@ -96,15 +96,15 @@ public class SetupSettings {
         return freeField;
     }
 
-    ColorType getMarginColorType() {
+    List<ColorType> getMarginColorType() {
         return marginColorType;
     }
 
-    ColorType getFillColorType() {
+    List<ColorType> getFillColorType() {
         return fillColorType;
     }
 
-    ColorType getFreeColorType() {
+    List<ColorType> getFreeColorType() {
         return noHolesColorType;
     }
 
@@ -175,9 +175,23 @@ public class SetupSettings {
 
     void setMarginColorType(String marginColor) throws FinderParseException {
         try {
-            this.marginColorType = parseToColor(marginColor);
+            this.marginColorType = parseToColorList(marginColor);
         } catch (IllegalArgumentException e) {
             throw new FinderParseException("Unsupported margin color: value=" + marginColor);
+        }
+    }
+
+    // The Tetris Company standardization
+    private List<ColorType> parseToColorList(String color) throws IllegalArgumentException {
+        try {
+            return Collections.singletonList(parseToColor(color));
+        } catch (IllegalArgumentException e) {
+            List<ColorType> list = new ArrayList<>();
+            for (int index = 0; index < color.length(); index++) {
+                char ch = color.charAt(index);
+                list.add(parseToColor(String.valueOf(ch)));
+            }
+            return list;
         }
     }
 
@@ -227,7 +241,7 @@ public class SetupSettings {
 
     void setFillColorType(String fillColor) throws FinderParseException {
         try {
-            this.fillColorType = parseToColor(fillColor);
+            this.fillColorType = parseToColorList(fillColor);
         } catch (IllegalArgumentException e) {
             throw new FinderParseException("Unsupported fill color: value=" + fillColor);
         }
@@ -235,7 +249,7 @@ public class SetupSettings {
 
     void setFreeColorType(String noHolesColor) throws FinderParseException {
         try {
-            this.noHolesColorType = parseToColor(noHolesColor);
+            this.noHolesColorType = parseToColorList(noHolesColor);
         } catch (IllegalArgumentException e) {
             throw new FinderParseException("Unsupported no-holes color: value=" + noHolesColor);
         }
@@ -317,7 +331,7 @@ public class SetupSettings {
     private FieldOperation createFieldOperation(String command, String args) throws FinderParseException {
         switch (command.toLowerCase()) {
             case "row": {
-                int y = Integer.valueOf(args);
+                int y = Integer.parseInt(args);
                 if (y < 0) {
                     throw new FinderParseException("Unsupported operation / 0 <= y: y=" + y);
                 }
@@ -328,12 +342,12 @@ public class SetupSettings {
             }
             case "block": {
                 String[] split = args.split(",");
-                int x = Integer.valueOf(split[0]);
+                int x = Integer.parseInt(split[0]);
                 if (x < 0 || 10 <= x) {
                     throw new FinderParseException("Unsupported piece operation / 0 <= x < 10: args=" + args);
                 }
 
-                int y = Integer.valueOf(split[1]);
+                int y = Integer.parseInt(split[1]);
                 if (y < 0) {
                     throw new FinderParseException("Unsupported piece operation / 0 <= y: args=" + args);
                 }
@@ -348,12 +362,12 @@ public class SetupSettings {
                 Rotate rotate = toRotate(command.split("-")[1].toLowerCase());
 
                 String[] split = args.split(",");
-                int x = Integer.valueOf(split[0]);
+                int x = Integer.parseInt(split[0]);
                 if (x < 0 || 10 <= x) {
                     throw new FinderParseException("Unsupported piece operation / 0 <= x < 10: args=" + args);
                 }
 
-                int y = Integer.valueOf(split[1]);
+                int y = Integer.parseInt(split[1]);
                 if (y < 0) {
                     throw new FinderParseException("Unsupported piece operation / 0 <= y: args=" + args);
                 }

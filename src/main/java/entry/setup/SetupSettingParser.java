@@ -253,19 +253,19 @@ public class SetupSettingParser extends SettingParser<SetupSettings> {
         Field notFilledField = FieldFactory.createField(maxHeight);
         Field freeField = FieldFactory.createField(maxHeight);
 
-        ColorType marginColorType = settings.getMarginColorType();
-        ColorType fillColorType = settings.getFillColorType();
-        ColorType freeColorType = settings.getFreeColorType();
+        List<ColorType> marginColorType = settings.getMarginColorType();
+        List<ColorType> fillColorType = settings.getFillColorType();
+        List<ColorType> freeColorType = settings.getFreeColorType();
 
         for (int y = 0; y < maxHeight; y++) {
             for (int x = 0; x < 10; x++) {
                 ColorType colorType = coloredField.getColorType(x, y);
 
-                if (colorType.equals(freeColorType)) {
+                if (freeColorType.contains(colorType)) {
                     freeField.setBlock(x, y);
-                } else if (colorType.equals(fillColorType)) {
+                } else if (fillColorType.contains(colorType)) {
                     needFilledField.setBlock(x, y);
-                } else if (colorType.equals(marginColorType)) {
+                } else if (marginColorType.contains(colorType)) {
                     // skip
                 } else {
                     switch (colorType) {

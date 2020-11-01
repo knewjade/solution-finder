@@ -128,6 +128,18 @@ class SetupTetfuCaseTest {
         }
 
         @Test
+        void case5MultiColor() throws Exception {
+            // 高さ4
+            String fumen = "v115@9gj0whUpBtCeU4CtAeV4kl0wJeAgH";
+            String command = buildCommand(fumen, "-p [^T]! --fill isz --margin oljt");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(12));
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
         void case6() throws Exception {
             // 高さ3
             String fumen = "v115@HhUpxhBeA81hCeA8yhD8AeB8JeAgH";
