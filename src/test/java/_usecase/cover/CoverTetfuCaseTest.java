@@ -733,5 +733,33 @@ class CoverTetfuCaseTest {
             assertThat(log.getOutput()).contains(Messages.foundOrSolutions(1920, all));
             assertThat(log.getOutput()).contains(Messages.foundAndSolutions(480, all));
         }
+
+        @Test
+        void case12Tetris() throws Exception {
+            String fumen1 = "v115@1gB8AeE8AeI8AeI8AeI8AeI8JeT1IvhFP3Im1I03IS?+I19IJEJ";
+
+            String command = String.format("cover -t %s -p *! --mode tetris", fumen1);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            int all = 5040;
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(3230, all, fumen1));
+            assertThat(log.getOutput()).contains(Messages.foundOrSolutions(3230, all));
+            assertThat(log.getOutput()).contains(Messages.foundAndSolutions(3230, all));
+        }
+
+        @Test
+        void case12TetrisEnd() throws Exception {
+            String fumen1 = "v115@1gB8AeE8AeI8AeI8AeI8AeI8JeT1IvhFP3Im1I03IS?+I19IJEJ";
+
+            String command = String.format("cover -t %s -p *! --mode tetris-end", fumen1);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            int all = 5040;
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(2038, all, fumen1));
+            assertThat(log.getOutput()).contains(Messages.foundOrSolutions(2038, all));
+            assertThat(log.getOutput()).contains(Messages.foundAndSolutions(2038, all));
+        }
     }
 }

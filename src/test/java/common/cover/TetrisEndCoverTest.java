@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TetrisCoverTest {
+class TetrisEndCoverTest {
     private final MinoFactory minoFactory = new MinoFactory();
     private final MinoShifter minoShifter = new MinoShifter();
     private final MinoRotation minoRotation = MinoRotation.create();
@@ -42,7 +42,7 @@ class TetrisCoverTest {
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
 
-        TetrisCover cover = new TetrisCover();
+        TetrisEndCover cover = new TetrisEndCover();
 
         {
             List<Piece> pieces = toPieceList("JZ");
@@ -117,7 +117,7 @@ class TetrisCoverTest {
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
 
-        TetrisCover cover = new TetrisCover();
+        TetrisEndCover cover = new TetrisEndCover();
 
         {
             List<Piece> pieces = toPieceList("S");
@@ -134,7 +134,7 @@ class TetrisCoverTest {
 
             assertThat(
                     cover.canBuild(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
-            ).isTrue();
+            ).isFalse();
             assertThat(
                     cover.canBuildWithHold(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
             ).isTrue();
@@ -144,7 +144,7 @@ class TetrisCoverTest {
 
             assertThat(
                     cover.canBuild(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
-            ).isTrue();
+            ).isFalse();
             assertThat(
                     cover.canBuildWithHold(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
             ).isTrue();
@@ -167,7 +167,7 @@ class TetrisCoverTest {
             ).isFalse();
             assertThat(
                     cover.canBuildWithHold(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
-            ).isTrue();
+            ).isFalse();
         }
     }
 

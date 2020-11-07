@@ -133,6 +133,10 @@ public class CoverSettings {
             case "tetris":
                 this.mode = CoverModes.Tetris;
                 return;
+            case "tetris-end":
+            case "tetrisend":
+                this.mode = CoverModes.TetrisEnd;
+                return;
             default:
                 throw new FinderParseException("Unsupported mode: mode=" + mode);
         }
