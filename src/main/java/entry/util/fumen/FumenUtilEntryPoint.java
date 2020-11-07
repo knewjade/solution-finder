@@ -17,18 +17,39 @@ import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.Piece;
 import entry.EntryPoint;
+import entry.path.output.MyFile;
 import exceptions.FinderException;
 import exceptions.FinderExecuteException;
+import exceptions.FinderInitializeException;
+import exceptions.FinderTerminateException;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class FumenUtilEntryPoint implements EntryPoint {
-    private final FumenUtilSettings settings;
+    private static final String LINE_SEPARATOR = System.lineSeparator();
 
-    public FumenUtilEntryPoint(FumenUtilSettings settings) {
+    private final FumenUtilSettings settings;
+    private final BufferedWriter logWriter;
+
+    public FumenUtilEntryPoint(FumenUtilSettings settings) throws FinderInitializeException {
         this.settings = settings;
+
+        // ログファイルの出力先を整備
+        String logFilePath = settings.getLogFilePath();
+        MyFile logFile = new MyFile(logFilePath);
+
+        logFile.mkdirs();
+        logFile.verify();
+
+        try {
+            this.logWriter = logFile.newBufferedWriter();
+        } catch (IOException e) {
+            throw new FinderInitializeException(e);
+        }
     }
 
     @Override
@@ -53,7 +74,8 @@ public class FumenUtilEntryPoint implements EntryPoint {
 
                     int height = 24;
 
-                    ColoredField coloredField = pages.get(0).getField();
+                    TetfuPage headPage = pages.get(0);
+                    ColoredField coloredField = headPage.getField();
                     Field field = toField(coloredField, height);
 
                     List<MinoOperationWithKey> operationsWithKey = OperationTransform.parseToOperationWithKeys(
@@ -77,7 +99,7 @@ public class FumenUtilEntryPoint implements EntryPoint {
                     }
 
                     String encode = tetfu.encode(Collections.singletonList(
-                            new TetfuElement(freeze)
+                            new TetfuElement(freeze, headPage.getComment())
                     ));
 
                     output(String.format("v115@%s", encode));
@@ -98,27 +120,32 @@ public class FumenUtilEntryPoint implements EntryPoint {
         return field;
     }
 
+    public void output(String str) throws FinderExecuteException {
+        try {
+            logWriter.append(str).append(LINE_SEPARATOR);
+        } catch (IOException e) {
+            throw new FinderExecuteException(e);
+        }
+
+        if (settings.isOutputToConsole())
+            System.out.println(str);
+    }
+
+    private void flush() throws FinderExecuteException {
+        try {
+            logWriter.flush();
+        } catch (IOException e) {
+            throw new FinderExecuteException(e);
+        }
+    }
+
     @Override
-    public void close() {
-    }
-
-    private void output() {
-        output("");
-    }
-
-    private void output(String str) {
-        System.out.println(str);
-    }
-
-    private static class Quiz {
-        private static final Quiz EMPTY = new Quiz("", -1);
-
-        private final String comment;
-        private final int index;
-
-        private Quiz(String comment, int index) {
-            this.comment = comment;
-            this.index = index;
+    public void close() throws FinderTerminateException {
+        try {
+            flush();
+            logWriter.close();
+        } catch (IOException | FinderExecuteException e) {
+            throw new FinderTerminateException(e);
         }
     }
 }

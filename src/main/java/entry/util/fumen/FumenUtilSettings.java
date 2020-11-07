@@ -54,4 +54,8 @@ public class FumenUtilSettings {
     void setFumens(List<String> fumens) {
         this.fumens = fumens;
     }
+
+    boolean isOutputToConsole() {
+        return true;
+    }
 }

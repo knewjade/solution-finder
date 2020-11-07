@@ -20,3 +20,4 @@ utilの中には、さらにサブコマンドが含まれます。
    :caption: 目次
 
    fig
+   fumen
