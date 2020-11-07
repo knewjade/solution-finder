@@ -54,5 +54,16 @@ class UtilFumenTetfuCaseTest {
                     .contains("v115@9gBtEeilwwBtDeglRpxwR4Ceg0RpwwR4Dei0JeAgH")
                     .contains("v115@9gili0DeglAtRpQ4g0DeBtRpR4DeAtzhQ4NeAgH");
         }
+
+        @Test
+        void case4CommentAtHead() throws Exception {
+            // 1ページ目のコメントが残る
+            String fumens = "v115@vhFXKYZAxXHDBQGDSA1d0ACDYHDBQzuRA1Dq9BlAAA?ANJYZAyXHDBQGDSA1d0ACDYHDBQzuRA1Dq9BlAAAA0/XZAz?XHDBQGDSA1d0ACDYHDBQzuRA1Dq9BlAAAAWSYZA0XHDBQGD?SA1d0ACDYHDBQzuRA1Dq9BlAAAATIYZA1XHDBQGDSA1d0AC?DYHDBQzuRA1Dq9BlAAAACDYZA2XHDBQGDSA1d0ACDYHDBQz?uRA1Dq9BlAAAA";
+            String command = buildCommand("reduce", fumens, "");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput())
+                    .contains("v115@9gBtEeilwwBtDeglRpxwR4Ceg0RpwwR4Dei0JeAgWZ?AxXHDBQGDSA1d0ACDYHDBQzuRA1Dq9BlAAAA");
+        }
     }
 }
