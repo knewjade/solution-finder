@@ -1,6 +1,10 @@
 package entry;
 
 import core.FinderConstant;
+import entry.cover.CoverEntryPoint;
+import entry.cover.CoverOptions;
+import entry.cover.CoverSettingParser;
+import entry.cover.CoverSettings;
 import entry.dev.DevRandomEntryPoint;
 import entry.move.MoveEntryPoint;
 import entry.move.MoveSettingParser;
@@ -17,10 +21,6 @@ import entry.ren.RenEntryPoint;
 import entry.ren.RenOptions;
 import entry.ren.RenSettingParser;
 import entry.ren.RenSettings;
-import entry.cover.CoverEntryPoint;
-import entry.cover.CoverOptions;
-import entry.cover.CoverSettingParser;
-import entry.cover.CoverSettings;
 import entry.setup.SetupEntryPoint;
 import entry.setup.SetupOptions;
 import entry.setup.SetupSettingParser;
@@ -32,6 +32,10 @@ import entry.spin.SpinSettings;
 import entry.util.fig.FigUtilEntryPoint;
 import entry.util.fig.FigUtilSettingParser;
 import entry.util.fig.FigUtilSettings;
+import entry.util.fumen.FumenUtilEntryPoint;
+import entry.util.fumen.FumenUtilOptions;
+import entry.util.fumen.FumenUtilSettingParser;
+import entry.util.fumen.FumenUtilSettings;
 import exceptions.FinderInitializeException;
 import exceptions.FinderParseException;
 import org.apache.commons.cli.CommandLineParser;
@@ -276,6 +280,18 @@ public class EntryPointMain {
                 }
 
                 break;
+            }
+            case "fumen": {
+                Options options = FumenUtilOptions.create();
+                CommandLineParser parser = new DefaultParser();
+                FumenUtilSettingParser settingParser = new FumenUtilSettingParser(options, parser);
+                Optional<FumenUtilSettings> settingsOptional = settingParser.parse(commands);
+                if (settingsOptional.isPresent()) {
+                    FumenUtilSettings settings = settingsOptional.get();
+                    return Optional.of(new FumenUtilEntryPoint(settings));
+                } else {
+                    return Optional.empty();
+                }
             }
             default:
                 throw new IllegalArgumentException("util: Invalid type: Use fig or seq");

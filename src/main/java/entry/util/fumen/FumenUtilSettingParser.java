@@ -1,0 +1,119 @@
+package entry.util.fumen;
+
+import common.tetfu.Tetfu;
+import entry.CommandLineWrapper;
+import entry.common.SettingParser;
+import entry.cover.CoverOptions;
+import exceptions.FinderParseException;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.Options;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+public class FumenUtilSettingParser extends SettingParser<FumenUtilSettings> {
+    private static final String CHARSET_NAME = "utf-8";
+    private static final String DEFAULT_FIELD_TXT = "input/field.txt";
+
+    public FumenUtilSettingParser(Options options, CommandLineParser parser) {
+        super(options, parser);
+    }
+
+    @Override
+    protected Optional<FumenUtilSettings> parse(CommandLineWrapper wrapper) throws FinderParseException {
+        FumenUtilSettings settings = new FumenUtilSettings();
+
+        // テト譜の読み込み
+        List<String> fumens = loadFumenData(
+                wrapper,
+                CoverOptions.Fumen.optName(),
+                CoverOptions.FieldPath.optName(),
+                DEFAULT_FIELD_TXT,
+                Charset.forName(CHARSET_NAME)
+        ).stream()
+                .map(Tetfu::removeDomainData)
+                .filter(Tetfu::isDataLater115)
+                .map(Tetfu::removePrefixData)
+                .collect(Collectors.toList());
+
+        if (fumens.isEmpty()) {
+            throw new FinderParseException("Cannot load fumen" + fumens);
+        }
+
+        settings.setFumens(fumens);
+
+        // モードの設定
+        Optional<String> modeType = wrapper.getStringOption(FumenUtilOptions.Mode.optName());
+        try {
+            modeType.ifPresent(type -> {
+                String key = modeType.orElse("normal");
+                try {
+                    settings.setFumenUtilModes(key);
+                } catch (FinderParseException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            throw new FinderParseException("Unsupported format: format=" + modeType.orElse("<empty>"));
+        }
+
+        // ログファイルの設定
+        Optional<String> logFilePath = wrapper.getStringOption(CoverOptions.LogPath.optName());
+        logFilePath.ifPresent(settings::setLogFilePath);
+
+        // アウトプットファイルの設定
+        Optional<String> outputBaseFilePath = wrapper.getStringOption(CoverOptions.OutputBase.optName());
+        outputBaseFilePath.ifPresent(settings::setOutputBaseFilePath);
+
+        return Optional.of(settings);
+    }
+
+    // フィールドの情報を読み込む
+    private static List<String> loadFumenData(
+            CommandLineWrapper wrapper,
+            String fumenOptName,
+            String fieldPathOptName,
+            String defaultFieldText,
+            Charset charset
+    ) throws FinderParseException {
+        if (wrapper.hasOption(fumenOptName)) {
+            // テト譜から
+            return wrapper.getStringOptions(fumenOptName);
+        } else {
+            // フィールドファイルから
+            Optional<String> fieldPathOption = wrapper.getStringOption(fieldPathOptName);
+            String fieldPath = fieldPathOption.orElse(defaultFieldText);
+            Path path = Paths.get(fieldPath);
+
+            Stream<String> lines;
+            try {
+                lines = Files.lines(path, charset);
+            } catch (IOException e) {
+                throw new FinderParseException("Cannot open field file");
+            }
+
+            LinkedList<String> fieldLines = lines
+                    .map(str -> {
+                        if (str.contains("#"))
+                            return str.substring(0, str.indexOf('#'));
+                        return str;
+                    })
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .collect(Collectors.toCollection(LinkedList::new));
+
+            if (fieldLines.isEmpty())
+                throw new FinderParseException("Should specify clear-line & field-definition in field file");
+
+            return fieldLines;
+        }
+    }
+}

@@ -53,8 +53,10 @@ public class DevMain {
 //        String command = "util fig --tetfu v115@BgC8GeC8BeglDeD8AeglDeE8hlCeF8ywAtG8wwBtH8?AtAeI8AeI8AeI8KeAgH -F png -f no";
 
 //        String command = "util seq -t v115@vhFRQJUGJKJJvMJTNJGBJ v115@vhFRQJPGJKJJGMJTNJ0BJ -p *!";
-        String command = "util seq -t v115@vhFRQJUGJKJJvMJTNJGBJ#:-1 v115@vhFRQJPGJKJJGMJTNJ0BJ#1:5 -p *!";
+//        String command = "util seq -t v115@vhFRQJUGJKJJvMJTNJGBJ#:-1 v115@vhFRQJPGJKJJGMJTNJ0BJ#1:5 -p *!";
 //        String command = "util seq -t v115@vhERQJPGJKJJGMJTNJ -p *!";
+
+        String command = "util fumen -M reduce -t v115@vhdXKJNJJ0/ISSJzHJGDJJHJSGJvLJ0KJJEJzJJ+NJ?tMJFDJz/IyQJsGJOGJpFJ+NJ3MJXDJULJzGJxBJiJJtKJyJ?J0JJ";
 
         int returnCode = EntryPointMain.main(command.split(" "));
         System.exit(returnCode);
