@@ -7,9 +7,11 @@ import core.FinderConstant;
 import core.mino.MinoFactory;
 import core.mino.Piece;
 import entry.EntryPoint;
+import entry.path.output.MyFile;
 import exceptions.FinderException;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
+import exceptions.FinderTerminateException;
 import lib.Stopwatch;
 import util.fig.Bag;
 import util.fig.FigSetting;
@@ -24,6 +26,7 @@ import util.fig.output.PngWriter;
 import util.fig.position.BasicPositionDecider;
 import util.fig.position.RightPositionDecider;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -34,11 +37,27 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class FigUtilEntryPoint implements EntryPoint {
-    private final FigUtilSettings settings;
+    private static final String LINE_SEPARATOR = System.lineSeparator();
 
-    public FigUtilEntryPoint(FigUtilSettings settings) {
+    private final FigUtilSettings settings;
+    private final BufferedWriter logWriter;
+
+    public FigUtilEntryPoint(FigUtilSettings settings) throws FinderInitializeException {
         settings.adjust();
         this.settings = settings;
+
+        // ログファイルの出力先を整備
+        String logFilePath = settings.getLogFilePath();
+        MyFile logFile = new MyFile(logFilePath);
+
+        logFile.mkdirs();
+        logFile.verify();
+
+        try {
+            this.logWriter = logFile.newBufferedWriter();
+        } catch (IOException e) {
+            throw new FinderInitializeException(e);
+        }
     }
 
     @Override
@@ -279,16 +298,37 @@ public class FigUtilEntryPoint implements EntryPoint {
         throw new IllegalStateException("No reachable");
     }
 
-    @Override
-    public void close() {
-    }
-
-    private void output() {
+    private void output() throws FinderExecuteException {
         output("");
     }
 
-    private void output(String str) {
-        System.out.println(str);
+    public void output(String str) throws FinderExecuteException {
+        try {
+            logWriter.append(str).append(LINE_SEPARATOR);
+        } catch (IOException e) {
+            throw new FinderExecuteException(e);
+        }
+
+        if (settings.isOutputToConsole())
+            System.out.println(str);
+    }
+
+    private void flush() throws FinderExecuteException {
+        try {
+            logWriter.flush();
+        } catch (IOException e) {
+            throw new FinderExecuteException(e);
+        }
+    }
+
+    @Override
+    public void close() throws FinderTerminateException {
+        try {
+            flush();
+            logWriter.close();
+        } catch (IOException | FinderExecuteException e) {
+            throw new FinderTerminateException(e);
+        }
     }
 
     private static class Quiz {

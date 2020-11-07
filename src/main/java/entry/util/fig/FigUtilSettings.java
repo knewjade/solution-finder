@@ -4,9 +4,9 @@ import common.tetfu.TetfuPage;
 import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
-import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
+import core.mino.Piece;
 import core.srs.Rotate;
 import util.fig.FrameType;
 
@@ -17,7 +17,9 @@ import java.util.OptionalInt;
 // TODO: unittest: write
 public class FigUtilSettings {
     private static final String DEFAULT_OUTPUT_FILE_PATH = "output/fig.gif";
+    private static final String DEFAULT_LOG_FILE_PATH = "output/last_output.txt";
 
+    private String logFilePath = DEFAULT_LOG_FILE_PATH;
     private FrameType frameType = FrameType.Basic;
     private boolean isUsingHold = true;
     private int height = -1;
@@ -31,6 +33,10 @@ public class FigUtilSettings {
     private FigFormat figFormat = FigFormat.Gif;
 
     // ********* Getter ************
+    String getLogFilePath() {
+        return logFilePath;
+    }
+
     FrameType getFrameType() {
         return frameType;
     }
@@ -76,6 +82,10 @@ public class FigUtilSettings {
     }
 
     // ********* Setter ************
+
+    void setLogFilePath(String path) {
+        this.logFilePath = path;
+    }
 
     void setUsingHold(Boolean isUsingHold) {
         this.isUsingHold = isUsingHold;
@@ -173,5 +183,9 @@ public class FigUtilSettings {
 
     void setFigFormat(FigFormat figFormat) {
         this.figFormat = figFormat;
+    }
+
+    boolean isOutputToConsole() {
+        return true;
     }
 }

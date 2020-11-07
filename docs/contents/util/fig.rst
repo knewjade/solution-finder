@@ -37,6 +37,7 @@ short    long                   default
 ``-l``   ``--line``             -1
 ``-f``   ``--frame``            basic
 ``-H``   ``--hold``             visible
+``-lp``  ``--log-path``         output/last_output.txt
 ``-fp``  ``--field-path``       input/field.txt
 ======== ====================== ======================
 
@@ -149,6 +150,12 @@ v115のテト譜データにのみ対応。
 ただしホールドを指定する場合は、テト譜にQuizが設定されている必要があります。
 
 もし、Quizが設定されているが、Nextにその情報を使用したくない場合は ``hidden`` を指定してください。
+
+
+``-lp``, ``--log-path`` [default: output/last_output.txt]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+実行時のログを保存するファイルのパスを指定する。
 
 
 ``-fp``, ``--field-path`` [default: input/field.txt]

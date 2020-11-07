@@ -167,6 +167,10 @@ public class FigUtilSettingParser {
         Optional<Integer> positiveNext = next.map(integer -> 0 < integer ? integer : 0);
         positiveNext.ifPresent(settings::setNextBoxCount);
 
+        // ログファイルの設定
+        Optional<String> logFilePath = wrapper.getStringOption("log-path");
+        logFilePath.ifPresent(settings::setLogFilePath);
+
         return Optional.of(settings);
     }
 
@@ -319,6 +323,16 @@ public class FigUtilSettingParser {
                 .desc("Figure file path of result to output")
                 .build();
         options.addOption(outputFileOption);
+
+        Option logFileOption = Option.builder("lp")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("path")
+                .longOpt("log-path")
+                .desc("File path of output log")
+                .build();
+        options.addOption(logFileOption);
 
         Option fieldFileOption = Option.builder("fp")
                 .optionalArg(true)
