@@ -8,4 +8,5 @@ public enum CoverModes {
     TSpinDouble,
     TSpinTriple,
     Tetris,
+    TetrisEnd,
 }
