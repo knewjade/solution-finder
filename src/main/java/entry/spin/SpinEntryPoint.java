@@ -11,6 +11,7 @@ import core.field.FieldView;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.mino.Piece;
+import core.neighbor.SimpleOriginalPiece;
 import core.srs.MinoRotation;
 import core.srs.MinoRotationDetail;
 import entry.EntryPoint;
@@ -28,7 +29,7 @@ import exceptions.FinderInitializeException;
 import exceptions.FinderTerminateException;
 import lib.Stopwatch;
 import searcher.spins.*;
-import searcher.spins.candidates.Candidate;
+import searcher.spins.results.Result;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -152,7 +153,39 @@ public class SpinEntryPoint implements EntryPoint {
 
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
-        List<Candidate> results = spinRunner.search(secondPreSpinRunner, requiredClearLine).collect(Collectors.toList());
+        boolean isCombination = true;
+        List<OutputCandidate> results;
+        if (isCombination) {
+            // combination
+            results = spinRunner.search(secondPreSpinRunner, requiredClearLine)
+                    .map(WrapperOutputCandidate::new)
+                    .collect(Collectors.toList());
+        } else {
+            // sequence
+            results = spinRunner.search(secondPreSpinRunner, requiredClearLine)
+                    .map(candidate -> {
+                        SimpleOriginalPiece operationT = candidate.getOperationT();
+
+                        Result result = candidate.getResult();
+                        Field allMergedField = result.getAllMergedField();
+
+                        List<SimpleOriginalPiece> operation = result.operationStream().collect(Collectors.toList());
+                        long allMergedFilledLine = result.getAllMergedFilledLine();
+
+                        Field allMergedFieldWithoutT = candidate.getAllMergedFieldWithoutT();
+                        long allMergedFilledLineWithoutT = candidate.getAllMergedFilledLineWithoutT();
+
+                        return new SimpleOutputCandidate(
+                                operationT,
+                                allMergedField,
+                                operation,
+                                allMergedFilledLine,
+                                allMergedFieldWithoutT,
+                                allMergedFilledLineWithoutT
+                        );
+                    })
+                    .collect(Collectors.toList());
+        }
 
         stopwatch.stop();
 

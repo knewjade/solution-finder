@@ -46,7 +46,7 @@ public class DevMain {
 //        String command = "path -p J,Z,O,S,L,I,I,J,S,O,Z -t v115@vhAAgH";
 
 //        String command = "spin ";  // 0 solutions
-//        String command = "spin -p *! -t v115@HhB8AeH8BeI8AeG8JeAgH -mr 1";  // 2 solutions
+        String command = "spin -p *! -t v115@HhB8AeH8BeI8AeG8JeAgH -mr 1";  // 2 solutions
 //        String command = "spin -p *! -t v115@HhB8AeH8BeI8AeG8JeAgH -r no";  // 1 solutions
 
 //        String command = "spin --tetfu v115@KhB8DeB8BeB8AeI8BeC8JeAgH --patterns *p7 -ft 7";
@@ -56,7 +56,7 @@ public class DevMain {
 //        String command = "util seq -t v115@vhFRQJUGJKJJvMJTNJGBJ#:-1 v115@vhFRQJPGJKJJGMJTNJ0BJ#1:5 -p *!";
 //        String command = "util seq -t v115@vhERQJPGJKJJGMJTNJ -p *!";
 
-        String command = "util fumen -M reduce -t v115@vhdXKJNJJ0/ISSJzHJGDJJHJSGJvLJ0KJJEJzJJ+NJ?tMJFDJz/IyQJsGJOGJpFJ+NJ3MJXDJULJzGJxBJiJJtKJyJ?J0JJ";
+//        String command = "util fumen -M reduce -t v115@vhdXKJNJJ0/ISSJzHJGDJJHJSGJvLJ0KJJEJzJJ+NJ?tMJFDJz/IyQJsGJOGJpFJ+NJ3MJXDJULJzGJxBJiJJtKJyJ?J0JJ";
 
         int returnCode = EntryPointMain.main(command.split(" "));
         System.exit(returnCode);

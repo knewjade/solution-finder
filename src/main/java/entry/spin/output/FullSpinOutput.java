@@ -17,12 +17,10 @@ import core.srs.RotateDirection;
 import core.srs.SpinResult;
 import entry.path.output.FumenParser;
 import entry.path.output.MyFile;
-import entry.path.output.OneFumenParser;
+import entry.spin.OutputCandidate;
 import exceptions.FinderExecuteException;
 import output.HTMLBuilder;
 import searcher.spins.SpinCommons;
-import searcher.spins.candidates.Candidate;
-import searcher.spins.results.Result;
 import searcher.spins.spin.Spin;
 
 import java.io.BufferedWriter;
@@ -52,12 +50,12 @@ public class FullSpinOutput implements SpinOutput {
     }
 
     @Override
-    public void output(MyFile myFile, List<Candidate> results, Field initField, int fieldHeight) throws FinderExecuteException {
+    public void output(MyFile myFile, List<OutputCandidate> results, Field initField, int fieldHeight) throws FinderExecuteException {
         HTMLBuilder<FullSpinColumn> htmlBuilder = new HTMLBuilder<>("Spin Result");
         htmlBuilder.addHeader(String.format("%d solutions", results.size()));
 
         // HTMLを作成する
-        for (Candidate candidate : results) {
+        for (OutputCandidate candidate : results) {
             add(htmlBuilder, candidate, initField, fieldHeight);
         }
 
@@ -79,13 +77,12 @@ public class FullSpinOutput implements SpinOutput {
         }
     }
 
-    private void add(HTMLBuilder<FullSpinColumn> htmlBuilder, Candidate candidate, Field initField, int fieldHeight) {
+    private void add(HTMLBuilder<FullSpinColumn> htmlBuilder, OutputCandidate candidate, Field initField, int fieldHeight) {
         LockedReachable lockedReachable = lockedReachableThreadLocal.get();
 
         // Tを使って消去されるライン数
-        Result result = candidate.getResult();
         SimpleOriginalPiece operationT = candidate.getOperationT();
-        int clearedLineOnlyT = Long.bitCount(result.getAllMergedFilledLine() & operationT.getUsingKey());
+        int clearedLineOnlyT = Long.bitCount(candidate.getAllMergedFilledLine() & operationT.getUsingKey());
 
         // Tミノを除いた地形で揃っているラインを消去する
         Field freeze = candidate.getAllMergedFieldWithoutT().freeze();
@@ -127,7 +124,7 @@ public class FullSpinOutput implements SpinOutput {
         FullSpinColumn column = new FullSpinColumn(maxSpin, finalPriority, getSpinString(maxSpin));
 
         // テト譜
-        List<MinoOperationWithKey> operations = result.operationStream().collect(Collectors.toList());
+        List<MinoOperationWithKey> operations = candidate.operationStream().collect(Collectors.toList());
         String fumen = fumenParser.parse(operations, initField, fieldHeight);
 
         // 表示されるタイトル
@@ -136,7 +133,7 @@ public class FullSpinOutput implements SpinOutput {
                 .collect(Collectors.joining(" "));
 
         // 解の優先度
-        Field freezeForClearedLineAll = result.getAllMergedField().freeze();
+        Field freezeForClearedLineAll = candidate.getAllMergedField().freeze();
         int clearedLineAll = freezeForClearedLineAll.clearLine();
 
         int numOfHoles = getNumOfHoles(freezeForClearedLineAll);
