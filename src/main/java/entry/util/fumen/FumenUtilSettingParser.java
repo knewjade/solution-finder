@@ -3,7 +3,6 @@ package entry.util.fumen;
 import common.tetfu.Tetfu;
 import entry.CommandLineWrapper;
 import entry.common.SettingParser;
-import entry.cover.CoverOptions;
 import exceptions.FinderParseException;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Options;
@@ -34,8 +33,8 @@ public class FumenUtilSettingParser extends SettingParser<FumenUtilSettings> {
         // テト譜の読み込み
         List<String> fumens = loadFumenData(
                 wrapper,
-                CoverOptions.Fumen.optName(),
-                CoverOptions.FieldPath.optName(),
+                FumenUtilOptions.Fumen.optName(),
+                FumenUtilOptions.FieldPath.optName(),
                 DEFAULT_FIELD_TXT,
                 Charset.forName(CHARSET_NAME)
         ).stream()
@@ -66,11 +65,11 @@ public class FumenUtilSettingParser extends SettingParser<FumenUtilSettings> {
         }
 
         // ログファイルの設定
-        Optional<String> logFilePath = wrapper.getStringOption(CoverOptions.LogPath.optName());
+        Optional<String> logFilePath = wrapper.getStringOption(FumenUtilOptions.LogPath.optName());
         logFilePath.ifPresent(settings::setLogFilePath);
 
         // アウトプットファイルの設定
-        Optional<String> outputBaseFilePath = wrapper.getStringOption(CoverOptions.OutputBase.optName());
+        Optional<String> outputBaseFilePath = wrapper.getStringOption(FumenUtilOptions.OutputBase.optName());
         outputBaseFilePath.ifPresent(settings::setOutputBaseFilePath);
 
         return Optional.of(settings);

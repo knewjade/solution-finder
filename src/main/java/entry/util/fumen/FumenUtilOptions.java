@@ -13,6 +13,7 @@ public enum FumenUtilOptions {
     Mode(SingleArgOption.full("M", "mode", "normal or tspin", "Specify cover mode")),
     FieldPath(SingleArgOption.full("fp", "field-path", "path", "File path of field definition")),
     LogPath(SingleArgOption.full("lp", "log-path", "path", "File path of output log")),
+    OutputBase(SingleArgOption.full("o", "output-base", "path", "Base file path of result to output")),
     ;
 
     private final OptionBuilder optionBuilder;
