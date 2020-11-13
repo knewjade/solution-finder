@@ -837,6 +837,26 @@ class SetupTetfuCaseTest {
                     .contains(Messages.foundSolutions(1))
                     .contains(Messages.foundSubSolutions(1));
         }
+
+        @Test
+        void case6() throws Exception {
+            String fumen = "v115@3gwhIeyhCe6hB83hB8zhAewhKeAgH";
+            String command = String.format("setup -split yes --tetfu %s --page 1 --patterns *p7 --fill I", fumen);
+            EntryPointMain.main(command.split(" "));
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput())
+                    .contains(Messages.foundSolutions(2))
+                    .contains(Messages.foundSubSolutions(2));
+
+            // HTML
+            SetupHTML html = OutputFileHelper.loadSetupHTML();
+            assertThat(html.getFumens())
+                    .hasSize(2)
+                    .contains("ShB8HeB8Qe1QYaAFLDmClcJSAVDEHBEooRBUoAVBaN?UPCP+AAAvhFMtB3nB6qBOpBzhBZhB")
+                    .contains("ShB8HeB8QezLYaAFLDmClcJSAVDEHBEooRBPoAVB6i?/wCT+AAAvhFMtB6qBOpBlnB3hBZmB");
+        }
     }
 
     @Nested

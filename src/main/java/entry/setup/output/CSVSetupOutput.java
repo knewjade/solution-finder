@@ -98,12 +98,6 @@ public class CSVSetupOutput implements SetupOutput {
                             // 操作に変換
                             List<MinoOperationWithKey> operationWithKeys = setupResult.getSolution();
 
-                            // パターンを表す名前 を生成
-                            String blocksName = operationWithKeys.stream()
-                                    .map(OperationWithKey::getPiece)
-                                    .map(Piece::getName)
-                                    .collect(Collectors.joining());
-
                             // 譜面の作成
                             String encode = fumenParser.parse(operationWithKeys, initField, maxHeight);
 

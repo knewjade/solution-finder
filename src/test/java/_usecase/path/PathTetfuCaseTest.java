@@ -1061,14 +1061,15 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // ライン消去なし
         assertThat(uniqueHTML.noDeletedLineFumens())
                 .hasSize(3)
-                .contains("9gC8GeB8HeB8GeF8BeC8JeXIYZAFLDmClcJSAVDEHB?EooRBToAVBJHstCqAAAAvhEZnBTlBCjB/rBGrB")
                 .contains("9gC8GeB8HeB8GeF8BeC8JezLYZAFLDmClcJSAVDEHB?EooRBPoAVBzintCpAAAAvhEXtByvBWxB3qBxxB")
+                .contains("9gC8GeB8HeB8GeF8BeC8JeXIYZAFLDmClcJSAVDEHB?EooRBToAVBJ3TWCqAAAAvhEZnBTlB/rBCtBGrB")
                 .contains("9gC8GeB8HeB8GeF8BeC8JeeMYZAFLDmClcJSAVDEHB?EooRBKoAVBpyytCzAAAAvhExvBqsBTtB3rB3qB");
 
         // ライン消去あり
         assertThat(uniqueHTML.deletedLineFumens())
-                .contains("9gC8GeB8HeB8GeF8BeC8JeXIYZAFLDmClcJSAVDEHB?EooRBToAVBp/rtCvAAAAvhExqBmmBCoB3lBzrB")
-                .contains("9gC8GeB8HeB8GeF8BeC8JeyLYZAFLDmClcJSAVDEHB?EooRBMoAVBKu7tCvAAAAvhEWoBxlBXoB3lBzrB");
+                .hasSize(7)
+                .contains("9gC8GeB8HeB8GeF8BeC8JeeMYZAFLDmClcJSAVDEHB?EooRBKoAVBpy7tCvAAAAvhExvBStB3mB3lBzsB")
+                .contains("9gC8GeB8HeB8GeF8BeC8JeTFYZAFLDmClcJSAVDEHB?EooRBPoAVBzintCpAAAAvhE/rBasBWtBXtBRwB");
 
         // minimal
         PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
@@ -1078,14 +1079,15 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens())
                 .hasSize(3)
-                .contains("9gC8GeB8HeB8GeF8BeC8JeXIYZAFLDmClcJSAVDEHB?EooRBToAVBJHstCqAAAAvhEZnBTlBCjB/rBGrB")
                 .contains("9gC8GeB8HeB8GeF8BeC8JezLYZAFLDmClcJSAVDEHB?EooRBPoAVBzintCpAAAAvhEXtByvBWxB3qBxxB")
+                .contains("9gC8GeB8HeB8GeF8BeC8JeXIYZAFLDmClcJSAVDEHB?EooRBToAVBJ3TWCqAAAAvhEZnBTlB/rBCtBGrB")
                 .contains("9gC8GeB8HeB8GeF8BeC8JeeMYZAFLDmClcJSAVDEHB?EooRBKoAVBpyytCzAAAAvhExvBqsBTtB3rB3qB");
 
         // ライン消去あり
         assertThat(minimalHTML.deletedLineFumens())
-                .contains("9gC8GeB8HeB8GeF8BeC8JezLYZAFLDmClcJSAVDEHB?EooRBPoAVBp/rtCzAAAAvhExsBmqBCnBXtB3qB")
-                .contains("9gC8GeB8HeB8GeF8BeC8JeyLYZAFLDmClcJSAVDEHB?EooRBMoAVBKu7tCvAAAAvhEWoBxlBXoB3lBzrB");
+                .hasSize(5)
+                .contains("9gC8GeB8HeB8GeF8BeC8JeXIYZAFLDmClcJSAVDEHB?EooRBToAVBpvTWCvAAAAvhExqBmmB3lBCoBzrB")
+                .contains("9gC8GeB8HeB8GeF8BeC8JezLYZAFLDmClcJSAVDEHB?EooRBPoAVBp/rtCzAAAAvhExsBmqBCnBXtB3qB");
     }
 
     @Test

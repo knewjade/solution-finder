@@ -1,5 +1,6 @@
 package entry.path.output;
 
+import common.buildup.BuildUpStream;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.Operation;
 import common.datastore.Operations;
@@ -10,29 +11,57 @@ import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
+import concurrent.LockedReachableThreadLocal;
+import core.action.reachable.DeepdropReachable;
+import core.action.reachable.LockedReachable;
 import core.field.Field;
 import core.mino.MinoFactory;
 import core.mino.Piece;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class SequenceFumenParser implements FumenParser {
     private final MinoFactory minoFactory;
     private final ColorConverter colorConverter;
+    private final LockedReachableThreadLocal reachableThreadLocal;
 
     public SequenceFumenParser(MinoFactory minoFactory, ColorConverter colorConverter) {
         this.minoFactory = minoFactory;
         this.colorConverter = colorConverter;
+        this.reachableThreadLocal = new LockedReachableThreadLocal(24);
     }
 
     @Override
     public String parse(List<MinoOperationWithKey> operationsWithKey, Field field, int maxClearLine) {
-        Operations operations = OperationTransform.parseToOperationsBeforeNoClearLine(field, operationsWithKey, maxClearLine);
+        List<MinoOperationWithKey> validOperationsWithKey = get(operationsWithKey, field, maxClearLine);
+        Operations operations = OperationTransform.parseToOperationsBeforeNoClearLine(field, validOperationsWithKey, maxClearLine);
         return parse(operations, field, maxClearLine);
     }
 
+    public List<MinoOperationWithKey> get(List<MinoOperationWithKey> operationsWithKey, Field field, int maxClearLine) {
+        {
+            LockedReachable reachable = reachableThreadLocal.get();
+            BuildUpStream stream = new BuildUpStream(reachable, maxClearLine);
+            Optional<List<MinoOperationWithKey>> first = stream.existsValidBuildPattern(field, operationsWithKey).findFirst();
+            if (first.isPresent()) {
+                return first.get();
+            }
+        }
+        {
+            DeepdropReachable reachable = new DeepdropReachable();
+            BuildUpStream stream = new BuildUpStream(reachable, maxClearLine);
+            Optional<List<MinoOperationWithKey>> first = stream.existsValidBuildPattern(field, operationsWithKey).findFirst();
+            if (first.isPresent()) {
+                return first.get();
+            }
+        }
+        return operationsWithKey;
+    }
+
+    @Override
     public String parse(Operations operations, Field field, int maxClearLine) {
         List<? extends Operation> operationsList = operations.getOperations();
 
