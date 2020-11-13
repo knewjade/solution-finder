@@ -208,7 +208,7 @@ class SetupTetfuCaseTest {
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 // Log
-                assertThat(log.getOutput()).contains(Messages.foundSolutions(6));
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(204));
                 assertThat(log.getError()).isEmpty();
             }
 
@@ -217,7 +217,7 @@ class SetupTetfuCaseTest {
                 String command = buildCommand(fumen, "-p *!,*! -f Z -m L --drop softdrop -l 4");
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
-                assertThat(log.getOutput()).contains(Messages.foundSolutions(168));
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(1470));
 
                 assertThat(log.getError()).isEmpty();
             }
@@ -847,13 +847,14 @@ class SetupTetfuCaseTest {
 
             // Log
             assertThat(log.getOutput())
-                    .contains(Messages.foundSolutions(2))
-                    .contains(Messages.foundSubSolutions(2));
+                    .contains(Messages.foundSolutions(3))
+                    .contains(Messages.foundSubSolutions(3));
 
             // HTML
             SetupHTML html = OutputFileHelper.loadSetupHTML();
             assertThat(html.getFumens())
-                    .hasSize(2)
+                    .hasSize(3)
+                    .contains("ShB8HeB8QeMNYaAFLDmClcJSAVDEHBEooRBaoAVBzi?/wCJHBAAvhF3nB6qBOpBlmBZmBzrB")
                     .contains("ShB8HeB8Qe1QYaAFLDmClcJSAVDEHBEooRBUoAVBaN?UPCP+AAAvhFMtB3nB6qBOpBzhBZhB")
                     .contains("ShB8HeB8QezLYaAFLDmClcJSAVDEHBEooRBPoAVB6i?/wCT+AAAvhFMtB6qBOpBlnB3hBZmB");
         }

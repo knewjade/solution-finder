@@ -68,7 +68,7 @@ class SpinTetfuCaseTest {
                     .contains("zgD8FeF8DeG8CeH8BeI8Ke/NYXAFLDmClcJSAVDEHB?EooRBToAVBU+jBAvhClsB5oBywB")
                     .contains("zgD8FeF8DeG8CeH8BeI8Ke/NYXAFLDmClcJSAVDEHB?EooRBToAVBU+jBAvhClsB5oBqrB")
                     .contains("zgD8FeF8DeG8CeH8BeI8Ke6NYWAFLDmClcJSAVDEHB?EooRBMoAVBUNBAAvhBlnB/oB")
-                    .contains("zgD8FeF8DeG8CeH8BeI8Ke9NYXAFLDmClcJSAVDEHB?EooRBUoAVBMuzBAvhCahBRnB/jB");
+                    .contains("zgD8FeF8DeG8CeH8BeI8Ke9NYXAFLDmClcJSAVDEHB?EooRBUoAVBpyzBAvhCRnBahB/jB");
         }
 
         @Test
