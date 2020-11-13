@@ -34,7 +34,7 @@ public abstract class SettingParser<T> {
         // help
         if (wrapper.hasOption("help")) {
             HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("path [options]", options);
+            formatter.printHelp("<command> [options]", options);
             return Optional.empty();
         }
 
