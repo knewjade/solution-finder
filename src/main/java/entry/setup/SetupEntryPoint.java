@@ -210,7 +210,7 @@ public class SetupEntryPoint implements EntryPoint {
         FumenParser oneFumenParser = createFumenParser(settings.isTetfuSplit(), minoFactory, colorConverter);
 
         // ミノリストの作成
-        long deleteKeyMask = getDeleteKeyMask(notFilledField, maxHeight);
+        long deleteKeyMask = getDeleteKeyMask(notFilledField, initField, needFilledField, freeField, maxHeight);
         SeparableMinos separableMinos = SeparableMinos.createSeparableMinos(minoFactory, minoShifter, sizedBit, deleteKeyMask);
 
         // 絶対に置かないブロック
@@ -461,9 +461,12 @@ public class SetupEntryPoint implements EntryPoint {
         return new OrderFunctions(buildUpStreamThreadLocal, piecesPool, initField);
     }
 
-    private long getDeleteKeyMask(Field notFilledField, int maxHeight) {
+    private long getDeleteKeyMask(Field notFilledField, Field initField, Field needFilledField, Field freeField, int maxHeight) {
         Field freeze = notFilledField.freeze(maxHeight);
         freeze.inverse();
+        freeze.merge(initField);
+        freeze.merge(needFilledField);
+        freeze.merge(freeField);
         return freeze.clearLineReturnKey();
     }
 

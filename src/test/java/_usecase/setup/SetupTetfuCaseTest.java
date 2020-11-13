@@ -857,6 +857,20 @@ class SetupTetfuCaseTest {
                     .contains("ShB8HeB8Qe1QYaAFLDmClcJSAVDEHBEooRBUoAVBaN?UPCP+AAAvhFMtB3nB6qBOpBzhBZhB")
                     .contains("ShB8HeB8QezLYaAFLDmClcJSAVDEHBEooRBPoAVB6i?/wCT+AAAvhFMtB6qBOpBlnB3hBZmB");
         }
+
+        @Test
+        void case7() throws Exception {
+            // ミノを置いた結果、途中でライン消去されるケース
+            String fumen = "v115@9gQ4IeR4Hei0H8Q4g0D8MeAgH";
+            String command = String.format("setup -s yes -f IJLOSZT -p SJ -t %s", fumen);
+            EntryPointMain.main(command.split(" "));
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput())
+                    .contains(Messages.foundSolutions(1))
+                    .contains(Messages.foundSubSolutions(1));
+        }
     }
 
     @Nested
