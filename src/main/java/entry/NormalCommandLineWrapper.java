@@ -77,6 +77,20 @@ public class NormalCommandLineWrapper implements CommandLineWrapper {
     }
 
     @Override
+    public Optional<Double> getDoubleOption(String name) throws FinderParseException {
+        String optionValue = commandLine.getOptionValue(name);
+
+        if (optionValue == null)
+            return Optional.empty();
+        try {
+            Double value = Double.valueOf(optionValue);
+            return Optional.of(value);
+        } catch (NumberFormatException e) {
+            throw new FinderParseException(String.format("Cannot parse %s option: value=%s", name, optionValue));
+        }
+    }
+
+    @Override
     public Optional<Integer> getIntegerOption(String name) throws FinderParseException {
         String optionValue = commandLine.getOptionValue(name);
 

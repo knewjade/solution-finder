@@ -56,6 +56,17 @@ public class PriorityCommandLineWrapper implements CommandLineWrapper {
     }
 
     @Override
+    public Optional<Double> getDoubleOption(String name) throws FinderParseException {
+        for (CommandLineWrapper commandLine : commandLines) {
+            Optional<Double> option = commandLine.getDoubleOption(name);
+            if (option.isPresent())
+                return option;
+        }
+        return Optional.empty();
+    }
+
+
+    @Override
     public List<String> getStringOptions(String name) {
         for (CommandLineWrapper commandLine : commandLines) {
             List<String> option = commandLine.getStringOptions(name);

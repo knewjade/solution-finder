@@ -12,6 +12,8 @@ public interface CommandLineWrapper {
 
     Optional<String> getStringOption(String name);
 
+    Optional<Double> getDoubleOption(String name) throws FinderParseException;
+
     Optional<Integer> getIntegerOption(String name) throws FinderParseException;
 
     List<String> getStringOptions(String name);
