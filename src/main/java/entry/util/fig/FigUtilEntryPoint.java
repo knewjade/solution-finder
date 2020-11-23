@@ -14,6 +14,7 @@ import exceptions.FinderInitializeException;
 import exceptions.FinderTerminateException;
 import lib.Stopwatch;
 import util.fig.Bag;
+import util.fig.FigColors;
 import util.fig.FigSetting;
 import util.fig.FrameType;
 import util.fig.generator.AllFigGenerator;
@@ -26,12 +27,17 @@ import util.fig.output.PngWriter;
 import util.fig.position.BasicPositionDecider;
 import util.fig.position.RightPositionDecider;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -127,9 +133,14 @@ public class FigUtilEntryPoint implements EntryPoint {
         output("  .... Output to " + getCanonicalPath(outputFile));
         Quiz quiz = parseQuiz();
 
+        // カラーテーマの読み込み
+        Properties colorThemeProperties = readProperties();
+
         // generatorの準備
         boolean usingHold = settings.isUsingHold();
-        FigGenerator figGenerator = createFigGenerator(frameType, usingHold, minoFactory, colorConverter);
+        FigGenerator figGenerator = createFigGenerator(
+                frameType, usingHold, minoFactory, colorConverter, colorThemeProperties
+        );
 
         // Bagの作成
         List<TetfuPage> tetfuPages = settings.getTetfuPages();
@@ -147,6 +158,17 @@ public class FigUtilEntryPoint implements EntryPoint {
         boolean isInfiniteLoop = settings.getInfiniteLoop();
 
         return new GifWriter(minoFactory, colorConverter, figGenerator, bag, nextBoxCount, delay, outputFile, isInfiniteLoop);
+    }
+
+    private Properties readProperties() throws FinderInitializeException {
+        Properties colorThemeProperties = new Properties();
+        String path = String.format("theme/%s.properties", "default");
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(path), StandardCharsets.UTF_8)) {
+            colorThemeProperties.load(reader);
+        } catch (IOException e) {
+            throw new FinderInitializeException("Occur error when read color theme", e);
+        }
+        return colorThemeProperties;
     }
 
     private Quiz parseQuiz() {
@@ -174,7 +196,7 @@ public class FigUtilEntryPoint implements EntryPoint {
 
             int currentIndex = comment.indexOf('(') + 1;
             int currentChar = comment.charAt(currentIndex);
-            String next = comment.substring(comment.indexOf(')') + 1, comment.length());
+            String next = comment.substring(comment.indexOf(')') + 1);
             List<Piece> pieces = IntStream.concat(IntStream.of(currentChar), next.chars())
                     .mapToObj(value -> (char) value)
                     .map(String::valueOf)
@@ -231,9 +253,14 @@ public class FigUtilEntryPoint implements EntryPoint {
         output("  .... Output to " + getCanonicalPath(outputDirectoryFile));
         Quiz quiz = parseQuiz();
 
+        // カラーテーマの読み込み
+        Properties colorThemeProperties = readProperties();
+
         // generatorの準備
         boolean usingHold = settings.isUsingHold();
-        FigGenerator figGenerator = createFigGenerator(frameType, usingHold, minoFactory, colorConverter);
+        FigGenerator figGenerator = createFigGenerator(
+                frameType, usingHold, minoFactory, colorConverter, colorThemeProperties
+        );
 
         // Bagの作成
         List<TetfuPage> tetfuPages = settings.getTetfuPages();
@@ -272,27 +299,35 @@ public class FigUtilEntryPoint implements EntryPoint {
         return path.substring(0, pointIndex);
     }
 
-    private FigGenerator createFigGenerator(FrameType frameType, boolean isUsingHold, MinoFactory minoFactory, ColorConverter colorConverter) {
+    private FigGenerator createFigGenerator(
+            FrameType frameType, boolean isUsingHold, MinoFactory minoFactory, ColorConverter colorConverter,
+            Properties colorThemeProperties
+    ) {
         int height = settings.getHeight();
         int nextBoxCount = settings.getNextBoxCount();
         assert 0 <= nextBoxCount;
 
         FigSetting figSetting = new FigSetting(frameType, height, nextBoxCount);
+        FigColors figColors = new FigColors(colorThemeProperties);
+
         switch (frameType) {
-            case NoFrame:
-                return new FieldOnlyFigGenerator(figSetting, minoFactory, colorConverter);
-            case Basic:
+            case NoFrame: {
+                return new FieldOnlyFigGenerator(figSetting, figColors, minoFactory, colorConverter);
+            }
+            case Basic: {
                 if (!isUsingHold)
-                    return new NoHoldFigGenerator(figSetting, minoFactory, colorConverter);
+                    return new NoHoldFigGenerator(figSetting, figColors, minoFactory, colorConverter);
 
                 BasicPositionDecider basicPositionDecider = new BasicPositionDecider(figSetting);
-                return new AllFigGenerator(figSetting, basicPositionDecider, minoFactory, colorConverter);
-            case Right:
+                return new AllFigGenerator(figSetting, basicPositionDecider, figColors, minoFactory, colorConverter);
+            }
+            case Right: {
                 if (!isUsingHold)
-                    return new NoHoldFigGenerator(figSetting, minoFactory, colorConverter);
+                    return new NoHoldFigGenerator(figSetting, figColors, minoFactory, colorConverter);
 
                 RightPositionDecider rightPositionDecider = new RightPositionDecider(figSetting);
-                return new AllFigGenerator(figSetting, rightPositionDecider, minoFactory, colorConverter);
+                return new AllFigGenerator(figSetting, rightPositionDecider, figColors, minoFactory, colorConverter);
+            }
         }
 
         throw new IllegalStateException("No reachable");
