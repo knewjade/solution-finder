@@ -18,9 +18,10 @@ import core.srs.Rotate;
 import exceptions.FinderParseException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static common.tetfu.TetfuTable.ENCODE_TABLE_SIZE;
@@ -34,19 +35,14 @@ public class Tetfu {
     public static final int TETFU_FIELD_BLOCKS = TETFU_MAX_HEIGHT * TETFU_FIELD_WIDTH;
     private static final int FILED_WIDTH = 10;
 
-    private static final List<String> SUPPORTED_DOMAINS = Arrays.asList(
-            "http://fumen.zui.jp/?",
-            "fumen.zui.jp/?",
-            "http://harddrop.com/fumen/?",
-            "harddrop.com/fumen/?",
-            "https://punsyuko.com/fumen/#",
-            "punsyuko.com/fumen/#"
-    );
-
     public static String removeDomainData(String str) {
-        for (String domain : SUPPORTED_DOMAINS)
-            if (str.startsWith(domain))
-                return str.substring(domain.length());
+        String regex = "[vmd][0-9]{3}@[a-zA-Z0-9?+/]+";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(str);
+
+        if (matcher.find()) {
+            return matcher.group(0);
+        }
         return str;
     }
 
@@ -285,7 +281,10 @@ public class Tetfu {
     private int pollValues(LinkedList<Integer> values, int splitCount) {
         int value = 0;
         for (int count = 0; count < splitCount; count++) {
-            int v = values.pollFirst();
+            Integer v = values.pollFirst();
+            if (v == null) {
+                throw new IllegalStateException("Next value does not exist");
+            }
             value += v * Math.pow(ENCODE_TABLE_SIZE, count);
         }
         return value;
