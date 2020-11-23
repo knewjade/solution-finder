@@ -83,6 +83,10 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
             assert Tetfu.isDataLater115(input);
             String data = Tetfu.removePrefixData(input);
 
+            if (data == null) {
+                throw new FinderParseException("Not found data: " + input);
+            }
+
             // ページ指定を取り出す
             String[] split = raw.split(prefix);
             assert 2 <= split.length;
@@ -139,28 +143,31 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
 
             int height = 24;
 
+            Field field = toField(pages.get(0).getField(), height);
+
             {
-                Field field = toField(pages.get(0).getField(), height);
+                Field freeze = field.freeze();
 
                 List<MinoOperationWithKey> operationsWithKey = OperationTransform.parseToOperationWithKeys(
-                        field, new Operations(operationList), minoFactory, height
+                        freeze, new Operations(operationList), minoFactory, height
                 );
 
-                parameters.add(new CoverParameter(field, operationsWithKey, input, false));
+                parameters.add(new CoverParameter(freeze, operationsWithKey, input, false));
             }
 
             if (isMirror) {
-                Field field = toField(pages.get(0).getField(), height);
+                Field freeze = field.freeze();
+                freeze.mirror();
 
                 List<MinoOperationWithKey> operationsWithKey = OperationTransform.parseToOperationWithKeys(
-                        field, new Operations(operationList), minoFactory, height
+                        freeze, new Operations(operationList), minoFactory, height
                 ).stream().map(m -> {
                     Operation mirror = minoTransform.mirror(m.getPiece(), m.getRotate(), m.getX(), m.getY());
                     Mino mino = minoFactory.create(mirror.getPiece(), mirror.getRotate());
                     return new MinimalOperationWithKey(mino, mirror.getX(), mirror.getY(), m.getNeedDeletedKey());
                 }).collect(Collectors.toList());
 
-                parameters.add(new CoverParameter(field, operationsWithKey, input, true));
+                parameters.add(new CoverParameter(freeze, operationsWithKey, input, true));
             }
         }
 
