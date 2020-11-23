@@ -77,6 +77,10 @@ class TetfuTest {
         assertThat(Tetfu.removeDomainData("punsyuko.com/fumen/#m115@vhAAgH")).isEqualTo("m115@vhAAgH");
         assertThat(Tetfu.removeDomainData("punsyuko.com/fumen/#d115@vhAAgH")).isEqualTo("d115@vhAAgH");
 
+        // knewjade.github.io/fumen-for-mobile
+        assertThat(Tetfu.removeDomainData("https://knewjade.github.io/fumen-for-mobile/#?d=v115@vhAAgH")).isEqualTo("v115@vhAAgH");
+        assertThat(Tetfu.removeDomainData("knewjade.github.io/fumen-for-mobile/#?d=v115@vhAAgH")).isEqualTo("v115@vhAAgH");
+
         // direct
         assertThat(Tetfu.removeDomainData("v115@vhAAgH")).isEqualTo("v115@vhAAgH");
         assertThat(Tetfu.removeDomainData("m115@vhAAgH")).isEqualTo("m115@vhAAgH");
@@ -93,9 +97,7 @@ class TetfuTest {
         // v114
         assertThat(Tetfu.removePrefixData("v114@vhAAgH")).isNull();
         assertThat(Tetfu.removePrefixData("m114@vhAAgH")).isNull();
-        ;
         assertThat(Tetfu.removePrefixData("d114@vhAAgH")).isNull();
-        ;
     }
 
     @Test
@@ -118,7 +120,7 @@ class TetfuTest {
     }
 
     @Test
-    void encode1() throws Exception {
+    void encode1() {
         List<TetfuElement> elements = Collections.singletonList(
                 new TetfuElement(ColorType.T, Rotate.Spawn, 5, 0)
         );
@@ -131,7 +133,7 @@ class TetfuTest {
     }
 
     @Test
-    void encode2() throws Exception {
+    void encode2() {
         List<TetfuElement> elements = Arrays.asList(
                 new TetfuElement(ColorType.L, Rotate.Spawn, 4, 0),
                 new TetfuElement(ColorType.J, Rotate.Spawn, 8, 0),
@@ -151,7 +153,7 @@ class TetfuTest {
     }
 
     @Test
-    void encode3() throws Exception {
+    void encode3() {
         List<TetfuElement> elements = Arrays.asList(
                 new TetfuElement(ColorType.I, Rotate.Reverse, 5, 0, "a"),
                 new TetfuElement(ColorType.S, Rotate.Reverse, 5, 2, "b"),
@@ -170,7 +172,7 @@ class TetfuTest {
     }
 
     @Test
-    void encode4() throws Exception {
+    void encode4() {
         MinoFactory factory = new MinoFactory();
         ArrayColoredField field = new ArrayColoredField(Tetfu.TETFU_MAX_HEIGHT);
         field.putMino(factory.create(Piece.I, Rotate.Spawn), 1, 0);
@@ -186,7 +188,7 @@ class TetfuTest {
     }
 
     @Test
-    void encode5() throws Exception {
+    void encode5() {
         MinoFactory factory = new MinoFactory();
         ArrayColoredField field = new ArrayColoredField(Tetfu.TETFU_MAX_HEIGHT);
         field.putMino(factory.create(Piece.I, Rotate.Spawn), 1, 0);
@@ -202,7 +204,7 @@ class TetfuTest {
     }
 
     @Test
-    void encode6() throws Exception {
+    void encode6() {
         List<TetfuElement> elements = Collections.singletonList(
                 new TetfuElement(ColorType.Empty, Rotate.Spawn, 6, 0)
         );
@@ -216,7 +218,7 @@ class TetfuTest {
     }
 
     @Test
-    void encode7() throws Exception {
+    void encode7() {
         List<TetfuElement> elements = Arrays.asList(
                 TetfuElement.createFieldOnly(ColoredFieldFactory.createColoredField("XXXXLLXXXX")),
                 TetfuElement.createFieldOnly(ColoredFieldFactory.createColoredField("XXXXJJXXXX"))
@@ -231,7 +233,7 @@ class TetfuTest {
     }
 
     @Test
-    void encode8() throws Exception {
+    void encode8() {
         List<TetfuElement> elements = Collections.singletonList(
                 new TetfuElement(ColorType.I, Rotate.Left, 0, 1)
         );
@@ -245,7 +247,7 @@ class TetfuTest {
     }
 
     @Test
-    void encode9() throws Exception {
+    void encode9() {
         List<TetfuElement> elements = Collections.singletonList(
                 new TetfuElement(ColorType.I, Rotate.Right, 0, 2)
         );
@@ -259,7 +261,7 @@ class TetfuTest {
     }
 
     @Test
-    void encodeQuiz1() throws Exception {
+    void encodeQuiz1() {
         List<Piece> orders = Collections.singletonList(L);
         String quiz = Tetfu.encodeForQuiz(orders);
 
@@ -275,7 +277,7 @@ class TetfuTest {
     }
 
     @Test
-    void encodeQuiz2() throws Exception {
+    void encodeQuiz2() {
         List<Piece> orders = Arrays.asList(J, L);
         String quiz = Tetfu.encodeForQuiz(orders, L);
 

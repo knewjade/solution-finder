@@ -58,8 +58,6 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
                 DEFAULT_FIELD_TXT,
                 Charset.forName(CHARSET_NAME)
         ).stream()
-                .map(Tetfu::removeDomainData)
-                .filter(Tetfu::isDataLater115)
                 .collect(Collectors.toList());
 
         if (fumens.isEmpty()) {
@@ -71,7 +69,14 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
 
         List<CoverParameter> parameters = new ArrayList<>();
 
-        for (String input : fumens) {
+        for (String raw : fumens) {
+            String input = Tetfu.removeDomainData(raw);
+            if (!Tetfu.isDataLater115(input)) {
+                continue;
+            }
+
+            String prefix = input.substring(0, 4);
+
             int start = 1;
             int end = -1;
 
@@ -82,8 +87,10 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
                 throw new FinderParseException("Not found data: " + input);
             }
 
-            String[] dataPage = data.split("#");
-            data = dataPage[0];
+            // ページ指定を取り出す
+            String[] split = raw.split(prefix);
+            assert 2 <= split.length;
+            String[] dataPage = split[1].split("#");
 
             if (2 <= dataPage.length) {
                 String[] startEnd = dataPage[1].split(":");

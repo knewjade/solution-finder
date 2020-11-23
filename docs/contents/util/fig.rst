@@ -36,6 +36,7 @@ short    long                   default
 ``-e``   ``--end``              -1
 ``-l``   ``--line``             -1
 ``-f``   ``--frame``            basic
+``-c``   ``--color``            default
 ``-H``   ``--hold``             visible
 ``-lp``  ``--log-path``         output/last_output.txt
 ``-fp``  ``--field-path``       input/field.txt
@@ -138,6 +139,14 @@ v115のテト譜データにのみ対応。
 * basic: フィールド左側にHold、右側にNextがある最も基本的なフレーム
 * right: フィールドの右側にHold・Nextをともに配置するコンパクトなフレーム
 * no: Hold・Nextを表示せず、フィールドのみを表示するフレーム
+
+
+``-c``, ``--color`` [default: default]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+使用するカラーテーマを指定します。指定された名前でthemeディレクトリ内からカラーテーマのファイル名を検索します。
+
+なお、カラーテーマファイルの詳細は `こちら <https://github.com/knewjade/fumen2xlsx#%E3%82%AB%E3%83%A9%E3%83%BC%E3%83%86%E3%83%BC%E3%83%9E%E3%81%AE%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%9E%E3%82%A4%E3%82%BA>_` をご参照ください。
 
 
 ``-H``, ``--hold`` [default: visible]

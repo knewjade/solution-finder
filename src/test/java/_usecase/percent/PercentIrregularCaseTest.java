@@ -314,7 +314,7 @@ class PercentIrregularCaseTest extends PercentUseCaseBaseTest {
         String tetfu = "v115@invalid";
         String command = String.format("percent -t %s -p *p2", tetfu);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
-
+        System.out.println(log.getError());
         assertThat(log.getReturnCode()).isEqualTo(1);
 
         assertThat(log.getError())
