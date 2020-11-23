@@ -25,7 +25,7 @@ class UtilFumenTetfuCaseTest {
         }
 
         @Test
-        void case1() throws Exception {
+        void reduce1() throws Exception {
             String fumen = "v115@vhdXKJNJJ0/ISSJzHJGDJJHJSGJvLJ0KJJEJzJJ+NJ?tMJFDJz/IyQJsGJOGJpFJ+NJ3MJXDJULJzGJxBJiJJtKJyJ?J0JJ";
             String command = buildCommand("reduce", fumen, "");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
@@ -34,7 +34,7 @@ class UtilFumenTetfuCaseTest {
         }
 
         @Test
-        void case2Over() throws Exception {
+        void reduce2Over() throws Exception {
             // フィールドの高さが24以上必要なケース
             String fumen = "v115@xeI8AeI8AeI8AeI8AeI8AeI8AeI8AeI8AeI8AeI8Ae?I8AeI8AeI8AeI8AeI8AeI8AeI8AeI8Key0HvhSTqHmlH0yH?9zHXpHprH3sH22Hx2HJqHzvHS2HXsHzlHCnH0yHvzHNyHGz?H";
             String command = buildCommand("reduce", fumen, "");
@@ -45,7 +45,7 @@ class UtilFumenTetfuCaseTest {
         }
 
         @Test
-        void case3() throws Exception {
+        void reduce3() throws Exception {
             String fumens = "v115@vhFXKJNJJ0/IWSJTIJCDJ v115@vhFRPJTFJvLJMJJi/IGBJ";
             String command = buildCommand("reduce", fumens, "");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
@@ -56,7 +56,7 @@ class UtilFumenTetfuCaseTest {
         }
 
         @Test
-        void case4CommentAtHead() throws Exception {
+        void reduce4CommentAtHead() throws Exception {
             // 1ページ目のコメントが残る
             String fumens = "v115@vhFXKYZAxXHDBQGDSA1d0ACDYHDBQzuRA1Dq9BlAAA?ANJYZAyXHDBQGDSA1d0ACDYHDBQzuRA1Dq9BlAAAA0/XZAz?XHDBQGDSA1d0ACDYHDBQzuRA1Dq9BlAAAAWSYZA0XHDBQGD?SA1d0ACDYHDBQzuRA1Dq9BlAAAATIYZA1XHDBQGDSA1d0AC?DYHDBQzuRA1Dq9BlAAAACDYZA2XHDBQGDSA1d0ACDYHDBQz?uRA1Dq9BlAAAA";
             String command = buildCommand("reduce", fumens, "");
