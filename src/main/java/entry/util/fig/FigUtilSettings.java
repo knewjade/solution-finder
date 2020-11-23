@@ -31,6 +31,7 @@ public class FigUtilSettings {
     private int startPage = 1;
     private int endPage = -1;  // include
     private FigFormat figFormat = FigFormat.Gif;
+    private String colorTheme = "default";
 
     // ********* Getter ************
     String getLogFilePath() {
@@ -79,6 +80,10 @@ public class FigUtilSettings {
 
     FigFormat getFigFormat() {
         return figFormat;
+    }
+
+    String getColorTheme() {
+        return colorTheme;
     }
 
     // ********* Setter ************
@@ -141,7 +146,7 @@ public class FigUtilSettings {
                             Rotate rotate = page.getRotate();
                             Mino mino = minoFactory.create(piece, rotate);
                             int minoHeight = page.getY() + mino.getMaxY() + 1;
-                            return fieldHeight < minoHeight ? minoHeight : fieldHeight;
+                            return Math.max(fieldHeight, minoHeight);
                         } else {
                             return fieldHeight;
                         }
@@ -187,5 +192,9 @@ public class FigUtilSettings {
 
     boolean isOutputToConsole() {
         return true;
+    }
+
+    void setColorTheme(String colorTheme) {
+        this.colorTheme = colorTheme;
     }
 }

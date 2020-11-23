@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -134,7 +135,7 @@ public class FigUtilEntryPoint implements EntryPoint {
         Quiz quiz = parseQuiz();
 
         // カラーテーマの読み込み
-        Properties colorThemeProperties = readProperties();
+        Properties colorThemeProperties = readProperties(settings.getColorTheme());
 
         // generatorの準備
         boolean usingHold = settings.isUsingHold();
@@ -160,11 +161,13 @@ public class FigUtilEntryPoint implements EntryPoint {
         return new GifWriter(minoFactory, colorConverter, figGenerator, bag, nextBoxCount, delay, outputFile, isInfiniteLoop);
     }
 
-    private Properties readProperties() throws FinderInitializeException {
+    private Properties readProperties(String name) throws FinderInitializeException {
         Properties colorThemeProperties = new Properties();
-        String path = String.format("theme/%s.properties", "default");
+        String path = String.format("theme/%s.properties", name);
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(path), StandardCharsets.UTF_8)) {
             colorThemeProperties.load(reader);
+        } catch (NoSuchFileException e) {
+            throw new FinderInitializeException("Not found color theme", e);
         } catch (IOException e) {
             throw new FinderInitializeException("Occur error when read color theme", e);
         }
@@ -254,7 +257,7 @@ public class FigUtilEntryPoint implements EntryPoint {
         Quiz quiz = parseQuiz();
 
         // カラーテーマの読み込み
-        Properties colorThemeProperties = readProperties();
+        Properties colorThemeProperties = readProperties(settings.getColorTheme());
 
         // generatorの準備
         boolean usingHold = settings.isUsingHold();

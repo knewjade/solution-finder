@@ -41,8 +41,14 @@ public class AllFigGenerator implements FigGenerator {
 
     @Override
     public void reset() {
-        graphics.setColor(figColors.line().getNormalColor());
+        // Frame
+        graphics.setColor(figColors.frame());
         graphics.fillRect(0, 0, image.getWidth(), image.getHeight());
+
+        // Border
+        graphics.setColor(figColors.line().getNormalColor());
+        Rectangle rectangle = positionDecider.getField();
+        fillRect(rectangle);
     }
 
     @Override
@@ -91,7 +97,7 @@ public class AllFigGenerator implements FigGenerator {
 
     @Override
     public void updateNext(List<Piece> pieces) {
-        Color color = figColors.bextFrame();
+        Color color = figColors.nextBoxBorder();
         int nextBoxCount = Math.min(setting.geNextBoxCount(), pieces.size());
 
         assert nextBoxCount <= pieces.size();
@@ -141,7 +147,7 @@ public class AllFigGenerator implements FigGenerator {
 
     @Override
     public void updateHold(Piece piece) {
-        Color color = new Color(0xdddddd);
+        Color color = figColors.holdFrame();
         Rectangle rectangle = positionDecider.getHold();
         graphics.setColor(figColors.background().getNormalColor());
         fillRect(rectangle);

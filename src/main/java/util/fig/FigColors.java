@@ -52,11 +52,10 @@ public class FigColors {
             Color clear = Color.BLACK;
             Color piece = Color.BLACK;
             this.border = new FigColor(normal, clear, piece);
-
         }
     }
 
-    public Color bextFrame() {
+    public Color nextBoxBorder() {
         return new Color(0x999999);
     }
 
@@ -70,5 +69,13 @@ public class FigColors {
 
     public FigColor parse(ColorType type) {
         return map.get(type);
+    }
+
+    public Color holdFrame() {
+        return new Color(0xdddddd);
+    }
+
+    public Color frame() {
+        return new Color(0x333333);
     }
 }

@@ -13,6 +13,12 @@ public class BasicPositionDecider implements PositionDecider {
     }
 
     @Override
+    public Rectangle getField() {
+        int left = getHoldLeftMargin();
+        return new Rectangle(left, 0, setting.getFieldWidthPx(), setting.getScreenHeight());
+    }
+
+    @Override
     public Rectangle getInField(int xIndex, int yIndex) {
         Rectangle rectangle = fieldPositionDecider.getInField(xIndex, yIndex);
         if (rectangle == DUMMY)

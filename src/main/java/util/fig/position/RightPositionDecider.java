@@ -13,6 +13,12 @@ public class RightPositionDecider implements PositionDecider {
     }
 
     @Override
+    public Rectangle getField() {
+        int left = 0;
+        return new Rectangle(left, 0, setting.getFieldWidthPx(), setting.getScreenHeight());
+    }
+
+    @Override
     public Rectangle getInField(int xIndex, int yIndex) {
         return fieldPositionDecider.getInField(xIndex, yIndex);
     }
