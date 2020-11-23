@@ -171,6 +171,10 @@ public class FigUtilSettingParser {
         Optional<String> logFilePath = wrapper.getStringOption("log-path");
         logFilePath.ifPresent(settings::setLogFilePath);
 
+        // カラーテーマの設定
+        Optional<String> colorTheme = wrapper.getStringOption("color");
+        colorTheme.ifPresent(settings::setColorTheme);
+
         return Optional.of(settings);
     }
 
@@ -313,6 +317,16 @@ public class FigUtilSettingParser {
                 .desc("Format of figure")
                 .build();
         options.addOption(formatOption);
+
+        Option colorThemeOption = Option.builder("c")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("string")
+                .longOpt("color")
+                .desc("Color theme name")
+                .build();
+        options.addOption(colorThemeOption);
 
         Option outputFileOption = Option.builder("o")
                 .optionalArg(true)
