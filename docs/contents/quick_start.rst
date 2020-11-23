@@ -9,6 +9,8 @@ solution-finderの実行にはJavaが必要となりますので、インスト�
 
 参考(外部サイト): https://www.atmarkit.co.jp/ait/articles/1604/19/news027.html
 
+もしインストールができない環境の場合は `こちら <https://docs.google.com/presentation/d/11PBkJZhL8FZUyKqDjGOpby3irDpnEG_pswnrFfWM5z0>`_ のスライドを参考にしてください。
+
 
 Windows (コマンドラインから操作する)
 ------------------------------------------------------------
