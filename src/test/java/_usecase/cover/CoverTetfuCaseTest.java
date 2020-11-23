@@ -370,6 +370,21 @@ class CoverTetfuCaseTest {
         }
 
         @Test
+        void case5Mirror2() throws Exception {
+            String fumen1 = "v115@HhA8IeA8IeB8ReRQJvhDUGJvMJTNJ+DJ";
+
+            String command = String.format("cover -t %s -p *! --mirror yes", fumen1);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            int all = 5040;
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(624, all, fumen1));
+            assertThat(log.getOutput()).contains(Messages.foundMirrorSolutions(624, all, fumen1));
+            assertThat(log.getOutput()).contains(Messages.foundOrSolutions(996, all));
+            assertThat(log.getOutput()).contains(Messages.foundAndSolutions(252, all));
+        }
+
+        @Test
         void case6Right() throws Exception {
             String fumen1 = "v115@UhA8DeA8AeC8DeC8JeRQJ";
             String fumen2 = "v115@UhA8DeA8AeC8DeC8JeBQJ";
