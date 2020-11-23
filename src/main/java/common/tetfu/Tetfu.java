@@ -281,8 +281,10 @@ public class Tetfu {
     private int pollValues(LinkedList<Integer> values, int splitCount) {
         int value = 0;
         for (int count = 0; count < splitCount; count++) {
-            assert !values.isEmpty();
-            int v = values.pollFirst();
+            Integer v = values.pollFirst();
+            if (v == null) {
+                throw new IllegalStateException("Next value does not exist");
+            }
             value += v * Math.pow(ENCODE_TABLE_SIZE, count);
         }
         return value;
