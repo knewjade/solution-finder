@@ -776,5 +776,22 @@ class CoverTetfuCaseTest {
             assertThat(log.getOutput()).contains(Messages.foundOrSolutions(2038, all));
             assertThat(log.getOutput()).contains(Messages.foundAndSolutions(2038, all));
         }
+
+        @Test
+        void case13Mirror() throws Exception {
+            String fumen1 = "https://knewjade.github.io/fumen-for-mobile/#?d=v115@9gD8FeD8FeF8DeF8NeTBYaAFLDmClcJSAVDEHBEooR?BPoAVB6yTxCp/AAAvhEMsBXtB9tBisBAAA";
+
+            String command = String.format("cover -t %s -p *p7 --mirror yes", fumen1);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            String fumen1d = "v115@9gD8FeD8FeF8DeF8NeTBYaAFLDmClcJSAVDEHBEooR?BPoAVB6yTxCp/AAAvhEMsBXtB9tBisBAAA";
+
+            // Log
+            int all = 5040;
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(288, all, fumen1d));
+            assertThat(log.getOutput()).contains(Messages.foundMirrorSolutions(288, all, fumen1d));
+            assertThat(log.getOutput()).contains(Messages.foundOrSolutions(432, all));
+            assertThat(log.getOutput()).contains(Messages.foundAndSolutions(144, all));
+        }
     }
 }

@@ -1,5 +1,6 @@
 package entry.cover;
 
+import common.buildup.BuildUp;
 import common.datastore.*;
 import common.parser.OperationTransform;
 import common.tetfu.Tetfu;
@@ -7,6 +8,7 @@ import common.tetfu.TetfuPage;
 import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
+import core.action.reachable.DeepdropReachable;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Mino;
@@ -51,14 +53,13 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
         ColorConverter colorConverter = new ColorConverter();
 
         // テト譜の読み込み
-        List<String> fumens = loadFumenData(
+        List<String> fumens = new ArrayList<>(loadFumenData(
                 wrapper,
                 CoverOptions.Fumen.optName(),
                 CoverOptions.FieldPath.optName(),
                 DEFAULT_FIELD_TXT,
                 Charset.forName(CHARSET_NAME)
-        ).stream()
-                .collect(Collectors.toList());
+        ));
 
         if (fumens.isEmpty()) {
             throw new FinderParseException("Cannot load fumen" + fumens);
@@ -145,29 +146,29 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
 
             Field field = toField(pages.get(0).getField(), height);
 
+            List<MinoOperationWithKey> operationsWithKey = OperationTransform.parseToOperationWithKeys(
+                    field, new Operations(operationList), minoFactory, height
+            );
+
+            assertOperationKeys(field, operationsWithKey, height);
+
             {
-                Field freeze = field.freeze();
-
-                List<MinoOperationWithKey> operationsWithKey = OperationTransform.parseToOperationWithKeys(
-                        freeze, new Operations(operationList), minoFactory, height
-                );
-
-                parameters.add(new CoverParameter(freeze, operationsWithKey, input, false));
+                parameters.add(new CoverParameter(field, operationsWithKey, input, false));
             }
 
             if (isMirror) {
                 Field freeze = field.freeze();
                 freeze.mirror();
 
-                List<MinoOperationWithKey> operationsWithKey = OperationTransform.parseToOperationWithKeys(
-                        freeze, new Operations(operationList), minoFactory, height
-                ).stream().map(m -> {
+                List<MinoOperationWithKey> operationsWithKeyMirror = operationsWithKey.stream().map(m -> {
                     Operation mirror = minoTransform.mirror(m.getPiece(), m.getRotate(), m.getX(), m.getY());
                     Mino mino = minoFactory.create(mirror.getPiece(), mirror.getRotate());
                     return new MinimalOperationWithKey(mino, mirror.getX(), mirror.getY(), m.getNeedDeletedKey());
                 }).collect(Collectors.toList());
 
-                parameters.add(new CoverParameter(freeze, operationsWithKey, input, true));
+                assertOperationKeys(freeze, operationsWithKeyMirror, height);
+
+                parameters.add(new CoverParameter(freeze, operationsWithKeyMirror, input, true));
             }
         }
 
@@ -231,6 +232,14 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
         outputBaseFilePath.ifPresent(settings::setOutputBaseFilePath);
 
         return Optional.of(settings);
+    }
+
+    private void assertOperationKeys(Field field, List<MinoOperationWithKey> operationsWithKey, int height) {
+        if (!BuildUp.cansBuild(field, operationsWithKey, height, new DeepdropReachable())) {
+            // 実行時のエラーチェック
+            // テト譜から入力する関係上、組み立てられない手順になることはない想定
+            throw new IllegalStateException("Invalid operations");
+        }
     }
 
     // フィールドの情報を読み込む
