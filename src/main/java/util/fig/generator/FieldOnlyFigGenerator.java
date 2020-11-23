@@ -1,21 +1,22 @@
 package util.fig.generator;
 
-import core.mino.Piece;
-import util.fig.FigColor;
-import util.fig.FigSetting;
-import util.fig.Rectangle;
-import util.fig.position.FieldOnlyPositionDecider;
-import util.fig.position.PositionDecider;
 import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import core.mino.Mino;
 import core.mino.MinoFactory;
+import core.mino.Piece;
 import core.srs.Rotate;
+import util.fig.FigColor;
+import util.fig.FigColors;
+import util.fig.FigSetting;
+import util.fig.Rectangle;
+import util.fig.position.FieldOnlyPositionDecider;
+import util.fig.position.PositionDecider;
 
-import java.util.List;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 public class FieldOnlyFigGenerator implements FigGenerator {
     private final FigSetting setting;
@@ -24,9 +25,11 @@ public class FieldOnlyFigGenerator implements FigGenerator {
     private final PositionDecider positionDecider;
     private final BufferedImage image;
     private final Graphics2D graphics;
+    private final FigColors figColors;
 
-    public FieldOnlyFigGenerator(FigSetting setting, MinoFactory minoFactory, ColorConverter colorConverter) {
+    public FieldOnlyFigGenerator(FigSetting setting, FigColors figColors, MinoFactory minoFactory, ColorConverter colorConverter) {
         this.setting = setting;
+        this.figColors = figColors;
         this.minoFactory = minoFactory;
         this.colorConverter = colorConverter;
         this.positionDecider = new FieldOnlyPositionDecider(setting);
@@ -39,8 +42,10 @@ public class FieldOnlyFigGenerator implements FigGenerator {
 
     @Override
     public void reset() {
-        graphics.setColor(FigColor.Line.getNormalColor());
-        graphics.fillRect(0, 0, image.getWidth(), image.getHeight());
+        // Border
+        graphics.setColor(figColors.line().getNormalColor());
+        Rectangle rectangle = positionDecider.getField();
+        fillRect(rectangle);
     }
 
     @Override
@@ -56,7 +61,7 @@ public class FieldOnlyFigGenerator implements FigGenerator {
             boolean isFilledLine = freeze.isFilledLine(yIndex);
             for (int xIndex = 0; xIndex < widthBlock; xIndex++) {
                 ColorType type = field.getColorType(xIndex, yIndex);
-                FigColor figColor = FigColor.parse(type);
+                FigColor figColor = figColors.parse(type);
                 Color color = getColor(figColor, isFilledLine);
                 graphics.setColor(color);
 
@@ -74,7 +79,7 @@ public class FieldOnlyFigGenerator implements FigGenerator {
     public void updateMino(ColorType colorType, Rotate rotate, int xIndex, int yIndex) {
         Piece piece = colorConverter.parseToBlock(colorType);
         Mino mino = minoFactory.create(piece, rotate);
-        FigColor figColor = FigColor.parse(colorType);
+        FigColor figColor = figColors.parse(colorType);
         Color color = figColor.getStrong2Color();
         graphics.setColor(color);
         for (int[] positions : mino.getPositions()) {

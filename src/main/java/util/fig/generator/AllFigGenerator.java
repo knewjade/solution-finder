@@ -1,16 +1,17 @@
 package util.fig.generator;
 
-import core.mino.Piece;
-import util.fig.FigColor;
-import util.fig.FigSetting;
-import util.fig.Rectangle;
-import util.fig.position.PositionDecider;
 import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import core.mino.Mino;
 import core.mino.MinoFactory;
+import core.mino.Piece;
 import core.srs.Rotate;
+import util.fig.FigColor;
+import util.fig.FigColors;
+import util.fig.FigSetting;
+import util.fig.Rectangle;
+import util.fig.position.PositionDecider;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -23,9 +24,11 @@ public class AllFigGenerator implements FigGenerator {
     private final PositionDecider positionDecider;
     private final BufferedImage image;
     private final Graphics2D graphics;
+    private final FigColors figColors;
 
-    public AllFigGenerator(FigSetting setting, PositionDecider positionDecider, MinoFactory minoFactory, ColorConverter colorConverter) {
+    public AllFigGenerator(FigSetting setting, PositionDecider positionDecider, FigColors figColors, MinoFactory minoFactory, ColorConverter colorConverter) {
         this.setting = setting;
+        this.figColors = figColors;
         this.minoFactory = minoFactory;
         this.colorConverter = colorConverter;
         this.positionDecider = positionDecider;
@@ -38,8 +41,14 @@ public class AllFigGenerator implements FigGenerator {
 
     @Override
     public void reset() {
-        graphics.setColor(FigColor.Line.getNormalColor());
+        // Frame
+        graphics.setColor(figColors.frame());
         graphics.fillRect(0, 0, image.getWidth(), image.getHeight());
+
+        // Border
+        graphics.setColor(figColors.line().getNormalColor());
+        Rectangle rectangle = positionDecider.getField();
+        fillRect(rectangle);
     }
 
     @Override
@@ -55,7 +64,7 @@ public class AllFigGenerator implements FigGenerator {
             boolean isFilledLine = freeze.isFilledLine(yIndex);
             for (int xIndex = 0; xIndex < widthBlock; xIndex++) {
                 ColorType type = field.getColorType(xIndex, yIndex);
-                FigColor figColor = FigColor.parse(type);
+                FigColor figColor = figColors.parse(type);
                 Color color = getColor(figColor, isFilledLine);
                 graphics.setColor(color);
 
@@ -77,7 +86,7 @@ public class AllFigGenerator implements FigGenerator {
     public void updateMino(ColorType colorType, Rotate rotate, int xIndex, int yIndex) {
         Piece piece = colorConverter.parseToBlock(colorType);
         Mino mino = minoFactory.create(piece, rotate);
-        FigColor figColor = FigColor.parse(colorType);
+        FigColor figColor = figColors.parse(colorType);
         Color color = figColor.getStrong2Color();
         graphics.setColor(color);
         for (int[] positions : mino.getPositions()) {
@@ -88,14 +97,14 @@ public class AllFigGenerator implements FigGenerator {
 
     @Override
     public void updateNext(List<Piece> pieces) {
-        Color color = new Color(0x999999);
-        int nextBoxCount = setting.geNextBoxCount() < pieces.size() ? setting.geNextBoxCount() : pieces.size();
+        Color color = figColors.nextBoxBorder();
+        int nextBoxCount = Math.min(setting.geNextBoxCount(), pieces.size());
 
         assert nextBoxCount <= pieces.size();
 
         for (int index = 0; index < nextBoxCount; index++) {
             Rectangle rectangle = positionDecider.getNext(index);
-            graphics.setColor(FigColor.Background.getNormalColor());
+            graphics.setColor(figColors.background().getNormalColor());
             fillRect(rectangle);
 
             graphics.setColor(color);
@@ -111,7 +120,7 @@ public class AllFigGenerator implements FigGenerator {
             return;
 
         ColorType colorType = colorConverter.parseToColorType(piece);
-        FigColor figColor = FigColor.parse(colorType);
+        FigColor figColor = figColors.parse(colorType);
         Color color = getColor(figColor, true);
         graphics.setColor(color);
 
@@ -138,9 +147,9 @@ public class AllFigGenerator implements FigGenerator {
 
     @Override
     public void updateHold(Piece piece) {
-        Color color = new Color(0xdddddd);
+        Color color = figColors.holdFrame();
         Rectangle rectangle = positionDecider.getHold();
-        graphics.setColor(FigColor.Background.getNormalColor());
+        graphics.setColor(figColors.background().getNormalColor());
         fillRect(rectangle);
 
         graphics.setColor(color);
