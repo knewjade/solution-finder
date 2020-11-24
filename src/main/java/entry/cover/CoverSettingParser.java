@@ -1,6 +1,5 @@
 package entry.cover;
 
-import common.buildup.BuildUp;
 import common.datastore.*;
 import common.parser.OperationTransform;
 import common.tetfu.Tetfu;
@@ -8,7 +7,6 @@ import common.tetfu.TetfuPage;
 import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
-import core.action.reachable.DeepdropReachable;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Mino;
@@ -150,8 +148,6 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
                     field, new Operations(operationList), minoFactory, height
             );
 
-            assertOperationKeys(field, operationsWithKey, height);
-
             {
                 parameters.add(new CoverParameter(field, operationsWithKey, input, false));
             }
@@ -165,8 +161,6 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
                     Mino mino = minoFactory.create(mirror.getPiece(), mirror.getRotate());
                     return new MinimalOperationWithKey(mino, mirror.getX(), mirror.getY(), m.getNeedDeletedKey());
                 }).collect(Collectors.toList());
-
-                assertOperationKeys(freeze, operationsWithKeyMirror, height);
 
                 parameters.add(new CoverParameter(freeze, operationsWithKeyMirror, input, true));
             }
@@ -232,14 +226,6 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
         outputBaseFilePath.ifPresent(settings::setOutputBaseFilePath);
 
         return Optional.of(settings);
-    }
-
-    private void assertOperationKeys(Field field, List<MinoOperationWithKey> operationsWithKey, int height) {
-        if (!BuildUp.cansBuild(field, operationsWithKey, height, new DeepdropReachable())) {
-            // 実行時のエラーチェック
-            // テト譜から入力する関係上、組み立てられない手順になることはない想定
-            throw new IllegalStateException("Invalid operations");
-        }
     }
 
     // フィールドの情報を読み込む
