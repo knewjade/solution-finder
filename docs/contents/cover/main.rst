@@ -172,9 +172,17 @@ v115のテト譜データにのみ対応。
 
 以下から操作方法をひとつ選択する。
 
-* softdrop: ソフトドロップ＋回転入れ（制限なし）
+* softdrop: ソフトドロップ＋回転入れ（制限なし）
 * harddrop: ハードドロップのみ
-* t-softdrop: Tのみソフトドロップ（その他のミノはハードドロップ）
+* t-softdrop: Tミノはソフトドロップ、その他のミノはハードドロップ
+
+* any-tspin (any, tspin0): Tミノは必ずT-Spin(Mini含むすべてのT-Spin)をする。その他のミノはハードドロップ
+* tss (tspin1): Tミノは必ずT-Spin Single,Double,Tripe(Miniは含まない)をする。その他のミノはハードドロップ
+* tsd (tspin2): Tミノは必ずT-Spin Double,Tripe(Miniは含まない)をする。その他のミノはハードドロップ
+* tst (tspin3): Tミノは必ずT-Spin Tripe(Miniは含まない)をする。その他のミノはハードドロップ
+
+※ T-Spin系のdropでは、「T-Spinできないケース」や「ライン消去が発生しないT-Spinになるケース」ではミノを置きません。
+また、Tミノを使わないケースでは `harddrop` と同じになる点にご注意ください (solutionが省略されるわけではありません)。
 
 
 ``-m``, ``--mirror`` [default: no]
