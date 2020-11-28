@@ -220,7 +220,7 @@ public class EntryPointMain {
             case "spin":
                 return getSpinEntryPoint(commands);
             default:
-                throw new IllegalArgumentException("Invalid type: Use percent, path, util");
+                throw new IllegalArgumentException("Invalid type: Use percent, path, util, setup, move, ren, cover, spin");
         }
     }
 

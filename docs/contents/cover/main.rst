@@ -129,6 +129,7 @@ short    long                   default
 ``-m``   ``--mirror``           no
 ``-M``   ``--mode``             normal
 ``-P``   ``--priority``         no
+``-l``   ``--last-sd``          0
 ``-o``   ``--output-base``      output/path.txt
 ``-lp``  ``--log-path``         output/last_output.txt
 ``-fp``  ``--field-path``       input/field.txt
@@ -171,9 +172,17 @@ v115のテト譜データにのみ対応。
 
 以下から操作方法をひとつ選択する。
 
-* softdrop: ソフトドロップ＋回転入れ（制限なし）
+* softdrop: ソフトドロップ＋回転入れ（制限なし）
 * harddrop: ハードドロップのみ
-* t-softdrop: Tのみソフトドロップ（その他のミノはハードドロップ）
+* t-softdrop: Tミノはソフトドロップ、その他のミノはハードドロップ
+
+* any-tspin (any, tspin0): Tミノは必ずT-Spin(Mini含むすべてのT-Spin)をする。その他のミノはハードドロップ
+* tss (tspin1): Tミノは必ずT-Spin Single,Double,Tripe(Miniは含まない)をする。その他のミノはハードドロップ
+* tsd (tspin2): Tミノは必ずT-Spin Double,Tripe(Miniは含まない)をする。その他のミノはハードドロップ
+* tst (tspin3): Tミノは必ずT-Spin Tripe(Miniは含まない)をする。その他のミノはハードドロップ
+
+※ T-Spin系のdropでは、「T-Spinできないケース」や「ライン消去が発生しないT-Spinになるケース」ではミノを置きません。
+また、Tミノを使わないケースでは `harddrop` と同じになる点にご注意ください (solutionが省略されるわけではありません)。
 
 
 ``-m``, ``--mirror`` [default: no]
@@ -231,6 +240,24 @@ v115のテト譜データにのみ対応。
 
 このとき、``-P no`` ではすべて成功 (``TIOSZLJ,O,O,O``) となりますが、
 ``-P yes`` ではテト譜Aのみ成功 (``TIOSZLJ,O,X,X``) となります。
+
+
+``-l``, ``--last-sd`` [default: 0]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+`--drop` の設定によらず、ソフトドロップを有効にするタイミングを指定します。
+数値には、残り何ミノでソフトドロップを有効にするかを入力します。
+
+たとえば、`このテト譜 <http://fumen.zui.jp/?v115@ThE8BeA8BeF8LeTJJvhAUtB>_` で `--drop harddrop --last-sd 1` と指定したとします。
+本来 `--drop harddrop` だけでは、Zミノでソフトドロップが必要となるため、組むことができません。
+しかし `--last-sd 1` を指定することで、残り1ミノのときだけソフトドロップを有効になります。
+つまり今回の例では、Oミノを置いた後であれば、Zミノを置くことができます。
+
+
+なお、テト譜ごとで必要なミノ数が異なる場合では、それぞれのテト譜で適用されるタイミングが変わります。
+
+たとえば、4ミノと3ミノの組み方を指定したケースでは、それぞれの組み方で3ミノ・2ミノ置いた後から適用されることになります。
+
 
 
 ``-o``, ``--output-base`` [default: output/cover.csv]

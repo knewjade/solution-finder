@@ -109,10 +109,6 @@ public class SpinCommons {
     }
 
     private static TSpins getTSpin(SpinResult spinResult, Rotate toRotate, boolean filledTFront, TSpinNames name) {
-        if (name != TSpinNames.NoName) {
-            return TSpins.Regular;
-        }
-
         if (!filledTFront) {
             // 正面側に2つブロックがない
             // Mini判定の可能性がある
@@ -147,7 +143,9 @@ public class SpinCommons {
         return TSpinNames.NoName;
     }
 
-    private static boolean isFilledTFront(Field field, Rotate rotate, int x, int y) {
+    // `true`のとき、T-SpinはRegularになる。
+    // `false`のとき、MiniかRegularか判別するにはさらに条件が必要
+    public static boolean isFilledTFront(Field field, Rotate rotate, int x, int y) {
         switch (rotate) {
             case Spawn: {
                 return isBlock(field, x - 1, y + 1) && isBlock(field, x + 1, y + 1);
