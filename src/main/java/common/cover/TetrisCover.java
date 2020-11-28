@@ -1,7 +1,6 @@
 package common.cover;
 
 import common.datastore.MinoOperationWithKey;
-import core.action.reachable.Reachable;
 import core.field.Field;
 import core.field.KeyOperators;
 import core.mino.Mino;
@@ -14,7 +13,7 @@ import java.util.stream.Stream;
 
 public class TetrisCover implements Cover {
     @Override
-    public boolean canBuild(Field field, Stream<? extends MinoOperationWithKey> operations, List<Piece> pieces, int height, Reachable reachable, int maxDepth) {
+    public boolean canBuild(Field field, Stream<? extends MinoOperationWithKey> operations, List<Piece> pieces, int height, ReachableForCover reachable, int maxDepth) {
         if (pieces.size() < maxDepth) {
             return false;
         }
@@ -28,7 +27,7 @@ public class TetrisCover implements Cover {
         return existsValidByOrder(field.freeze(height), eachBlocks, pieces, height, reachable, 0, maxDepth, false);
     }
 
-    private boolean existsValidByOrder(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height, Reachable reachable, int depth, int maxDepth, boolean satisfied) {
+    private boolean existsValidByOrder(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height, ReachableForCover reachable, int depth, int maxDepth, boolean satisfied) {
         long deleteKey = field.clearLineReturnKey();
         Piece piece = pieces.get(depth);
         LinkedList<MinoOperationWithKey> operationWithKeys = eachBlocks.get(piece);
@@ -103,7 +102,7 @@ public class TetrisCover implements Cover {
     }
 
     @Override
-    public boolean canBuildWithHold(Field field, Stream<MinoOperationWithKey> operations, List<Piece> pieces, int height, Reachable reachable, int maxDepth) {
+    public boolean canBuildWithHold(Field field, Stream<MinoOperationWithKey> operations, List<Piece> pieces, int height, ReachableForCover reachable, int maxDepth) {
         if (pieces.size() < maxDepth) {
             return false;
         }
@@ -117,7 +116,7 @@ public class TetrisCover implements Cover {
         return existsValidByOrderWithHold(field.freeze(height), eachBlocks, pieces, height, reachable, maxDepth, 1, pieces.get(0), false);
     }
 
-    private boolean existsValidByOrderWithHold(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height, Reachable reachable, int maxDepth, int depth, Piece hold, boolean satisfied) {
+    private boolean existsValidByOrderWithHold(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height, ReachableForCover reachable, int maxDepth, int depth, Piece hold, boolean satisfied) {
         long deleteKey = field.clearLineReturnKey();
 
         Piece piece = depth < pieces.size() ? pieces.get(depth) : null;
@@ -133,7 +132,7 @@ public class TetrisCover implements Cover {
         return false;
     }
 
-    private boolean existsValidByOrderWithHold(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height, Reachable reachable, int maxDepth, int depth, Piece usePiece, long deleteKey, Piece nextHoldPiece, boolean satisfied) {
+    private boolean existsValidByOrderWithHold(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height, ReachableForCover reachable, int maxDepth, int depth, Piece usePiece, long deleteKey, Piece nextHoldPiece, boolean satisfied) {
         LinkedList<MinoOperationWithKey> operationWithKeys = eachBlocks.get(usePiece);
         if (operationWithKeys == null) {
             return false;

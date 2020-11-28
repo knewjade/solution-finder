@@ -40,7 +40,7 @@ class AnyTSpinCoverTest {
                 new SimpleOperation(Piece.T, Rotate.Reverse, 2, 1)
         );
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-        SoftdropTOnlyReachable reachable = new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height);
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
 
         AnyTSpinCover cover = new AnyTSpinCover();
 
@@ -115,7 +115,7 @@ class AnyTSpinCoverTest {
                 new SimpleOperation(Piece.T, Rotate.Reverse, 3, 1)
         );
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-        SoftdropTOnlyReachable reachable = new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height);
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
 
         AnyTSpinCover cover = new AnyTSpinCover();
 
@@ -167,7 +167,7 @@ class AnyTSpinCoverTest {
                 new SimpleOperation(Piece.T, Rotate.Right, 0, 1)
         );
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-        SoftdropTOnlyReachable reachable = new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height);
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
 
         AnyTSpinCover cover = new AnyTSpinCover();
 

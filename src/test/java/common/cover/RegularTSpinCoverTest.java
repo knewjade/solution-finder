@@ -40,7 +40,7 @@ class RegularTSpinCoverTest {
                 new SimpleOperation(Piece.T, Rotate.Reverse, 2, 1)
         );
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-        SoftdropTOnlyReachable reachable = new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height);
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
 
         RegularTSpinCover cover = new RegularTSpinCover(2);
 
@@ -115,7 +115,7 @@ class RegularTSpinCoverTest {
                 new SimpleOperation(Piece.T, Rotate.Reverse, 3, 1)
         );
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-        SoftdropTOnlyReachable reachable = new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height);
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
 
         RegularTSpinCover cover = new RegularTSpinCover(2);
 
@@ -168,7 +168,7 @@ class RegularTSpinCoverTest {
                 new SimpleOperation(Piece.T, Rotate.Reverse, 3, 1)
         );
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-        SoftdropTOnlyReachable reachable = new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height);
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
 
         RegularTSpinCover cover = new RegularTSpinCover(1);
 
@@ -220,7 +220,7 @@ class RegularTSpinCoverTest {
                 new SimpleOperation(Piece.T, Rotate.Right, 0, 1)
         );
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-        SoftdropTOnlyReachable reachable = new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height);
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
 
         RegularTSpinCover cover = new RegularTSpinCover(1);
 

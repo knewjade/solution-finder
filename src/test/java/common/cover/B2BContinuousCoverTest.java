@@ -43,7 +43,7 @@ class B2BContinuousCoverTest {
                 new SimpleOperation(Piece.T, Rotate.Reverse, 2, 1)
         );
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-        SoftdropTOnlyReachable reachable = new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height);
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
 
         {
             List<Piece> pieces = toPieceList("LT");
@@ -116,7 +116,7 @@ class B2BContinuousCoverTest {
                 new SimpleOperation(Piece.T, Rotate.Reverse, 3, 1)
         );
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-        SoftdropTOnlyReachable reachable = new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height);
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
 
         {
             List<Piece> pieces = toPieceList("LST");
@@ -167,7 +167,7 @@ class B2BContinuousCoverTest {
                 new SimpleOperation(Piece.I, Rotate.Left, 0, 1)
         );
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-        HarddropReachable reachable = new HarddropReachable(minoFactory, minoShifter, height);
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new HarddropReachable(minoFactory, minoShifter, height));
 
         {
             List<Piece> pieces = toPieceList("ZJI");

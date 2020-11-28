@@ -134,7 +134,7 @@ public class CoverEntryPoint implements EntryPoint {
 
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
-        Reachable reachable = createReachable(settings.getDropType(), height);
+        ReachableForCover reachableForCover = new ReachableForCoverWrapper(createReachable(settings.getDropType(), height));
         List<BitSet> results = new ArrayList<>();
 
         CoverModes mode = settings.getCoverModes();
@@ -194,9 +194,9 @@ public class CoverEntryPoint implements EntryPoint {
 
                 int maxDepth = operations.size();
                 boolean success = settings.isUsingHold() ? cover.canBuildWithHold(
-                        field, operations.stream(), pieceList, height, reachable, maxDepth
+                        field, operations.stream(), pieceList, height, reachableForCover, maxDepth
                 ) : cover.canBuild(
-                        field, operations.stream(), pieceList, height, reachable, maxDepth
+                        field, operations.stream(), pieceList, height, reachableForCover, maxDepth
                 );
 
                 if (success) {

@@ -4,6 +4,7 @@ import common.datastore.*;
 import common.parser.BlockInterpreter;
 import common.parser.OperationTransform;
 import core.action.reachable.HarddropReachable;
+import core.action.reachable.LockedReachable;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.*;
@@ -31,7 +32,7 @@ class NormalCoverTest {
                 new SimpleOperation(Piece.O, Rotate.Spawn, 4, 1)
         );
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-        HarddropReachable reachable = new HarddropReachable(minoFactory, minoShifter, height);
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new HarddropReachable(minoFactory, minoShifter, height));
 
         {
             List<Piece> pieces = toPieceList("I");

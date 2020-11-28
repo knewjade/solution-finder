@@ -40,7 +40,7 @@ class TetrisCoverTest {
                 new SimpleOperation(Piece.I, Rotate.Left, 0, 1)
         );
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new LockedReachable(minoFactory, minoShifter, minoRotation, height));
 
         TetrisCover cover = new TetrisCover();
 
@@ -115,7 +115,7 @@ class TetrisCoverTest {
                 new SimpleOperation(Piece.I, Rotate.Left, 0, 1)
         );
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new LockedReachable(minoFactory, minoShifter, minoRotation, height));
 
         TetrisCover cover = new TetrisCover();
 
