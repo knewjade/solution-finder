@@ -18,7 +18,7 @@ import java.util.Set;
 /**
  * マルチスレッド非対応
  */
-public class HarddropAndTSpinCandidate implements Candidate<Action> {
+public class TSpinOrHarddropCandidate implements Candidate<Action> {
     private static final int FIELD_WIDTH = 10;
 
     private final MinoFactory minoFactory;
@@ -36,7 +36,7 @@ public class HarddropAndTSpinCandidate implements Candidate<Action> {
      *                 `1 <= required`のとき、Regular T-Spinのみとなる。
      *                 `required <= 0`のとき、Miniを含むすべてのT-Spinが許可される。
      */
-    public HarddropAndTSpinCandidate(
+    public TSpinOrHarddropCandidate(
             MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY, int required
     ) {
         this.minoFactory = minoFactory;
@@ -84,12 +84,6 @@ public class HarddropAndTSpinCandidate implements Candidate<Action> {
 
     private boolean firstCheck(Field field, Mino mino, int x, int y) {
         Rotate rotate = mino.getRotate();
-
-        // harddropでたどりつけるとき
-        if (field.canReachOnHarddrop(mino, x, y)) {
-            lockedCache.found(x, y, rotate);
-            return true;
-        }
 
         Field freeze = field.freeze(appearY);
         freeze.put(mino, x, y);

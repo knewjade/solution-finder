@@ -17,7 +17,7 @@ import java.util.Optional;
 /**
  * マルチスレッド非対応
  */
-public class TSpinAndHarddropReachable implements Reachable {
+public class TSpinOrHarddropReachable implements Reachable {
     private final HarddropReachable harddropReachable;
     private final int required;
     private final SpinChecker spinChecker;
@@ -27,7 +27,7 @@ public class TSpinAndHarddropReachable implements Reachable {
      *                 `1 <= required`のとき、Regular T-Spinのみとなる。
      *                 `required <= 0`のとき、Miniを含むすべてのT-Spinが許可される。
      */
-    public TSpinAndHarddropReachable(
+    public TSpinOrHarddropReachable(
             MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY, int required
     ) {
         this.harddropReachable = new HarddropReachable(minoFactory, minoShifter, maxY);
@@ -42,7 +42,7 @@ public class TSpinAndHarddropReachable implements Reachable {
         assert field.getFilledLine() == 0L;
 
         if (mino.getPiece() == Piece.T) {
-            Field freeze = field.freeze(validHeight);
+            Field freeze = field.freeze();
             freeze.put(mino, x, y);
             int clearLine = freeze.clearLine();
 
@@ -62,6 +62,8 @@ public class TSpinAndHarddropReachable implements Reachable {
                     }
                 }
             }
+
+            return false;
         }
 
         return harddropReachable.checks(field, mino, x, y, validHeight);
