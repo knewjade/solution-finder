@@ -14,10 +14,7 @@ import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
 import common.tetfu.field.ColoredFieldView;
-import core.action.reachable.HarddropReachable;
-import core.action.reachable.LockedReachable;
-import core.action.reachable.Reachable;
-import core.action.reachable.SoftdropTOnlyReachable;
+import core.action.reachable.*;
 import core.field.Field;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
@@ -338,6 +335,22 @@ public class CoverEntryPoint implements EntryPoint {
             case SoftdropTOnly: {
                 MinoRotation minoRotation = MinoRotation.create();
                 return new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, maxY);
+            }
+            case AnyTSpin: {
+                MinoRotation minoRotation = MinoRotation.create();
+                return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, 0);
+            }
+            case TSpinSingle: {
+                MinoRotation minoRotation = MinoRotation.create();
+                return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, 1);
+            }
+            case TSpinDouble: {
+                MinoRotation minoRotation = MinoRotation.create();
+                return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, 2);
+            }
+            case TSpinTriple: {
+                MinoRotation minoRotation = MinoRotation.create();
+                return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, 3);
             }
         }
 

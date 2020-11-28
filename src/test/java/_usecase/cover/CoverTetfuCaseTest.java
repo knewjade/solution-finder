@@ -417,26 +417,6 @@ class CoverTetfuCaseTest {
         }
 
         @Test
-        void case7Normal() throws Exception {
-            String fumen1 = "v115@vhGRQJUGJKJJvMJTNJ+DJFKJ";
-
-            String command = String.format("cover -t %s -p *! --drop t-softdrop", fumen1);
-            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
-
-            // Log
-            int all = 5040;
-            assertThat(log.getOutput()).contains(Messages.foundSolutions(1944, all, fumen1));
-            assertThat(log.getOutput()).contains(Messages.foundOrSolutions(1944, all));
-            assertThat(log.getOutput()).contains(Messages.foundAndSolutions(1944, all));
-
-            // CSV
-            CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1));
-
-            assertThat(csv.row("name", "SLOZJIT"))
-                    .containsEntry(fumen1, "X");
-        }
-
-        @Test
         void case7B2B() throws Exception {
             String fumen1 = "v115@vhGRQJUGJKJJvMJTNJ+DJFKJ";
 
@@ -460,20 +440,54 @@ class CoverTetfuCaseTest {
         void case7TSD() throws Exception {
             String fumen1 = "v115@vhGRQJUGJKJJvMJTNJ+DJFKJ";
 
-            String command = String.format("cover -t %s -p *! --mode tsd", fumen1);
-            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+            {
+                String command = String.format("cover -t %s -p *! --mode tsd", fumen1);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
-            // Log
-            int all = 5040;
-            assertThat(log.getOutput()).contains(Messages.foundSolutions(2184, all, fumen1));
-            assertThat(log.getOutput()).contains(Messages.foundOrSolutions(2184, all));
-            assertThat(log.getOutput()).contains(Messages.foundAndSolutions(2184, all));
+                // Log
+                int all = 5040;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(2184, all, fumen1));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(2184, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(2184, all));
 
-            // CSV
-            CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1));
+                // CSV
+                CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1));
 
-            assertThat(csv.row("name", "SLOZJIT"))
-                    .containsEntry(fumen1, "O");
+                assertThat(csv.row("name", "SLOZJIT"))
+                        .containsEntry(fumen1, "O");
+            }
+            {
+                String command = String.format("cover -t %s -p *! --drop t-softdrop --mode tsd", fumen1);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 5040;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(1624, all, fumen1));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(1624, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(1624, all));
+
+                // CSV
+                CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1));
+
+                assertThat(csv.row("name", "SLOZJIT"))
+                        .containsEntry(fumen1, "X");
+            }
+            {
+                String command = String.format("cover -t %s -p *! --drop tsd", fumen1);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 5040;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(1624, all, fumen1));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(1624, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(1624, all));
+
+                // CSV
+                CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1));
+
+                assertThat(csv.row("name", "SLOZJIT"))
+                        .containsEntry(fumen1, "X");
+            }
         }
 
         @Test
@@ -834,6 +848,16 @@ class CoverTetfuCaseTest {
             }
             {
                 String command = String.format("cover -d harddrop --hold yes --patterns [OZ]! --tetfu %s --last-sd 1", fumen1);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 2;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(2, all, fumen1));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(2, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(2, all));
+            }
+            {
+                String command = String.format("cover -d harddrop --hold no --patterns [OZ]! --tetfu %s --last-sd 2", fumen1);
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 // Log
