@@ -2,6 +2,7 @@ package entry.cover;
 
 import common.comparator.PiecesNumberComparator;
 import common.cover.*;
+import common.cover.reachable.LastSoftdropReachableForCover;
 import common.cover.reachable.ReachableForCover;
 import common.cover.reachable.ReachableForCoverWrapper;
 import common.datastore.MinoOperationWithKey;
@@ -136,7 +137,7 @@ public class CoverEntryPoint implements EntryPoint {
 
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
-        ReachableForCover reachableForCover = new ReachableForCoverWrapper(createReachable(settings.getDropType(), height));
+        ReachableForCover reachableForCover = getReachableForCover(settings.getLastSoftdrop(), height);
         List<BitSet> results = new ArrayList<>();
 
         CoverModes mode = settings.getCoverModes();
@@ -312,6 +313,14 @@ public class CoverEntryPoint implements EntryPoint {
         } catch (IOException e) {
             throw new FinderExecuteException("Failed to output file", e);
         }
+    }
+
+    private ReachableForCover getReachableForCover(int lastSoftdrop, int maxY) {
+        Reachable reachable = createReachable(settings.getDropType(), maxY);
+        if (lastSoftdrop <= 0) {
+            return new ReachableForCoverWrapper(reachable);
+        }
+        return new LastSoftdropReachableForCover(reachable, maxY, lastSoftdrop);
     }
 
     private Reachable createReachable(DropType dropType, int maxY) {

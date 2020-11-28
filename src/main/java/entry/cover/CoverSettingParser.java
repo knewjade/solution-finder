@@ -209,6 +209,10 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
             throw new FinderParseException("Unsupported format: format=" + modeType.orElse("<empty>"));
         }
 
+        // アウトプットファイルの設定
+        Optional<Integer> lastSoftdrop = wrapper.getIntegerOption(CoverOptions.LastSoftdrop.optName());
+        lastSoftdrop.ifPresent(settings::setLastSoftdrop);
+
         // ホールドの設定
         Optional<Boolean> isUsingHold = wrapper.getBoolOption(CoverOptions.Hold.optName());
         isUsingHold.ifPresent(settings::setUsingHold);
@@ -224,6 +228,7 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
         // アウトプットファイルの設定
         Optional<String> outputBaseFilePath = wrapper.getStringOption(CoverOptions.OutputBase.optName());
         outputBaseFilePath.ifPresent(settings::setOutputBaseFilePath);
+
 
         return Optional.of(settings);
     }

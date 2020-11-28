@@ -807,5 +807,41 @@ class CoverTetfuCaseTest {
             assertThat(log.getOutput()).contains(Messages.foundOrSolutions(20160, all));
             assertThat(log.getOutput()).contains(Messages.foundAndSolutions(20160, all));
         }
+
+        @Test
+        void case15() throws Exception {
+            String fumen1 = "v115@ThE8BeA8BeF8LeTJJvhAUtB";
+
+            {
+                String command = String.format("cover -d harddrop --hold no --patterns [OZ]! --tetfu %s", fumen1);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 2;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(0, all, fumen1));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(0, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(0, all));
+            }
+            {
+                String command = String.format("cover -d harddrop --hold no --patterns [OZ]! --tetfu %s --last-sd 1", fumen1);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 2;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(1, all, fumen1));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(1, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(1, all));
+            }
+            {
+                String command = String.format("cover -d harddrop --hold yes --patterns [OZ]! --tetfu %s --last-sd 1", fumen1);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 2;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(2, all, fumen1));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(2, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(2, all));
+            }
+        }
     }
 }

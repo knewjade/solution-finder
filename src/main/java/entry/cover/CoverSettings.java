@@ -18,6 +18,7 @@ public class CoverSettings {
     private boolean isUsingHold = true;
     private CoverModes mode = CoverModes.Normal;
     private boolean isUsingPriority = false;
+    private int lastSoftdrop = 0;
 
     // ********* Getter ************
     boolean isUsingHold() {
@@ -50,6 +51,10 @@ public class CoverSettings {
 
     CoverModes getCoverModes() {
         return mode;
+    }
+
+    int getLastSoftdrop() {
+        return lastSoftdrop;
     }
 
     // ********* Setter ************
@@ -140,5 +145,9 @@ public class CoverSettings {
             default:
                 throw new FinderParseException("Unsupported mode: mode=" + mode);
         }
+    }
+
+    public void setLastSoftdrop(int lastSoftdrop) {
+        this.lastSoftdrop = lastSoftdrop;
     }
 }
