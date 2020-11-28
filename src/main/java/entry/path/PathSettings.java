@@ -240,6 +240,24 @@ public class PathSettings {
             case "t_softdrop":
                 this.dropType = DropType.SoftdropTOnly;
                 return;
+            case "any":
+            case "any-tspin":
+            case "anytspin":
+            case "tspin0":
+                this.dropType = DropType.AnyTSpin;
+                return;
+            case "tss":
+            case "tspin1":
+                this.dropType = DropType.TSpinSingle;
+                return;
+            case "tsd":
+            case "tspin2":
+                this.dropType = DropType.TSpinDouble;
+                return;
+            case "tst":
+            case "tspin3":
+                this.dropType = DropType.TSpinTriple;
+                return;
             default:
                 throw new FinderParseException("Unsupported droptype: type=" + type);
         }

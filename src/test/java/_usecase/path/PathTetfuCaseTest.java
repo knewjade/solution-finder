@@ -1314,4 +1314,47 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
                 .returns(1, PathHTML::sequence)
                 .returns(0, path -> path.allFumens().size());
     }
+
+    @Test
+    void caseTSpinDrop() throws Exception {
+        // ガムシロ積み
+        String fumen = "v115@zgwhGeRpwhGeRpwhh0Eehlwhg0DeR4hli0AeBtwwwh?RpJeAgH";
+
+        {
+            String command = String.format("path -t %s -p *! -c 5 -d any", fumen);
+
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput())
+                    .contains(Messages.uniqueCount(14))
+                    .contains(Messages.minimalCount(13));
+        }
+        {
+            String command = String.format("path -t %s -p *! -c 5 -d tss", fumen);
+
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput())
+                    .contains(Messages.uniqueCount(12))
+                    .contains(Messages.minimalCount(12));
+        }
+        {
+            String command = String.format("path -t %s -p *! -c 5 -d tsd", fumen);
+
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput())
+                    .contains(Messages.uniqueCount(11))
+                    .contains(Messages.minimalCount(11));
+        }
+        {
+            String command = String.format("path -t %s -p *! -c 5 -d tst", fumen);
+
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput())
+                    .contains(Messages.uniqueCount(6))
+                    .contains(Messages.minimalCount(6));
+        }
+    }
 }
