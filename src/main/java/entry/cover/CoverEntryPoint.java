@@ -2,6 +2,9 @@ package entry.cover;
 
 import common.comparator.PiecesNumberComparator;
 import common.cover.*;
+import common.cover.reachable.LastSoftdropReachableForCover;
+import common.cover.reachable.ReachableForCover;
+import common.cover.reachable.ReachableForCoverWrapper;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.blocks.LongPieces;
 import common.datastore.blocks.Pieces;
@@ -11,10 +14,7 @@ import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
 import common.tetfu.field.ColoredFieldView;
-import core.action.reachable.HarddropReachable;
-import core.action.reachable.LockedReachable;
-import core.action.reachable.Reachable;
-import core.action.reachable.SoftdropTOnlyReachable;
+import core.action.reachable.*;
 import core.field.Field;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
@@ -134,7 +134,7 @@ public class CoverEntryPoint implements EntryPoint {
 
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
-        Reachable reachable = createReachable(settings.getDropType(), height);
+        ReachableForCover reachableForCover = getReachableForCover(settings.getLastSoftdrop(), height);
         List<BitSet> results = new ArrayList<>();
 
         CoverModes mode = settings.getCoverModes();
@@ -194,9 +194,9 @@ public class CoverEntryPoint implements EntryPoint {
 
                 int maxDepth = operations.size();
                 boolean success = settings.isUsingHold() ? cover.canBuildWithHold(
-                        field, operations.stream(), pieceList, height, reachable, maxDepth
+                        field, operations.stream(), pieceList, height, reachableForCover, maxDepth
                 ) : cover.canBuild(
-                        field, operations.stream(), pieceList, height, reachable, maxDepth
+                        field, operations.stream(), pieceList, height, reachableForCover, maxDepth
                 );
 
                 if (success) {
@@ -312,6 +312,14 @@ public class CoverEntryPoint implements EntryPoint {
         }
     }
 
+    private ReachableForCover getReachableForCover(int lastSoftdrop, int maxY) {
+        Reachable reachable = createReachable(settings.getDropType(), maxY);
+        if (lastSoftdrop <= 0) {
+            return new ReachableForCoverWrapper(reachable);
+        }
+        return new LastSoftdropReachableForCover(reachable, maxY, lastSoftdrop);
+    }
+
     private Reachable createReachable(DropType dropType, int maxY) {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
@@ -327,6 +335,22 @@ public class CoverEntryPoint implements EntryPoint {
             case SoftdropTOnly: {
                 MinoRotation minoRotation = MinoRotation.create();
                 return new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, maxY);
+            }
+            case AnyTSpin: {
+                MinoRotation minoRotation = MinoRotation.create();
+                return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, 0);
+            }
+            case TSpinSingle: {
+                MinoRotation minoRotation = MinoRotation.create();
+                return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, 1);
+            }
+            case TSpinDouble: {
+                MinoRotation minoRotation = MinoRotation.create();
+                return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, 2);
+            }
+            case TSpinTriple: {
+                MinoRotation minoRotation = MinoRotation.create();
+                return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, 3);
             }
         }
 

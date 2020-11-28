@@ -10,6 +10,7 @@ import common.tetfu.common.ColorConverter;
 import concurrent.HarddropReachableThreadLocal;
 import concurrent.LockedReachableThreadLocal;
 import concurrent.SoftdropTOnlyReachableThreadLocal;
+import concurrent.TSpinOrHarddropReachableThreadLocal;
 import core.FinderConstant;
 import core.action.reachable.Reachable;
 import core.column_field.ColumnField;
@@ -281,15 +282,8 @@ public class PathEntryPoint implements EntryPoint {
     }
 
     private ThreadLocal<BuildUpStream> createBuildUpStreamThreadLocal(DropType dropType, int maxClearLine) throws FinderInitializeException {
-        switch (dropType) {
-            case Softdrop:
-                return new BuildUpListUpThreadLocal(new LockedReachableThreadLocal(maxClearLine), maxClearLine);
-            case Harddrop:
-                return new BuildUpListUpThreadLocal(new HarddropReachableThreadLocal(maxClearLine), maxClearLine);
-            case SoftdropTOnly:
-                return new BuildUpListUpThreadLocal(new SoftdropTOnlyReachableThreadLocal(maxClearLine), maxClearLine);
-        }
-        throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
+        ThreadLocal<? extends Reachable> reachableThreadLocal = createReachableThreadLocal(dropType, maxClearLine);
+        return new BuildUpListUpThreadLocal(reachableThreadLocal, maxClearLine);
     }
 
     private ThreadLocal<? extends Reachable> createReachableThreadLocal(DropType dropType, int maxClearLine) throws FinderInitializeException {
@@ -300,6 +294,14 @@ public class PathEntryPoint implements EntryPoint {
                 return new HarddropReachableThreadLocal(maxClearLine);
             case SoftdropTOnly:
                 return new SoftdropTOnlyReachableThreadLocal(maxClearLine);
+            case AnyTSpin:
+                return new TSpinOrHarddropReachableThreadLocal(maxClearLine, 0);
+            case TSpinSingle:
+                return new TSpinOrHarddropReachableThreadLocal(maxClearLine, 1);
+            case TSpinDouble:
+                return new TSpinOrHarddropReachableThreadLocal(maxClearLine, 2);
+            case TSpinTriple:
+                return new TSpinOrHarddropReachableThreadLocal(maxClearLine, 3);
         }
         throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
     }
