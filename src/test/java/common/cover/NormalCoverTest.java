@@ -1,10 +1,10 @@
 package common.cover;
 
+import common.cover.reachable.ReachableForCoverWrapper;
 import common.datastore.*;
 import common.parser.BlockInterpreter;
 import common.parser.OperationTransform;
 import core.action.reachable.HarddropReachable;
-import core.action.reachable.LockedReachable;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.*;

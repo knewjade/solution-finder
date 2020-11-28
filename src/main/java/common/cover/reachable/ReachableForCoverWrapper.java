@@ -1,4 +1,4 @@
-package common.cover;
+package common.cover.reachable;
 
 import core.action.reachable.Reachable;
 import core.field.Field;
@@ -12,7 +12,7 @@ public class ReachableForCoverWrapper implements ReachableForCover {
     }
 
     @Override
-    public boolean checks(Field field, Mino mino, int x, int y, int validHeight) {
+    public boolean checks(Field field, Mino mino, int x, int y, int validHeight, int remainingDepth) {
         return reachable.checks(field, mino, x, y, validHeight);
     }
 }

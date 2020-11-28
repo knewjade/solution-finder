@@ -1,6 +1,7 @@
 package common.cover;
 
 import common.SpinChecker;
+import common.cover.reachable.ReachableForCover;
 import common.datastore.MinoOperation;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.SimpleMinoOperation;
@@ -77,7 +78,7 @@ public class B2BContinuousCover implements Cover {
                 int x = key.getX();
                 int y = originalY - deletedLines;
 
-                if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY())) {
+                if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY(), maxDepth - depth)) {
                     if (!checksB2B(field, height, new SimpleMinoOperation(mino, x, y))) {
                         operationWithKeys.add(index, key);
                         continue;
@@ -190,7 +191,7 @@ public class B2BContinuousCover implements Cover {
             int x = key.getX();
             int y = originalY - deletedLines;
 
-            if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY())) {
+            if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY(), maxDepth - depth + 1)) {
                 if (!checksB2B(field, height, new SimpleMinoOperation(mino, x, y))) {
                     operationWithKeys.add(index, key);
                     continue;

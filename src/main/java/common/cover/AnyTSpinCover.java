@@ -1,6 +1,7 @@
 package common.cover;
 
 import common.SpinChecker;
+import common.cover.reachable.ReachableForCover;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.SimpleMinoOperation;
 import core.action.reachable.LockedReachable;
@@ -76,7 +77,7 @@ public class AnyTSpinCover implements Cover {
                 int x = key.getX();
                 int y = originalY - deletedLines;
 
-                if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY())) {
+                if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY(), maxDepth - depth)) {
                     boolean newSatisfied = satisfied;
 
                     {
@@ -184,7 +185,7 @@ public class AnyTSpinCover implements Cover {
             int x = key.getX();
             int y = originalY - deletedLines;
 
-            if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY())) {
+            if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY(), maxDepth - depth + 1)) {
                 boolean newSatisfied = satisfied;
 
                 {

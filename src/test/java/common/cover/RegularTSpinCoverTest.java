@@ -1,5 +1,6 @@
 package common.cover;
 
+import common.cover.reachable.ReachableForCoverWrapper;
 import common.datastore.*;
 import common.parser.BlockInterpreter;
 import common.parser.OperationTransform;

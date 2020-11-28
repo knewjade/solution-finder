@@ -1,5 +1,6 @@
 package common.cover;
 
+import common.cover.reachable.ReachableForCover;
 import common.datastore.MinoOperationWithKey;
 import core.field.Field;
 import core.mino.Piece;

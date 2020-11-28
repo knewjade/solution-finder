@@ -1,5 +1,6 @@
 package common.cover;
 
+import common.cover.reachable.ReachableForCover;
 import common.datastore.MinoOperationWithKey;
 import core.field.Field;
 import core.field.KeyOperators;
@@ -51,7 +52,7 @@ public class NormalCover implements Cover {
                 int x = key.getX();
                 int y = originalY - deletedLines;
 
-                if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY())) {
+                if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY(), maxDepth - depth)) {
                     if (maxDepth == depth + 1)
                         return true;
 
@@ -126,7 +127,7 @@ public class NormalCover implements Cover {
             int x = key.getX();
             int y = originalY - deletedLines;
 
-            if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY())) {
+            if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY(), maxDepth - depth + 1)) {
                 if (depth == maxDepth)
                     return true;
 

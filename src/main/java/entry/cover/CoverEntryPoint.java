@@ -2,6 +2,8 @@ package entry.cover;
 
 import common.comparator.PiecesNumberComparator;
 import common.cover.*;
+import common.cover.reachable.ReachableForCover;
+import common.cover.reachable.ReachableForCoverWrapper;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.blocks.LongPieces;
 import common.datastore.blocks.Pieces;
