@@ -19,7 +19,10 @@ public class FigColors {
     }
 
     private final EnumMap<ColorType, FigColor> map;
-    private final FigColor border;
+    private final Color border;
+    private final Color sideFrame;
+    private final Color holdBoxFrame;
+    private final Color nextBoxFrame;
 
     public FigColors(Properties properties) {
         EnumMap<ColorType, FigColor> map = new EnumMap<>(ColorType.class);
@@ -48,18 +51,24 @@ public class FigColors {
         this.map = map;
 
         {
-            Color normal = toColor(properties.getProperty("Border"));
-            Color clear = Color.BLACK;
-            Color piece = Color.BLACK;
-            this.border = new FigColor(normal, clear, piece);
+            this.border = toColor(properties.getProperty("Border"));
+        }
+        {
+            String sideFrame = properties.getProperty("SideFrame");
+            this.sideFrame = sideFrame != null ? toColor(sideFrame) : new Color(0x333333);
+        }
+        {
+            String boxFrame = properties.getProperty("BoxFrame");
+            this.holdBoxFrame = boxFrame != null ? toColor(boxFrame) : new Color(0xdddddd);
+            this.nextBoxFrame = boxFrame != null ? toColor(boxFrame) : new Color(0x999999);
         }
     }
 
     public Color nextBoxBorder() {
-        return new Color(0x999999);
+        return nextBoxFrame;
     }
 
-    public FigColor line() {
+    public Color line() {
         return border;
     }
 
@@ -72,10 +81,10 @@ public class FigColors {
     }
 
     public Color holdFrame() {
-        return new Color(0xdddddd);
+        return holdBoxFrame;
     }
 
-    public Color frame() {
-        return new Color(0x333333);
+    public Color sideFrame() {
+        return sideFrame;
     }
 }

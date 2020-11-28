@@ -43,7 +43,7 @@ public class FieldOnlyFigGenerator implements FigGenerator {
     @Override
     public void reset() {
         // Border
-        graphics.setColor(figColors.line().getNormalColor());
+        graphics.setColor(figColors.line());
         Rectangle rectangle = positionDecider.getField();
         fillRect(rectangle);
     }

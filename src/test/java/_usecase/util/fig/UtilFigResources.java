@@ -11,6 +11,7 @@ public enum UtilFigResources {
     TetfuCase8("figs/tetfu_case8.gif"),
     TetfuCase9("figs/tetfu_case9.gif"),
     TetfuCase10("figs/tetfu_case10.gif"),
+    TetfuCase11("figs/tetfu_case11.gif"),
     FileCase1("figs/file_case1.gif"),
     FileCase2("figs/file_case2.gif"),
     PngCase1Java8("figs/png_case1_java8/"),

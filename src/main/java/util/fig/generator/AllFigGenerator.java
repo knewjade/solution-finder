@@ -42,11 +42,11 @@ public class AllFigGenerator implements FigGenerator {
     @Override
     public void reset() {
         // Frame
-        graphics.setColor(figColors.frame());
+        graphics.setColor(figColors.sideFrame());
         graphics.fillRect(0, 0, image.getWidth(), image.getHeight());
 
         // Border
-        graphics.setColor(figColors.line().getNormalColor());
+        graphics.setColor(figColors.line());
         Rectangle rectangle = positionDecider.getField();
         fillRect(rectangle);
     }
