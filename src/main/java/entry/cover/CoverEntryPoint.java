@@ -99,6 +99,7 @@ public class CoverEntryPoint implements EntryPoint {
         output("Drop: " + settings.getDropType().name().toLowerCase());
         output("Mode: " + settings.getCoverModes().name().toLowerCase());
         output("Priority: " + (settings.isUsingPriority() ? "yes" : "no"));
+        output("Last drop: " + settings.getLastSoftdrop());
 
         // ========================================
         output("Searching patterns:");
