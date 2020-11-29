@@ -20,6 +20,64 @@
 ``java -jar sfinder.jar util fig --tetfu v115@vhKSSJznBGjBXqBNpB0fBRmBasB/rB0qBAAA``
 
 
+カラーテーマ
+============================================================
+
+themeディレクトリにプロパティファイルを追加すると、`--color` で指定できるようになります。
+
+既にあるプロパティファイルをコピーして名前を変更したうえで、直接ファイルを更新してください。
+
+
+デフォルトカラーのサンプル
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. |fig_sample_default| image:: img/fig/sample_default.gif
+   :scale: 50
+.. |fig_sample_mipi| image:: img/fig/sample_mipi.gif
+   :scale: 50
+.. |fig_sample_fumen| image:: img/fig/sample_fumen.gif
+   :scale: 50
+.. |fig_sample_four| image:: img/fig/sample_four.gif
+   :scale: 50
+
+**default** : ``mipi`` をベースにライン消去・操作ミノが強調されるようなカラーリング
+
+|fig_sample_default|
+
+**mipi** : `@mipi_teto_puyo <https://twitter.com/mipi_teto_puyo>`_ さんの資料をベースとしたカラーリング
+
+|fig_sample_mipi|
+
+**fumen** : `連続テト譜エディタ <http://fumen.zui.jp/>`_ をベースとしたカラーリング
+
+|fig_sample_fumen|
+
+**four** : `FOUR <https://four.lol/>`_ をベースとしたカラーリング
+
+|fig_sample_four|
+
+
+プロパティファイルの構成
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+カラーテーマのプロパティは、以下のルールを基に色を設定します。
+
+*ブロック・ライン*
+
+* ```T,I,O,S,Z,L,J,Gray``: 各ブロックの色
+* ```Gray``: せり上がりブロックの色
+* ```Empty``: 空白の色
+* ```Border``: ブロックまわりの線の色
+* ```SideFrame``: フィールド左右のフレームの色
+* ```BoxFrame``: ホールド・ネクストボックスの枠の色
+
+*適用されるタイミング*
+
+* ``.normal``: 通常時のブロックの色
+* ``.clear``: ラインが揃ったときに強調するための色
+* ``.piece``: 操作しているミノを強調するための色
+
+
 オプション一覧
 ============================================================
 
@@ -145,8 +203,6 @@ v115のテト譜データにのみ対応。
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 使用するカラーテーマを指定します。指定された名前でthemeディレクトリ内からカラーテーマのファイル名を検索します。
-
-なお、カラーテーマファイルの詳細は `こちら <https://github.com/knewjade/fumen2xlsx#%E3%82%AB%E3%83%A9%E3%83%BC%E3%83%86%E3%83%BC%E3%83%9E%E3%81%AE%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%9E%E3%82%A4%E3%82%BA>_` をご参照ください。
 
 
 ``-H``, ``--hold`` [default: visible]
