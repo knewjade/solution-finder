@@ -9,7 +9,6 @@ import core.field.SmallField;
 import entry.EntryPointMain;
 import module.LongTest;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -395,5 +394,35 @@ class PercentTetfuCaseTest extends PercentUseCaseBaseTest {
                 .contains("#Q=[S](Z)I*JOT");
 
         assertThat(log.getError()).isEmpty();
+    }
+
+    @Test
+    void use180Rotation() throws Exception {
+        String tetfu = "v115@GhA8DeA8CeB8DeF8DeF8JeAgH";
+
+        {
+            String command = String.format("percent -t %s -p *!", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput())
+                    .contains(Messages.useHold())
+                    .contains(Messages.softdrop())
+                    .contains(Messages.success(5028, 5040))
+                    .contains("*!");
+
+            assertThat(log.getError()).isEmpty();
+        }
+        {
+            String command = String.format("percent -t %s -p *! -drop 180", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput())
+                    .contains(Messages.useHold())
+                    .contains(Messages.rotation180())
+                    .contains(Messages.success(5040, 5040))
+                    .contains("*!");
+
+            assertThat(log.getError()).isEmpty();
+        }
     }
 }

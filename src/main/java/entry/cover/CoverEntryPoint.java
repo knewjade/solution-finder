@@ -332,6 +332,10 @@ public class CoverEntryPoint implements EntryPoint {
                 MinoRotation minoRotation = MinoRotation.create();
                 return new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
             }
+            case Rotation180: {
+                MinoRotation minoRotation = MinoRotation.create();
+                return new SRSAnd180Reachable(minoFactory, minoShifter, minoRotation, maxY);
+            }
             case SoftdropTOnly: {
                 MinoRotation minoRotation = MinoRotation.create();
                 return new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, maxY);

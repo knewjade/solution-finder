@@ -201,6 +201,7 @@ noの場合、解自体から抽出したパターンをもとに、重複をチ
 
 * softdrop: ソフトドロップ＋回転入れ（制限なし）
 * harddrop: ハードドロップのみ
+* 180: ソフトドロップ＋180度回転入れ。180度回転は `Nullpomino <https://github.com/nullpomino/nullpomino>`_ のStandard Wallkickに準拠します。
 * t-softdrop: Tミノはソフトドロップ、その他のミノはハードドロップ
 
 * any-tspin (any, tspin0): Tミノは必ずT-Spin(Mini含むすべてのT-Spin)をする。その他のミノはハードドロップ

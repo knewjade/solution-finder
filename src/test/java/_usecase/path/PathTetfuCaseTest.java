@@ -1357,4 +1357,32 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
                     .contains(Messages.minimalCount(6));
         }
     }
+
+    @Test
+    void user180Rotation() throws Exception {
+        String tetfu = "v115@HhA8BeA8FeE8CeG8CeB8JeAgH";
+
+        {
+            String command = String.format("path -t %s -p *!", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput())
+                    .contains(Messages.uniqueCount(6))
+                    .contains(Messages.minimalCount(3))
+                    .contains(Messages.useHold());
+
+            assertThat(log.getError()).isEmpty();
+        }
+        {
+            String command = String.format("path -t %s -p *! -d 180", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput())
+                    .contains(Messages.uniqueCount(7))
+                    .contains(Messages.minimalCount(5))
+                    .contains(Messages.useHold());
+
+            assertThat(log.getError()).isEmpty();
+        }
+    }
 }

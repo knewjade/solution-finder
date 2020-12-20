@@ -124,6 +124,54 @@ class RenTetfuCaseTest {
                     .hasSize(4)
                     .contains("FfH8AeI8AeH8AeI8AeD8AeI8AeI8AeO8AeI8AeI8Ae?D8AeN8AeI8AeC8AeM8AeH8AeD8JeZCXWAFLDmClcJSAVDEH?BEooRBJoAVBJ+AAAvhB5rAZ4A");
         }
+
+        @Test
+        void use180Rotation() throws Exception {
+            String fumen = "v115@TfF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8De?F8CeG8BeA8AeF8AeA8BeH8AeG8JeAgH";
+
+            {
+                String command = String.format("ren -t %s -p jzostiljosztil", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                assertThat(log.getOutput())
+                        .contains(Messages.foundSolutions(1))
+                        .contains(Messages.maxRen(0))
+                        .contains("JZOSTILJOSZTIL");
+                assertThat(log.getError()).isEmpty();
+
+                // HTML
+                SetupHTML html = OutputFileHelper.loadRenHTML();
+                assertThat(html.getHtml())
+                        .contains("0 Ren")
+                        .doesNotContain("1 Ren");
+
+                assertThat(html.getFumens())
+                        .hasSize(1)
+                        .contains("TfF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8De?F8CeG8BeA8AeF8AeA8BeH8AeG8Je2/XUAFLDmClcJSAVDEH?BEooRBKoAVB");
+            }
+            {
+                String command = String.format("ren -t %s -p jzostiljosztil -d 180", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                assertThat(log.getOutput())
+                        .contains(Messages.foundSolutions(376))
+                        .contains(Messages.maxRen(13))
+                        .contains("JZOSTILJOSZTIL");
+                assertThat(log.getError()).isEmpty();
+
+                // HTML
+                SetupHTML html = OutputFileHelper.loadRenHTML();
+                assertThat(html.getHtml())
+                        .contains("13 Ren")
+                        .doesNotContain("14 Ren");
+
+                assertThat(html.getFumens())
+                        .hasSize(376)
+                        .contains("TfF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8De?F8CeG8BeA8AeF8AeA8BeH8AeG8JeMKYhAFLDmClcJSAVDEH?BEooRBaoAVBvvLMCs/dgCzn9VC0AAAAvhMTkBmkB/lBZkBC?lBGlBNkBTlB/kBUlBxkB6lB1pB");
+            }
+        }
     }
 
     @Nested

@@ -83,6 +83,7 @@ v115のテト譜データにのみ対応。
 
 * softdrop: ソフトドロップ＋回転入れ（制限なし）
 * harddrop: ハードドロップのみ
+* 180: ソフトドロップ＋180度回転入れ。180度回転は `Nullpomino <https://github.com/nullpomino/nullpomino>`_ のStandard Wallkickに準拠します。
 * t-softdrop: Tミノはソフトドロップ、その他のミノはハードドロップ
 
 ``-o``, ``--output-base`` [default: output/ren.html]

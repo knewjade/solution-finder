@@ -6,10 +6,7 @@ import common.datastore.action.Action;
 import common.datastore.blocks.Pieces;
 import common.pattern.PatternGenerator;
 import common.tetfu.common.ColorConverter;
-import core.action.candidate.Candidate;
-import core.action.candidate.HarddropCandidate;
-import core.action.candidate.LockedCandidate;
-import core.action.candidate.SoftdropTOnlyCandidate;
+import core.action.candidate.*;
 import core.field.Field;
 import core.field.FieldView;
 import core.mino.MinoFactory;
@@ -194,8 +191,7 @@ public class RenEntryPoint implements EntryPoint {
 
     private static final String FILE_EXTENSION = ".html";
 
-
-    private String getRemoveExtensionFromPath(String path) throws FinderInitializeException {
+    private String getRemoveExtensionFromPath(String path) {
         int pointIndex = path.lastIndexOf('.');
         int separatorIndex = path.lastIndexOf(File.separatorChar);
 
@@ -222,6 +218,8 @@ public class RenEntryPoint implements EntryPoint {
                 return new LockedCandidate(minoFactory, minoShifter, minoRotation, 24);
             case Harddrop:
                 return new HarddropCandidate(minoFactory, minoShifter);
+            case Rotation180:
+                return new SRSAnd180Candidate(minoFactory, minoShifter, minoRotation, 24);
             case SoftdropTOnly:
                 return new SoftdropTOnlyCandidate(minoFactory, minoShifter, minoRotation, 24);
             default:
