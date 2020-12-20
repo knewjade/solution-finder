@@ -13,6 +13,7 @@ public enum Rotate {
 
     private static final EnumMap<Rotate, Rotate> toLeft = new EnumMap<>(Rotate.class);
     private static final EnumMap<Rotate, Rotate> toRight = new EnumMap<>(Rotate.class);
+    private static final EnumMap<Rotate, Rotate> to180 = new EnumMap<>(Rotate.class);
     private static final Rotate[] ROTATE_MAP = new Rotate[Rotate.values().length];
 
     static {
@@ -25,6 +26,11 @@ public enum Rotate {
         toRight.put(Right, Reverse);
         toRight.put(Reverse, Left);
         toRight.put(Left, Spawn);
+
+        to180.put(Spawn, Reverse);
+        to180.put(Right, Left);
+        to180.put(Reverse, Spawn);
+        to180.put(Left, Right);
 
         for (Rotate rotate : Rotate.values())
             ROTATE_MAP[rotate.getNumber()] = rotate;
@@ -75,6 +81,10 @@ public enum Rotate {
 
     public Rotate getRightRotate() {
         return toRight.get(this);
+    }
+
+    public Rotate get180Rotate() {
+        return to180.get(this);
     }
 
     public int getNumber() {

@@ -29,6 +29,13 @@ class MinoRotationTest {
         return minoRotation.getKicks(field, mino, after, x, y, RotateDirection.Right);
     }
 
+    private int[] kicks180(String marks, Mino mino, int x, int y) {
+        Field field = FieldFactory.createField(marks);
+        assert field.canPut(mino, x, y);
+        Mino after = new Mino(mino.getPiece(), mino.getRotate().get180Rotate());
+        return minoRotation.getKicksWith180Rotation(field, mino, after, x, y);
+    }
+
     @Nested
     class Kicks {
         @Nested
@@ -45,7 +52,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks1ng1() throws Exception {
+            void checks1ng1() {
                 String marks = "" +
                         "XX________" +
                         "X_________" +
@@ -56,7 +63,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks1ng2() throws Exception {
+            void checks1ng2() {
                 String marks = "" +
                         "XX________" +
                         "X_________" +
@@ -67,7 +74,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks2ok1() throws Exception {
+            void checks2ok1() {
                 String marks = "" +
                         "________XX" +
                         "_________X" +
@@ -78,7 +85,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks2ng1() throws Exception {
+            void checks2ng1() {
                 String marks = "" +
                         "________XX" +
                         "_________X" +
@@ -89,7 +96,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks2ng2() throws Exception {
+            void checks2ng2() {
                 String marks = "" +
                         "________XX" +
                         "_________X" +
@@ -100,7 +107,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks3ok1() throws Exception {
+            void checks3ok1() {
                 String marks = "" +
                         "XXX_______" +
                         "XXX_______" +
@@ -112,7 +119,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks3ok2() throws Exception {
+            void checks3ok2() {
                 String marks = "" +
                         "__________" +
                         "XXX_______" +
@@ -124,7 +131,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks3ok3() throws Exception {
+            void checks3ok3() {
                 String marks = "" +
                         "X_________" +
                         "XXX___XXXX" +
@@ -136,7 +143,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks3ok4() throws Exception {
+            void checks3ok4() {
                 String marks = "" +
                         "__________" +
                         "XXX___XXXX" +
@@ -148,7 +155,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks4ok1() throws Exception {
+            void checks4ok1() {
                 String marks = "" +
                         "_______XXX" +
                         "_______XXX" +
@@ -160,7 +167,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks4ok2() throws Exception {
+            void checks4ok2() {
                 String marks = "" +
                         "__________" +
                         "_______XXX" +
@@ -172,7 +179,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks4ok3() throws Exception {
+            void checks4ok3() {
                 String marks = "" +
                         "__________" +
                         "_______XXX" +
@@ -184,7 +191,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks4ok4() throws Exception {
+            void checks4ok4() {
                 String marks = "" +
                         "_______XXX" +
                         "XXXX___XXX" +
@@ -196,7 +203,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks4ok5() throws Exception {
+            void checks4ok5() {
                 String marks = "" +
                         "_________X" +
                         "XXXX___XXX" +
@@ -208,7 +215,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks5() throws Exception {
+            void checks5() {
                 String marks = "" +
                         "__________" +
                         "XXXXX_____" +
@@ -223,7 +230,7 @@ class MinoRotationTest {
         @Nested
         class WithO {
             @Test
-            void checksRight() throws Exception {
+            void checksRight() {
                 String marks = "" +
                         "X__XXXXXXX" +
                         "X___XXXXXX" +
@@ -235,7 +242,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checksLeft() throws Exception {
+            void checksLeft() {
                 String marks = "" +
                         "X__XXXXXXX" +
                         "X___XXXXXX" +
@@ -250,7 +257,7 @@ class MinoRotationTest {
         @Nested
         class WithS {
             @Test
-            void checks1ok1() throws Exception {
+            void checks1ok1() {
                 String marks = "" +
                         "XX__XXXXXX" +
                         "X__XXXXXXX";
@@ -258,7 +265,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks2ok1() throws Exception {
+            void checks2ok1() {
                 String marks = "" +
                         "XX__XXXXXX" +
                         "XX__XXXXXX" +
@@ -267,7 +274,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks2ng1() throws Exception {
+            void checks2ng1() {
                 String marks = "" +
                         "XX________" +
                         "XX__XXXXXX" +
@@ -276,7 +283,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks3ok1() throws Exception {
+            void checks3ok1() {
                 String marks = "" +
                         "___X______" +
                         "X_XXXXXXXX" +
@@ -286,7 +293,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks3ng1() throws Exception {
+            void checks3ng1() {
                 String marks = "" +
                         "__________" +
                         "X_XXXXXXXX" +
@@ -296,7 +303,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks4ok1() throws Exception {
+            void checks4ok1() {
                 String marks = "" +
                         "XX________" +
                         "X_________" +
@@ -307,7 +314,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks4ok2() throws Exception {
+            void checks4ok2() {
                 String marks = "" +
                         "XX________" +
                         "X_________" +
@@ -319,7 +326,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks4ok3() throws Exception {
+            void checks4ok3() {
                 String marks = "" +
                         "X_________" +
                         "__________" +
@@ -330,7 +337,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks4ng1() throws Exception {
+            void checks4ng1() {
                 String marks = "" +
                         "X_________" +
                         "__________" +
@@ -342,7 +349,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks5ng1() throws Exception {
+            void checks5ng1() {
                 String marks = "" +
                         "XX________" +
                         "X_________" +
@@ -355,7 +362,7 @@ class MinoRotationTest {
         @Nested
         class WithZ {
             @Test
-            void checks1ok1() throws Exception {
+            void checks1ok1() {
                 String marks = "" +
                         "X__XXXXXXX" +
                         "XX__XXXXXX";
@@ -363,7 +370,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks2ok1() throws Exception {
+            void checks2ok1() {
                 String marks = "" +
                         "X__XXXXXXX" +
                         "X__XXXXXXX" +
@@ -372,7 +379,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks2ng1() throws Exception {
+            void checks2ng1() {
                 String marks = "" +
                         "___XXXXXXX" +
                         "X__XXXXXXX" +
@@ -381,7 +388,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks3ok1() throws Exception {
+            void checks3ok1() {
                 String marks = "" +
                         "__X_______" +
                         "XXXX_XXXXX" +
@@ -391,7 +398,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks3ng1() throws Exception {
+            void checks3ng1() {
                 String marks = "" +
                         "__________" +
                         "XXXX_XXXXX" +
@@ -401,7 +408,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks4ok1() throws Exception {
+            void checks4ok1() {
                 String marks = "" +
                         "____XX____" +
                         "_____X____" +
@@ -412,7 +419,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks4ok2() throws Exception {
+            void checks4ok2() {
                 String marks = "" +
                         "____XX____" +
                         "_____X____" +
@@ -424,7 +431,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks4ok3() throws Exception {
+            void checks4ok3() {
                 String marks = "" +
                         "_____XX___" +
                         "______X___" +
@@ -435,7 +442,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks4ng1() throws Exception {
+            void checks4ng1() {
                 String marks = "" +
                         "_____XX___" +
                         "______X___" +
@@ -447,7 +454,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks5ng1() throws Exception {
+            void checks5ng1() {
                 String marks = "" +
                         "________XX" +
                         "_________X" +
@@ -460,7 +467,7 @@ class MinoRotationTest {
         @Nested
         class WithL {
             @Test
-            void checks1ok1() throws Exception {
+            void checks1ok1() {
                 String marks = "" +
                         "XXX_______" +
                         "XX________" +
@@ -469,7 +476,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks2ok1() throws Exception {
+            void checks2ok1() {
                 String marks = "" +
                         "XXX__XXXXX" +
                         "XX___XXXXX" +
@@ -478,7 +485,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks2ng1() throws Exception {
+            void checks2ng1() {
                 String marks = "" +
                         "XXX___XXXX" +
                         "XX___XXXXX" +
@@ -487,7 +494,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks3ok1() throws Exception {
+            void checks3ok1() {
                 String marks = "" +
                         "XXXX______" +
                         "XX________" +
@@ -496,7 +503,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks3ng1() throws Exception {
+            void checks3ng1() {
                 String marks = "" +
                         "XXX_______" +
                         "XX________" +
@@ -506,7 +513,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks4ok1() throws Exception {
+            void checks4ok1() {
                 String marks = "" +
                         "____XXXXXX" +
                         "XX___XXXXX" +
@@ -516,7 +523,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks4ng1() throws Exception {
+            void checks4ng1() {
                 String marks = "" +
                         "____XXXXXX" +
                         "X____XXXXX" +
@@ -525,7 +532,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks5ok1() throws Exception {
+            void checks5ok1() {
                 String marks = "" +
                         "___XXXXXXX" +
                         "_____XXXXX" +
@@ -534,7 +541,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks5ng1() throws Exception {
+            void checks5ng1() {
                 String marks = "" +
                         "____XXXXXX" +
                         "_____XXXXX" +
@@ -543,7 +550,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks6ok1() throws Exception {
+            void checks6ok1() {
                 String marks = "" +
                         "XXXX_XXXXX" +
                         "XX___XXXXX";
@@ -551,7 +558,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks6ok2() throws Exception {
+            void checks6ok2() {
                 String marks = "" +
                         "XXX__XXXXX" +
                         "XX___XXXXX";
@@ -559,7 +566,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks6ok3() throws Exception {
+            void checks6ok3() {
                 String marks = "" +
                         "XXXX__XXXX" +
                         "XX___XXXXX";
@@ -567,7 +574,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks6ng1() throws Exception {
+            void checks6ng1() {
                 String marks = "" +
                         "XXX___XXXX" +
                         "XX___XXXXX";
@@ -575,7 +582,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks7ok1() throws Exception {
+            void checks7ok1() {
                 String marks = "" +
                         "____XXXXXX" +
                         "XX___XXXXX" +
@@ -585,7 +592,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks7ng1() throws Exception {
+            void checks7ng1() {
                 String marks = "" +
                         "____XXXXXX" +
                         "X____XXXXX" +
@@ -594,7 +601,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks8ok1() throws Exception {
+            void checks8ok1() {
                 String marks = "" +
                         "XXX_______" +
                         "XX________" +
@@ -605,7 +612,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks8ok2() throws Exception {
+            void checks8ok2() {
                 String marks = "" +
                         "XXX_______" +
                         "XX________" +
@@ -617,7 +624,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks8ok3() throws Exception {
+            void checks8ok3() {
                 String marks = "" +
                         "XX________" +
                         "X_________" +
@@ -628,7 +635,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks8ok4() throws Exception {
+            void checks8ok4() {
                 String marks = "" +
                         "XX________" +
                         "X_________" +
@@ -640,7 +647,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks8ng1() throws Exception {
+            void checks8ng1() {
                 String marks = "" +
                         "XX_XXXXXXX" +
                         "XX_XXXXXXX" +
@@ -649,7 +656,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks9ng1() throws Exception {
+            void checks9ng1() {
                 String marks = "" +
                         "________XX" +
                         "_________X" +
@@ -662,7 +669,7 @@ class MinoRotationTest {
         @Nested
         class WithJ {
             @Test
-            void checks1ok1() throws Exception {
+            void checks1ok1() {
                 String marks = "" +
                         "_______XXX" +
                         "________XX" +
@@ -671,7 +678,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks2ok1() throws Exception {
+            void checks2ok1() {
                 String marks = "" +
                         "XXXXX__XXX" +
                         "XXXXX___XX" +
@@ -680,7 +687,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks2ng1() throws Exception {
+            void checks2ng1() {
                 String marks = "" +
                         "XXXX___XXX" +
                         "XXXXX___XX" +
@@ -689,7 +696,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks3ok1() throws Exception {
+            void checks3ok1() {
                 String marks = "" +
                         "______XXXX" +
                         "________XX" +
@@ -698,7 +705,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks3ng1() throws Exception {
+            void checks3ng1() {
                 String marks = "" +
                         "_______XXX" +
                         "________XX" +
@@ -708,7 +715,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks4ok1() throws Exception {
+            void checks4ok1() {
                 String marks = "" +
                         "XXXXXX____" +
                         "XXXXX___XX" +
@@ -718,7 +725,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks4ng1() throws Exception {
+            void checks4ng1() {
                 String marks = "" +
                         "XXXXXX____" +
                         "XXXXX____X" +
@@ -727,7 +734,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks5ok1() throws Exception {
+            void checks5ok1() {
                 String marks = "" +
                         "XXXXXXX___" +
                         "XXXXX_____" +
@@ -736,7 +743,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks5ng1() throws Exception {
+            void checks5ng1() {
                 String marks = "" +
                         "XXXXXX____" +
                         "XXXXX_____" +
@@ -745,7 +752,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks6ok1() throws Exception {
+            void checks6ok1() {
                 String marks = "" +
                         "XXXXX_XXXX" +
                         "XXXXX___XX";
@@ -753,7 +760,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks6ok2() throws Exception {
+            void checks6ok2() {
                 String marks = "" +
                         "XXXXX__XXX" +
                         "XXXXX___XX";
@@ -761,7 +768,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks6ok3() throws Exception {
+            void checks6ok3() {
                 String marks = "" +
                         "XXXX__XXXX" +
                         "XXXXX___XX";
@@ -769,7 +776,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks6ng1() throws Exception {
+            void checks6ng1() {
                 String marks = "" +
                         "XXXX___XXX" +
                         "XXXXX___XX";
@@ -777,7 +784,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks7ok1() throws Exception {
+            void checks7ok1() {
                 String marks = "" +
                         "XXXXXX____" +
                         "XXXXX___XX" +
@@ -787,7 +794,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks7ng1() throws Exception {
+            void checks7ng1() {
                 String marks = "" +
                         "XXXXXX____" +
                         "XXXXX____X" +
@@ -796,7 +803,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks8ok1() throws Exception {
+            void checks8ok1() {
                 String marks = "" +
                         "_______XXX" +
                         "________XX" +
@@ -807,7 +814,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks8ok2() throws Exception {
+            void checks8ok2() {
                 String marks = "" +
                         "_______XXX" +
                         "________XX" +
@@ -819,7 +826,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks8ok3() throws Exception {
+            void checks8ok3() {
                 String marks = "" +
                         "________XX" +
                         "_________X" +
@@ -830,7 +837,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks8ok4() throws Exception {
+            void checks8ok4() {
                 String marks = "" +
                         "________XX" +
                         "_________X" +
@@ -842,7 +849,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks8ng1() throws Exception {
+            void checks8ng1() {
                 String marks = "" +
                         "XXXXXXX_XX" +
                         "XXXXXXX_XX" +
@@ -851,7 +858,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks9ng1() throws Exception {
+            void checks9ng1() {
                 String marks = "" +
                         "XX________" +
                         "X_________" +
@@ -864,7 +871,7 @@ class MinoRotationTest {
         @Nested
         class WithT {
             @Test
-            void checks1ok1() throws Exception {
+            void checks1ok1() {
                 String marks = "" +
                         "XX________" +
                         "X_________" +
@@ -874,7 +881,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks1ok2() throws Exception {
+            void checks1ok2() {
                 String marks = "" +
                         "________XX" +
                         "_________X" +
@@ -884,7 +891,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks2ok1() throws Exception {
+            void checks2ok1() {
                 String marks = "" +
                         "_____XXXXX" +
                         "XXX__XXXXX" +
@@ -893,7 +900,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks2ok2() throws Exception {
+            void checks2ok2() {
                 String marks = "" +
                         "XX________" +
                         "XX__XXXXXX" +
@@ -902,7 +909,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks2ng1() throws Exception {
+            void checks2ng1() {
                 String marks = "" +
                         "_____XXXXX" +
                         "XXX___XXXX" +
@@ -911,7 +918,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks2ng2() throws Exception {
+            void checks2ng2() {
                 String marks = "" +
                         "XX________" +
                         "X___XXXXXX" +
@@ -920,7 +927,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks3ok1() throws Exception {
+            void checks3ok1() {
                 String marks = "" +
                         "____XXXXXX" +
                         "XX___XXXXX" +
@@ -929,7 +936,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks3ok2() throws Exception {
+            void checks3ok2() {
                 String marks = "" +
                         "XXX_______" +
                         "XX___XXXXX" +
@@ -938,7 +945,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks4ok1() throws Exception {
+            void checks4ok1() {
                 String marks = "" +
                         "XXXX______" +
                         "XXX_______" +
@@ -950,7 +957,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks4ok2() throws Exception {
+            void checks4ok2() {
                 String marks = "" +
                         "___XX_____" +
                         "____X_____" +
@@ -962,7 +969,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks4ng1() throws Exception {
+            void checks4ng1() {
                 String marks = "" +
                         "XXXX______" +
                         "XXX_______" +
@@ -975,7 +982,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks4ng2() throws Exception {
+            void checks4ng2() {
                 String marks = "" +
                         "___XX_____" +
                         "____X_____" +
@@ -988,7 +995,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks4ng3() throws Exception {
+            void checks4ng3() {
                 String marks = "" +
                         "XXX_XXXXXX" +
                         "XXX__XXXXX" +
@@ -998,7 +1005,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks4ng4() throws Exception {
+            void checks4ng4() {
                 String marks = "" +
                         "XXX_XXXXXX" +
                         "XX__XXXXXX" +
@@ -1008,7 +1015,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks5ok1() throws Exception {
+            void checks5ok1() {
                 String marks = "" +
                         "XXXX______" +
                         "XX________" +
@@ -1020,7 +1027,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks5ok2() throws Exception {
+            void checks5ok2() {
                 String marks = "" +
                         "______XXXX" +
                         "________XX" +
@@ -1032,7 +1039,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks6ok1() throws Exception {
+            void checks6ok1() {
                 String marks = "" +
                         "XXXXX_____" +
                         "XXX_______" +
@@ -1044,7 +1051,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks6ok2() throws Exception {
+            void checks6ok2() {
                 String marks = "" +
                         "_____XXXXX" +
                         "_______XXX" +
@@ -1056,7 +1063,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks7ok1() throws Exception {
+            void checks7ok1() {
                 String marks = "" +
                         "XXXXX_____" +
                         "XX________" +
@@ -1068,7 +1075,7 @@ class MinoRotationTest {
             }
 
             @Test
-            void checks7ok2() throws Exception {
+            void checks7ok2() {
                 String marks = "" +
                         "_____XXXXX" +
                         "________XX" +
@@ -1315,6 +1322,310 @@ class MinoRotationTest {
             void rightFromRight() {
                 int[][] patterns = minoRotation.getRightPatternsFrom(new Mino(Piece.O, Rotate.Right));
                 assertThat(patterns[0]).isEqualTo(new int[]{1, 0});
+            }
+        }
+    }
+
+    @Nested
+    class Rotate180 {
+        @Nested
+        class WithI {
+            @Test
+            void case1() {
+                String marks = "" +
+                        "__________" +
+                        "XXXXXXXX__" +
+                        "XXXXXXX___" +
+                        "XXXXXXX___" +
+                        "XXXXXXX___" +
+                        "XXXXXXX_X_" +
+                        "XXXXXXXXX_" +
+                        "XXXXXXXXX_";
+                assertThat(kicks180(marks, new Mino(Piece.I, Rotate.Right), 8, 5)).containsExactly(-1, -2);
+            }
+
+            @Test
+            void case2() {
+                String marks = "" +
+                        "__XX______" +
+                        "___XXXXXXX" +
+                        "___XXXXXXX" +
+                        "_X_XXXXXXX" +
+                        "_X_XXXXXXX" +
+                        "_XXXXXXXXX";
+                assertThat(kicks180(marks, new Mino(Piece.I, Rotate.Left), 1, 4)).containsExactly(1, -1);
+            }
+
+            @Test
+            void case3() {
+                String marks = "" +
+                        "__________" +
+                        "_XXXXXXXXX" +
+                        "_X_XXXXXXX" +
+                        "_X_XXXXXXX" +
+                        "_X_XXXXXXX" +
+                        "_X_XXXXXXX";
+                assertThat(kicks180(marks, new Mino(Piece.I, Rotate.Left), 0, 1)).containsExactly(2, 1);
+            }
+
+            @Test
+            void case4() {
+                String marks = "" +
+                        "__________" +
+                        "__________" +
+                        "__________" +
+                        "XXX____X__" +
+                        "_XXXXXXXXX" +
+                        "XXX____XXX";
+                assertThat(kicks180(marks, new Mino(Piece.I, Rotate.Spawn), 4, 2)).containsExactly(1, -2);
+            }
+        }
+
+        @Nested
+        class WithO {
+            @Test
+            void case1() {
+                String marks = "" +
+                        "__________" +
+                        "__________" +
+                        "__________" +
+                        "__________";
+                assertThat(kicks180(marks, new Mino(Piece.O, Rotate.Spawn), 4, 1)).containsExactly(1, 1);
+                assertThat(kicks180(marks, new Mino(Piece.O, Rotate.Reverse), 5, 2)).containsExactly(-1, -1);
+
+                assertThat(kicks180(marks, new Mino(Piece.O, Rotate.Right), 5, 2)).containsExactly(1, -1);
+                assertThat(kicks180(marks, new Mino(Piece.O, Rotate.Left), 6, 1)).containsExactly(-1, 1);
+            }
+        }
+
+        @Nested
+        class WithL {
+            @Test
+            void case1() {
+                String marks = "" +
+                        "__________" +
+                        "XX________" +
+                        "XXX___XXXX" +
+                        "XXX___XXXX" +
+                        "XX____XXXX" +
+                        "XX_XXXXXXX";
+                assertThat(kicks180(marks, new Mino(Piece.L, Rotate.Spawn), 3, 1)).containsExactly(0, 0);
+            }
+
+            @Test
+            void case2() {
+                String marks = "" +
+                        "__________" +
+                        "XX________" +
+                        "XX__XXXXXX" +
+                        "XXX_XXXXXX" +
+                        "XXX_XXXXXX" +
+                        "XXX__XXXXX";
+                assertThat(kicks180(marks, new Mino(Piece.L, Rotate.Left), 3, 2)).containsExactly(0, -1);
+            }
+        }
+
+        @Nested
+        class WithJ {
+            @Test
+            void case1() {
+                String marks = "" +
+                        "__________" +
+                        "__________" +
+                        "XXXXX__XXX" +
+                        "XXXXX__XXX" +
+                        "XXXXX_XXXX" +
+                        "XXXX__XXXX";
+                assertThat(kicks180(marks, new Mino(Piece.J, Rotate.Right), 5, 1)).containsExactly(0, 0);
+            }
+        }
+
+        @Nested
+        class WithS {
+            @Test
+            void case1() {
+                String marks = "" +
+                        "__________" +
+                        "__________" +
+                        "XXXXXX____" +
+                        "XXXXXX____" +
+                        "XXXXXX__X_" +
+                        "XXXXX__XXX";
+                assertThat(kicks180(marks, new Mino(Piece.S, Rotate.Spawn), 7, 1)).containsExactly(-1, 0);
+            }
+
+            @Test
+            void case2() {
+                String marks = "" +
+                        "__________" +
+                        "__________" +
+                        "_X____X___" +
+                        "XX__XXX___" +
+                        "XXX__XXXXX" +
+                        "XXXX_XXXXX";
+                assertThat(kicks180(marks, new Mino(Piece.S, Rotate.Left), 3, 2)).containsExactly(0, -1);
+            }
+
+            @Test
+            void case3() {
+                String marks = "" +
+                        "__________" +
+                        "__________" +
+                        "____XXXXXX" +
+                        "X__XXXXXXX" +
+                        "XXXX__XXXX" +
+                        "XXX__XXXXX";
+                assertThat(kicks180(marks, new Mino(Piece.S, Rotate.Spawn), 2, 2)).containsExactly(2, -1);
+            }
+
+            @Test
+            void case4() {
+                String marks = "" +
+                        "__________" +
+                        "__________" +
+                        "____XXX___" +
+                        "XXXXX_X___" +
+                        "XXXXX__X__" +
+                        "XXXXXX_XXX";
+                assertThat(kicks180(marks, new Mino(Piece.S, Rotate.Right), 7, 2)).containsExactly(-1, -1);
+            }
+
+            @Test
+            void case5() {
+                String marks = "" +
+                        "__________" +
+                        "__________" +
+                        "XXXXXXX___" +
+                        "XXXXX_XX__" +
+                        "XXXXX__XX_" +
+                        "XXXXXX_XXX";
+                assertThat(kicks180(marks, new Mino(Piece.S, Rotate.Right), 7, 3)).containsExactly(-1, -2);
+            }
+        }
+
+        @Nested
+        class WithZ {
+            @Test
+            void case1() {
+                String marks = "" +
+                        "__________" +
+                        "__________" +
+                        "__________" +
+                        "X____XXXXX" +
+                        "X____XXXXX" +
+                        "XXXX__XXXX";
+                assertThat(kicks180(marks, new Mino(Piece.Z, Rotate.Spawn), 3, 1)).containsExactly(1, 0);
+            }
+
+            @Test
+            void case2() {
+                String marks = "" +
+                        "__________" +
+                        "__________" +
+                        "__________" +
+                        "XXXXXX_XXX" +
+                        "XXXXX__XXX" +
+                        "XXXXX_XXXX";
+                assertThat(kicks180(marks, new Mino(Piece.Z, Rotate.Right), 6, 3)).containsExactly(0, -2);
+            }
+
+            @Test
+            void case3() {
+                String marks = "" +
+                        "__________" +
+                        "X_________" +
+                        "X__XXXXXXX" +
+                        "X__X_XXXXX" +
+                        "X_X__XXXXX" +
+                        "XXX_XXXXXX";
+                assertThat(kicks180(marks, new Mino(Piece.Z, Rotate.Left), 2, 2)).containsExactly(1, -1);
+            }
+
+            @Test
+            void case4() {
+                String marks = "" +
+                        "__________" +
+                        "__________" +
+                        "___XXXXXXX" +
+                        "__XX_XXXXX" +
+                        "_XX__XXXXX" +
+                        "XXX_XXXXXX";
+                assertThat(kicks180(marks, new Mino(Piece.Z, Rotate.Left), 2, 3)).containsExactly(1, -2);
+            }
+        }
+
+        @Nested
+        class WithT {
+            @Test
+            void case1() {
+                String marks = "" +
+                        "__________" +
+                        "__________" +
+                        "__________" +
+                        "XX___XXXXX" +
+                        "XXXX__XXXX" +
+                        "XXXX_XXXXX";
+                assertThat(kicks180(marks, new Mino(Piece.T, Rotate.Left), 4, 2)).containsExactly(0, -1);
+            }
+
+            @Test
+            void case2() {
+                String marks = "" +
+                        "__________" +
+                        "_____XXXXX" +
+                        "_____XXXXX" +
+                        "XXXX_XXXXX" +
+                        "XXXX__XXXX" +
+                        "XXXX_XXXXX";
+                assertThat(kicks180(marks, new Mino(Piece.T, Rotate.Left), 4, 3)).containsExactly(0, -2);
+            }
+
+            @Test
+            void case3() {
+                String marks = "" +
+                        "__________" +
+                        "__________" +
+                        "XX___XX___" +
+                        "XXX__XX___" +
+                        "X_____XXXX" +
+                        "XX_XXXXXXX";
+                assertThat(kicks180(marks, new Mino(Piece.T, Rotate.Spawn), 4, 1)).containsExactly(-2, 0);
+            }
+
+            @Test
+            void case4() {
+                String marks = "" +
+                        "__________" +
+                        "___X______" +
+                        "XXXX___XX_" +
+                        "XXXX__XXXX" +
+                        "X______XXX" +
+                        "XX_XXXXXXX";
+                assertThat(kicks180(marks, new Mino(Piece.T, Rotate.Spawn), 5, 1)).containsExactly(-3, 0);
+            }
+
+            @Test
+            void case5() {
+                String marks = "" +
+                        "__________" +
+                        "__________" +
+                        "XX___XXXXX" +
+                        "XXX___XXXX" +
+                        "X___XXXXXX" +
+                        "XX_XXXXXXX";
+                assertThat(kicks180(marks, new Mino(Piece.T, Rotate.Spawn), 4, 2)).containsExactly(-2, -1);
+            }
+
+            @Test
+            void case6() {
+                String marks = "" +
+                        "__________" +
+                        "__________" +
+                        "XX________" +
+                        "XXX___XXXX" +
+                        "X___XXXXXX" +
+                        "XX_XXXXXXX";
+                assertThat(kicks180(marks, new Mino(Piece.T, Rotate.Spawn), 4, 2)).containsExactly(-2, -1);
             }
         }
     }
