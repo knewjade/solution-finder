@@ -79,6 +79,9 @@ public class RenSettings {
             case "harddrop":
                 this.dropType = DropType.Harddrop;
                 return;
+            case "180":
+                this.dropType = DropType.Rotation180;
+                return;
             case "tsoft":
             case "tsoftdrop":
             case "t-soft":

@@ -867,5 +867,31 @@ class CoverTetfuCaseTest {
                 assertThat(log.getOutput()).contains(Messages.foundAndSolutions(2, all));
             }
         }
+
+        @Test
+        void use180Rotation() throws Exception {
+            String fumen1 = "v115@HhE8AeF8DeG8CeD8JelKJvhA+rB";
+
+            {
+                String command = String.format("cover --patterns [TJ]! --tetfu %s", fumen1);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 2;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(0, all, fumen1));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(0, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(0, all));
+            }
+            {
+                String command = String.format("cover --patterns [TJ]! -d 180 --tetfu %s", fumen1);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 2;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(2, all, fumen1));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(2, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(2, all));
+            }
+        }
     }
 }

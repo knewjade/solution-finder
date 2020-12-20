@@ -8,8 +8,10 @@ import common.pattern.PatternGenerator;
 import common.tetfu.common.ColorConverter;
 import concurrent.HarddropReachableThreadLocal;
 import concurrent.LockedReachableThreadLocal;
+import concurrent.SRSAnd180ReachableThreadLocal;
 import concurrent.SoftdropTOnlyReachableThreadLocal;
 import core.FinderConstant;
+import core.action.reachable.Reachable;
 import core.column_field.ColumnField;
 import core.field.Field;
 import core.field.FieldFactory;
@@ -146,7 +148,7 @@ public class SetupEntryPoint implements EntryPoint {
                 fieldForMaxDepth.fillLine(y);
             fieldForMaxDepth.reduce(notFilledField);
             int fieldMaxDepth = Verify.depth(fieldForMaxDepth);
-            maxDepth = fieldMaxDepth < maxDepth ? fieldMaxDepth : maxDepth;
+            maxDepth = Math.min(fieldMaxDepth, maxDepth);
         }
 
         {
@@ -500,13 +502,20 @@ public class SetupEntryPoint implements EntryPoint {
     }
 
     private ThreadLocal<BuildUpStream> createBuildUpStreamThreadLocal(DropType dropType, int maxClearLine) throws FinderInitializeException {
+        ThreadLocal<? extends Reachable> reachableThreadLocal = createReachableThreadLocal(dropType, maxClearLine);
+        return new BuildUpListUpThreadLocal(reachableThreadLocal, maxClearLine);
+    }
+
+    private ThreadLocal<? extends Reachable> createReachableThreadLocal(DropType dropType, int maxClearLine) throws FinderInitializeException {
         switch (dropType) {
             case Softdrop:
-                return new BuildUpListUpThreadLocal(new LockedReachableThreadLocal(maxClearLine), maxClearLine);
+                return new LockedReachableThreadLocal(maxClearLine);
             case Harddrop:
-                return new BuildUpListUpThreadLocal(new HarddropReachableThreadLocal(maxClearLine), maxClearLine);
+                return new HarddropReachableThreadLocal(maxClearLine);
             case SoftdropTOnly:
-                return new BuildUpListUpThreadLocal(new SoftdropTOnlyReachableThreadLocal(maxClearLine), maxClearLine);
+                return new SoftdropTOnlyReachableThreadLocal(maxClearLine);
+            case Rotation180:
+                return new SRSAnd180ReachableThreadLocal(maxClearLine);
         }
         throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
     }

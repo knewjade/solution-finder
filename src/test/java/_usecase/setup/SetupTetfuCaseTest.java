@@ -565,6 +565,25 @@ class SetupTetfuCaseTest {
                 assertThat(pages.get(0)).returns("6 : ISS", TetfuPage::getComment);
             }
         }
+
+        @Test
+        void use180Rotation() throws Exception {
+            String fumen = "v115@HhE8yhG8zhF80hJeAgH";
+            String command = buildCommand(fumen, "-p IZT -f i");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(1));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SetupHTML html = OutputFileHelper.loadSetupHTML();
+            assertThat(html.getHtml()).contains("3333333333");
+
+            assertThat(html.getFumens())
+                    .hasSize(1)
+                    .contains("HhE8wwBtG8xwBtF8wwzhJeAgWDAa+1BA");
+        }
     }
 
     @Nested

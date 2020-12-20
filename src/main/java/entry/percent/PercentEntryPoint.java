@@ -230,6 +230,8 @@ public class PercentEntryPoint implements EntryPoint {
                 return new HarddropCandidateThreadLocal();
             case SoftdropTOnly:
                 return new SoftdropTOnlyCandidateThreadLocal(maxClearLine);
+            case Rotation180:
+                return new SRSAnd180CandidateThreadLocal(maxClearLine);
         }
         throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
     }
@@ -242,6 +244,8 @@ public class PercentEntryPoint implements EntryPoint {
                 return new HarddropReachableThreadLocal(maxClearLine);
             case SoftdropTOnly:
                 return new SoftdropTOnlyReachableThreadLocal(maxClearLine);
+            case Rotation180:
+                return new SRSAnd180ReachableThreadLocal(maxClearLine);
         }
         throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
     }

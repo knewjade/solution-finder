@@ -7,10 +7,7 @@ import common.datastore.BlockField;
 import common.pattern.LoadedPatternGenerator;
 import common.pattern.PatternGenerator;
 import common.tetfu.common.ColorConverter;
-import concurrent.HarddropReachableThreadLocal;
-import concurrent.LockedReachableThreadLocal;
-import concurrent.SoftdropTOnlyReachableThreadLocal;
-import concurrent.TSpinOrHarddropReachableThreadLocal;
+import concurrent.*;
 import core.FinderConstant;
 import core.action.reachable.Reachable;
 import core.column_field.ColumnField;
@@ -292,6 +289,8 @@ public class PathEntryPoint implements EntryPoint {
                 return new LockedReachableThreadLocal(maxClearLine);
             case Harddrop:
                 return new HarddropReachableThreadLocal(maxClearLine);
+            case Rotation180:
+                return new SRSAnd180ReachableThreadLocal(maxClearLine);
             case SoftdropTOnly:
                 return new SoftdropTOnlyReachableThreadLocal(maxClearLine);
             case AnyTSpin:
@@ -321,9 +320,8 @@ public class PathEntryPoint implements EntryPoint {
         switch (outputType) {
             case CSV:
                 return new CSVPathOutput(this, settings);
-            case HTML: {
+            case HTML:
                 return new LinkPathOutput(this, settings, minoFactory, colorConverter);
-            }
             case TetfuCSV:
                 return new FumenCSVPathOutput(this, settings);
             case PatternCSV:

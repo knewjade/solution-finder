@@ -14,6 +14,7 @@ import searcher.pack.SizedBit;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -67,7 +68,11 @@ public class FumenCSVPathOutput implements PathOutput {
         try (AsyncBufferedFileWriter writer = outputBaseFile.newAsyncWriter()) {
             writer.writeAndNewLine("テト譜,使用ミノ,対応ツモ数 (対地形&パターン),対応ツモ数 (対地形),対応ツモ数 (対パターン),ツモ (対地形&パターン),ツモ (対地形),ツモ (対パターン)");
 
-            pathPairList.parallelStream()
+            // 並び替える
+            Comparator<PathPair> comparator = new PathPairComparator();
+
+            pathPairList.stream()
+                    .sorted(comparator)
                     .map(pathPair -> {
                         // テト譜
                         String encode = pathPair.getFumen();
