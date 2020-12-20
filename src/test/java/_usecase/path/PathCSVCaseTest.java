@@ -146,7 +146,6 @@ class PathCSVCaseTest extends PathUseCaseBaseTest {
         String command = String.format("path -t %s -p *p3 -f csv -k solution", fumen);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
-        System.out.println(log.getError());
         assertThat(log.getReturnCode()).isEqualTo(0);
 
         assertThat(log.getOutput())
