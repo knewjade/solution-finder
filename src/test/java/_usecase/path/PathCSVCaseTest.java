@@ -1,6 +1,8 @@
 package _usecase.path;
 
-import _usecase.*;
+import _usecase.ConfigFileHelper;
+import _usecase.Log;
+import _usecase.RunnerHelper;
 import _usecase.path.files.OutputFileHelper;
 import _usecase.path.files.PathCSV;
 import common.datastore.Operation;
@@ -8,8 +10,8 @@ import common.datastore.Operations;
 import common.datastore.SimpleOperation;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Piece;
 import core.mino.Mino;
+import core.mino.Piece;
 import core.srs.Rotate;
 import entry.EntryPointMain;
 import helper.CSVStore;
@@ -144,6 +146,7 @@ class PathCSVCaseTest extends PathUseCaseBaseTest {
         String command = String.format("path -t %s -p *p3 -f csv -k solution", fumen);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
+        System.out.println(log.getError());
         assertThat(log.getReturnCode()).isEqualTo(0);
 
         assertThat(log.getOutput())
