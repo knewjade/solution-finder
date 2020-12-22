@@ -142,6 +142,8 @@ public class MinoRotationImpl implements MinoRotation {
                 return getKicksWithRightRotation(field, before, after, x, y);
             case Left:
                 return getKicksWithLeftRotation(field, before, after, x, y);
+            case Rotate180:
+                return getKicksWith180Rotation(field, before, after, x, y);
         }
         throw new IllegalStateException();
     }
@@ -185,6 +187,8 @@ public class MinoRotationImpl implements MinoRotation {
                 return getRightPatternsFrom(current);
             case Left:
                 return getLeftPatternsFrom(current);
+            case Rotate180:
+                return getRotate180PatternsFrom(current);
         }
         throw new IllegalStateException();
     }

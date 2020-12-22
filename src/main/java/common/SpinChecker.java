@@ -21,11 +21,20 @@ public class SpinChecker {
     private final MinoFactory minoFactory;
     private final MinoRotationDetail minoRotationDetail;
     private final LockedReachable lockedReachable;
+    private final List<RotateDirection> rotations;
 
     public SpinChecker(MinoFactory minoFactory, MinoRotationDetail minoRotationDetail, LockedReachable lockedReachable) {
+        this(minoFactory, minoRotationDetail, lockedReachable, false);
+    }
+
+    public SpinChecker(
+            MinoFactory minoFactory, MinoRotationDetail minoRotationDetail, LockedReachable lockedReachable,
+            boolean use180Rotation
+    ) {
         this.minoFactory = minoFactory;
         this.minoRotationDetail = minoRotationDetail;
         this.lockedReachable = lockedReachable;
+        this.rotations = use180Rotation ? RotateDirection.valuesWith180() : RotateDirection.valuesNo180();
     }
 
     public Optional<Spin> check(Field field, Operation operation, int fieldHeight, int clearedLine) {
@@ -39,8 +48,8 @@ public class SpinChecker {
         Spin maxSpin = null;
         int maxPriority = -1;
 
-        // 左回転, 右回転
-        for (RotateDirection direction : RotateDirection.values()) {
+        // 左回転, 右回転 (,180)
+        for (RotateDirection direction : rotations) {
             RotateDirection beforeDirection = RotateDirection.reverse(direction);
 
             Mino before = minoFactory.create(Piece.T, rotate.get(beforeDirection));

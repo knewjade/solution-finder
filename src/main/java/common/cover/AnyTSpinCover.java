@@ -24,18 +24,14 @@ import java.util.stream.Stream;
 public class AnyTSpinCover implements Cover {
     private final SpinChecker spinChecker;
 
-    public AnyTSpinCover() {
+    public AnyTSpinCover(boolean use180Rotation) {
         int maxY = 24;
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = MinoRotation.create();
         MinoRotationDetail minoRotationDetail = new MinoRotationDetail(minoFactory, minoRotation);
         LockedReachable lockedReachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
-        this.spinChecker = new SpinChecker(minoFactory, minoRotationDetail, lockedReachable);
-    }
-
-    public AnyTSpinCover(MinoFactory minoFactory, MinoRotationDetail minoRotationDetail, LockedReachable lockedReachable) {
-        this.spinChecker = new SpinChecker(minoFactory, minoRotationDetail, lockedReachable);
+        this.spinChecker = new SpinChecker(minoFactory, minoRotationDetail, lockedReachable, use180Rotation);
     }
 
     @Override
