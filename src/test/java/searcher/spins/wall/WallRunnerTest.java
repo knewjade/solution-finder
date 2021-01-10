@@ -2,7 +2,10 @@ package searcher.spins.wall;
 
 import common.datastore.PieceCounter;
 import common.parser.OperationTransform;
-import core.field.*;
+import core.field.Field;
+import core.field.FieldFactory;
+import core.field.FieldView;
+import core.field.KeyOperators;
 import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
@@ -394,7 +397,7 @@ class WallRunnerTest {
 
     private SimpleOriginalPiece to(Piece piece, Rotate rotate, int x, int y, long deletedKey, int fieldHeight) {
         return new SimpleOriginalPiece(
-                OperationTransform.toFullOperationWithKey(new Mino(piece, rotate), x, y, deletedKey), fieldHeight
+                OperationTransform.toFullOperationWithKey(new Mino(piece, rotate), x, y, deletedKey, fieldHeight), fieldHeight
         );
     }
 }

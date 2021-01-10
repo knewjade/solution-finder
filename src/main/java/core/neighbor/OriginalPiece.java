@@ -17,7 +17,7 @@ public class OriginalPiece implements MinoOperationWithKey {
     private final Field minoField;
 
     public OriginalPiece(Mino mino, int x, int y, int fieldHeight) {
-        this.operationWithKey = OperationTransform.toFullOperationWithKey(mino, x, y, 0L);
+        this.operationWithKey = OperationTransform.toFullOperationWithKey(mino, x, y, 0L, fieldHeight);
         this.minoField = createMinoField(mino, x, y);
         this.harddropCollider = createHarddropCollider(mino, x, y, fieldHeight);
     }

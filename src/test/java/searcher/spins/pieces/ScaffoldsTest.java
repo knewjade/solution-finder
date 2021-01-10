@@ -31,7 +31,7 @@ class ScaffoldsTest {
         Scaffolds scaffolds = Scaffolds.create(factory.createMinimalPieces(FieldFactory.createField(fieldHeight)));
 
         SimpleOriginalPiece operation = new SimpleOriginalPiece(OperationTransform.toFullOperationWithKey(
-                minoFactory.create(Piece.O, Rotate.Spawn), 3, 3, KeyOperators.getBitKey(4)
+                minoFactory.create(Piece.O, Rotate.Spawn), 3, 3, KeyOperators.getBitKey(4), fieldHeight
         ), fieldHeight);
         List<SimpleOriginalPiece> results = scaffolds.get(operation).collect(Collectors.toList());
 
@@ -48,7 +48,7 @@ class ScaffoldsTest {
         Scaffolds scaffolds = Scaffolds.create(factory.createMinimalPieces(FieldFactory.createField(fieldHeight)));
 
         SimpleOriginalPiece operation = new SimpleOriginalPiece(OperationTransform.toFullOperationWithKey(
-                minoFactory.create(Piece.I, Rotate.Spawn), 4, 2, 0L
+                minoFactory.create(Piece.I, Rotate.Spawn), 4, 2, 0L, fieldHeight
         ), fieldHeight);
         List<SimpleOriginalPiece> results = scaffolds.get(operation).collect(Collectors.toList());
 
@@ -65,7 +65,7 @@ class ScaffoldsTest {
         Scaffolds scaffolds = Scaffolds.create(factory.createMinimalPieces(FieldFactory.createField(fieldHeight)));
 
         SimpleOriginalPiece operation = new SimpleOriginalPiece(OperationTransform.toFullOperationWithKey(
-                minoFactory.create(Piece.S, Rotate.Spawn), 2, 0, 0L
+                minoFactory.create(Piece.S, Rotate.Spawn), 2, 0, 0L, fieldHeight
         ), fieldHeight);
         List<SimpleOriginalPiece> results = scaffolds.get(operation).collect(Collectors.toList());
 

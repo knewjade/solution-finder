@@ -74,7 +74,7 @@ class RoofRunnerTest {
 
     private SimpleOriginalPiece to(Piece piece, Rotate rotate, int x, int y, int fieldHeight) {
         return new SimpleOriginalPiece(
-                OperationTransform.toFullOperationWithKey(new Mino(piece, rotate), x, y, 0L), fieldHeight
+                OperationTransform.toFullOperationWithKey(new Mino(piece, rotate), x, y, 0L, fieldHeight), fieldHeight
         );
     }
 }

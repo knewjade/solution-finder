@@ -20,7 +20,7 @@ public class OperationTransform {
             int x = op.getX();
             int y = op.getY();
             long deleteKey = field.clearLineReturnKey();
-            MinoOperationWithKey operationWithKey = toFullOperationWithKey(mino, x, y, deleteKey);
+            MinoOperationWithKey operationWithKey = toFullOperationWithKey(mino, x, y, deleteKey, height);
             keys.add(operationWithKey);
 
             // 次のフィールドを作成
@@ -30,9 +30,7 @@ public class OperationTransform {
         return keys;
     }
 
-    public static FullOperationWithKey toFullOperationWithKey(Mino mino, int x, int y, long deleteKey) {
-        int height = y + mino.getMaxY() + Long.bitCount(deleteKey) + 1;
-
+    public static FullOperationWithKey toFullOperationWithKey(Mino mino, int x, int y, long deleteKey, int height) {
         // 一番上と一番下のy座標を抽出
         Field vanilla = FieldFactory.createField(height);
         vanilla.put(mino, x, y);

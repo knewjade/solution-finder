@@ -124,7 +124,7 @@ class SpinCommonsTest {
 
     private SimpleOriginalPiece to(Piece piece, Rotate rotate, int x, int y, long deletedKey, int fieldHeight) {
         return new SimpleOriginalPiece(
-                OperationTransform.toFullOperationWithKey(new Mino(piece, rotate), x, y, deletedKey), fieldHeight
+                OperationTransform.toFullOperationWithKey(new Mino(piece, rotate), x, y, deletedKey, fieldHeight), fieldHeight
         );
     }
 }

@@ -11,6 +11,7 @@ import core.column_field.ColumnField;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
+import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.mino.Piece;
@@ -43,7 +44,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class OperationTransformTest {
     @Test
-    void parseToOperationWithKeys() throws Exception {
+    void parseToOperationWithKeys() {
+        int height = 4;
         Field field = FieldFactory.createField("" +
                 "____XXXXXX" +
                 "____XXXXXX" +
@@ -55,27 +57,125 @@ class OperationTransformTest {
         String base = "L,0,2,0;Z,R,2,2;O,0,0,1;L,2,1,1";
         Operations operations = OperationInterpreter.parseToOperations(base);
         MinoFactory minoFactory = new MinoFactory();
-        List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, 4);
+        List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
 
         String line = OperationWithKeyInterpreter.parseToString(operationWithKeys);
         assertThat(line).isEqualTo("L,0,2,0,0,1025;Z,R,2,2,0,1074791424;O,0,0,1,0,1049600;L,2,1,1,1049600,1073741825");
+
+        Field expected = FieldFactory.createField("" +
+                "XXXXXXXXXX" +
+                "XXXXXXXXXX" +
+                "XXXXXXXXXX" +
+                "XXXXXXXXXX" +
+                ""
+        );
+        assertOperations(minoFactory, field, operations, expected, height);
+        assertOperations(field, operationWithKeys, expected, height);
     }
 
     @Test
-    void parseToOperationWithKeys2() throws Exception {
-        Field field = FieldFactory.createField(4);
+    void parseToOperationWithKeys2() {
+        int height = 4;
+        Field field = FieldFactory.createField(height);
 
         String base = "T,2,5,1;I,0,2,0;I,0,7,0;I,L,0,1";
         Operations operations = OperationInterpreter.parseToOperations(base);
         MinoFactory minoFactory = new MinoFactory();
-        List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, 4);
+        List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
 
         String line = OperationWithKeyInterpreter.parseToString(operationWithKeys);
         assertThat(line).isEqualTo("T,2,5,1,0,1025;I,0,2,0,0,1;I,0,7,0,0,1;I,L,0,1,0,1074791425");
+
+        Field expected = FieldFactory.createField("" +
+                "X_________" +
+                "X_________" +
+                "X___XXX___" +
+                "XXXXXXXXXX" +
+                ""
+        );
+
+        assertOperations(minoFactory, field, operations, expected, height);
+        assertOperations(field, operationWithKeys, expected, height);
     }
 
     @Test
-    void parseToOperations() throws Exception {
+    void parseToOperationWithKeys3() {
+        int height = 6;
+        Field field = FieldFactory.createField(height);
+
+        String base = "J,0,1,0;T,R,3,1;S,0,5,0;L,0,7,0;I,L,9,1;Z,0,4,1";
+        Operations operations = OperationInterpreter.parseToOperations(base);
+        MinoFactory minoFactory = new MinoFactory();
+        List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
+
+        Field expected = FieldFactory.createField("" +
+                "___XX____X" +
+                "___XXX___X" +
+                "X__XXXX_XX" +
+                "XXXXXXXXXX" +
+                ""
+        );
+
+        assertOperations(minoFactory, field, operations, expected, height);
+        assertOperations(field, operationWithKeys, expected, height);
+    }
+
+    @Test
+    void parseToOperationWithKeys4() {
+        int height = 9;
+        Field field = FieldFactory.createField(height);
+
+        String base = "I,0,1,6;J,L,5,7;L,2,7,6;T,L,9,7;S,0,5,3;Z,R,4,1;O,0,3,4";
+        Operations operations = OperationInterpreter.parseToOperations(base);
+        MinoFactory minoFactory = new MinoFactory();
+        List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
+
+        Field expected = FieldFactory.createField("" +
+                "_____X___X" +
+                "_____X__XX" +
+                "XXXXXXXXXX" +
+                "___XX_X___" +
+                "___XXXX___" +
+                "____XX____" +
+                "_____X____" +
+                "____XX____" +
+                "____X_____" +
+                ""
+        );
+
+        assertOperations(minoFactory, field, operations, expected, height);
+        assertOperations(field, operationWithKeys, expected, height);
+    }
+
+    private void assertOperations(
+            MinoFactory minoFactory, Field initField, Operations operations, Field expected, int height
+    ) {
+        Field f1 = initField.freeze(height);
+        for (Operation operation : operations.getOperations()) {
+            Mino mino = minoFactory.create(operation.getPiece(), operation.getRotate());
+            f1.put(mino, operation.getX(), operation.getY());
+            f1.clearLine();
+        }
+
+        Field freeze = expected.freeze();
+        freeze.clearLine();
+        assertThat(f1).isEqualTo(freeze);
+    }
+
+    private void assertOperations(
+            Field initField, List<MinoOperationWithKey> operationWithKeys, Field expected, int height
+    ) {
+        Field f2 = initField.freeze(height);
+        for (MinoOperationWithKey operation : operationWithKeys) {
+            Field minoField = operation.createMinoField(height);
+            f2.merge(minoField);
+        }
+
+        assertThat(f2).isEqualTo(expected);
+    }
+
+    @Test
+    void parseToOperations() {
         Field field = FieldFactory.createField("" +
                 "____XXXXXX" +
                 "____XXXXXX" +
