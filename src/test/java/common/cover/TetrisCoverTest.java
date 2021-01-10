@@ -100,7 +100,7 @@ class TetrisCoverTest {
 
     @Test
     void cansBuild2() {
-        int height = 5;
+        int height = 10;
         Field field = FieldFactory.createField("" +
                         "___XXXXX__" +
                         "__XXXXXXXX" +

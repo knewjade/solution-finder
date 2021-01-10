@@ -1,19 +1,17 @@
 package common.buildup;
 
-import common.datastore.MinoOperation;
-import common.datastore.MinoOperationWithKey;
-import common.datastore.OperationWithKey;
+import common.SpinChecker;
+import common.datastore.*;
 import common.datastore.action.Action;
 import core.action.reachable.Reachable;
 import core.field.Field;
 import core.field.KeyOperators;
 import core.mino.Mino;
 import core.mino.Piece;
+import searcher.spins.spin.Spin;
 
-import java.util.Comparator;
-import java.util.EnumMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

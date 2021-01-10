@@ -36,6 +36,9 @@ public class OperationTransform {
         vanilla.put(mino, x, y);
         vanilla.insertWhiteLineWithKey(deleteKey);
         int lowerY = vanilla.getLowerY();
+        if (vanilla.getNumOfAllBlocks() != 4) {
+            throw new IllegalStateException("The blocks don't fit in the field");
+        }
         int upperY = vanilla.getUpperYWith4Blocks();
 
         // 接着に必ず消去されている必要がある行を抽出
