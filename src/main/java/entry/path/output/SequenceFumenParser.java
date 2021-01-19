@@ -36,9 +36,11 @@ public class SequenceFumenParser implements FumenParser {
 
     @Override
     public String parse(List<MinoOperationWithKey> operationsWithKey, Field field, int maxClearLine) {
-        List<MinoOperationWithKey> validOperationsWithKey = get(operationsWithKey, field, maxClearLine);
-        Operations operations = OperationTransform.parseToOperationsBeforeNoClearLine(field, validOperationsWithKey, maxClearLine);
-        return parse(operations, field, maxClearLine);
+        Field freeze = field.freeze();
+        freeze.clearLine();
+        List<MinoOperationWithKey> validOperationsWithKey = get(operationsWithKey, freeze, maxClearLine);
+        Operations operations = OperationTransform.parseToOperationsBeforeNoClearLine(freeze, validOperationsWithKey, maxClearLine);
+        return parse(operations, freeze, maxClearLine);
     }
 
     public List<MinoOperationWithKey> get(List<MinoOperationWithKey> operationsWithKey, Field field, int maxClearLine) {

@@ -1385,4 +1385,20 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
             assertThat(log.getError()).isEmpty();
         }
     }
+
+    @Test
+    void caseFilledLineInField() throws Exception {
+        // 入力された地形が揃っている
+        String tetfu = "v115@7gR4B8DewwR4D8BtywE8AeBtH8AeE8JeAgH";
+
+        String command = String.format("path -c 6 --patterns [^SZ]!,*p2 --tetfu %s -s yes", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getOutput())
+                .contains(Messages.uniqueCount(26))
+                .contains(Messages.minimalCount(7))
+                .contains(Messages.useHold());
+
+        assertThat(log.getError()).isEmpty();
+    }
 }
