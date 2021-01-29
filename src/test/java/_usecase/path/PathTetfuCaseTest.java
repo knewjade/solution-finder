@@ -1386,9 +1386,4 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
             assertThat(log.getError()).isEmpty();
         }
     }
-
-    @Test
-    void testFail() {
-        Assertions.fail("Failed always");
-    }
 }
