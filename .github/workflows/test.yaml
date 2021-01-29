@@ -11,3 +11,4 @@ jobs:
       - run: ./gradlew check
         env:
           ALLOWS_ALL_TEST: ${{ github.ref == 'refs/heads/main' }}
+          GRADLE_OPTS: -Xmx2048m
