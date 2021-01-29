@@ -132,7 +132,7 @@ task releaseWithBianry(type: Zip) {
 
 test {
     useJUnitPlatform {
-        println "[useJUnitPlatform] System.getenv(\"ALLOWS_ALL_TEST\")"
+        println "[useJUnitPlatform] " + System.getenv("ALLOWS_ALL_TEST")
         if (System.getenv("ALLOWS_ALL_TEST") == "true") {
             println "[useJUnitPlatform] Run all tests"
         } else {
