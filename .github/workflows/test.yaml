@@ -8,6 +8,6 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: ./gradlew check
+      - run: ./gradlew check
         env:
           ALLOWS_ALL_TEST: ${{ github.ref == 'refs/heads/main' }}
