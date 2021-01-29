@@ -136,7 +136,7 @@ test {
             println "[useJUnitPlatform] Run all tests"
         } else {
             println "[useJUnitPlatform] Run tests / Exclude tag:long"
-            excludeTags 'long'
+//            excludeTags 'long'
         }
     }
 }
