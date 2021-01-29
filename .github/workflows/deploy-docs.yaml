@@ -1,4 +1,4 @@
-name: deploy-manual
+name: deploy-docs
 on:
   push:
     tags:
