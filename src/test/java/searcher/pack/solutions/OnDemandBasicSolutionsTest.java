@@ -13,13 +13,12 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.time.Duration.ofMinutes;
-import static java.time.Duration.ofSeconds;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTimeout;
 
 class OnDemandBasicSolutionsTest {
     @Test
-    void get2x3() throws Exception {
+    void get2x3() {
         SizedBit sizedBit = new SizedBit(2, 3);
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
         Predicate<ColumnField> memorizedPredicate = columnField -> true;
@@ -29,7 +28,7 @@ class OnDemandBasicSolutionsTest {
     }
 
     @Test
-    void get2x4() throws Exception {
+    void get2x4() {
         SizedBit sizedBit = new SizedBit(2, 4);
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
         Predicate<ColumnField> memorizedPredicate = columnField -> true;
@@ -39,7 +38,7 @@ class OnDemandBasicSolutionsTest {
     }
 
     @Test
-    void get2x5() throws Exception {
+    void get2x5() {
         SizedBit sizedBit = new SizedBit(2, 5);
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
         Predicate<ColumnField> memorizedPredicate = columnField -> true;
@@ -49,7 +48,7 @@ class OnDemandBasicSolutionsTest {
     }
 
     @Test
-    void get3x3() throws Exception {
+    void get3x3() {
         SizedBit sizedBit = new SizedBit(3, 3);
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
         Predicate<ColumnField> memorizedPredicate = columnField -> true;
@@ -59,7 +58,7 @@ class OnDemandBasicSolutionsTest {
     }
 
     @Test
-    void get3x4() throws Exception {
+    void get3x4() {
         SizedBit sizedBit = new SizedBit(3, 4);
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
         Predicate<ColumnField> memorizedPredicate = columnField -> true;
@@ -69,7 +68,7 @@ class OnDemandBasicSolutionsTest {
     }
 
     @Test
-    void get3x5() throws Exception {
+    void get3x5() {
         assertTimeout(ofMinutes(1), () -> {
             SizedBit sizedBit = new SizedBit(3, 5);
             SeparableMinos separableMinos = createSeparableMinos(sizedBit);
