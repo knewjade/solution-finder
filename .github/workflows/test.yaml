@@ -10,5 +10,6 @@ jobs:
           java-version: 11
       - run: ./gradlew check
         env:
-          ALLOWS_ALL_TEST: ${{ github.ref == 'refs/heads/main' }}
+#          ALLOWS_ALL_TESTS: ${{ github.ref == 'refs/heads/main' }}
+          ALLOWS_ALL_TESTS: true
           JAVA_OPTS: -Xms2048M -Xmx2048M
