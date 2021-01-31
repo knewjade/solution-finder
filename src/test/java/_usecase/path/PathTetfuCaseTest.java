@@ -7,7 +7,6 @@ import _usecase.path.files.OutputFileHelper;
 import _usecase.path.files.PathHTML;
 import core.field.FieldFactory;
 import entry.EntryPointMain;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -1114,12 +1113,12 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // ライン消去なし
         assertThat(uniqueHTML.noDeletedLineFumens())
                 .hasSize(43)
-                .contains("wgC8HeB8EeF8DeY8JeTAYZAFLDmClcJSAVDEHBEooR?BPoAVBKtzFD0AAAAvhEOrB/pBUsB0pBlqB");
+                .contains("EhC8HeB8EeF8DeE8JeSPYZAFLDmClcJSAVDEHBEooR?BMoAVBqfLuC0AAAAvhEOrB2uBUsB3qBlpB");
 
         // ライン消去あり
         assertThat(uniqueHTML.deletedLineFumens())
                 .hasSize(172)
-                .contains("wgC8HeB8EeF8DeY8JeTAYZAFLDmClcJSAVDEHBEooR?BPoAVBqHUxCqAAAAvhEOrBUiB3gBNkBupB");
+                .contains("EhC8HeB8EeF8DeE8Je0JYZAFLDmClcJSAVDEHBEooR?BaoAVBq+aFDqAAAAvhEOrBNlBTfBUiBuqB");
 
         // minimal
         PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
@@ -1129,12 +1128,12 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         // ライン消去なし
         assertThat(minimalHTML.noDeletedLineFumens())
                 .hasSize(15)
-                .contains("wgC8HeB8EeF8DeY8JeTAYZAFLDmClcJSAVDEHBEooR?BPoAVBKtzFD0AAAAvhEOrB/pBUsB0pBlqB");
+                .contains("EhC8HeB8EeF8DeE8JeTKYZAFLDmClcJSAVDEHBEooR?BPoAVBKtLuC0AAAAvhEOrB/pBUsB3qBlpB");
 
         // ライン消去あり
         assertThat(minimalHTML.deletedLineFumens())
                 .hasSize(36)
-                .contains("wgC8HeB8EeF8DeY8JeTAYZAFLDmClcJSAVDEHBEooR?BPoAVBqHUxCqAAAAvhEOrBUiB3gBNkBupB");
+                .contains("EhC8HeB8EeF8DeE8Je/KYZAFLDmClcJSAVDEHBEooR?BToAVBvXmFDqAAAAvhETkBUiBFmB0pBmqB");
     }
 
     @Test
@@ -1401,5 +1400,29 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
                 .contains(Messages.useHold());
 
         assertThat(log.getError()).isEmpty();
+
+        // unique
+        PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
+
+        // ライン消去なし
+        assertThat(uniqueHTML.noDeletedLineFumens())
+                .isEmpty();
+
+        // ライン消去あり
+        assertThat(uniqueHTML.deletedLineFumens())
+                .hasSize(26)
+                .contains("FhD8DeG8AeJ8AeE8Je2FYZAFLDmClcJSAVDEHBEooR?BKoAVBsiHgCpAAAAvhECiB6lBOrBTpBxxB");
+
+        // minimal
+        PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
+
+        // ライン消去なし
+        assertThat(minimalHTML.noDeletedLineFumens())
+                .isEmpty();
+
+        // ライン消去あり
+        assertThat(minimalHTML.deletedLineFumens())
+                .hasSize(7)
+                .contains("FhD8DeG8AeJ8AeE8JeCGYZAFLDmClcJSAVDEHBEooR?BMoAVBv/VWCpAAAAvhEzhBmkBdrBCtBxuB");
     }
 }
