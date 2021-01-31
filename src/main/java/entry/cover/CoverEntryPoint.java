@@ -139,6 +139,7 @@ public class CoverEntryPoint implements EntryPoint {
         List<BitSet> results = new ArrayList<>();
 
         CoverModes mode = settings.getCoverModes();
+        boolean use180Rotation = settings.getDropType() == DropType.Rotation180;
 
         // Check
         Cover cover;
@@ -148,23 +149,23 @@ public class CoverEntryPoint implements EntryPoint {
                 break;
             }
             case B2BContinuous: {
-                cover = new B2BContinuousCover();
+                cover = new B2BContinuousCover(use180Rotation);
                 break;
             }
             case AnyTSpin: {
-                cover = new AnyTSpinCover();
+                cover = new AnyTSpinCover(use180Rotation);
                 break;
             }
             case TSpinSingle: {
-                cover = new RegularTSpinCover(1);
+                cover = new RegularTSpinCover(1, use180Rotation);
                 break;
             }
             case TSpinDouble: {
-                cover = new RegularTSpinCover(2);
+                cover = new RegularTSpinCover(2, use180Rotation);
                 break;
             }
             case TSpinTriple: {
-                cover = new RegularTSpinCover(3);
+                cover = new RegularTSpinCover(3, use180Rotation);
                 break;
             }
             case Tetris: {

@@ -4,6 +4,7 @@ import common.cover.reachable.ReachableForCoverWrapper;
 import common.datastore.*;
 import common.parser.BlockInterpreter;
 import common.parser.OperationTransform;
+import core.action.reachable.SRSAnd180Reachable;
 import core.action.reachable.SoftdropTOnlyReachable;
 import core.field.Field;
 import core.field.FieldFactory;
@@ -43,7 +44,7 @@ class AnyTSpinCoverTest {
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
         ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
 
-        AnyTSpinCover cover = new AnyTSpinCover();
+        AnyTSpinCover cover = new AnyTSpinCover(false);
 
         {
             List<Piece> pieces = toPieceList("LT");
@@ -118,7 +119,7 @@ class AnyTSpinCoverTest {
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
         ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
 
-        AnyTSpinCover cover = new AnyTSpinCover();
+        AnyTSpinCover cover = new AnyTSpinCover(false);
 
         {
             List<Piece> pieces = toPieceList("LST");
@@ -170,7 +171,7 @@ class AnyTSpinCoverTest {
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
         ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
 
-        AnyTSpinCover cover = new AnyTSpinCover();
+        AnyTSpinCover cover = new AnyTSpinCover(false);
 
         {
             List<Piece> pieces = toPieceList("TO");
@@ -189,6 +190,58 @@ class AnyTSpinCoverTest {
             assertThat(
                     cover.canBuild(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
             ).isFalse();
+            assertThat(
+                    cover.canBuildWithHold(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+            ).isTrue();
+        }
+    }
+
+    @Test
+    void cansBuildUse180() {
+        int height = 5;
+        Field field = FieldFactory.createField("" +
+                        "__________" +
+                        "_______XXX" +
+                        "XXX___XXXX" +
+                        "XXX____XXX" +
+                        "XXX___XXXX"
+                , height);
+        List<Operation> operationList = Arrays.asList(
+                new SimpleOperation(Piece.O, Rotate.Spawn, 3, 0),
+                new SimpleOperation(Piece.J, Rotate.Right, 3, 3),
+                new SimpleOperation(Piece.T, Rotate.Right, 5, 1)
+        );
+        List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SRSAnd180Reachable(minoFactory, minoShifter, minoRotation, height));
+
+        AnyTSpinCover cover = new AnyTSpinCover(true);
+
+        {
+            List<Piece> pieces = toPieceList("TIJO");
+
+            assertThat(
+                    cover.canBuild(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+            ).isFalse();
+            assertThat(
+                    cover.canBuildWithHold(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+            ).isFalse();
+        }
+        {
+            List<Piece> pieces = toPieceList("TOJ");
+
+            assertThat(
+                    cover.canBuild(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+            ).isFalse();
+            assertThat(
+                    cover.canBuildWithHold(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+            ).isTrue();
+        }
+        {
+            List<Piece> pieces = toPieceList("OTJ");
+
+            assertThat(
+                    cover.canBuild(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+            ).isTrue();
             assertThat(
                     cover.canBuildWithHold(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
             ).isTrue();

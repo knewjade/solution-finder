@@ -4,6 +4,7 @@ import common.cover.reachable.ReachableForCoverWrapper;
 import common.datastore.*;
 import common.parser.BlockInterpreter;
 import common.parser.OperationTransform;
+import core.action.reachable.SRSAnd180Reachable;
 import core.action.reachable.SoftdropTOnlyReachable;
 import core.field.Field;
 import core.field.FieldFactory;
@@ -43,7 +44,7 @@ class RegularTSpinCoverTest {
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
         ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
 
-        RegularTSpinCover cover = new RegularTSpinCover(2);
+        RegularTSpinCover cover = new RegularTSpinCover(2, false);
 
         {
             List<Piece> pieces = toPieceList("LT");
@@ -118,7 +119,7 @@ class RegularTSpinCoverTest {
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
         ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
 
-        RegularTSpinCover cover = new RegularTSpinCover(2);
+        RegularTSpinCover cover = new RegularTSpinCover(2, false);
 
         {
             List<Piece> pieces = toPieceList("LST");
@@ -171,7 +172,7 @@ class RegularTSpinCoverTest {
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
         ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
 
-        RegularTSpinCover cover = new RegularTSpinCover(1);
+        RegularTSpinCover cover = new RegularTSpinCover(1, false);
 
         {
             List<Piece> pieces = toPieceList("LST");
@@ -223,7 +224,7 @@ class RegularTSpinCoverTest {
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
         ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
 
-        RegularTSpinCover cover = new RegularTSpinCover(1);
+        RegularTSpinCover cover = new RegularTSpinCover(1, false);
 
         {
             List<Piece> pieces = toPieceList("TO");
@@ -245,6 +246,73 @@ class RegularTSpinCoverTest {
             assertThat(
                     cover.canBuildWithHold(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
             ).isFalse();
+        }
+    }
+
+    @Test
+    void cansBuildUse180() {
+        int height = 5;
+        Field field = FieldFactory.createField("" +
+                        "__________" +
+                        "X_____XXXX" +
+                        "X_____XXXX" +
+                        "XX_XXXXXXX"
+                , height);
+        List<Operation> operationList = Arrays.asList(
+                new SimpleOperation(Piece.Z, Rotate.Spawn, 1, 2),
+                new SimpleOperation(Piece.S, Rotate.Right, 2, 3),
+                new SimpleOperation(Piece.T, Rotate.Reverse, 2, 1)
+        );
+        List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SRSAnd180Reachable(minoFactory, minoShifter, minoRotation, height));
+
+        {
+            RegularTSpinCover cover = new RegularTSpinCover(1, true);
+
+            {
+                List<Piece> pieces = toPieceList("TOSZ");
+
+                assertThat(
+                        cover.canBuild(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+                ).isFalse();
+                assertThat(
+                        cover.canBuildWithHold(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+                ).isFalse();
+            }
+            {
+                List<Piece> pieces = toPieceList("SZT");
+
+                assertThat(
+                        cover.canBuild(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+                ).isFalse();
+                assertThat(
+                        cover.canBuildWithHold(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+                ).isTrue();
+            }
+            {
+                List<Piece> pieces = toPieceList("ZST");
+
+                assertThat(
+                        cover.canBuild(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+                ).isTrue();
+                assertThat(
+                        cover.canBuildWithHold(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+                ).isTrue();
+            }
+        }
+        {
+            RegularTSpinCover cover = new RegularTSpinCover(2, true);
+
+            {
+                List<Piece> pieces = toPieceList("ZST");
+
+                assertThat(
+                        cover.canBuild(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+                ).isFalse();
+                assertThat(
+                        cover.canBuildWithHold(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+                ).isFalse();
+            }
         }
     }
 

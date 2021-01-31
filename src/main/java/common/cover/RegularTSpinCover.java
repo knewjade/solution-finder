@@ -26,19 +26,14 @@ public class RegularTSpinCover implements Cover {
     private final SpinChecker spinChecker;
     private final int requiredTSpinLine;
 
-    public RegularTSpinCover(int requiredTSpinLine) {
+    public RegularTSpinCover(int requiredTSpinLine, boolean use180Rotation) {
         int maxY = 24;
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = MinoRotation.create();
         MinoRotationDetail minoRotationDetail = new MinoRotationDetail(minoFactory, minoRotation);
         LockedReachable lockedReachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
-        this.spinChecker = new SpinChecker(minoFactory, minoRotationDetail, lockedReachable);
-        this.requiredTSpinLine = requiredTSpinLine;
-    }
-
-    public RegularTSpinCover(MinoFactory minoFactory, MinoRotationDetail minoRotationDetail, LockedReachable lockedReachable, int requiredTSpinLine) {
-        this.spinChecker = new SpinChecker(minoFactory, minoRotationDetail, lockedReachable);
+        this.spinChecker = new SpinChecker(minoFactory, minoRotationDetail, lockedReachable, use180Rotation);
         this.requiredTSpinLine = requiredTSpinLine;
     }
 
