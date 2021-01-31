@@ -7,6 +7,7 @@ import _usecase.path.files.OutputFileHelper;
 import _usecase.path.files.PathHTML;
 import core.field.FieldFactory;
 import entry.EntryPointMain;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

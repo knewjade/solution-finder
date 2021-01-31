@@ -132,7 +132,7 @@ task releaseWithBianry(type: Zip) {
 
 test {
     useJUnitPlatform {
-        if (System.getenv("TRAVIS_BRANCH") == "master") {
+        if (System.getenv("ALLOWS_ALL_TESTS") == "true") {
             println "[useJUnitPlatform] Run all tests"
         } else {
             println "[useJUnitPlatform] Run tests / Exclude tag:long"

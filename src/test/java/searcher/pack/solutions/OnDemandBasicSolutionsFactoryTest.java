@@ -6,14 +6,13 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import lib.Stopwatch;
 import module.LongTest;
-import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import searcher.pack.SeparableMinos;
 import searcher.pack.SizedBit;
 import searcher.pack.calculator.BasicSolutions;
 import searcher.pack.mino_fields.MinoFields;
 
-import java.io.IOException;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -25,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class OnDemandBasicSolutionsFactoryTest {
     @Test
-    void create3x1() throws Exception {
+    void create3x1() {
         SizedBit sizedBit = new SizedBit(3, 1);
         int expectedSolutions = 3;
         int expectedSolutionItems = 3;
@@ -33,7 +32,7 @@ class OnDemandBasicSolutionsFactoryTest {
     }
 
     @Test
-    void create3x2() throws Exception {
+    void create3x2() {
         SizedBit sizedBit = new SizedBit(3, 2);
         int expectedSolutions = 28;
         int expectedSolutionItems = 88;
@@ -41,7 +40,7 @@ class OnDemandBasicSolutionsFactoryTest {
     }
 
     @Test
-    void create3x3() throws Exception {
+    void create3x3() {
         SizedBit sizedBit = new SizedBit(3, 3);
         int expectedSolutions = 254;
         int expectedSolutionItems = 3972;
@@ -49,7 +48,7 @@ class OnDemandBasicSolutionsFactoryTest {
     }
 
     @Test
-    void create3x4() throws Exception {
+    void create3x4() {
         SizedBit sizedBit = new SizedBit(3, 4);
         int expectedSolutions = 2211;
         int expectedSolutionItems = 228022;
@@ -57,7 +56,7 @@ class OnDemandBasicSolutionsFactoryTest {
     }
 
     @Test
-    void create2x5() throws Exception {
+    void create2x5() {
         SizedBit sizedBit = new SizedBit(2, 5);
         int expectedSolutions = 822;
         int expectedSolutionItems = 321978;
@@ -66,14 +65,15 @@ class OnDemandBasicSolutionsFactoryTest {
 
     @Test
     @LongTest
-    void create2x6() throws Exception {
+    @Disabled("OutOfMemoryError(Java heap space) on CI")
+    void create2x6() {
         SizedBit sizedBit = new SizedBit(2, 6);
         int expectedSolutions = 3490;
         int expectedSolutionItems = 8380826;
         assertCache(sizedBit, expectedSolutions, expectedSolutionItems);
     }
 
-    private void assertCache(SizedBit sizedBit, long expectedSolutions, long expectedSolutionItems) throws IOException {
+    private void assertCache(SizedBit sizedBit, long expectedSolutions, long expectedSolutionItems) {
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
 
         int minMemorizedBit = (int) (sizedBit.getMaxBitDigit() * 0.2);

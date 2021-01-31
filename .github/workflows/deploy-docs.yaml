@@ -1,0 +1,25 @@
+name: deploy-docs
+on:
+  push:
+    tags:
+      - 'v*'
+defaults:
+  run:
+    working-directory: docs
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - run: make html
+      - uses: peaceiris/actions-gh-pages@bbdfb200618d235585ad98e965f4aafc39b4c501
+        with:
+          personal_token: ${{ secrets.PERSONAL_TOKEN }}
+          external_repository: knewjade/sfinder-docs
+          publish_branch: master
+          enable_jekyll: false
+          publish_dir: ./build/html

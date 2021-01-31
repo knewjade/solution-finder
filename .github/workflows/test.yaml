@@ -1,0 +1,19 @@
+name: test
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - run: ./gradlew check
+        env:
+          ALLOWS_ALL_TESTS: ${{ github.ref == 'refs/heads/main' }}
+          JAVA_OPTS: -Xms2048M -Xmx2048M
+      - uses: actions/upload-artifact@v2
+        if: ${{ failure() }}
+        with:
+          name: test-report
+          path: build/reports/tests/test/

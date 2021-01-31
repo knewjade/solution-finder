@@ -84,7 +84,7 @@ class VisitedTreeTest {
     @LongTest
     void randomLong() throws SyntaxException {
         Randoms randoms = new Randoms();
-        for (int size = 8; size <= 11; size++) {
+        for (int size = 8; size <= 10; size++) {
             PatternGenerator generator = new LoadedPatternGenerator("*p7, *p" + (size - 7));
 
             VisitedTree tree = new VisitedTree();
