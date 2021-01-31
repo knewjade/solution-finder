@@ -146,6 +146,14 @@ public class Mino implements Comparable<Mino> {
         return positions;
     }
 
+    public int getWidth() {
+        return xMinMax.max - xMinMax.min + 1;
+    }
+
+    public int getHeight() {
+        return yMinMax.max - yMinMax.min + 1;
+    }
+
     public long getMask(int x, int y) {
         assert 0 <= x && x < 10 : x;
         assert -4 < y && y < 8 : y;
