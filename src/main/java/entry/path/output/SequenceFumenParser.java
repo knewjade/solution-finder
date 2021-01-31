@@ -37,7 +37,7 @@ public class SequenceFumenParser implements FumenParser {
     @Override
     public String parse(List<MinoOperationWithKey> operationsWithKey, Field field, int maxClearLine) {
         List<MinoOperationWithKey> validOperationsWithKey = get(operationsWithKey, field, maxClearLine);
-        Operations operations = OperationTransform.parseToOperationsBeforeNoClearLine(field, validOperationsWithKey, maxClearLine);
+        Operations operations = OperationTransform.parseToOperations(field, validOperationsWithKey, maxClearLine);
         return parse(operations, field, maxClearLine);
     }
 
@@ -74,10 +74,14 @@ public class SequenceFumenParser implements FumenParser {
         String quiz = Tetfu.encodeForQuiz(pieceList);
         ArrayList<TetfuElement> tetfuElements = new ArrayList<>();
 
+        // 最初から揃っているラインを削除
+        Field freeze = field.freeze();
+        freeze.clearLine();
+
         // 最初のelement
         Operation firstKey = operationsList.get(0);
         ColorType colorType1 = colorConverter.parseToColorType(firstKey.getPiece());
-        ColoredField coloredField = createInitColoredField(field, maxClearLine);
+        ColoredField coloredField = createInitColoredField(freeze, maxClearLine);
         TetfuElement firstElement = new TetfuElement(coloredField, colorType1, firstKey.getRotate(), firstKey.getX(), firstKey.getY(), quiz);
         tetfuElements.add(firstElement);
 
