@@ -42,6 +42,7 @@ public class FumenUtilSettings {
     }
 
     void setFumenUtilModes(String mode) throws FinderParseException {
+        assert mode != null;
         switch (mode.trim().toLowerCase()) {
             case "reduce":
                 this.mode = FumenUtilModes.Reduce;

@@ -27,7 +27,7 @@
 short    long                   default
 ======== ====================== ======================
 ``-t``   ``--tetfu``            なし
-``-M``   ``--mode``             normal
+``-M``   ``--mode``             なし
 ``-o``   ``--output-base``      output/path.txt
 ``-lp``  ``--log-path``         output/last_output.txt
 ``-fp``  ``--field-path``       input/field.txt
@@ -44,7 +44,7 @@ short    long                   default
 v115のテト譜データにのみ対応。
 
 
-``-M``, ``--mode`` [default: normal]
+``-M``, ``--mode`` [default: なし]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 変換モードを変更します。現在のところ、以下のモードに対応しています。

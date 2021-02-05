@@ -51,18 +51,10 @@ public class FumenUtilSettingParser extends SettingParser<FumenUtilSettings> {
 
         // モードの設定
         Optional<String> modeType = wrapper.getStringOption(FumenUtilOptions.Mode.optName());
-        try {
-            modeType.ifPresent(type -> {
-                String key = modeType.orElse("normal");
-                try {
-                    settings.setFumenUtilModes(key);
-                } catch (FinderParseException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-        } catch (Exception e) {
-            throw new FinderParseException("Unsupported format: format=" + modeType.orElse("<empty>"));
+        if (!modeType.isPresent()) {
+            throw new FinderParseException("Should specify mode");
         }
+        settings.setFumenUtilModes(modeType.get());
 
         // ログファイルの設定
         Optional<String> logFilePath = wrapper.getStringOption(FumenUtilOptions.LogPath.optName());

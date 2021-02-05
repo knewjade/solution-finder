@@ -2,6 +2,7 @@ package _usecase.util.fumen;
 
 import _usecase.Log;
 import _usecase.RunnerHelper;
+import _usecase.path.files.OutputFileHelper;
 import entry.EntryPointMain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -22,6 +23,46 @@ class UtilFumenTetfuCaseTest {
         @BeforeEach
         void setUp() throws IOException {
             super.setUp();
+        }
+
+        @Test
+        void noMode() throws Exception {
+            String fumen = "v115@vhdXKJNJJ0/ISSJzHJGDJJHJSGJvLJ0KJJEJzJJ+NJ?tMJFDJz/IyQJsGJOGJpFJ+NJ3MJXDJULJzGJxBJiJJtKJyJ?J0JJ";
+            String command = String.format("util fumen -t %s", fumen);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(1);
+
+            assertThat(log.getError())
+                    .contains(ErrorMessages.failPreMain())
+                    .contains("Should specify mode");
+
+            assertThat(OutputFileHelper.existsErrorText()).isTrue();
+
+            String errorFile = OutputFileHelper.loadErrorText();
+            assertThat(errorFile)
+                    .contains(command)
+                    .contains("Should specify mode [FinderParseException]");
+        }
+
+        @Test
+        void invlidMode() throws Exception {
+            String fumen = "v115@vhdXKJNJJ0/ISSJzHJGDJJHJSGJvLJ0KJJEJzJJ+NJ?tMJFDJz/IyQJsGJOGJpFJ+NJ3MJXDJULJzGJxBJiJJtKJyJ?J0JJ";
+            String command = String.format("util fumen -M invalid -t %s", fumen);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(1);
+
+            assertThat(log.getError())
+                    .contains(ErrorMessages.failPreMain())
+                    .contains("Unsupported mode: mode=invalid");
+
+            assertThat(OutputFileHelper.existsErrorText()).isTrue();
+
+            String errorFile = OutputFileHelper.loadErrorText();
+            assertThat(errorFile)
+                    .contains(command)
+                    .contains("Unsupported mode: mode=invalid [FinderParseException]");
         }
 
         @Test
