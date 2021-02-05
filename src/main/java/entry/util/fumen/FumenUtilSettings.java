@@ -46,6 +46,9 @@ public class FumenUtilSettings {
             case "reduce":
                 this.mode = FumenUtilModes.Reduce;
                 return;
+            case "remove-comment":
+                this.mode = FumenUtilModes.RemoveComment;
+                return;
             default:
                 throw new FinderParseException("Unsupported mode: mode=" + mode);
         }

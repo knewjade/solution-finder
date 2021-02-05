@@ -25,6 +25,7 @@ import exceptions.FinderTerminateException;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -63,14 +64,18 @@ public class FumenUtilEntryPoint implements EntryPoint {
                     Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
                     List<TetfuPage> pages = tetfu.decode(fumen);
 
-                    List<SimpleMinoOperation> operationList = pages.stream()
-                            .filter(TetfuPage::isPutMino)
-                            .map(page -> {
-                                Piece piece = colorConverter.parseToBlock(page.getColorType());
-                                Mino mino = minoFactory.create(piece, page.getRotate());
-                                return new SimpleMinoOperation(mino, page.getX(), page.getY());
-                            })
-                            .collect(Collectors.toList());
+                    List<SimpleMinoOperation> operationList = new ArrayList<>();
+                    for (TetfuPage page : pages) {
+                        if (page.isPutMino()) {
+                            Piece piece = colorConverter.parseToBlock(page.getColorType());
+                            Mino mino = minoFactory.create(piece, page.getRotate());
+                            operationList.add(new SimpleMinoOperation(mino, page.getX(), page.getY()));
+
+                            if (page.isBlockUp() || page.isMirror()) {
+                                break;
+                            }
+                        }
+                    }
 
                     int height = 24;
 
@@ -101,6 +106,23 @@ public class FumenUtilEntryPoint implements EntryPoint {
                     String encode = tetfu.encode(Collections.singletonList(
                             new TetfuElement(freeze, headPage.getComment())
                     ));
+
+                    output(String.format("v115@%s", encode));
+                }
+                break;
+            }
+            case RemoveComment: {
+                MinoFactory minoFactory = new MinoFactory();
+                ColorConverter colorConverter = new ColorConverter();
+                for (String fumen : settings.getFumens()) {
+                    Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
+                    List<TetfuPage> pages = tetfu.decode(fumen);
+
+                    List<TetfuElement> elements = pages.stream().map(page -> new TetfuElement(
+                            page.getField(), page.getColorType(), page.getRotate(), page.getX(), page.getY(), "",
+                            page.isLock(), page.isMirror(), page.isBlockUp(), page.getBlockUpList()
+                    )).collect(Collectors.toList());
+                    String encode = tetfu.encode(elements);
 
                     output(String.format("v115@%s", encode));
                 }

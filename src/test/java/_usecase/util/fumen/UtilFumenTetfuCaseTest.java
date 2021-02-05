@@ -65,5 +65,35 @@ class UtilFumenTetfuCaseTest {
             assertThat(log.getOutput())
                     .contains("v115@9gBtEeilwwBtDeglRpxwR4Ceg0RpwwR4Dei0JeAgWZ?AxXHDBQGDSA1d0ACDYHDBQzuRA1Dq9BlAAAA");
         }
+
+        @Test
+        void reduce5() throws Exception {
+            String fumens = "v115@8gA8HeB8HeB8BeD8CeA8BeE8AeB8whglQpAtwwg0Q4?AeB8TJnvhCTpBlkDxpB";
+            String command = buildCommand("reduce", fumens, "");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput())
+                    .contains("");
+        }
+
+        @Test
+        void removeComment1() throws Exception {
+            String fumens = "v115@EhC8HeB8EeF8DeE8JeTKJvhGOrB/pBUsB3qBlpBSMA?AAA";
+            String command = buildCommand("remove-comment", fumens, "");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput())
+                    .contains("v115@EhC8HeB8EeF8DeE8JeTKJvhGOrB/pBUsB3qBlpBSMA?AAA");
+        }
+
+        @Test
+        void removeComment2() throws Exception {
+            String fumens = "v115@bhA8HeA8whglQpAtwwg0Q4A8AeA8AgWFAwSZrDRAAA?AvhAA4QFAwSZrDSAAAAlhA8AeA8Q4g0wwAtQpglwhAAtFAw?SZrDTAAAAvhCAwSAAA4QFAwSZrDVAAAAAAPFAwSZrDWAAAA?";
+            String command = buildCommand("remove-comment", fumens, "");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput())
+                    .contains("v115@bhA8HeA8whglQpAtwwg0Q4A8AeA8AgHvhAA4BlhA8A?eA8Q4g0wwAtQpglwhAAevhCAwDA4BAAA");
+        }
     }
 }

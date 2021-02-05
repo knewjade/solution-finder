@@ -4,6 +4,8 @@ import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import core.srs.Rotate;
 
+import java.util.List;
+
 public interface TetfuPage {
     ColorType getColorType();
 
@@ -20,4 +22,10 @@ public interface TetfuPage {
     boolean isPutMino();
 
     boolean isLock();
+
+    boolean isMirror();
+
+    boolean isBlockUp();
+
+    List<Integer> getBlockUpList();
 }
