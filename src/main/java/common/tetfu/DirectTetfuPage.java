@@ -4,6 +4,8 @@ import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import core.srs.Rotate;
 
+import java.util.List;
+
 public class DirectTetfuPage implements TetfuPage {
     private final ColorType colorType;
     private final int x;
@@ -13,8 +15,14 @@ public class DirectTetfuPage implements TetfuPage {
     private final ColoredField field;
     private final boolean isPutMino;
     private final boolean isLock;
+    private final boolean isMirror;
+    private final boolean isBlockUp;
+    private final List<Integer> blockUp;
 
-    public DirectTetfuPage(ColorType colorType, int x, int y, Rotate rotate, String comment, ColoredField field, boolean isPutMino, boolean isLock) {
+    public DirectTetfuPage(
+            ColorType colorType, int x, int y, Rotate rotate, String comment, ColoredField field,
+            boolean isPutMino, boolean isLock, boolean isMirror, boolean isBlockUp, List<Integer> blockUp
+    ) {
         this.colorType = colorType;
         this.x = x;
         this.y = y;
@@ -23,6 +31,9 @@ public class DirectTetfuPage implements TetfuPage {
         this.field = field;
         this.isPutMino = isPutMino;
         this.isLock = isLock;
+        this.isMirror = isMirror;
+        this.isBlockUp = isBlockUp;
+        this.blockUp = blockUp;
     }
 
     @Override
@@ -63,5 +74,20 @@ public class DirectTetfuPage implements TetfuPage {
     @Override
     public boolean isLock() {
         return isLock;
+    }
+
+    @Override
+    public boolean isMirror() {
+        return isMirror;
+    }
+
+    @Override
+    public boolean isBlockUp() {
+        return isBlockUp;
+    }
+
+    @Override
+    public List<Integer> getBlockUpList() {
+        return blockUp;
     }
 }

@@ -6,6 +6,10 @@ import common.tetfu.decorder.ActionDecoder;
 import common.tetfu.field.ColoredField;
 import core.srs.Rotate;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static common.tetfu.Tetfu.TETFU_MAX_HEIGHT;
 
 public class DecodedTetfuPage implements TetfuPage {
@@ -15,14 +19,16 @@ public class DecodedTetfuPage implements TetfuPage {
     private final String escapedComment;
     private final ColoredField field;
     private final ActionDecoder actionDecoder;
+    private final List<Integer> blockUp;
 
-    DecodedTetfuPage(ActionDecoder decoder, String escapedComment, ColoredField field) {
+    DecodedTetfuPage(ActionDecoder decoder, String escapedComment, ColoredField field, int[] blockUp) {
         this.colorType = decoder.colorType;
         this.coordinate = decoder.coordinate;
         this.rotate = decoder.rotate;
         this.escapedComment = escapedComment;
         this.field = field.freeze(TETFU_MAX_HEIGHT);
         this.actionDecoder = decoder;
+        this.blockUp = Arrays.stream(blockUp).boxed().collect(Collectors.toList());
     }
 
     @Override
@@ -63,6 +69,21 @@ public class DecodedTetfuPage implements TetfuPage {
     @Override
     public boolean isLock() {
         return actionDecoder.isLock;
+    }
+
+    @Override
+    public boolean isMirror() {
+        return actionDecoder.isMirror;
+    }
+
+    @Override
+    public boolean isBlockUp() {
+        return actionDecoder.isBlockUp;
+    }
+
+    @Override
+    public List<Integer> getBlockUpList() {
+        return blockUp;
     }
 
     @Override

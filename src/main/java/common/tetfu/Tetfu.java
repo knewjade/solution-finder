@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static common.tetfu.TetfuTable.ENCODE_TABLE_SIZE;
 import static common.tetfu.TetfuTable.decodeData;
@@ -91,16 +92,18 @@ public class Tetfu {
     // コメント・フィールドは初期設定のみ設定可能
     public String encode(List<TetfuElement> elements) {
         ColoredField prevField = ColoredFieldFactory.createField(TETFU_MAX_HEIGHT);
+        List<Integer> prevBlockUp = createBlockUp();
         String prevComment = "";
 
         for (int index = 0; index < elements.size(); index++) {
             TetfuElement element = elements.get(index);
             ColoredField field = element.getField().orElse(prevField);
+            List<Integer> blockUp = element.getBlockUpList().orElse(prevBlockUp);
 
             // field settings
             // prevFieldは、ひとつ前のミノを置いてできたフィールド
             // fieldは次に表示させたいフィールド。今回は、最初をのぞいてひとつ前のミノを置いてできたフィールドをそのまま利用
-            encodeField(prevField, field);
+            encodeField(prevField, prevBlockUp, field, blockUp);
 
             String comment = element.getEscapedComment();
             ActionFlags flags = new ActionFlags(comment, prevComment, index, element);
@@ -117,19 +120,18 @@ public class Tetfu {
                 field.clearLine();
 
                 if (flags.isBlockUp) {
-                    throw new UnsupportedOperationException();
-//                    currentField.blockUp();
-//                    for (int x = 0; x < TETFU_FIELD_WIDTH; x++)
-//                        currentField.setBlockNumber(x, 0, blockUp[x]);
+                    field.blockUp();
+                    for (int x = 0; x < TETFU_FIELD_WIDTH; x++)
+                        field.setBlockNumber(x, 0, element.getBlockUp(x));
                 }
 
                 if (flags.isMirror) {
-                    throw new UnsupportedOperationException();
-//                    currentField.mirror();
+                    field.mirror();
                 }
             }
             // next field
             prevField = field;
+            prevBlockUp = blockUp;
             prevComment = comment;
         }
 
@@ -145,8 +147,15 @@ public class Tetfu {
         return builder.toString();
     }
 
-    private void encodeField(ColoredField prevField, ColoredField currentField) {
-        FieldEncoder encoder = new FieldEncoder(prevField, currentField);
+    private List<Integer> createBlockUp() {
+        return IntStream.range(0, 10).mapToObj(i -> 0).collect(Collectors.toList());
+    }
+
+    private void encodeField(
+            ColoredField prevField, List<Integer> prevBlockUp,
+            ColoredField currentField, List<Integer> currentBlockUp
+    ) {
+        FieldEncoder encoder = new FieldEncoder(prevField, prevBlockUp, currentField, currentBlockUp);
         boolean isChanged = encoder.encode();
 
         if (isChanged) {
@@ -245,7 +254,7 @@ public class Tetfu {
                 escapedComment = commentDecoder.getEscapedComment();
             }
 
-            TetfuPage tetfuPage = new DecodedTetfuPage(actionDecoder, escapedComment, currentField);
+            TetfuPage tetfuPage = new DecodedTetfuPage(actionDecoder, escapedComment, currentField, blockUp);
             pages.add(tetfuPage);
 
             ColorType colorType = actionDecoder.colorType;

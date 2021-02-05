@@ -4,6 +4,7 @@ import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import core.srs.Rotate;
 
+import java.util.List;
 import java.util.Optional;
 
 import static common.tetfu.Tetfu.TETFU_MAX_HEIGHT;
@@ -24,6 +25,7 @@ public class TetfuElement {
     private final boolean isLock;
     private final boolean isMirror;
     private final boolean isBlockUp;
+    private final List<Integer> blockUp;
 
     public TetfuElement(String comment) {
         this(ColorType.Empty, Rotate.Reverse, 0, 0, comment);
@@ -50,10 +52,13 @@ public class TetfuElement {
     }
 
     public TetfuElement(ColoredField field, ColorType colorType, Rotate rotate, int x, int y, String comment) {
-        this(field, colorType, rotate, x, y, comment, true, false, false);
+        this(field, colorType, rotate, x, y, comment, true, false, false, null);
     }
 
-    public TetfuElement(ColoredField field, ColorType colorType, Rotate rotate, int x, int y, String comment, boolean isLock, boolean isMirror, boolean isBlockUp) {
+    public TetfuElement(
+            ColoredField field, ColorType colorType, Rotate rotate, int x, int y, String comment,
+            boolean isLock, boolean isMirror, boolean isBlockUp, List<Integer> blockUp
+    ) {
         assert field == null || field.getMaxHeight() == TETFU_MAX_HEIGHT;
         this.field = field;
         this.colorType = colorType;
@@ -64,6 +69,7 @@ public class TetfuElement {
         this.isLock = isLock;
         this.isMirror = isMirror;
         this.isBlockUp = isBlockUp;
+        this.blockUp = blockUp;
     }
 
     public Optional<ColoredField> getField() {
@@ -96,5 +102,20 @@ public class TetfuElement {
 
     public boolean isLock() {
         return isLock;
+    }
+
+    public int getBlockUp(int x) {
+        return blockUp != null ? blockUp.get(x) : 0;
+    }
+    public Optional<List<Integer>> getBlockUpList() {
+        return Optional.ofNullable(blockUp);
+    }
+
+    public boolean isMirror() {
+        return isMirror;
+    }
+
+    public boolean isBlockUp() {
+        return isBlockUp;
     }
 }
