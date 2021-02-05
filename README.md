@@ -62,7 +62,7 @@ solution-finderは、探索ツールとして次の特徴を持っています�
 
 詳細は、以下のドキュメントをご参照ください。
 
-http://sfinder.s3-website-ap-northeast-1.amazonaws.com/index.html
+https://knewjade.github.io/sfinder-docs
 
 
 ------
