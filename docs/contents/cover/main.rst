@@ -130,7 +130,7 @@ short    long                   default
 ``-M``   ``--mode``             normal
 ``-P``   ``--priority``         no
 ``-l``   ``--last-sd``          0
-``-o``   ``--output-base``      output/path.txt
+``-o``   ``--output-base``      output/cover.csv
 ``-lp``  ``--log-path``         output/last_output.txt
 ``-fp``  ``--field-path``       input/field.txt
 ``-pp``  ``--patterns-path``    input/patterns.txt
@@ -174,7 +174,7 @@ v115のテト譜データにのみ対応。
 
 * softdrop: ソフトドロップ＋回転入れ（制限なし）
 * harddrop: ハードドロップのみ
-* 180: ソフトドロップ＋180度回転入れ。180度回転は `Nullpomino <https://github.com/nullpomino/nullpomino>`_ のStandard Wallkickに準拠します。なお現時点では、180度回転によるTスピンは判定されず、あくまでミノの移動のみに反映されます。
+* 180: ソフトドロップ＋180度回転入れ。180度回転は `Nullpomino <https://github.com/nullpomino/nullpomino>`_ のStandard Wallkickに準拠します
 * t-softdrop: Tミノはソフトドロップ、その他のミノはハードドロップ
 
 * any-tspin (any, tspin0): Tミノは必ずT-Spin(Mini含むすべてのT-Spin)をする。その他のミノはハードドロップ
