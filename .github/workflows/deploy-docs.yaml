@@ -22,4 +22,4 @@ jobs:
           external_repository: knewjade/sfinder-docs
           publish_branch: master
           enable_jekyll: false
-          publish_dir: ./build/html
+          publish_dir: ./docs/build/html
