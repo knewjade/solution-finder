@@ -20,6 +20,6 @@ jobs:
         with:
           personal_token: ${{ secrets.PERSONAL_TOKEN }}
           external_repository: knewjade/sfinder-docs
-          publish_branch: master
+          publish_branch: main
           enable_jekyll: false
           publish_dir: ./docs/build/html
