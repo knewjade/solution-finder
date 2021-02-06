@@ -157,9 +157,8 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
                 freeze.mirror();
 
                 List<MinoOperationWithKey> operationsWithKeyMirror = operationsWithKey.stream().map(m -> {
-                    Operation mirror = minoTransform.mirror(m.getPiece(), m.getRotate(), m.getX(), m.getY());
-                    Mino mino = minoFactory.create(mirror.getPiece(), mirror.getRotate());
-                    return new MinimalOperationWithKey(mino, mirror.getX(), mirror.getY(), m.getNeedDeletedKey());
+                    MinoOperation mirror = minoTransform.mirror(minoFactory, m.getPiece(), m.getRotate(), m.getX(), m.getY());
+                    return new MinimalOperationWithKey(mirror.getMino(), mirror.getX(), mirror.getY(), m.getNeedDeletedKey());
                 }).collect(Collectors.toList());
 
                 parameters.add(new CoverParameter(freeze, operationsWithKeyMirror, input, true));
