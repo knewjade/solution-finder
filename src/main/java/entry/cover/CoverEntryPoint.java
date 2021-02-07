@@ -14,6 +14,7 @@ import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
 import common.tetfu.field.ColoredFieldView;
+import core.FinderConstant;
 import core.action.reachable.*;
 import core.field.Field;
 import core.mino.MinoFactory;
@@ -100,6 +101,7 @@ public class CoverEntryPoint implements EntryPoint {
         output("Mode: " + settings.getCoverModes().name().toLowerCase());
         output("Priority: " + (settings.isUsingPriority() ? "yes" : "no"));
         output("Last drop: " + settings.getLastSoftdrop());
+        output("Version: " + FinderConstant.VERSION);
 
         // ========================================
         output("Searching patterns:");

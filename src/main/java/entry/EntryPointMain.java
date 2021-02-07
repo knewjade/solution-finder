@@ -5,7 +5,6 @@ import entry.cover.CoverEntryPoint;
 import entry.cover.CoverOptions;
 import entry.cover.CoverSettingParser;
 import entry.cover.CoverSettings;
-import entry.dev.DevRandomEntryPoint;
 import entry.move.MoveEntryPoint;
 import entry.move.MoveSettingParser;
 import entry.move.MoveSettings;
@@ -59,24 +58,21 @@ public class EntryPointMain {
             "spin",
             "cover",
             "util fig",
+            "util fumen",
     };
 
     public static int main(String[] args) {
         if (args.length < 1) {
-            String commands = Arrays.stream(COMMANDS).collect(Collectors.joining(","));
+            String commands = String.join(",", COMMANDS);
             throw new IllegalArgumentException("No command: Use " + commands);
         }
 
-        if (args[0].equals("-h")) {
+        if (args[0].equals("-h") || args[0].equals("-v")) {
+            System.out.println("Version: " + FinderConstant.VERSION);
             System.out.println("Usage: <command> [options]");
             System.out.println("  <command>:");
             for (String command : COMMANDS)
                 System.out.println("    - " + command);
-            return 0;
-        }
-
-        if (args[0].equals("-v")) {
-            System.out.println("Version: " + FinderConstant.VERSION);
             return 0;
         }
 
@@ -155,7 +151,7 @@ public class EntryPointMain {
                 writer.printf("# Version: %s%n", FinderConstant.VERSION);
 
                 // Output command
-                writer.printf("# command: %s%n", Arrays.stream(commands).collect(Collectors.joining(" ")));
+                writer.printf("# command: %s%n", String.join(" ", commands));
 
                 // Output error messages
                 writer.println("# Error message summary:");
@@ -215,8 +211,6 @@ public class EntryPointMain {
                 return getRenEntryPoint(commands);
             case "cover":
                 return getCoverEntryPoint(commands);
-            case "dev":
-                return getDevEntryPoint(commands);
             case "spin":
                 return getSpinEntryPoint(commands);
             default:
@@ -348,11 +342,5 @@ public class EntryPointMain {
         } else {
             return Optional.empty();
         }
-    }
-
-    private static Optional<EntryPoint> getDevEntryPoint(List<String> commands) {
-        if (commands.get(0).equals("quiz"))
-            return Optional.of(new DevRandomEntryPoint(commands.subList(1, commands.size())));
-        throw new IllegalArgumentException("dev: Invalid type: Use quiz");
     }
 }

@@ -6,6 +6,7 @@ import common.datastore.action.Action;
 import common.datastore.blocks.Pieces;
 import common.pattern.PatternGenerator;
 import common.tetfu.common.ColorConverter;
+import core.FinderConstant;
 import core.action.candidate.*;
 import core.field.Field;
 import core.field.FieldView;
@@ -99,6 +100,7 @@ public class RenEntryPoint implements EntryPoint {
         output("# Initialize / User-defined");
         output("Using hold: " + (settings.isUsingHold() ? "use" : "avoid"));
         output("Drop: " + settings.getDropType().name().toLowerCase());
+        output("Version: " + FinderConstant.VERSION);
 
         output("Searching sequence:");
 
