@@ -104,6 +104,10 @@ public class SpinSettingParser extends SettingParser<SpinSettings> {
         Optional<Integer> maxRoofNum = wrapper.getIntegerOption(SpinOptions.MaxRoof.optName());
         maxRoofNum.ifPresent(settings::setMaxRoofNum);
 
+        // 解を制限するモード
+        Optional<String> filter = wrapper.getStringOption(SpinOptions.Filter.optName());
+        filter.ifPresent(settings::setFilterMode);
+
         // 出力分割の設定
         Optional<Boolean> isSplit = wrapper.getBoolOption(PathOptions.Split.optName());
         isSplit.ifPresent(settings::setTetfuSplit);

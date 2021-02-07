@@ -168,11 +168,17 @@ public class SpinEntryPoint implements EntryPoint {
         LockedReachableThreadLocal lockedReachableThreadLocal = new LockedReachableThreadLocal(minoFactory, minoShifter, minoRotation, fieldHeight);
         SpinOutput output;
         if (searchRoof) {
-            output = new FullSpinOutput(fumenParser, minoFactory, minoRotationDetail, lockedReachableThreadLocal, rotateReachableThreadLocal);
+            output = new FullSpinOutput(
+                    fumenParser, minoFactory, minoRotationDetail, lockedReachableThreadLocal, rotateReachableThreadLocal, settings.getFilterMode()
+            );
         } else {
-            output = new NoRoofSpinOutput(fumenParser, lockedReachableThreadLocal, rotateReachableThreadLocal);
+            output = new NoRoofSpinOutput(
+                    fumenParser, lockedReachableThreadLocal, rotateReachableThreadLocal, settings.getFilterMode()
+            );
         }
-        output.output(base, results, initField, fieldHeight);
+
+        int resultSize = output.output(base, results, initField, fieldHeight);
+        output("Found solutions = " + resultSize);
     }
 
     private void verifyTarget() throws FinderInitializeException {
