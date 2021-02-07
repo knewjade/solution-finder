@@ -24,6 +24,7 @@ public class SpinSettings {
     private boolean searchRoof = true;
     private int maxRoofNum = -1;
     private boolean isSplit = false;
+    private FilterType filter = FilterType.Strict;
 
     // ********* Getter ************
     Field getField() {
@@ -66,7 +67,7 @@ public class SpinSettings {
         if (fieldHeight < 0) {
             int maxUsingHeight = getMaxUsingHeight(getField());
             int maxTargetHeight = getMarginHeight();
-            return maxTargetHeight < maxUsingHeight ? maxUsingHeight : maxTargetHeight;
+            return Math.max(maxTargetHeight, maxUsingHeight);
         }
         return marginHeight;
     }
@@ -98,6 +99,10 @@ public class SpinSettings {
 
     boolean isTetfuSplit() {
         return isSplit;
+    }
+
+    FilterType getFilterMode() {
+        return filter;
     }
 
     // ********* Setter ************
@@ -143,5 +148,22 @@ public class SpinSettings {
 
     void setMaxRoofNum(int maxRoofNum) {
         this.maxRoofNum = maxRoofNum;
+    }
+
+    void setFilterMode(String mode) {
+        switch (mode.trim().toLowerCase()) {
+            case "strict":
+                filter = FilterType.Strict;
+                break;
+            case "ignore-t":
+            case "ignore_t":
+                filter = FilterType.IgnoreT;
+                break;
+            case "none":
+                filter = FilterType.None;
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported filter mode: " + mode);
+        }
     }
 }

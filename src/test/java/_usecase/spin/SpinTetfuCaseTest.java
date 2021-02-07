@@ -21,6 +21,10 @@ class SpinTetfuCaseTest {
             return String.format("spin -t %s %s", fumen, options);
         }
 
+        private String buildCommandWithNone(String fumen, String options) {
+            return String.format("spin -t %s %s -f none", fumen, options);
+        }
+
         @Override
         @BeforeEach
         void setUp() throws IOException {
@@ -30,7 +34,7 @@ class SpinTetfuCaseTest {
         @Test
         void case1() throws Exception {
             String fumen = "v115@zgD8FeF8DeG8CeH8BeI8KeAgH";
-            String command = buildCommand(fumen, "-p TSLI -ft 5 -c 2");
+            String command = buildCommandWithNone(fumen, "-p TSLI -ft 5 -c 2");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -52,7 +56,7 @@ class SpinTetfuCaseTest {
         @Test
         void case1Split() throws Exception {
             String fumen = "v115@zgD8FeF8DeG8CeH8BeI8KeAgH";
-            String command = buildCommand(fumen, "-p TSLI -ft 5 -c 2 --split yes");
+            String command = buildCommandWithNone(fumen, "-p TSLI -ft 5 -c 2 --split yes");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -74,7 +78,7 @@ class SpinTetfuCaseTest {
         @Test
         void case2() throws Exception {
             String fumen = "v115@CgA8HeD8BeA8AeE8DeF8DeF8DeF8DeF8DeF8DeF8De?F8DeC8JeAgH";
-            String command = buildCommand(fumen, "-p TSZLJI -fb 8 -ft 10 -c 2");
+            String command = buildCommandWithNone(fumen, "-p TSZLJI -fb 8 -ft 10 -c 2");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -93,7 +97,7 @@ class SpinTetfuCaseTest {
         @LongTest
         void case3() throws Exception {
             String fumen = "v115@PhA8IeA8BeA8AeB8BeC8JeAgH";
-            String command = buildCommand(fumen, "-p *! -fb 0 -ft 4 -c 3");
+            String command = buildCommandWithNone(fumen, "-p *! -fb 0 -ft 4 -c 3");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -113,7 +117,7 @@ class SpinTetfuCaseTest {
         @LongTest
         void case4() throws Exception {
             String fumen = "v115@ThB8EeA8CeB8DeA8JeAgH";
-            String command = buildCommand(fumen, "-p *! -fb 0 -ft 4 -c 3");
+            String command = buildCommandWithNone(fumen, "-p *! -fb 0 -ft 4 -c 3");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -130,7 +134,7 @@ class SpinTetfuCaseTest {
         @LongTest
         void case5() throws Exception {
             String fumen = "v115@zgD8FeE8EeF8DeG8CeH8LeAgH";
-            String command = buildCommand(fumen, "-p *! -mr -1");
+            String command = buildCommandWithNone(fumen, "-p *! -mr -1");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -152,7 +156,7 @@ class SpinTetfuCaseTest {
         @LongTest
         void case6() throws Exception {
             String fumen = "v115@zgD8FeE8EeF8DeG8CeH8LeAgH";
-            String command = buildCommand(fumen, "-p *! -r no -mr 1");
+            String command = buildCommandWithNone(fumen, "-p *! -r no -mr 1");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -175,7 +179,7 @@ class SpinTetfuCaseTest {
         @LongTest
         void case7_1() throws Exception {
             String fumen = "v115@zgD8FeE8EeF8DeG8CeH8LeAgH";
-            String command = buildCommand(fumen, "-p *! -mr 0");
+            String command = buildCommandWithNone(fumen, "-p *! -mr 0");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -202,7 +206,7 @@ class SpinTetfuCaseTest {
         @LongTest
         void case7_2() throws Exception {
             String fumen = "v115@zgD8FeE8EeF8DeG8CeH8LeAgH";
-            String command = buildCommand(fumen, "-p *! -mr 1");
+            String command = buildCommandWithNone(fumen, "-p *! -mr 1");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -231,7 +235,7 @@ class SpinTetfuCaseTest {
         @Test
         void case8_1() throws Exception {
             String fumen = "v115@HhB8AeH8BeI8AeG8JeAgH";
-            String command = buildCommand(fumen, "-p *! -mr 0");
+            String command = buildCommandWithNone(fumen, "-p *! -mr 0");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -247,7 +251,7 @@ class SpinTetfuCaseTest {
         @Test
         void case8_2() throws Exception {
             String fumen = "v115@HhB8AeH8BeI8AeG8JeAgH";
-            String command = buildCommand(fumen, "-p *! -mr 1");
+            String command = buildCommandWithNone(fumen, "-p *! -mr 1");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -266,7 +270,7 @@ class SpinTetfuCaseTest {
         @Test
         void case8_3() throws Exception {
             String fumen = "v115@HhB8AeH8BeI8AeG8JeAgH";
-            String command = buildCommand(fumen, "-p *! -r no");
+            String command = buildCommandWithNone(fumen, "-p *! -r no");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -285,7 +289,7 @@ class SpinTetfuCaseTest {
         void case9_1() throws Exception {
             // 空中に浮いたTスピンが見つかる不具合に対するテスト
             String fumen = "v115@XgA8IeB8IeA8AeB8FeG8CeG8CeB8DeB8BeB8AeF8Ae?B8BeC8JeAgH";
-            String command = buildCommand(fumen, "-p JT -ft 7");
+            String command = buildCommandWithNone(fumen, "-p JT -ft 7");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -301,7 +305,7 @@ class SpinTetfuCaseTest {
         @Test
         void case9_2() throws Exception {
             String fumen = "v115@XgA8IeB8IeA8AeB8FeG8CeG8CeB8DeB8BeB8AeF8Ae?B8BeC8JeAgH";
-            String command = buildCommand(fumen, "-p JTS -ft 7");
+            String command = buildCommandWithNone(fumen, "-p JTS -ft 7");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -320,7 +324,7 @@ class SpinTetfuCaseTest {
         void case10() throws Exception {
             // ライン消去の上の段に屋根を作る
             String fumen = "v115@HhE8CeF8DeG8AeD8JeAgH";
-            String command = buildCommand(fumen, "-p JTO -ft 3 -m 5");
+            String command = buildCommandWithNone(fumen, "-p JTO -ft 3 -m 5");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -342,7 +346,7 @@ class SpinTetfuCaseTest {
         void case12() throws Exception {
             // ライン消去の上の段に屋根を作る
             String fumen = "v115@FhF8CeH8AeH8DeB8JeAgH";
-            String command = buildCommand(fumen, "-p ZLT -ft 3 -m 6");
+            String command = buildCommandWithNone(fumen, "-p ZLT -ft 3 -m 6");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -365,7 +369,7 @@ class SpinTetfuCaseTest {
         void case13() throws Exception {
             // Tミノがおけない
             String fumen = "v115@VgG8CeG8CeG8CeG8CeG8CeF8DeH8AeI8AeA8JeAgH";
-            String command = buildCommand(fumen, "-p [LJOT]!");
+            String command = buildCommandWithNone(fumen, "-p [LJOT]!");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -382,6 +386,22 @@ class SpinTetfuCaseTest {
             assertThat(html.getFumens())
                     .hasSize(1)
                     .contains("HgRpHeRpBeG8CeG8wwhlG8xwglG8wwAeglG8i0F8Ce?g0H8AeI8AeA8JeAgWEAqOMgC");
+        }
+
+        @Test
+        void case13Strict() throws Exception {
+            // Tミノがおけない
+            String fumen = "v115@VgG8CeG8CeG8CeG8CeG8CeF8DeH8AeI8AeA8JeAgH";
+            String command = buildCommand(fumen, "-p [LJOT]!");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(0));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SpinHTML html = OutputFileHelper.loadSpinHTML();
+            assertThat(html.getFumens()).hasSize(0);
         }
     }
 

@@ -235,7 +235,7 @@ public class SetupSettings {
             case "empty":
                 return null;
             default:
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("Unsupported color: " + color);
         }
     }
 

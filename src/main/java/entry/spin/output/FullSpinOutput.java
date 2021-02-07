@@ -1,8 +1,7 @@
 package entry.spin.output;
 
-import common.buildup.BuildUp;
-import common.datastore.MinoOperationWithKey;
 import common.datastore.Operation;
+import common.datastore.Pair;
 import common.datastore.SimpleOperation;
 import concurrent.LockedReachableThreadLocal;
 import concurrent.RotateReachableThreadLocal;
@@ -17,6 +16,7 @@ import core.srs.RotateDirection;
 import core.srs.SpinResult;
 import entry.path.output.FumenParser;
 import entry.path.output.MyFile;
+import entry.spin.FilterType;
 import exceptions.FinderExecuteException;
 import output.HTMLBuilder;
 import searcher.spins.SpinCommons;
@@ -28,39 +28,38 @@ import java.io.BufferedWriter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 public class FullSpinOutput implements SpinOutput {
-    private final FumenParser fumenParser;
     private final MinoFactory minoFactory;
     private final MinoRotationDetail minoRotationDetail;
     private final LockedReachableThreadLocal lockedReachableThreadLocal;
-    private final RotateReachableThreadLocal rotateReachableThreadLocal;
+    private final Formatter formatter;
 
     public FullSpinOutput(
             FumenParser fumenParser,
             MinoFactory minoFactory, MinoRotationDetail minoRotationDetail,
             LockedReachableThreadLocal lockedReachableThreadLocal,
-            RotateReachableThreadLocal rotateReachableThreadLocal
+            RotateReachableThreadLocal rotateReachableThreadLocal,
+            FilterType filterType
     ) {
-        this.fumenParser = fumenParser;
         this.minoFactory = minoFactory;
         this.minoRotationDetail = minoRotationDetail;
         this.lockedReachableThreadLocal = lockedReachableThreadLocal;
-        this.rotateReachableThreadLocal = rotateReachableThreadLocal;
+        this.formatter = new Formatter(fumenParser, lockedReachableThreadLocal, rotateReachableThreadLocal, filterType);
     }
 
     @Override
-    public void output(MyFile myFile, List<Candidate> results, Field initField, int fieldHeight) throws FinderExecuteException {
+    public int output(MyFile myFile, List<Candidate> results, Field initField, int fieldHeight) throws FinderExecuteException {
         HTMLBuilder<FullSpinColumn> htmlBuilder = new HTMLBuilder<>("Spin Result");
-        htmlBuilder.addHeader(String.format("%d solutions", results.size()));
 
         // HTMLを作成する
         for (Candidate candidate : results) {
             add(htmlBuilder, candidate, initField, fieldHeight);
         }
 
-        System.out.println("Found solutions = " + htmlBuilder.getSize());
+        int size = htmlBuilder.getSize();
+        htmlBuilder.addHeader(String.format("%d solutions", size));
 
         // 書き込み
         try (BufferedWriter writer = myFile.newBufferedWriter()) {
@@ -76,6 +75,8 @@ public class FullSpinOutput implements SpinOutput {
         } catch (Exception e) {
             throw new FinderExecuteException("Failed to output file", e);
         }
+
+        return size;
     }
 
     private void add(HTMLBuilder<FullSpinColumn> htmlBuilder, Candidate candidate, Field initField, int fieldHeight) {
@@ -123,46 +124,13 @@ public class FullSpinOutput implements SpinOutput {
         assert maxSpin != null;
 
         final int finalPriority = maxPriority;
-        FullSpinColumn column = new FullSpinColumn(maxSpin, finalPriority, getSpinString(maxSpin));
 
-        // テト譜
-        List<MinoOperationWithKey> operations = result.operationStream().collect(Collectors.toList());
-        String fumen = fumenParser.parse(operations, initField, fieldHeight);
-
-        // 表示されるタイトル
-        String name = operations.stream()
-                .map(operation -> String.format("%s-%s", operation.getPiece(), operation.getRotate()))
-                .collect(Collectors.joining(" "));
-
-        // 解の優先度
-        Field freezeForClearedLineAll = result.getAllMergedField().freeze();
-        int clearedLineAll = freezeForClearedLineAll.clearLine();
-
-        int numOfHoles = getNumOfHoles(freezeForClearedLineAll);
-        int numOfPieces = operations.size();
-        int solutionPriority = calcSolutionPriority(operationT, clearedLineOnlyT, clearedLineAll, numOfHoles, numOfPieces);
-
-        // その解をそのまま組み立てられるか
-        boolean cansBuildWithoutT = BuildUp.existsValidBuildPattern(initField, operations.stream().filter(op -> !operationT.equals(op)), fieldHeight, lockedReachable);
-
-        // そのままTスピンできるか
-        String mark = cansBuildWithoutT && freeze.isOnGround(mino, operationT.getX(), y - slideY) ? (
-                rotateReachableThreadLocal.get().checks(freeze, mino, operationT.getX(), y - slideY, fieldHeight) ? "O" : "X"
-        ) : "-";
-        String aLink = String.format(
-                "<div>[%s] <a href='http://fumen.zui.jp/?v115@%s' target='_blank'>%s</a> [clear=%d, hole=%d, piece=%d]</div>",
-                mark, fumen, name, clearedLineAll, numOfHoles, numOfPieces
-        );
-
-        htmlBuilder.addColumn(column, aLink, solutionPriority);
-    }
-
-    private int calcSolutionPriority(SimpleOriginalPiece operationT, int clearedLineOnlyT, int clearedLineAll, int numOfHoles, int numOfPieces) {
-        // 優先度高: 使用ミノが少ない -> Tミノのy座標が低い -> Tスピン以外での消去ライン数が小さい -> ホール数が小さい
-        return numOfHoles * 100 * 100 * 100
-                + (clearedLineAll - clearedLineOnlyT) * 100 * 100
-                + operationT.getY() * 100
-                + numOfPieces;
+        Optional<Pair<String, Integer>> optional = formatter.get(candidate, initField, fieldHeight);
+        if (optional.isPresent()) {
+            Pair<String, Integer> aLinkSolutionPriority = optional.get();
+            FullSpinColumn column = new FullSpinColumn(maxSpin, finalPriority, getSpinString(maxSpin));
+            htmlBuilder.addColumn(column, aLinkSolutionPriority.getKey(), aLinkSolutionPriority.getValue());
+        }
     }
 
     private List<Spin> getSpins(LockedReachable lockedReachable, Field fieldWithoutT, Operation operation, Mino before, int[][] patterns, RotateDirection direction, int maxHeight, int clearedLine) {
@@ -262,12 +230,5 @@ public class FullSpinOutput implements SpinOutput {
                 return "Triple";
         }
         throw new IllegalStateException();
-    }
-
-    private int getNumOfHoles(Field field) {
-        Field freeze = field.freeze();
-        freeze.slideDown();
-        freeze.reduce(field);
-        return freeze.getNumOfAllBlocks();
     }
 }

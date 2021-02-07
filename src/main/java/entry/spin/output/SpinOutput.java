@@ -8,5 +8,5 @@ import searcher.spins.candidates.Candidate;
 import java.util.List;
 
 public interface SpinOutput {
-    void output(MyFile myFile, List<Candidate> results, Field initField, int fieldHeight) throws FinderExecuteException;
+    int output(MyFile myFile, List<Candidate> results, Field initField, int fieldHeight) throws FinderExecuteException;
 }
