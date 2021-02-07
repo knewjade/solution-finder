@@ -45,10 +45,9 @@ import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class EntryPointMain {
-    private static String[] COMMANDS = {
+    private static final String[] COMMANDS = {
             "percent",
             "path",
             "setup",
