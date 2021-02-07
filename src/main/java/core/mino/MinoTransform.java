@@ -1,7 +1,6 @@
 package core.mino;
 
-import common.datastore.Operation;
-import common.datastore.SimpleOperation;
+import common.datastore.SimpleMinoOperation;
 import common.datastore.action.Action;
 import common.datastore.action.MinimalAction;
 import core.srs.Rotate;
@@ -82,104 +81,41 @@ public class MinoTransform {
         return rotates[index];
     }
 
-    public Operation mirror(Piece piece, Rotate rotate, int x, int y) {
-        int mx09 = 9 - x;
-        int mx18 = 8 - (x - 1) + 1;
-        int mx08 = 8 - x;
+    public SimpleMinoOperation mirror(MinoFactory minoFactory, Piece piece, Rotate rotate, int x, int y) {
+        Mino mino = minoFactory.create(piece, rotate);
+        int rx = x + mino.getMaxX();
+        int by = y + mino.getMinY();
 
+        Piece mirrorPiece = mirrorPiece(piece);
+        Rotate mirrorRotate = mirrorRotate(rotate);
+        Mino mirror = minoFactory.create(mirrorPiece, mirrorRotate);
+        int lx = 9 - rx;
+        return new SimpleMinoOperation(
+                mirror, lx - mirror.getMinX(), by - mirror.getMinY()
+        );
+    }
+
+    private Piece mirrorPiece(Piece piece) {
         switch (piece) {
-            case I: {
-                switch (rotate) {
-                    case Spawn:
-                        return new SimpleOperation(piece, Rotate.Reverse, mx09, y);
-                    case Reverse:
-                        return new SimpleOperation(piece, Rotate.Spawn, mx09, y);
-                    case Left:
-                        return new SimpleOperation(piece, Rotate.Right, mx09, y + 1);
-                    case Right:
-                        return new SimpleOperation(piece, Rotate.Left, mx09, y - 1);
-                }
-                break;
-            }
-            case T: {
-                switch (rotate) {
-                    case Spawn:
-                        return new SimpleOperation(piece, Rotate.Spawn, mx09, y);
-                    case Reverse:
-                        return new SimpleOperation(piece, Rotate.Reverse, mx09, y);
-                    case Left:
-                        return new SimpleOperation(piece, Rotate.Right, mx09, y);
-                    case Right:
-                        return new SimpleOperation(piece, Rotate.Left, mx09, y);
-                }
-                break;
-            }
-            case O: {
-                switch (rotate) {
-                    case Spawn:
-                        return new SimpleOperation(piece, Rotate.Spawn, mx08, y);
-                    case Reverse:
-                        return new SimpleOperation(piece, Rotate.Reverse, mx18, y);
-                    case Left:
-                        return new SimpleOperation(piece, Rotate.Left, mx18, y);
-                    case Right:
-                        return new SimpleOperation(piece, Rotate.Right, mx08, y);
-                }
-                break;
-            }
-            case S: {
-                switch (rotate) {
-                    case Spawn:
-                        return new SimpleOperation(Piece.Z, Rotate.Spawn, mx09, y);
-                    case Reverse:
-                        return new SimpleOperation(Piece.Z, Rotate.Reverse, mx09, y);
-                    case Left:
-                        return new SimpleOperation(Piece.Z, Rotate.Right, mx09, y);
-                    case Right:
-                        return new SimpleOperation(Piece.Z, Rotate.Left, mx09, y);
-                }
-                break;
-            }
-            case Z: {
-                switch (rotate) {
-                    case Spawn:
-                        return new SimpleOperation(Piece.S, Rotate.Spawn, mx09, y);
-                    case Reverse:
-                        return new SimpleOperation(Piece.S, Rotate.Reverse, mx09, y);
-                    case Left:
-                        return new SimpleOperation(Piece.S, Rotate.Right, mx09, y);
-                    case Right:
-                        return new SimpleOperation(Piece.S, Rotate.Left, mx09, y);
-                }
-                break;
-            }
-            case L: {
-                switch (rotate) {
-                    case Spawn:
-                        return new SimpleOperation(Piece.J, Rotate.Spawn, mx09, y);
-                    case Reverse:
-                        return new SimpleOperation(Piece.J, Rotate.Reverse, mx09, y);
-                    case Left:
-                        return new SimpleOperation(Piece.J, Rotate.Right, mx09, y);
-                    case Right:
-                        return new SimpleOperation(Piece.J, Rotate.Left, mx09, y);
-                }
-                break;
-            }
-            case J: {
-                switch (rotate) {
-                    case Spawn:
-                        return new SimpleOperation(Piece.L, Rotate.Spawn, mx09, y);
-                    case Reverse:
-                        return new SimpleOperation(Piece.L, Rotate.Reverse, mx09, y);
-                    case Left:
-                        return new SimpleOperation(Piece.L, Rotate.Right, mx09, y);
-                    case Right:
-                        return new SimpleOperation(Piece.L, Rotate.Left, mx09, y);
-                }
-                break;
-            }
+            case J:
+                return Piece.L;
+            case L:
+                return Piece.J;
+            case S:
+                return Piece.Z;
+            case Z:
+                return Piece.S;
         }
-        throw new IllegalStateException("Unknown type: " + piece + ", " + rotate);
+        return piece;
+    }
+
+    private Rotate mirrorRotate(Rotate rotate) {
+        switch (rotate) {
+            case Left:
+                return Rotate.Right;
+            case Right:
+                return Rotate.Left;
+        }
+        return rotate;
     }
 }

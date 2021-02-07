@@ -1,7 +1,7 @@
 package core.mino;
 
 import common.datastore.Operation;
-import common.datastore.SimpleOperation;
+import common.datastore.SimpleMinoOperation;
 import core.srs.Rotate;
 import org.junit.jupiter.api.Test;
 
@@ -9,36 +9,44 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class MinoTransformTest {
     private final MinoTransform transform = new MinoTransform();
+    private final MinoFactory minoFactory = new MinoFactory();
 
     void assertOperation(Operation operation, Operation expected) {
-        Operation mirror = transform.mirror(operation.getPiece(), operation.getRotate(), operation.getX(), operation.getY());
+        Operation mirror = transform.mirror(minoFactory, operation.getPiece(), operation.getRotate(), operation.getX(), operation.getY());
         assertThat(mirror).isEqualTo(expected);
 
-        Operation mirror2 = transform.mirror(mirror.getPiece(), mirror.getRotate(), mirror.getX(), mirror.getY());
+        Operation mirror2 = transform.mirror(minoFactory, mirror.getPiece(), mirror.getRotate(), mirror.getX(), mirror.getY());
         assertThat(mirror2).isEqualTo(operation);
+    }
+
+    private SimpleMinoOperation createSimpleOperation(
+            Piece piece, Rotate rotate, int x, int y
+    ) {
+        Mino mino = minoFactory.create(piece, rotate);
+        return new SimpleMinoOperation(mino, x, y);
     }
 
     @Test
     void mirrorI() {
         Piece piece = Piece.I;
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Spawn, 1, 0);
-            SimpleOperation expected = new SimpleOperation(piece, Rotate.Reverse, 8, 0);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Spawn, 1, 0);
+            SimpleMinoOperation expected = createSimpleOperation(piece, Rotate.Spawn, 7, 0);
             assertOperation(operation, expected);
         }
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Reverse, 2, 0);
-            SimpleOperation expected = new SimpleOperation(piece, Rotate.Spawn, 7, 0);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Reverse, 2, 0);
+            SimpleMinoOperation expected = createSimpleOperation(piece, Rotate.Reverse, 8, 0);
             assertOperation(operation, expected);
         }
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Right, 0, 2);
-            SimpleOperation expected = new SimpleOperation(piece, Rotate.Left, 9, 1);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Right, 0, 2);
+            SimpleMinoOperation expected = createSimpleOperation(piece, Rotate.Left, 9, 1);
             assertOperation(operation, expected);
         }
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Left, 0, 1);
-            SimpleOperation expected = new SimpleOperation(piece, Rotate.Right, 9, 2);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Left, 0, 1);
+            SimpleMinoOperation expected = createSimpleOperation(piece, Rotate.Right, 9, 2);
             assertOperation(operation, expected);
         }
     }
@@ -47,23 +55,23 @@ class MinoTransformTest {
     void mirrorT() {
         Piece piece = Piece.T;
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Spawn, 1, 1);
-            SimpleOperation expected = new SimpleOperation(piece, Rotate.Spawn, 8, 1);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Spawn, 1, 1);
+            SimpleMinoOperation expected = createSimpleOperation(piece, Rotate.Spawn, 8, 1);
             assertOperation(operation, expected);
         }
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Reverse, 1, 0);
-            SimpleOperation expected = new SimpleOperation(piece, Rotate.Reverse, 8, 0);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Reverse, 1, 0);
+            SimpleMinoOperation expected = createSimpleOperation(piece, Rotate.Reverse, 8, 0);
             assertOperation(operation, expected);
         }
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Right, 0, 1);
-            SimpleOperation expected = new SimpleOperation(piece, Rotate.Left, 9, 1);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Right, 0, 1);
+            SimpleMinoOperation expected = createSimpleOperation(piece, Rotate.Left, 9, 1);
             assertOperation(operation, expected);
         }
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Left, 1, 1);
-            SimpleOperation expected = new SimpleOperation(piece, Rotate.Right, 8, 1);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Left, 1, 1);
+            SimpleMinoOperation expected = createSimpleOperation(piece, Rotate.Right, 8, 1);
             assertOperation(operation, expected);
         }
     }
@@ -72,23 +80,23 @@ class MinoTransformTest {
     void mirrorO() {
         Piece piece = Piece.O;
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Spawn, 0, 0);
-            SimpleOperation expected = new SimpleOperation(piece, Rotate.Spawn, 8, 0);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Spawn, 0, 0);
+            SimpleMinoOperation expected = createSimpleOperation(piece, Rotate.Spawn, 8, 0);
             assertOperation(operation, expected);
         }
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Reverse, 1, 1);
-            SimpleOperation expected = new SimpleOperation(piece, Rotate.Reverse, 9, 1);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Reverse, 1, 1);
+            SimpleMinoOperation expected = createSimpleOperation(piece, Rotate.Reverse, 9, 1);
             assertOperation(operation, expected);
         }
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Left, 1,0);
-            SimpleOperation expected = new SimpleOperation(piece, Rotate.Left, 9, 0);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Left, 1, 0);
+            SimpleMinoOperation expected = createSimpleOperation(piece, Rotate.Right, 8, 1);
             assertOperation(operation, expected);
         }
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Right, 0, 1);
-            SimpleOperation expected = new SimpleOperation(piece, Rotate.Right, 8, 1);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Right, 0, 1);
+            SimpleMinoOperation expected = createSimpleOperation(piece, Rotate.Left, 9, 0);
             assertOperation(operation, expected);
         }
     }
@@ -97,23 +105,23 @@ class MinoTransformTest {
     void mirrorS() {
         Piece piece = Piece.S;
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Spawn, 1, 0);
-            SimpleOperation expected = new SimpleOperation(Piece.Z, Rotate.Spawn, 8, 0);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Spawn, 1, 0);
+            SimpleMinoOperation expected = createSimpleOperation(Piece.Z, Rotate.Spawn, 8, 0);
             assertOperation(operation, expected);
         }
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Reverse, 1, 1);
-            SimpleOperation expected = new SimpleOperation(Piece.Z, Rotate.Reverse, 8, 1);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Reverse, 1, 1);
+            SimpleMinoOperation expected = createSimpleOperation(Piece.Z, Rotate.Reverse, 8, 1);
             assertOperation(operation, expected);
         }
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Left, 1,1);
-            SimpleOperation expected = new SimpleOperation(Piece.Z, Rotate.Right, 8, 1);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Left, 1, 1);
+            SimpleMinoOperation expected = createSimpleOperation(Piece.Z, Rotate.Right, 8, 1);
             assertOperation(operation, expected);
         }
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Right, 0, 1);
-            SimpleOperation expected = new SimpleOperation(Piece.Z, Rotate.Left, 9, 1);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Right, 0, 1);
+            SimpleMinoOperation expected = createSimpleOperation(Piece.Z, Rotate.Left, 9, 1);
             assertOperation(operation, expected);
         }
     }
@@ -122,23 +130,23 @@ class MinoTransformTest {
     void mirrorZ() {
         Piece piece = Piece.Z;
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Spawn, 1, 0);
-            SimpleOperation expected = new SimpleOperation(Piece.S, Rotate.Spawn, 8, 0);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Spawn, 1, 0);
+            SimpleMinoOperation expected = createSimpleOperation(Piece.S, Rotate.Spawn, 8, 0);
             assertOperation(operation, expected);
         }
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Reverse, 1, 1);
-            SimpleOperation expected = new SimpleOperation(Piece.S, Rotate.Reverse, 8, 1);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Reverse, 1, 1);
+            SimpleMinoOperation expected = createSimpleOperation(Piece.S, Rotate.Reverse, 8, 1);
             assertOperation(operation, expected);
         }
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Left, 1,1);
-            SimpleOperation expected = new SimpleOperation(Piece.S, Rotate.Right, 8, 1);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Left, 1, 1);
+            SimpleMinoOperation expected = createSimpleOperation(Piece.S, Rotate.Right, 8, 1);
             assertOperation(operation, expected);
         }
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Right, 0, 1);
-            SimpleOperation expected = new SimpleOperation(Piece.S, Rotate.Left, 9, 1);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Right, 0, 1);
+            SimpleMinoOperation expected = createSimpleOperation(Piece.S, Rotate.Left, 9, 1);
             assertOperation(operation, expected);
         }
     }
@@ -147,23 +155,23 @@ class MinoTransformTest {
     void mirrorL() {
         Piece piece = Piece.L;
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Spawn, 1, 0);
-            SimpleOperation expected = new SimpleOperation(Piece.J, Rotate.Spawn, 8, 0);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Spawn, 1, 0);
+            SimpleMinoOperation expected = createSimpleOperation(Piece.J, Rotate.Spawn, 8, 0);
             assertOperation(operation, expected);
         }
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Reverse, 1, 1);
-            SimpleOperation expected = new SimpleOperation(Piece.J, Rotate.Reverse, 8, 1);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Reverse, 1, 1);
+            SimpleMinoOperation expected = createSimpleOperation(Piece.J, Rotate.Reverse, 8, 1);
             assertOperation(operation, expected);
         }
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Left, 1,1);
-            SimpleOperation expected = new SimpleOperation(Piece.J, Rotate.Right, 8, 1);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Left, 1, 1);
+            SimpleMinoOperation expected = createSimpleOperation(Piece.J, Rotate.Right, 8, 1);
             assertOperation(operation, expected);
         }
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Right, 0, 1);
-            SimpleOperation expected = new SimpleOperation(Piece.J, Rotate.Left, 9, 1);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Right, 0, 1);
+            SimpleMinoOperation expected = createSimpleOperation(Piece.J, Rotate.Left, 9, 1);
             assertOperation(operation, expected);
         }
     }
@@ -172,23 +180,23 @@ class MinoTransformTest {
     void mirrorJ() {
         Piece piece = Piece.J;
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Spawn, 1, 0);
-            SimpleOperation expected = new SimpleOperation(Piece.L, Rotate.Spawn, 8, 0);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Spawn, 1, 0);
+            SimpleMinoOperation expected = createSimpleOperation(Piece.L, Rotate.Spawn, 8, 0);
             assertOperation(operation, expected);
         }
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Reverse, 1, 1);
-            SimpleOperation expected = new SimpleOperation(Piece.L, Rotate.Reverse, 8, 1);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Reverse, 1, 1);
+            SimpleMinoOperation expected = createSimpleOperation(Piece.L, Rotate.Reverse, 8, 1);
             assertOperation(operation, expected);
         }
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Left, 1,1);
-            SimpleOperation expected = new SimpleOperation(Piece.L, Rotate.Right, 8, 1);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Left, 1, 1);
+            SimpleMinoOperation expected = createSimpleOperation(Piece.L, Rotate.Right, 8, 1);
             assertOperation(operation, expected);
         }
         {
-            SimpleOperation operation = new SimpleOperation(piece, Rotate.Right, 0, 1);
-            SimpleOperation expected = new SimpleOperation(Piece.L, Rotate.Left, 9, 1);
+            SimpleMinoOperation operation = createSimpleOperation(piece, Rotate.Right, 0, 1);
+            SimpleMinoOperation expected = createSimpleOperation(Piece.L, Rotate.Left, 9, 1);
             assertOperation(operation, expected);
         }
     }
