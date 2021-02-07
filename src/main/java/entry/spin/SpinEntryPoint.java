@@ -5,6 +5,7 @@ import common.pattern.PatternGenerator;
 import common.tetfu.common.ColorConverter;
 import concurrent.LockedReachableThreadLocal;
 import concurrent.RotateReachableThreadLocal;
+import core.FinderConstant;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
@@ -111,6 +112,7 @@ public class SpinEntryPoint implements EntryPoint {
         output("Required clear line: " + requiredClearLine);
         output("Search roof: " + (searchRoof ? "yes" : "no"));
         output("Max roof num: " + (maxRoofNum != Integer.MAX_VALUE ? maxRoofNum : "no limit"));
+        output("Version: " + FinderConstant.VERSION);
 
 //        output("Using hold: " + (settings.isUsingHold() ? "use" : "avoid"));
 //        output("Drop: " + settings.getDropType().name().toLowerCase());
