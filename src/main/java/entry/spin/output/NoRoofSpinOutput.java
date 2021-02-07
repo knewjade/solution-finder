@@ -105,7 +105,7 @@ public class NoRoofSpinOutput implements SpinOutput {
         int y = operationT.getY();
         int slideY = Long.bitCount(filledLineWithoutT & KeyOperators.getMaskForKeyBelowY(y + mino.getMinY()));
 
-        String mark = cansBuildWithoutT ? (
+        String mark = cansBuildWithoutT && freeze.isOnGround(mino, operationT.getX(), y - slideY) ? (
                 rotateReachableThreadLocal.get().checks(freeze, mino, operationT.getX(), y - slideY, fieldHeight) ? "O" : "X"
         ) : "-";
         String aLink = String.format(

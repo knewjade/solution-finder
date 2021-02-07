@@ -17,7 +17,6 @@ import core.srs.RotateDirection;
 import core.srs.SpinResult;
 import entry.path.output.FumenParser;
 import entry.path.output.MyFile;
-import entry.path.output.OneFumenParser;
 import exceptions.FinderExecuteException;
 import output.HTMLBuilder;
 import searcher.spins.SpinCommons;
@@ -147,7 +146,7 @@ public class FullSpinOutput implements SpinOutput {
         boolean cansBuildWithoutT = BuildUp.existsValidBuildPattern(initField, operations.stream().filter(op -> !operationT.equals(op)), fieldHeight, lockedReachable);
 
         // そのままTスピンできるか
-        String mark = cansBuildWithoutT ? (
+        String mark = cansBuildWithoutT && freeze.isOnGround(mino, operationT.getX(), y - slideY) ? (
                 rotateReachableThreadLocal.get().checks(freeze, mino, operationT.getX(), y - slideY, fieldHeight) ? "O" : "X"
         ) : "-";
         String aLink = String.format(

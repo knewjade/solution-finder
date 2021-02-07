@@ -360,6 +360,29 @@ class SpinTetfuCaseTest {
                     .contains("5gilGeglAeF8ywH8wwH8DeB8JeAgWCA0CBAA")
                     .contains("1gBtIeBtCeF8ywH8wwH8DeB8JeAgWCA0XBAA");
         }
+
+        @Test
+        void case13() throws Exception {
+            // Tミノがおけない
+            String fumen = "v115@VgG8CeG8CeG8CeG8CeG8CeF8DeH8AeI8AeA8JeAgH";
+            String command = buildCommand(fumen, "-p [LJOT]!");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(1));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SpinHTML html = OutputFileHelper.loadSpinHTML();
+            assertThat(html.getHtml())
+                    .contains("[-]")
+                    .doesNotContain("[O]")
+                    .doesNotContain("[X]");
+
+            assertThat(html.getFumens())
+                    .hasSize(1)
+                    .contains("HgRpHeRpBeG8CeG8wwhlG8xwglG8wwAeglG8i0F8Ce?g0H8AeI8AeA8JeAgWEAqOMgC");
+        }
     }
 
     @Nested
