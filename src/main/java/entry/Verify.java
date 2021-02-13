@@ -23,18 +23,18 @@ public class Verify {
     }
 
     public static void maxClearLineUnder10(int maxClearLine) throws FinderInitializeException {
-        if (maxClearLine < 2 || 10 < maxClearLine)
-            throw new FinderInitializeException("Clear-Line should be 2 <= line <= 10: line=" + maxClearLine);
+        if (maxClearLine < 1 || 10 < maxClearLine)
+            throw new FinderInitializeException("Clear-Line should be 1 <= line <= 10: line=" + maxClearLine);
     }
 
     public static void maxClearLineUnder12(int maxClearLine) throws FinderInitializeException {
-        if (maxClearLine < 2 || 12 < maxClearLine)
-            throw new FinderInitializeException("Clear-Line should be 2 <= line <= 12: line=" + maxClearLine);
+        if (maxClearLine < 1 || 12 < maxClearLine)
+            throw new FinderInitializeException("Clear-Line should be 1 <= line <= 12: line=" + maxClearLine);
     }
 
     public static void maxClearLineUnder24(int maxClearLine) throws FinderInitializeException {
-        if (maxClearLine < 2 || 24 < maxClearLine)
-            throw new FinderInitializeException("Clear-Line should be 2 <= line <= 24: line=" + maxClearLine);
+        if (maxClearLine < 1 || 24 < maxClearLine)
+            throw new FinderInitializeException("Clear-Line should be 1 <= line <= 24: line=" + maxClearLine);
     }
 
     public static void reservedBlocks(BlockField blockField) throws FinderInitializeException {

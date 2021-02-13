@@ -944,6 +944,20 @@ class SetupTetfuCaseTest {
 
             assertThat(log.getError()).isEmpty();
         }
+
+        @Test
+        void test1Line() throws Exception {
+            String tetfu = "v115@bhTpPeAgH";
+
+            String command = String.format("setup -t %s -f O -p I", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput())
+                    .contains(Messages.foundSolutions(1))
+                    .contains(Messages.foundSubSolutions(1));
+
+            assertThat(log.getError()).isEmpty();
+        }
     }
 
     @Nested

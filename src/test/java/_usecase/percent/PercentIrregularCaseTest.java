@@ -283,7 +283,7 @@ class PercentIrregularCaseTest extends PercentUseCaseBaseTest {
         String errorFile = OutputFileHelper.loadErrorText();
         assertThat(errorFile)
                 .contains(command)
-                .contains("Clear-Line should be 2 <= line <= 24: line=0 [FinderInitializeException]");
+                .contains("Clear-Line should be 1 <= line <= 24: line=0 [FinderInitializeException]");
     }
 
     @Test

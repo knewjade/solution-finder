@@ -1425,4 +1425,41 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
                 .hasSize(7)
                 .contains("FhD8DeG8AeJ8AeE8JeCGYZAFLDmClcJSAVDEHBEooR?BMoAVBv/VWCpAAAAvhEzhBmkBdrBCtBxuB");
     }
+
+    @Test
+    void test1Line() throws Exception {
+        String tetfu = "v115@bhE8DeA8JeAgH";
+
+        String command = String.format("path -c 1 --patterns I --tetfu %s", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getOutput())
+                .contains(Messages.uniqueCount(1))
+                .contains(Messages.minimalCount(1))
+                .contains(Messages.useHold());
+
+        assertThat(log.getError()).isEmpty();
+
+        // unique
+        PathHTML uniqueHTML = OutputFileHelper.loadPathUniqueHTML();
+
+        // ライン消去なし
+        assertThat(uniqueHTML.noDeletedLineFumens())
+                .hasSize(1)
+                .contains("bhE8zhA8JeAgWBApAAAA");
+
+        // ライン消去あり
+        assertThat(uniqueHTML.deletedLineFumens()).isEmpty();
+
+        // minimal
+        PathHTML minimalHTML = OutputFileHelper.loadPathMinimalHTML();
+
+        // ライン消去なし
+        assertThat(minimalHTML.noDeletedLineFumens())
+                .hasSize(1)
+                .contains("bhE8zhA8JeAgWBApAAAA");
+
+        // ライン消去あり
+        assertThat(minimalHTML.deletedLineFumens()).isEmpty();
+    }
 }
