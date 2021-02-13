@@ -35,6 +35,10 @@ import entry.util.fumen.FumenUtilEntryPoint;
 import entry.util.fumen.FumenUtilOptions;
 import entry.util.fumen.FumenUtilSettingParser;
 import entry.util.fumen.FumenUtilSettings;
+import entry.util.seq.SeqUtilEntryPoint;
+import entry.util.seq.SeqUtilOptions;
+import entry.util.seq.SeqUtilSettingParser;
+import entry.util.seq.SeqUtilSettings;
 import exceptions.FinderInitializeException;
 import exceptions.FinderParseException;
 import org.apache.commons.cli.CommandLineParser;
@@ -282,6 +286,18 @@ public class EntryPointMain {
                 if (settingsOptional.isPresent()) {
                     FumenUtilSettings settings = settingsOptional.get();
                     return Optional.of(new FumenUtilEntryPoint(settings));
+                } else {
+                    return Optional.empty();
+                }
+            }
+            case "seq": {
+                Options options = SeqUtilOptions.create();
+                CommandLineParser parser = new DefaultParser();
+                SeqUtilSettingParser settingParser = new SeqUtilSettingParser(options, parser);
+                Optional<SeqUtilSettings> settingsOptional = settingParser.parse(commands);
+                if (settingsOptional.isPresent()) {
+                    SeqUtilSettings settings = settingsOptional.get();
+                    return Optional.of(new SeqUtilEntryPoint(settings));
                 } else {
                     return Optional.empty();
                 }

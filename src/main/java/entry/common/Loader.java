@@ -83,10 +83,10 @@ public class Loader {
         // 探索パターンの設定
         if (wrapper.hasOption(patternsOptName)) {
             // パターン定義から
-            Optional<String> patternOption = wrapper.getStringOption(patternsOptName);
-            assert patternOption.isPresent();
-            String patternValue = patternOption.get();
-            return Arrays.stream(patternValue.split(patternDelimiter)).collect(Collectors.toList());
+            List<String> patternOption = wrapper.getStringOptions(patternsOptName);
+            return patternOption.stream()
+                    .flatMap(pattern -> Arrays.stream(pattern.split(patternDelimiter)))
+                    .collect(Collectors.toList());
         } else {
             // パターンファイルから
             Optional<String> patternPathOption = wrapper.getStringOption(patternsPathOptName);

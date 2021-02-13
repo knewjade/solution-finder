@@ -5,7 +5,6 @@ import core.mino.Piece;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 // 指定したミノ列からホールドを利用して並び替えられるミノ列をすべて列挙
@@ -21,22 +20,38 @@ public class ForwardOrderLookUp {
     }
 
     private List<List<Integer>> forward(int toDepth, boolean isOverBlock) {
+        if (toDepth == 1) {
+            ArrayList<List<Integer>> candidates = new ArrayList<>();
+            {
+                StackOrder<Integer> e = new IntegerListStackOrder();
+                e.addLast(0);
+                candidates.add(e.toList());
+
+                if (isOverBlock) {
+                    StackOrder<Integer> e2 = new IntegerListStackOrder();
+                    e2.addLast(1);
+                    candidates.add(e2.toList());
+                }
+
+            }
+            return candidates;
+        }
+
         assert 1 < toDepth;
-        List<Integer> indexes = IntStream.range(0, toDepth).boxed().collect(Collectors.toList());
 
         ArrayList<StackOrder<Integer>> candidates = new ArrayList<>();
         StackOrder<Integer> e = new IntegerListStackOrder();
-        e.addLast(indexes.get(0));
-        e.addLast(indexes.get(1));
+        e.addLast(0);
+        e.addLast(1);
         candidates.add(e);
 
         StackOrder<Integer> e2 = new IntegerListStackOrder();
-        e2.addLast(indexes.get(1));
-        e2.addLast(indexes.get(0));
+        e2.addLast(1);
+        e2.addLast(0);
         candidates.add(e2);
 
         for (int depth = 2; depth < toDepth; depth++) {
-            Integer number = indexes.get(depth);
+            Integer number = depth;
             int size = candidates.size();
             for (int index = 0; index < size; index++) {
                 StackOrder<Integer> pieces = candidates.get(index);
@@ -68,7 +83,7 @@ public class ForwardOrderLookUp {
     }
 
     public Stream<Stream<Piece>> parse(List<Piece> pieces) {
-        assert 1 < indexesList.get(0).size() && indexesList.get(0).size() <= pieces.size();
+        assert 1 <= indexesList.get(0).size() && indexesList.get(0).size() <= pieces.size();
 
         return indexesList.stream()
                 .map(indexes -> indexes.stream().map(index -> index != -1 ? pieces.get(index) : null));
