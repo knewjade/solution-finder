@@ -47,8 +47,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'solution-finder'
-copyright = '2017-2020, newjade'
-author = 'newjade'
+copyright = '2017-2021, knewjade'
+author = 'knewjade'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
