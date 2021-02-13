@@ -25,7 +25,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         @Test
         void singleSequence() throws Exception {
             // 固定のシーケンス
-            String command = "util seq -p ZJSTL";
+            String command = "util seq -p ZJSTL -distinct no";
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -38,7 +38,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         @Test
         void pattern() throws Exception {
             // パターン
-            String command = "util seq -p *p2";
+            String command = "util seq -p *p2 -distinct no";
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -52,7 +52,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         @Test
         void duplicatedPattern() throws Exception {
             // 同一パターンが含まれる (スペース区切り)
-            String command = "util seq -p *p2 *p2";
+            String command = "util seq -p *p2 *p2 -distinct no";
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -66,7 +66,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         @Test
         void duplicatedPattern2() throws Exception {
             // 同一パターンが含まれる (セミコロン区切り)
-            String command = "util seq -p *p2;*p2";
+            String command = "util seq -p *p2;*p2 -distinct no";
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -94,7 +94,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         @Test
         void cutting1() throws Exception {
             // サイズ1でカットする
-            String command = "util seq -p *p2 *p2 -d yes -c 1";
+            String command = "util seq -p *p2 *p2 -c 1";
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -107,7 +107,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         @Test
         void overCutting() throws Exception {
             // cuttingが大きい
-            String command = "util seq -p *! -d yes -c 10";
+            String command = "util seq -p *! -c 10";
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -122,7 +122,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         @Test
         void singleSequence() throws Exception {
             // 固定のシーケンス。同じミノを含まない
-            String command = "util seq -p ZJSTL -M forward";
+            String command = "util seq -p ZJSTL -M forward -d no";
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -152,7 +152,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         @Test
         void cutting4() throws Exception {
             // サイズ4でカットする
-            String command = "util seq -p ZJSTL -M forward -c 4";
+            String command = "util seq -p ZJSTL -M forward -c 4 -d no";
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -182,7 +182,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         @Test
         void samePiece() throws Exception {
             // 固定のシーケンス。同じミノを含む
-            String command = "util seq -p ZZJST -M forward -c 4";
+            String command = "util seq -p ZZJST -M forward -c 4 -d no";
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -216,7 +216,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         @Test
         void twoSequences() throws Exception {
             // 固定のシーケンスが2つ
-            String command = "util seq -p ZZJST ZJSTZ -M forward -c 4 -d yes";
+            String command = "util seq -p ZZJST ZJSTZ -M forward -c 4";
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -251,7 +251,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         @Test
         void pattern() throws Exception {
             // 固定のシーケンスが2つ
-            String command = "util seq -p [SLJI]p2 -M forward -d yes";
+            String command = "util seq -p [SLJI]p2 -M forward";
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -277,7 +277,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         @Test
         void overCutting() throws Exception {
             // cuttingが大きい
-            String command = "util seq -p *! -M forward -c 10 -d yes";
+            String command = "util seq -p *! -M forward -c 10";
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput().split(LINE_SEPARATOR))

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SeqUtilSettings {
-    private boolean isDistinct = false;
+    private boolean isDistinct = true;
     private int cuttingSize = -1;
     private List<String> patterns = new ArrayList<>();
     private SeqUtilModes mode = SeqUtilModes.Pass;
