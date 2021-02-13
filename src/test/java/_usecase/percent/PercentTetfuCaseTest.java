@@ -425,4 +425,17 @@ class PercentTetfuCaseTest extends PercentUseCaseBaseTest {
             assertThat(log.getError()).isEmpty();
         }
     }
+
+    @Test
+    void test1Line() throws Exception {
+        String tetfu = "v115@bhE8DeA8JeAgH";
+
+        String command = String.format("percent -t %s -p I -c 1", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getOutput())
+                .contains(Messages.success(1, 1));
+
+        assertThat(log.getError()).isEmpty();
+    }
 }

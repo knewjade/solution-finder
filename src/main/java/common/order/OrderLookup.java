@@ -44,7 +44,16 @@ public class OrderLookup {
     // blocks -- [hold] --> ???
     // toDepth: ???の深さ
     public static ArrayList<StackOrder<Piece>> forwardBlocks(List<Piece> blocks, int toDepth) {
-        assert 1 < toDepth && toDepth <= blocks.size(): toDepth;
+        if (blocks.size() == 1) {
+            assert toDepth == 1;
+            ArrayList<StackOrder<Piece>> candidates = new ArrayList<>();
+            StackOrder<Piece> e = new LongStackOrder();
+            e.addLast(blocks.get(0));
+            candidates.add(e.fix());
+            return candidates;
+        }
+
+        assert 1 < toDepth && toDepth <= blocks.size() : toDepth;
 
         ArrayList<StackOrder<Piece>> candidates = new ArrayList<>();
         StackOrder<Piece> e = new LongStackOrder();
