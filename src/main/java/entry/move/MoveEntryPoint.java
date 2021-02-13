@@ -41,6 +41,9 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * beta command
+ */
 public class MoveEntryPoint implements EntryPoint {
     private static final String LINE_SEPARATOR = System.lineSeparator();
 
