@@ -1,1 +1,2 @@
-rootProject.name = 'solution-finder'
+rootProject.name = 'sfinder-experimental'
+include ":solution-finder"

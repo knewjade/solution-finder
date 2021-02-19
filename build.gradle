@@ -1,22 +1,13 @@
-group 'com.knewjade'
 version '0.960'
 
 apply plugin: 'java'
-apply plugin: 'idea'
 
 archivesBaseName = 'solution-finder'
 sourceCompatibility = 1.8
 
 // Specify encoding of sources
 def defaultEncoding = 'UTF-8'
-
-tasks.withType(AbstractCompile).each {
-    it.options.encoding = defaultEncoding
-}
-
-tasks.withType(GroovyCompile).each {
-    it.groovyOptions.encoding = defaultEncoding
-}
+[compileJava, compileTestJava]*.options*.encoding = defaultEncoding
 
 buildscript {
     repositories {
@@ -33,22 +24,27 @@ repositories {
 }
 
 dependencies {
-    compile 'commons-cli:commons-cli:1.+'
-    testCompile 'com.google.guava:guava:27.1-jre'
+    implementation 'commons-cli:commons-cli:1.+'
+    testImplementation'com.google.guava:guava:27.1-jre'
 
-    testCompile 'org.junit.jupiter:junit-jupiter-api:5.+'
-    testCompile 'org.junit.jupiter:junit-jupiter-engine:5.+'
-    testCompile 'org.junit.jupiter:junit-jupiter-params:5.+'
-    testCompile 'org.apiguardian:apiguardian-api:1.0.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.+'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.+'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.+'
+    testImplementation 'org.apiguardian:apiguardian-api:1.0.0'
 
     // for assertions
-    testCompile 'org.assertj:assertj-core:3.+'
+    testImplementation 'org.assertj:assertj-core:3.+'
 }
 
 jar {
-    manifest.attributes 'Main-Class': 'Main'
-    from configurations.compile.collect {
-        it.isDirectory() ? it : zipTree(it)
+    manifest {
+        attributes 'Main-Class': 'Main'
+    }
+
+    from {
+        configurations.compileClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
     }
 }
 
