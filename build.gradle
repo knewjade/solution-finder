@@ -4,20 +4,11 @@ apply plugin: 'java'
 
 archivesBaseName = 'solution-finder'
 sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 // Specify encoding of sources
 def defaultEncoding = 'UTF-8'
 [compileJava, compileTestJava]*.options*.encoding = defaultEncoding
-
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.+'
-    }
-}
 
 repositories {
     mavenCentral()
@@ -73,7 +64,7 @@ task copyRelease(type: Task) {
         }
 
         def jarName = String.format '%s-%s.jar', archivesBaseName, version
-        def srcJarFile = file libsDir.canonicalPath + File.separator + jarName
+        def srcJarFile = file(["build", "libs", jarName].join(File.separator))
 
         // copy jar
         copy {
@@ -123,7 +114,7 @@ task releaseWithBianry(type: Zip) {
     copyBinary.mustRunAfter copyRelease
 
     from releaseDir
-    classifier = "GUI"
+    archiveClassifier.set("GUI")
 }
 
 test {
