@@ -3,12 +3,12 @@ version '0.960'
 apply plugin: 'java'
 
 archivesBaseName = 'solution-finder'
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
 
 // Specify encoding of sources
 def defaultEncoding = 'UTF-8'
 [compileJava, compileTestJava]*.options*.encoding = defaultEncoding
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenCentral()
