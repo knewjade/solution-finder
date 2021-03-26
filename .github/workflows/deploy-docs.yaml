@@ -3,6 +3,8 @@ on:
   push:
     tags:
       - 'v*'
+    branches:
+      - main
 defaults:
   run:
     working-directory: docs
