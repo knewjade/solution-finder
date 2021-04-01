@@ -1,5 +1,6 @@
 package _usecase.ren;
 
+import _usecase.ConfigFileHelper;
 import _usecase.Log;
 import _usecase.RunnerHelper;
 import _usecase.ren.files.OutputFileHelper;
@@ -172,6 +173,25 @@ class RenTetfuCaseTest {
                         .contains("TfF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8De?F8CeG8BeA8AeF8AeA8BeH8AeG8JeMKYhAFLDmClcJSAVDEH?BEooRBaoAVBvvLMCs/dgCzn9VC0AAAAvhMTkBmkB/lBZkBC?lBGlBNkBTlB/kBUlBxkB6lB1pB");
             }
         }
+
+        @Test
+        void manyPatterns() throws Exception {
+            ConfigFileHelper.createPatternFileFromCommand("*, *!");
+
+            String tetfu = "v115@9gB8HeC8GeD8FeC8QeAgH";
+            String command = String.format("ren -t %s", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+            System.out.println(log.getOutput());
+            System.out.println(log.getError());
+//            assertThat(log.getOutput())
+//                    .contains(_usecase.percent.Messages.useHold())
+//                    .contains(_usecase.percent.Messages.success(34981, 35280))
+//                    .contains(_usecase.percent.Messages.clearLine(4))
+//                    .contains(_usecase.percent.Messages.patternSize(35280))
+//                    .contains("and more, total 35280 lines");
+//
+//            assertThat(log.getError()).isEmpty();
+        }
     }
 
     @Nested
@@ -190,6 +210,20 @@ class RenTetfuCaseTest {
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
+            assertThat(log.getReturnCode()).isNotEqualTo(0);
+            assertThat(log.getError()).contains("Should specify one sequence, not allow pattern(*) for multi sequences");
+        }
+
+        @Test
+        void manyPatternsFile() throws Exception {
+            ConfigFileHelper.createPatternFileFromCommand("*!");
+
+            String tetfu = "v115@9gB8HeC8GeD8FeC8QeAgH";
+            String command = String.format("ren -t %s", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getReturnCode()).isNotEqualTo(0);
             assertThat(log.getError()).contains("Should specify one sequence, not allow pattern(*) for multi sequences");
         }
     }

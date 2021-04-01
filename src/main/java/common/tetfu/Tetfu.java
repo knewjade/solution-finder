@@ -97,7 +97,9 @@ public class Tetfu {
 
         for (int index = 0; index < elements.size(); index++) {
             TetfuElement element = elements.get(index);
-            ColoredField field = element.getField().orElse(prevField);
+            ColoredField field = element.getField().isPresent()
+                    ? element.getField().get().freeze()
+                    : prevField;
             List<Integer> blockUp = element.getBlockUpList().orElse(prevBlockUp);
 
             // field settings

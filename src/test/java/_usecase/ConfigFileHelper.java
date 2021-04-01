@@ -4,11 +4,17 @@ import com.google.common.base.Charsets;
 import com.google.common.io.CharSink;
 import com.google.common.io.FileWriteMode;
 import com.google.common.io.Files;
+import common.SyntaxException;
+import common.datastore.blocks.Pieces;
+import common.pattern.LoadedPatternGenerator;
 import core.field.Field;
 import core.field.FieldView;
+import core.mino.Piece;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ConfigFileHelper {
     private static final String FIELD_PATH = concatPath("input", "field.txt");
@@ -69,7 +75,28 @@ public class ConfigFileHelper {
         createNewTextFile(pattern, fileName, directoryPath);
     }
 
-    public static void deletePatternFile() throws IOException {
+    public static void createPatternFileFromCommand(String patternCommand) throws IOException, SyntaxException {
+        createPatternFileFromCommand(patternCommand, "patterns");
+    }
+
+    public static void createPatternFileFromCommand(String patternCommand, String fileName) throws IOException, SyntaxException {
+        createNewTextFileAndExpand(patternCommand, fileName, concatPath("input"));
+    }
+
+    private static void createNewTextFileAndExpand(String pattern, String fileName, String parentDirectoryPath) throws IOException, SyntaxException {
+        File file = new File(concatPath(parentDirectoryPath, fileName + ".txt"));
+        FileHelper.deleteFileAndClose(file);
+
+        // noinspection ResultOfMethodCallIgnored
+        file.createNewFile();
+        CharSink charSink = Files.asCharSink(file, Charsets.UTF_8, FileWriteMode.APPEND);
+        String text = new LoadedPatternGenerator(pattern).blocksStream()
+                .map(pieces -> pieces.blockStream().map(Piece::getName).collect(Collectors.joining()))
+                .collect(Collectors.joining(System.lineSeparator()));
+        charSink.write(text);
+    }
+
+    public static void deletePatternFile() {
         File file = new File(PATTERN_PATH);
         FileHelper.deleteFileAndClose(file);
     }

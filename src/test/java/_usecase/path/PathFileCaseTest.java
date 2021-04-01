@@ -1,6 +1,8 @@
 package _usecase.path;
 
-import _usecase.*;
+import _usecase.ConfigFileHelper;
+import _usecase.Log;
+import _usecase.RunnerHelper;
 import _usecase.path.files.OutputFileHelper;
 import _usecase.path.files.PathHTML;
 import core.field.Field;
@@ -213,13 +215,13 @@ class PathFileCaseTest extends PathUseCaseBaseTest {
     void useFieldFileAndPatternsFile4() throws Exception {
         // フィールドファイル + パターンファイル (デフォルト以外の場所)
 
-        ConfigFileHelper.createFieldFile(Stream.of(
+        ConfigFileHelper.createFieldFile(String.join(LINE_SEPARATOR,
                 "4",
                 "XX_____XXX",
                 "XX____XXXX",
                 "XX___XXXXX",
                 "XXIIIIXXXX"
-        ).collect(Collectors.joining(LINE_SEPARATOR)));
+        ));
         ConfigFileHelper.createPatternFile("I,*p3");
 
         String command = "path -r true";
@@ -382,5 +384,21 @@ class PathFileCaseTest extends PathUseCaseBaseTest {
         assertThat(parseLastPageTetfu(minimalHTML.allFumens()))
                 .hasSize(1)
                 .allMatch(coloredField -> isFilled(height, coloredField));
+    }
+
+    @Test
+    void manyPatternsFile() throws Exception {
+        ConfigFileHelper.createPatternFileFromCommand("*!");
+
+        String tetfu = "v115@9gB8HeC8GeD8FeC8QeAgH";
+        String command = String.format("path -t %s", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getOutput())
+                .contains(Messages.uniqueCount(116))
+                .contains(Messages.minimalCount(76))
+                .contains("... and more, total 5040 lines");
+
+        assertThat(log.getError()).isEmpty();
     }
 }

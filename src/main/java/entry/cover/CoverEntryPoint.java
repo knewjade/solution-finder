@@ -111,8 +111,11 @@ public class CoverEntryPoint implements EntryPoint {
         PatternGenerator generator = Verify.patterns(patterns);
 
         // Output patterns
-        for (String pattern : patterns)
+        for (String pattern : patterns.subList(0, Math.min(5, patterns.size())))
             output("  " + pattern);
+
+        if (5 < patterns.size())
+            output(String.format("  ... and more, total %s lines", patterns.size()));
 
         // 探索パターンの列挙
         List<LongPieces> piecesList = generator.blocksStream()

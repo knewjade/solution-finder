@@ -1,5 +1,6 @@
 package _usecase.cover;
 
+import _usecase.ConfigFileHelper;
 import _usecase.Log;
 import _usecase.RunnerHelper;
 import _usecase.cover.files.OutputFileHelper;
@@ -892,6 +893,22 @@ class CoverTetfuCaseTest {
                 assertThat(log.getOutput()).contains(Messages.foundOrSolutions(2, all));
                 assertThat(log.getOutput()).contains(Messages.foundAndSolutions(2, all));
             }
+        }
+
+        @Test
+        void manyPatternsFile() throws Exception {
+            ConfigFileHelper.createPatternFileFromCommand("J,*!,*p2");
+
+            String fumen1 = "v115@bhA8BeB8AeA8MeeNYWAFLDmClcJSAVDEHBEooRBKoA?VBvXBAAvhBTfB0pB";
+
+            String command = String.format("cover -d harddrop --tetfu %s", fumen1);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            int all = 211680;
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(20160, all, fumen1));
+            assertThat(log.getOutput()).contains(Messages.foundOrSolutions(20160, all));
+            assertThat(log.getOutput()).contains(Messages.foundAndSolutions(20160, all));
         }
     }
 }
