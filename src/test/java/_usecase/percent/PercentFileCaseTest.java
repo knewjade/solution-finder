@@ -266,4 +266,22 @@ class PercentFileCaseTest extends PercentUseCaseBaseTest {
 
         assertThat(log.getError()).isEmpty();
     }
+
+    @Test
+    void manyPatternsFile() throws Exception {
+        ConfigFileHelper.createPatternFileFromCommand("*, *!");
+
+        String tetfu = "v115@9gB8HeC8GeD8FeC8QeAgH";
+        String command = String.format("percent -t %s", tetfu);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getOutput())
+                .contains(Messages.useHold())
+                .contains(Messages.success(34981, 35280))
+                .contains(Messages.clearLine(4))
+                .contains(Messages.patternSize(35280))
+                .contains("... and more, total 35280 lines");
+
+        assertThat(log.getError()).isEmpty();
+    }
 }

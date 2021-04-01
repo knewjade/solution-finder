@@ -177,8 +177,11 @@ public class SetupEntryPoint implements EntryPoint {
 
         // Output patterns
         output("Searching patterns [" + (settings.isCombination() ? "combination" : "order") + "]:");
-        for (String pattern : patterns)
+        for (String pattern : patterns.subList(0, Math.min(5, patterns.size())))
             output("  " + pattern);
+
+        if (5 < patterns.size())
+            output(String.format("  ... and more, total %s lines", patterns.size()));
 
         output();
 

@@ -75,23 +75,23 @@ public class LoadedPatternGenerator implements PatternGenerator {
     @Override
     public Stream<Pieces> blocksStream() {
         int depth = getDepth();
-        Stream<Pieces> stream = Stream.empty();
+        Stream.Builder<Pieces> builder = Stream.builder();
         for (PatternInterpreter interpreter : interpreters) {
             List<Element> elements = interpreter.getElements();
-            stream = Stream.concat(stream, new PiecesStreamBuilder(elements, depth).blocksStream());
+            new PiecesStreamBuilder(elements, depth).blocksStream().forEach(builder::add);
         }
-        return stream;
+        return builder.build();
     }
 
     @Override
     public Stream<PieceCounter> blockCountersStream() {
         int depth = getDepth();
-        Stream<PieceCounter> stream = Stream.empty();
+        Stream.Builder<PieceCounter> builder = Stream.builder();
         for (PatternInterpreter interpreter : interpreters) {
             List<Element> elements = interpreter.getElements();
-            stream = Stream.concat(stream, new PiecesStreamBuilder(elements, depth).blockCountersStream());
+            new PiecesStreamBuilder(elements, depth).blockCountersStream().forEach(builder::add);
         }
-        return stream;
+        return builder.build();
     }
 }
 

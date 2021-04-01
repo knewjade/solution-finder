@@ -73,4 +73,19 @@ class SetupFileCaseTest extends SetupUseCaseBaseTest {
                 .contains("9gwhAeRpAeh0CewhQ4RpAtg0CeA8whR4Btg0glAeB8?whAeQ4AtilAeA8KeAgWGAs3HgCT+AAA")
                 .contains("/gQ4zhCeh0R4RpCeA8g0BtQ4RpglAeB8g0AeBtilAe?A8KeAgWGAMuaFDz/AAA");
     }
+
+    @Test
+    void manyPatternsFile() throws Exception {
+        ConfigFileHelper.createPatternFileFromCommand("*!");
+
+        String fumen = "v115@zg0hEewhj0Eewhj0Eewhj0EewhzwOeAgH";
+        String command = String.format("setup -t %s -f t -m j --drop harddrop -l 4 --combination yes", fumen);
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        // Log
+        assertThat(log.getOutput())
+                .contains(Messages.foundSolutions(38))
+                .contains("... and more, total 5040 lines");
+        assertThat(log.getError()).isEmpty();
+    }
 }

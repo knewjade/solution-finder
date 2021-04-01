@@ -1,5 +1,6 @@
 package _usecase.spin;
 
+import _usecase.ConfigFileHelper;
 import _usecase.Log;
 import _usecase.RunnerHelper;
 import _usecase.spin.files.OutputFileHelper;
@@ -425,6 +426,7 @@ class SpinTetfuCaseTest {
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
+            assertThat(log.getReturnCode()).isNotEqualTo(0);
             assertThat(log.getError()).contains("Fill-bottom should be 0 <= y < 24");
         }
 
@@ -436,6 +438,7 @@ class SpinTetfuCaseTest {
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
+            assertThat(log.getReturnCode()).isNotEqualTo(0);
             assertThat(log.getError()).contains("Fill-top should be greater than or equal to fill-bottom");
         }
 
@@ -447,6 +450,7 @@ class SpinTetfuCaseTest {
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
+            assertThat(log.getReturnCode()).isNotEqualTo(0);
             assertThat(log.getError()).contains("Required-clear-line should be 1 <= line <= 3");
         }
 
@@ -458,6 +462,21 @@ class SpinTetfuCaseTest {
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
+            assertThat(log.getReturnCode()).isNotEqualTo(0);
+            assertThat(log.getError()).contains("Required-clear-line should be 1 <= line <= 3");
+        }
+
+
+        @Test
+        void manyPatternsFile() throws Exception {
+            ConfigFileHelper.createPatternFileFromCommand("*!");
+
+            String fumen = "v115@HhB8AeH8BeI8AeG8JeAgH";
+            String command = buildCommand(fumen, "-c 4");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getReturnCode()).isNotEqualTo(0);
             assertThat(log.getError()).contains("Required-clear-line should be 1 <= line <= 3");
         }
     }
