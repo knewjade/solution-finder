@@ -13,6 +13,7 @@ public enum SeqUtilOptions {
     Mode(SingleArgOption.full("M", "mode", "pass or forward", "Specify sequence mode")),
     CuttingSize(SingleArgOption.full("c", "cut", "cutting size", "Specify max piece size in a sequence")),
     Distinct(SingleArgOption.full("d", "distinct", "yes or no", "Specify whether or not to remove duplicates")),
+    Expression(SingleArgOption.full("e", "expression", "expression", "Specify regular expression to filter sequences after cutting")),
     ;
 
     private final OptionBuilder optionBuilder;

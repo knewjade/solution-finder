@@ -10,6 +10,7 @@ public class SeqUtilSettings {
     private int cuttingSize = -1;
     private List<String> patterns = new ArrayList<>();
     private SeqUtilModes mode = SeqUtilModes.Pass;
+    private String expression = "";
 
     // ********* Getter ************
     List<String> getPatterns() {
@@ -26,6 +27,10 @@ public class SeqUtilSettings {
 
     boolean isDistinct() {
         return this.isDistinct;
+    }
+
+    String getExpression() {
+        return expression;
     }
 
     // ********* Setter ************
@@ -53,5 +58,9 @@ public class SeqUtilSettings {
 
     void setDistinct(boolean value) {
         this.isDistinct = value;
+    }
+
+    void setExpression(String value) {
+        this.expression = value;
     }
 }

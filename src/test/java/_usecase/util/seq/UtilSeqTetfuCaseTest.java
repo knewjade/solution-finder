@@ -118,6 +118,97 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
     }
 
     @Nested
+    class Expression {
+        @Test
+        void SZ() throws Exception {
+            String command = "util seq -p *! -e SZ";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput().split(LINE_SEPARATOR))
+                    .hasSize(720);  // 6!
+
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
+        void SxZ() throws Exception {
+            String command = "util seq -p *! -e S.Z";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput().split(LINE_SEPARATOR))
+                    .hasSize(600);  // 6!-5!
+
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
+        void SxxZ() throws Exception {
+            String command = "util seq -p *! -e S..Z";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput().split(LINE_SEPARATOR))
+                    .hasSize(480);  // 6!-5!*2
+
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
+        void StoZ() throws Exception {
+            String command = "util seq -p *! -e S.*Z";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput().split(LINE_SEPARATOR))
+                    .hasSize(2520);  // 7!/2
+
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
+        void Sat2() throws Exception {
+            String command = "util seq -p *! -e ^.S";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput().split(LINE_SEPARATOR))
+                    .hasSize(720);  // 6!
+
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
+        void SatLast2() throws Exception {
+            String command = "util seq -p *! -e S.$";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput().split(LINE_SEPARATOR))
+                    .hasSize(720);  // 6!
+
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
+        void forward() throws Exception {
+            String command = "util seq -p STZOJ -M forward -e Z$";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput().split(LINE_SEPARATOR))
+                    .hasSize(2); // STOJZ,TSOJZ
+
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
+        void S2() throws Exception {
+            String command = "util seq -p *p3,*p3 -eq S2";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput().split(LINE_SEPARATOR))
+                    .hasSize(2); // STOJZ,TSOJZ
+
+            assertThat(log.getError()).isEmpty();
+        }
+    }
+
+    @Nested
     class Forward {
         @Test
         void singleSequence() throws Exception {

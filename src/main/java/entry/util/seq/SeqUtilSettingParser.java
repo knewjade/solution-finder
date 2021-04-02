@@ -58,6 +58,10 @@ public class SeqUtilSettingParser extends SettingParser<SeqUtilSettings> {
             throw new FinderParseException(e.getMessage());
         }
 
+        // ミノのフィルタリングを指定する
+        Optional<String> expression = wrapper.getStringOption(SeqUtilOptions.Expression.optName());
+        expression.ifPresent(settings::setExpression);
+
         return Optional.of(settings);
     }
 }
