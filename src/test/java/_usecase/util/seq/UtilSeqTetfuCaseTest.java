@@ -92,9 +92,9 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         }
 
         @Test
-        void cutting1() throws Exception {
+        void length1() throws Exception {
             // サイズ1でカットする
-            String command = "util seq -p *p2 *p2 -c 1";
+            String command = "util seq -p *p2 *p2 -l 1";
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -105,9 +105,9 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         }
 
         @Test
-        void overCutting() throws Exception {
-            // cuttingが大きい
-            String command = "util seq -p *! -c 10";
+        void overLength() throws Exception {
+            // lengthが大きい
+            String command = "util seq -p *! -l 10";
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -366,12 +366,23 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         }
 
         @Test
-        void forward() throws Exception {
-            String command = "util seq -p STZOJ -M forward -e Z$";
+        void Sat1or2() throws Exception {
+            String command = "util seq -p *! -e ^.{0,1}?S";
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput().split(LINE_SEPARATOR))
-                    .hasSize(2); // STOJZ,TSOJZ
+                    .hasSize(1440);
+
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
+        void notSZ() throws Exception {
+            String command = "util seq -p *! -ne SZ";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput().split(LINE_SEPARATOR))
+                    .hasSize(5040 - 720);  // 7! - 6!
 
             assertThat(log.getError()).isEmpty();
         }
@@ -410,9 +421,9 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         }
 
         @Test
-        void cutting5() throws Exception {
+        void length5() throws Exception {
             // 固定のシーケンス。同じミノを含まない
-            String command = "util seq -p ZJSTL -M forward -c 5 -d no";
+            String command = "util seq -p ZJSTL -M forward -l 5 -d no";
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -442,7 +453,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         @Test
         void samePiece() throws Exception {
             // 固定のシーケンス。同じミノを含む
-            String command = "util seq -p ZZJST -M forward -c 4 -d no";
+            String command = "util seq -p ZZJST -M forward -l 4 -d no";
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -454,7 +465,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         @Test
         void distinct() throws Exception {
             // distinctを有効にする
-            String command = "util seq -p ZZJST -M forward -c 4 -d yes";
+            String command = "util seq -p ZZJST -M forward -l 4 -d yes";
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -476,7 +487,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         @Test
         void twoSequences() throws Exception {
             // 固定のシーケンスが2つ
-            String command = "util seq -p ZZJST ZJSTZ -M forward -c 4";
+            String command = "util seq -p ZZJST ZJSTZ -M forward -l 4";
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -534,7 +545,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
                 assertThat(log.getError()).isEmpty();
             }
             {
-                String command = "util seq -p [SLJI]p3 -c 3 -M forward";
+                String command = "util seq -p [SLJI]p3 -l 3 -M forward";
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -572,8 +583,8 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
 
         @Test
         void overCutting() throws Exception {
-            // cuttingが大きい
-            String command = "util seq -p *! -M forward -c 10";
+            // lengthが大きい
+            String command = "util seq -p *! -M forward -l 10";
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -584,7 +595,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
 
         @Test
         void SZ() throws Exception {
-            String command = "util seq -p SZOJT -M forward -c 4 -n S=1 Z=1";
+            String command = "util seq -p SZOJT -M forward -l 4 -n S=1 Z=1";
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -640,10 +651,10 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         }
 
         @Test
-        void hold0c5() throws Exception {
+        void hold0l5() throws Exception {
             {
                 // holdByHead = yes
-                String command = "util seq -p SZOJT -M forward -c 5 -n hold=0";
+                String command = "util seq -p SZOJT -M forward -l 5 -n hold=0";
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 assertThat(log.getOutput()).isEmpty();
@@ -652,7 +663,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
             }
             {
                 // holdByHead = no
-                String command = "util seq -p SZOJT -M forward -c 5 -hh no -n hold=0";
+                String command = "util seq -p SZOJT -M forward -l 5 -hh no -n hold=0";
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -702,10 +713,10 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         }
 
         @Test
-        void hold1c5() throws Exception {
+        void hold1l5() throws Exception {
             {
                 // holdByHead = yes
-                String command = "util seq -p SZOJT -M forward -c 5 -n hold=1";
+                String command = "util seq -p SZOJT -M forward -l 5 -n hold=1";
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -718,7 +729,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
             }
             {
                 // holdByHead = no
-                String command = "util seq -p SZOJT -M forward -c 5 -hh no -n hold=1";
+                String command = "util seq -p SZOJT -M forward -l 5 -hh no -n hold=1";
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 assertThat(log.getOutput()).isEmpty();
@@ -728,10 +739,10 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         }
 
         @Test
-        void hold1c3() throws Exception {
+        void hold1l3() throws Exception {
             {
                 // holdByHead = yes
-                String command = "util seq -p SZOJT -M forward -c 3 -n hold=1";
+                String command = "util seq -p SZOJT -M forward -l 3 -n hold=1";
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -746,7 +757,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
             }
             {
                 // holdByHead = no
-                String command = "util seq -p SZOJT -M forward -c 3 -hh no -n hold=1";
+                String command = "util seq -p SZOJT -M forward -l 3 -hh no -n hold=1";
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -765,7 +776,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         void hold1greaterThan1() throws Exception {
             {
                 // holdByHead = yes
-                String command = "util seq -p SZOJT -M forward -c 3 -n hold>1";
+                String command = "util seq -p SZOJT -M forward -l 3 -n hold>1";
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -781,7 +792,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
             }
             {
                 // holdByHead = yes
-                String command = "util seq -p SZOJT -M forward -c 3 -n 1<hold";
+                String command = "util seq -p SZOJT -M forward -l 3 -n 1<hold";
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -801,7 +812,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         void hold1greaterThanOrEqualTo1() throws Exception {
             {
                 // holdByHead = yes
-                String command = "util seq -p SZOJT -M forward -c 3 -n hold>=1";
+                String command = "util seq -p SZOJT -M forward -l 3 -n hold>=1";
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -820,7 +831,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
             }
             {
                 // holdByHead = yes
-                String command = "util seq -p SZOJT -M forward -c 3 -n 1<=hold";
+                String command = "util seq -p SZOJT -M forward -l 3 -n 1<=hold";
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -843,7 +854,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         void hold1notEqualTo1() throws Exception {
             {
                 // holdByHead = yes
-                String command = "util seq -p SZOJT -M forward -c 3 -n hold!=1";
+                String command = "util seq -p SZOJT -M forward -l 3 -n hold!=1";
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -885,10 +896,10 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         }
 
         @Test
-        void c5() throws Exception {
+        void l5() throws Exception {
             {
                 // holdByHead = yes
-                String command = "util seq -p ZJST -M backward -c 5";
+                String command = "util seq -p ZJST -M backward -l 5";
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -916,7 +927,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
             }
             {
                 // holdByHead = no
-                String command = "util seq -p ZJST -M backward -hh no -c 5";
+                String command = "util seq -p ZJST -M backward -hh no -l 5";
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -945,10 +956,10 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         }
 
         @Test
-        void hold1c5() throws Exception {
+        void hold1l5() throws Exception {
             {
                 // holdByHead = yes
-                String command = "util seq -p ZJST -M backward -n hold=1 -c 5";
+                String command = "util seq -p ZJST -M backward -n hold=1 -l 5";
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -964,7 +975,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
             }
             {
                 // holdByHead = no
-                String command = "util seq -p ZJST -M backward -hh no -n hold=1 -c 5";
+                String command = "util seq -p ZJST -M backward -hh no -n hold=1 -l 5";
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -984,10 +995,10 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
     @Nested
     class BackwardAndPass {
         @Test
-        void c5() throws Exception {
+        void l5() throws Exception {
             {
                 // holdByHead = yes
-                String command = "util seq -p ZJST -M backward-and-pass -c 5";
+                String command = "util seq -p ZJST -M backward-and-pass -l 5";
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -997,7 +1008,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
             }
             {
                 // holdByHead = no
-                String command = "util seq -p ZJST -M backward-pass -hh no -c 5";
+                String command = "util seq -p ZJST -M backward-pass -hh no -l 5";
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -1008,10 +1019,10 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
         }
 
         @Test
-        void hold1c5() throws Exception {
+        void hold1l5() throws Exception {
             {
                 // holdByHead = yes
-                String command = "util seq -p ZJST -M backward-and-pass -n hold=1 -c 5";
+                String command = "util seq -p ZJST -M backward-and-pass -n hold=1 -l 5";
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -1051,7 +1062,7 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
             }
             {
                 // holdByHead = no
-                String command = "util seq -p ZJST -M backward-pass -hh no -n hold=1 -c 5";
+                String command = "util seq -p ZJST -M backward-pass -hh no -n hold=1 -l 5";
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 assertThat(log.getOutput().split(LINE_SEPARATOR))

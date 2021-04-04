@@ -35,11 +35,13 @@ public class SeqUtilEntryPoint implements EntryPoint {
 
     @Override
     public void run() throws FinderException {
-        int cuttingSize = settings.getCuttingSize();
-        PieceCutting limit = 0 < cuttingSize ? new UsePieceCutting(cuttingSize) : new NoPieceCutting();
+        int length = settings.getLength();
+        PieceTransformer limit = 0 < length ? new UsePieceLength(length) : new NoPieceTransformer();
 
         Predicate<PieceCounter> pieceCounterPredicate = createPieceCounterPredicate(settings.getPieceEquations());
-        Predicate<String> expressionPredicate = createExpressionPredicate(settings.getExpression());
+        Predicate<String> expressionPredicate = createExpressionPredicate(
+                settings.getExpression(), settings.getNotExpression()
+        );
         SeqUtilModes mode = settings.getSeqUtilMode();
         List<String> patterns = settings.getPatterns();
         switch (mode) {
@@ -168,16 +170,42 @@ public class SeqUtilEntryPoint implements EntryPoint {
         };
     }
 
-    private Predicate<String> createExpressionPredicate(String expression) {
-        String trim = expression.trim();
-        if (trim.isEmpty()) {
-            return pieces -> true;
+    private Predicate<String> createExpressionPredicate(String expression, String notExpression) {
+        List<Predicate<String>> predicates = new ArrayList<>();
+
+        {
+            String trim = expression.trim();
+            if (!trim.isEmpty()) {
+                Pattern pattern = Pattern.compile(trim);
+                predicates.add(piecesStr -> {
+                    Matcher matcher = pattern.matcher(piecesStr);
+                    return matcher.find();
+                });
+            }
         }
 
-        Pattern pattern = Pattern.compile(trim);
+        {
+            String trim = notExpression.trim();
+            if (!trim.isEmpty()) {
+                Pattern pattern = Pattern.compile(trim);
+                predicates.add(piecesStr -> {
+                    Matcher matcher = pattern.matcher(piecesStr);
+                    return !matcher.find();
+                });
+            }
+        }
+
+        if (predicates.isEmpty()) {
+            return piecesStr -> true;
+        }
+
         return piecesStr -> {
-            Matcher matcher = pattern.matcher(piecesStr);
-            return matcher.find();
+            for (Predicate<String> predicate : predicates) {
+                if (!predicate.test(piecesStr)) {
+                    return false;
+                }
+            }
+            return true;
         };
     }
 
