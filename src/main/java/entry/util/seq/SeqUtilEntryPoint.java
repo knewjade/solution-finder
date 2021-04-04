@@ -1,21 +1,27 @@
 package entry.util.seq;
 
 import common.SyntaxException;
-import common.datastore.blocks.Pieces;
-import common.order.ForwardOrderLookUp;
+import common.datastore.PieceCounter;
+import common.datastore.blocks.LongPieces;
+import common.order.*;
 import common.pattern.LoadedPatternGenerator;
 import core.mino.Piece;
 import entry.EntryPoint;
+import entry.util.seq.equations.HoldEquation;
+import entry.util.seq.equations.PieceEquation;
 import exceptions.FinderException;
 import exceptions.FinderExecuteException;
 import exceptions.FinderTerminateException;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * beta command
@@ -29,33 +35,113 @@ public class SeqUtilEntryPoint implements EntryPoint {
 
     @Override
     public void run() throws FinderException {
-        PieceOutput output = settings.isDistinct() ? new DistinctPieceOutput() : new SimplePieceOutput();
         int cuttingSize = settings.getCuttingSize();
         PieceCutting limit = 0 < cuttingSize ? new UsePieceCutting(cuttingSize) : new NoPieceCutting();
 
-        Predicate<Pieces> predicate = createPiecesPredicate(settings.getExpression());
+        Predicate<PieceCounter> pieceCounterPredicate = createPieceCounterPredicate(settings.getPieceEquations());
+        Predicate<String> expressionPredicate = createExpressionPredicate(settings.getExpression());
         SeqUtilModes mode = settings.getSeqUtilMode();
         List<String> patterns = settings.getPatterns();
         switch (mode) {
             case Pass: {
+                PieceOutput output = settings.isDistinct() ? new DistinctPieceOutput() : new SimplePieceOutput();
+
                 List<LoadedPatternGenerator> generators = createGenerators(patterns);
                 for (LoadedPatternGenerator generator : generators) {
                     generator.blocksStream()
                             .map(limit::get)
-                            .filter(predicate)
+                            .filter(pieces -> pieceCounterPredicate.test(new PieceCounter(pieces.blockStream())))
+                            .filter(pieces -> expressionPredicate.test(pieces.blockStream().map(Piece::getName).collect(Collectors.joining())))
                             .forEach(output::output);
                 }
                 break;
             }
             case Forward: {
+                PieceOutput output = settings.isDistinct() ? new DistinctPieceOutput() : new SimplePieceOutput();
+
                 List<LoadedPatternGenerator> generators = createGenerators(patterns);
                 for (LoadedPatternGenerator generator : generators) {
                     int fromDepth = generator.getDepth();
-                    ForwardOrderLookUp orderLookUp = new ForwardOrderLookUp(limit.toDepth(fromDepth), fromDepth);
+                    Predicate<WithHoldCount<Piece>> holdPredicate = settings.getHoldEquation()
+                            .map(HoldEquation::toPredict)
+                            .orElse(e -> true);
+
+                    CountForwardOrderLookUp countForwardOrderLookUp;
+                    if (settings.isStartsWithoutHold()) {
+                        countForwardOrderLookUp = new CountForwardOrderLookUpStartsWithEmpty(limit.toDepth(fromDepth, true), fromDepth);
+                    } else {
+                        countForwardOrderLookUp = new CountForwardOrderLookUpStartsWithAny(limit.toDepth(fromDepth, true), fromDepth);
+                    }
+
                     generator.blocksStream()
-                            .flatMap(it -> orderLookUp.parse(it.getPieces()))
+                            .flatMap(it -> countForwardOrderLookUp.parse(it.getPieces()))
+                            .filter(holdPredicate)
+                            .map(it -> new LongPieces(it.getList()))
                             .map(limit::get)
-                            .filter(predicate)
+                            .filter(pieces -> pieceCounterPredicate.test(new PieceCounter(pieces.blockStream())))
+                            .filter(pieces -> expressionPredicate.test(pieces.blockStream().map(Piece::getName).collect(Collectors.joining())))
+                            .forEach(output::output);
+                }
+
+                break;
+            }
+            case Backward: {
+                PieceOutputForBackward output = settings.isDistinct() ? new DistinctPieceOutputForBackward() : new SimplePieceOutputForBackward();
+
+                List<LoadedPatternGenerator> generators = createGenerators(patterns);
+                for (LoadedPatternGenerator generator : generators) {
+                    int toDepth = generator.getDepth();
+                    Predicate<WithHoldCount<Piece>> holdPredicate = settings.getHoldEquation()
+                            .map(HoldEquation::toPredict)
+                            .orElse(e -> true);
+
+                    CountReverseOrderLookUp countReverseOrderLookUp;
+                    if (settings.isStartsWithoutHold()) {
+                        countReverseOrderLookUp = new CountReverseOrderLookUpStartsWithEmpty(toDepth, limit.fromDepth(toDepth));
+                    } else {
+                        countReverseOrderLookUp = new CountReverseOrderLookUpStartsWithAny(toDepth, limit.fromDepth(toDepth));
+                    }
+
+                    generator.blocksStream()
+                            .flatMap(it -> countReverseOrderLookUp.parse(it.getPieces()))
+                            .filter(holdPredicate)
+                            .map(pieceWithHoldCount -> limit.get(pieceWithHoldCount.getList()))
+                            .filter(pieceList -> pieceCounterPredicate.test(new PieceCounter(pieceList.stream().filter(Objects::nonNull))))
+                            .map(pieceList -> pieceList.stream().map(piece -> piece != null ? piece.getName() : "*").collect(Collectors.joining()))
+                            .filter(expressionPredicate)
+                            .forEach(output::output);
+                }
+
+                break;
+            }
+            case BackwardAndPass: {
+                PieceOutputForBackward output = settings.isDistinct() ? new DistinctPieceOutputForBackward() : new SimplePieceOutputForBackward();
+
+                List<LoadedPatternGenerator> generators = createGenerators(patterns);
+                for (LoadedPatternGenerator generator : generators) {
+                    int toDepth = generator.getDepth();
+                    Predicate<WithHoldCount<Piece>> holdPredicate = settings.getHoldEquation()
+                            .map(HoldEquation::toPredict)
+                            .orElse(e -> true);
+
+                    CountReverseOrderLookUp countReverseOrderLookUp;
+                    if (settings.isStartsWithoutHold()) {
+                        countReverseOrderLookUp = new CountReverseOrderLookUpStartsWithEmpty(toDepth, limit.fromDepth(toDepth));
+                    } else {
+                        countReverseOrderLookUp = new CountReverseOrderLookUpStartsWithAny(toDepth, limit.fromDepth(toDepth));
+                    }
+
+                    generator.blocksStream()
+                            .flatMap(it -> countReverseOrderLookUp.parse(it.getPieces()))
+                            .filter(holdPredicate)
+                            .map(pieceWithHoldCount -> limit.get(pieceWithHoldCount.getList()))
+                            .filter(pieceList -> pieceCounterPredicate.test(new PieceCounter(pieceList.stream().filter(Objects::nonNull))))
+                            .filter(pieceList -> {
+                                String str = pieceList.stream().map(piece -> piece != null ? piece.getName() : "*").collect(Collectors.joining());
+                                return expressionPredicate.test(str);
+                            })
+                            .flatMap(this::expand)
+                            .map(pieceList -> pieceList.stream().map(Piece::getName).collect(Collectors.joining()))
                             .forEach(output::output);
                 }
 
@@ -67,15 +153,29 @@ public class SeqUtilEntryPoint implements EntryPoint {
         }
     }
 
-    private Predicate<Pieces> createPiecesPredicate(String expression) {
+    private Predicate<PieceCounter> createPieceCounterPredicate(List<PieceEquation> pieceEquations) {
+        List<Predicate<EnumMap<Piece, Integer>>> predicates = pieceEquations.stream()
+                .map(PieceEquation::toPredict)
+                .collect(Collectors.toList());
+        return (pieceCounter) -> {
+            EnumMap<Piece, Integer> map = pieceCounter.getEnumMap();
+            for (Predicate<EnumMap<Piece, Integer>> predicate : predicates) {
+                if (!predicate.test(map)) {
+                    return false;
+                }
+            }
+            return true;
+        };
+    }
+
+    private Predicate<String> createExpressionPredicate(String expression) {
         String trim = expression.trim();
         if (trim.isEmpty()) {
             return pieces -> true;
         }
 
         Pattern pattern = Pattern.compile(trim);
-        return pieces -> {
-            String piecesStr = pieces.blockStream().map(Piece::getName).collect(Collectors.joining());
+        return piecesStr -> {
             Matcher matcher = pattern.matcher(piecesStr);
             return matcher.find();
         };
@@ -92,6 +192,39 @@ public class SeqUtilEntryPoint implements EntryPoint {
             }
         }
         return generators;
+    }
+
+    private Stream<List<Piece>> expand(List<Piece> pieceList) {
+        // nullのインデックスを取得
+        ArrayList<Integer> nullIndexes = new ArrayList<>();
+        for (int index = 0; index < pieceList.size(); index++) {
+            if (pieceList.get(index) == null) {
+                nullIndexes.add(index);
+            }
+        }
+
+        // nullが含まれない場合はそのまま返す
+        if (nullIndexes.isEmpty()) {
+            return Stream.of(pieceList);
+        }
+
+        ArrayList<List<Piece>> lists = new ArrayList<>();
+        lists.add(pieceList);
+
+        // nullの位置に各ミノを展開
+        for (int nullIndex : nullIndexes) {
+            ArrayList<List<Piece>> next = new ArrayList<>();
+            for (List<Piece> pieces : lists) {
+                for (Piece piece : Piece.valueList()) {
+                    ArrayList<Piece> p = new ArrayList<>(pieces);
+                    p.set(nullIndex, piece);
+                    next.add(p);
+                }
+            }
+            lists = next;
+        }
+
+        return lists.stream();
     }
 
     @Override

@@ -115,6 +115,186 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
 
             assertThat(log.getError()).isEmpty();
         }
+
+        @Test
+        void S2() throws Exception {
+            String command = "util seq -p *p3,*p3 -n S=2";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput().split(LINE_SEPARATOR))
+                    .hasSize(8100);  // 90 * 90
+
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
+        void ST2() throws Exception {
+            String command = "util seq -p *p3,*p3 -n S=2 T=2";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput().split(LINE_SEPARATOR))
+                    .hasSize(900);  // 30 * 30
+
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
+        void ST2comma() throws Exception {
+            String command = "util seq -p *p3,*p3 -n S=2,T==2";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput().split(LINE_SEPARATOR))
+                    .hasSize(900);  // 30 * 30
+
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
+        void notEqualTo0() throws Exception {
+            String command = "util seq -p *p3,*p3 -n O!=1";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput().split(LINE_SEPARATOR))
+                    .hasSize(14400 + 8100);
+
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
+        void lessThan1() throws Exception {
+            {
+                String command = "util seq -p *p3 -n Z<1";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(120);  // 6 * 5 * 4
+
+                assertThat(log.getError()).isEmpty();
+            }
+            {
+                String command = "util seq -p *p3 -n 1>Z";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(120);  // 6 * 5 * 4
+
+                assertThat(log.getError()).isEmpty();
+            }
+        }
+
+        @Test
+        void lessThanOrEqualTo1() throws Exception {
+            {
+                String command = "util seq -p *p3,*p3 -n Z<=1";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(36000);  // 7*6*5 * 7*6*5 - 6*5*3 * 6*5*3
+
+                assertThat(log.getError()).isEmpty();
+            }
+            {
+                String command = "util seq -p *p3,*p3 -n 1>=Z";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(36000);  // 7*6*5 * 7*6*5 - 6*5*3 * 6*5*3
+
+                assertThat(log.getError()).isEmpty();
+            }
+        }
+
+        @Test
+        void greaterThan1() throws Exception {
+            {
+                String command = "util seq -p *p3 -n Z>0";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(90);  // 6 * 5 * 3
+
+                assertThat(log.getError()).isEmpty();
+            }
+            {
+                String command = "util seq -p *p3 -n 0<Z";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(90);  // 6 * 5 * 3
+
+                assertThat(log.getError()).isEmpty();
+            }
+        }
+
+        @Test
+        void greaterThanOrEqualTo1() throws Exception {
+            {
+                String command = "util seq -p *p3,*p3 -n Z>=2";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(8100);  // 7*6*5 * 7*6*5 - 36000
+
+                assertThat(log.getError()).isEmpty();
+            }
+            {
+                String command = "util seq -p *p3,*p3 -n 2<=Z";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(8100);  // 7*6*5 * 7*6*5 - 36000
+
+                assertThat(log.getError()).isEmpty();
+            }
+        }
+    }
+
+    @Nested
+    class InvalidCount {
+        @Test
+        void negative() throws Exception {
+            String command = "util seq -p *p3,*p3 -n Z=-1";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isNotEqualTo(0);
+            assertThat(log.getError()).contains("Negative value is unsupported");
+        }
+
+        @Test
+        void noPiece() throws Exception {
+            String command = "util seq -p *p3,*p3 -n 1=1";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isNotEqualTo(0);
+            assertThat(log.getError()).contains("Invalid operand");
+        }
+
+        @Test
+        void duplicatePiece() throws Exception {
+            String command = "util seq -p *p3,*p3 -n Z=Z";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isNotEqualTo(0);
+            assertThat(log.getError()).contains("Invalid operand");
+        }
+
+        @Test
+        void noLeft() throws Exception {
+            String command = "util seq -p *p3,*p3 -n =1";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isNotEqualTo(0);
+            assertThat(log.getError()).contains("Left operand is blank");
+        }
+
+        @Test
+        void noRight() throws Exception {
+            String command = "util seq -p *p3,*p3 -n T=";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isNotEqualTo(0);
+            assertThat(log.getError()).contains("Right operand is blank");
+        }
     }
 
     @Nested
@@ -195,55 +375,14 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
 
             assertThat(log.getError()).isEmpty();
         }
-
-        @Test
-        void S2() throws Exception {
-            String command = "util seq -p *p3,*p3 -eq S2";
-            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
-
-            assertThat(log.getOutput().split(LINE_SEPARATOR))
-                    .hasSize(2); // STOJZ,TSOJZ
-
-            assertThat(log.getError()).isEmpty();
-        }
     }
 
     @Nested
     class Forward {
         @Test
         void singleSequence() throws Exception {
-            // 固定のシーケンス。同じミノを含まない
-            String command = "util seq -p ZJSTL -M forward -d no";
-            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
-
-            assertThat(log.getOutput().split(LINE_SEPARATOR))
-                    .hasSize(16)
-                    .contains(
-                            "ZSTLJ",
-                            "JSTLZ",
-                            "ZJTLS",
-                            "JZTLS",
-                            "ZSJLT",
-                            "JSZLT",
-                            "ZJSLT",
-                            "JZSLT",
-                            "ZSTJL",
-                            "JSTZL",
-                            "ZJTSL",
-                            "JZTSL",
-                            "ZSJTL",
-                            "JSZTL",
-                            "ZJSTL",
-                            "JZSTL"
-                    );
-
-            assertThat(log.getError()).isEmpty();
-        }
-
-        @Test
-        void cutting4() throws Exception {
             // サイズ4でカットする
-            String command = "util seq -p ZJSTL -M forward -c 4 -d no";
+            String command = "util seq -p ZJSTL -M forward -d no";
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput().split(LINE_SEPARATOR))
@@ -265,6 +404,36 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
                             "JSZL",
                             "JSTZ",
                             "JSTL"
+                    );
+
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
+        void cutting5() throws Exception {
+            // 固定のシーケンス。同じミノを含まない
+            String command = "util seq -p ZJSTL -M forward -c 5 -d no";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput().split(LINE_SEPARATOR))
+                    .hasSize(16)
+                    .contains(
+                            "ZSTLJ",
+                            "JSTLZ",
+                            "ZJTLS",
+                            "JZTLS",
+                            "ZSJLT",
+                            "JSZLT",
+                            "ZJSLT",
+                            "JZSLT",
+                            "ZSTJL",
+                            "JSTZL",
+                            "ZJTSL",
+                            "JZTSL",
+                            "ZSJTL",
+                            "JSZTL",
+                            "ZJSTL",
+                            "JZSTL"
                     );
 
             assertThat(log.getError()).isEmpty();
@@ -341,28 +510,64 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
 
         @Test
         void pattern() throws Exception {
-            // 固定のシーケンスが2つ
-            String command = "util seq -p [SLJI]p2 -M forward";
-            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+            {
+                String command = "util seq -p [SLJI]p3 -M forward";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
-            assertThat(log.getOutput().split(LINE_SEPARATOR))
-                    .hasSize(12)
-                    .contains(
-                            "LJ",
-                            "JL",
-                            "LI",
-                            "IL",
-                            "LS",
-                            "SL",
-                            "JI",
-                            "IJ",
-                            "JS",
-                            "SJ",
-                            "IS",
-                            "SI"
-                    );
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(12)
+                        .contains(
+                                "LJ",
+                                "JL",
+                                "LI",
+                                "IL",
+                                "LS",
+                                "SL",
+                                "JI",
+                                "IJ",
+                                "JS",
+                                "SJ",
+                                "IS",
+                                "SI"
+                        );
 
-            assertThat(log.getError()).isEmpty();
+                assertThat(log.getError()).isEmpty();
+            }
+            {
+                String command = "util seq -p [SLJI]p3 -c 3 -M forward";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(24)
+                        .contains(
+                                "SJI",
+                                "IJS",
+                                "SIJ",
+                                "ISJ",
+                                "JSI",
+                                "JIS",
+                                "SJL",
+                                "LJS",
+                                "SLJ",
+                                "LSJ",
+                                "JSL",
+                                "JLS",
+                                "IJL",
+                                "LJI",
+                                "ILJ",
+                                "LIJ",
+                                "JIL",
+                                "JLI",
+                                "ISL",
+                                "LSI",
+                                "ILS",
+                                "LIS",
+                                "SIL",
+                                "SLI"
+                        );
+
+                assertThat(log.getError()).isEmpty();
+            }
         }
 
         @Test
@@ -375,6 +580,512 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
                     .hasSize(5040);
 
             assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
+        void SZ() throws Exception {
+            String command = "util seq -p SZOJT -M forward -c 4 -n S=1 Z=1";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput().split(LINE_SEPARATOR))
+                    .hasSize(14)
+                    .contains(
+                            "ZSJT",
+                            "SZJT",
+                            "ZOST",
+                            "SOZT",
+                            "ZSOT",
+                            "SZOT",
+                            "ZOJS",
+                            "SOJZ",
+                            "ZSJO",
+                            "SZJO",
+                            "ZOSJ",
+                            "SOZJ",
+                            "ZSOJ",
+                            "SZOJ"
+                    );
+
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
+        void hold0() throws Exception {
+            {
+                // holdByHead = yes
+                String command = "util seq -p SZOJT -M forward -n hold=0";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(1)
+                        .contains(
+                                "ZOJT"
+                        );
+
+                assertThat(log.getError()).isEmpty();
+            }
+            {
+                // holdByHead = no
+                String command = "util seq -p SZOJT -M forward -hh no -n hold=0";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(1)
+                        .contains(
+                                "SZOJ"
+                        );
+
+                assertThat(log.getError()).isEmpty();
+            }
+        }
+
+        @Test
+        void hold0c5() throws Exception {
+            {
+                // holdByHead = yes
+                String command = "util seq -p SZOJT -M forward -c 5 -n hold=0";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput()).isEmpty();
+
+                assertThat(log.getError()).isEmpty();
+            }
+            {
+                // holdByHead = no
+                String command = "util seq -p SZOJT -M forward -c 5 -hh no -n hold=0";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(1)
+                        .contains(
+                                "SZOJT"
+                        );
+
+                assertThat(log.getError()).isEmpty();
+            }
+        }
+
+        @Test
+        void hold1() throws Exception {
+            {
+                // holdByHead = yes
+                String command = "util seq -p SZOJT -M forward -n hold=1";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(4)
+                        .contains(
+                                "SOJT",
+                                "ZSJT",
+                                "ZOST",
+                                "ZOJS"
+                        );
+
+                assertThat(log.getError()).isEmpty();
+            }
+            {
+                // holdByHead = no
+                String command = "util seq -p SZOJT -M forward -hh no -n hold=1";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(4)
+                        .contains(
+                                "SOJT",
+                                "ZOJT",
+                                "SZJT",
+                                "SZOT"
+                        );
+
+                assertThat(log.getError()).isEmpty();
+            }
+        }
+
+        @Test
+        void hold1c5() throws Exception {
+            {
+                // holdByHead = yes
+                String command = "util seq -p SZOJT -M forward -c 5 -n hold=1";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(1)
+                        .contains(
+                                "ZOJTS"
+                        );
+
+                assertThat(log.getError()).isEmpty();
+            }
+            {
+                // holdByHead = no
+                String command = "util seq -p SZOJT -M forward -c 5 -hh no -n hold=1";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput()).isEmpty();
+
+                assertThat(log.getError()).isEmpty();
+            }
+        }
+
+        @Test
+        void hold1c3() throws Exception {
+            {
+                // holdByHead = yes
+                String command = "util seq -p SZOJT -M forward -c 3 -n hold=1";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(3)
+                        .contains(
+                                "SOJ",
+                                "ZSJ",
+                                "ZOS"
+                        );
+
+                assertThat(log.getError()).isEmpty();
+            }
+            {
+                // holdByHead = no
+                String command = "util seq -p SZOJT -M forward -c 3 -hh no -n hold=1";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(3)
+                        .contains(
+                                "SOJ",
+                                "ZOJ",
+                                "SZJ"
+                        );
+
+                assertThat(log.getError()).isEmpty();
+            }
+        }
+
+        @Test
+        void hold1greaterThan1() throws Exception {
+            {
+                // holdByHead = yes
+                String command = "util seq -p SZOJT -M forward -c 3 -n hold>1";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(4)
+                        .contains(
+                                "SZJ",
+                                "SOZ",
+                                "ZSO",
+                                "SZO"
+                        );
+
+                assertThat(log.getError()).isEmpty();
+            }
+            {
+                // holdByHead = yes
+                String command = "util seq -p SZOJT -M forward -c 3 -n 1<hold";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(4)
+                        .contains(
+                                "SZJ",
+                                "SOZ",
+                                "ZSO",
+                                "SZO"
+                        );
+
+                assertThat(log.getError()).isEmpty();
+            }
+        }
+
+        @Test
+        void hold1greaterThanOrEqualTo1() throws Exception {
+            {
+                // holdByHead = yes
+                String command = "util seq -p SZOJT -M forward -c 3 -n hold>=1";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(7)
+                        .contains(
+                                "SOJ",
+                                "ZSJ",
+                                "SZJ",
+                                "ZOS",
+                                "SOZ",
+                                "ZSO",
+                                "SZO"
+                        );
+
+                assertThat(log.getError()).isEmpty();
+            }
+            {
+                // holdByHead = yes
+                String command = "util seq -p SZOJT -M forward -c 3 -n 1<=hold";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(7)
+                        .contains(
+                                "SOJ",
+                                "ZSJ",
+                                "SZJ",
+                                "ZOS",
+                                "SOZ",
+                                "ZSO",
+                                "SZO"
+                        );
+
+                assertThat(log.getError()).isEmpty();
+            }
+        }
+
+        @Test
+        void hold1notEqualTo1() throws Exception {
+            {
+                // holdByHead = yes
+                String command = "util seq -p SZOJT -M forward -c 3 -n hold!=1";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(5)
+                        .contains(
+                                "ZOJ",
+                                "SZJ",
+                                "SOZ",
+                                "ZSO",
+                                "SZO"
+                        );
+
+                assertThat(log.getError()).isEmpty();
+            }
+        }
+    }
+
+    @Nested
+    class Backward {
+        @Test
+        void singleSequence() throws Exception {
+            String command = "util seq -p ZJST -M backward";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput().split(LINE_SEPARATOR))
+                    .hasSize(8)
+                    .contains(
+                            "TZJS",
+                            "ZTJS",
+                            "JZTS",
+                            "ZJTS",
+                            "SZJT",
+                            "ZSJT",
+                            "JZST",
+                            "ZJST"
+                    );
+
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
+        void c5() throws Exception {
+            {
+                // holdByHead = yes
+                String command = "util seq -p ZJST -M backward -c 5";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(16)
+                        .contains(
+                                "*ZJST",
+                                "Z*JST",
+                                "JZ*ST",
+                                "ZJ*ST",
+                                "SZJ*T",
+                                "ZSJ*T",
+                                "JZS*T",
+                                "ZJS*T",
+                                "TZJS*",
+                                "ZTJS*",
+                                "JZTS*",
+                                "ZJTS*",
+                                "SZJT*",
+                                "ZSJT*",
+                                "JZST*",
+                                "ZJST*"
+                        );
+
+                assertThat(log.getError()).isEmpty();
+            }
+            {
+                // holdByHead = no
+                String command = "util seq -p ZJST -M backward -hh no -c 5";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(16)
+                        .contains(
+                                "*ZJST",
+                                "Z*JST",
+                                "JZ*ST",
+                                "ZJ*ST",
+                                "SZJ*T",
+                                "ZSJ*T",
+                                "JZS*T",
+                                "ZJS*T",
+                                "TZJS*",
+                                "ZTJS*",
+                                "JZTS*",
+                                "ZJTS*",
+                                "SZJT*",
+                                "ZSJT*",
+                                "JZST*",
+                                "ZJST*"
+                        );
+
+                assertThat(log.getError()).isEmpty();
+            }
+        }
+
+        @Test
+        void hold1c5() throws Exception {
+            {
+                // holdByHead = yes
+                String command = "util seq -p ZJST -M backward -n hold=1 -c 5";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(4)
+                        .contains(
+                                "Z*JST",
+                                "JZ*ST",
+                                "SZJ*T",
+                                "TZJS*"
+                        );
+
+                assertThat(log.getError()).isEmpty();
+            }
+            {
+                // holdByHead = no
+                String command = "util seq -p ZJST -M backward -hh no -n hold=1 -c 5";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(4)
+                        .contains(
+                                "*ZJST",
+                                "Z*JST",
+                                "ZJ*ST",
+                                "ZJS*T"
+                        );
+
+                assertThat(log.getError()).isEmpty();
+            }
+        }
+    }
+
+    @Nested
+    class BackwardAndPass {
+        @Test
+        void c5() throws Exception {
+            {
+                // holdByHead = yes
+                String command = "util seq -p ZJST -M backward-and-pass -c 5";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(97);
+
+                assertThat(log.getError()).isEmpty();
+            }
+            {
+                // holdByHead = no
+                String command = "util seq -p ZJST -M backward-pass -hh no -c 5";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(97);
+
+                assertThat(log.getError()).isEmpty();
+            }
+        }
+
+        @Test
+        void hold1c5() throws Exception {
+            {
+                // holdByHead = yes
+                String command = "util seq -p ZJST -M backward-and-pass -n hold=1 -c 5";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(28)
+                        .contains(
+                                "ZTJST",
+                                "ZIJST",
+                                "ZLJST",
+                                "ZJJST",
+                                "ZSJST",
+                                "ZZJST",
+                                "ZOJST",
+                                "JZTST",
+                                "JZIST",
+                                "JZLST",
+                                "JZJST",
+                                "JZSST",
+                                "JZZST",
+                                "JZOST",
+                                "SZJTT",
+                                "SZJIT",
+                                "SZJLT",
+                                "SZJJT",
+                                "SZJST",
+                                "SZJZT",
+                                "SZJOT",
+                                "TZJST",
+                                "TZJSI",
+                                "TZJSL",
+                                "TZJSJ",
+                                "TZJSS",
+                                "TZJSZ",
+                                "TZJSO"
+                        );
+
+                assertThat(log.getError()).isEmpty();
+            }
+            {
+                // holdByHead = no
+                String command = "util seq -p ZJST -M backward-pass -hh no -n hold=1 -c 5";
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput().split(LINE_SEPARATOR))
+                        .hasSize(25)
+                        .contains(
+                                "TZJST",
+                                "IZJST",
+                                "LZJST",
+                                "JZJST",
+                                "SZJST",
+                                "ZZJST",
+                                "OZJST",
+                                "ZTJST",
+                                "ZIJST",
+                                "ZLJST",
+                                "ZJJST",
+                                "ZSJST",
+                                "ZOJST",
+                                "ZJTST",
+                                "ZJIST",
+                                "ZJLST",
+                                "ZJSST",
+                                "ZJZST",
+                                "ZJOST",
+                                "ZJSTT",
+                                "ZJSIT",
+                                "ZJSLT",
+                                "ZJSJT",
+                                "ZJSZT",
+                                "ZJSOT"
+                        );
+
+                assertThat(log.getError()).isEmpty();
+            }
         }
     }
 }

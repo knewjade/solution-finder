@@ -4,6 +4,7 @@ import entry.CommandLineWrapper;
 import entry.common.Loader;
 import entry.common.SettingParser;
 import entry.path.PathOptions;
+import entry.util.seq.equations.EquationInterpreter;
 import exceptions.FinderParseException;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Options;
@@ -58,9 +59,19 @@ public class SeqUtilSettingParser extends SettingParser<SeqUtilSettings> {
             throw new FinderParseException(e.getMessage());
         }
 
-        // ミノのフィルタリングを指定する
+        // ミノのフィルタリングの指定
         Optional<String> expression = wrapper.getStringOption(SeqUtilOptions.Expression.optName());
         expression.ifPresent(settings::setExpression);
+
+        // カウントの条件の指定
+        List<String> countEquations = wrapper.getStringOptions(SeqUtilOptions.CountEquations.optName());
+        EquationInterpreter interpreter = EquationInterpreter.parse(countEquations);
+        interpreter.getHoldEquation().ifPresent(settings::setHoldEquation);
+        settings.setPieceEquations(interpreter.getPieceEquation());
+
+        // ホールドが空でスタートするか (最初に指定されたミノをホールドとして扱うか)
+        Optional<Boolean> holdByHead = wrapper.getBoolOption(SeqUtilOptions.HoldByHead.optName());
+        holdByHead.ifPresent(it -> settings.setStartsWithoutHold(!it));
 
         return Optional.of(settings);
     }
