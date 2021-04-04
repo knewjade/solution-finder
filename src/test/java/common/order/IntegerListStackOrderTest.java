@@ -9,8 +9,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class IntegerListStackOrderTest {
     @Test
-    void add() throws Exception {
-        IntegerListStackOrder stackOrder = new IntegerListStackOrder();
+    void add() {
+        IntegerListStackOrder stackOrder = IntegerListStackOrder.create();
         stackOrder.addLast(0);
         stackOrder.addLast(1);
         stackOrder.addLast(2);
@@ -21,8 +21,8 @@ class IntegerListStackOrderTest {
     }
 
     @Test
-    void stock() throws Exception {
-        IntegerListStackOrder stackOrder = new IntegerListStackOrder();
+    void stock() {
+        IntegerListStackOrder stackOrder = IntegerListStackOrder.create();
         stackOrder.addLast(0);
         stackOrder.stock(1);  // to head and memory TS*
         stackOrder.addLast(2);

@@ -28,7 +28,7 @@ public class ReverseOrderLookUp {
         List<Integer> indexes = IntStream.range(0, toDepth).boxed().collect(Collectors.toList());
 
         ArrayList<StackOrder<Integer>> candidates = new ArrayList<>();
-        StackOrder<Integer> e = new IntegerListStackOrder();
+        StackOrder<Integer> e = IntegerListStackOrder.create();
         candidates.add(e);
 
         for (int depth = 0; depth < fromDepth; depth++) {

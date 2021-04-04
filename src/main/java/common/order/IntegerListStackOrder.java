@@ -8,10 +8,27 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class IntegerListStackOrder implements StackOrder<Integer> {
+    public static IntegerListStackOrder create() {
+        return new IntegerListStackOrder();
+    }
+
+    public static IntegerListStackOrder create(int first) {
+        IntegerListStackOrder order = new IntegerListStackOrder();
+        order.addLast(first);
+        return order;
+    }
+
+    public static IntegerListStackOrder create(int first, int second) {
+        IntegerListStackOrder order = new IntegerListStackOrder();
+        order.addLast(first);
+        order.addLast(second);
+        return order;
+    }
+
     private final List<Integer> blocks;
     private int stockIndex;
 
-    IntegerListStackOrder() {
+    private IntegerListStackOrder() {
         this(new ArrayList<>(), 0);
     }
 
@@ -31,7 +48,6 @@ public class IntegerListStackOrder implements StackOrder<Integer> {
         assert number != null;
         blocks.add(blocks.size() - 1, number);
     }
-
 
     @Override
     public void addLastTwoAndRemoveLast(Integer number) {
@@ -58,12 +74,12 @@ public class IntegerListStackOrder implements StackOrder<Integer> {
     }
 
     @Override
-    public StackOrder<Integer> freeze() {
+    public IntegerListStackOrder freeze() {
         return new IntegerListStackOrder(new ArrayList<>(blocks), stockIndex);
     }
 
     @Override
-    public StackOrder<Integer> fix() {
+    public IntegerListStackOrder fix() {
         return new IntegerListStackOrder(Collections.unmodifiableList(blocks), stockIndex);
     }
 
