@@ -4,10 +4,10 @@
 探索条件には、7種のミノ(ITSZJLO) の組み合わせや地形を自由に設定できます。
 
 最新版は、以下のリンクからダウンロードできます。  
-https://github.com/knewjade/solution-finder/releases/latest  
+https://github.com/knewjade/solution-finder/releases/latest
 
-(GUIが入っているパッケージには、[@kitsune_fuchi](https://twitter.com/kitsune_fuchi) さん作成の補助GUIが入っています。
-なお、補助GUIではpercent・path・util figコマンドのみ対応しています)  
+(GUIが入っているパッケージには、[@kitsune_fuchi](https://twitter.com/kitsune_fuchi) さん作成の補助GUIが入っています。 なお、補助GUIではpercent・path・util
+figコマンドのみ対応しています)
 
 ※ プログラムの実行には、[Java8](https://www.java.com/ja/download/) 以降を実行できる環境が必要です
 
@@ -30,7 +30,6 @@ solution-finderは、探索ツールとして次の特徴を持っています�
 * マルチスレッドによる探索に対応
 * 実行時にオプションを与えることで「ホールドあり・なし」「ハードドロップのみ」など細かい設定が可能
 * フィールドの入力として [連続テト譜エディタ Ver 1.15a](http://fumen.zui.jp) のデータに対応
-
 
 # 主な機能
 
@@ -55,8 +54,9 @@ solution-finderは、探索ツールとして次の特徴を持っています�
 * cover: 指定したミノの置き場所通りに置くことができるミノ順をすべて列挙する
 
 * util: solution-finderの機能を補助するユーティリティ
-   - fig: テト譜をもとに画像を生成
-
+    - fig: テト譜をもとに画像を生成
+    - fumen: 入力されたテト譜を変換して、新たなテト譜を標準出力に出力
+    - seq: 入力されたパターンの``*``などをシーケンス（ツモ順）に展開
 
 # ドキュメント
 
