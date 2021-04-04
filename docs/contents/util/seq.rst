@@ -20,7 +20,7 @@
 基本コマンド
 ============================================================
 
-``java -jar sfinder.jar util seq -p TIOLJSZ``
+``java -jar sfinder.jar util seq -p '*!'``
 
 
 サンプルコマンド
