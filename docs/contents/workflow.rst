@@ -84,5 +84,5 @@ sfinder.jarがあるディレクトリをPowerShellで開き、次のコマン�
 
 .. note::
 
-  - ``util seq``の結果を、リダイレクトで``input/patterns.txt``に保存します
-  - ``percent` では、``-p``を指定しないことでファイルから読み取るようにしています
+  - ``util seq`` の結果を、リダイレクトで ``input/patterns.txt`` に保存します
+  - ``percent`` では、``-p`` を指定しないことでファイルから読み取るようにしています
