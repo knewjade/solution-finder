@@ -1,7 +1,5 @@
 package common.order;
 
-import core.mino.Piece;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,31 +21,22 @@ public class ForwardOrderLookUp {
         if (toDepth == 1) {
             ArrayList<List<Integer>> candidates = new ArrayList<>();
             {
-                StackOrder<Integer> e = new IntegerListStackOrder();
-                e.addLast(0);
+                StackOrder<Integer> e = IntegerListStackOrder.create(0);
                 candidates.add(e.toList());
 
                 if (isOverBlock) {
-                    StackOrder<Integer> e2 = new IntegerListStackOrder();
-                    e2.addLast(1);
+                    StackOrder<Integer> e2 = IntegerListStackOrder.create(1);
                     candidates.add(e2.toList());
                 }
-
             }
             return candidates;
         }
 
-        assert 1 < toDepth;
-
         ArrayList<StackOrder<Integer>> candidates = new ArrayList<>();
-        StackOrder<Integer> e = new IntegerListStackOrder();
-        e.addLast(0);
-        e.addLast(1);
+        StackOrder<Integer> e = IntegerListStackOrder.create(0, 1);
         candidates.add(e);
 
-        StackOrder<Integer> e2 = new IntegerListStackOrder();
-        e2.addLast(1);
-        e2.addLast(0);
+        StackOrder<Integer> e2 = IntegerListStackOrder.create(1, 0);
         candidates.add(e2);
 
         for (int depth = 2; depth < toDepth; depth++) {
@@ -82,7 +71,7 @@ public class ForwardOrderLookUp {
                 .collect(Collectors.toList());
     }
 
-    public Stream<Stream<Piece>> parse(List<Piece> pieces) {
+    public <T> Stream<Stream<T>> parse(List<T> pieces) {
         assert 1 <= indexesList.get(0).size() && indexesList.get(0).size() <= pieces.size();
 
         return indexesList.stream()

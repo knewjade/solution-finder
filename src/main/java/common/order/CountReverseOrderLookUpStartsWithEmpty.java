@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 // 「あるミノ列」からホールドを利用して指定したミノ列にできるとき、その「あるミノ列」をすべて逆算して列挙
 // ホールドを使用せずに指定したミノ列になるパターン（最後にホールド[任意のミノ]を追加しただけのミノ列は除く）
 // 「あるミノ列」の開始時にホールドは空であるとする
-public class CountReverseOrderLookUpStartsWithEmpty {
+public class CountReverseOrderLookUpStartsWithEmpty implements CountReverseOrderLookUp {
     private final List<Pair<List<Integer>, Integer>> indexesList;
 
     /**
@@ -54,6 +54,7 @@ public class CountReverseOrderLookUpStartsWithEmpty {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public <T> Stream<WithHoldCount<T>> parse(List<T> pieces) {
         return parse(pieces, null);
     }
