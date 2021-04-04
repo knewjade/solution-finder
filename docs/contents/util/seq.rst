@@ -95,7 +95,7 @@ short    long                   default
 ``-l``   ``--length``           -1
 ``-d``   ``--distinct``         yes
 ``-e``   ``--expression``       なし
-``-ne``   ``--not-expression``  なし
+``-ne``  ``--not-expression``   なし
 ``-n``   ``--num``              なし
 ``-hh``  ``--head-hold``        yes
 ======== ====================== ======================
