@@ -62,6 +62,8 @@ public class DevMain {
 
 //        String command = "util fumen -M reduce -t v115@vhdXKJNJJ0/ISSJzHJGDJJHJSGJvLJ0KJJEJzJJ+NJ?tMJFDJz/IyQJsGJOGJpFJ+NJ3MJXDJULJzGJxBJiJJtKJyJ?J0JJ";
 
+//        String command = "util seq -M pass -hh no -p *! -e ^.{0,1}?S";
+
         int returnCode = EntryPointMain.main(command.split(" "));
         System.exit(returnCode);
 

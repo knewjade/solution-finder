@@ -10,10 +10,11 @@ import java.util.Optional;
 
 public class SeqUtilSettings {
     private boolean isDistinct = true;
-    private int cuttingSize = -1;
+    private int length = -1;
     private List<String> patterns = new ArrayList<>();
     private SeqUtilModes mode = SeqUtilModes.Pass;
     private String expression = "";
+    private String notExpression = "";
     private HoldEquation holdEquation = null;
     private List<PieceEquation> pieceEquations = new ArrayList<>();
     private boolean startsWithoutHold = false;
@@ -27,8 +28,8 @@ public class SeqUtilSettings {
         return mode;
     }
 
-    int getCuttingSize() {
-        return this.cuttingSize;
+    int getLength() {
+        return this.length;
     }
 
     boolean isDistinct() {
@@ -37,6 +38,10 @@ public class SeqUtilSettings {
 
     String getExpression() {
         return expression;
+    }
+
+    String getNotExpression() {
+        return notExpression;
     }
 
     Optional<HoldEquation> getHoldEquation() {
@@ -77,8 +82,8 @@ public class SeqUtilSettings {
         this.patterns = patterns;
     }
 
-    void setCuttingSize(int value) {
-        this.cuttingSize = value;
+    void setLength(int value) {
+        this.length = value;
     }
 
     void setDistinct(boolean value) {
@@ -87,6 +92,10 @@ public class SeqUtilSettings {
 
     void setExpression(String value) {
         this.expression = value;
+    }
+
+    void setNotExpression(String value) {
+        this.notExpression = value;
     }
 
     void setHoldEquation(HoldEquation holdEquation) {

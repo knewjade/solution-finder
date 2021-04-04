@@ -62,6 +62,7 @@ public class EntryPointMain {
             "cover",
             "util fig",
             "util fumen",
+            "util seq",
     };
 
     public static int main(String[] args) {

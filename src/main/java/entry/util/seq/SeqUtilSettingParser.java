@@ -38,8 +38,8 @@ public class SeqUtilSettingParser extends SettingParser<SeqUtilSettings> {
         settings.setPatterns(patterns);
 
         // シーケンス内の最大ミノ数
-        Optional<Integer> cuttingSize = wrapper.getIntegerOption(SeqUtilOptions.CuttingSize.optName());
-        cuttingSize.ifPresent(settings::setCuttingSize);
+        Optional<Integer> length = wrapper.getIntegerOption(SeqUtilOptions.Length.optName());
+        length.ifPresent(settings::setLength);
 
         // 重複を取り除く
         Optional<Boolean> distinct = wrapper.getBoolOption(SeqUtilOptions.Distinct.optName());
@@ -62,6 +62,9 @@ public class SeqUtilSettingParser extends SettingParser<SeqUtilSettings> {
         // ミノのフィルタリングの指定
         Optional<String> expression = wrapper.getStringOption(SeqUtilOptions.Expression.optName());
         expression.ifPresent(settings::setExpression);
+
+        Optional<String> notExpression = wrapper.getStringOption(SeqUtilOptions.NotExpression.optName());
+        notExpression.ifPresent(settings::setNotExpression);
 
         // カウントの条件の指定
         List<String> countEquations = wrapper.getStringOptions(SeqUtilOptions.CountEquations.optName());

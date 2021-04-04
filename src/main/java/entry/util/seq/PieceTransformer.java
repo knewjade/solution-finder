@@ -7,7 +7,7 @@ import core.mino.Piece;
 import java.util.List;
 import java.util.stream.Stream;
 
-interface PieceCutting {
+interface PieceTransformer {
     Pieces get(Pieces pieces);
 
     Pieces get(Stream<Piece> pieces);
@@ -19,10 +19,10 @@ interface PieceCutting {
     List<Piece> get(List<Piece> pieceList);
 }
 
-class UsePieceCutting implements PieceCutting {
+class UsePieceLength implements PieceTransformer {
     private final int limit;
 
-    public UsePieceCutting(int limit) {
+    public UsePieceLength(int limit) {
         assert 0 < limit;
         this.limit = limit;
     }
@@ -53,7 +53,7 @@ class UsePieceCutting implements PieceCutting {
     }
 }
 
-class NoPieceCutting implements PieceCutting {
+class NoPieceTransformer implements PieceTransformer {
     @Override
     public Pieces get(Pieces pieces) {
         return pieces;
