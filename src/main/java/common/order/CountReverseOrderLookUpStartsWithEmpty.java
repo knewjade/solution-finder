@@ -49,6 +49,15 @@ public class CountReverseOrderLookUpStartsWithEmpty implements CountReverseOrder
             }
         }
 
+        if (toDepth == fromDepth) {
+            // ミノの数がぴったりの場合、最後にホールされているミノを取り出す必要がある
+            for (StackOrderWithHoldCount<Integer> candidate : candidates) {
+                if (candidate.existsHoldPiece()) {
+                    candidate.incrementHoldCount();
+                }
+            }
+        }
+
         return candidates.stream()
                 .map(StackOrderWithHoldCount::toListWithHoldCount)
                 .collect(Collectors.toList());
