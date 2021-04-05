@@ -48,7 +48,7 @@ public class CountStackOrderStartsWithEmpty implements StackOrderWithHoldCount<I
         assert number != null;
         blocks.add(stockIndex, number);
         stockIndex = blocks.size();
-        if(isFirstAdd){
+        if (isFirstAdd) {
             // 最初の追加まではホールドしなくても置けるパターンのため、ホールドとしてカウントしない
             // 位置調整のみ
             holdCount += 1;
@@ -88,5 +88,15 @@ public class CountStackOrderStartsWithEmpty implements StackOrderWithHoldCount<I
     @Override
     public Pair<List<Integer>, Integer> toListWithHoldCount() {
         return new Pair<>(blocks, holdCount);
+    }
+
+    @Override
+    public boolean existsHoldPiece() {
+        return 0 < holdCount;
+    }
+
+    @Override
+    public void incrementHoldCount() {
+        holdCount += 1;
     }
 }

@@ -86,4 +86,14 @@ public class CountStackOrderStartsWithAny implements StackOrderWithHoldCount<Int
     public Pair<List<Integer>, Integer> toListWithHoldCount() {
         return new Pair<>(blocks, holdCount);
     }
+
+    @Override
+    public boolean existsHoldPiece() {
+        return true;
+    }
+
+    @Override
+    public void incrementHoldCount() {
+        holdCount += 1;
+    }
 }

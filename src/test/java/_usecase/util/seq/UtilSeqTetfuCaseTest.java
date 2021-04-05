@@ -880,16 +880,24 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput().split(LINE_SEPARATOR))
-                    .hasSize(8)
+                    .hasSize(16)
                     .contains(
-                            "TZJS",
-                            "ZTJS",
-                            "JZTS",
-                            "ZJTS",
-                            "SZJT",
-                            "ZSJT",
-                            "JZST",
-                            "ZJST"
+                            "*ZJST",
+                            "Z*JST",
+                            "JZ*ST",
+                            "ZJ*ST",
+                            "SZJ*T",
+                            "ZSJ*T",
+                            "JZS*T",
+                            "ZJS*T",
+                            "TZJS*",
+                            "ZTJS*",
+                            "JZTS*",
+                            "ZJTS*",
+                            "SZJT*",
+                            "ZSJT*",
+                            "JZST*",
+                            "ZJST*"
                     );
 
             assertThat(log.getError()).isEmpty();
@@ -1097,6 +1105,53 @@ class UtilSeqTetfuCaseTest extends UtilSeqUseCaseBaseTest {
 
                 assertThat(log.getError()).isEmpty();
             }
+        }
+
+        @Test
+        void tiolj() throws Exception {
+            String command = "util seq -M backward -p TIOLJ -n HOLD<=1";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput().split(LINE_SEPARATOR))
+                    .hasSize(6)
+                    .contains(
+                            "*TIOLJ",
+                            "T*IOLJ",
+                            "IT*OLJ",
+                            "OTI*LJ",
+                            "LTIO*J",
+                            "JTIOL*"
+                    );
+
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
+        void TIOLJl5() throws Exception {
+            String command = "util seq -M backward -p TIOLJ -l 5 -n HOLD<=1";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput().split(LINE_SEPARATOR))
+                    .hasSize(1)
+                    .contains(
+                            "JTIOL"
+                    );
+
+            assertThat(log.getError()).isEmpty();
+        }
+
+        @Test
+        void TIOLJl5hhNo() throws Exception {
+            String command = "util seq -M backward -p TIOLJ -l 5 -hh no -n HOLD<=1";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput().split(LINE_SEPARATOR))
+                    .hasSize(1)
+                    .contains(
+                            "TIOLJ"
+                    );
+
+            assertThat(log.getError()).isEmpty();
         }
     }
 }

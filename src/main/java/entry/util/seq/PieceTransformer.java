@@ -71,7 +71,7 @@ class NoPieceTransformer implements PieceTransformer {
 
     @Override
     public int fromDepth(int toDepth) {
-        return toDepth;
+        return toDepth + 1;
     }
 
     @Override
