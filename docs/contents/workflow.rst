@@ -60,11 +60,11 @@ sfinder.jarがあるディレクトリをPowerShellで開き、次のコマン�
 
 .. note::
 
-  - `ガムシロ積み3巡目のパフェ <https://tetris-matome.com/gamushiro/>`_ のため、5ラインパフェ(``-c 5``)となっています
-  - ``path -s yes`` で出力されるテト譜をページごとに分割しています
-  - ``path.csv`` から ``Select-String`` でテト譜を正規表現で抽出しています。そのため、解はunique相当になります
+  - `ガムシロ積み3巡目のパフェ <https://tetris-matome.com/gamushiro/>`_ のため、5ラインパフェ(``-c 5``)となっています。
+  - ``path -s yes`` で出力されるテト譜をページごとに分割しています。
+  - ``path.csv`` から ``Select-String`` でテト譜を正規表現で抽出しています。そのため、解はunique相当になります。
   - もしminimalから抽出したい場合は、HTMLファイルからすべての解をまとめたテト譜を削除して、読み込むファイルを変更すれば、同じコマンドで抽出できます。ただし、minimalではTスピンできる解が省略される可能性もあるため、uniqueと結果が異なる可能性もあるのでご注意ください。
-  - ``cover --mode tsd`` でパフェの途中でTSDできる確率を求めています
+  - ``cover --mode tsd`` でパフェの途中でTSDできる確率を求めています。
 
 
 
@@ -77,12 +77,29 @@ sfinder.jarがあるディレクトリをPowerShellで開き、次のコマン�
 
 ::
 
-  $pattern = "*p7"
-  java -jar sfinder.jar util seq -M pass -hh no -p *! -e '^.{0,1}?S > input/patterns.txt
-  java -jar sfinder.jar percent -t v115@9gB8EeF8CeH8BeG8CeD8JeAgH
+  $pattern = "*p4"
+  java -jar sfinder.jar util seq -M pass -hh no -p $pattern -e '^.{0,1}?S' | Out-File -Encoding default input/patterns.txt
+  java -jar sfinder.jar percent -t v115@9gB8DeG8CeH8BeG8CeD8JeAgH -fc 0 -td 1
 
+出力は以下のようになります。
+
+::
+
+  # Output
+  success = 58.33% (140/240)
+
+  Success pattern tree [Head 1 pieces]:
+  * -> 58.33 %
+  ∟ T -> 80.00 %
+  ∟ I -> 75.00 %
+  ∟ L -> 60.00 %
+  ∟ J -> 50.00 %
+  ∟ S -> 58.33 %
+  ∟ Z -> 50.00 %
+  ∟ O -> 35.00 %
 
 .. note::
 
-  - ``util seq`` の結果を、リダイレクトで ``input/patterns.txt`` に保存します
-  - ``percent`` では、``-p`` を指定しないことでファイルから読み取るようにしています
+  - ``util seq`` の結果を ``input/patterns.txt`` に保存します。
+  - ``percent`` では、``-p`` を指定しないことでファイルから読み取るようにしています。
+  - ``percent`` の ``-fc 0 -td 1`` は、結果の表示を少なくするためのオプションです。
