@@ -33,7 +33,7 @@ Sの直後にZがくるツモ順 (開幕7ミノ)
 
 ``java -jar sfinder.jar util seq -M pass -hh no -p *! -e 'SZ'``
 
-ZよりSが先にくるツモ順 (開幕7ミノ)
+SがZより先にくるツモ順 (開幕7ミノ)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ``java -jar sfinder.jar util seq -M pass -hh no -p *! -e 'S.*Z'``
