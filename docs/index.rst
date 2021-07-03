@@ -55,27 +55,6 @@ https://github.com/knewjade/solution-finder/releases/
 ※ メモリの関係から 64bit版 を推奨します
 
 
-Fumen Preview (Chrome Extension)
--------------------------------------------
-
-.. |preview_video_001| image:: contents/img/extension/video1.gif
-   :scale: 50
-.. |preview_setting_001| image:: contents/img/extension/allow_local_access.png
-   :scale: 50
-
-solution-finderが出力するHTMLファイルのテト譜を開くことなく確認できるChrome拡張機能を別途公開しています。
-
-|preview_video_001|
-
-`Chrome Web Store <https://chrome.google.com/webstore/detail/fumen-preview/kkmandajpdmjfibomfokgdjcgmbkipef>`_ からインストールすることができます。あわせてご利用ください。
-
-なお、Chrome拡張機能のデフォルトの設定では、ローカルファイルには拡張機能が適用されません。
-
-Fumen Previewの設定画面から「ファイルのURLへのアクセスを許可する」にチェックする必要があります。ご注意ください。
-
-|preview_setting_001|
-
-
 補助GUI
 -------------------------------------------
 
@@ -112,6 +91,7 @@ solution-finderを操作しやすくするGUIを `@kitsune_fuchi (twitter) <http
    contents/util/main
    contents/workflow
    contents/caution
+   contents/tools
    contents/contact
 
 
