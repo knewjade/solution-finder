@@ -11,9 +11,9 @@ solution-finderと併用すると便利なツールを記載します。
 Fumen Preview (Chrome Extension)
 ============================================================
 
-.. |preview_video_001| image:: contents/img/extension/video1.gif
+.. |preview_video_001| image:: img/extension/video1.gif
    :scale: 50
-.. |preview_setting_001| image:: contents/img/extension/allow_local_access.png
+.. |preview_setting_001| image:: img/extension/allow_local_access.png
    :scale: 50
 
 solution-finderが出力するHTMLファイルのテト譜を開くことなく確認できるChrome拡張機能を別途公開しています。
