@@ -244,7 +244,7 @@ short    long                   default
 ``-np``  ``--n-pieces``         -1
 ``-fo``  ``--format``           html
 ``-s``   ``--split``            no
-``-o``   ``--output-base``      output/path.txt
+``-o``   ``--output-base``      output/setup.html
 ``-lp``  ``--log-path``         output/last_output.txt
 ``-fp``  ``--field-path``       input/field.txt
 ``-pp``  ``--patterns-path``    input/patterns.txt
