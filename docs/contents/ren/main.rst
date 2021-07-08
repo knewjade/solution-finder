@@ -29,7 +29,7 @@ short    long                   default
 ``-P``   ``--page``             1
 ``-p``   ``--patterns``         なし
 ``-d``   ``--drop``             softdrop
-``-o``   ``--output-base``      output/path.txt
+``-o``   ``--output-base``      output/ren.html
 ``-lp``  ``--log-path``         output/last_output.txt
 ``-fp``  ``--field-path``       input/field.txt
 ``-pp``  ``--patterns-path``    input/patterns.txt
@@ -85,6 +85,7 @@ v115のテト譜データにのみ対応。
 * harddrop: ハードドロップのみ
 * 180: ソフトドロップ＋180度回転入れ。180度回転は `Nullpomino <https://github.com/nullpomino/nullpomino>`_ のStandard Wallkickに準拠します。
 * t-softdrop: Tミノはソフトドロップ、その他のミノはハードドロップ
+
 
 ``-o``, ``--output-base`` [default: output/ren.html]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
