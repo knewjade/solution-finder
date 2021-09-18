@@ -189,8 +189,8 @@ public class FigUtilEntryPoint implements EntryPoint {
     }
 
     private Bag createBag(ColorConverter colorConverter, int startPageIndex, List<TetfuPage> tetfuPages, Quiz quiz, List<TetfuPage> usingTetfuPages) {
-        String comment = quiz.comment;
-        if (settings.isUsingHold() && comment != null) {
+        if (quiz.isValid()) {
+            String comment = quiz.comment;
             int holdIndex = comment.indexOf('[') + 1;
             char holdChar = comment.charAt(holdIndex);
             Piece hold = null;
@@ -378,6 +378,10 @@ public class FigUtilEntryPoint implements EntryPoint {
         private Quiz(String comment, int index) {
             this.comment = comment;
             this.index = index;
+        }
+
+        public boolean isValid() {
+            return comment != null && comment.startsWith("#Q=");
         }
     }
 }
