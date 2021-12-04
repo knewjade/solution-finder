@@ -99,6 +99,7 @@ public class CoverEntryPoint implements EntryPoint {
         output("Using hold: " + (settings.isUsingHold() ? "use" : "avoid"));
         output("Drop: " + settings.getDropType().name().toLowerCase());
         output("Mode: " + settings.getCoverModes().name().toLowerCase());
+        output("StartingB2B: " + settings.getStartingB2B());
         output("Priority: " + (settings.isUsingPriority() ? "yes" : "no"));
         output("Last drop: " + settings.getLastSoftdrop());
         output("Version: " + FinderConstant.VERSION);
@@ -158,19 +159,19 @@ public class CoverEntryPoint implements EntryPoint {
                 break;
             }
             case AnyTSpin: {
-                cover = new AnyTSpinCover(use180Rotation);
+                cover = TSpinCover.createAnyTSpinCover(use180Rotation, settings.getStartingB2B());
                 break;
             }
             case TSpinSingle: {
-                cover = new RegularTSpinCover(1, use180Rotation);
+                cover = TSpinCover.createRegularTSpinCover(1, settings.getStartingB2B(), use180Rotation);
                 break;
             }
             case TSpinDouble: {
-                cover = new RegularTSpinCover(2, use180Rotation);
+                cover = TSpinCover.createRegularTSpinCover(2, settings.getStartingB2B(), use180Rotation);
                 break;
             }
             case TSpinTriple: {
-                cover = new RegularTSpinCover(3, use180Rotation);
+                cover = TSpinCover.createRegularTSpinCover(3, settings.getStartingB2B(), use180Rotation);
                 break;
             }
             case Tetris: {

@@ -22,11 +22,56 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class RegularTSpinCover implements Cover {
-    private final SpinChecker spinChecker;
-    private final int requiredTSpinLine;
+public class TSpinCover implements Cover {
+    interface TSpinCondition {
+        boolean satisfy(Spin spin);
+    }
 
-    public RegularTSpinCover(int requiredTSpinLine, boolean use180Rotation) {
+    static class RegularTSpinCondition implements TSpinCondition {
+        private final int requiredTSpinLine;
+
+        RegularTSpinCondition(int requiredTSpinLine) {
+            this.requiredTSpinLine = requiredTSpinLine;
+        }
+
+        @Override
+        public boolean satisfy(Spin spin) {
+            return spin.getSpin() == TSpins.Regular && requiredTSpinLine <= spin.getClearedLine();
+        }
+    }
+
+    static class AnyTSpinCondition implements TSpinCondition {
+        @Override
+        public boolean satisfy(Spin spin) {
+            return true;
+        }
+    }
+
+    public static TSpinCover createRegularTSpinCover(int requiredTSpinLine, boolean use180Rotation) {
+        return createRegularTSpinCover(requiredTSpinLine, 0, use180Rotation);
+    }
+
+    public static TSpinCover createRegularTSpinCover(int requiredTSpinLine, int b2bContinuousAfterStart, boolean use180Rotation) {
+        TSpinCondition tSpinCondition = new RegularTSpinCondition(requiredTSpinLine);
+        TSpinGuard tSpinGuard = new TSpinGuard(b2bContinuousAfterStart);
+        return new TSpinCover(tSpinCondition, tSpinGuard, use180Rotation);
+    }
+
+    public static TSpinCover createAnyTSpinCover(boolean use180Rotation) {
+        return createAnyTSpinCover(use180Rotation, 0);
+    }
+
+    public static TSpinCover createAnyTSpinCover(boolean use180Rotation, int b2bContinuousAfterStart) {
+        TSpinCondition tSpinCondition = new AnyTSpinCondition();
+        TSpinGuard tSpinGuard = new TSpinGuard(b2bContinuousAfterStart);
+        return new TSpinCover(tSpinCondition, tSpinGuard, use180Rotation);
+    }
+
+    private final SpinChecker spinChecker;
+    private final TSpinCondition tSpinCondition;
+    private final TSpinGuard initGuard;
+
+    private TSpinCover(TSpinCondition tSpinCondition, TSpinGuard initGuard, boolean use180Rotation) {
         int maxY = 24;
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
@@ -34,7 +79,8 @@ public class RegularTSpinCover implements Cover {
         MinoRotationDetail minoRotationDetail = new MinoRotationDetail(minoFactory, minoRotation);
         LockedReachable lockedReachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
         this.spinChecker = new SpinChecker(minoFactory, minoRotationDetail, lockedReachable, use180Rotation);
-        this.requiredTSpinLine = requiredTSpinLine;
+        this.initGuard = initGuard;
+        this.tSpinCondition = tSpinCondition;
     }
 
     @Override
@@ -49,10 +95,13 @@ public class RegularTSpinCover implements Cover {
             operationWithKeys.add(operationWithKey);
         }, EnumMap::putAll);
 
-        return existsValidByOrder(field.freeze(height), eachBlocks, pieces, height, reachable, 0, maxDepth, false);
+        return existsValidByOrder(field.freeze(height), eachBlocks, pieces, height, reachable, 0, maxDepth, initGuard);
     }
 
-    private boolean existsValidByOrder(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height, ReachableForCover reachable, int depth, int maxDepth, boolean satisfied) {
+    private boolean existsValidByOrder(
+            Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height,
+            ReachableForCover reachable, int depth, int maxDepth, TSpinGuard guard
+    ) {
         long deleteKey = field.clearLineReturnKey();
         Piece piece = pieces.get(depth);
         LinkedList<MinoOperationWithKey> operationWithKeys = eachBlocks.get(piece);
@@ -77,25 +126,37 @@ public class RegularTSpinCover implements Cover {
                 int y = originalY - deletedLines;
 
                 if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY(), maxDepth - depth)) {
-                    boolean newSatisfied = satisfied;
+                    TSpinGuard newGuard = guard;
 
                     {
                         Field freeze = field.freeze(height);
                         freeze.put(mino, x, y);
                         int currentDeletedLines = freeze.clearLine();
 
-                        if (0 < currentDeletedLines && key.getPiece() == Piece.T) {
-                            // Tでラインが消去された
-                            Optional<Spin> spinOptional = spinChecker.check(field, new SimpleMinoOperation(mino, x, y), height, currentDeletedLines);
+                        // ラインが消去されたか
+                        if (0 < currentDeletedLines) {
+                            //// Tスピンであるか
+                            Optional<Spin> spinOptional = Optional.empty();
+                            if (key.getPiece() == Piece.T) {
+                                spinOptional = spinChecker.check(field, new SimpleMinoOperation(mino, x, y), height, currentDeletedLines);
+                            }
+
                             if (spinOptional.isPresent()) {
                                 Spin spin = spinOptional.get();
-                                if (spin.getSpin() == TSpins.Regular && requiredTSpinLine <= spin.getClearedLine()) {
-                                    newSatisfied = true;
+                                if (tSpinCondition.satisfy(spin)) {
+                                    // 対象内でTスピン
+                                    newGuard = newGuard.recordRequiredTSpin();
+                                } else {
+                                    // 対象外でTスピン
+                                    newGuard = newGuard.recordUnrequiredTSpin();
                                 }
+                            } else {
+                                // Tスピンではない
+                                newGuard = newGuard.recordNormalClearedLine(currentDeletedLines);
                             }
                         }
 
-                        if (key.getPiece() == Piece.T && !newSatisfied) {
+                        if (key.getPiece() == Piece.T && newGuard.isAmbiguous()) {
                             // まだ条件を満たしていない
                             LinkedList<MinoOperationWithKey> ts = eachBlocks.get(Piece.T);
                             if (ts != null && ts.isEmpty()) {
@@ -106,8 +167,14 @@ public class RegularTSpinCover implements Cover {
                         }
                     }
 
+                    if (newGuard.isFailed()) {
+                        // まだ条件を満たしていない
+                        operationWithKeys.add(index, key);
+                        continue;
+                    }
+
                     if (maxDepth == depth + 1) {
-                        if (newSatisfied) {
+                        if (newGuard.isSatisfied()) {
                             return true;
                         } else {
                             // まだ条件を満たしていない
@@ -120,7 +187,7 @@ public class RegularTSpinCover implements Cover {
                     nextField.put(mino, x, y);
                     nextField.insertBlackLineWithKey(deleteKey);
 
-                    boolean exists = existsValidByOrder(nextField, eachBlocks, pieces, height, reachable, depth + 1, maxDepth, newSatisfied);
+                    boolean exists = existsValidByOrder(nextField, eachBlocks, pieces, height, reachable, depth + 1, maxDepth, newGuard);
                     if (exists)
                         return true;
                 }
@@ -144,26 +211,29 @@ public class RegularTSpinCover implements Cover {
             operationWithKeys.add(operationWithKey);
         }, EnumMap::putAll);
 
-        return existsValidByOrderWithHold(field.freeze(height), eachBlocks, pieces, height, reachable, maxDepth, 1, pieces.get(0), false);
+        return existsValidByOrderWithHold(field.freeze(height), eachBlocks, pieces, height, reachable, maxDepth, 1, pieces.get(0), initGuard);
     }
 
-    private boolean existsValidByOrderWithHold(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height, ReachableForCover reachable, int maxDepth, int depth, Piece hold, boolean satisfied) {
+    private boolean existsValidByOrderWithHold(
+            Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height,
+            ReachableForCover reachable, int maxDepth, int depth, Piece hold, TSpinGuard guard
+    ) {
         long deleteKey = field.clearLineReturnKey();
 
         Piece piece = depth < pieces.size() ? pieces.get(depth) : null;
 
-        if (hold != null && existsValidByOrderWithHold(field, eachBlocks, pieces, height, reachable, maxDepth, depth, hold, deleteKey, piece, satisfied)) {
+        if (hold != null && existsValidByOrderWithHold(field, eachBlocks, pieces, height, reachable, maxDepth, depth, hold, deleteKey, piece, guard)) {
             return true;
         }
 
-        if (piece != null && existsValidByOrderWithHold(field, eachBlocks, pieces, height, reachable, maxDepth, depth, piece, deleteKey, hold, satisfied)) {
+        if (piece != null && existsValidByOrderWithHold(field, eachBlocks, pieces, height, reachable, maxDepth, depth, piece, deleteKey, hold, guard)) {
             return true;
         }
 
         return false;
     }
 
-    private boolean existsValidByOrderWithHold(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height, ReachableForCover reachable, int maxDepth, int depth, Piece usePiece, long deleteKey, Piece nextHoldPiece, boolean satisfied) {
+    private boolean existsValidByOrderWithHold(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height, ReachableForCover reachable, int maxDepth, int depth, Piece usePiece, long deleteKey, Piece nextHoldPiece, TSpinGuard guard) {
         LinkedList<MinoOperationWithKey> operationWithKeys = eachBlocks.get(usePiece);
         if (operationWithKeys == null) {
             return false;
@@ -188,25 +258,37 @@ public class RegularTSpinCover implements Cover {
             int y = originalY - deletedLines;
 
             if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY(), maxDepth - depth + 1)) {
-                boolean newSatisfied = satisfied;
+                TSpinGuard newGuard = guard;
 
                 {
                     Field freeze = field.freeze(height);
                     freeze.put(mino, x, y);
                     int currentDeletedLines = freeze.clearLine();
 
-                    if (0 < currentDeletedLines && key.getPiece() == Piece.T) {
-                        // Tでラインが消去された
-                        Optional<Spin> spinOptional = spinChecker.check(field, new SimpleMinoOperation(mino, x, y), height, currentDeletedLines);
+                    // ラインが消去されたか
+                    if (0 < currentDeletedLines) {
+                        //// Tスピンであるか
+                        Optional<Spin> spinOptional = Optional.empty();
+                        if (key.getPiece() == Piece.T) {
+                            spinOptional = spinChecker.check(field, new SimpleMinoOperation(mino, x, y), height, currentDeletedLines);
+                        }
+
                         if (spinOptional.isPresent()) {
                             Spin spin = spinOptional.get();
-                            if (spin.getSpin() == TSpins.Regular && requiredTSpinLine <= spin.getClearedLine()) {
-                                newSatisfied = true;
+                            if (tSpinCondition.satisfy(spin)) {
+                                // 対象内でTスピン
+                                newGuard = newGuard.recordRequiredTSpin();
+                            } else {
+                                // 対象外でTスピン
+                                newGuard = newGuard.recordUnrequiredTSpin();
                             }
+                        } else {
+                            // Tスピンではない
+                            newGuard = newGuard.recordNormalClearedLine(currentDeletedLines);
                         }
                     }
 
-                    if (key.getPiece() == Piece.T && !newSatisfied) {
+                    if (key.getPiece() == Piece.T && newGuard.isAmbiguous()) {
                         // まだ条件を満たしていない
                         LinkedList<MinoOperationWithKey> ts = eachBlocks.get(Piece.T);
                         if (ts != null && ts.isEmpty()) {
@@ -217,8 +299,14 @@ public class RegularTSpinCover implements Cover {
                     }
                 }
 
+                if (newGuard.isFailed()) {
+                    // まだ条件を満たしていない
+                    operationWithKeys.add(index, key);
+                    continue;
+                }
+
                 if (maxDepth == depth) {
-                    if (newSatisfied) {
+                    if (newGuard.isSatisfied()) {
                         return true;
                     } else {
                         // まだ条件を満たしていない
@@ -231,7 +319,7 @@ public class RegularTSpinCover implements Cover {
                 nextField.put(mino, x, y);
                 nextField.insertBlackLineWithKey(deleteKey);
 
-                boolean exists = existsValidByOrderWithHold(nextField, eachBlocks, pieces, height, reachable, maxDepth, depth + 1, nextHoldPiece, newSatisfied);
+                boolean exists = existsValidByOrderWithHold(nextField, eachBlocks, pieces, height, reachable, maxDepth, depth + 1, nextHoldPiece, newGuard);
                 if (exists)
                     return true;
             }

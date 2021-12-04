@@ -910,5 +910,51 @@ class CoverTetfuCaseTest {
             assertThat(log.getOutput()).contains(Messages.foundOrSolutions(20160, all));
             assertThat(log.getOutput()).contains(Messages.foundAndSolutions(20160, all));
         }
+
+        @Test
+        void case16() throws Exception {
+            String fumen1 = "v115@9gC8GeC8GeE8AeI8AeD8JeCBJvhD0CJvDJz7IlGJ";
+
+            {
+                String command = String.format("cover --hold no --patterns LZSOT --mode any-tspin -sb 0 --tetfu %s", fumen1);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 1;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(1, all, fumen1));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(1, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(1, all));
+            }
+            {
+                String command = String.format("cover --hold no --patterns LZSOT --mode any-tspin -sb 1 --tetfu %s", fumen1);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 1;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(0, all, fumen1));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(0, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(0, all));
+            }
+            {
+                String command = String.format("cover --hold no --patterns LZSOT --mode tss -sb 0 --tetfu %s", fumen1);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 1;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(1, all, fumen1));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(1, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(1, all));
+            }
+            {
+                String command = String.format("cover --hold no --patterns LZSOT --mode tss -sb 1 --tetfu %s", fumen1);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 1;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(0, all, fumen1));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(0, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(0, all));
+            }
+        }
     }
 }

@@ -15,6 +15,7 @@ public enum CoverOptions {
     Drop(SingleArgOption.full("d", "drop", "hard or soft", "Specify drop")),
     Mirror(SingleArgOption.full("m", "mirror", "yes or no", "Specify expanding mirror")),
     Mode(SingleArgOption.full("M", "mode", "normal or tspin", "Specify cover mode")),
+    StartingB2B(SingleArgOption.full("sb", "starting-b2b", "integer", "If mode is tspin*, specify required times B2B continues immediately after the start.")),
     Priority(SingleArgOption.full("P", "priority", "yes or no", "Specify sing prioritized mode")),
     LastSoftdrop(SingleArgOption.full("l", "last-sd", "integer", "Specify the depth to allow softdrop")),
     PatternsPath(SingleArgOption.full("pp", "patterns-path", "path", "File path of pattern definition")),

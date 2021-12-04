@@ -19,6 +19,7 @@ public class CoverSettings {
     private CoverModes mode = CoverModes.Normal;
     private boolean isUsingPriority = false;
     private int lastSoftdrop = 0;
+    private int startingB2B = 0;
 
     // ********* Getter ************
     boolean isUsingHold() {
@@ -55,6 +56,10 @@ public class CoverSettings {
 
     int getLastSoftdrop() {
         return lastSoftdrop;
+    }
+
+    int getStartingB2B() {
+        return startingB2B;
     }
 
     // ********* Setter ************
@@ -170,5 +175,9 @@ public class CoverSettings {
 
     public void setLastSoftdrop(int lastSoftdrop) {
         this.lastSoftdrop = lastSoftdrop;
+    }
+
+    void setStartingB2B(int startingB2B) {
+        this.startingB2B = startingB2B;
     }
 }
