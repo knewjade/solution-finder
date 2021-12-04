@@ -15,11 +15,30 @@ public class MoveSettings {
     private String logFilePath = DEFAULT_LOG_FILE_PATH;
     private String outputBaseFilePath = DEFAULT_OUTPUT_BASE_FILE_PATH;
     private int maxClearLine = 4;
-    private Field field = FieldFactory.createField(4);
+    private ColoredField coloredField = null;
     private List<String> patterns = new ArrayList<>();
+    private boolean showsColoredField = false;
 
     // ********* Getter ************
     Field getField() {
+        if (coloredField == null) {
+            return FieldFactory.createField(4);
+        }
+        return parseToField(coloredField);
+    }
+
+    public ColoredField getColoredField() {
+        return coloredField;
+    }
+
+    private Field parseToField(ColoredField coloredField) {
+        int usingHeight = coloredField.getUsingHeight();
+        int height = Math.max(maxClearLine, usingHeight);
+        Field field = FieldFactory.createField(height);
+        for (int y = 0; y < height; y++)
+            for (int x = 0; x < 10; x++)
+                if (coloredField.getColorType(x, y) != ColorType.Empty)
+                    field.setBlock(x, y);
         return field;
     }
 
@@ -39,6 +58,14 @@ public class MoveSettings {
         return outputBaseFilePath;
     }
 
+    public boolean isShowsColoredField() {
+        return showsColoredField;
+    }
+
+    boolean isOutputToConsole() {
+        return true;
+    }
+
     // ********* Setter ************
     void setLogFilePath(String path) {
         this.logFilePath = path;
@@ -48,20 +75,8 @@ public class MoveSettings {
         this.outputBaseFilePath = path;
     }
 
-    void setField(ColoredField coloredField) {
-        int usingHeight = coloredField.getUsingHeight();
-        int height = maxClearLine < usingHeight ? usingHeight : maxClearLine;
-        Field field = FieldFactory.createField(height);
-        for (int y = 0; y < height; y++)
-            for (int x = 0; x < 10; x++)
-                if (coloredField.getColorType(x, y) != ColorType.Empty)
-                    field.setBlock(x, y);
-        setField(field);
-        setMaxClearLine(height);
-    }
-
-    private void setField(Field field) {
-        this.field = field;
+    void setColoredField(ColoredField coloredField) {
+        this.coloredField = coloredField;
     }
 
     void setMaxClearLine(int maxClearLine) {
@@ -72,7 +87,7 @@ public class MoveSettings {
         this.patterns = patterns;
     }
 
-    boolean isOutputToConsole() {
-        return true;
+    public void setShowsColoredField(boolean showsColoredField) {
+        this.showsColoredField = showsColoredField;
     }
 }

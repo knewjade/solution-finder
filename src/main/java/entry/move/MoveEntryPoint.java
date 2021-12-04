@@ -121,10 +121,16 @@ public class MoveEntryPoint implements EntryPoint {
                     List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, new Operations(operationStream), minoFactory, maxClearLine);
                     BlockField blockField = OperationTransform.parseToBlockField(operationWithKeys, minoFactory, maxClearLine);
 
-                    String encodeColor = encodeColor(field, minoFactory, colorConverter, blockField);
-                    String encodeGray = encodeGray(order.getField(), minoFactory, colorConverter);
+                    String encodeGrayField = encodeColor(field, minoFactory, colorConverter, blockField);
+                    String encodeCleared = encodeGray(order.getField(), minoFactory, colorConverter);
 
-                    bw.write(String.format("%s,%s,%s", using, encodeColor, encodeGray));
+                    if (settings.isShowsColoredField()) {
+                        String encodeColorField = encodeColor(settings.getColoredField(), minoFactory, colorConverter, blockField);
+                        bw.write(String.format("%s,%s,%s,%s", using, encodeColorField, encodeGrayField, encodeCleared));
+                    } else {
+                        bw.write(String.format("%s,%s,%s", using, encodeGrayField, encodeCleared));
+                    }
+
                     bw.newLine();
                 }
             }
@@ -135,13 +141,18 @@ public class MoveEntryPoint implements EntryPoint {
     }
 
     private String encodeColor(Field initField, MinoFactory minoFactory, ColorConverter colorConverter, BlockField blockField) {
-        TetfuElement tetfuElement = parseColorElement(initField, colorConverter, blockField, "");
+        ColoredField coloredField = ColoredFieldFactory.createGrayField(initField);
+        TetfuElement tetfuElement = parseColorElement(coloredField, colorConverter, blockField, "");
         return encodeOnePage(minoFactory, colorConverter, tetfuElement);
     }
 
-    private TetfuElement parseColorElement(Field initField, ColorConverter colorConverter, BlockField blockField, String comment) {
-        ColoredField coloredField = ColoredFieldFactory.createGrayField(initField);
+    private String encodeColor(ColoredField initField, MinoFactory minoFactory, ColorConverter colorConverter, BlockField blockField) {
+        ColoredField coloredField = initField.freeze();
+        TetfuElement tetfuElement = parseColorElement(coloredField, colorConverter, blockField, "");
+        return encodeOnePage(minoFactory, colorConverter, tetfuElement);
+    }
 
+    private TetfuElement parseColorElement(ColoredField coloredField, ColorConverter colorConverter, BlockField blockField, String comment) {
         for (Piece piece : Piece.values()) {
             Field target = blockField.get(piece);
             ColorType colorType = colorConverter.parseToColorType(piece);
