@@ -17,6 +17,7 @@ import core.srs.Rotate;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,7 +30,54 @@ class NormalCoverTest {
     private final NormalCover cover = new NormalCover();
 
     @Test
-    void cansBuild() {
+    void cansBuild1() {
+        int height = 4;
+        Field field = FieldFactory.createField("" +
+                "XXX_______" +
+                "XXX_______" +
+                "XXXXX_XXXX" +
+                "XXXXX_XXXX"
+        );
+        List<Operation> operationList = Collections.singletonList(
+                new SimpleOperation(Piece.L, Rotate.Reverse, 4, 3)
+        );
+        List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new HarddropReachable(minoFactory, minoShifter, height));
+
+        {
+            List<Piece> pieces = toPieceList("L");
+
+            assertThat(
+                    cover.canBuild(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+            ).isTrue();
+            assertThat(
+                    cover.canBuildWithHold(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+            ).isTrue();
+        }
+        {
+            List<Piece> pieces = toPieceList("O");
+
+            assertThat(
+                    cover.canBuild(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+            ).isFalse();
+            assertThat(
+                    cover.canBuildWithHold(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+            ).isFalse();
+        }
+        {
+            List<Piece> pieces = toPieceList("IL");
+
+            assertThat(
+                    cover.canBuild(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+            ).isFalse();
+            assertThat(
+                    cover.canBuildWithHold(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+            ).isTrue();
+        }
+    }
+
+    @Test
+    void cansBuild2() {
         int height = 4;
         Field field = FieldFactory.createField(height);
         List<Operation> operationList = Arrays.asList(

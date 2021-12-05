@@ -228,6 +228,9 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
         Optional<String> outputBaseFilePath = wrapper.getStringOption(CoverOptions.OutputBase.optName());
         outputBaseFilePath.ifPresent(settings::setOutputBaseFilePath);
 
+        // 開始直後で必要なB2B継続回数の設定
+        Optional<Integer> startingB2B = wrapper.getIntegerOption(CoverOptions.StartingB2B.optName());
+        startingB2B.ifPresent(settings::setStartingB2B);
 
         return Optional.of(settings);
     }
