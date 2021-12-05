@@ -244,7 +244,7 @@ public class MoveSettingParser {
                 .optionalArg(true)
                 .hasArg()
                 .numberOfArgs(1)
-                .argName("num-of-line")
+                .argName("boolean")
                 .longOpt("output-colorize")
                 .desc("If it's yes, then output a colorized-field column")
                 .build();
