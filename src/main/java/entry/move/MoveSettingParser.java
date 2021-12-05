@@ -95,7 +95,7 @@ public class MoveSettingParser {
                     // フィールドの設定
                     String fieldMarks = String.join("", fieldLines);
                     ColoredField coloredField = ColoredFieldFactory.createColoredField(fieldMarks);
-                    settings.setField(coloredField);
+                    settings.setColoredField(coloredField);
                 }
             } catch (NumberFormatException e) {
                 throw new FinderParseException("Cannot read clear-line from " + fieldPath);
@@ -133,6 +133,11 @@ public class MoveSettingParser {
                 throw new FinderParseException("Cannot open patterns file", e);
             }
         }
+
+        // 色付きフィールドの設定
+        Optional<Boolean> showsColoredField = wrapper.getBoolOption("output-colorize");
+        showsColoredField.ifPresent(settings::setShowsColoredField);
+
         return Optional.of(settings);
     }
 
@@ -235,6 +240,16 @@ public class MoveSettingParser {
                 .build();
         options.addOption(clearLineOption);
 
+        Option showsColoredFieldOption = Option.builder("oc")
+                .optionalArg(true)
+                .hasArg()
+                .numberOfArgs(1)
+                .argName("num-of-line")
+                .longOpt("output-colorize")
+                .desc("If it's yes, then output a colorized-field column")
+                .build();
+        options.addOption(showsColoredFieldOption);
+
         return options;
     }
 
@@ -285,7 +300,7 @@ public class MoveSettingParser {
             coloredField.putMino(mino, x, y);
         }
 
-        settings.setField(coloredField);
+        settings.setColoredField(coloredField);
 
         return wrapper;
     }
