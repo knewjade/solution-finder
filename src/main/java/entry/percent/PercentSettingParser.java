@@ -29,7 +29,7 @@ public class PercentSettingParser extends SettingParser<PercentSettings> {
     private static final String PATTERN_DELIMITER = ";";
 
     public PercentSettingParser(Options options, CommandLineParser parser) {
-        super(options, parser);
+        super(options, parser, "percent");
     }
 
     @Override

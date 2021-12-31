@@ -19,7 +19,7 @@ public class SeqUtilSettingParser extends SettingParser<SeqUtilSettings> {
     private static final String PATTERN_DELIMITER = ";";
 
     public SeqUtilSettingParser(Options options, CommandLineParser parser) {
-        super(options, parser);
+        super(options, parser, "util seq");
     }
 
     @Override

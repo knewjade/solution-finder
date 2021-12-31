@@ -51,27 +51,21 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class EntryPointMain {
-    private static final String[] COMMANDS = {
+    private static final List<String> COMMANDS = Arrays.asList(
             "percent",
             "path",
             "setup",
-            "ren",
-            "combo",
-            "move",
+            "ren(or combo)",
             "spin",
             "cover",
             "util fig",
             "util fumen",
             "util seq",
-    };
+            "(move)"
+    );
 
     public static int main(String[] args) {
-        if (args.length < 1) {
-            String commands = String.join(",", COMMANDS);
-            throw new IllegalArgumentException("No command: Use " + commands);
-        }
-
-        if (args[0].equals("-h") || args[0].equals("-v")) {
+        if (args.length < 1 || args[0].equals("-h") || args[0].equals("-v")) {
             System.out.println("Version: " + FinderConstant.VERSION);
             System.out.println("Usage: <command> [options]");
             System.out.println("  <command>:");
@@ -304,7 +298,7 @@ public class EntryPointMain {
                 }
             }
             default:
-                throw new IllegalArgumentException("util: Invalid type: Use fig or seq");
+                throw new IllegalArgumentException("util: Invalid type: Use fig or seq or fumen");
         }
 
         return Optional.empty();

@@ -33,7 +33,7 @@ public class SetupSettingParser extends SettingParser<SetupSettings> {
     private static final String PATTERN_DELIMITER = ";";
 
     public SetupSettingParser(Options options, CommandLineParser parser) {
-        super(options, parser);
+        super(options, parser, "setup");
     }
 
     @Override

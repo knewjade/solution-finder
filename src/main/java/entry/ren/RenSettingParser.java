@@ -27,7 +27,7 @@ public class RenSettingParser extends SettingParser<RenSettings> {
     private static final String PATTERN_DELIMITER = ";";
 
     public RenSettingParser(Options options, CommandLineParser parser) {
-        super(options, parser);
+        super(options, parser, "ren");
     }
 
     protected Optional<RenSettings> parse(CommandLineWrapper wrapper) throws FinderParseException {
