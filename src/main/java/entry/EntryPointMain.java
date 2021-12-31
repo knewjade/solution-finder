@@ -63,7 +63,6 @@ public class EntryPointMain {
             "util seq",
             "(move)"
     );
-    // and hidden commands ("move")
 
     public static int main(String[] args) {
         if (args.length < 1 || args[0].equals("-h") || args[0].equals("-v")) {
