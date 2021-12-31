@@ -28,7 +28,7 @@ public class SpinSettingParser extends SettingParser<SpinSettings> {
     private static final String PATTERN_DELIMITER = ";";
 
     public SpinSettingParser(Options options, CommandLineParser parser) {
-        super(options, parser);
+        super(options, parser, "spin");
     }
 
     protected Optional<SpinSettings> parse(CommandLineWrapper wrapper) throws FinderParseException {

@@ -39,7 +39,7 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
     private static final String PATTERN_DELIMITER = ";";
 
     public CoverSettingParser(Options options, CommandLineParser parser) {
-        super(options, parser);
+        super(options, parser, "cover");
     }
 
     @Override

@@ -14,10 +14,12 @@ import java.util.stream.Collectors;
 
 public abstract class SettingParser<T> {
     private final Options options;
+    private final String commandName;
     private final CommandLineFactory commandLineFactory;
 
-    public SettingParser(Options options, CommandLineParser parser) {
+    public SettingParser(Options options, CommandLineParser parser, String commandName) {
         this.options = options;
+        this.commandName = commandName;
         this.commandLineFactory = new CommandLineFactory(options, parser);
     }
 
@@ -34,7 +36,7 @@ public abstract class SettingParser<T> {
         // help
         if (wrapper.hasOption("help")) {
             HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("<command> [options]", options);
+            formatter.printHelp(commandName + " [options]", options);
             return Optional.empty();
         }
 

@@ -29,7 +29,7 @@ public class PathSettingParser extends SettingParser<PathSettings> {
     private static final String PATTERN_DELIMITER = ";";
 
     public PathSettingParser(Options options, CommandLineParser parser) {
-        super(options, parser);
+        super(options, parser, "path");
     }
 
     @Override

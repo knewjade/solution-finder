@@ -23,7 +23,7 @@ public class FumenUtilSettingParser extends SettingParser<FumenUtilSettings> {
     private static final String DEFAULT_FIELD_TXT = "input/field.txt";
 
     public FumenUtilSettingParser(Options options, CommandLineParser parser) {
-        super(options, parser);
+        super(options, parser, "util fumen");
     }
 
     @Override
