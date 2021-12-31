@@ -31,7 +31,7 @@ public class FirstPreSpinRunner {
             MinoFactory minoFactory, MinoShifter minoShifter, RotateReachableThreadLocal rotateReachableThreadLocal,
             int allowFillMinY, int allowFillMaxHeight, int maxTargetHeight, int fieldHeight
     ) {
-        assert allowFillMaxHeight + 2 <= maxTargetHeight;
+        assert allowFillMaxHeight + 1 <= maxTargetHeight;
         assert maxTargetHeight <= fieldHeight;
 
         this.allowFillMaxHeight = allowFillMaxHeight;

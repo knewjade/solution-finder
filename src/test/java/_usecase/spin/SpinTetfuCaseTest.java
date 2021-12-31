@@ -344,6 +344,29 @@ class SpinTetfuCaseTest {
         }
 
         @Test
+        void case10_2() throws Exception {
+            // ライン消去の上の段に屋根を作る
+            String fumen = "v115@HhE8CeF8DeG8AeD8JeAgH";
+            String command = buildCommandWithNone(fumen, "-p JTO -ft 3 -m 4");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(1));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SpinHTML html = OutputFileHelper.loadSpinHTML();
+
+            assertThat(html.getFumens())
+                    .hasSize(1)
+                    .contains("Ehh0AeE8Beg0F8ywg0G8wwD8JeAgWCA0/AAA");
+        }
+
+        //        String command = "spin -p *! -t v115@HhB8AeH8BeI8AeG8JeAgH -mr 1";  // 2 solutions
+//        String command = "spin -p *! -t v115@HhB8AeH8BeI8AeG8JeAgH -r no --filter none";  // 1 solutions
+
+
+        @Test
         void case12() throws Exception {
             // ライン消去の上の段に屋根を作る
             String fumen = "v115@FhF8CeH8AeH8DeB8JeAgH";
@@ -404,6 +427,62 @@ class SpinTetfuCaseTest {
             SpinHTML html = OutputFileHelper.loadSpinHTML();
             assertThat(html.getFumens()).hasSize(0);
         }
+
+        @Test
+        void case14_1() throws Exception {
+            // TST
+            String fumen = "v115@HhB8AeH8BeI8AeG8JeAgH";
+            String command = buildCommandWithNone(fumen, "-p *! -mr 1");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(2));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SpinHTML html = OutputFileHelper.loadSpinHTML();
+
+            assertThat(html.getFumens())
+                    .hasSize(2)
+                    .contains("1gBtIeBtEeB8wwH8xwI8wwG8JeAgWCA0XBAA")
+                    .contains("1gi0Ieg0EeB8wwH8xwI8wwG8JeAgWCA0/AAA");
+        }
+
+        @Test
+        void case14_2() throws Exception {
+            // TST (屋根探索をスキップ。解の制限なし)
+            String fumen = "v115@HhB8AeH8BeI8AeG8JeAgH";
+            String command = buildCommandWithNone(fumen, "-p *! -r no");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(1));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SpinHTML html = OutputFileHelper.loadSpinHTML();
+
+            assertThat(html.getFumens())
+                    .hasSize(1)
+                    .contains("HhB8wwH8xwI8wwG8JeAgWBA0AAAA");
+        }
+
+        @Test
+        void case14_3() throws Exception {
+            // TST (屋根探索をスキップ。解の制限あり)
+            String fumen = "v115@HhB8AeH8BeI8AeG8JeAgH";
+            String command = buildCommand(fumen, "-p *! -r no");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(0));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SpinHTML html = OutputFileHelper.loadSpinHTML();
+
+            assertThat(html.getFumens()).isEmpty();
+        }
     }
 
     @Nested
@@ -443,6 +522,18 @@ class SpinTetfuCaseTest {
         }
 
         @Test
+        void mIsEqualsToFt() throws Exception {
+            // -ftと-mが同じ
+            String fumen = "v115@9gzhFezhFezhFezhPeAgH";
+            String command = buildCommand(fumen, "-p IOT -ft 5 -m 5");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getReturnCode()).isNotEqualTo(0);
+            assertThat(log.getError()).contains("Margin-height should be greater than or equal to (fill-top+1): top=5, margin=5");
+        }
+
+        @Test
         void clearLineLessThan0() throws Exception {
             // 消去ラインが0以下
             String fumen = "v115@9gzhFezhFezhFezhPeAgH";
@@ -465,7 +556,6 @@ class SpinTetfuCaseTest {
             assertThat(log.getReturnCode()).isNotEqualTo(0);
             assertThat(log.getError()).contains("Required-clear-line should be 1 <= line <= 3");
         }
-
 
         @Test
         void manyPatternsFile() throws Exception {

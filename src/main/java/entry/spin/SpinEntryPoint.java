@@ -202,8 +202,8 @@ public class SpinEntryPoint implements EntryPoint {
         if (marginHeight < 0 || 24 < marginHeight)
             throw new FinderInitializeException("Margin-height should be 0 <= y < 24: margin=" + marginHeight);
 
-        if (marginHeight < fillTop + 2)
-            throw new FinderInitializeException("Margin-height should be greater than or equal to (fill-top+2): top=" + fillTop + ", margin=" + marginHeight);
+        if (marginHeight < fillTop + 1)
+            throw new FinderInitializeException("Margin-height should be greater than or equal to (fill-top+1): top=" + fillTop + ", margin=" + marginHeight);
 
         if (fieldHeight < 0 || 24 < fieldHeight)
             throw new FinderInitializeException("Field-height should be 0 <= y < 24: field=" + fieldHeight);

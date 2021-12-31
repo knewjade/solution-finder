@@ -19,7 +19,7 @@ public class DevMain {
 //        String command = "path -t v115@9gB8EeF8DeG8CeF8DeC8JeAgH -p I,*p3";
 //        String command = "path -t v115@QhC8BeA8BeE8AeG8JeAgH -p *!";
 
-//         String command = "setup -p [^T]! --fill i --margin o -t v115@zgdpwhUpxhCe3hAe1hZpJeAgH";  // 14
+//        String command = "setup -p [^T]! --fill i --margin o -t v115@zgdpwhUpxhCe3hAe1hZpJeAgH";  // 14
 //        String command = "setup -p [^T]! --fill i --margin o -t v115@zgTpwhYpAeUpzhAe3hQpAeQpzhTpAeUpJeAgH";  // 7
 //        String command = "setup -p [^T]! --fill i --margin o -t v115@zgUpwhYpAeTp0hAe3hQpAeQpyhUpAeTpJeAgH";  // 7
 
@@ -49,7 +49,7 @@ public class DevMain {
 
 //        String command = "spin ";  // 0 solutions
 //        String command = "spin -p *! -t v115@HhB8AeH8BeI8AeG8JeAgH -mr 1";  // 2 solutions
-//        String command = "spin -p *! -t v115@HhB8AeH8BeI8AeG8JeAgH -r no";  // 1 solutions
+//        String command = "spin -p *! -t v115@HhB8AeH8BeI8AeG8JeAgH -r no --filter none";  // 1 solutions
 
 //        String command = "spin --tetfu v115@KhB8DeB8BeB8AeI8BeC8JeAgH --patterns *p7 -ft 7";
 //        String command = "util fig -c fumen --tetfu v115@BgC8GeC8BeglDeD8AeglDeE8hlCeF8ywAtG8wwBtH8?AtAeI8AeI8AeI8KeAgH -F png -f no";
