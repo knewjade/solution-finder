@@ -13,7 +13,7 @@ public class DevMain {
 //        String command = "percent -t v115@wgF8FeG8CeB8GeC8DeF8GeB8JeAgH -p L,L,Z,S,Z,I,J,I,Z,T,O -c 7 --hold no";
 //        String command = "percent -t v115@FfI8AeI8AeI8AeI8BeI8AeI8AeI8AeR8AeI8AeI8Ae?I8BeI8AeI8AeI8AeI8JeAgH -p III* -c 16";
 //        String command = "move -t v115@9gA8IeA8IeA8IeA8SeAgH -p [TIO]p2";
-        String command = "move -t v115@zgQ4IeR4CeAtDeglQ4BeBtDeglywAti0Rphlwwzhg0?RpJeAgH -oc yes -c 6 -p I";
+//        String command = "move -t v115@zgQ4IeR4CeAtDeglQ4BeBtDeglywAti0Rphlwwzhg0?RpJeAgH -oc yes -c 6 -p I";
 //        String command = "path -k solution -f csv -t v115@zgyhGexhHexhGeAtxhC8BeA8BtyhE8AtA8JeAgWBAV?AAAAvhAAAPBAUAAAA -P 2 -p [IJLOS]p5,S --split yes";
 //        String command = "path -t v115@9gB8HeC8GeE8EeF8NeAgWMA0no2ANI98AQPcQB";
 //        String command = "path -t v115@9gB8EeF8DeG8CeF8DeC8JeAgH -p I,*p3";
@@ -43,6 +43,7 @@ public class DevMain {
 //        String command = "setup -p *! --fill i --margin o -t v115@2gWpCeWpDe0hQpxhAe4hAe2hJeAgH --format csv";
 //        String command = "setup -p *! --fill i --margin o -t v115@2gWpCeWpDe0hQpxhAe4hAe2hJeAgH";
 //        String command = "setup -p [^SZT]! --fill i --margin o -t v115@zgTpwhQpDeTpAeQpDezhAewhDeyhQpAexhCeTpAeRp?MeAgH";
+        String command = "setup -t v115@zgyhDeC8whQ4FeB8R4FeB8Q4B8EeB8AeB8DeC8JeAg?H -p LZ -f I -F S -c no -np 2";
 
 //        String command = "path -t v115@RhA8GeE8EeB8JeAgH -p LZZSITSO";
 //        String command = "path -p J,Z,O,S,L,I,I,J,S,O,Z -t v115@vhAAgH";
