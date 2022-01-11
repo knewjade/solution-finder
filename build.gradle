@@ -1,4 +1,4 @@
-version '1.03'
+version '1.02'
 
 apply plugin: 'java'
 
