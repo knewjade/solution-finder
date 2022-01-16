@@ -109,17 +109,8 @@ public class PathSettingParser extends SettingParser<PathSettings> {
 
         // ドロップの設定
         Optional<String> dropType = wrapper.getStringOption(PathOptions.Drop.optName());
-        try {
-            dropType.ifPresent(type -> {
-                String key = dropType.orElse("softdrop");
-                try {
-                    settings.setDropType(key);
-                } catch (FinderParseException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-        } catch (Exception e) {
-            throw new FinderParseException("Unsupported format: format=" + dropType.orElse("<empty>"));
+        if (dropType.isPresent()) {
+            settings.setDropType(dropType.get());
         }
 
         // ホールドの設定

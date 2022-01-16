@@ -103,17 +103,8 @@ public class PercentSettingParser extends SettingParser<PercentSettings> {
 
         // ドロップの設定
         Optional<String> dropType = wrapper.getStringOption(PercentOptions.Drop.optName());
-        try {
-            dropType.ifPresent(type -> {
-                String key = dropType.orElse("softdrop");
-                try {
-                    settings.setDropType(key);
-                } catch (FinderParseException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-        } catch (Exception e) {
-            throw new FinderParseException("Unsupported format: format=" + dropType.orElse("<empty>"));
+        if (dropType.isPresent()) {
+            settings.setDropType(dropType.get());
         }
 
         // パフェ成功確率ツリーの深さの設定
