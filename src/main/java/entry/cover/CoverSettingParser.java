@@ -180,32 +180,25 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
 
         // ドロップの設定
         Optional<String> dropType = wrapper.getStringOption(CoverOptions.Drop.optName());
-        try {
-            dropType.ifPresent(type -> {
-                String key = dropType.orElse("softdrop");
-                try {
-                    settings.setDropType(key);
-                } catch (FinderParseException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-        } catch (Exception e) {
-            throw new FinderParseException("Unsupported format: format=" + dropType.orElse("<empty>"));
+        if (dropType.isPresent()) {
+            settings.setDropType(dropType.get());
         }
 
         // モードの設定
         Optional<String> modeType = wrapper.getStringOption(CoverOptions.Mode.optName());
-        try {
-            modeType.ifPresent(type -> {
-                String key = modeType.orElse("normal");
-                try {
-                    settings.setCoverModes(key);
-                } catch (FinderParseException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-        } catch (Exception e) {
-            throw new FinderParseException("Unsupported format: format=" + modeType.orElse("<empty>"));
+        if (modeType.isPresent()) {
+            settings.setCoverModes(modeType.get());
+        }
+
+        // N-Linesモードの設定
+        if (CoverModes.isNLinesMode(settings.getCoverModes())) {
+            // max softdrop count
+            Optional<Integer> maxSoftdropCount = wrapper.getIntegerOption(CoverOptions.MaxSoftdropTimes.optName());
+            maxSoftdropCount.ifPresent(settings::setMaxSoftdropTimes);
+
+            // max clear line count
+            Optional<Integer> maxClearLineCount = wrapper.getIntegerOption(CoverOptions.MaxClearLineTimes.optName());
+            maxClearLineCount.ifPresent(settings::setMaxClearLineTimes);
         }
 
         // アウトプットファイルの設定

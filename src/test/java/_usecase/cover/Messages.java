@@ -20,4 +20,12 @@ class Messages {
         double p = (count * 100.0) / all;
         return String.format("AND = %.2f %% [%d/%d]", p, count, all);
     }
+
+    static String maxSoftdropTiems(int times) {
+        return String.format("Max Softdrop Times: %d", times);
+    }
+
+    static String maxClearLineTimes(int times) {
+        return String.format("Max Clear Line Times: %d", times);
+    }
 }

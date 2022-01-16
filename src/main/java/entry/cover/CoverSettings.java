@@ -5,6 +5,7 @@ import exceptions.FinderParseException;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class CoverSettings {
     private static final String DEFAULT_LOG_FILE_PATH = "output/last_output.txt";
@@ -20,6 +21,8 @@ public class CoverSettings {
     private boolean isUsingPriority = false;
     private int lastSoftdrop = 0;
     private int startingB2B = 0;
+    private int maxSoftdropTimes = -1;
+    private int maxClearLineTimes = -1;
 
     // ********* Getter ************
     boolean isUsingHold() {
@@ -60,6 +63,14 @@ public class CoverSettings {
 
     int getStartingB2B() {
         return startingB2B;
+    }
+
+    Optional<Integer> getMaxSoftdropTimes() {
+        return 0 <= maxSoftdropTimes ? Optional.of(maxSoftdropTimes) : Optional.empty();
+    }
+
+    Optional<Integer> getMaxClearLineTimes() {
+        return 0 <= maxClearLineTimes ? Optional.of(maxClearLineTimes) : Optional.empty();
     }
 
     // ********* Setter ************
@@ -219,5 +230,13 @@ public class CoverSettings {
 
     void setStartingB2B(int startingB2B) {
         this.startingB2B = startingB2B;
+    }
+
+    void setMaxSoftdropTimes(int maxSoftdropTimes) {
+        this.maxSoftdropTimes = maxSoftdropTimes;
+    }
+
+    void setMaxClearLineTimes(int maxClearLineTimes) {
+        this.maxClearLineTimes = maxClearLineTimes;
     }
 }
