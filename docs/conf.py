@@ -47,7 +47,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'solution-finder'
-copyright = '2017-2021, knewjade'
+copyright = '2017-2022, knewjade'
 author = 'knewjade'
 
 # The version info for the project you're documenting, acts as replacement for
