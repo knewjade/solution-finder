@@ -43,21 +43,13 @@ class CoverTetfuCaseTest {
             CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1, fumen2));
 
             assertThat(csv.size()).isEqualTo(5040);
-            assertThat(csv.row("name", "TIOLJSZ"))
-                    .containsEntry(fumen1, "X")
-                    .containsEntry(fumen2, "O");
+            assertThat(csv.row("name", "TIOLJSZ")).containsEntry(fumen1, "X").containsEntry(fumen2, "O");
 
-            assertThat(csv.row("name", "LISZTOJ"))
-                    .containsEntry(fumen1, "O")
-                    .containsEntry(fumen2, "X");
+            assertThat(csv.row("name", "LISZTOJ")).containsEntry(fumen1, "O").containsEntry(fumen2, "X");
 
-            assertThat(csv.row("name", "TILSZJO"))
-                    .containsEntry(fumen1, "O")
-                    .containsEntry(fumen2, "O");
+            assertThat(csv.row("name", "TILSZJO")).containsEntry(fumen1, "O").containsEntry(fumen2, "O");
 
-            assertThat(csv.row("name", "JSTILZO"))
-                    .containsEntry(fumen1, "X")
-                    .containsEntry(fumen2, "X");
+            assertThat(csv.row("name", "JSTILZO")).containsEntry(fumen1, "X").containsEntry(fumen2, "X");
         }
 
         @Test
@@ -79,21 +71,13 @@ class CoverTetfuCaseTest {
             CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1, fumen2));
 
             assertThat(csv.size()).isEqualTo(5040);
-            assertThat(csv.row("name", "JIZSOLT"))
-                    .containsEntry(fumen1, "X")
-                    .containsEntry(fumen2, "O");
+            assertThat(csv.row("name", "JIZSOLT")).containsEntry(fumen1, "X").containsEntry(fumen2, "O");
 
-            assertThat(csv.row("name", "SLIOZJT"))
-                    .containsEntry(fumen1, "O")
-                    .containsEntry(fumen2, "X");
+            assertThat(csv.row("name", "SLIOZJT")).containsEntry(fumen1, "O").containsEntry(fumen2, "X");
 
-            assertThat(csv.row("name", "ILSZJOT"))
-                    .containsEntry(fumen1, "O")
-                    .containsEntry(fumen2, "O");
+            assertThat(csv.row("name", "ILSZJOT")).containsEntry(fumen1, "O").containsEntry(fumen2, "O");
 
-            assertThat(csv.row("name", "ZOTIJLS"))
-                    .containsEntry(fumen1, "X")
-                    .containsEntry(fumen2, "X");
+            assertThat(csv.row("name", "ZOTIJLS")).containsEntry(fumen1, "X").containsEntry(fumen2, "X");
         }
 
         @Test
@@ -115,21 +99,13 @@ class CoverTetfuCaseTest {
             CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1, fumen2));
 
             assertThat(csv.size()).isEqualTo(5040);
-            assertThat(csv.row("name", "JIOTLSZ"))
-                    .containsEntry(fumen1, "X")
-                    .containsEntry(fumen2, "O");
+            assertThat(csv.row("name", "JIOTLSZ")).containsEntry(fumen1, "X").containsEntry(fumen2, "O");
 
-            assertThat(csv.row("name", "OTLIZJS"))
-                    .containsEntry(fumen1, "O")
-                    .containsEntry(fumen2, "X");
+            assertThat(csv.row("name", "OTLIZJS")).containsEntry(fumen1, "O").containsEntry(fumen2, "X");
 
-            assertThat(csv.row("name", "ILSJZOT"))
-                    .containsEntry(fumen1, "O")
-                    .containsEntry(fumen2, "O");
+            assertThat(csv.row("name", "ILSJZOT")).containsEntry(fumen1, "O").containsEntry(fumen2, "O");
 
-            assertThat(csv.row("name", "ZSLIOTJ"))
-                    .containsEntry(fumen1, "X")
-                    .containsEntry(fumen2, "X");
+            assertThat(csv.row("name", "ZSLIOTJ")).containsEntry(fumen1, "X").containsEntry(fumen2, "X");
         }
 
         @Test
@@ -151,17 +127,11 @@ class CoverTetfuCaseTest {
             CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1, fumen2));
 
             assertThat(csv.size()).isEqualTo(5040);
-            assertThat(csv.row("name", "ISLJZOT"))
-                    .containsEntry(fumen1, "X")
-                    .containsEntry(fumen2, "O");
+            assertThat(csv.row("name", "ISLJZOT")).containsEntry(fumen1, "X").containsEntry(fumen2, "O");
 
-            assertThat(csv.row("name", "OILSZJT"))
-                    .containsEntry(fumen1, "O")
-                    .containsEntry(fumen2, "X");
+            assertThat(csv.row("name", "OILSZJT")).containsEntry(fumen1, "O").containsEntry(fumen2, "X");
 
-            assertThat(csv.row("name", "ZTJLSIO"))
-                    .containsEntry(fumen1, "X")
-                    .containsEntry(fumen2, "X");
+            assertThat(csv.row("name", "ZTJLSIO")).containsEntry(fumen1, "X").containsEntry(fumen2, "X");
         }
 
         @Test
@@ -433,8 +403,7 @@ class CoverTetfuCaseTest {
             // CSV
             CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1));
 
-            assertThat(csv.row("name", "SLOZJIT"))
-                    .containsEntry(fumen1, "O");
+            assertThat(csv.row("name", "SLOZJIT")).containsEntry(fumen1, "O");
         }
 
         @Test
@@ -454,8 +423,7 @@ class CoverTetfuCaseTest {
                 // CSV
                 CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1));
 
-                assertThat(csv.row("name", "SLOZJIT"))
-                        .containsEntry(fumen1, "O");
+                assertThat(csv.row("name", "SLOZJIT")).containsEntry(fumen1, "O");
             }
             {
                 String command = String.format("cover -t %s -p *! --drop t-softdrop --mode tsd", fumen1);
@@ -470,8 +438,7 @@ class CoverTetfuCaseTest {
                 // CSV
                 CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1));
 
-                assertThat(csv.row("name", "SLOZJIT"))
-                        .containsEntry(fumen1, "X");
+                assertThat(csv.row("name", "SLOZJIT")).containsEntry(fumen1, "X");
             }
             {
                 String command = String.format("cover -t %s -p *! --drop tsd", fumen1);
@@ -486,8 +453,7 @@ class CoverTetfuCaseTest {
                 // CSV
                 CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1));
 
-                assertThat(csv.row("name", "SLOZJIT"))
-                        .containsEntry(fumen1, "X");
+                assertThat(csv.row("name", "SLOZJIT")).containsEntry(fumen1, "X");
             }
         }
 
@@ -536,12 +502,8 @@ class CoverTetfuCaseTest {
                 // CSV
                 CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1, fumen2));
 
-                assertThat(csv.row("name", "OTILSZJ"))
-                        .containsEntry(fumen1, "X")
-                        .containsEntry(fumen2, "X");
-                assertThat(csv.row("name", "OTIZSJL"))
-                        .containsEntry(fumen1, "X")
-                        .containsEntry(fumen2, "X");
+                assertThat(csv.row("name", "OTILSZJ")).containsEntry(fumen1, "X").containsEntry(fumen2, "X");
+                assertThat(csv.row("name", "OTIZSJL")).containsEntry(fumen1, "X").containsEntry(fumen2, "X");
             }
             {
                 String command = String.format("cover -t %s %s -p *! --mode tsd", fumen1, fumen2);
@@ -557,12 +519,8 @@ class CoverTetfuCaseTest {
                 // CSV
                 CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1, fumen2));
 
-                assertThat(csv.row("name", "OTILSZJ"))
-                        .containsEntry(fumen1, "X")
-                        .containsEntry(fumen2, "X");
-                assertThat(csv.row("name", "OTIZSJL"))
-                        .containsEntry(fumen1, "X")
-                        .containsEntry(fumen2, "X");
+                assertThat(csv.row("name", "OTILSZJ")).containsEntry(fumen1, "X").containsEntry(fumen2, "X");
+                assertThat(csv.row("name", "OTIZSJL")).containsEntry(fumen1, "X").containsEntry(fumen2, "X");
             }
             {
                 String command = String.format("cover -t %s %s -p *! --mode any", fumen1, fumen2);
@@ -578,12 +536,8 @@ class CoverTetfuCaseTest {
                 // CSV
                 CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1, fumen2));
 
-                assertThat(csv.row("name", "OTILSZJ"))
-                        .containsEntry(fumen1, "O")
-                        .containsEntry(fumen2, "X");
-                assertThat(csv.row("name", "OTIZSJL"))
-                        .containsEntry(fumen1, "X")
-                        .containsEntry(fumen2, "X");
+                assertThat(csv.row("name", "OTILSZJ")).containsEntry(fumen1, "O").containsEntry(fumen2, "X");
+                assertThat(csv.row("name", "OTIZSJL")).containsEntry(fumen1, "X").containsEntry(fumen2, "X");
             }
         }
 
@@ -723,29 +677,13 @@ class CoverTetfuCaseTest {
             // CSV
             CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1, fumen2, fumen3, fumen4));
 
-            assertThat(csv.row("name", "OZLSIJT"))
-                    .containsEntry(fumen1, "O")
-                    .containsEntry(fumen2, "X")
-                    .containsEntry(fumen3, "X")
-                    .containsEntry(fumen4, "X");
+            assertThat(csv.row("name", "OZLSIJT")).containsEntry(fumen1, "O").containsEntry(fumen2, "X").containsEntry(fumen3, "X").containsEntry(fumen4, "X");
 
-            assertThat(csv.row("name", "JITOLSZ"))
-                    .containsEntry(fumen1, "X")
-                    .containsEntry(fumen2, "O")
-                    .containsEntry(fumen3, "X")
-                    .containsEntry(fumen4, "X");
+            assertThat(csv.row("name", "JITOLSZ")).containsEntry(fumen1, "X").containsEntry(fumen2, "O").containsEntry(fumen3, "X").containsEntry(fumen4, "X");
 
-            assertThat(csv.row("name", "STIZOLJ"))
-                    .containsEntry(fumen1, "X")
-                    .containsEntry(fumen2, "X")
-                    .containsEntry(fumen3, "O")
-                    .containsEntry(fumen4, "X");
+            assertThat(csv.row("name", "STIZOLJ")).containsEntry(fumen1, "X").containsEntry(fumen2, "X").containsEntry(fumen3, "O").containsEntry(fumen4, "X");
 
-            assertThat(csv.row("name", "ZTIOSLJ"))
-                    .containsEntry(fumen1, "X")
-                    .containsEntry(fumen2, "X")
-                    .containsEntry(fumen3, "X")
-                    .containsEntry(fumen4, "O");
+            assertThat(csv.row("name", "ZTIOSLJ")).containsEntry(fumen1, "X").containsEntry(fumen2, "X").containsEntry(fumen3, "X").containsEntry(fumen4, "O");
         }
 
         @Test
@@ -1018,6 +956,161 @@ class CoverTetfuCaseTest {
                 assertThat(log.getOutput()).contains(Messages.foundSolutions(0, all, fumens4));
                 assertThat(log.getOutput()).contains(Messages.foundOrSolutions(1268, all));
                 assertThat(log.getOutput()).contains(Messages.foundAndSolutions(0, all));
+            }
+        }
+
+        @Test
+        void case18MaxSoftdrop() throws Exception {
+            String fumen = "v115@9gE8EeE8EeE8EeE8OeSSJvhDHoBOsBhiBpmB";
+
+            {
+                String command = String.format("cover --hold yes --patterns [LSJI]p4,I --mode 1L --max-softdrop -1 --max-clearline -1 --tetfu %s", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 24;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(24, all, fumen));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(24, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(24, all));
+            }
+            {
+                String command = String.format("cover --hold no --patterns [LSJI]p4,I --mode 1L --max-softdrop -1 --max-clearline -1 --tetfu %s", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 24;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(12, all, fumen));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(12, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(12, all));
+            }
+            {
+                String command = String.format("cover --hold no --patterns [LSJI]p4,I --mode 1L --max-softdrop 1 --max-clearline -1 --tetfu %s", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 24;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(8, all, fumen));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(8, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(8, all));
+            }
+            {
+                String command = String.format("cover --hold no --patterns [LSJI]p4,I --mode 1L --max-softdrop 0 --max-clearline -1 --tetfu %s", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 24;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(4, all, fumen));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(4, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(4, all));
+            }
+        }
+
+        @Test
+        void case18MaxClearLine() throws Exception {
+            String fumen = "v115@9gE8EeE8EeE8EeE8OeSSJvhDHoBOsBhiBpmB";
+
+            for (String mode : Arrays.asList("1L", "normal")) {
+                {
+                    String command = String.format("cover --hold yes --patterns [LSJI]p4,I --mode %s --max-softdrop -1 --max-clearline -1 --tetfu %s", mode, fumen);
+                    Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                    // Log
+                    int all = 24;
+                    assertThat(log.getOutput()).contains(Messages.foundSolutions(24, all, fumen));
+                    assertThat(log.getOutput()).contains(Messages.foundOrSolutions(24, all));
+                    assertThat(log.getOutput()).contains(Messages.foundAndSolutions(24, all));
+
+                    assertThat(log.getOutput()).contains(Messages.maxSoftdropTiems(-1));
+                    assertThat(log.getOutput()).contains(Messages.maxClearLineTimes(-1));
+                }
+                {
+                    String command = String.format("cover --hold no --patterns [LSJI]p4,I --mode %s --max-softdrop -1 --max-clearline 1 --tetfu %s", mode, fumen);
+                    Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                    // Log
+                    int all = 24;
+                    assertThat(log.getOutput()).contains(Messages.foundSolutions(3, all, fumen));
+                    assertThat(log.getOutput()).contains(Messages.foundOrSolutions(3, all));
+                    assertThat(log.getOutput()).contains(Messages.foundAndSolutions(3, all));
+
+                    assertThat(log.getOutput()).contains(Messages.maxSoftdropTiems(-1));
+                    assertThat(log.getOutput()).contains(Messages.maxClearLineTimes(1));
+                }
+                {
+                    String command = String.format("cover --hold no --patterns [LSJI]p4,I --mode %s --max-softdrop 1 --max-clearline 1 --tetfu %s", mode, fumen);
+                    Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                    // Log
+                    int all = 24;
+                    assertThat(log.getOutput()).contains(Messages.foundSolutions(2, all, fumen));
+                    assertThat(log.getOutput()).contains(Messages.foundOrSolutions(2, all));
+                    assertThat(log.getOutput()).contains(Messages.foundAndSolutions(2, all));
+
+                    assertThat(log.getOutput()).contains(Messages.maxSoftdropTiems(1));
+                    assertThat(log.getOutput()).contains(Messages.maxClearLineTimes(1));
+                }
+                {
+                    String command = String.format("cover --hold no --patterns [LSJI]p4,I --mode %s --max-softdrop 0 --max-clearline 1 --tetfu %s", mode, fumen);
+                    Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                    // Log
+                    int all = 24;
+                    assertThat(log.getOutput()).contains(Messages.foundSolutions(1, all, fumen));
+                    assertThat(log.getOutput()).contains(Messages.foundOrSolutions(1, all));
+                    assertThat(log.getOutput()).contains(Messages.foundAndSolutions(1, all));
+
+                    assertThat(log.getOutput()).contains(Messages.maxSoftdropTiems(0));
+                    assertThat(log.getOutput()).contains(Messages.maxClearLineTimes(1));
+                }
+                {
+                    String command = String.format("cover --hold no --patterns [LSJI]p4,I --mode %s --max-softdrop -1 --max-clearline 0 --tetfu %s", mode, fumen);
+                    Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                    // Log
+                    int all = 24;
+                    assertThat(log.getOutput()).contains(Messages.foundSolutions(0, all, fumen));
+                    assertThat(log.getOutput()).contains(Messages.foundOrSolutions(0, all));
+                    assertThat(log.getOutput()).contains(Messages.foundAndSolutions(0, all));
+
+                    assertThat(log.getOutput()).contains(Messages.maxSoftdropTiems(-1));
+                    assertThat(log.getOutput()).contains(Messages.maxClearLineTimes(0));
+                }
+            }
+        }
+
+        @Test
+        void case18OrPC() throws Exception {
+            String fumen = "v115@9gE8EeE8EeE8EeE8OeSSJvhDHoBOsBhiBpmB";
+
+            {
+                String command = String.format("cover --hold yes --patterns [LSJI]p4,I --mode 3L-OR-PC --max-softdrop -1 --max-clearline -1 --tetfu %s", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 24;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(18, all, fumen));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(18, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(18, all));
+            }
+            {
+                String command = String.format("cover --hold no --patterns [LSJI]p4,I --mode 3L-OR-PC --max-softdrop -1 --max-clearline 1 --tetfu %s", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 24;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(3, all, fumen));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(3, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(3, all));
+            }
+            {
+                String command = String.format("cover --hold no --patterns [LSJI]p4,I --mode 3L-OR-PC --max-softdrop 1 --max-clearline -1 --tetfu %s", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 24;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(5, all, fumen));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(5, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(5, all));
             }
         }
     }

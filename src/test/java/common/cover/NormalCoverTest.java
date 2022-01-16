@@ -27,7 +27,7 @@ class NormalCoverTest {
     private final MinoFactory minoFactory = new MinoFactory();
     private final MinoShifter minoShifter = new MinoShifter();
 
-    private final NormalCover cover = new NormalCover();
+    private final ClearLinesCover cover = ClearLinesCover.createNormal();
 
     @Test
     void cansBuild1() {

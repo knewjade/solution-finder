@@ -18,6 +18,8 @@ public enum CoverOptions {
     StartingB2B(SingleArgOption.full("sb", "starting-b2b", "integer", "If mode is tspin*, specify required times B2B continues immediately after the start.")),
     Priority(SingleArgOption.full("P", "priority", "yes or no", "Specify sing prioritized mode")),
     LastSoftdrop(SingleArgOption.full("l", "last-sd", "integer", "Specify the depth to allow softdrop")),
+    MaxSoftdropTimes(SingleArgOption.full("ms", "max-softdrop", "integer", "Specify max times to allow softdrop (N-Lines [or PC] mode only)")),
+    MaxClearLineTimes(SingleArgOption.full("mc", "max-clearline", "integer", "Specify max times to allow clearline (N-Lines [or PC] mode only)")),
     PatternsPath(SingleArgOption.full("pp", "patterns-path", "path", "File path of pattern definition")),
     FieldPath(SingleArgOption.full("fp", "field-path", "path", "File path of field definition")),
     LogPath(SingleArgOption.full("lp", "log-path", "path", "File path of output log")),

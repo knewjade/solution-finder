@@ -93,17 +93,8 @@ public class RenSettingParser extends SettingParser<RenSettings> {
 
         // ドロップの設定
         Optional<String> dropType = wrapper.getStringOption(RenOptions.Drop.optName());
-        try {
-            dropType.ifPresent(type -> {
-                String key = dropType.orElse("softdrop");
-                try {
-                    settings.setDropType(key);
-                } catch (FinderParseException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-        } catch (Exception e) {
-            throw new FinderParseException("Unsupported format: format=" + dropType.orElse("<empty>"));
+        if (dropType.isPresent()) {
+            settings.setDropType(dropType.get());
         }
 
         return Optional.of(settings);

@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -99,6 +100,12 @@ public class CoverEntryPoint implements EntryPoint {
         output("Using hold: " + (settings.isUsingHold() ? "use" : "avoid"));
         output("Drop: " + settings.getDropType().name().toLowerCase());
         output("Mode: " + settings.getCoverModes().name().toLowerCase());
+
+        if (CoverModes.isNLinesMode(settings.getCoverModes())) {
+            output("Max Softdrop Times: " + this.settings.getMaxSoftdropTimes().orElse(-1));
+            output("Max Clear Line Times: " + this.settings.getMaxClearLineTimes().orElse(-1));
+        }
+
         output("StartingB2B: " + settings.getStartingB2B());
         output("Priority: " + (settings.isUsingPriority() ? "yes" : "no"));
         output("Last drop: " + settings.getLastSoftdrop());
@@ -144,11 +151,8 @@ public class CoverEntryPoint implements EntryPoint {
         ReachableForCover reachableForCover = getReachableForCover(settings.getLastSoftdrop(), height);
         List<BitSet> results = new ArrayList<>();
 
-        CoverModes mode = settings.getCoverModes();
-        boolean use180Rotation = settings.getDropType() == DropType.Rotation180;
-
         // Check
-        Cover cover = createCover(mode, use180Rotation);
+        Cover cover = createCover();
 
         boolean isUsingPrioritized = settings.isUsingPriority();
 
@@ -283,25 +287,30 @@ public class CoverEntryPoint implements EntryPoint {
         }
     }
 
-    private Cover createCover(CoverModes mode, boolean use180Rotation) {
-        switch (mode) {
+    private Cover createCover() {
+        boolean use180Rotation = this.settings.getDropType() == DropType.Rotation180;
+
+        CoverModes modes = this.settings.getCoverModes();
+        switch (modes) {
             case Normal: {
-                return new NormalCover();
+                if (!this.settings.getMaxSoftdropTimes().isPresent() && !this.settings.getMaxClearLineTimes().isPresent())
+                    return ClearLinesCover.createNormal();
+                return createClearLinesCover(1, false);
             }
             case B2BContinuous: {
                 return new B2BContinuousCover(use180Rotation);
             }
             case AnyTSpin: {
-                return TSpinCover.createAnyTSpinCover(use180Rotation, settings.getStartingB2B());
+                return TSpinCover.createAnyTSpinCover(use180Rotation, this.settings.getStartingB2B());
             }
             case TSpinSingle: {
-                return TSpinCover.createRegularTSpinCover(1, settings.getStartingB2B(), use180Rotation);
+                return TSpinCover.createRegularTSpinCover(1, this.settings.getStartingB2B(), use180Rotation);
             }
             case TSpinDouble: {
-                return TSpinCover.createRegularTSpinCover(2, settings.getStartingB2B(), use180Rotation);
+                return TSpinCover.createRegularTSpinCover(2, this.settings.getStartingB2B(), use180Rotation);
             }
             case TSpinTriple: {
-                return TSpinCover.createRegularTSpinCover(3, settings.getStartingB2B(), use180Rotation);
+                return TSpinCover.createRegularTSpinCover(3, this.settings.getStartingB2B(), use180Rotation);
             }
             case Tetris: {
                 return new TetrisCover();
@@ -310,33 +319,41 @@ public class CoverEntryPoint implements EntryPoint {
                 return new TetrisEndCover();
             }
             case OneLine: {
-                return ClearLinesCover.createEqualToOrGreaterThan(1, false);
+                return createClearLinesCover(1, false);
             }
             case OneLineOrPC: {
-                return ClearLinesCover.createEqualToOrGreaterThan(1, true);
+                return createClearLinesCover(1, true);
             }
             case TwoLines: {
-                return ClearLinesCover.createEqualToOrGreaterThan(2, false);
+                return createClearLinesCover(2, false);
             }
             case TwoLinesOrPC: {
-                return ClearLinesCover.createEqualToOrGreaterThan(2, true);
+                return createClearLinesCover(2, true);
             }
             case ThreeLines: {
-                return ClearLinesCover.createEqualToOrGreaterThan(3, false);
+                return createClearLinesCover(3, false);
             }
             case ThreeLinesOrPC: {
-                return ClearLinesCover.createEqualToOrGreaterThan(3, true);
+                return createClearLinesCover(3, true);
             }
             case FourLines: {
-                return ClearLinesCover.createEqualToOrGreaterThan(4, false);
+                return createClearLinesCover(4, false);
             }
             case FourLinesOrPC: {
-                return ClearLinesCover.createEqualToOrGreaterThan(4, true);
+                return createClearLinesCover(4, true);
             }
             default: {
-                throw new IllegalStateException("Unknown cover mode: " + mode);
+                throw new IllegalStateException("Unknown cover mode: " + modes);
             }
         }
+    }
+
+    private Cover createClearLinesCover(int requiredClearLines, boolean allowsPc) {
+        Optional<Integer> maxSoftdropTimes = this.settings.getMaxSoftdropTimes();
+        Optional<Integer> maxClearLineTimes = this.settings.getMaxClearLineTimes();
+        return ClearLinesCover.createEqualToOrGreaterThan(
+                requiredClearLines, allowsPc, maxSoftdropTimes.orElse(Integer.MAX_VALUE), maxClearLineTimes.orElse(Integer.MAX_VALUE)
+        );
     }
 
     private ReachableForCover getReachableForCover(int lastSoftdrop, int maxY) {
