@@ -80,7 +80,7 @@ class PathCSVCaseTest extends PathUseCaseBaseTest {
                     return freeze;
                 }))
                 .hasSize(186)
-                .allMatch(Field::isPerfect);
+                .allMatch(Field::isEmpty);
 
         // minimal
         PathCSV minimalCSV = OutputFileHelper.loadPathMinimalNoneCSV();
@@ -94,7 +94,7 @@ class PathCSVCaseTest extends PathUseCaseBaseTest {
                     return freeze;
                 }))
                 .hasSize(127)
-                .allMatch(Field::isPerfect);
+                .allMatch(Field::isEmpty);
     }
 
     @Test

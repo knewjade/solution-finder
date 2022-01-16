@@ -67,13 +67,13 @@ public class MiddleBitBlocks implements BitBlocks {
 
     @Override
     public EnumMap<Piece, List<SimpleOriginalPiece>> getNextOriginPiecesMap(Field rest) {
-        assert !rest.isPerfect();
+        assert !rest.isEmpty();
         MiddleField field = getBit(rest);
         return get(field);
     }
 
     private EnumMap<Piece, List<SimpleOriginalPiece>> get(MiddleField field) {
-        assert !field.isPerfect();
+        assert !field.isEmpty();
         long firstKey = field.getBoard(0);
         long secondKey = field.getBoard(1);
         assert maps.containsKey(firstKey) : FieldView.toString(field);

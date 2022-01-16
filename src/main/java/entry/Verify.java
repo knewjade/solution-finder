@@ -18,7 +18,7 @@ public class Verify {
     public static void needFilledField(Field field) throws FinderInitializeException {
         field(field);
 
-        if (field.isPerfect())
+        if (field.isEmpty())
             throw new FinderInitializeException("Should specify filled block");
     }
 

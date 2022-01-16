@@ -238,14 +238,14 @@ public class SetupEntryPoint implements EntryPoint {
         // ホールを持ってはいけないエリアがある場合は、新たにフィルターを追加する
         switch (settings.getExcludeType()) {
             case Holes: {
-                if (freeField.isPerfect())
+                if (freeField.isEmpty())
                     filter = new SimpleHolesFilter(maxHeight).and(filter);
                 else
                     filter = new SimpleHolesWithFreeFilter(maxHeight, freeField).and(filter);
                 break;
             }
             case StrictHoles: {
-                if (freeField.isPerfect())
+                if (freeField.isEmpty())
                     filter = new StrictHolesFilter(maxHeight).and(filter);
                 else
                     filter = new StrictHolesWithFreeFilter(maxHeight, freeField).and(filter);

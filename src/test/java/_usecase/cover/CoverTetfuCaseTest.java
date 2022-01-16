@@ -956,5 +956,69 @@ class CoverTetfuCaseTest {
                 assertThat(log.getOutput()).contains(Messages.foundAndSolutions(0, all));
             }
         }
+
+        @Test
+        void case17() throws Exception {
+            String fumens1 = "v115@1gA8HeB8HeC8BeH8CeH8AeD8JelLYZAFLDmClcJSAV?DEHBEooRBUoAVBaHUPCpAAAAvhEUrBToBSsBOpBRwB";
+            String fumens2 = "v115@1gA8HeB8HeC8BeH8CeH8AeD8JelLYZAFLDmClcJSAV?DEHBEooRBUoAVBzyaPCpAAAAvhE3rBStBzlBOpBRxB";
+            String fumens3 = "v115@1gA8HeB8HeC8BeH8CeH8AeD8JelLYZAFLDmClcJSAV?DEHBEooRBUoAVBvyjPCpAAAAvhEToBCsBfrBOpBxwB";
+            String fumens4 = "v115@1gA8HeB8HeC8BeH8CeH8AeD8Je1LYZAFLDmClcJSAV?DEHBEooRBUoAVBPt/VCpAAAAvhETjBfmBOkBCsBxwB";
+
+            {
+                String command = String.format("cover --patterns *! --mode tsd --tetfu %s %s %s %s", fumens1, fumens2, fumens3, fumens4);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 5040;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(1836, all, fumens1));
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(1864, all, fumens2));
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(1248, all, fumens3));
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(0, all, fumens4));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(2840, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(0, all));
+            }
+
+            {
+                String command = String.format("cover --patterns *! --mode tsd -sb 1 --tetfu %s %s %s %s", fumens1, fumens2, fumens3, fumens4);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 5040;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(1584, all, fumens1));
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(1624, all, fumens2));
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(1248, all, fumens3));
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(0, all, fumens4));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(2398, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(0, all));
+            }
+
+            {
+                String command = String.format("cover --patterns *! --mode 3L-or-pc --tetfu %s %s %s %s", fumens1, fumens2, fumens3, fumens4);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 5040;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(320, all, fumens1));
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(272, all, fumens2));
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(240, all, fumens3));
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(0, all, fumens4));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(598, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(0, all));
+            }
+
+            {
+                String command = String.format("cover --patterns *! --mode 2L --tetfu %s %s %s %s", fumens1, fumens2, fumens3, fumens4);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 5040;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(674, all, fumens1));
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(612, all, fumens2));
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(508, all, fumens3));
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(0, all, fumens4));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(1268, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(0, all));
+            }
+        }
     }
 }

@@ -77,7 +77,7 @@ class MiddleFieldTest {
         field.remove(new Mino(Piece.T, Rotate.Spawn), 1, 0);
         field.remove(new Mino(Piece.I, Rotate.Left), 4, 6);
         field.remove(new Mino(Piece.O, Rotate.Spawn), 8, 8);
-        assertThat(field.isPerfect()).isTrue();
+        assertThat(field.isEmpty()).isTrue();
     }
 
     @Test
@@ -105,7 +105,7 @@ class MiddleFieldTest {
 
             field.remove(piece);
 
-            assertThat(field.isPerfect())
+            assertThat(field.isEmpty())
                     .as("%s (%d, %d)", mino, x, y)
                     .isTrue();
         }
@@ -192,12 +192,12 @@ class MiddleFieldTest {
         Field field = FieldFactory.createMiddleField();
 
         assertThat(field.isEmpty(0, 0)).isTrue();
-        assertThat(field.isPerfect()).isTrue();
+        assertThat(field.isEmpty()).isTrue();
 
         field.setBlock(7, 8);
 
         assertThat(field.isEmpty(7, 8)).isFalse();
-        assertThat(field.isPerfect()).isFalse();
+        assertThat(field.isEmpty()).isFalse();
     }
 
     @Test
@@ -962,7 +962,7 @@ class MiddleFieldTest {
                 assertThat(field.isEmpty(x, y)).isFalse();
 
             field.clearLine();
-            assertThat(field.isPerfect()).isTrue();
+            assertThat(field.isEmpty()).isTrue();
         }
     }
 

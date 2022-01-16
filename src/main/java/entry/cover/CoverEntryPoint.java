@@ -148,44 +148,7 @@ public class CoverEntryPoint implements EntryPoint {
         boolean use180Rotation = settings.getDropType() == DropType.Rotation180;
 
         // Check
-        Cover cover;
-        switch (mode) {
-            case Normal: {
-                cover = new NormalCover();
-                break;
-            }
-            case B2BContinuous: {
-                cover = new B2BContinuousCover(use180Rotation);
-                break;
-            }
-            case AnyTSpin: {
-                cover = TSpinCover.createAnyTSpinCover(use180Rotation, settings.getStartingB2B());
-                break;
-            }
-            case TSpinSingle: {
-                cover = TSpinCover.createRegularTSpinCover(1, settings.getStartingB2B(), use180Rotation);
-                break;
-            }
-            case TSpinDouble: {
-                cover = TSpinCover.createRegularTSpinCover(2, settings.getStartingB2B(), use180Rotation);
-                break;
-            }
-            case TSpinTriple: {
-                cover = TSpinCover.createRegularTSpinCover(3, settings.getStartingB2B(), use180Rotation);
-                break;
-            }
-            case Tetris: {
-                cover = new TetrisCover();
-                break;
-            }
-            case TetrisEnd: {
-                cover = new TetrisEndCover();
-                break;
-            }
-            default: {
-                throw new IllegalStateException("Unknown cover mode: " + mode);
-            }
-        }
+        Cover cover = createCover(mode, use180Rotation);
 
         boolean isUsingPrioritized = settings.isUsingPriority();
 
@@ -317,6 +280,62 @@ public class CoverEntryPoint implements EntryPoint {
             bw.flush();
         } catch (IOException e) {
             throw new FinderExecuteException("Failed to output file", e);
+        }
+    }
+
+    private Cover createCover(CoverModes mode, boolean use180Rotation) {
+        switch (mode) {
+            case Normal: {
+                return new NormalCover();
+            }
+            case B2BContinuous: {
+                return new B2BContinuousCover(use180Rotation);
+            }
+            case AnyTSpin: {
+                return TSpinCover.createAnyTSpinCover(use180Rotation, settings.getStartingB2B());
+            }
+            case TSpinSingle: {
+                return TSpinCover.createRegularTSpinCover(1, settings.getStartingB2B(), use180Rotation);
+            }
+            case TSpinDouble: {
+                return TSpinCover.createRegularTSpinCover(2, settings.getStartingB2B(), use180Rotation);
+            }
+            case TSpinTriple: {
+                return TSpinCover.createRegularTSpinCover(3, settings.getStartingB2B(), use180Rotation);
+            }
+            case Tetris: {
+                return new TetrisCover();
+            }
+            case TetrisEnd: {
+                return new TetrisEndCover();
+            }
+            case OneLine: {
+                return ClearLinesCover.createEqualToOrGreaterThan(1, false);
+            }
+            case OneLineOrPC: {
+                return ClearLinesCover.createEqualToOrGreaterThan(1, true);
+            }
+            case TwoLines: {
+                return ClearLinesCover.createEqualToOrGreaterThan(2, false);
+            }
+            case TwoLinesOrPC: {
+                return ClearLinesCover.createEqualToOrGreaterThan(2, true);
+            }
+            case ThreeLines: {
+                return ClearLinesCover.createEqualToOrGreaterThan(3, false);
+            }
+            case ThreeLinesOrPC: {
+                return ClearLinesCover.createEqualToOrGreaterThan(3, true);
+            }
+            case FourLines: {
+                return ClearLinesCover.createEqualToOrGreaterThan(4, false);
+            }
+            case FourLinesOrPC: {
+                return ClearLinesCover.createEqualToOrGreaterThan(4, true);
+            }
+            default: {
+                throw new IllegalStateException("Unknown cover mode: " + mode);
+            }
         }
     }
 

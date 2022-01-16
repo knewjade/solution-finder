@@ -3,8 +3,6 @@ package searcher.spins.wall;
 import common.datastore.PieceCounter;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.field.KeyOperators;
-import core.mino.Mino;
 import core.mino.Piece;
 import core.neighbor.SimpleOriginalPiece;
 import searcher.spins.Solutions;
@@ -115,7 +113,7 @@ public class WallRunner {
         }
 
         // 次に置くミノ一覧
-        assert !initResult.getRemain().isPerfect();
+        assert !initResult.getRemain().isEmpty();
         EnumMap<Piece, List<SimpleOriginalPiece>> nextOriginPiecesMap = bitBlocks.getNextOriginPiecesMap(initResult.getRemain());
         Result initLastResult = initResult.getLastResult();
 

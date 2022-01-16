@@ -120,7 +120,7 @@ public class SmallField implements Field {
     }
 
     @Override
-    public boolean isPerfect() {
+    public boolean isEmpty() {
         return xBoard == 0L;
     }
 

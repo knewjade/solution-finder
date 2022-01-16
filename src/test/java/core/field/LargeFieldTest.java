@@ -94,7 +94,7 @@ class LargeFieldTest {
             assertThat(field1.getXBoardMidHigh()).isEqualTo(field2.getXBoardMidHigh());
             assertThat(field1.getXBoardHigh()).isEqualTo(field2.getXBoardHigh());
 
-            assertThat(field1.isPerfect()).isFalse();
+            assertThat(field1.isEmpty()).isFalse();
         }
     }
 
@@ -219,7 +219,7 @@ class LargeFieldTest {
     @Test
     void isPerfect() throws Exception {
         Field field = FieldFactory.createLargeField();
-        assertThat(field.isPerfect()).isTrue();
+        assertThat(field.isEmpty()).isTrue();
     }
 
     @Test
@@ -370,7 +370,7 @@ class LargeFieldTest {
                 assertThat(field.isEmpty(x, y)).isFalse();
 
             field.clearLine();
-            assertThat(field.isPerfect()).isTrue();
+            assertThat(field.isEmpty()).isTrue();
         }
     }
 

@@ -30,6 +30,6 @@ public class SimpleHolesWithFreeFilter implements SetupSolutionFilter {
         freeze.reduce(freeField);
 
         // ホールがまだ残っていたら除外
-        return freeze.isPerfect();
+        return freeze.isEmpty();
     }
 }

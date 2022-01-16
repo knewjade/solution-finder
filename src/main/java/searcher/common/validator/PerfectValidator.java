@@ -6,7 +6,7 @@ import core.field.Field;
 public class PerfectValidator implements Validator {
     @Override
     public boolean satisfies(Field field, int maxY) {
-        return maxY == 0 && field.isPerfect();
+        return maxY == 0 && field.isEmpty();
     }
 
     @Override

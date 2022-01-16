@@ -60,7 +60,7 @@ class SmallFieldTest {
         assertThat(field.isEmpty(1, 1)).isFalse();
 
         field.remove(new Mino(Piece.T, Rotate.Spawn), 1, 0);
-        assertThat(field.isPerfect()).isTrue();
+        assertThat(field.isEmpty()).isTrue();
     }
 
     @Test
@@ -88,7 +88,7 @@ class SmallFieldTest {
 
             field.remove(piece);
 
-            assertThat(field.isPerfect())
+            assertThat(field.isEmpty())
                     .as("%s (%d, %d)", mino, x, y)
                     .isTrue();
         }
@@ -164,12 +164,12 @@ class SmallFieldTest {
         Field field = FieldFactory.createSmallField();
 
         assertThat(field.isEmpty(0, 0)).isTrue();
-        assertThat(field.isPerfect()).isTrue();
+        assertThat(field.isEmpty()).isTrue();
 
         field.setBlock(0, 0);
 
         assertThat(field.isEmpty(0, 0)).isFalse();
-        assertThat(field.isPerfect()).isFalse();
+        assertThat(field.isEmpty()).isFalse();
     }
 
     @Test
@@ -453,7 +453,7 @@ class SmallFieldTest {
                 assertThat(field.isEmpty(x, y)).isFalse();
 
             field.clearLine();
-            assertThat(field.isPerfect()).isTrue();
+            assertThat(field.isEmpty()).isTrue();
         }
     }
 
