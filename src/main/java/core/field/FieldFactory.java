@@ -1,5 +1,8 @@
 package core.field;
 
+import common.tetfu.common.ColorType;
+import common.tetfu.field.ColoredField;
+
 public class FieldFactory {
     public static Field createField(int maxHeight) {
         if (maxHeight <= 6)
@@ -144,5 +147,14 @@ public class FieldFactory {
             return createMiddleField(marks, false);
 
         throw new UnsupportedOperationException("Too large field height: " + maxY);
+    }
+
+    public static Field createField(ColoredField coloredField, int height) {
+        Field field = createField(height);
+        for (int y = 0; y < height; y++)
+            for (int x = 0; x < 10; x++)
+                if (coloredField.getColorType(x, y) != ColorType.Empty)
+                    field.setBlock(x, y);
+        return field;
     }
 }

@@ -23,7 +23,7 @@ public class RemainderFieldRunner {
     private List<RemainderField> extract(Field remainderBlock) {
         int maxBoardCount = remainderBlock.getBoardCount();
 
-        assert !remainderBlock.isPerfect();
+        assert !remainderBlock.isEmpty();
 
         List<RemainderField> pairs = new ArrayList<>();
 
@@ -34,7 +34,7 @@ public class RemainderFieldRunner {
             pairs.add(remainderField);
 
             remainderBlock = pair.getValue();
-        } while (!remainderBlock.isPerfect());
+        } while (!remainderBlock.isEmpty());
 
         assert 1 <= pairs.size();
 
@@ -42,7 +42,7 @@ public class RemainderFieldRunner {
     }
 
     private Pair<RemainderField, Field> calcRemainderFieldPair(Field restBlock, int boardCount) {
-        assert !restBlock.isPerfect();
+        assert !restBlock.isEmpty();
 
         switch (boardCount) {
             case 1: {

@@ -395,7 +395,7 @@ public class LargeField implements Field {
     }
 
     @Override
-    public boolean isPerfect() {
+    public boolean isEmpty() {
         return xBoardLow == 0L && xBoardMidLow == 0L && xBoardMidHigh == 0L && xBoardHigh == 0L;
     }
 

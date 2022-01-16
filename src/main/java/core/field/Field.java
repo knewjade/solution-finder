@@ -54,7 +54,7 @@ public interface Field extends Comparable<Field> {
     boolean existsAbove(int y);
 
     // フィールド内に1つもブロックがないとき true を返却
-    boolean isPerfect();
+    boolean isEmpty();
 
     // x列上で、maxY行より下がすべてブロックで埋まっているとき true を返却
     boolean isFilledInColumn(int x, int maxY);

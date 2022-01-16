@@ -163,7 +163,7 @@ public class MiddleField implements Field {
     }
 
     @Override
-    public boolean isPerfect() {
+    public boolean isEmpty() {
         return xBoardLow == 0L && xBoardHigh == 0L;
     }
 

@@ -32,7 +32,7 @@ public class AddLastWallResult extends WallResult {
 
     @Override
     public boolean isVisitedAll() {
-        return remain.isPerfect();
+        return remain.isEmpty();
     }
 
     @Override

@@ -70,7 +70,7 @@ public class LargeBitBlocks implements BitBlocks {
 
     @Override
     public EnumMap<Piece, List<SimpleOriginalPiece>> getNextOriginPiecesMap(Field rest) {
-        assert !rest.isPerfect();
+        assert !rest.isEmpty();
         LargeField field = getBit(rest);
         return get(field);
     }

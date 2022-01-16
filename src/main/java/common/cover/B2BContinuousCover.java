@@ -23,7 +23,11 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class B2BContinuousCover implements Cover {
-    private final SpinChecker spinChecker;
+    interface B2BCondition {
+        boolean checks(Field field, int height, MinoOperation key);
+    }
+
+    private final B2BCondition b2BCondition;
 
     public B2BContinuousCover(boolean use180Rotation) {
         int maxY = 24;
@@ -32,7 +36,40 @@ public class B2BContinuousCover implements Cover {
         MinoRotation minoRotation = MinoRotation.create();
         MinoRotationDetail minoRotationDetail = new MinoRotationDetail(minoFactory, minoRotation);
         LockedReachable lockedReachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
-        this.spinChecker = new SpinChecker(minoFactory, minoRotationDetail, lockedReachable, use180Rotation);
+        SpinChecker spinChecker = new SpinChecker(minoFactory, minoRotationDetail, lockedReachable, use180Rotation);
+
+        this.b2BCondition = (Field field, int height, MinoOperation key) -> {
+            Field freeze = field.freeze(height);
+            freeze.put(key.getMino(), key.getX(), key.getY());
+            int currentDeletedLines = freeze.clearLine();
+
+            if (0 < currentDeletedLines) {
+                // ラインが消去された
+                switch (key.getPiece()) {
+                    case T: {
+                        Optional<Spin> spinOptional = spinChecker.check(field, key, height, currentDeletedLines);
+                        if (!spinOptional.isPresent()) {
+                            // Tスピンできない
+                            return false;
+                        }
+                        break;
+                    }
+                    case I: {
+                        if (currentDeletedLines != 4) {
+                            // テトリスできない
+                            return false;
+                        }
+                        break;
+                    }
+                    default: {
+                        // T,I以外でライン消去された
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        };
     }
 
     @Override
@@ -75,7 +112,7 @@ public class B2BContinuousCover implements Cover {
                 int y = originalY - deletedLines;
 
                 if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY(), maxDepth - depth)) {
-                    if (!checksB2B(field, height, new SimpleMinoOperation(mino, x, y))) {
+                    if (!b2BCondition.checks(field, height, new SimpleMinoOperation(mino, x, y))) {
                         operationWithKeys.add(index, key);
                         continue;
                     }
@@ -97,39 +134,6 @@ public class B2BContinuousCover implements Cover {
         }
 
         return false;
-    }
-
-    private boolean checksB2B(Field field, int height, MinoOperation key) {
-        Field freeze = field.freeze(height);
-        freeze.put(key.getMino(), key.getX(), key.getY());
-        int currentDeletedLines = freeze.clearLine();
-
-        if (0 < currentDeletedLines) {
-            // ラインが消去された
-            switch (key.getPiece()) {
-                case T: {
-                    Optional<Spin> spinOptional = spinChecker.check(field, key, height, currentDeletedLines);
-                    if (!spinOptional.isPresent()) {
-                        // Tスピンできない
-                        return false;
-                    }
-                    break;
-                }
-                case I: {
-                    if (currentDeletedLines != 4) {
-                        // テトリスできない
-                        return false;
-                    }
-                    break;
-                }
-                default: {
-                    // T,I以外でライン消去された
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
 
     @Override
@@ -188,7 +192,7 @@ public class B2BContinuousCover implements Cover {
             int y = originalY - deletedLines;
 
             if (field.isOnGround(mino, x, y) && field.canPut(mino, x, y) && reachable.checks(field, mino, x, y, height - mino.getMinY(), maxDepth - depth + 1)) {
-                if (!checksB2B(field, height, new SimpleMinoOperation(mino, x, y))) {
+                if (!b2BCondition.checks(field, height, new SimpleMinoOperation(mino, x, y))) {
                     operationWithKeys.add(index, key);
                     continue;
                 }
