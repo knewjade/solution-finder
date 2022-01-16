@@ -9,4 +9,12 @@ public enum CoverModes {
     TSpinTriple,
     Tetris,
     TetrisEnd,
+    OneLine,
+    OneLineOrPC,
+    TwoLines,
+    TwoLinesOrPC,
+    ThreeLines,
+    ThreeLinesOrPC,
+    FourLines,
+    FourLinesOrPC,
 }

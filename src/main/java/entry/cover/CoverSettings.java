@@ -136,7 +136,7 @@ public class CoverSettings {
     }
 
     void setCoverModes(String mode) throws FinderParseException {
-        switch (mode.trim().toLowerCase()) {
+        switch (mode.trim().toLowerCase().replace("_", "-")) {
             case "normal":
                 this.mode = CoverModes.Normal;
                 return;
@@ -167,6 +167,46 @@ public class CoverSettings {
             case "tetris-end":
             case "tetrisend":
                 this.mode = CoverModes.TetrisEnd;
+                return;
+            case "1l":
+            case "1line":
+            case "1lines":
+                this.mode = CoverModes.OneLine;
+                return;
+            case "1l-or-pc":
+            case "1line-or-pc":
+            case "1lines-or-pc":
+                this.mode = CoverModes.OneLineOrPC;
+                return;
+            case "2l":
+            case "2line":
+            case "2lines":
+                this.mode = CoverModes.TwoLines;
+                return;
+            case "2l-or-pc":
+            case "2line-or-pc":
+            case "2lines-or-pc":
+                this.mode = CoverModes.TwoLinesOrPC;
+                return;
+            case "3l":
+            case "3line":
+            case "3lines":
+                this.mode = CoverModes.ThreeLines;
+                return;
+            case "3l-or-pc":
+            case "3line-or-pc":
+            case "3lines-or-pc":
+                this.mode = CoverModes.ThreeLinesOrPC;
+                return;
+            case "4l":
+            case "4line":
+            case "4lines":
+                this.mode = CoverModes.FourLines;
+                return;
+            case "4l-or-pc":
+            case "4line-or-pc":
+            case "4lines-or-pc":
+                this.mode = CoverModes.FourLinesOrPC;
                 return;
             default:
                 throw new FinderParseException("Unsupported mode: mode=" + mode);
