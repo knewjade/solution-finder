@@ -306,7 +306,6 @@ class TSpinCoverTest {
             }
         }
 
-
         @Test
         void cansBuildMini() {
             int height = 4;
@@ -601,6 +600,61 @@ class TSpinCoverTest {
                 assertThat(
                         cover.canBuildWithHold(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
                 ).isTrue();
+            }
+        }
+
+        @Test
+        void tssAnd4Lines() {
+            int height = 5;
+            Field field = FieldFactory.createField("" +
+                            "XX__XXXXXX" +
+                            "X___XXXXXX" +
+                            "XX_XXXXXXX" +
+                            "XXX_XXXXXX" +
+                            "XXX_XXXXXX"
+                    , height);
+            List<Operation> operationList = Arrays.asList(
+                    new SimpleOperation(Piece.T, Rotate.Left, 2, 3),
+                    new SimpleOperation(Piece.I, Rotate.Left, 3, 1)
+            );
+            List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
+            ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new LockedReachable(minoFactory, minoShifter, minoRotation, height));
+
+            {
+                TSpinCover cover = TSpinCover.createAnyTSpinCover(false, 2);
+
+                List<Piece> pieces = toPieceList("TI");
+
+                assertThat(
+                        cover.canBuild(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+                ).isTrue();
+                assertThat(
+                        cover.canBuildWithHold(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+                ).isTrue();
+            }
+            {
+                TSpinCover cover = TSpinCover.createAnyTSpinCover(false, 2);
+
+                List<Piece> pieces = toPieceList("IT");
+
+                assertThat(
+                        cover.canBuild(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+                ).isFalse();
+                assertThat(
+                        cover.canBuildWithHold(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+                ).isTrue();
+            }
+            {
+                TSpinCover cover = TSpinCover.createAnyTSpinCover(false, 3);
+
+                List<Piece> pieces = toPieceList("TI");
+
+                assertThat(
+                        cover.canBuild(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+                ).isFalse();
+                assertThat(
+                        cover.canBuildWithHold(field, operationsWithKey.stream(), pieces, height, reachable, operationsWithKey.size())
+                ).isFalse();
             }
         }
 
