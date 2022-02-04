@@ -156,11 +156,12 @@ public class TSpinCover implements Cover {
                             }
                         }
 
-                        if (key.getPiece() == Piece.T && newGuard.isAmbiguous()) {
+                        if ((key.getPiece() == Piece.T || key.getPiece() == Piece.I) && newGuard.isAmbiguous()) {
                             // まだ条件を満たしていない
                             LinkedList<MinoOperationWithKey> ts = eachBlocks.get(Piece.T);
-                            if (ts != null && ts.isEmpty()) {
-                                // Tミノが残っていない
+                            LinkedList<MinoOperationWithKey> is = eachBlocks.get(Piece.I);
+                            if ((ts == null || ts.isEmpty()) && (is == null || is.isEmpty())) {
+                                // Tミノ・Iミノともに残っていない
                                 operationWithKeys.add(index, key);
                                 continue;
                             }
@@ -288,11 +289,12 @@ public class TSpinCover implements Cover {
                         }
                     }
 
-                    if (key.getPiece() == Piece.T && newGuard.isAmbiguous()) {
+                    if ((key.getPiece() == Piece.T || key.getPiece() == Piece.I) && newGuard.isAmbiguous()) {
                         // まだ条件を満たしていない
                         LinkedList<MinoOperationWithKey> ts = eachBlocks.get(Piece.T);
-                        if (ts != null && ts.isEmpty()) {
-                            // Tミノが残っていない
+                        LinkedList<MinoOperationWithKey> is = eachBlocks.get(Piece.I);
+                        if ((ts == null || ts.isEmpty()) && (is == null || is.isEmpty())) {
+                            // Tミノ・Iミノともに残っていない
                             operationWithKeys.add(index, key);
                             continue;
                         }

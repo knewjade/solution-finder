@@ -1079,6 +1079,34 @@ class CoverTetfuCaseTest {
         }
 
         @Test
+        void case19() throws Exception {
+            {
+                String fumen = "v115@zgF8BeH8CeH8AeH8AeI8AeC8JetCJvhAJHJ";
+
+                String command = String.format("cover -t %s -p TI -M b2b", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 1;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(1, all, fumen));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(1, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(1, all));
+            }
+            {
+                String fumen = "v115@zgF8BeH8CeH8AeH8AeI8AeC8JetCJvhAJHJ";
+
+                String command = String.format("cover -t %s -p TI -M tss -sb 2", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 1;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(1, all, fumen));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(1, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(1, all));
+            }
+        }
+
+        @Test
         void case18OrPC() throws Exception {
             String fumen = "v115@9gE8EeE8EeE8EeE8OeSSJvhDHoBOsBhiBpmB";
 
