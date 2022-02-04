@@ -16,7 +16,7 @@ repositories {
 
 dependencies {
     implementation 'commons-cli:commons-cli:1.+'
-    testImplementation'com.google.guava:guava:27.1-jre'
+    testImplementation 'com.google.guava:guava:27.1-jre'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.+'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.+'

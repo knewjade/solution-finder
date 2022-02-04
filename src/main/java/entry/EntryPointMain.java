@@ -5,9 +5,6 @@ import entry.cover.CoverEntryPoint;
 import entry.cover.CoverOptions;
 import entry.cover.CoverSettingParser;
 import entry.cover.CoverSettings;
-import entry.move.MoveEntryPoint;
-import entry.move.MoveSettingParser;
-import entry.move.MoveSettings;
 import entry.path.PathEntryPoint;
 import entry.path.PathOptions;
 import entry.path.PathSettingParser;
@@ -60,8 +57,7 @@ public class EntryPointMain {
             "cover",
             "util fig",
             "util fumen",
-            "util seq",
-            "(move)"
+            "util seq"
     );
 
     public static int main(String[] args) {
@@ -81,8 +77,7 @@ public class EntryPointMain {
         EntryPoint entryPoint;
         try {
             Optional<EntryPoint> optional = createEntryPoint(args[0], argsList);
-            if (!optional.isPresent())
-                return 0;
+            if (!optional.isPresent()) return 0;
             entryPoint = optional.get();
         } catch (Exception e) {
             System.err.println("Error: Failed to execute pre-main. Output stack trace to output/error.txt");
@@ -202,8 +197,6 @@ public class EntryPointMain {
                 return getUtilEntryPoint(commands);
             case "setup":
                 return getSetupEntryPoint(commands);
-            case "move":
-                return getMoveEntryPoint(commands);
             case "ren":
             case "combo":
                 return getRenEntryPoint(commands);
@@ -212,7 +205,7 @@ public class EntryPointMain {
             case "spin":
                 return getSpinEntryPoint(commands);
             default:
-                throw new IllegalArgumentException("Invalid type: Use percent, path, util, setup, move, ren, cover, spin");
+                throw new IllegalArgumentException("Invalid type: Use percent, path, util, setup, ren, cover, spin");
         }
     }
 
@@ -242,9 +235,7 @@ public class EntryPointMain {
         }
     }
 
-    private static Optional<EntryPoint> getCoverEntryPoint(
-            List<String> commands
-    ) throws FinderInitializeException, FinderParseException {
+    private static Optional<EntryPoint> getCoverEntryPoint(List<String> commands) throws FinderInitializeException, FinderParseException {
         Options options = CoverOptions.create();
         CommandLineParser parser = new DefaultParser();
         CoverSettingParser settingParser = new CoverSettingParser(options, parser);
@@ -312,17 +303,6 @@ public class EntryPointMain {
         if (settingsOptional.isPresent()) {
             SetupSettings settings = settingsOptional.get();
             return Optional.of(new SetupEntryPoint(settings));
-        } else {
-            return Optional.empty();
-        }
-    }
-
-    private static Optional<EntryPoint> getMoveEntryPoint(List<String> commands) throws FinderParseException, FinderInitializeException {
-        MoveSettingParser settingParser = new MoveSettingParser(commands);
-        Optional<MoveSettings> settingsOptional = settingParser.parse();
-        if (settingsOptional.isPresent()) {
-            MoveSettings settings = settingsOptional.get();
-            return Optional.of(new MoveEntryPoint(settings));
         } else {
             return Optional.empty();
         }
