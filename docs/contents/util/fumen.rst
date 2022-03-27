@@ -28,7 +28,7 @@ short    long                   default
 ======== ====================== ======================
 ``-t``   ``--tetfu``            なし
 ``-M``   ``--mode``             なし
-``-o``   ``--output-base``      output/path.txt
+``-o``   ``--output-base``      output/path.html
 ``-lp``  ``--log-path``         output/last_output.txt
 ``-fp``  ``--field-path``       input/field.txt
 ======== ====================== ======================
