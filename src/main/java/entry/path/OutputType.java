@@ -5,5 +5,19 @@ public enum OutputType {
     HTML,
     TetfuCSV,
     PatternCSV,
-    UseCSV
+    UseCSV,
+    ;
+
+    public boolean isCSV() {
+        switch (this) {
+            case CSV:
+            case TetfuCSV:
+            case PatternCSV:
+            case UseCSV:
+                return true;
+            case HTML:
+                return false;
+        }
+        throw new IllegalStateException("Unsupported output type");
+    }
 }

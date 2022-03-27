@@ -131,16 +131,6 @@ public class PathSettingParser extends SettingParser<PathSettings> {
         Optional<String> logFilePath = wrapper.getStringOption(PathOptions.LogPath.optName());
         logFilePath.ifPresent(settings::setLogFilePath);
 
-        // アウトプットファイルの設定
-        Optional<String> outputBaseFilePath = wrapper.getStringOption(PathOptions.OutputBase.optName());
-        outputBaseFilePath.ifPresent(v -> {
-            if ("-".equals(v)) {
-                settings.useOutputToConsole();
-            } else {
-                settings.useOutputToFile(v);
-            }
-        });
-
         // 最大レイヤーの設定
         Optional<Integer> maxLayerNumber = wrapper.getIntegerOption(PathOptions.MaxLayer.optName());
         Optional<PathLayer> pathLayer = maxLayerNumber.map(this::getPathLayer);
@@ -161,6 +151,16 @@ public class PathSettingParser extends SettingParser<PathSettings> {
         } catch (Exception e) {
             throw new FinderParseException("Unsupported format: format=" + outputType.orElse("<empty>"));
         }
+
+        // アウトプットファイルの設定
+        Optional<String> outputBaseFilePath = wrapper.getStringOption(PathOptions.OutputBase.optName());
+        outputBaseFilePath.ifPresent(v -> {
+            if (settings.getOutputType().isCSV() && "-".equals(v)) {
+                settings.useOutputToConsole();
+            } else {
+                settings.useOutputToFile(v);
+            }
+        });
 
         // 出力分割の設定
         Optional<Boolean> isSplit = wrapper.getBoolOption(PathOptions.Split.optName());

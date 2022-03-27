@@ -46,4 +46,8 @@ public class CSVStore {
         }
         return result;
     }
+
+    public Set<String> keySet() {
+        return map.keySet();
+    }
 }

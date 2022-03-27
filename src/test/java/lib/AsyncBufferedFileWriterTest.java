@@ -2,8 +2,7 @@ package lib;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.List;
@@ -25,7 +24,7 @@ class AsyncBufferedFileWriterTest {
         ExecutorService executorService = Executors.newFixedThreadPool(6);
         int maxThread = 10;
         int maxCount = 100;
-        try (AsyncBufferedFileWriter writer = new AsyncBufferedFileWriter(file, charset, false, 10L)) {
+        try (AsyncBufferedFileWriter writer = new AsyncBufferedFileWriter(newBufferedWriter(file, charset), 10L)) {
             for (int thread = 0; thread < maxThread; thread++) {
                 int numberOfThread = thread;
                 executorService.submit(() -> {
@@ -34,7 +33,8 @@ class AsyncBufferedFileWriterTest {
                 });
             }
             executorService.shutdown();
-            executorService.awaitTermination(3L, TimeUnit.SECONDS);
+            boolean terminated = executorService.awaitTermination(3L, TimeUnit.SECONDS);
+            assert terminated;
         }
 
         // Read
@@ -53,5 +53,9 @@ class AsyncBufferedFileWriterTest {
                             .collect(Collectors.toList())
             );
         }
+    }
+
+    private BufferedWriter newBufferedWriter(File file, Charset charset) throws FileNotFoundException {
+        return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false), charset));
     }
 }

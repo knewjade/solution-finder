@@ -38,7 +38,7 @@ public class UseCSVPathOutput implements PathOutput {
 
         // baseファイル
         String outputFilePath = String.format("%s%s", namePath, FILE_EXTENSION);
-        MyFile base = new MyFile(outputFilePath);
+        MyFile base = new MyFile(outputFilePath, pathSettings.isResultOutputToConsole());
         base.mkdirs();
         base.verify();
 

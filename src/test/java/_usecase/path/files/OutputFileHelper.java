@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class OutputFileHelper {
     private static final String UNIQUE_PATH = concatPath("output", "path_unique.html");
@@ -87,28 +88,47 @@ public class OutputFileHelper {
         return loadPathCSV(Paths.get(MINIMAL_CSV));
     }
 
-    private static PathCSV loadPathCSV(Path path) throws IOException {
-        List<Operations> operations = Files.lines(path)
+    public static PathCSV loadPathCSV(Path path) throws IOException {
+        return loadPathCSV(Files.lines(path));
+    }
+
+    public static PathCSV loadPathCSV(Stream<String> content) {
+        List<Operations> operations = content
                 .map(OperationInterpreter::parseToOperations)
                 .collect(Collectors.toList());
         return new PathCSV(operations);
     }
 
     public static CSVStore loadPathSolutionCSV() throws IOException {
-        return loadCSVStore(Paths.get(DEFAULT_CSV), Arrays.asList("fumen", "use", "num-valid", "num-solutions", "num-patterns", "valid", "solutions", "patterns"));
+        Path path = Paths.get(DEFAULT_CSV);
+        return loadPathSolutionCSV(Files.lines(path));
+    }
+
+    public static CSVStore loadPathSolutionCSV(Stream<String> content) {
+        return loadCSVStore(content, Arrays.asList("fumen", "use", "num-valid", "num-solutions", "num-patterns", "valid", "solutions", "patterns"));
     }
 
     public static CSVStore loadPathUseCSV() throws IOException {
-        return loadCSVStore(Paths.get(DEFAULT_CSV), Arrays.asList("use", "num-solutions", "num-patterns", "fumens", "patterns"));
+        Path path = Paths.get(DEFAULT_CSV);
+        return loadPathUseCSV(Files.lines(path));
+    }
+
+    public static CSVStore loadPathUseCSV(Stream<String> content) {
+        return loadCSVStore(content, Arrays.asList("use", "num-solutions", "num-patterns", "fumens", "patterns"));
     }
 
     public static CSVStore loadPathPatternCSV() throws IOException {
-        return loadCSVStore(Paths.get(DEFAULT_CSV), Arrays.asList("pattern", "num-solutions", "use", "nouse", "fumens"));
+        Path path = Paths.get(DEFAULT_CSV);
+        return loadPathPatternCSV(Files.lines(path));
     }
 
-    private static CSVStore loadCSVStore(Path path, List<String> columnNames) throws IOException {
+    public static CSVStore loadPathPatternCSV(Stream<String> content) {
+        return loadCSVStore(content, Arrays.asList("pattern", "num-solutions", "use", "nouse", "fumens"));
+    }
+
+    private static CSVStore loadCSVStore(Stream<String> content, List<String> columnNames) {
         CSVStore csvStore = new CSVStore(columnNames);
-        Files.lines(path)
+        content
                 .skip(1)  // skip header
                 .forEach(csvStore::load);
         return csvStore;
@@ -119,7 +139,7 @@ public class OutputFileHelper {
         Matcher matcher = pattern.matcher(html);
         if (matcher.find()) {
             assert matcher.groupCount() == 1 : html;
-            return Integer.valueOf(matcher.group(1));
+            return Integer.parseInt(matcher.group(1));
         } else {
             throw new IllegalStateException("Not found pattern: " + html);
         }
@@ -130,7 +150,7 @@ public class OutputFileHelper {
         Matcher matcher = pattern.matcher(html);
         if (matcher.find()) {
             assert matcher.groupCount() == 1 : html;
-            return Integer.valueOf(matcher.group(1));
+            return Integer.parseInt(matcher.group(1));
         } else {
             throw new IllegalStateException("Not found sequence: " + html);
         }
