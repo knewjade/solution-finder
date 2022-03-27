@@ -59,7 +59,7 @@ public class PathSettingParser extends SettingParser<PathSettings> {
                     try {
                         // 最大削除ラインの設定
                         String firstLine = fieldLines.pollFirst();
-                        int maxClearLine = Integer.valueOf(firstLine != null ? firstLine : "error");
+                        int maxClearLine = Integer.parseInt(firstLine != null ? firstLine : "error");
 
                         // フィールドの設定
                         String fieldMarks = String.join("", fieldLines);
@@ -133,7 +133,13 @@ public class PathSettingParser extends SettingParser<PathSettings> {
 
         // アウトプットファイルの設定
         Optional<String> outputBaseFilePath = wrapper.getStringOption(PathOptions.OutputBase.optName());
-        outputBaseFilePath.ifPresent(settings::setOutputBaseFilePath);
+        outputBaseFilePath.ifPresent(v -> {
+            if ("-".equals(v)) {
+                settings.useOutputToConsole();
+            } else {
+                settings.useOutputToFile(v);
+            }
+        });
 
         // 最大レイヤーの設定
         Optional<Integer> maxLayerNumber = wrapper.getIntegerOption(PathOptions.MaxLayer.optName());
