@@ -80,6 +80,7 @@ public class SetupSettingParser extends SettingParser<SetupSettings> {
                     // 最大削除ラインの設定
                     Integer maxHeightForce = null;
                     try {
+                        assert fieldLines.peekFirst() != null;
                         maxHeightForce = Integer.valueOf(fieldLines.peekFirst());
                         fieldLines.pollFirst();  // 読み込みに成功したときだけ進める
                     } catch (Exception ignore) {
@@ -133,7 +134,7 @@ public class SetupSettingParser extends SettingParser<SetupSettings> {
         Optional<Boolean> combination = wrapper.getBoolOption(SetupOptions.Combination.optName());
         combination.ifPresent(settings::setCombination);
 
-        // 除外の設定
+        // 除外の設定
         Optional<String> excludeType = wrapper.getStringOption(SetupOptions.Exclude.optName());
         try {
             excludeType.ifPresent(type -> {
@@ -164,10 +165,6 @@ public class SetupSettingParser extends SettingParser<SetupSettings> {
         Optional<String> logFilePath = wrapper.getStringOption(SetupOptions.LogPath.optName());
         logFilePath.ifPresent(settings::setLogFilePath);
 
-        // アウトプットファイルの設定
-        Optional<String> outputBaseFilePath = wrapper.getStringOption(SetupOptions.OutputBase.optName());
-        outputBaseFilePath.ifPresent(settings::setOutputBaseFilePath);
-
         // 出力タイプの設定
         Optional<String> outputType = wrapper.getStringOption(SetupOptions.Format.optName());
         try {
@@ -181,6 +178,16 @@ public class SetupSettingParser extends SettingParser<SetupSettings> {
         } catch (Exception e) {
             throw new FinderParseException("Unsupported format: format=" + outputType.orElse("<empty>"));
         }
+
+        // アウトプットファイルの設定
+        Optional<String> outputBaseFilePath = wrapper.getStringOption(SetupOptions.OutputBase.optName());
+        outputBaseFilePath.ifPresent(v -> {
+            if (settings.getOutputType().isCSV() && "-".equals(v)) {
+                settings.useOutputToConsole();
+            } else {
+                settings.useOutputToFile(v);
+            }
+        });
 
         return Optional.of(settings);
     }

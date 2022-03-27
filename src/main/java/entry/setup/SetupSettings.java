@@ -38,6 +38,8 @@ public class SetupSettings {
     private String outputBaseFilePath = DEFAULT_OUTPUT_BASE_FILE_PATH;
     private OutputType outputType = OutputType.HTML;
     private boolean isSplit = false;
+    private boolean isLogOutputToConsole = true;
+    private boolean isResultOutputToConsole = false;
 
     // ********* Getter ************
     public boolean isUsingHold() {
@@ -76,8 +78,12 @@ public class SetupSettings {
         return patterns;
     }
 
-    boolean isOutputToConsole() {
-        return true;
+    boolean isLogOutputToConsole() {
+        return isLogOutputToConsole;
+    }
+
+    public boolean isResultOutputToConsole() {
+        return isResultOutputToConsole;
     }
 
     Field getInitField() {
@@ -410,6 +416,25 @@ public class SetupSettings {
             default:
                 throw new FinderParseException("Unsupported format: format=" + type);
         }
+    }
+
+    void setLogOutputToConsole(boolean output) {
+        this.isLogOutputToConsole = output;
+    }
+
+    void setResultOutputToConsole(boolean output) {
+        this.isResultOutputToConsole = output;
+    }
+
+    void useOutputToFile(String path) {
+        setOutputBaseFilePath(path);
+        setLogOutputToConsole(true);
+        setResultOutputToConsole(false);
+    }
+
+    void useOutputToConsole() {
+        setLogOutputToConsole(false);
+        setResultOutputToConsole(true);
     }
 }
 

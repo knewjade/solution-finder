@@ -83,4 +83,51 @@ class SetupCSVCaseTest extends SetupUseCaseBaseTest {
                 .contains(entry("use", "SLIJZO"))
                 .contains(entry("num-build", "336"));
     }
+
+    @Test
+    void case1Console() throws Exception {
+            /*
+            comment: <Empty>
+            ___OOOOOOO
+            ___OOOOOOO
+            ____IIIIIO
+            II_IIIIIII
+            II_IIIIIII
+             */
+
+        String tetfu = "v115@2gWpCeWpDe0hQpxhAe4hAe2hJeAgH";
+        String command = String.format("setup -p *! --fill i --margin o -t %s --format csv", tetfu);
+
+        CSVStore csvStoreFromFile;
+        CSVStore csvStoreFromConsole;
+        {
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
+
+            assertThat(log.getOutput())
+                    .contains("*!")
+                    .contains(Messages.foundSolutions(139))
+                    .contains(Messages.foundSubSolutions(214));
+
+            // column: [fumen, use, num-build]
+            csvStoreFromFile = OutputFileHelper.loadSetupCSV();
+        }
+        {
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main((command + " -o -").split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
+
+            // column: [fumen, use, num-build]
+            csvStoreFromConsole = OutputFileHelper.loadSetupCSV();
+        }
+
+        assertThat(csvStoreFromFile.keySet()).isEqualTo(csvStoreFromConsole.keySet());
+        for (String key : csvStoreFromFile.keySet()) {
+            assertThat(csvStoreFromFile.row("use", key))
+                    .isEqualTo(csvStoreFromConsole.row("use", key));
+            assertThat(csvStoreFromFile.row("num-build", key))
+                    .isEqualTo(csvStoreFromConsole.row("num-build", key));
+        }
+    }
 }
