@@ -2,8 +2,8 @@ package _usecase.path;
 
 import _usecase.ConfigFileHelper;
 import _usecase.Log;
-import _usecase.path.files.OutputFileHelper;
 import _usecase.RunnerHelper;
+import _usecase.path.files.OutputFileHelper;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
@@ -656,5 +656,14 @@ class PathIrregularCaseTest extends PathUseCaseBaseTest {
         assertThat(errorFile)
                 .contains(command)
                 .contains("Cannot parse hold option: value=INVALID [FinderParseException]");
+    }
+
+    @Test
+    void unsupportedConsoleOutput() throws Exception {
+        String command = "path -t v115@9gB8HeC8GeD8FeC8QeAgH -p *! -o -";
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getReturnCode()).isNotEqualTo(0);
+        assertThat(log.getError()).contains("Parent directory is not invalid");
     }
 }

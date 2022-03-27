@@ -27,9 +27,15 @@ public class MyFile {
     }
 
     public void mkdirs() throws FinderInitializeException {
-        // 親ディレクトリがない場合は作成
-        if (!file.getParentFile().exists()) {
-            boolean mkdirsSuccess = file.getParentFile().mkdirs();
+        // 親ディレクトリが有効でない場合はエラー
+        File parentFile = file.getParentFile();
+        if (parentFile == null) {
+            throw new FinderInitializeException("Parent directory is not invalid: OutputBase=" + path);
+        }
+
+        // ベースディレクトリがない場合は作成
+        if (!parentFile.exists()) {
+            boolean mkdirsSuccess = parentFile.mkdirs();
             if (!mkdirsSuccess) {
                 throw new FinderInitializeException("Failed to make output directory: OutputBase=" + path);
             }
