@@ -347,7 +347,7 @@ public class PathEntryPoint implements EntryPoint {
             throw new FinderExecuteException(e);
         }
 
-        if (settings.isOutputToConsole())
+        if (settings.isLogOutputToConsole())
             System.out.println(str);
     }
 

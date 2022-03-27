@@ -15,7 +15,7 @@ import java.util.List;
 
 public class PathSettings {
     private static final String DEFAULT_LOG_FILE_PATH = "output/last_output.txt";
-    private static final String DEFAULT_OUTPUT_BASE_FILE_PATH = "output/path.txt";
+    private static final String DEFAULT_OUTPUT_BASE_FILE_PATH = "output/path.html";
 
     private boolean isUsingHold = true;
     private int maxClearLine = 4;
@@ -32,14 +32,20 @@ public class PathSettings {
     private DropType dropType = DropType.Softdrop;
     private int threadCount = -1;
     private boolean isMinimalSpecifiedOnly = true;
+    private boolean isLogOutputToConsole = true;
+    private boolean isResultOutputToConsole = false;
 
     // ********* Getter ************
     public boolean isUsingHold() {
         return isUsingHold;
     }
 
-    boolean isOutputToConsole() {
-        return true;
+    public boolean isLogOutputToConsole() {
+        return isLogOutputToConsole;
+    }
+
+    public boolean isResultOutputToConsole() {
+        return isResultOutputToConsole;
     }
 
     Field getField() {
@@ -266,7 +272,26 @@ public class PathSettings {
         }
     }
 
-    public void setMinimalSpecifiedOnly(boolean isMinimalSpecifiedOnly) {
+    void setMinimalSpecifiedOnly(boolean isMinimalSpecifiedOnly) {
         this.isMinimalSpecifiedOnly = isMinimalSpecifiedOnly;
+    }
+
+    void setLogOutputToConsole(boolean output) {
+        this.isLogOutputToConsole = output;
+    }
+
+    void setResultOutputToConsole(boolean output) {
+        this.isResultOutputToConsole = output;
+    }
+
+    void useOutputToFile(String path) {
+        setOutputBaseFilePath(path);
+        setLogOutputToConsole(true);
+        setResultOutputToConsole(false);
+    }
+
+    void useOutputToConsole() {
+        setLogOutputToConsole(false);
+        setResultOutputToConsole(true);
     }
 }

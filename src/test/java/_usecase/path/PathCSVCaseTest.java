@@ -20,6 +20,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -468,6 +470,204 @@ class PathCSVCaseTest extends PathUseCaseBaseTest {
                 .matches(map -> count(map.get("use"), 2), "fail use")
                 .matches(map -> count(map.get("nouse"), 2), "fail nouse")
                 .matches(map -> count(map.get("fumens"), 4), "fail fumens");
+    }
+
+    @Test
+    void none1Console() throws Exception {
+        String tetfu = "v115@9gA8IeE8EeE8EeE8OeAgWQA0no2ANI98AwN88AjPEN?B";
+
+        int height = 4;
+        ConfigFileHelper.createFieldFile(FieldFactory.createField(height), height);
+        ConfigFileHelper.createPatternFile("*p2");
+
+        String command = String.format("path -t %s -f csv -k none", tetfu);
+
+        PathCSV uniqueCSV;
+        PathCSV minimalCSV;
+        {
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput())
+                    .contains("I,*p6")
+                    .contains(Messages.clearLine(4))
+                    .contains(Messages.uniqueCount(186))
+                    .contains(Messages.minimalCount(127))
+                    .contains(Messages.useHold());
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
+
+            Field field = FieldFactory.createField("" +
+                    "X_________" +
+                    "XXXXX_____" +
+                    "XXXXX_____" +
+                    "XXXXX_____"
+            );
+
+            // unique
+            uniqueCSV = OutputFileHelper.loadPathUniqueNoneCSV();
+            assertThat(uniqueCSV.operations().stream()
+                    .map(operations -> {
+                        Field freeze = field.freeze(height);
+                        for (Operation operation : operations.getOperations()) {
+                            freeze.put(new Mino(operation.getPiece(), operation.getRotate()), operation.getX(), operation.getY());
+                            freeze.clearLine();
+                        }
+                        return freeze;
+                    }))
+                    .hasSize(186)
+                    .allMatch(Field::isEmpty);
+
+            // minimal
+            minimalCSV = OutputFileHelper.loadPathMinimalNoneCSV();
+            assertThat(minimalCSV.operations().stream()
+                    .map(operations -> {
+                        Field freeze = field.freeze(height);
+                        for (Operation operation : operations.getOperations()) {
+                            freeze.put(new Mino(operation.getPiece(), operation.getRotate()), operation.getX(), operation.getY());
+                            freeze.clearLine();
+                        }
+                        return freeze;
+                    }))
+                    .hasSize(127)
+                    .allMatch(Field::isEmpty);
+        }
+
+        // minimal
+        {
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main((command + " -o -").split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
+
+            Stream<String> content = Arrays.stream(log.getOutput().split(System.lineSeparator()));
+            PathCSV pathCSV = OutputFileHelper.loadPathCSV(content);
+
+            assertThat(new HashSet<>(pathCSV.operations())).isEqualTo(new HashSet<>(minimalCSV.operations()));
+        }
+
+        // unique
+        {
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main((command + " -L 1 -o -").split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
+
+            Stream<String> content = Arrays.stream(log.getOutput().split(System.lineSeparator()));
+            PathCSV pathCSV = OutputFileHelper.loadPathCSV(content);
+
+            assertThat(new HashSet<>(pathCSV.operations())).isEqualTo(new HashSet<>(uniqueCSV.operations()));
+        }
+    }
+
+    @Test
+    void solution1Console() throws Exception {
+        String fumen = "v115@9gF8DeG8CeH8BeG8MeAgH";
+        String command = String.format("path -t %s -p *p3 -f csv -k solution", fumen);
+
+        CSVStore csvStoreFromFile;
+        CSVStore csvStoreFromConsole;
+        {
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
+
+            assertThat(log.getOutput())
+                    .contains(Messages.foundPath(18));
+
+            csvStoreFromFile = OutputFileHelper.loadPathSolutionCSV();
+        }
+        {
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main((command + " -o -").split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
+
+            Stream<String> content = Arrays.stream(log.getOutput().split(System.lineSeparator()));
+            csvStoreFromConsole = OutputFileHelper.loadPathSolutionCSV(content);
+        }
+
+        assertThat(csvStoreFromFile.keySet()).isEqualTo(csvStoreFromConsole.keySet());
+
+        // column: [fumen, use, num-valid, num-solutions, num-patterns, valid, solutions, patterns]
+        for (String key : csvStoreFromFile.keySet()) {
+            assertThat(csvStoreFromFile.row("num-valid", key))
+                    .isEqualTo(csvStoreFromConsole.row("num-valid", key));
+            assertThat(csvStoreFromFile.row("num-solutions", key))
+                    .isEqualTo(csvStoreFromConsole.row("num-solutions", key));
+            assertThat(csvStoreFromFile.row("num-patterns", key))
+                    .isEqualTo(csvStoreFromConsole.row("num-patterns", key));
+        }
+    }
+
+    @Test
+    void use1Console() throws Exception {
+        String fumen = "v115@9gF8DeG8CeH8BeG8MeAgH";
+        String command = String.format("path -t %s -p *p3 -f csv -k use", fumen);
+
+        CSVStore csvStoreFromFile;
+        CSVStore csvStoreFromConsole;
+        {
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
+
+            assertThat(log.getOutput())
+                    .contains(Messages.foundPath(18))
+                    .contains(Messages.foundPieceCombinations(35));
+
+            // column: [use, num-solutions, num-patterns, fumens, patterns]
+            csvStoreFromFile = OutputFileHelper.loadPathUseCSV();
+        }
+        {
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main((command + " -o -").split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
+
+            // column: [use, num-solutions, num-patterns, fumens, patterns]
+            Stream<String> content = Arrays.stream(log.getOutput().split(System.lineSeparator()));
+            csvStoreFromConsole = OutputFileHelper.loadPathUseCSV(content);
+        }
+
+        assertThat(csvStoreFromFile.keySet()).isEqualTo(csvStoreFromConsole.keySet());
+        for (String key : csvStoreFromFile.keySet()) {
+            assertThat(csvStoreFromFile.row("num-solutions", key))
+                    .isEqualTo(csvStoreFromConsole.row("num-solutions", key));
+            assertThat(csvStoreFromFile.row("num-patterns", key))
+                    .isEqualTo(csvStoreFromConsole.row("num-patterns", key));
+        }
+    }
+
+    @Test
+    void pattern1Console() throws Exception {
+        String fumen = "v115@9gF8DeG8CeH8BeG8MeAgH";
+        String command = String.format("path -t %s -p *p4 -f csv -k pattern", fumen);
+
+        CSVStore csvStoreFromFile;
+        CSVStore csvStoreFromConsole;
+        {
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
+
+            assertThat(log.getOutput())
+                    .contains(Messages.foundPath(18))
+                    .contains(Messages.success(514, 840));
+
+            // column: [pattern, num-solutions, use, nouse, fumens]
+            csvStoreFromFile = OutputFileHelper.loadPathPatternCSV();
+        }
+        {
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main((command + " -o -").split(" ")));
+
+            assertThat(log.getReturnCode()).isEqualTo(0);
+
+            // column: [pattern, num-solutions, use, nouse, fumens]
+            Stream<String> content = Arrays.stream(log.getOutput().split(System.lineSeparator()));
+            csvStoreFromConsole = OutputFileHelper.loadPathPatternCSV(content);
+        }
+
+        assertThat(csvStoreFromFile.keySet()).isEqualTo(csvStoreFromConsole.keySet());
+        for (String key : csvStoreFromFile.keySet()) {
+            assertThat(csvStoreFromFile.row("num-solutions", key))
+                    .isEqualTo(csvStoreFromConsole.row("num-solutions", key));
+        }
     }
 
     private boolean count(String str, int count) {

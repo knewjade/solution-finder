@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class OutputFileHelper {
     private static final String SETUP_PATH = concatPath("output", "setup.html");
@@ -61,12 +62,17 @@ public class OutputFileHelper {
     }
 
     public static CSVStore loadSetupCSV() throws IOException {
-        return loadCSVStore(Paths.get(SETUP_CSV), Arrays.asList("fumen", "use", "num-build"));
+        Path path = Paths.get(SETUP_CSV);
+        return loadSetupCSV(Files.lines(path));
     }
 
-    private static CSVStore loadCSVStore(Path path, List<String> columnNames) throws IOException {
+    public static CSVStore loadSetupCSV(Stream<String> content) {
+        return loadCSVStore(content, Arrays.asList("fumen", "use", "num-build"));
+    }
+
+    private static CSVStore loadCSVStore(Stream<String> content, List<String> columnNames) {
         CSVStore csvStore = new CSVStore(columnNames);
-        Files.lines(path)
+        content
                 .skip(1)  // skip header
                 .forEach(csvStore::load);
         return csvStore;

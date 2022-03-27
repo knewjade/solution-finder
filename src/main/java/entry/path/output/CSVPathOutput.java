@@ -3,7 +3,6 @@ package entry.path.output;
 import common.buildup.BuildUpStream;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.Operations;
-import common.datastore.blocks.LongPieces;
 import common.parser.OperationInterpreter;
 import common.parser.OperationTransform;
 import core.field.Field;
@@ -45,14 +44,19 @@ public class CSVPathOutput implements PathOutput {
         MyFile base = new MyFile(outputFilePath);
         base.mkdirs();
 
+        PathLayer pathLayer = pathSettings.getPathLayer();
+
+        // 結果を標準出力に表示するか
+        boolean resultOutputToConsole = pathSettings.isResultOutputToConsole();
+
         // uniqueファイル
         String uniqueOutputFilePath = String.format("%s_unique%s", namePath, FILE_EXTENSION);
-        MyFile unique = new MyFile(uniqueOutputFilePath);
+        MyFile unique = new MyFile(uniqueOutputFilePath, resultOutputToConsole && pathLayer == PathLayer.Unique);
         unique.verify();
 
         // minimalファイル
         String minimalOutputFilePath = String.format("%s_minimal%s", namePath, FILE_EXTENSION);
-        MyFile minimal = new MyFile(minimalOutputFilePath);
+        MyFile minimal = new MyFile(minimalOutputFilePath, resultOutputToConsole && pathLayer == PathLayer.Minimal);
         minimal.verify();
 
         // 保存
@@ -62,7 +66,7 @@ public class CSVPathOutput implements PathOutput {
         this.outputMinimalFile = minimal;
     }
 
-    private String getRemoveExtensionFromPath(String path) throws FinderInitializeException {
+    private String getRemoveExtensionFromPath(String path) {
         int pointIndex = path.lastIndexOf('.');
         int separatorIndex = path.lastIndexOf(File.separatorChar);
 

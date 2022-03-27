@@ -39,7 +39,7 @@ public class PatternCSVPathOutput implements PathOutput {
 
         // baseファイル
         String outputFilePath = String.format("%s%s", namePath, FILE_EXTENSION);
-        MyFile base = new MyFile(outputFilePath);
+        MyFile base = new MyFile(outputFilePath, pathSettings.isResultOutputToConsole());
         base.mkdirs();
         base.verify();
 
@@ -115,12 +115,10 @@ public class PatternCSVPathOutput implements PathOutput {
                                 .collect(Collectors.toSet());
 
                         String uses = usesSet.stream()
-                                .map(blockCounter -> {
-                                    return blockCounter.getBlockStream()
-                                            .sorted()
-                                            .map(Piece::getName)
-                                            .collect(Collectors.joining());
-                                })
+                                .map(blockCounter -> blockCounter.getBlockStream()
+                                        .sorted()
+                                        .map(Piece::getName)
+                                        .collect(Collectors.joining()))
                                 .collect(Collectors.joining(";"));
 
                         // 残せるミノ一覧を抽出
@@ -128,12 +126,10 @@ public class PatternCSVPathOutput implements PathOutput {
                         String noUses = usesSet.stream()
                                 .map(orderPieceCounter::removeAndReturnNew)
                                 .distinct()
-                                .map(blockCounter -> {
-                                    return blockCounter.getBlockStream()
-                                            .sorted()
-                                            .map(Piece::getName)
-                                            .collect(Collectors.joining());
-                                })
+                                .map(blockCounter -> blockCounter.getBlockStream()
+                                        .sorted()
+                                        .map(Piece::getName)
+                                        .collect(Collectors.joining()))
                                 .collect(Collectors.joining(";"));
 
                         return String.format("%s,%d,%s,%s,%s", sequenceName, possibleSize, uses, noUses, fumens);

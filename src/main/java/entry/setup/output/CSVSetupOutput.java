@@ -46,7 +46,7 @@ public class CSVSetupOutput implements SetupOutput {
 
         // baseファイル
         String outputFilePath = String.format("%s%s", namePath, FILE_EXTENSION);
-        MyFile setup = new MyFile(outputFilePath);
+        MyFile setup = new MyFile(outputFilePath, setupSettings.isResultOutputToConsole());
         setup.mkdirs();
         setup.verify();
 

@@ -7,7 +7,7 @@ public enum PathLayer {
     Unique(1),
     Minimal(2),;
 
-    private static Map<Integer, PathLayer> map = new HashMap<>();
+    private static final Map<Integer, PathLayer> map = new HashMap<>();
 
     static {
         for (PathLayer pathLayer : PathLayer.values())

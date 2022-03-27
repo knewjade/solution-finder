@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 
-// 関数の呼び出し順に書き込まれることは保証する
+// 関数の呼び出し順に書き込まれることを保証する
 // 書き込み時にエラーが発生した場合は RuntimeException が送出される
 public class AsyncBufferedFileWriter implements Closeable, Flushable {
     private static final TimeUnit AWAIT_TERMINATION_UNIT = TimeUnit.SECONDS;
@@ -19,8 +19,8 @@ public class AsyncBufferedFileWriter implements Closeable, Flushable {
     private final LinkedBlockingDeque<Runnable> taskQueue = new LinkedBlockingDeque<>();
     private final long awaitTerminationInSec;
 
-    public AsyncBufferedFileWriter(File file, Charset charset, boolean append, long awaitTerminationInSec) throws FileNotFoundException {
-        this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, append), charset));
+    public AsyncBufferedFileWriter(BufferedWriter bufferedWriter, long awaitTerminationInSec) {
+        this.bufferedWriter = bufferedWriter;
         this.awaitTerminationInSec = awaitTerminationInSec;
     }
 
@@ -59,9 +59,10 @@ public class AsyncBufferedFileWriter implements Closeable, Flushable {
 
             try {
                 Runnable task = taskQueue.pollFirst(1L, TimeUnit.SECONDS);
+                assert task != null;
                 task.run();
-            } catch (InterruptedException ignore) {
-                ignore.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         });
     }
@@ -77,6 +78,7 @@ public class AsyncBufferedFileWriter implements Closeable, Flushable {
             while (!taskQueue.isEmpty()) {
                 try {
                     Runnable task = taskQueue.pollFirst(1L, TimeUnit.SECONDS);
+                    assert task != null;
                     task.run();
                 } catch (InterruptedException ignore) {
                     return;
@@ -85,9 +87,12 @@ public class AsyncBufferedFileWriter implements Closeable, Flushable {
         });
         singleThreadExecutor.shutdown();
         try {
-            singleThreadExecutor.awaitTermination(awaitTerminationInSec, AWAIT_TERMINATION_UNIT);
+            boolean terminated = singleThreadExecutor.awaitTermination(awaitTerminationInSec, AWAIT_TERMINATION_UNIT);
+            if (!terminated) {
+                singleThreadExecutor.shutdown();
+            }
         } catch (InterruptedException e) {
-            throw new IOException(e);
+            singleThreadExecutor.shutdown();
         } finally {
             bufferedWriter.close();
         }
