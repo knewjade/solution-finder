@@ -1,0 +1,261 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2017-2022, knewjade
+# This file is distributed under the same license as the solution-finder package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: solution-finder \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-03-30 19:39+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../contents/patterns.rst:3
+msgid "ミノの組み合わせ"
+msgstr ""
+
+#: ../../contents/patterns.rst:6
+msgid "概要"
+msgstr ""
+
+#: ../../contents/patterns.rst:8
+msgid "このページでは、探索したいミノの組み合わせを指定する方法について説明します。"
+msgstr ""
+
+#: ../../contents/patterns.rst:10
+msgid "ミノの組み合わせは、パターンファイルやテト譜のコメント、コマンドライン引数から指定できます。"
+msgstr ""
+
+#: ../../contents/patterns.rst:12
+msgid "例えば ``I , [TIJLSZO]p4`` をミノの組み合わせとして指定した場合、"
+msgstr ""
+
+#: ../../contents/patterns.rst:14
+msgid "``ITIJL, ITIJS, ITIJZ, ..., IJSZO, ILSZO``"
+msgstr ""
+
+#: ../../contents/patterns.rst:16
+msgid "のように「先頭I」と 「7種から4つを取り出した順列」 をつなげた 7P4=840 通りを探索対象にします。"
+msgstr ""
+
+#: ../../contents/patterns.rst:20
+msgid "基本ルール"
+msgstr ""
+
+#: ../../contents/patterns.rst:22
+msgid "要素1 , 要素2 , 要素3 , ... とコンマで繋げていきます。"
+msgstr ""
+
+#: ../../contents/patterns.rst:24
+msgid "全体の探索個数は 「要素1の総数 × 要素2の総数 × 要素3の総数 × ...」 となります。"
+msgstr ""
+
+#: ../../contents/patterns.rst:26
+#: ../../contents/patterns.rst:45
+msgid "例)"
+msgstr ""
+
+#: ../../contents/patterns.rst:28
+msgid "``I, T, S, Z``   →  ITSZ 1通り"
+msgstr ""
+
+#: ../../contents/patterns.rst:29
+msgid "``[SZ] , O, [JL]``  →  SOJ, SOL, ZOJ, ZOL 4通り"
+msgstr ""
+
+#: ../../contents/patterns.rst:30
+msgid "``L , *``  →  LT, LI, LJ, LL, LS, LZ, LO 7通り"
+msgstr ""
+
+#: ../../contents/patterns.rst:35
+#: ../../contents/patterns.rst:63
+msgid "要素を繋げるコンマは省略することもできます。"
+msgstr ""
+
+#: ../../contents/patterns.rst:36
+#: ../../contents/patterns.rst:64
+msgid "``T, I, O`` →　``TIO``"
+msgstr ""
+
+#: ../../contents/patterns.rst:37
+#: ../../contents/patterns.rst:65
+msgid "``S, Z, *p3`` →　``SZ, *p3``"
+msgstr ""
+
+#: ../../contents/patterns.rst:41
+msgid "要素ルール"
+msgstr ""
+
+#: ../../contents/patterns.rst:43
+msgid "各要素は次のように指定します。"
+msgstr ""
+
+#: ../../contents/patterns.rst:47
+msgid "``I`` : Iのみ : 1通り"
+msgstr ""
+
+#: ../../contents/patterns.rst:48
+msgid "``[SZLJ]`` : SZJLから1つを選択 : 4通り"
+msgstr ""
+
+#: ../../contents/patterns.rst:49
+msgid "``[^TI]`` : TI以外から1つを選択 : 5通り"
+msgstr ""
+
+#: ../../contents/patterns.rst:50
+msgid "``[SZLJ]p2`` : SZLJから2つを選択する順列 : 12通り"
+msgstr ""
+
+#: ../../contents/patterns.rst:51
+msgid "``*`` (アスタリスク) : [TIJLSZO]と同等 : 7通り"
+msgstr ""
+
+#: ../../contents/patterns.rst:52
+msgid "``*p3`` : [TIJLSZO]p3と同等 : 7P3=210通り"
+msgstr ""
+
+#: ../../contents/patterns.rst:53
+msgid "``[SZLJ]!`` : [SZLJ]p4と同等 : 4P4=4!=24通り"
+msgstr ""
+
+#: ../../contents/patterns.rst:54
+msgid "``*!`` : [TIJLSZO]p7と同等 : 7P7=7!=5040通り"
+msgstr ""
+
+#: ../../contents/patterns.rst:57
+msgid "``*`` は [TIJLSZO] と同じように解釈されます。"
+msgstr ""
+
+#: ../../contents/patterns.rst:59
+msgid "``!`` は 左側で指定したミノ （[] or \\*）を全て使う組み合わせとなります。[]の中をよく変更する場合に指定すると便利です。"
+msgstr ""
+
+#: ../../contents/patterns.rst:69
+msgid "Windowsのコマンドプロンプトで ^ をそのまま使用した場合、プログラムに入力することができません。 その場合は、以下のように入力文字列を変更してください。"
+msgstr ""
+
+#: ../../contents/patterns.rst:72
+msgid "ダブルクォーテーションで囲む　ex) ``\"[^TI]\"``"
+msgstr ""
+
+#: ../../contents/patterns.rst:73
+msgid "``^`` を2つにする  ex) ``[^^TI]``"
+msgstr ""
+
+#: ../../contents/patterns.rst:75
+msgid "ちなみにPowerShellでは、そのまま利用することができます。"
+msgstr ""
+
+#: ../../contents/patterns.rst:79
+msgid "Macのターミナルで ``*`` や ``!`` が含まれる場合、うまくプログラムを実行開始できないことがあります。 その場合はパターンの指定をシングルクォーテーションで囲んでください。 ex) ``\"*!,*!\"``"
+msgstr ""
+
+#: ../../contents/patterns.rst:84
+msgid "書き方: パターンファイルの場合"
+msgstr ""
+
+#: ../../contents/patterns.rst:86
+msgid "指定したファイルに組み合わせを記述しておくことで、ミノの組み合わせを変更することができます。"
+msgstr ""
+
+#: ../../contents/patterns.rst:88
+msgid "デフォルトのパターンファイルの位置は ``input/patterns.txt`` になります。"
+msgstr ""
+
+#: ../../contents/patterns.rst:90
+msgid "パターンファイルの位置はオプションから変更することができます。詳細は :doc:`command` を参照してください。"
+msgstr ""
+
+#: ../../contents/patterns.rst:92
+msgid "パターンファイルには、1行につき上記の1つのパターンを記述します。 なお、複数行に渡って複数個のパターンを書くことができます。 その場合は、各パターンを足し合わせた探索候補から探索します。"
+msgstr ""
+
+#: ../../contents/patterns.rst:96
+msgid "例) patterns.txtに次の3行が書かれたとき ::"
+msgstr ""
+
+#: ../../contents/patterns.rst:102
+msgid "この場合 TI, SZ, LO の3通りを探索します。"
+msgstr ""
+
+#: ../../contents/patterns.rst:104
+msgid "ただし、T と I,J のようにブロック数が違うパターンは並べることができません。"
+msgstr ""
+
+#: ../../contents/patterns.rst:106
+msgid "また、 ``#`` をつけることでパターン内にコメントを残すことができます。"
+msgstr ""
+
+#: ../../contents/patterns.rst:108
+msgid "例) コメントの例 ::"
+msgstr ""
+
+#: ../../contents/patterns.rst:116
+msgid "書き方: テト譜の場合"
+msgstr ""
+
+#: ../../contents/patterns.rst:118
+msgid "テト譜からミノの組み合わせを変更する場合、テト譜のコメント部分にパターン or Quizを記述します。"
+msgstr ""
+
+#: ../../contents/patterns.rst:120
+msgid "例) 消去ライン数が4ラインで、パターンを*p4で指定する場合 / `サンプル1 <http://fumen.zui.jp/?v115@9gD8DeF8DeF8DeF8DeB8JeAgWUA0no2AtTMeDUPNXE?uN98AQPUGB>`_ ::"
+msgstr ""
+
+#: ../../contents/patterns.rst:124
+msgid "複数パターンを同時に指定する場合は ``;`` で連結してください。"
+msgstr ""
+
+#: ../../contents/patterns.rst:126
+msgid "例) 消去ライン数が4ラインで、パターンを T,* と I,* で指定する場合 ::"
+msgstr ""
+
+#: ../../contents/patterns.rst:130
+msgid "例) Quiz形式で ZILJTOS を指定する場合 / `サンプル2 <http://fumen.zui.jp/?v115@HhA8BeA8FeE8CeG8CeB8JeAgWaAFLDmClcJSAVDEHB?EooRBaoAVBpi/wCPNBAA>`_ ::"
+msgstr ""
+
+#: ../../contents/patterns.rst:137
+msgid "空白を入れたい場合は ``'`` で囲ってください( ``'T,*; I,*'`` )"
+msgstr ""
+
+#: ../../contents/patterns.rst:138
+msgid "``--patterns`` は ``-p`` に省略できます"
+msgstr ""
+
+#: ../../contents/patterns.rst:139
+msgid "コマンドライン側からオプションを指定することで、テト譜のコメント編集せずに設定することもできます"
+msgstr ""
+
+#: ../../contents/patterns.rst:143
+msgid "書き方: コマンドラインの場合"
+msgstr ""
+
+#: ../../contents/patterns.rst:145
+msgid "基本的にテト譜と同様です。オプションにパターンを指定してください。"
+msgstr ""
+
+#: ../../contents/patterns.rst:147
+msgid "例) ::"
+msgstr ""
+
+#: ../../contents/patterns.rst:153
+msgid "サンプル: コマンド集"
+msgstr ""
+
+#: ../../contents/patterns.rst:155
+msgid "``*p7``   →  すべてのミノを1つずつ使用する5040通り"
+msgstr ""
+
+#: ../../contents/patterns.rst:156
+msgid "``I, *p4``  →  Iをホールドした状態から新たな4種類のミノをひく840通り  ※ 開幕パフェ1巡目のパフェテンプレ"
+msgstr ""
+
+#: ../../contents/patterns.rst:157
+msgid "``[IOSL]!, *p7``  →  IOSLミノを1つずつ引いた(840通り)後に、新たな７種類のミノを1つずつ使用する計840*5040通り  ※ 開幕パフェ2巡目 IOSL残り"
+msgstr ""

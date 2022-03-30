@@ -1,0 +1,570 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2017-2022, knewjade
+# This file is distributed under the same license as the solution-finder package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: solution-finder \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-03-30 19:39+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../contents/spin/main.rst:3
+msgid "コマンド: spin"
+msgstr ""
+
+#: ../../contents/spin/main.rst:6
+msgid "概要"
+msgstr ""
+
+#: ../../contents/spin/main.rst:8
+msgid "ある地形からTスピンできる置き方を探す"
+msgstr ""
+
+#: ../../contents/spin/main.rst:11
+msgid "基本コマンド"
+msgstr ""
+
+#: ../../contents/spin/main.rst:13
+msgid "``java -jar sfinder.jar spin --tetfu v115@zgD8FeE8EeF8DeG8CeH8LeAgH --patterns *p7 -ft 4``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:16
+msgid "オプション一覧"
+msgstr ""
+
+#: ../../contents/spin/main.rst:19
+msgid "short"
+msgstr ""
+
+#: ../../contents/spin/main.rst:19
+msgid "long"
+msgstr ""
+
+#: ../../contents/spin/main.rst:19
+msgid "default"
+msgstr ""
+
+#: ../../contents/spin/main.rst:21
+msgid "``-t``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:21
+msgid "``--tetfu``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:21
+#: ../../contents/spin/main.rst:23
+msgid "なし"
+msgstr ""
+
+#: ../../contents/spin/main.rst:22
+msgid "``-P``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:22
+msgid "``--page``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:22
+msgid "1"
+msgstr ""
+
+#: ../../contents/spin/main.rst:23
+msgid "``-p``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:23
+msgid "``--patterns``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:24
+msgid "``-fb``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:24
+msgid "``--fill-bottom``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:24
+msgid "0"
+msgstr ""
+
+#: ../../contents/spin/main.rst:25
+msgid "``-ft``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:25
+msgid "``--fill-top``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:25
+#: ../../contents/spin/main.rst:26
+#: ../../contents/spin/main.rst:29
+msgid "-1"
+msgstr ""
+
+#: ../../contents/spin/main.rst:26
+msgid "``-m``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:26
+msgid "``--margin-height``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:27
+msgid "``-c``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:27
+msgid "``--line``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:27
+msgid "2"
+msgstr ""
+
+#: ../../contents/spin/main.rst:28
+msgid "``-r``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:28
+msgid "``--roof``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:28
+msgid "yes"
+msgstr ""
+
+#: ../../contents/spin/main.rst:29
+msgid "``-mr``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:29
+msgid "``--max-roof``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:30
+msgid "``-s``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:30
+msgid "``--split``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:30
+msgid "no"
+msgstr ""
+
+#: ../../contents/spin/main.rst:31
+msgid "``-f``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:31
+msgid "``--filter``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:31
+msgid "strict"
+msgstr ""
+
+#: ../../contents/spin/main.rst:32
+msgid "``-o``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:32
+msgid "``--output-base``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:32
+msgid "output/spin.html"
+msgstr ""
+
+#: ../../contents/spin/main.rst:33
+msgid "``-fp``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:33
+msgid "``--field-path``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:33
+msgid "input/field.txt"
+msgstr ""
+
+#: ../../contents/spin/main.rst:34
+msgid "``-pp``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:34
+msgid "``--patterns-path``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:34
+msgid "input/patterns.txt"
+msgstr ""
+
+#: ../../contents/spin/main.rst:35
+msgid "``-lp``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:35
+msgid "``--log-path``"
+msgstr ""
+
+#: ../../contents/spin/main.rst:35
+msgid "output/last_output.txt"
+msgstr ""
+
+#: ../../contents/spin/main.rst:40
+msgid "出力結果"
+msgstr ""
+
+#: ../../contents/spin/main.rst:42
+msgid "[X] Z-Right L-Right I-Left T-Right [clear=4, hole=1, piece=4]"
+msgstr ""
+
+#: ../../contents/spin/main.rst:47
+msgid "先頭のマーク"
+msgstr ""
+
+#: ../../contents/spin/main.rst:45
+msgid "``O`` = 実際にTスピンできる"
+msgstr ""
+
+#: ../../contents/spin/main.rst:46
+msgid "``X`` = Tミノ以外は組むことができるが、Tミノが到達できない位置にある"
+msgstr ""
+
+#: ../../contents/spin/main.rst:47
+msgid "``-`` = そのままでは置けないミノを含む手順である (Tミノも含む)"
+msgstr ""
+
+#: ../../contents/spin/main.rst:49
+msgid "※ ``--filter`` オプションで、このマークにごとに解を制限できます"
+msgstr ""
+
+#: ../../contents/spin/main.rst:51
+msgid "ミノの方向"
+msgstr ""
+
+#: ../../contents/spin/main.rst:53
+msgid "clear = Tスピン以外も含めて消去されたライン数"
+msgstr ""
+
+#: ../../contents/spin/main.rst:54
+msgid "hole = Tスピン後の地形の穴の数（横穴も含む）"
+msgstr ""
+
+#: ../../contents/spin/main.rst:55
+msgid "piece = その解で使われたミノ数"
+msgstr ""
+
+#: ../../contents/spin/main.rst:59
+msgid "設定値について"
+msgstr ""
+
+#: ../../contents/spin/main.rst:61
+msgid "このコマンドは、設定値によって探索にかかる時間が大きく変わります。 ここでは、探索時間を調整するための基本的な方針を紹介します。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:64
+msgid "**1. Tスピンをつくる範囲をなるべく狭くする**"
+msgstr ""
+
+#: ../../contents/spin/main.rst:66
+msgid "Spinコマンドでは、``-fb`` と ``-ft`` の間の段でTスピンをつくります。 この  ``-fb`` と ``-ft`` の差が大きかったり、ブロックがないラインを選ぶほど、 つくれるTスピンの数は増えていきます。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:70
+msgid "それにあわせて実行する時間も増えていくため、 ある程度つくりたいTスピンを予測して、なるべく空間が狭くなるように指定するのをおすすめします。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:74
+msgid "**2. 「マージン」の範囲をなるべく狭くする**"
+msgstr ""
+
+#: ../../contents/spin/main.rst:76
+msgid "Spinコマンドでの「マージン」とは、Tスピンの屋根や回転入れのためのミノを置いても良い範囲のことです。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:78
+msgid "「Tスピンの屋根や回転入れのための追加するミノ」をみつけるのは難しく、Tスピン自体をみつけるよりも時間がかかります。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:80
+msgid "そのため、マージンの高さ（``-m`` の値）を小さくしたり、マージンの空間が広くならないようにしたりしてください。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:83
+msgid "**3. 屋根に利用できるミノ数を少なくする**"
+msgstr ""
+
+#: ../../contents/spin/main.rst:85
+msgid "2ではマージンの範囲を狭くしましたが、マージン内に置くミノの最大数（``-mr`` の値）を小さくしても実行時間は短くなります。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:87
+msgid "たとえば ``-mr 1`` と指定すると、最低限のTスピンの形からさらに1ミノだけ置かれます。 そのため、2ミノ以上のケースを探さないため、その分実行がはやくなります。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:91
+msgid "※ 同じような効果をもつオプションで、``-r no`` があります。``-mr 0`` との違いは以下の通りです。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:93
+msgid "``-mr 0`` : 回転入れするための余計のミノを追加する必要のない解だけが表示される"
+msgstr ""
+
+#: ../../contents/spin/main.rst:94
+msgid "``-r no`` : 探索自体をスキップするので、そのままではミノを入れられない形も表示される"
+msgstr ""
+
+#: ../../contents/spin/main.rst:97
+msgid "**各オプションの関係を表した図**"
+msgstr ""
+
+#: ../../contents/spin/main.rst:99
+#: ../../contents/spin/main.rst:99
+msgid "option_001"
+msgstr ""
+
+#: ../../contents/spin/main.rst:102
+msgid "|option_001|"
+msgstr ""
+
+#: ../../contents/spin/main.rst:106
+msgid "現バージョンでは未対応の機能"
+msgstr ""
+
+#: ../../contents/spin/main.rst:108
+msgid "地形を削らないとTスピンできないケース `サンプル <http://tinyurl.com/y2anl6g3>`_"
+msgstr ""
+
+#: ../../contents/spin/main.rst:112
+msgid "ミノを順列で指定できるようにする"
+msgstr ""
+
+#: ../../contents/spin/main.rst:110
+msgid "今後、指定されたミノ順で、実際に組むことができる解のみ表示させたいです。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:111
+msgid "Tミノ以外のミノに屋根が必要なケースは、順列指定でのみ対応させる予定です。 `その理由 <http://fumen.zui.jp/?v115@EhD8AeC8CeC8AeD8AeD8BeG8JeAglIhglCeywCeglD?ewwDehlQeAg0lAUYHDBQDxRA1dE6B0XHDBQpjRA1d0KB3XH?DBQeJSA1dkRBiAAAAqgAtHeBtHeAtweAg0DBMYHDBwFhRA1?w2KB1XHDBQUHSA1dkRBCYHDBQBFSA1d0KBGY3JBj+ESAVi+?AB5XHDBQOHSA1Ae3B1X/TBZ0mAAqgAPHeBPHeAPFeDAgWCA?SLCAgWDAQLDAhWGAJeAg0GAtjVRAz3AAAEhD8CeA8CeC8Ce?B8AeD8BeG8JeAg0qAlP52BxpDfEToXOBlP62A1vDfETY9KB?lvs2ACqDfET4d3Blvs2ACmAAAIhglRpAeywCeglRpBewwDe?hlQeAg0lAUYHDBQDxRA1dE6B0XHDBQpjRA1d0KB3XHDBQeJ?SA1dkRBiAAAA5fRpHeRpDfxSAeSLDexSBeQLWeAg0aBlvs2?AkJEfETIH+Blvs2A00btAls7fClvs2A2HEfET4xRBlvs2AU?GEfETY85AlP52BUDEfEWUDVBlvs2AWJEfEVpHIBl/PVB4pD?fET4JwBlvs2A1iAAAkfglIeglIeglQawSHexSCfgWRpGegW?RpGehWQeAg0OBlvs2AkJEfETIH+Blvs2A0kitAlszVClvs2?A2HEfET4xRBlvs2AUGEfETY85AlP52BUDEfEWUDVBlvs2A0?EEfEVpHIBl/PVB4ZAAAqgAtHeBtHeAtweAglvhBAg0mBlPB?BC5sDfET45ABlvs2AWxDfETY85AlP52BUDEfEWUDVBlvs2A?WJEfETYhBClvs2ADIEfEZk0KBlvs2A2HEfEVpM6AlPiOBmJ?EfETY12BlPJVByyDfETYN6Blvs2AUeAAAAg0mBlvs2AVGEf?ET4p9Blvs2AVJEfETYO6Alvs2AwpDfEX2NEBlPREBQ0DfET?ofzBlvs2A2yDfET4BBClPhzBGIEfEV5Z3Blvs2A1yDfET4J?wBlvs2AUuDfE032RBlPhzB5xAAA>`_"
+msgstr ""
+
+#: ../../contents/spin/main.rst:115
+msgid "``-t``, ``--tetfu`` [default: なし]"
+msgstr ""
+
+#: ../../contents/spin/main.rst:117
+msgid "フィールドやオプションなどを指定したテト譜データを指定する。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:119
+msgid "テト譜で探索条件を指定する場合は ``--tetfu v115@vhAAgH`` のように指定する。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:121
+msgid "v115のテト譜データにのみ対応。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:125
+msgid "``-P``, ``--page`` [default: 1]"
+msgstr ""
+
+#: ../../contents/spin/main.rst:127
+msgid "テト譜でロードするページを指定する。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:129
+msgid "ページを変更したい場合は ``--page 31`` のように指定する。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:133
+msgid "``-p``, ``--patterns`` [default: なし]"
+msgstr ""
+
+#: ../../contents/spin/main.rst:135
+msgid "探索したいミノ順を指定する。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:137
+msgid "最大で22個のミノまで指定できる。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:139
+msgid "なお、renコマンドでは複数のミノを指定する記号（`*`, `[]`）は使用できません。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:141
+msgid "パターンを変更したい場合は ``--pattern IOSZLJTIO`` のように指定します。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:145
+msgid "``-fb``, ``--fill-bottom`` [default: 0]"
+msgstr ""
+
+#: ../../contents/spin/main.rst:147
+msgid "揃えるラインの範囲のうち、一番下のラインを指定する。 y座標は、一番下の段を `0` とする。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:150
+msgid "もし `2` を指定すると、y=2より上のラインを揃える組み合わせを探索する。 （3段目/y=2 は対象になる）"
+msgstr ""
+
+#: ../../contents/spin/main.rst:153
+#: ../../contents/spin/main.rst:165
+msgid "ここで指定する範囲には、Tスピンにならないライン消去（Tミノを含まないライン消去）も含まれる。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:157
+msgid "``-ft``, ``--fill-top`` [default: -1]"
+msgstr ""
+
+#: ../../contents/spin/main.rst:159
+msgid "揃えるラインの範囲の高さを指定する。 y座標は、一番下の段を `0` とする。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:162
+msgid "もし `4` を指定すると、y=4より下のラインを揃える組み合わせを探索する。 （5段目/y=4 は対象にならない）"
+msgstr ""
+
+#: ../../contents/spin/main.rst:167
+msgid "`-1` が指定されたときは、自動的に 最も高い位置にあるブロックの高さ+1 に設定される。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:171
+msgid "``-m``, ``--margin-height`` [default: -1]"
+msgstr ""
+
+#: ../../contents/spin/main.rst:173
+msgid "ミノを置ける範囲の高さを指定する。 `-1` が指定されたときは、自動的に `fill-top` + 2 が設定される。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:176
+msgid "もし `4` を指定すると、y=4より下にミノを置く組み合わせを探索する。 （5段目/y=4 にブロックを置かない）"
+msgstr ""
+
+#: ../../contents/spin/main.rst:179
+msgid "この高さは、Tスピンに必要なブロックや回転入れするための屋根の探索に利用される。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:183
+msgid "``-c``, ``--line`` [default: 2]"
+msgstr ""
+
+#: ../../contents/spin/main.rst:185
+msgid "Tスピン時に消すべき最小のライン数を指定する。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:187
+msgid "`2` を指定したとき、T-Spin Double/Triple を探索する。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:191
+msgid "``-r``, ``--roof`` [default: yes]"
+msgstr ""
+
+#: ../../contents/spin/main.rst:193
+msgid "このオプションが `yes` のとき、Tミノの回転入れに必要な屋根の探索を実行する。 `no` を指定した場合は、屋根の探索をスキップされ、そのままではTミノを入れられない地形も解として表示される。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:196
+msgid "もし、屋根なしでTミノをそのまま入れられる解が必要であれば `-r yes -mr 0` を指定する。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:200
+msgid "``-mr``, ``--max-roof`` [default: -1]"
+msgstr ""
+
+#: ../../contents/spin/main.rst:202
+msgid "Tミノの回転入れに必要な屋根の探索で置くことができる最大のミノ数を指定する。 `-1` が指定されたとき、指定パターンの中で制限なく屋根を置いて探索する。 そのため、この値が大きいほど実行時間が長くなる。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:206
+msgid "もし `0` を指定した場合は、屋根が必要ない解が選択される。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:210
+msgid "``-s``, ``--split`` [default: no]"
+msgstr ""
+
+#: ../../contents/spin/main.rst:212
+msgid "出力フォーマットがlinkのときに出力されるテト譜で、手順を1ミノずつ分割するか指定する。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:214
+msgid "ただし ``yes`` で生成されるテト譜はあくまで置き場所を示すものであり、ページ順通りに置くとミノが空中に浮いたり、移動できない場所に置かれることもあります。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:216
+msgid "yes: 1ページにつき1ミノずつ表示される形で出力"
+msgstr ""
+
+#: ../../contents/spin/main.rst:217
+msgid "no: すべてのミノが1ページに納まった形で出力"
+msgstr ""
+
+#: ../../contents/spin/main.rst:221
+msgid "``-f``, ``--filter`` [default: strict]"
+msgstr ""
+
+#: ../../contents/spin/main.rst:223
+msgid "解の先頭に表示されているマークに従って、表示する解を制限します。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:225
+msgid "指定できる値は以下の通りです。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:227
+msgid "strict: Tスピンできる解のみを表示します（`[O]` のみに相当）`"
+msgstr ""
+
+#: ../../contents/spin/main.rst:228
+msgid "ignore-t: Tミノ以外は組むことができる解を表示します。Tミノが実際に到達できるかは問いません。ただし、地面に触れている必要はあります（`[O]` と `[X]` に相当）`"
+msgstr ""
+
+#: ../../contents/spin/main.rst:229
+msgid "none: 表示する解を制限しません"
+msgstr ""
+
+#: ../../contents/spin/main.rst:233
+msgid "``-o``, ``--output-base`` [default: output/spin.html]"
+msgstr ""
+
+#: ../../contents/spin/main.rst:235
+msgid "出力結果を保存するファイルのパスを指定する。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:239
+msgid "``-fp``, ``--field-path`` [default: input/field.txt]"
+msgstr ""
+
+#: ../../contents/spin/main.rst:241
+msgid "フィールドを定義するファイルのパスを指定する。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:245
+msgid "``-pp``, ``--patterns-path`` [default: input/patterns.txt]"
+msgstr ""
+
+#: ../../contents/spin/main.rst:247
+msgid "探索の組み合わせパターンを定義するファイルのパスを指定する。"
+msgstr ""
+
+#: ../../contents/spin/main.rst:251
+msgid "``-lp``, ``--log-path`` [default: output/last_output.txt]"
+msgstr ""
+
+#: ../../contents/spin/main.rst:253
+msgid "実行時のログを保存するファイルのパスを指定する。"
+msgstr ""
