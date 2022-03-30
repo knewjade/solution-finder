@@ -1,0 +1,46 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2017-2022, knewjade
+# This file is distributed under the same license as the solution-finder package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: solution-finder \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-03-30 19:39+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../contents/util/main.rst:18
+#: ../../contents/util/main.rst:18
+msgid "目次"
+msgstr ""
+
+#: ../../contents/util/main.rst:3
+msgid "コマンド: util"
+msgstr ""
+
+#: ../../contents/util/main.rst:6
+msgid "概要"
+msgstr ""
+
+#: ../../contents/util/main.rst:8
+msgid "solution-finderの機能を補助するユーティリティ群です。"
+msgstr ""
+
+#: ../../contents/util/main.rst:10
+msgid "utilの中には、さらにサブコマンドが含まれます。"
+msgstr ""
+
+#: ../../contents/util/main.rst:12
+msgid "サブコマンドを実行する場合は ``util サブコマンド`` と指定してください。"
+msgstr ""
+
+#: ../../contents/util/main.rst:16
+msgid "サブコマンド一覧"
+msgstr ""

@@ -1,0 +1,347 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2017-2022, knewjade
+# This file is distributed under the same license as the solution-finder package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: solution-finder \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-03-30 19:39+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../contents/path/csv.rst:2
+msgid "key: none"
+msgstr ""
+
+#: ../../contents/path/csv.rst:4
+msgid "出力されるCSVファイルの1行につき、一連の操作手順を表現します。"
+msgstr ""
+
+#: ../../contents/path/csv.rst:6
+#: ../../contents/path/csv.rst:12
+msgid "例) ::"
+msgstr ""
+
+#: ../../contents/path/csv.rst:10
+msgid "このうち、4つごとに1つのミノを置く操作を表しています。そのため、この例では3つのミノを置く操作手順を表しています。"
+msgstr ""
+
+#: ../../contents/path/csv.rst:16
+msgid "この例では「ミノJを右回転させた状態で回転軸が(x=3,y=3)にくるように接着させる」ことを表しています。"
+msgstr ""
+
+#: ../../contents/path/csv.rst:18
+msgid "従って、この4つが表している操作は次のようになります。"
+msgstr ""
+
+#: ../../contents/path/csv.rst:21
+msgid "1つめの要素 J: ミノの種類"
+msgstr ""
+
+#: ../../contents/path/csv.rst:21
+msgid "TIJLSZOのどれか。"
+msgstr ""
+
+#: ../../contents/path/csv.rst:27
+msgid "2つめの要素 R: 回転方向"
+msgstr ""
+
+#: ../../contents/path/csv.rst:24
+msgid "0: 出現時の回転方向"
+msgstr ""
+
+#: ../../contents/path/csv.rst:25
+msgid "R: 右回転"
+msgstr ""
+
+#: ../../contents/path/csv.rst:26
+msgid "L: 左回転"
+msgstr ""
+
+#: ../../contents/path/csv.rst:27
+msgid "2: 裏向き (右回転2回 or 左回転2回)"
+msgstr ""
+
+#: ../../contents/path/csv.rst:30
+msgid "3つめの要素 3: 回転軸のx座標"
+msgstr ""
+
+#: ../../contents/path/csv.rst:30
+msgid "最も左の列を 0 としたときの列番号"
+msgstr ""
+
+#: ../../contents/path/csv.rst:33
+msgid "4つめの要素 3: 回転軸のy座標"
+msgstr ""
+
+#: ../../contents/path/csv.rst:33
+msgid "最も下の行を 0 としたときの行番号"
+msgstr ""
+
+#: ../../contents/path/csv.rst:35
+msgid "この4つの要素が1セットとして、必要な操作回数だけ右にセットが続きます。"
+msgstr ""
+
+#: ../../contents/path/csv.rst:39
+msgid "key: solution"
+msgstr ""
+
+#: ../../contents/path/csv.rst:41
+msgid "パフェ手順（地形）をキーして、それぞれの手順で対応できるツモを振り分けます。"
+msgstr ""
+
+#: ../../contents/path/csv.rst:43
+msgid "出力例) ``path -t v115@BhF8CeG8BeH8CeG8JeAgWDAqedBA -p *p4 -f csv -k solution`` ::"
+msgstr ""
+
+#: ../../contents/path/csv.rst:49
+#: ../../contents/path/csv.rst:111
+#: ../../contents/path/csv.rst:150
+msgid "各項目は、左から順に以下の通りです。 以下の 例) は、上記の結果を基づいた説明になります。"
+msgstr ""
+
+#: ../../contents/path/csv.rst:55
+#: ../../contents/path/csv.rst:137
+#: ../../contents/path/csv.rst:171
+msgid "テト譜"
+msgstr ""
+
+#: ../../contents/path/csv.rst:53
+msgid "パフェの手順（地形）を表すテト譜"
+msgstr ""
+
+#: ../../contents/path/csv.rst:55
+#: ../../contents/path/csv.rst:60
+#: ../../contents/path/csv.rst:70
+#: ../../contents/path/csv.rst:85
+#: ../../contents/path/csv.rst:91
+#: ../../contents/path/csv.rst:117
+#: ../../contents/path/csv.rst:121
+#: ../../contents/path/csv.rst:126
+#: ../../contents/path/csv.rst:131
+#: ../../contents/path/csv.rst:137
+#: ../../contents/path/csv.rst:156
+#: ../../contents/path/csv.rst:161
+#: ../../contents/path/csv.rst:171
+#: ../../contents/path/csv.rst:175
+msgid "例)"
+msgstr ""
+
+#: ../../contents/path/csv.rst:55
+msgid "``http://fumen.zui.jp/?v115@9gh0R4F8g0R4G8BtH8g0BtG8JeAgWDA6vzBA`` その行の対象となるパフェ地形のテト譜リンク"
+msgstr ""
+
+#: ../../contents/path/csv.rst:60
+#: ../../contents/path/csv.rst:126
+#: ../../contents/path/csv.rst:156
+msgid "使用ミノ"
+msgstr ""
+
+#: ../../contents/path/csv.rst:58
+msgid "その手順で使用するミノの組み合わせ"
+msgstr ""
+
+#: ../../contents/path/csv.rst:60
+msgid "``JSZ`` JSZの3ミノを使ってパフェをする地形である"
+msgstr ""
+
+#: ../../contents/path/csv.rst:65
+msgid "対応ツモ数 (対地形&パターン)"
+msgstr ""
+
+#: ../../contents/path/csv.rst:63
+msgid "そのパフェ手順で組むことができるツモのうち、入力パターンでカバーされる手順の総数"
+msgstr ""
+
+#: ../../contents/path/csv.rst:65
+#: ../../contents/path/csv.rst:75
+#: ../../contents/path/csv.rst:80
+#: ../../contents/path/csv.rst:166
+msgid "例) 入力パターンが ``*p4`` で、ホールドありのとき"
+msgstr ""
+
+#: ../../contents/path/csv.rst:65
+msgid "``2`` JSZの組み合わせでこのパフェができる順番は 2通り。この2通りは、入力パターンの範囲で組むことができる"
+msgstr ""
+
+#: ../../contents/path/csv.rst:70
+msgid "対応ツモ数 (対地形)"
+msgstr ""
+
+#: ../../contents/path/csv.rst:68
+#: ../../contents/path/csv.rst:159
+msgid "その手順に持ち込むことができるツモの総数 (入力パターンには依存しません)"
+msgstr ""
+
+#: ../../contents/path/csv.rst:70
+msgid "``2`` （入力パターンに関係なく）JSZの組み合わせでこのパフェができる順番は 2通り"
+msgstr ""
+
+#: ../../contents/path/csv.rst:75
+#: ../../contents/path/csv.rst:166
+msgid "対応ツモ数 (対パターン)"
+msgstr ""
+
+#: ../../contents/path/csv.rst:73
+#: ../../contents/path/csv.rst:164
+msgid "すべての入力パターンの中で、その手順で対応できるツモの総数"
+msgstr ""
+
+#: ../../contents/path/csv.rst:75
+msgid "``48`` 全7p4(840通り)の入力パターンのうち、ホールドを使うことで48通りのツモ順に対応できる"
+msgstr ""
+
+#: ../../contents/path/csv.rst:80
+msgid "ツモ (対地形&パターン)"
+msgstr ""
+
+#: ../../contents/path/csv.rst:78
+msgid "「対応ツモ数 (対地形&パターン)」の一覧"
+msgstr ""
+
+#: ../../contents/path/csv.rst:80
+msgid "``ZSJ;ZJS`` ZSJ か ZJS の順にミノを置いたときだけパフェでき、入力パターンの範囲で組むことができる"
+msgstr ""
+
+#: ../../contents/path/csv.rst:85
+msgid "ツモ (対地形)"
+msgstr ""
+
+#: ../../contents/path/csv.rst:83
+msgid "「対応ツモ数 (対地形)」の一覧"
+msgstr ""
+
+#: ../../contents/path/csv.rst:85
+msgid "``ZSJ;ZJS`` ZSJ か ZJS の順にミノを置いたときだけパフェできる"
+msgstr ""
+
+#: ../../contents/path/csv.rst:91
+#: ../../contents/path/csv.rst:175
+msgid "ツモ (対パターン)"
+msgstr ""
+
+#: ../../contents/path/csv.rst:88
+#: ../../contents/path/csv.rst:174
+msgid "「対応ツモ数 (対パターン)」の一覧"
+msgstr ""
+
+#: ../../contents/path/csv.rst:90
+msgid "``JZSI;ZLJS;JZTS;...`` 入力パターンに従ったパターンなので4ミノの組み合わせになっている"
+msgstr ""
+
+#: ../../contents/path/csv.rst:94
+msgid "key: pattern"
+msgstr ""
+
+#: ../../contents/path/csv.rst:96
+msgid "ツモをキーして、それぞれのツモで対応できるパフェ手順を振り分けます。"
+msgstr ""
+
+#: ../../contents/path/csv.rst:98
+msgid "出力例) ``path -t v115@BhF8CeG8BeH8CeG8JeAgWDAqedBA -p *p4 -f csv -k pattern`` ::"
+msgstr ""
+
+#: ../../contents/path/csv.rst:103
+msgid "なお、このCSV形式を選択した場合は、percentコマンドのようなパフェ成功確率がログ上に表示されます。"
+msgstr ""
+
+#: ../../contents/path/csv.rst:105
+msgid "ログ出力例) ::"
+msgstr ""
+
+#: ../../contents/path/csv.rst:117
+msgid "ツモ"
+msgstr ""
+
+#: ../../contents/path/csv.rst:115
+msgid "入力パターンから生成されたツモ順"
+msgstr ""
+
+#: ../../contents/path/csv.rst:117
+msgid "``TJSI`` その行の対象となるツモ順"
+msgstr ""
+
+#: ../../contents/path/csv.rst:121
+#: ../../contents/path/csv.rst:161
+msgid "対応地形数"
+msgstr ""
+
+#: ../../contents/path/csv.rst:120
+msgid "そのツモからパフェ可能な手順（地形）の総数"
+msgstr ""
+
+#: ../../contents/path/csv.rst:122
+msgid "``4`` TJSIのツモを引いたとき、4つのパフェを作ることができる"
+msgstr ""
+
+#: ../../contents/path/csv.rst:124
+msgid "パフェ可能なミノの組み合わせ一覧"
+msgstr ""
+
+#: ../../contents/path/csv.rst:126
+msgid "``TJS;TIJ`` TJSIのうち、TJS と TIJ を使ったパフェが存在する"
+msgstr ""
+
+#: ../../contents/path/csv.rst:131
+msgid "未使用ミノ"
+msgstr ""
+
+#: ../../contents/path/csv.rst:129
+msgid "パフェした後に残るミノの組み合わせ一覧"
+msgstr ""
+
+#: ../../contents/path/csv.rst:131
+msgid "``I;S`` TJSIのうち、I (TJS使用時) と S (TIJ使用時) が残るパフェが存在する"
+msgstr ""
+
+#: ../../contents/path/csv.rst:134
+#: ../../contents/path/csv.rst:169
+msgid "「対応地形数」の一覧"
+msgstr ""
+
+#: ../../contents/path/csv.rst:136
+msgid "``v115@9gzhF8ywG8g0wwH8i0G8JeAgWDAqedBA;...`` 4つのパフェを表すテト譜のデータ"
+msgstr ""
+
+#: ../../contents/path/csv.rst:140
+msgid "key: use"
+msgstr ""
+
+#: ../../contents/path/csv.rst:142
+msgid "使用ミノをキーして、それぞれのミノの組み合わせで対応できるツモやパフェ手順を振り分けます。"
+msgstr ""
+
+#: ../../contents/path/csv.rst:144
+msgid "出力例) ``path -t v115@BhF8CeG8BeH8CeG8JeAgWDAqedBA -p *p4 -f csv -k use`` ::"
+msgstr ""
+
+#: ../../contents/path/csv.rst:154
+msgid "パフェ手順で使用するミノの組み合わせ"
+msgstr ""
+
+#: ../../contents/path/csv.rst:156
+msgid "``TIL`` その行の対象となるミノの組み合わせ"
+msgstr ""
+
+#: ../../contents/path/csv.rst:161
+msgid "``2`` （入力パターンに関係なく）TILの組み合わせでこのパフェができる順番は 2通り"
+msgstr ""
+
+#: ../../contents/path/csv.rst:166
+msgid "``88`` 全7p4(=840通り)の入力パターンのうち、ホールドを使うことで88通りのツモ順に対応できる"
+msgstr ""
+
+#: ../../contents/path/csv.rst:171
+msgid "``v115@9gzhF8ilG8glwwH8ywG8JeAgWDA0SdBA;...`` 4つのパフェを表すテト譜のデータ"
+msgstr ""
+
+#: ../../contents/path/csv.rst:176
+msgid "``TZIL;LOTI;ILZT;...`` 入力パターンに従ったパターンなので4ミノの組み合わせになっている"
+msgstr ""

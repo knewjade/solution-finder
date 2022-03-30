@@ -1,0 +1,147 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2017-2022, knewjade
+# This file is distributed under the same license as the solution-finder package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: solution-finder \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-03-30 19:39+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../contents/command.rst:3
+msgid "コマンドについて"
+msgstr ""
+
+#: ../../contents/command.rst:6
+msgid "概要"
+msgstr ""
+
+#: ../../contents/command.rst:8
+msgid "このページでは、solution-finderを実行するためのコマンドについて説明します。"
+msgstr ""
+
+#: ../../contents/command.rst:10
+msgid "solution-finderの実行は、基本的に次のようなコマンドで実行します。 ::"
+msgstr ""
+
+#: ../../contents/command.rst:14
+msgid "このとき、<command>を必ず指定する必要があります。"
+msgstr ""
+
+#: ../../contents/command.rst:16
+msgid "solution-finderでは、現在3つのコマンドが実装されており、それぞれ以下の処理を行います。"
+msgstr ""
+
+#: ../../contents/command.rst:19
+msgid "<command>"
+msgstr ""
+
+#: ../../contents/command.rst:19
+msgid "処理内容"
+msgstr ""
+
+#: ../../contents/command.rst:21
+msgid "percent"
+msgstr ""
+
+#: ../../contents/command.rst:21
+msgid "ある地形からパーフェクトできる確率を計算する"
+msgstr ""
+
+#: ../../contents/command.rst:22
+msgid "path"
+msgstr ""
+
+#: ../../contents/command.rst:22
+msgid "ある地形からパーフェクトまでの操作手順をすべて列挙する"
+msgstr ""
+
+#: ../../contents/command.rst:23
+msgid "util"
+msgstr ""
+
+#: ../../contents/command.rst:23
+msgid "ユーティリティ群 （※ コマンドのあとにサブコマンドが続く。詳細は次節を参照）"
+msgstr ""
+
+#: ../../contents/command.rst:26
+#: ../../contents/command.rst:46
+msgid "このコマンドごとにそれぞれオプションが用意されています。"
+msgstr ""
+
+#: ../../contents/command.rst:28
+#: ../../contents/command.rst:48
+msgid "オプションの詳細は各コマンドに記載されていますので、そちらをご参照ください。"
+msgstr ""
+
+#: ../../contents/command.rst:32
+msgid "``java -jar sfinder.jar -v`` で、現在のバージョンを表示します"
+msgstr ""
+
+#: ../../contents/command.rst:33
+msgid "``java -jar sfinder.jar -h`` で、Usage (現在の実装されているコマンド)を表示します"
+msgstr ""
+
+#: ../../contents/command.rst:34
+msgid "``java -jar sfinder.jar <command> -h`` で、各オプションごとのUsage (使用できるオプション一覧)を表示します"
+msgstr ""
+
+#: ../../contents/command.rst:38
+msgid "サブコマンドについて"
+msgstr ""
+
+#: ../../contents/command.rst:40
+msgid "utilコマンドについては、コマンドの下にサブコマンドを指定します。 ::"
+msgstr ""
+
+#: ../../contents/command.rst:44
+msgid "このとき、<sub-command>を必ず指定する必要があります。"
+msgstr ""
+
+#: ../../contents/command.rst:52
+msgid "テト譜からオプションを指定する"
+msgstr ""
+
+#: ../../contents/command.rst:54
+msgid "テト譜のコメント欄で、削除ライン数の横に上記のオプションを並べることで設定できます。"
+msgstr ""
+
+#: ../../contents/command.rst:56
+msgid "例) 4ラインパフェで、パターンを*p4、ホールドなしで探索したい場合 ::"
+msgstr ""
+
+#: ../../contents/command.rst:62
+msgid "オプションの優先順位"
+msgstr ""
+
+#: ../../contents/command.rst:64
+msgid "コマンドラインやテト譜など、複数箇所で同一オプションを設定した場合、次の数字が小さい場所の値が優先されます。"
+msgstr ""
+
+#: ../../contents/command.rst:66
+msgid "コマンドライン引数 ``sfinder.jar <command> [options]``"
+msgstr ""
+
+#: ../../contents/command.rst:67
+msgid "テト譜のコマンド"
+msgstr ""
+
+#: ../../contents/command.rst:68
+msgid "フィールドファイル・パターンファイルの設定値"
+msgstr ""
+
+#: ../../contents/command.rst:72
+msgid "すべてのオプションをひとつの場所に書く必要はありません"
+msgstr ""
+
+#: ../../contents/command.rst:73
+msgid "たとえば、フィールドの高さをテト譜に指定して、コマンドでパターンを指定することができる"
+msgstr ""

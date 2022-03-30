@@ -2,12 +2,13 @@
 
 ```
 cd docs
-make html
+make -e SPHINXOPTS="-D language='ja'" html
+make -e SPHINXOPTS="-D language='en'" html
 ```
 
 # Prepare for translations
 
 ```
 cd docs/source
-sphinx-build -b gettext . ./_locale/gettext
+sphinx-build -b gettext . ./locale/gettext
 ```

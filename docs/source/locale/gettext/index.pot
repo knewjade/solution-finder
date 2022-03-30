@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: solution-finder \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-30 17:19+0900\n"
+"POT-Creation-Date: 2022-03-30 19:39+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,171 +16,171 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../../source/index.rst:77
-#: ../../source/index.rst:77
+#: ../../index.rst:77
+#: ../../index.rst:77
 msgid "目次"
 msgstr ""
 
-#: ../../source/index.rst:2
+#: ../../index.rst:2
 msgid "solution-finderドキュメント"
 msgstr ""
 
-#: ../../source/index.rst:5
+#: ../../index.rst:5
 msgid "概要"
 msgstr ""
 
-#: ../../source/index.rst:7
+#: ../../index.rst:7
 msgid "solution-finderとは、テトリスで「ある地形からパーフェクトできる確率・接着手順」など、条件に従った解を探索するためのツールです。"
 msgstr ""
 
-#: ../../source/index.rst:9
+#: ../../index.rst:9
 msgid "solution-finderは、探索ツールとして次の特徴を持っています。"
 msgstr ""
 
-#: ../../source/index.rst:11
+#: ../../index.rst:11
 msgid "任意のフィールド・ミノ組み合わせを指定した探索が可能"
 msgstr ""
 
-#: ../../source/index.rst:12
+#: ../../index.rst:12
 msgid "探索時の回転法則はSRSに準拠"
 msgstr ""
 
-#: ../../source/index.rst:13
+#: ../../index.rst:13
 msgid "マルチスレッドによる探索に対応"
 msgstr ""
 
-#: ../../source/index.rst:14
+#: ../../index.rst:14
 msgid "実行時にオプションを与えることで「ホールドあり・なし」「ハードドロップのみ」など細かい設定が可能"
 msgstr ""
 
-#: ../../source/index.rst:15
+#: ../../index.rst:15
 msgid "フィールドの入力として `連続テト譜エディタ Ver 1.15a <http://fumen.zui.jp>`_ のデータに対応"
 msgstr ""
 
-#: ../../source/index.rst:19
+#: ../../index.rst:19
 msgid "主な機能"
 msgstr ""
 
-#: ../../source/index.rst:24
+#: ../../index.rst:24
 msgid "percent: ある地形からパーフェクトできる確率を計算する"
 msgstr ""
 
-#: ../../source/index.rst:22
+#: ../../index.rst:22
 msgid "7種のミノ(TIJLSZO) の様々な組み合わせでの探索が可能"
 msgstr ""
 
-#: ../../source/index.rst:23
+#: ../../index.rst:23
 msgid "先頭3ミノごとのパーフェクト成功確率もツリー形式で表示"
 msgstr ""
 
-#: ../../source/index.rst:24
+#: ../../index.rst:24
 msgid "パーフェクトができないツモ順を表示"
 msgstr ""
 
-#: ../../source/index.rst:29
+#: ../../index.rst:29
 msgid "path: ある地形からパーフェクトまでの操作手順をすべて列挙する"
 msgstr ""
 
-#: ../../source/index.rst:27
+#: ../../index.rst:27
 msgid "指定したミノの組み合わせから、パーフェクトまでの全パターンを列挙してファイルに出力"
 msgstr ""
 
-#: ../../source/index.rst:28
+#: ../../index.rst:28
 msgid "2種類の結果を列挙して出力"
 msgstr ""
 
-#: ../../source/index.rst:29
+#: ../../index.rst:29
 msgid "出力フォーマットは、テト譜リンクとCSVに対応"
 msgstr ""
 
-#: ../../source/index.rst:33
+#: ../../index.rst:33
 msgid "setup: ある地形から指定したブロックを埋める操作手順をすべて列挙する"
 msgstr ""
 
-#: ../../source/index.rst:32
+#: ../../index.rst:32
 msgid "指定したミノの組み合わせから、置くことができる全パターンを列挙してファイルに出力"
 msgstr ""
 
-#: ../../source/index.rst:33
+#: ../../index.rst:33
 msgid "ブロックを置いても置かなくても良いマージンエリアの設定が可能"
 msgstr ""
 
-#: ../../source/index.rst:36
+#: ../../index.rst:36
 msgid "ren: ある地形からRENが続く手順を列挙する"
 msgstr ""
 
-#: ../../source/index.rst:36
+#: ../../index.rst:36
 msgid "指定したミノ順から、RENを列挙してファイルに出力"
 msgstr ""
 
-#: ../../source/index.rst:38
+#: ../../index.rst:38
 msgid "spin: ある地形からTスピンできる手順を列挙する"
 msgstr ""
 
-#: ../../source/index.rst:40
+#: ../../index.rst:40
 msgid "cover: 指定したミノの置き場所通りに置くことができるミノ順をすべて列挙する"
 msgstr ""
 
-#: ../../source/index.rst:45
+#: ../../index.rst:45
 msgid "util: solution-finderの機能を補助するユーティリティ"
 msgstr ""
 
-#: ../../source/index.rst:43
+#: ../../index.rst:43
 msgid "fig: テト譜をもとに画像を生成"
 msgstr ""
 
-#: ../../source/index.rst:44
+#: ../../index.rst:44
 msgid "fumen: 入力されたテト譜を変換して、新たなテト譜を標準出力に出力"
 msgstr ""
 
-#: ../../source/index.rst:45
+#: ../../index.rst:45
 msgid "seq: 入力されたパターンの``*``などをシーケンス（ツモ順）に展開"
 msgstr ""
 
-#: ../../source/index.rst:48
+#: ../../index.rst:48
 msgid "ダウンロード"
 msgstr ""
 
-#: ../../source/index.rst:50
+#: ../../index.rst:50
 msgid "ダウンロードは 以下のリンク からお願いします。"
 msgstr ""
 
-#: ../../source/index.rst:52
+#: ../../index.rst:52
 msgid "https://github.com/knewjade/solution-finder/releases/"
 msgstr ""
 
-#: ../../source/index.rst:54
+#: ../../index.rst:54
 msgid "※ プログラムの実行には、Java8が実行できる環境が必要です ※ メモリの関係から 64bit版 を推奨します"
 msgstr ""
 
-#: ../../source/index.rst:59
+#: ../../index.rst:59
 msgid "補助GUI"
 msgstr ""
 
-#: ../../source/index.rst:61
+#: ../../index.rst:61
 msgid "solution-finderを操作しやすくするGUIを `@kitsune_fuchi (twitter) <https://twitter.com/kitsune_fuchi>`_ さんに作成していただきました。"
 msgstr ""
 
-#: ../../source/index.rst:63
+#: ../../index.rst:63
 msgid "なお、補助GUIではpercent・path・util figコマンドのみ対応しています。ご注意ください"
 msgstr ""
 
-#: ../../source/index.rst:65
+#: ../../index.rst:65
 msgid "ダウンロードは 以下のツイートに記載されているリンク先 からお願いします。"
 msgstr ""
 
-#: ../../source/index.rst:67
+#: ../../index.rst:67
 msgid "path, percent コマンド用"
 msgstr ""
 
-#: ../../source/index.rst:69
+#: ../../index.rst:69
 msgid "https://twitter.com/kitsune_fuchi/status/868826325770878976"
 msgstr ""
 
-#: ../../source/index.rst:71
+#: ../../index.rst:71
 msgid "util fig コマンド用"
 msgstr ""
 
-#: ../../source/index.rst:73
+#: ../../index.rst:73
 msgid "https://twitter.com/kitsune_fuchi/status/871189534746202113"
 msgstr ""
