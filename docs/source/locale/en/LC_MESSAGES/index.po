@@ -28,7 +28,7 @@ msgstr ""
 
 #: ../../source/index.rst:5
 msgid "概要"
-msgstr ""
+msgstr "Overviews"
 
 #: ../../source/index.rst:7
 msgid "solution-finderとは、テトリスで「ある地形からパーフェクトできる確率・接着手順」など、条件に従った解を探索するためのツールです。"
