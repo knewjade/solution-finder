@@ -39,7 +39,7 @@ https://github.com/knewjade/solution-finder/releases/ からダウンロード�
 
 また、プログラムの実行には `Java8(64bit) <https://java.com/ja/download/>`_ が必要となります。
 
-その後のステップは :ref:`contents/quick_start` をご覧ください。
+その後のステップは :doc:`contents/quick_start` をご覧ください。
 
 
 .. toctree::
