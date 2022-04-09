@@ -1,0 +1,1054 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: solution-finder\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-03-30 19:39+0900\n"
+"PO-Revision-Date: 2022-04-09 00:33\n"
+"Last-Translator: \n"
+"Language-Team: English\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: solution-finder\n"
+"X-Crowdin-Project-ID: 509240\n"
+"X-Crowdin-Language: en\n"
+"X-Crowdin-File: /translation/docs/source/locale/gettext/contents/setup/main.pot\n"
+"X-Crowdin-File-ID: 64\n"
+"Language: en_US\n"
+
+#: ../../contents/setup/main.rst:3
+msgid "コマンド: setup"
+msgstr ""
+
+#: ../../contents/setup/main.rst:6
+msgid "概要"
+msgstr ""
+
+#: ../../contents/setup/main.rst:8
+msgid "ある地形から指定したブロックを埋める操作手順をすべて列挙します。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:10
+msgid "そのとき、探索時に置いても置かなくても良い場所（マージンエリア）を補助的に指定することもできます。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:12
+msgid "探索結果は HTMLファイル で出力されます。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:16
+msgid "基本コマンド"
+msgstr ""
+
+#: ../../contents/setup/main.rst:18
+msgid "``java -jar sfinder.jar setup --tetfu v115@HhUpxhBeA81hCeA8yhD8AeB8JeAgH --patterns *! --fill i --margin o``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:22
+msgid "詳細"
+msgstr ""
+
+#: ../../contents/setup/main.rst:24
+#: ../../contents/setup/main.rst:24
+msgid "fumen_sample_001"
+msgstr ""
+
+#: ../../contents/setup/main.rst:26
+#: ../../contents/setup/main.rst:26
+msgid "fumen_sample_002"
+msgstr ""
+
+#: ../../contents/setup/main.rst:28
+#: ../../contents/setup/main.rst:28
+msgid "solution_sample_001"
+msgstr ""
+
+#: ../../contents/setup/main.rst:30
+#: ../../contents/setup/main.rst:30
+msgid "solution_sample_002"
+msgstr ""
+
+#: ../../contents/setup/main.rst:32
+#: ../../contents/setup/main.rst:32
+msgid "solution_sample_003"
+msgstr ""
+
+#: ../../contents/setup/main.rst:34
+#: ../../contents/setup/main.rst:34
+msgid "solution_sample_004"
+msgstr ""
+
+#: ../../contents/setup/main.rst:36
+#: ../../contents/setup/main.rst:36
+msgid "solution_sample_005"
+msgstr ""
+
+#: ../../contents/setup/main.rst:38
+#: ../../contents/setup/main.rst:38
+msgid "solution_sample_006"
+msgstr ""
+
+#: ../../contents/setup/main.rst:40
+#: ../../contents/setup/main.rst:40
+msgid "attention_sample_001"
+msgstr ""
+
+#: ../../contents/setup/main.rst:42
+#: ../../contents/setup/main.rst:42
+msgid "attention_sample_001_1"
+msgstr ""
+
+#: ../../contents/setup/main.rst:44
+#: ../../contents/setup/main.rst:44
+msgid "attention_sample_002"
+msgstr ""
+
+#: ../../contents/setup/main.rst:46
+#: ../../contents/setup/main.rst:46
+msgid "attention_sample_002_1"
+msgstr ""
+
+#: ../../contents/setup/main.rst:48
+#: ../../contents/setup/main.rst:48
+msgid "attention_sample_002_2"
+msgstr ""
+
+#: ../../contents/setup/main.rst:51
+msgid "|fumen_sample_001|"
+msgstr ""
+
+#: ../../contents/setup/main.rst:53
+msgid "``java -jar sfinder.jar setup --tetfu v115@9gTpFeTpFeTpFezhPeAgH --fill I --margin O -p *! -c yes``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:55
+msgid "はじめに「必ず埋める場所」「マージンエリア」を指定します。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:57
+msgid "もしオプションで ``--fill I --margin O`` を指定した場合、次のように解釈されます。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:59
+msgid "水色のエリア → 探索時に必ず埋める必要がある場所"
+msgstr ""
+
+#: ../../contents/setup/main.rst:60
+msgid "黄色のエリア → 探索時に置いても置かなくても良い場所（マージンエリア）"
+msgstr ""
+
+#: ../../contents/setup/main.rst:61
+msgid "グレーのエリア → 既にブロックが固定されたエリア"
+msgstr ""
+
+#: ../../contents/setup/main.rst:63
+msgid "このとき、下のような結果が得られます。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:65
+msgid "|solution_sample_001| |solution_sample_002| |solution_sample_003|"
+msgstr ""
+
+#: ../../contents/setup/main.rst:69
+msgid "また同時に、下のような結果も得られます。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:71
+msgid "|solution_sample_004|"
+msgstr ""
+
+#: ../../contents/setup/main.rst:73
+msgid "このような「穴」が含まれる地形を取り除く場合は ``--exclude`` を設定してください。 ``--exclude`` を設定することで、マージンエリアを含めて地形全体のどこかに「穴」のある解が 除外されます。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:77
+msgid "もし ``--exclude`` を設定しつつも、「穴」を許容するエリアを指定したい場合は ``--free`` で色を指定し、その色で地形を塗ってください。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:82
+msgid "次に、下の地形をもとに説明します。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:84
+msgid "|fumen_sample_002|"
+msgstr ""
+
+#: ../../contents/setup/main.rst:86
+msgid "``java -jar sfinder.jar setup --tetfu v115@9gQpBewhVpwhCe3hAe2hZpJeAgH --patterns [^T]! --fill I --margin O -c yes``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:88
+msgid "このとき、下のようなT以外のミノを使ってできる地形が列挙されます。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:90
+msgid "|solution_sample_005| |solution_sample_006|"
+msgstr ""
+
+#: ../../contents/setup/main.rst:93
+msgid "この解にはどちらも「穴」が含まれているため、そのまま ``--exclude`` を設定するとどちらの解も除外されてしまいます。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:95
+msgid "それを防ぐため、解が除外される前に「ミノを置く」「1ライン全て埋める」などの操作を行うことができます。 詳細は  ``--operate`` オプションをご参照ください。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:98
+msgid "この例では ``--operate \"T-Reverse(2,2)\"`` で1つめの解を取り出すことができます。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:102
+msgid "補足"
+msgstr ""
+
+#: ../../contents/setup/main.rst:105
+msgid "入力パターン ``--patterns`` について"
+msgstr ""
+
+#: ../../contents/setup/main.rst:107
+msgid "デフォルトでは ``--patterns`` で入力したミノは「ミノ順」として解釈されます。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:109
+msgid "このとき、解にはすべてのミノを使用した解が表示されます。 また、ミノ順の関係で組むことができない解は表示されません。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:112
+msgid "たとえば パターンに ``IOOI`` を指定したとき、2つめのI は O より後に置かれます。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:115
+msgid "もし、この入力パターンを「ミノの組み合わせ」として解釈したい場合は ``--combination yes`` を設定してください。 たとえば、パターンに ``IOOI`` を指定したとき、置く順番に関わらず I2個・O2個 を使用した解が表示されます。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:118
+msgid "``--combination yes`` のときに表示される解は「必ず埋めるエリア ``--fill``」をカバーする最小限のミノが表示されます。 置くミノの個数を固定したい場合は ``--n-pieces`` を設定してください。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:123
+msgid "マージンエリアについて"
+msgstr ""
+
+#: ../../contents/setup/main.rst:125
+msgid "``--free`` ``--margin`` で埋めても埋めなくても良いマージンエリアを指定できます。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:127
+msgid "ただしこれらの領域は、``--fill`` を埋める過程で、あくまで補助的な領域として利用される点にご注意ください。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:129
+msgid "例1）"
+msgstr ""
+
+#: ../../contents/setup/main.rst:131
+msgid "|attention_sample_001| |attention_sample_001_1|"
+msgstr ""
+
+#: ../../contents/setup/main.rst:134
+msgid "Tスピンの屋根にあたる部分にマージンエリアが設定されています。 領域の広さ的にはIミノが収まる範囲ですが ``--fill`` に寄与していないため、Tミノのみが解として出力されます。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:137
+msgid "例2）"
+msgstr ""
+
+#: ../../contents/setup/main.rst:139
+msgid "|attention_sample_002| |attention_sample_002_1| |attention_sample_002_2|"
+msgstr ""
+
+#: ../../contents/setup/main.rst:143
+msgid "こちらの地形も ``--fill`` に直接寄与しないミノがマージンエリアに使われています。 例1と異なる点として、 例1ではマージンエリアがなくても成立しますが、 例2はこれらのミノが足場として使われているため、存在しないと組むことができません。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:148
+msgid "あくまで、仕様上は ``--fill`` のみが判定対象となっているので、こちらの解も出力されません。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:151
+msgid "フィールドの指定方法"
+msgstr ""
+
+#: ../../contents/setup/main.rst:154
+msgid "テト譜から入力するとき"
+msgstr ""
+
+#: ../../contents/setup/main.rst:156
+#: ../../contents/setup/main.rst:156
+msgid "fumen_sample_003"
+msgstr ""
+
+#: ../../contents/setup/main.rst:159
+msgid "|fumen_sample_003|"
+msgstr ""
+
+#: ../../contents/setup/main.rst:161
+msgid "``java -jar sfinder.jar setup -t v115@9gV4whCe1hCeA82hAeB8XpA8KeAgH --fill I --margin O --free S -p [^T]! -op \"T-Reverse(7,2)\" -e holes``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:163
+msgid "オプションで「必ず埋める場所」「マージンエリア」「フリーエリア」の色を指定してください。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:165
+msgid "``-f`` or ``--fill`` → 探索時に必ず埋める必要がある場所"
+msgstr ""
+
+#: ../../contents/setup/main.rst:166
+msgid "``-m`` or ``--margin`` → 探索時に置いても置かなくても良い場所（マージンエリア。``exclude`` 設定時には穴を許容しない）"
+msgstr ""
+
+#: ../../contents/setup/main.rst:167
+msgid "``-F`` or ``--free`` → マージンエリア かつ 常に穴を許容するエリア"
+msgstr ""
+
+#: ../../contents/setup/main.rst:170
+msgid "フィールドファイルから入力するとき"
+msgstr ""
+
+#: ../../contents/setup/main.rst:172
+msgid "入力例 ::"
+msgstr ""
+
+#: ../../contents/setup/main.rst:179
+msgid "``java -jar sfinder.jar setup --patterns [^T]! --operate \"T-Reverse(7,2)\" --exclude holes``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:181
+msgid "通常のフィールドの定義に「必ず埋める場所」「マージンエリア」を指定します。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:183
+msgid "``*`` → 探索時に必ず埋める必要がある場所"
+msgstr ""
+
+#: ../../contents/setup/main.rst:184
+msgid "``.`` → 探索時に置いても置かなくても良い場所（マージンエリア。``--exclude`` 設定時には穴を許容しない）"
+msgstr ""
+
+#: ../../contents/setup/main.rst:185
+msgid "``+`` → マージンエリア かつ 常に穴を許容するエリア"
+msgstr ""
+
+#: ../../contents/setup/main.rst:189
+msgid "フィールドファイル1行目の数字は必須ではありません。 もし数字を記載した場合は ``--line`` オプションとして解釈されます。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:194
+msgid "出力フォーマット"
+msgstr ""
+
+#: ../../contents/setup/main.rst:196
+msgid "出力フォーマットは、以下の方式から選択できます。 変更したい場合は、オプションから変更できます。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:199
+msgid "html: シンプルなHTML形式のテト譜リンク"
+msgstr ""
+
+#: ../../contents/setup/main.rst:200
+msgid "csv: csv形式（詳細は後述）"
+msgstr ""
+
+#: ../../contents/setup/main.rst:203
+msgid "HTML形式"
+msgstr ""
+
+#: ../../contents/setup/main.rst:205
+msgid "サンプル ::"
+msgstr ""
+
+#: ../../contents/setup/main.rst:220
+msgid "``2202433332`` の数字は、列ごとのブロック数を左から並べたものです。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:222
+msgid "数字の下の ``____X_____〜`` は、地形を簡易的に表示したものです。 ここには ``--fill`` をカバーする最低限の地形が表示されます。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:225
+msgid "地形の下の ``ミノ順＋リンク`` は、テト譜へのリンクを表示しています。 もし「``--combination`` がオフ」 or 「``--n-pieces`` が設定されている」ときは、すべてのミノを利用したテト譜が表示されます。 したがって「テト譜」と「簡易的な地形表示」が異なる場合があります。ご注意ください。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:229
+msgid "リンクの後ろの数字 (462, ...) はこの地形を積み込む手順の総数で、入力パターンには依存しません。 手順は同じ種類のミノが複数個あっても、置く場所によってそれぞれ区別されます。 たとえば `T3個だけを使う地形 <http://fumen.zui.jp/?v115@QhwwAewwCewwBe0wAeywBewwJeAgH>`_ の場合、3!=6 通り となります。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:235
+msgid "CSV形式"
+msgstr ""
+
+#: ../../contents/setup/main.rst:237
+msgid "地形をキーして、それぞれの地形で使用されるミノとその地形を組む全手順数を出力します。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:239
+msgid "出力例) ``setup -p *! --fill i --margin o -t v115@2gWpCeWpDe0hQpxhAe4hAe2hJeAgH --format csv`` ::"
+msgstr ""
+
+#: ../../contents/setup/main.rst:245
+msgid "各項目は、左から順に以下の通りです。 以下の 例) は、上記の結果を基づいた説明になります。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:251
+msgid "テト譜"
+msgstr ""
+
+#: ../../contents/setup/main.rst:249
+msgid "地形を表すテト譜"
+msgstr ""
+
+#: ../../contents/setup/main.rst:251
+#: ../../contents/setup/main.rst:256
+#: ../../contents/setup/main.rst:264
+msgid "例)"
+msgstr ""
+
+#: ../../contents/setup/main.rst:251
+msgid "``http://fumen.zui.jp/?v115@4gAtHeBtBewwEeAtglQ4xwg0RpAeilR4wwg0RpAezh?Q4h0JeAgWHAKNmFDMuqBA``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:256
+msgid "使用ミノ"
+msgstr ""
+
+#: ../../contents/setup/main.rst:254
+msgid "その地形で使用するミノの組み合わせ"
+msgstr ""
+
+#: ../../contents/setup/main.rst:256
+msgid "``JSTZLIO`` JSTZLIOの7ミノを使った地形である"
+msgstr ""
+
+#: ../../contents/setup/main.rst:264
+msgid "手順数"
+msgstr ""
+
+#: ../../contents/setup/main.rst:259
+msgid "その地形を積み込む手順の総数で、入力パターンには依存しません。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:260
+msgid "手順は同じ種類のミノが複数個あっても、置く場所によってそれぞれ区別されます"
+msgstr ""
+
+#: ../../contents/setup/main.rst:261
+msgid "たとえば `T3個だけを使う地形 <http://fumen.zui.jp/?v115@QhwwAewwCewwBe0wAeywBewwJeAgH>`_ の場合、3!=6 通り となります"
+msgstr ""
+
+#: ../../contents/setup/main.rst:263
+msgid "``420`` その地形を組む手順が 420通り"
+msgstr ""
+
+#: ../../contents/setup/main.rst:267
+msgid "オプション一覧"
+msgstr ""
+
+#: ../../contents/setup/main.rst:270
+msgid "short"
+msgstr ""
+
+#: ../../contents/setup/main.rst:270
+msgid "long"
+msgstr ""
+
+#: ../../contents/setup/main.rst:270
+msgid "default"
+msgstr ""
+
+#: ../../contents/setup/main.rst:272
+msgid "``-t``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:272
+msgid "``--tetfu``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:272
+#: ../../contents/setup/main.rst:274
+#: ../../contents/setup/main.rst:276
+#: ../../contents/setup/main.rst:277
+#: ../../contents/setup/main.rst:278
+#: ../../contents/setup/main.rst:283
+msgid "なし"
+msgstr ""
+
+#: ../../contents/setup/main.rst:273
+msgid "``-P``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:273
+msgid "``--page``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:273
+msgid "1"
+msgstr ""
+
+#: ../../contents/setup/main.rst:274
+msgid "``-p``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:274
+msgid "``--patterns``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:275
+msgid "``-c``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:275
+msgid "``--combination``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:275
+#: ../../contents/setup/main.rst:286
+msgid "no"
+msgstr ""
+
+#: ../../contents/setup/main.rst:276
+msgid "``-f``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:276
+msgid "``--fill``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:277
+msgid "``-m``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:277
+msgid "``--margin``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:278
+msgid "``-F``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:278
+msgid "``--free``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:279
+msgid "``-l``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:279
+msgid "``--line``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:279
+#: ../../contents/setup/main.rst:284
+msgid "-1"
+msgstr ""
+
+#: ../../contents/setup/main.rst:280
+msgid "``-H``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:280
+msgid "``--hold``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:280
+msgid "use"
+msgstr ""
+
+#: ../../contents/setup/main.rst:281
+msgid "``-d``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:281
+msgid "``--drop``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:281
+msgid "softdrop"
+msgstr ""
+
+#: ../../contents/setup/main.rst:282
+msgid "``-e``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:282
+msgid "``--exclude``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:282
+msgid "none"
+msgstr ""
+
+#: ../../contents/setup/main.rst:283
+msgid "``-op``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:283
+msgid "``--operate``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:284
+msgid "``-np``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:284
+msgid "``--n-pieces``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:285
+msgid "``-fo``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:285
+msgid "``--format``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:285
+#: ../../contents/setup/main.rst:477
+msgid "html"
+msgstr ""
+
+#: ../../contents/setup/main.rst:286
+msgid "``-s``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:286
+msgid "``--split``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:287
+msgid "``-o``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:287
+msgid "``--output-base``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:287
+msgid "output/setup.html"
+msgstr ""
+
+#: ../../contents/setup/main.rst:288
+msgid "``-lp``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:288
+msgid "``--log-path``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:288
+msgid "output/last_output.txt"
+msgstr ""
+
+#: ../../contents/setup/main.rst:289
+msgid "``-fp``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:289
+msgid "``--field-path``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:289
+msgid "input/field.txt"
+msgstr ""
+
+#: ../../contents/setup/main.rst:290
+msgid "``-pp``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:290
+msgid "``--patterns-path``"
+msgstr ""
+
+#: ../../contents/setup/main.rst:290
+msgid "input/patterns.txt"
+msgstr ""
+
+#: ../../contents/setup/main.rst:295
+msgid "``-t``, ``--tetfu`` [default: なし]"
+msgstr ""
+
+#: ../../contents/setup/main.rst:297
+msgid "フィールドやオプションなどを指定したテト譜データを指定する。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:299
+msgid "テト譜で探索条件を指定する場合は ``--tetfu v115@vhAAgH`` のように指定する。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:301
+msgid "v115のテト譜データにのみ対応。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:305
+msgid "``-P``, ``--page`` [default: 1]"
+msgstr ""
+
+#: ../../contents/setup/main.rst:307
+msgid "テト譜でロードするページを指定する。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:309
+msgid "ページを変更したい場合は ``--page 31`` のように指定する。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:313
+msgid "``-p``, ``--patterns`` [default: なし]"
+msgstr ""
+
+#: ../../contents/setup/main.rst:315
+msgid "探索したいミノのパターンを指定する。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:317
+msgid "パターンを変更したい場合は ``--pattern *p7`` のように指定する。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:319
+msgid "もし ``--combination`` が設定されていない場合は「ミノ順」として、設定されているときは「ミノの組み合わせ」として解釈されます。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:323
+msgid "``-c``, ``--combination`` [default: no]"
+msgstr ""
+
+#: ../../contents/setup/main.rst:325
+msgid "``yes`` を指定した場合、入力されたパターンを「ミノ順」ではなく「ミノの組み合わせ」として解釈します。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:327
+msgid "たとえば パターンに ``IOOI`` を指定したとき、"
+msgstr ""
+
+#: ../../contents/setup/main.rst:329
+msgid "``no`` では、2つめのI は O より後に置く必要がありますが、"
+msgstr ""
+
+#: ../../contents/setup/main.rst:331
+msgid "``yes`` では、置く順番に関わらず I2個・O2個 を使用した解が表示されます。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:335
+msgid "``-f``, ``--fill`` [default: なし]"
+msgstr ""
+
+#: ../../contents/setup/main.rst:337
+msgid "フィールドをテト譜から入力するとき、必ず埋めるエリアとするブロックの色を指定する。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:339
+msgid "このオプションで指定した色が、探索時に必ず任意のミノを置く場所と解釈されます。 なお、色は ``TOI`` のように複数個同時に指定できます。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:342
+msgid "色の指定値は、以下のようになります（大文字・小文字はどちらでも良い）。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:344
+msgid "``I`` or ``cyan`` or ``cy`` → Iブロック"
+msgstr ""
+
+#: ../../contents/setup/main.rst:345
+msgid "``J`` or ``blue`` or ``bl`` → Jブロック"
+msgstr ""
+
+#: ../../contents/setup/main.rst:346
+msgid "``L`` or ``orange`` or ``or`` → Lブロック"
+msgstr ""
+
+#: ../../contents/setup/main.rst:347
+msgid "``O`` or ``yellow`` or ``ye`` → Oブロック"
+msgstr ""
+
+#: ../../contents/setup/main.rst:348
+msgid "``S`` or ``green`` or ``gr`` → Sブロック"
+msgstr ""
+
+#: ../../contents/setup/main.rst:349
+msgid "``Z`` or ``red`` or ``re`` → Zブロック"
+msgstr ""
+
+#: ../../contents/setup/main.rst:350
+msgid "``T`` or ``purple`` or ``pu`` → Tブロック"
+msgstr ""
+
+#: ../../contents/setup/main.rst:351
+msgid "``none`` → 指定なし（マージンエリアなし）"
+msgstr ""
+
+#: ../../contents/setup/main.rst:355
+msgid "``-m``, ``--margin`` [default: なし]"
+msgstr ""
+
+#: ../../contents/setup/main.rst:357
+#: ../../contents/setup/main.rst:369
+msgid "フィールドをテト譜から入力するとき、マージンエリアとするブロックの色を指定する。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:359
+#: ../../contents/setup/main.rst:371
+msgid "このオプションで指定した色が、探索時に置いても置かなくても良い場所と解釈されます。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:361
+msgid "もし ``--exclude`` オプションが指定されているとき、このエリア内の穴は除外対象となります。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:363
+#: ../../contents/setup/main.rst:375
+msgid "色の指定値は ``--fill`` オプションを参照してください。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:367
+msgid "``-F``, ``--free`` [default: なし]"
+msgstr ""
+
+#: ../../contents/setup/main.rst:373
+msgid "もし ``--exclude`` オプションが指定されている場合でも、このエリア内の穴は除外対象となりません。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:379
+msgid "``-l``, ``--line`` [default: -1]"
+msgstr ""
+
+#: ../../contents/setup/main.rst:381
+msgid "入力するフィールドの最大ライン数（高さ）を指定する。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:383
+msgid "指定したライン数よりも上にあるブロックは無視されます。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:385
+msgid "なお ``-1`` を指定した場合は ``最も高いフィールドの高さ`` が自動的に設定される。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:389
+msgid "``-H``, ``--hold`` [default: use]"
+msgstr ""
+
+#: ../../contents/setup/main.rst:391
+msgid "ホールドの有無を指定する。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:393
+msgid "ホールドなしで探索する場合は ``--hold avoid`` を指定する。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:397
+msgid "``-d``, ``--drop`` [default: softdrop]"
+msgstr ""
+
+#: ../../contents/setup/main.rst:399
+msgid "ミノの操作に制限を加える。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:401
+msgid "以下から操作方法をひとつ選択する。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:403
+msgid "softdrop: ソフトドロップ＋回転入れ（制限なし）"
+msgstr ""
+
+#: ../../contents/setup/main.rst:404
+msgid "harddrop: ハードドロップのみ"
+msgstr ""
+
+#: ../../contents/setup/main.rst:405
+msgid "180: ソフトドロップ＋180度回転入れ。180度回転は `Nullpomino <https://github.com/nullpomino/nullpomino>`_ のStandard Wallkickに準拠します。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:406
+msgid "t-softdrop: Tミノはソフトドロップ、その他のミノはハードドロップ"
+msgstr ""
+
+#: ../../contents/setup/main.rst:409
+msgid "``-e``, ``--exclude`` [default: none]"
+msgstr ""
+
+#: ../../contents/setup/main.rst:411
+msgid "地形に「穴」が含まれる解を除外します。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:413
+msgid "除外する対象をひとつ選択してください。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:415
+msgid "holes: ある空白ブロックに対して、その上にブロックがあれば「穴」として除外する（横に隙間がある場合でも除外されます）"
+msgstr ""
+
+#: ../../contents/setup/main.rst:416
+msgid "strict-holes: ある空白ブロックに対して、どうやっても到達できない場合は「穴」として除外する（四方がブロックで囲まれているとき）"
+msgstr ""
+
+#: ../../contents/setup/main.rst:417
+msgid "none: 除外なし"
+msgstr ""
+
+#: ../../contents/setup/main.rst:421
+msgid "``-op``, ``--operate`` [default: なし]"
+msgstr ""
+
+#: ../../contents/setup/main.rst:423
+msgid "除外対象を決定する前に、解の地形に対して操作を行う。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:425
+msgid "ここでの操作は、あくまで ``--exclude`` の判定 に利用するためであり、解の表示には影響は与えません。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:427
+msgid "以下の操作を指定することができます。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:429
+msgid "1ブロックを置く"
+msgstr ""
+
+#: ../../contents/setup/main.rst:431
+msgid "block(1,2)：(x=1,y=2)にブロックを置く"
+msgstr ""
+
+#: ../../contents/setup/main.rst:433
+msgid "ミノを置く"
+msgstr ""
+
+#: ../../contents/setup/main.rst:435
+msgid "I-Spawn(1,0)：出現時の回転のIミノを、回転軸(x=1,y=0)に置く"
+msgstr ""
+
+#: ../../contents/setup/main.rst:436
+msgid "T-Reverse(4,2)：裏返したTミノを回転軸(x=4,y=2)に置く"
+msgstr ""
+
+#: ../../contents/setup/main.rst:437
+msgid "L-Right(0,1)：右回転Lミノを回転軸(x=0,y=1)に置く"
+msgstr ""
+
+#: ../../contents/setup/main.rst:438
+msgid "J-Left(9,1)：左回転Jミノを回転軸(x=9,y=1)に置く"
+msgstr ""
+
+#: ../../contents/setup/main.rst:440
+msgid "1ラインすべてを埋める"
+msgstr ""
+
+#: ../../contents/setup/main.rst:442
+msgid "row(1)：2段目をすべてブロックで埋める。この時点でライン消去はされません"
+msgstr ""
+
+#: ../../contents/setup/main.rst:444
+msgid "ライン消去を行う"
+msgstr ""
+
+#: ../../contents/setup/main.rst:446
+msgid "clear()：ブロックで埋まっているラインを消去する"
+msgstr ""
+
+#: ../../contents/setup/main.rst:449
+msgid "座標は左下のブロックが (0,0) となります。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:451
+msgid "ミノの回転軸は `SRS / How Guideline SRS Really Works <https://harddrop.com/wiki/SRS#How_Guideline_SRS_Really_Works>`_ の回転軸に準拠しています。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:453
+msgid "すべての操作が終わった後、自動的にライン消去（clear()）が行われます"
+msgstr ""
+
+#: ../../contents/setup/main.rst:457
+msgid "複数個の操作を指定した場合は、先頭の操作から順に行われます。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:459
+msgid "例）--operate \"L-Right(0,1)\" \"row(1)\" \"clear()\" \"block(1,1)\""
+msgstr ""
+
+#: ../../contents/setup/main.rst:461
+msgid "`結果 <http://fumen.zui.jp/?v115@vhAKJYYAF7IVCNbNyDIP98AYo78ADq78A5nY9ARhg0?I8TeAAPQAF7YVEvT98A4p78A5nY9AvhAAAPRAF7wiDs4DXE?FbuRAy178ASAAAAShA8beAAPWAF7YfDsng/DFbO6AFLn6AF?rwRASbAAARhg0Ieh0ReAAPGASY0hEM/BAA>`_：右回転Lを置く→2段目をすべて埋める→ライン消去を行う→(1,1)にブロックを置く"
+msgstr ""
+
+#: ../../contents/setup/main.rst:465
+msgid "``-np``, ``--n-pieces`` [default: -1]"
+msgstr ""
+
+#: ../../contents/setup/main.rst:467
+msgid "解で使用されるミノの個数を指定する。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:469
+msgid "もし ``-1`` を指定した場合は自動で設定されます。（``--combination`` がオンのとき固定なし、オフのときはpatterns・地形に従う）"
+msgstr ""
+
+#: ../../contents/setup/main.rst:473
+msgid "``-fo``, ``--format`` [default: html]"
+msgstr ""
+
+#: ../../contents/setup/main.rst:475
+msgid "以下の出力フォーマットのうち、ひとつを指定する。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:478
+msgid "csv"
+msgstr ""
+
+#: ../../contents/setup/main.rst:482
+msgid "``-s``, ``--split`` [default: no]"
+msgstr ""
+
+#: ../../contents/setup/main.rst:484
+msgid "出力フォーマットがlinkのときに出力されるテト譜で、手順を1ミノずつ分割するか指定する。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:486
+msgid "ただし ``yes`` で生成されるテト譜はあくまで置き場所を示すものであり、ページ順通りに置くとミノが空中に浮いたり、移動できない場所に置かれることもあります。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:488
+msgid "yes: 1ページにつき1ミノずつ表示される形で出力"
+msgstr ""
+
+#: ../../contents/setup/main.rst:489
+msgid "no: すべてのミノが1ページに納まった形で出力"
+msgstr ""
+
+#: ../../contents/setup/main.rst:493
+msgid "``-o``, ``--output-base`` [default: output/setup.html]"
+msgstr ""
+
+#: ../../contents/setup/main.rst:495
+msgid "出力結果を保存するファイルのパスを指定する。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:497
+msgid "``--format csv`` の場合に限り、 ``-`` を指定することで、CSVファイルと同じ結果を標準出力します。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:501
+msgid "``-lp``, ``--log-path`` [default: output/last_output.txt]"
+msgstr ""
+
+#: ../../contents/setup/main.rst:503
+msgid "実行時のログを保存するファイルのパスを指定する。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:507
+msgid "``-fp``, ``--field-path`` [default: input/field.txt]"
+msgstr ""
+
+#: ../../contents/setup/main.rst:509
+msgid "フィールドを定義するファイルのパスを指定する。"
+msgstr ""
+
+#: ../../contents/setup/main.rst:513
+msgid "``-pp``, ``--patterns-path`` [default: input/patterns.txt]"
+msgstr ""
+
+#: ../../contents/setup/main.rst:515
+msgid "探索の組み合わせパターンを定義するファイルのパスを指定する。"
+msgstr ""
+
