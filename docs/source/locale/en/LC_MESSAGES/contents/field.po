@@ -1,0 +1,162 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: solution-finder\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-03-30 19:39+0900\n"
+"PO-Revision-Date: 2022-04-09 00:33\n"
+"Last-Translator: \n"
+"Language-Team: English\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: solution-finder\n"
+"X-Crowdin-Project-ID: 509240\n"
+"X-Crowdin-Language: en\n"
+"X-Crowdin-File: /translation/docs/source/locale/gettext/contents/field.pot\n"
+"X-Crowdin-File-ID: 50\n"
+"Language: en_US\n"
+
+#: ../../contents/field.rst:3
+msgid "フィールドの指定"
+msgstr ""
+
+#: ../../contents/field.rst:6
+msgid "概要"
+msgstr ""
+
+#: ../../contents/field.rst:8
+msgid "このページでは、フィールドを指定する方法について説明します。"
+msgstr ""
+
+#: ../../contents/field.rst:10
+msgid "フィールドは、コマンド引数から以外にもテキストファイルから指定できます。"
+msgstr ""
+
+#: ../../contents/field.rst:14
+msgid "書き方: テト譜をパラメータから入力する場合"
+msgstr ""
+
+#: ../../contents/field.rst:16
+#: ../../contents/field.rst:16
+msgid "fig001"
+msgstr ""
+
+#: ../../contents/field.rst:20
+msgid "テト譜の入力方法"
+msgstr ""
+
+#: ../../contents/field.rst:22
+msgid "テト譜上で地形を入力します。"
+msgstr ""
+
+#: ../../contents/field.rst:24
+msgid "そのあと、コメント欄に地形の高さを入力します。"
+msgstr ""
+
+#: ../../contents/field.rst:28
+msgid "|fig001|"
+msgstr ""
+
+#: ../../contents/field.rst:30
+msgid "「データ出力」をクリックします。"
+msgstr ""
+
+#: ../../contents/field.rst:32
+msgid "出力されたデータ と その他のオプション をsolution-finderに入力します。"
+msgstr ""
+
+#: ../../contents/field.rst:34
+msgid "例) パフェテンプレを探索する場合 (Windows) ::"
+msgstr ""
+
+#: ../../contents/field.rst:38
+msgid "例) パフェテンプレを探索する場合 (Mac) ::"
+msgstr ""
+
+#: ../../contents/field.rst:44
+msgid "``--tetfu`` は ``-t`` に省略できます"
+msgstr ""
+
+#: ../../contents/field.rst:45
+msgid "テト譜のコメント内に、「地形の高さ」以外のオプションを指定することもできます  例）4 --patterns \\*p4"
+msgstr ""
+
+#: ../../contents/field.rst:46
+msgid "コマンドに ``-P`` オプションをつけることで、ロードするテト譜のページを指定できます"
+msgstr ""
+
+#: ../../contents/field.rst:50
+msgid "書き方: テキストファイルからテト譜を入力する場合"
+msgstr ""
+
+#: ../../contents/field.rst:52
+msgid "field.txt に、1行につき1つのテト譜データが並ぶように入力します。"
+msgstr ""
+
+#: ../../contents/field.rst:54
+msgid "サンプル ::"
+msgstr ""
+
+#: ../../contents/field.rst:62
+#: ../../contents/field.rst:128
+msgid "テキストファイルのエンコーディングは、UTF-8(BOMなし)にしてください。"
+msgstr ""
+
+#: ../../contents/field.rst:66
+msgid "書き方: テキストファイルからフィールド情報を直接かく場合"
+msgstr ""
+
+#: ../../contents/field.rst:69
+msgid "フィールドの変更方法と制限"
+msgstr ""
+
+#: ../../contents/field.rst:71
+msgid "field.txt に「パーフェクトまでに削除するライン数」と「フィールドの形」を入力してください。"
+msgstr ""
+
+#: ../../contents/field.rst:73
+msgid "※ 「パーフェクトまでに削除するライン数」は、percent, path, setupコマンドでのみ必要となります。"
+msgstr ""
+
+#: ../../contents/field.rst:75
+msgid "percent, path, setupコマンド ::"
+msgstr ""
+
+#: ../../contents/field.rst:80
+msgid "percent, path, setupコマンド以外 ::"
+msgstr ""
+
+#: ../../contents/field.rst:84
+msgid "フィールドの形は、以下の文字で指定してください。"
+msgstr ""
+
+#: ../../contents/field.rst:86
+msgid "X : ブロックのある位置"
+msgstr ""
+
+#: ../../contents/field.rst:87
+msgid "_ : ブロックのない位置"
+msgstr ""
+
+#: ../../contents/field.rst:91
+msgid "ブロックの位置は X（グレー） の他に TIJLSZO でも指定することができます。 一部オプションでブロックの種類情報を使うときはこのように指定してください。"
+msgstr ""
+
+#: ../../contents/field.rst:95
+msgid "例) 左側4列が埋まっていて、右側6列が空いているフィールド (4ラインパーフェクト) ::"
+msgstr ""
+
+#: ../../contents/field.rst:104
+msgid "``#`` をつけることでフィールドファイル内にコメントを残すことができます。"
+msgstr ""
+
+#: ../../contents/field.rst:106
+#: ../../contents/field.rst:118
+msgid "例) ::"
+msgstr ""
+
+#: ../../contents/field.rst:116
+msgid "また、 ライン数・地形の代わりに、テト譜データを記載することもできます"
+msgstr ""
+
