@@ -1,0 +1,294 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2017-2022, knewjade
+# This file is distributed under the same license as the solution-finder
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: solution-finder \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-03-30 19:39+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../contents/ren/main.rst:3
+msgid "コマンド: ren"
+msgstr ""
+
+#: ../../contents/ren/main.rst:5
+msgid "Alias command: combo"
+msgstr ""
+
+#: ../../contents/ren/main.rst:8
+msgid "概要"
+msgstr ""
+
+#: ../../contents/ren/main.rst:10
+msgid "ある地形から最もRENが続く手順を列挙する。"
+msgstr ""
+
+#: ../../contents/ren/main.rst:12
+msgid ""
+"なおREN数の表示は `ライン消去回数 - 1` に準拠する。 (1回目のライン消去で \"0 REN\"、2回目のライン消去で \"1 "
+"REN\" となる。)"
+msgstr ""
+
+#: ../../contents/ren/main.rst:16
+msgid "基本コマンド"
+msgstr ""
+
+#: ../../contents/ren/main.rst:18
+msgid ""
+"``java -jar sfinder.jar ren --tetfu "
+"v115@VgF8DeF8DeF8DeF8DeF8DeF8DeF8DeI8KeAgH --patterns TOLJISZ``"
+msgstr ""
+
+#: ../../contents/ren/main.rst:22
+msgid "オプション一覧"
+msgstr ""
+
+#: ../../contents/ren/main.rst:25
+msgid "short"
+msgstr ""
+
+#: ../../contents/ren/main.rst:25
+msgid "long"
+msgstr ""
+
+#: ../../contents/ren/main.rst:25
+msgid "default"
+msgstr ""
+
+#: ../../contents/ren/main.rst:27
+msgid "``-H``"
+msgstr ""
+
+#: ../../contents/ren/main.rst:27
+msgid "``--hold``"
+msgstr ""
+
+#: ../../contents/ren/main.rst:27
+msgid "use"
+msgstr ""
+
+#: ../../contents/ren/main.rst:28
+msgid "``-t``"
+msgstr ""
+
+#: ../../contents/ren/main.rst:28
+msgid "``--tetfu``"
+msgstr ""
+
+#: ../../contents/ren/main.rst:28 ../../contents/ren/main.rst:30
+msgid "なし"
+msgstr ""
+
+#: ../../contents/ren/main.rst:29
+msgid "``-P``"
+msgstr ""
+
+#: ../../contents/ren/main.rst:29
+msgid "``--page``"
+msgstr ""
+
+#: ../../contents/ren/main.rst:29
+msgid "1"
+msgstr ""
+
+#: ../../contents/ren/main.rst:30
+msgid "``-p``"
+msgstr ""
+
+#: ../../contents/ren/main.rst:30
+msgid "``--patterns``"
+msgstr ""
+
+#: ../../contents/ren/main.rst:31
+msgid "``-d``"
+msgstr ""
+
+#: ../../contents/ren/main.rst:31
+msgid "``--drop``"
+msgstr ""
+
+#: ../../contents/ren/main.rst:31
+msgid "softdrop"
+msgstr ""
+
+#: ../../contents/ren/main.rst:32
+msgid "``-o``"
+msgstr ""
+
+#: ../../contents/ren/main.rst:32
+msgid "``--output-base``"
+msgstr ""
+
+#: ../../contents/ren/main.rst:32
+msgid "output/ren.html"
+msgstr ""
+
+#: ../../contents/ren/main.rst:33
+msgid "``-lp``"
+msgstr ""
+
+#: ../../contents/ren/main.rst:33
+msgid "``--log-path``"
+msgstr ""
+
+#: ../../contents/ren/main.rst:33
+msgid "output/last_output.txt"
+msgstr ""
+
+#: ../../contents/ren/main.rst:34
+msgid "``-fp``"
+msgstr ""
+
+#: ../../contents/ren/main.rst:34
+msgid "``--field-path``"
+msgstr ""
+
+#: ../../contents/ren/main.rst:34
+msgid "input/field.txt"
+msgstr ""
+
+#: ../../contents/ren/main.rst:35
+msgid "``-pp``"
+msgstr ""
+
+#: ../../contents/ren/main.rst:35
+msgid "``--patterns-path``"
+msgstr ""
+
+#: ../../contents/ren/main.rst:35
+msgid "input/patterns.txt"
+msgstr ""
+
+#: ../../contents/ren/main.rst:40
+msgid "``-H``, ``--hold`` [default: use]"
+msgstr ""
+
+#: ../../contents/ren/main.rst:42
+msgid "ホールドの有無を指定する。"
+msgstr ""
+
+#: ../../contents/ren/main.rst:44
+msgid "ホールドなしで探索する場合は ``--hold avoid`` を指定する。"
+msgstr ""
+
+#: ../../contents/ren/main.rst:48
+msgid "``-t``, ``--tetfu`` [default: なし]"
+msgstr ""
+
+#: ../../contents/ren/main.rst:50
+msgid "フィールドやオプションなどを指定したテト譜データを指定する。"
+msgstr ""
+
+#: ../../contents/ren/main.rst:52
+msgid "テト譜で探索条件を指定する場合は ``--tetfu v115@vhAAgH`` のように指定する。"
+msgstr ""
+
+#: ../../contents/ren/main.rst:54
+msgid "v115のテト譜データにのみ対応。"
+msgstr ""
+
+#: ../../contents/ren/main.rst:58
+msgid "``-P``, ``--page`` [default: 1]"
+msgstr ""
+
+#: ../../contents/ren/main.rst:60
+msgid "テト譜でロードするページを指定する。"
+msgstr ""
+
+#: ../../contents/ren/main.rst:62
+msgid "ページを変更したい場合は ``--page 31`` のように指定する。"
+msgstr ""
+
+#: ../../contents/ren/main.rst:66
+msgid "``-p``, ``--patterns`` [default: なし]"
+msgstr ""
+
+#: ../../contents/ren/main.rst:68
+msgid "探索したいミノ順を指定する。"
+msgstr ""
+
+#: ../../contents/ren/main.rst:70
+msgid "最大で22個のミノまで指定できる。"
+msgstr ""
+
+#: ../../contents/ren/main.rst:72
+msgid "なお、renコマンドでは複数のミノを指定する記号（`*`, `[]`）は使用できません。"
+msgstr ""
+
+#: ../../contents/ren/main.rst:74
+msgid "パターンを変更したい場合は ``--pattern IOSZLJTIO`` のように指定します。"
+msgstr ""
+
+#: ../../contents/ren/main.rst:78
+msgid "``-d``, ``--drop`` [default: softdrop]"
+msgstr ""
+
+#: ../../contents/ren/main.rst:80
+msgid "ミノの操作に制限を加える。"
+msgstr ""
+
+#: ../../contents/ren/main.rst:82
+msgid "以下から操作方法をひとつ選択する。"
+msgstr ""
+
+#: ../../contents/ren/main.rst:84
+msgid "softdrop: ソフトドロップ＋回転入れ（制限なし）"
+msgstr ""
+
+#: ../../contents/ren/main.rst:85
+msgid "harddrop: ハードドロップのみ"
+msgstr ""
+
+#: ../../contents/ren/main.rst:86
+msgid ""
+"180: ソフトドロップ＋180度回転入れ。180度回転は `Nullpomino "
+"<https://github.com/nullpomino/nullpomino>`_ のStandard Wallkickに準拠します。"
+msgstr ""
+
+#: ../../contents/ren/main.rst:87
+msgid "t-softdrop: Tミノはソフトドロップ、その他のミノはハードドロップ"
+msgstr ""
+
+#: ../../contents/ren/main.rst:91
+msgid "``-o``, ``--output-base`` [default: output/ren.html]"
+msgstr ""
+
+#: ../../contents/ren/main.rst:93
+msgid "出力結果を保存するファイルのパスを指定する。"
+msgstr ""
+
+#: ../../contents/ren/main.rst:97
+msgid "``-lp``, ``--log-path`` [default: output/last_output.txt]"
+msgstr ""
+
+#: ../../contents/ren/main.rst:99
+msgid "実行時のログを保存するファイルのパスを指定する。"
+msgstr ""
+
+#: ../../contents/ren/main.rst:103
+msgid "``-fp``, ``--field-path`` [default: input/field.txt]"
+msgstr ""
+
+#: ../../contents/ren/main.rst:105
+msgid "フィールドを定義するファイルのパスを指定する。"
+msgstr ""
+
+#: ../../contents/ren/main.rst:109
+msgid "``-pp``, ``--patterns-path`` [default: input/patterns.txt]"
+msgstr ""
+
+#: ../../contents/ren/main.rst:111
+msgid "探索の組み合わせパターンを定義するファイルのパスを指定する。"
+msgstr ""
+

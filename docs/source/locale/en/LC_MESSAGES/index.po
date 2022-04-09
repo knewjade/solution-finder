@@ -1,188 +1,132 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2017-2022, knewjade
+# This file is distributed under the same license as the solution-finder
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: solution-finder\n"
+"Project-Id-Version: solution-finder \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-30 17:19+0900\n"
-"PO-Revision-Date: 2022-03-30 08:42\n"
-"Last-Translator: \n"
-"Language-Team: English\n"
+"POT-Creation-Date: 2022-04-09 15:30+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Crowdin-Project: solution-finder\n"
-"X-Crowdin-Project-ID: 507284\n"
-"X-Crowdin-Language: en\n"
-"X-Crowdin-File: /rtd/docs/locale/gettext/index.pot\n"
-"X-Crowdin-File-ID: 12\n"
-"Language: en_US\n"
+"Generated-By: Babel 2.9.1\n"
 
-#: ../../source/index.rst:77
-#: ../../source/index.rst:77
+#: ../../index.rst:45
 msgid "目次"
+msgstr "Table of Contents"
+
+#: ../../index.rst:3
+msgid "solution-finder"
+msgstr "solution-finder"
+
+#: ../../index.rst:5
+msgid ""
+"solution-finderとは、テトリスで、条件にあわせた解をみつけたり、確率を計算するためのコマンドラインツールです。 "
+"コマンドを組み合わせることで、複雑な条件下での計算もできます。"
 msgstr ""
+"solution-finder is a command-line tool for searching piece operations and"
+" calculating probabilities under specified conditions in Tetris. It can "
+"perform calculations under complex conditions by combining commands."
 
-#: ../../source/index.rst:2
-msgid "solution-finderドキュメント"
+#: ../../index.rst:9
+msgid "コマンド一覧"
+msgstr "List of Commands"
+
+#: ../../index.rst:11
+msgid "**percent** : ある地形からパーフェクトクリアできる確率を計算します。"
 msgstr ""
+"**percent** : Calculate the probability of getting a perfect clear from a"
+" specified field."
 
-#: ../../source/index.rst:5
-msgid "概要"
-msgstr "Overviews"
-
-#: ../../source/index.rst:7
-msgid "solution-finderとは、テトリスで「ある地形からパーフェクトできる確率・接着手順」など、条件に従った解を探索するためのツールです。"
+#: ../../index.rst:12
+msgid "**path** : ある地形からパーフェクトクリアする手順をすべて出力します。"
 msgstr ""
+"**path** : Output all the operations for a perfect clear from a specified"
+" field."
 
-#: ../../source/index.rst:9
-msgid "solution-finderは、探索ツールとして次の特徴を持っています。"
+#: ../../index.rst:13
+msgid "**setup** : ある地形から指定したブロックを埋める操作手順をすべて出力します。"
 msgstr ""
+"**setup** : Outputs all the operations to fill according to a specified "
+"form."
 
-#: ../../source/index.rst:11
-msgid "任意のフィールド・ミノ組み合わせを指定した探索が可能"
+#: ../../index.rst:14
+msgid "**ren** : ある地形からRENを続ける手順をすべて出力します。"
 msgstr ""
+"**ren** : Output all the operations to continue REN(COMBO) from a "
+"specified field."
 
-#: ../../source/index.rst:12
-msgid "探索時の回転法則はSRSに準拠"
+#: ../../index.rst:15
+msgid "**spin** : ある地形からTスピンできる手順をすべて出力します。"
 msgstr ""
+"**spin** : Output all the operations that can be T-spin from a specified "
+"field."
 
-#: ../../source/index.rst:13
-msgid "マルチスレッドによる探索に対応"
+#: ../../index.rst:16
+msgid "**cover** : 指定された場所・条件通りにミノを置くことができる確率を計算します。"
 msgstr ""
+"**cover** : Calculate the coverage of piece sequences for specified "
+"operations."
 
-#: ../../source/index.rst:14
-msgid "実行時にオプションを与えることで「ホールドあり・なし」「ハードドロップのみ」など細かい設定が可能"
-msgstr ""
+#: ../../index.rst:17
+msgid "**util fig** : テト譜をもとに画像を生成します。"
+msgstr "**util fig** : Generate images based on the fumen."
 
-#: ../../source/index.rst:15
-msgid "フィールドの入力として `連続テト譜エディタ Ver 1.15a <http://fumen.zui.jp>`_ のデータに対応"
-msgstr ""
+#: ../../index.rst:18
+msgid "**util fumen** : 入力されたテト譜を変換して、新たなテト譜を出力します。"
+msgstr "**util fumen** : Convert the input fumens and output new fumens."
 
-#: ../../source/index.rst:19
-msgid "主な機能"
-msgstr ""
+#: ../../index.rst:19
+msgid "**util seq** : solution-finderのパターンをツモ順に展開します。"
+msgstr "**util seq** : Expand to piece sequences from solution-finder patterns."
 
-#: ../../source/index.rst:24
-msgid "percent: ある地形からパーフェクトできる確率を計算する"
-msgstr ""
+#: ../../index.rst:21
+msgid "詳細は各コマンドのページをご参照ください。"
+msgstr "Please see the page for each command for details."
 
-#: ../../source/index.rst:22
-msgid "7種のミノ(TIJLSZO) の様々な組み合わせでの探索が可能"
-msgstr ""
-
-#: ../../source/index.rst:23
-msgid "先頭3ミノごとのパーフェクト成功確率もツリー形式で表示"
-msgstr ""
-
-#: ../../source/index.rst:24
-msgid "パーフェクトができないツモ順を表示"
-msgstr ""
-
-#: ../../source/index.rst:29
-msgid "path: ある地形からパーフェクトまでの操作手順をすべて列挙する"
-msgstr ""
-
-#: ../../source/index.rst:27
-msgid "指定したミノの組み合わせから、パーフェクトまでの全パターンを列挙してファイルに出力"
-msgstr ""
-
-#: ../../source/index.rst:28
-msgid "2種類の結果を列挙して出力"
-msgstr ""
-
-#: ../../source/index.rst:29
-msgid "出力フォーマットは、テト譜リンクとCSVに対応"
-msgstr ""
-
-#: ../../source/index.rst:33
-msgid "setup: ある地形から指定したブロックを埋める操作手順をすべて列挙する"
-msgstr ""
-
-#: ../../source/index.rst:32
-msgid "指定したミノの組み合わせから、置くことができる全パターンを列挙してファイルに出力"
-msgstr ""
-
-#: ../../source/index.rst:33
-msgid "ブロックを置いても置かなくても良いマージンエリアの設定が可能"
-msgstr ""
-
-#: ../../source/index.rst:36
-msgid "ren: ある地形からRENが続く手順を列挙する"
-msgstr ""
-
-#: ../../source/index.rst:36
-msgid "指定したミノ順から、RENを列挙してファイルに出力"
-msgstr ""
-
-#: ../../source/index.rst:38
-msgid "spin: ある地形からTスピンできる手順を列挙する"
-msgstr ""
-
-#: ../../source/index.rst:40
-msgid "cover: 指定したミノの置き場所通りに置くことができるミノ順をすべて列挙する"
-msgstr ""
-
-#: ../../source/index.rst:45
-msgid "util: solution-finderの機能を補助するユーティリティ"
-msgstr ""
-
-#: ../../source/index.rst:43
-msgid "fig: テト譜をもとに画像を生成"
-msgstr ""
-
-#: ../../source/index.rst:44
-msgid "fumen: 入力されたテト譜を変換して、新たなテト譜を標準出力に出力"
-msgstr ""
-
-#: ../../source/index.rst:45
-msgid "seq: 入力されたパターンの``*``などをシーケンス（ツモ順）に展開"
-msgstr ""
-
-#: ../../source/index.rst:48
-msgid "ダウンロード"
-msgstr ""
-
-#: ../../source/index.rst:50
-msgid "ダウンロードは 以下のリンク からお願いします。"
-msgstr ""
-
-#: ../../source/index.rst:52
-msgid "https://github.com/knewjade/solution-finder/releases/"
-msgstr ""
-
-#: ../../source/index.rst:54
-msgid "※ プログラムの実行には、Java8が実行できる環境が必要です ※ メモリの関係から 64bit版 を推奨します"
-msgstr ""
-
-#: ../../source/index.rst:59
+#: ../../index.rst:25
 msgid "補助GUI"
-msgstr ""
+msgstr "GUI for assistance"
 
-#: ../../source/index.rst:61
-msgid "solution-finderを操作しやすくするGUIを `@kitsune_fuchi (twitter) <https://twitter.com/kitsune_fuchi>`_ さんに作成していただきました。"
+#: ../../index.rst:27
+msgid ""
+"solution-finderは基本的にCLIからコマンドで操作する必要があります。 一方で ``percent`` ``path`` "
+"``util fig`` コマンドについては、solution-finderを操作しやすくするGUIが付属しています。"
 msgstr ""
+"solution-finder must be operated with commands from the CLI. On the other"
+" hand, for ``percent`` ``path`` ``util fig`` commands, GUIs are included "
+"to assist the solution-finder."
 
-#: ../../source/index.rst:63
-msgid "なお、補助GUIではpercent・path・util figコマンドのみ対応しています。ご注意ください"
+#: ../../index.rst:30
+msgid ""
+"こちらのGUIは `@kitsune_fuchi (twitter) <https://twitter.com/kitsune_fuchi>`_ "
+"さんに作成していただきました。"
 msgstr ""
+"These GUIs are made by `@kitsune_fuchi (twitter) <https://twitter.com/kitsune_fuchi>`_."
 
-#: ../../source/index.rst:65
-msgid "ダウンロードは 以下のツイートに記載されているリンク先 からお願いします。"
-msgstr ""
+#: ../../index.rst:34
+msgid "ダウンロード"
+msgstr "Download"
 
-#: ../../source/index.rst:67
-msgid "path, percent コマンド用"
-msgstr ""
+#: ../../index.rst:36
+msgid "https://github.com/knewjade/solution-finder/releases/ からダウンロードしてください。"
+msgstr "Download from https://github.com/knewjade/solution-finder/releases."
 
-#: ../../source/index.rst:69
-msgid "https://twitter.com/kitsune_fuchi/status/868826325770878976"
-msgstr ""
+#: ../../index.rst:38
+msgid "（補助GUIを利用したい方は ``solution-finder-*-GUI.zip`` を選択してください。）"
+msgstr "If you want to use the GUI, please select ``solution-finder-*-GUI.zip``."
 
-#: ../../source/index.rst:71
-msgid "util fig コマンド用"
-msgstr ""
+#: ../../index.rst:40
+msgid "また、プログラムの実行には `Java8(64bit) <https://java.com/ja/download/>`_ 以上が必要となります。"
+msgstr "Java 8 (64bit) or higher is required to run the program."
 
-#: ../../source/index.rst:73
-msgid "https://twitter.com/kitsune_fuchi/status/871189534746202113"
-msgstr ""
-
+#: ../../index.rst:42
+msgid "その後のステップは :doc:`contents/quick_start` をご覧ください。"
+msgstr "See :doc:`contents/quick_start` for subsequent steps."

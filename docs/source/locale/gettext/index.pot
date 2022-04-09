@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: solution-finder \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-09 09:42+0900\n"
+"POT-Creation-Date: 2022-04-09 15:30+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,63 +26,59 @@ msgid "solution-finder"
 msgstr ""
 
 #: ../../index.rst:5
-msgid "solution-finderとは、テトリスで条件に従った解を探索するコマンドラインツールです。理論的なコマンドを組み合わせることで複雑な条件でも様々な結果を求めることができます。"
+msgid "solution-finderとは、テトリスで、条件にあわせた解をみつけたり、確率を計算するためのコマンドラインツールです。 コマンドを組み合わせることで、複雑な条件下での計算もできます。"
 msgstr ""
 
-#: ../../index.rst:8
+#: ../../index.rst:9
 msgid "コマンド一覧"
 msgstr ""
 
-#: ../../index.rst:10
+#: ../../index.rst:11
 msgid "**percent** : ある地形からパーフェクトクリアできる確率を計算します。"
 msgstr ""
 
-#: ../../index.rst:11
+#: ../../index.rst:12
 msgid "**path** : ある地形からパーフェクトクリアする手順をすべて出力します。"
 msgstr ""
 
-#: ../../index.rst:12
-msgid "**setup** : ある地形から指定したブロックを埋める操作手順をすべて列挙します。"
-msgstr ""
-
 #: ../../index.rst:13
-msgid "**ren** : ある地形からRENを続ける手順をすべて出力します。"
+msgid "**setup** : ある地形から指定したブロックを埋める操作手順をすべて出力します。"
 msgstr ""
 
 #: ../../index.rst:14
-msgid "**spin** : ある地形からTスピンできる手順をすべて出力します。"
+msgid "**ren** : ある地形からRENを続ける手順をすべて出力します。"
 msgstr ""
 
 #: ../../index.rst:15
-msgid "**cover** : 指定された場所・条件通りにミノを置くことができる確率を計算します。"
+msgid "**spin** : ある地形からTスピンできる手順をすべて出力します。"
 msgstr ""
 
 #: ../../index.rst:16
-msgid "**util fig** : テト譜をもとに画像を生成します。"
+msgid "**cover** : 指定された場所・条件通りにミノを置くことができる確率を計算します。"
 msgstr ""
 
 #: ../../index.rst:17
-msgid "**util fumen** : 入力されたテト譜を変換して、新たなテト譜を出力します。"
+msgid "**util fig** : テト譜をもとに画像を生成します。"
 msgstr ""
 
 #: ../../index.rst:18
+msgid "**util fumen** : 入力されたテト譜を変換して、新たなテト譜を出力します。"
+msgstr ""
+
+#: ../../index.rst:19
 msgid "**util seq** : solution-finderのパターンをツモ順に展開します。"
 msgstr ""
 
-#: ../../index.rst:20
-msgid "詳細は各コマンドをご参照ください。"
+#: ../../index.rst:21
+msgid "詳細は各コマンドのページをご参照ください。"
 msgstr ""
 
-#: ../../index.rst:24
+#: ../../index.rst:25
 msgid "補助GUI"
 msgstr ""
 
-#: ../../index.rst:26
-msgid "solution-finderはコマンドラインツールなため、基本的にCLIからコマンドで操作します。"
-msgstr ""
-
-#: ../../index.rst:28
-msgid "一方で ``percent`` ``path`` ``util fig`` コマンドについては、solution-finderを操作しやすくするGUIが付属しています。"
+#: ../../index.rst:27
+msgid "solution-finderは基本的にCLIからコマンドで操作する必要があります。 一方で ``percent`` ``path`` ``util fig`` コマンドについては、solution-finderを操作しやすくするGUIが付属しています。"
 msgstr ""
 
 #: ../../index.rst:30
@@ -102,7 +98,7 @@ msgid "（補助GUIを利用したい方は ``solution-finder-*-GUI.zip`` を選
 msgstr ""
 
 #: ../../index.rst:40
-msgid "また、プログラムの実行には `Java8(64bit) <https://java.com/ja/download/>`_ が必要となります。"
+msgid "また、プログラムの実行には `Java8(64bit) <https://java.com/ja/download/>`_ 以上が必要となります。"
 msgstr ""
 
 #: ../../index.rst:42

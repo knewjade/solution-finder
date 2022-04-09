@@ -1,28 +1,28 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2017-2022, knewjade
+# This file is distributed under the same license as the solution-finder
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: solution-finder\n"
+"Project-Id-Version: solution-finder \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-30 17:19+0900\n"
-"PO-Revision-Date: 2022-03-30 08:42\n"
-"Last-Translator: \n"
-"Language-Team: English\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Crowdin-Project: solution-finder\n"
-"X-Crowdin-Project-ID: 507284\n"
-"X-Crowdin-Language: en\n"
-"X-Crowdin-File: /rtd/docs/locale/gettext/contents.pot\n"
-"X-Crowdin-File-ID: 10\n"
-"Language: en_US\n"
+"Generated-By: Babel 2.9.1\n"
 
 #: ../../source/contents/caution.rst:3
 msgid "制限・注意・不具合情報"
 msgstr ""
 
-#: ../../source/contents/caution.rst:6
-#: ../../source/contents/tools.rst:6
+#: ../../source/contents/caution.rst:6 ../../source/contents/tools.rst:6
 #: ../../source/contents/workflow.rst:6
 msgid "このページについて"
 msgstr ""
@@ -32,32 +32,29 @@ msgid "solution-finderには、いくつか制約や実行時に注意するべ�
 msgstr ""
 
 #: ../../source/contents/caution.rst:10
-msgid "なお、ここに記載している制約は、solution-finderの都合によるものであり、 その他にコンピュータのリソースの制約や探索アルゴリズムの限界があります。"
+msgid ""
+"なお、ここに記載している制約は、solution-finderの都合によるものであり、 "
+"その他にコンピュータのリソースの制約や探索アルゴリズムの限界があります。"
 msgstr ""
 
 #: ../../source/contents/caution.rst:13
 msgid "そちらについては、各実行環境に大きく依存するため、参考程度の記載に留めています。"
 msgstr ""
 
-#: ../../source/contents/caution.rst:17
-#: ../../source/contents/command.rst:21
+#: ../../source/contents/caution.rst:17 ../../source/contents/command.rst:21
 msgid "percent"
 msgstr ""
 
-#: ../../source/contents/caution.rst:19
-#: ../../source/contents/caution.rst:34
-#: ../../source/contents/caution.rst:43
-#: ../../source/contents/caution.rst:52
+#: ../../source/contents/caution.rst:19 ../../source/contents/caution.rst:34
+#: ../../source/contents/caution.rst:43 ../../source/contents/caution.rst:52
 msgid "制限"
 msgstr ""
 
-#: ../../source/contents/caution.rst:21
-#: ../../source/contents/caution.rst:54
+#: ../../source/contents/caution.rst:21 ../../source/contents/caution.rst:54
 msgid "入力できるフィールドの高さは最大24まで"
 msgstr ""
 
-#: ../../source/contents/caution.rst:22
-#: ../../source/contents/caution.rst:38
+#: ../../source/contents/caution.rst:22 ../../source/contents/caution.rst:38
 #: ../../source/contents/caution.rst:47
 msgid "入力できるミノ順の最大の長さは22まで"
 msgstr ""
@@ -82,18 +79,15 @@ msgstr ""
 msgid "https://twitter.com/1millim/status/854351094679453696"
 msgstr ""
 
-#: ../../source/contents/caution.rst:32
-#: ../../source/contents/command.rst:22
+#: ../../source/contents/caution.rst:32 ../../source/contents/command.rst:22
 msgid "path"
 msgstr ""
 
-#: ../../source/contents/caution.rst:36
-#: ../../source/contents/caution.rst:45
+#: ../../source/contents/caution.rst:36 ../../source/contents/caution.rst:45
 msgid "入力できるフィールドの高さは最大10まで"
 msgstr ""
 
-#: ../../source/contents/caution.rst:38
-#: ../../source/contents/caution.rst:47
+#: ../../source/contents/caution.rst:38 ../../source/contents/caution.rst:47
 msgid "実行環境によっては、高さが7以上のフィールドに対する探索は難しいと思われます（メモリサイズに依存します）"
 msgstr ""
 
@@ -113,18 +107,13 @@ msgstr ""
 msgid "コマンドについて"
 msgstr ""
 
-#: ../../source/contents/command.rst:6
-#: ../../source/contents/cover/main.rst:6
-#: ../../source/contents/field.rst:6
-#: ../../source/contents/path/main.rst:6
+#: ../../source/contents/command.rst:6 ../../source/contents/cover/main.rst:6
+#: ../../source/contents/field.rst:6 ../../source/contents/path/main.rst:6
 #: ../../source/contents/patterns.rst:6
 #: ../../source/contents/percent/main.rst:6
-#: ../../source/contents/ren/main.rst:8
-#: ../../source/contents/setup/main.rst:6
-#: ../../source/contents/spin/main.rst:6
-#: ../../source/contents/util/fig.rst:6
-#: ../../source/contents/util/fumen.rst:6
-#: ../../source/contents/util/main.rst:6
+#: ../../source/contents/ren/main.rst:8 ../../source/contents/setup/main.rst:6
+#: ../../source/contents/spin/main.rst:6 ../../source/contents/util/fig.rst:6
+#: ../../source/contents/util/fumen.rst:6 ../../source/contents/util/main.rst:6
 #: ../../source/contents/util/seq.rst:6
 msgid "概要"
 msgstr ""
@@ -157,8 +146,7 @@ msgstr ""
 msgid "ある地形からパーフェクトできる確率を計算する"
 msgstr ""
 
-#: ../../source/contents/command.rst:22
-#: ../../source/contents/path/main.rst:8
+#: ../../source/contents/command.rst:22 ../../source/contents/path/main.rst:8
 msgid "ある地形からパーフェクトまでの操作手順をすべて列挙する"
 msgstr ""
 
@@ -170,13 +158,11 @@ msgstr ""
 msgid "ユーティリティ群 （※ コマンドのあとにサブコマンドが続く。詳細は次節を参照）"
 msgstr ""
 
-#: ../../source/contents/command.rst:26
-#: ../../source/contents/command.rst:46
+#: ../../source/contents/command.rst:26 ../../source/contents/command.rst:46
 msgid "このコマンドごとにそれぞれオプションが用意されています。"
 msgstr ""
 
-#: ../../source/contents/command.rst:28
-#: ../../source/contents/command.rst:48
+#: ../../source/contents/command.rst:28 ../../source/contents/command.rst:48
 msgid "オプションの詳細は各コマンドに記載されていますので、そちらをご参照ください。"
 msgstr ""
 
@@ -189,7 +175,9 @@ msgid "``java -jar sfinder.jar -h`` で、Usage (現在の実装されている�
 msgstr ""
 
 #: ../../source/contents/command.rst:34
-msgid "``java -jar sfinder.jar <command> -h`` で、各オプションごとのUsage (使用できるオプション一覧)を表示します"
+msgid ""
+"``java -jar sfinder.jar <command> -h`` で、各オプションごとのUsage "
+"(使用できるオプション一覧)を表示します"
 msgstr ""
 
 #: ../../source/contents/command.rst:38
@@ -273,7 +261,9 @@ msgid "コマンド: cover"
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:8
-msgid "ミノの組み方を指定したとき、最後までその通りに置くことができるミノ順をすべて列挙します。 また、組み方を複数個同時に指定することで、パターン全体をその組み方でカバーできる割合を表示します。"
+msgid ""
+"ミノの組み方を指定したとき、最後までその通りに置くことができるミノ順をすべて列挙します。 "
+"また、組み方を複数個同時に指定することで、パターン全体をその組み方でカバーできる割合を表示します。"
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:11
@@ -285,15 +275,16 @@ msgstr ""
 #: ../../source/contents/percent/main.rst:12
 #: ../../source/contents/ren/main.rst:16
 #: ../../source/contents/setup/main.rst:16
-#: ../../source/contents/spin/main.rst:11
-#: ../../source/contents/util/fig.rst:18
+#: ../../source/contents/spin/main.rst:11 ../../source/contents/util/fig.rst:18
 #: ../../source/contents/util/fumen.rst:18
 #: ../../source/contents/util/seq.rst:21
 msgid "基本コマンド"
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:17
-msgid "``java -jar sfinder.jar cover --tetfu v115@vhFRQJUGJKJJvMJTNJGBJ v115@vhFRQJPGJKJJGMJTNJ0BJ --patterns *p7``"
+msgid ""
+"``java -jar sfinder.jar cover --tetfu v115@vhFRQJUGJKJJvMJTNJGBJ "
+"v115@vhFRQJPGJKJJGMJTNJ0BJ --patterns *p7``"
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:21
@@ -305,7 +296,9 @@ msgid "組み方について"
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:26
-msgid "`サンプル <http://fumen.zui.jp/?v115@vhERQJUGJKJJvMJTNJ>`_ ``v115@vhERQJUGJKJJvMJTNJ``"
+msgid ""
+"`サンプル <http://fumen.zui.jp/?v115@vhERQJUGJKJJvMJTNJ>`_ "
+"``v115@vhERQJUGJKJJvMJTNJ``"
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:28
@@ -329,7 +322,9 @@ msgid "サンプル ``v115@vhERQJUGJKJJvMJTNJ#1:5``"
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:40
-msgid "テト譜の末尾に ``#x:y`` を加えることでページを指定することができます。 ページ番号は、先頭のページが ``1`` となります。 また、最後に指定したページのミノも探索対象に含まれます。"
+msgid ""
+"テト譜の末尾に ``#x:y`` を加えることでページを指定することができます。 ページ番号は、先頭のページが ``1`` となります。 "
+"また、最後に指定したページのミノも探索対象に含まれます。"
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:44
@@ -355,8 +350,7 @@ msgid "コンソール表示"
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:55
-#: ../../source/contents/cover/main.rst:81
-#: ../../source/contents/field.rst:54
+#: ../../source/contents/cover/main.rst:81 ../../source/contents/field.rst:54
 #: ../../source/contents/path/main.rst:35
 #: ../../source/contents/setup/main.rst:205
 msgid "サンプル ::"
@@ -417,7 +411,6 @@ msgid "補足: 置くミノ数とパターンのミノ数"
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:104
-#: ../../source/contents/cover/main.rst:104
 msgid "sample_001"
 msgstr ""
 
@@ -434,7 +427,9 @@ msgid "このとき、``JT`` を使わずに ``ILSZO`` を置くことができ�
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:113
-msgid "たとえば、ホールドが許可されている場合であれば ``JILSZOT`` は成功となります(``J`` をホールドしたまま ``ILSZO`` を置けるため)。 一方で、``JTILSZO`` は失敗となります(``JT`` のどちらかを置く必要があるため)。"
+msgid ""
+"たとえば、ホールドが許可されている場合であれば ``JILSZOT`` は成功となります(``J`` をホールドしたまま ``ILSZO`` "
+"を置けるため)。 一方で、``JTILSZO`` は失敗となります(``JT`` のどちらかを置く必要があるため)。"
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:116
@@ -446,8 +441,7 @@ msgstr ""
 #: ../../source/contents/percent/main.rst:30
 #: ../../source/contents/ren/main.rst:22
 #: ../../source/contents/setup/main.rst:267
-#: ../../source/contents/spin/main.rst:16
-#: ../../source/contents/util/fig.rst:82
+#: ../../source/contents/spin/main.rst:16 ../../source/contents/util/fig.rst:82
 #: ../../source/contents/util/fumen.rst:24
 #: ../../source/contents/util/seq.rst:92
 msgid "オプション一覧"
@@ -458,8 +452,7 @@ msgstr ""
 #: ../../source/contents/percent/main.rst:33
 #: ../../source/contents/ren/main.rst:25
 #: ../../source/contents/setup/main.rst:270
-#: ../../source/contents/spin/main.rst:19
-#: ../../source/contents/util/fig.rst:85
+#: ../../source/contents/spin/main.rst:19 ../../source/contents/util/fig.rst:85
 #: ../../source/contents/util/fumen.rst:27
 #: ../../source/contents/util/seq.rst:95
 msgid "short"
@@ -470,8 +463,7 @@ msgstr ""
 #: ../../source/contents/percent/main.rst:33
 #: ../../source/contents/ren/main.rst:25
 #: ../../source/contents/setup/main.rst:270
-#: ../../source/contents/spin/main.rst:19
-#: ../../source/contents/util/fig.rst:85
+#: ../../source/contents/spin/main.rst:19 ../../source/contents/util/fig.rst:85
 #: ../../source/contents/util/fumen.rst:27
 #: ../../source/contents/util/seq.rst:95
 msgid "long"
@@ -482,8 +474,7 @@ msgstr ""
 #: ../../source/contents/percent/main.rst:33
 #: ../../source/contents/ren/main.rst:25
 #: ../../source/contents/setup/main.rst:270
-#: ../../source/contents/spin/main.rst:19
-#: ../../source/contents/util/fig.rst:85
+#: ../../source/contents/spin/main.rst:19 ../../source/contents/util/fig.rst:85
 #: ../../source/contents/util/fig.rst:97
 #: ../../source/contents/util/fumen.rst:27
 #: ../../source/contents/util/seq.rst:95
@@ -495,8 +486,7 @@ msgstr ""
 #: ../../source/contents/percent/main.rst:36
 #: ../../source/contents/ren/main.rst:28
 #: ../../source/contents/setup/main.rst:272
-#: ../../source/contents/spin/main.rst:21
-#: ../../source/contents/util/fig.rst:92
+#: ../../source/contents/spin/main.rst:21 ../../source/contents/util/fig.rst:92
 #: ../../source/contents/util/fumen.rst:29
 msgid "``-t``"
 msgstr ""
@@ -506,8 +496,7 @@ msgstr ""
 #: ../../source/contents/percent/main.rst:36
 #: ../../source/contents/ren/main.rst:28
 #: ../../source/contents/setup/main.rst:272
-#: ../../source/contents/spin/main.rst:21
-#: ../../source/contents/util/fig.rst:92
+#: ../../source/contents/spin/main.rst:21 ../../source/contents/util/fig.rst:92
 #: ../../source/contents/util/fumen.rst:29
 msgid "``--tetfu``"
 msgstr ""
@@ -518,8 +507,7 @@ msgstr ""
 #: ../../source/contents/path/main.rst:66
 #: ../../source/contents/percent/main.rst:36
 #: ../../source/contents/percent/main.rst:38
-#: ../../source/contents/ren/main.rst:28
-#: ../../source/contents/ren/main.rst:30
+#: ../../source/contents/ren/main.rst:28 ../../source/contents/ren/main.rst:30
 #: ../../source/contents/setup/main.rst:272
 #: ../../source/contents/setup/main.rst:274
 #: ../../source/contents/setup/main.rst:276
@@ -527,12 +515,10 @@ msgstr ""
 #: ../../source/contents/setup/main.rst:278
 #: ../../source/contents/setup/main.rst:283
 #: ../../source/contents/spin/main.rst:21
-#: ../../source/contents/spin/main.rst:23
-#: ../../source/contents/util/fig.rst:92
+#: ../../source/contents/spin/main.rst:23 ../../source/contents/util/fig.rst:92
 #: ../../source/contents/util/fumen.rst:29
 #: ../../source/contents/util/fumen.rst:30
-#: ../../source/contents/util/seq.rst:97
-#: ../../source/contents/util/seq.rst:101
+#: ../../source/contents/util/seq.rst:97 ../../source/contents/util/seq.rst:101
 #: ../../source/contents/util/seq.rst:102
 #: ../../source/contents/util/seq.rst:103
 msgid "なし"
@@ -543,8 +529,7 @@ msgstr ""
 #: ../../source/contents/percent/main.rst:38
 #: ../../source/contents/ren/main.rst:30
 #: ../../source/contents/setup/main.rst:274
-#: ../../source/contents/spin/main.rst:23
-#: ../../source/contents/util/seq.rst:97
+#: ../../source/contents/spin/main.rst:23 ../../source/contents/util/seq.rst:97
 msgid "``-p``"
 msgstr ""
 
@@ -553,8 +538,7 @@ msgstr ""
 #: ../../source/contents/percent/main.rst:38
 #: ../../source/contents/ren/main.rst:30
 #: ../../source/contents/setup/main.rst:274
-#: ../../source/contents/spin/main.rst:23
-#: ../../source/contents/util/seq.rst:97
+#: ../../source/contents/spin/main.rst:23 ../../source/contents/util/seq.rst:97
 msgid "``--patterns``"
 msgstr ""
 
@@ -589,8 +573,7 @@ msgstr ""
 #: ../../source/contents/percent/main.rst:40
 #: ../../source/contents/ren/main.rst:31
 #: ../../source/contents/setup/main.rst:281
-#: ../../source/contents/util/fig.rst:90
-#: ../../source/contents/util/seq.rst:100
+#: ../../source/contents/util/fig.rst:90 ../../source/contents/util/seq.rst:100
 msgid "``-d``"
 msgstr ""
 
@@ -675,8 +658,7 @@ msgstr ""
 
 #: ../../source/contents/cover/main.rst:133
 #: ../../source/contents/setup/main.rst:279
-#: ../../source/contents/util/fig.rst:95
-#: ../../source/contents/util/seq.rst:99
+#: ../../source/contents/util/fig.rst:95 ../../source/contents/util/seq.rst:99
 msgid "``-l``"
 msgstr ""
 
@@ -700,10 +682,8 @@ msgstr ""
 #: ../../source/contents/setup/main.rst:284
 #: ../../source/contents/spin/main.rst:25
 #: ../../source/contents/spin/main.rst:26
-#: ../../source/contents/spin/main.rst:29
-#: ../../source/contents/util/fig.rst:94
-#: ../../source/contents/util/fig.rst:95
-#: ../../source/contents/util/seq.rst:99
+#: ../../source/contents/spin/main.rst:29 ../../source/contents/util/fig.rst:94
+#: ../../source/contents/util/fig.rst:95 ../../source/contents/util/seq.rst:99
 msgid "-1"
 msgstr ""
 
@@ -716,18 +696,15 @@ msgid "``--max-clearline``"
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:136
-#: ../../source/contents/path/main.rst:77
-#: ../../source/contents/ren/main.rst:32
+#: ../../source/contents/path/main.rst:77 ../../source/contents/ren/main.rst:32
 #: ../../source/contents/setup/main.rst:287
-#: ../../source/contents/spin/main.rst:32
-#: ../../source/contents/util/fig.rst:87
+#: ../../source/contents/spin/main.rst:32 ../../source/contents/util/fig.rst:87
 #: ../../source/contents/util/fumen.rst:31
 msgid "``-o``"
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:136
-#: ../../source/contents/path/main.rst:77
-#: ../../source/contents/ren/main.rst:32
+#: ../../source/contents/path/main.rst:77 ../../source/contents/ren/main.rst:32
 #: ../../source/contents/setup/main.rst:287
 #: ../../source/contents/spin/main.rst:32
 #: ../../source/contents/util/fumen.rst:31
@@ -743,8 +720,7 @@ msgstr ""
 #: ../../source/contents/percent/main.rst:44
 #: ../../source/contents/ren/main.rst:33
 #: ../../source/contents/setup/main.rst:288
-#: ../../source/contents/spin/main.rst:35
-#: ../../source/contents/util/fig.rst:99
+#: ../../source/contents/spin/main.rst:35 ../../source/contents/util/fig.rst:99
 #: ../../source/contents/util/fumen.rst:32
 msgid "``-lp``"
 msgstr ""
@@ -754,8 +730,7 @@ msgstr ""
 #: ../../source/contents/percent/main.rst:44
 #: ../../source/contents/ren/main.rst:33
 #: ../../source/contents/setup/main.rst:288
-#: ../../source/contents/spin/main.rst:35
-#: ../../source/contents/util/fig.rst:99
+#: ../../source/contents/spin/main.rst:35 ../../source/contents/util/fig.rst:99
 #: ../../source/contents/util/fumen.rst:32
 msgid "``--log-path``"
 msgstr ""
@@ -765,8 +740,7 @@ msgstr ""
 #: ../../source/contents/percent/main.rst:44
 #: ../../source/contents/ren/main.rst:33
 #: ../../source/contents/setup/main.rst:288
-#: ../../source/contents/spin/main.rst:35
-#: ../../source/contents/util/fig.rst:99
+#: ../../source/contents/spin/main.rst:35 ../../source/contents/util/fig.rst:99
 #: ../../source/contents/util/fumen.rst:32
 msgid "output/last_output.txt"
 msgstr ""
@@ -960,7 +934,9 @@ msgid "harddrop: ハードドロップのみ"
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:180
-msgid "180: ソフトドロップ＋180度回転入れ。180度回転は `Nullpomino <https://github.com/nullpomino/nullpomino>`_ のStandard Wallkickに準拠します"
+msgid ""
+"180: ソフトドロップ＋180度回転入れ。180度回転は `Nullpomino "
+"<https://github.com/nullpomino/nullpomino>`_ のStandard Wallkickに準拠します"
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:181
@@ -978,7 +954,9 @@ msgstr ""
 
 #: ../../source/contents/cover/main.rst:184
 #: ../../source/contents/path/main.rst:208
-msgid "tss (tspin1): Tミノは必ずT-Spin Single,Double,Tripe(Miniは含まない)をする。その他のミノはハードドロップ"
+msgid ""
+"tss (tspin1): Tミノは必ずT-Spin "
+"Single,Double,Tripe(Miniは含まない)をする。その他のミノはハードドロップ"
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:185
@@ -992,7 +970,9 @@ msgid "tst (tspin3): Tミノは必ずT-Spin Tripe(Miniは含まない)をする�
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:188
-msgid "※ T-Spin系のdropでは、「T-Spinできないケース」や「ライン消去が発生しないT-Spinになるケース」ではミノを置きません。 また、Tミノを使わないケースでは ``harddrop`` と同じになる点にご注意ください (solutionが省略されるわけではありません)。"
+msgid ""
+"※ T-Spin系のdropでは、「T-Spinできないケース」や「ライン消去が発生しないT-Spinになるケース」ではミノを置きません。 "
+"また、Tミノを使わないケースでは ``harddrop`` と同じになる点にご注意ください (solutionが省略されるわけではありません)。"
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:193
@@ -1048,11 +1028,15 @@ msgid "ライン数は ``1~4`` の間で指定できます"
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:222
-msgid "1L-OR-PC (1line-OR-PC, 1lines-OR-PC) ~ 4L-OR-PC (4line-OR-PC, 4lines-OR-PC)"
+msgid ""
+"1L-OR-PC (1line-OR-PC, 1lines-OR-PC) ~ 4L-OR-PC (4line-OR-PC, 4lines-OR-"
+"PC)"
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:220
-msgid "-通常のライン消去 (``1L ~ 4L``) に加えて、Perfect Clearも許可します - たとえば ``3L-OR-PC``　を指定した場合、3ライン or 4ライン or 任意のライン数のPC が可能です - ライン数は ``1~4`` の間で指定できます"
+msgid ""
+"-通常のライン消去 (``1L ~ 4L``) に加えて、Perfect Clearも許可します - たとえば ``3L-OR-PC``　"
+"を指定した場合、3ライン or 4ライン or 任意のライン数のPC が可能です - ライン数は ``1~4`` の間で指定できます"
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:224
@@ -1206,7 +1190,9 @@ msgid "入力されるテト譜に優先度を設定し、1つのツモ順につ
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:284
-msgid "なお、優先度はテト譜の入力順によって決まり、先頭にあるテト譜の優先度が最も高く、末尾にあるテト譜の優先度が最も低くなります。 ``-P yes`` の場合、優先度の高い組み方から成功/失敗が判定され、一番はじめに条件を満たしたテト譜のみを成功となります。"
+msgid ""
+"なお、優先度はテト譜の入力順によって決まり、先頭にあるテト譜の優先度が最も高く、末尾にあるテト譜の優先度が最も低くなります。 ``-P yes``"
+" の場合、優先度の高い組み方から成功/失敗が判定され、一番はじめに条件を満たしたテト譜のみを成功となります。"
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:288
@@ -1214,7 +1200,9 @@ msgid "たとえば ``-t テト譜A テト譜B テト譜C`` を入力し、``TIO
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:290
-msgid "このとき、``-P no`` ではすべて成功 (``TIOSZLJ,O,O,O``) となりますが、 ``-P yes`` ではテト譜Aのみ成功 (``TIOSZLJ,O,X,X``) となります。"
+msgid ""
+"このとき、``-P no`` ではすべて成功 (``TIOSZLJ,O,O,O``) となりますが、 ``-P yes`` ではテト譜Aのみ成功 "
+"(``TIOSZLJ,O,X,X``) となります。"
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:295
@@ -1222,11 +1210,17 @@ msgid "``-l``, ``--last-sd`` [default: 0]"
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:297
-msgid "``--drop`` の設定によらず、ソフトドロップを有効にするタイミングを指定します。 数値には、残り何ミノでソフトドロップを有効にするかを入力します。"
+msgid ""
+"``--drop`` の設定によらず、ソフトドロップを有効にするタイミングを指定します。 "
+"数値には、残り何ミノでソフトドロップを有効にするかを入力します。"
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:300
-msgid "たとえば、`このテト譜 <http://fumen.zui.jp/?v115@ThE8BeA8BeF8LeTJJvhAUtB>`_ で ``--drop harddrop --last-sd 1`` と指定したとします。 本来 ``--drop harddrop`` だけでは、Zミノでソフトドロップが必要となるため、組むことができません。 しかし ``--last-sd 1`` を指定することで、残り1ミノのときだけソフトドロップを有効になります。 つまり今回の例では、Oミノを置いた後であれば、Zミノを置くことができます。"
+msgid ""
+"たとえば、`このテト譜 <http://fumen.zui.jp/?v115@ThE8BeA8BeF8LeTJJvhAUtB>`_ で "
+"``--drop harddrop --last-sd 1`` と指定したとします。 本来 ``--drop harddrop`` "
+"だけでは、Zミノでソフトドロップが必要となるため、組むことができません。 しかし ``--last-sd 1`` "
+"を指定することで、残り1ミノのときだけソフトドロップを有効になります。 つまり今回の例では、Oミノを置いた後であれば、Zミノを置くことができます。"
 msgstr ""
 
 #: ../../source/contents/cover/main.rst:306
@@ -1361,7 +1355,6 @@ msgid "書き方: テト譜をパラメータから入力する場合"
 msgstr ""
 
 #: ../../source/contents/field.rst:16
-#: ../../source/contents/field.rst:16
 msgid "fig001"
 msgstr ""
 
@@ -1417,8 +1410,7 @@ msgstr ""
 msgid "field.txt に、1行につき1つのテト譜データが並ぶように入力します。"
 msgstr ""
 
-#: ../../source/contents/field.rst:62
-#: ../../source/contents/field.rst:128
+#: ../../source/contents/field.rst:62 ../../source/contents/field.rst:128
 msgid "テキストファイルのエンコーディングは、UTF-8(BOMなし)にしてください。"
 msgstr ""
 
@@ -1459,7 +1451,9 @@ msgid "_ : ブロックのない位置"
 msgstr ""
 
 #: ../../source/contents/field.rst:91
-msgid "ブロックの位置は X（グレー） の他に TIJLSZO でも指定することができます。 一部オプションでブロックの種類情報を使うときはこのように指定してください。"
+msgid ""
+"ブロックの位置は X（グレー） の他に TIJLSZO でも指定することができます。 "
+"一部オプションでブロックの種類情報を使うときはこのように指定してください。"
 msgstr ""
 
 #: ../../source/contents/field.rst:95
@@ -1470,10 +1464,8 @@ msgstr ""
 msgid "``#`` をつけることでフィールドファイル内にコメントを残すことができます。"
 msgstr ""
 
-#: ../../source/contents/field.rst:106
-#: ../../source/contents/field.rst:118
-#: ../../source/contents/path/csv.rst:6
-#: ../../source/contents/path/csv.rst:12
+#: ../../source/contents/field.rst:106 ../../source/contents/field.rst:118
+#: ../../source/contents/path/csv.rst:6 ../../source/contents/path/csv.rst:12
 #: ../../source/contents/patterns.rst:147
 #: ../../source/contents/quick_start.rst:40
 #: ../../source/contents/quick_start.rst:72
@@ -1561,18 +1553,18 @@ msgid "パフェ手順（地形）をキーして、それぞれの手順で対�
 msgstr ""
 
 #: ../../source/contents/path/csv.rst:43
-msgid "出力例) ``path -t v115@BhF8CeG8BeH8CeG8JeAgWDAqedBA -p *p4 -f csv -k solution`` ::"
+msgid ""
+"出力例) ``path -t v115@BhF8CeG8BeH8CeG8JeAgWDAqedBA -p *p4 -f csv -k "
+"solution`` ::"
 msgstr ""
 
-#: ../../source/contents/path/csv.rst:49
-#: ../../source/contents/path/csv.rst:111
+#: ../../source/contents/path/csv.rst:49 ../../source/contents/path/csv.rst:111
 #: ../../source/contents/path/csv.rst:150
 #: ../../source/contents/setup/main.rst:245
 msgid "各項目は、左から順に以下の通りです。 以下の 例) は、上記の結果を基づいた説明になります。"
 msgstr ""
 
-#: ../../source/contents/path/csv.rst:55
-#: ../../source/contents/path/csv.rst:137
+#: ../../source/contents/path/csv.rst:55 ../../source/contents/path/csv.rst:137
 #: ../../source/contents/path/csv.rst:171
 #: ../../source/contents/setup/main.rst:251
 msgid "テト譜"
@@ -1582,12 +1574,9 @@ msgstr ""
 msgid "パフェの手順（地形）を表すテト譜"
 msgstr ""
 
-#: ../../source/contents/path/csv.rst:55
-#: ../../source/contents/path/csv.rst:60
-#: ../../source/contents/path/csv.rst:70
-#: ../../source/contents/path/csv.rst:85
-#: ../../source/contents/path/csv.rst:91
-#: ../../source/contents/path/csv.rst:117
+#: ../../source/contents/path/csv.rst:55 ../../source/contents/path/csv.rst:60
+#: ../../source/contents/path/csv.rst:70 ../../source/contents/path/csv.rst:85
+#: ../../source/contents/path/csv.rst:91 ../../source/contents/path/csv.rst:117
 #: ../../source/contents/path/csv.rst:121
 #: ../../source/contents/path/csv.rst:126
 #: ../../source/contents/path/csv.rst:131
@@ -1595,8 +1584,7 @@ msgstr ""
 #: ../../source/contents/path/csv.rst:156
 #: ../../source/contents/path/csv.rst:161
 #: ../../source/contents/path/csv.rst:171
-#: ../../source/contents/path/csv.rst:175
-#: ../../source/contents/patterns.rst:26
+#: ../../source/contents/path/csv.rst:175 ../../source/contents/patterns.rst:26
 #: ../../source/contents/patterns.rst:45
 #: ../../source/contents/setup/main.rst:251
 #: ../../source/contents/setup/main.rst:256
@@ -1605,11 +1593,12 @@ msgid "例)"
 msgstr ""
 
 #: ../../source/contents/path/csv.rst:55
-msgid "``http://fumen.zui.jp/?v115@9gh0R4F8g0R4G8BtH8g0BtG8JeAgWDA6vzBA`` その行の対象となるパフェ地形のテト譜リンク"
+msgid ""
+"``http://fumen.zui.jp/?v115@9gh0R4F8g0R4G8BtH8g0BtG8JeAgWDA6vzBA`` "
+"その行の対象となるパフェ地形のテト譜リンク"
 msgstr ""
 
-#: ../../source/contents/path/csv.rst:60
-#: ../../source/contents/path/csv.rst:126
+#: ../../source/contents/path/csv.rst:60 ../../source/contents/path/csv.rst:126
 #: ../../source/contents/path/csv.rst:156
 #: ../../source/contents/setup/main.rst:256
 msgid "使用ミノ"
@@ -1631,10 +1620,8 @@ msgstr ""
 msgid "そのパフェ手順で組むことができるツモのうち、入力パターンでカバーされる手順の総数"
 msgstr ""
 
-#: ../../source/contents/path/csv.rst:65
-#: ../../source/contents/path/csv.rst:75
-#: ../../source/contents/path/csv.rst:80
-#: ../../source/contents/path/csv.rst:166
+#: ../../source/contents/path/csv.rst:65 ../../source/contents/path/csv.rst:75
+#: ../../source/contents/path/csv.rst:80 ../../source/contents/path/csv.rst:166
 msgid "例) 入力パターンが ``*p4`` で、ホールドありのとき"
 msgstr ""
 
@@ -1646,8 +1633,7 @@ msgstr ""
 msgid "対応ツモ数 (対地形)"
 msgstr ""
 
-#: ../../source/contents/path/csv.rst:68
-#: ../../source/contents/path/csv.rst:159
+#: ../../source/contents/path/csv.rst:68 ../../source/contents/path/csv.rst:159
 msgid "その手順に持ち込むことができるツモの総数 (入力パターンには依存しません)"
 msgstr ""
 
@@ -1655,13 +1641,11 @@ msgstr ""
 msgid "``2`` （入力パターンに関係なく）JSZの組み合わせでこのパフェができる順番は 2通り"
 msgstr ""
 
-#: ../../source/contents/path/csv.rst:75
-#: ../../source/contents/path/csv.rst:166
+#: ../../source/contents/path/csv.rst:75 ../../source/contents/path/csv.rst:166
 msgid "対応ツモ数 (対パターン)"
 msgstr ""
 
-#: ../../source/contents/path/csv.rst:73
-#: ../../source/contents/path/csv.rst:164
+#: ../../source/contents/path/csv.rst:73 ../../source/contents/path/csv.rst:164
 msgid "すべての入力パターンの中で、その手順で対応できるツモの総数"
 msgstr ""
 
@@ -1693,13 +1677,11 @@ msgstr ""
 msgid "``ZSJ;ZJS`` ZSJ か ZJS の順にミノを置いたときだけパフェできる"
 msgstr ""
 
-#: ../../source/contents/path/csv.rst:91
-#: ../../source/contents/path/csv.rst:175
+#: ../../source/contents/path/csv.rst:91 ../../source/contents/path/csv.rst:175
 msgid "ツモ (対パターン)"
 msgstr ""
 
-#: ../../source/contents/path/csv.rst:88
-#: ../../source/contents/path/csv.rst:174
+#: ../../source/contents/path/csv.rst:88 ../../source/contents/path/csv.rst:174
 msgid "「対応ツモ数 (対パターン)」の一覧"
 msgstr ""
 
@@ -1716,7 +1698,9 @@ msgid "ツモをキーして、それぞれのツモで対応できるパフェ�
 msgstr ""
 
 #: ../../source/contents/path/csv.rst:98
-msgid "出力例) ``path -t v115@BhF8CeG8BeH8CeG8JeAgWDAqedBA -p *p4 -f csv -k pattern`` ::"
+msgid ""
+"出力例) ``path -t v115@BhF8CeG8BeH8CeG8JeAgWDAqedBA -p *p4 -f csv -k "
+"pattern`` ::"
 msgstr ""
 
 #: ../../source/contents/path/csv.rst:103
@@ -1842,7 +1826,9 @@ msgid "※ 厳密にすべてのパターンを網羅する最小の組み合わ
 msgstr ""
 
 #: ../../source/contents/path/main.rst:20
-msgid "``java -jar sfinder.jar path --tetfu v115@9gE8DeG8CeH8BeG8CeA8JeAgH --patterns *p4``"
+msgid ""
+"``java -jar sfinder.jar path --tetfu v115@9gE8DeG8CeH8BeG8CeA8JeAgH "
+"--patterns *p4``"
 msgstr ""
 
 #: ../../source/contents/path/main.rst:26
@@ -1902,16 +1888,14 @@ msgstr ""
 #: ../../source/contents/percent/main.rst:37
 #: ../../source/contents/ren/main.rst:29
 #: ../../source/contents/setup/main.rst:273
-#: ../../source/contents/spin/main.rst:22
-#: ../../source/contents/util/fig.rst:93
+#: ../../source/contents/spin/main.rst:22 ../../source/contents/util/fig.rst:93
 msgid "1"
 msgstr ""
 
 #: ../../source/contents/path/main.rst:67
 #: ../../source/contents/percent/main.rst:39
 #: ../../source/contents/setup/main.rst:275
-#: ../../source/contents/spin/main.rst:27
-#: ../../source/contents/util/fig.rst:97
+#: ../../source/contents/spin/main.rst:27 ../../source/contents/util/fig.rst:97
 msgid "``-c``"
 msgstr ""
 
@@ -1927,8 +1911,7 @@ msgstr ""
 
 #: ../../source/contents/path/main.rst:68
 #: ../../source/contents/setup/main.rst:276
-#: ../../source/contents/spin/main.rst:31
-#: ../../source/contents/util/fig.rst:96
+#: ../../source/contents/spin/main.rst:31 ../../source/contents/util/fig.rst:96
 msgid "``-f``"
 msgstr ""
 
@@ -1959,8 +1942,7 @@ msgstr ""
 
 #: ../../source/contents/path/main.rst:70
 #: ../../source/contents/setup/main.rst:286
-#: ../../source/contents/spin/main.rst:30
-#: ../../source/contents/util/fig.rst:93
+#: ../../source/contents/spin/main.rst:30 ../../source/contents/util/fig.rst:93
 msgid "``-s``"
 msgstr ""
 
@@ -1970,8 +1952,7 @@ msgstr ""
 msgid "``--split``"
 msgstr ""
 
-#: ../../source/contents/path/main.rst:71
-#: ../../source/contents/util/fig.rst:91
+#: ../../source/contents/path/main.rst:71 ../../source/contents/util/fig.rst:91
 msgid "``-L``"
 msgstr ""
 
@@ -2191,7 +2172,9 @@ msgid "``-so``, ``--specified-only`` [default: yes]"
 msgstr ""
 
 #: ../../source/contents/path/main.rst:176
-msgid "minimalの絞り込みにおいて、パターンの重複をチェックするとき、そのパターンを入力パターン内に限定するならyesを指定。 noの場合、解自体から抽出したパターンをもとに、重複をチェックします。"
+msgid ""
+"minimalの絞り込みにおいて、パターンの重複をチェックするとき、そのパターンを入力パターン内に限定するならyesを指定。 "
+"noの場合、解自体から抽出したパターンをもとに、重複をチェックします。"
 msgstr ""
 
 #: ../../source/contents/path/main.rst:181
@@ -2203,11 +2186,16 @@ msgid "ミノの接着場所を予約します。"
 msgstr ""
 
 #: ../../source/contents/path/main.rst:185
-msgid "たとえば `テンプレ+縦I <http://fumen.zui.jp/?v115@9gwhDeE8whCeF8whBeG8whCeF8JeAgH>`_ を入力したとします。"
+msgid ""
+"たとえば `テンプレ+縦I "
+"<http://fumen.zui.jp/?v115@9gwhDeE8whCeF8whBeG8whCeF8JeAgH>`_ を入力したとします。"
 msgstr ""
 
 #: ../../source/contents/path/main.rst:187
-msgid "このとき探索開始には `クレーの地形 <http://fumen.zui.jp/?v115@9gh0R4F8g0R4G8BtH8g0BtG8JeAgWDA6vzBA>`_ が適用され、 最終的に色のあるブロック通りに配置されるパフェが探索対象となります。"
+msgid ""
+"このとき探索開始には `クレーの地形 "
+"<http://fumen.zui.jp/?v115@9gh0R4F8g0R4G8BtH8g0BtG8JeAgWDA6vzBA>`_ が適用され、"
+" 最終的に色のあるブロック通りに配置されるパフェが探索対象となります。"
 msgstr ""
 
 #: ../../source/contents/path/main.rst:190
@@ -2226,11 +2214,15 @@ msgstr ""
 #: ../../source/contents/percent/main.rst:99
 #: ../../source/contents/ren/main.rst:86
 #: ../../source/contents/setup/main.rst:405
-msgid "180: ソフトドロップ＋180度回転入れ。180度回転は `Nullpomino <https://github.com/nullpomino/nullpomino>`_ のStandard Wallkickに準拠します。"
+msgid ""
+"180: ソフトドロップ＋180度回転入れ。180度回転は `Nullpomino "
+"<https://github.com/nullpomino/nullpomino>`_ のStandard Wallkickに準拠します。"
 msgstr ""
 
 #: ../../source/contents/path/main.rst:212
-msgid "※ T-Spin系のdropでは、「T-Spinできないケース」や「ライン消去が発生しないT-Spinになるケース」ではミノを置きません。 また、Tミノを使わないケースでは `harddrop` と同じになる点にご注意ください (solutionが省略されるわけではありません)。"
+msgid ""
+"※ T-Spin系のdropでは、「T-Spinできないケース」や「ライン消去が発生しないT-Spinになるケース」ではミノを置きません。 "
+"また、Tミノを使わないケースでは `harddrop` と同じになる点にご注意ください (solutionが省略されるわけではありません)。"
 msgstr ""
 
 #: ../../source/contents/path/main.rst:217
@@ -2302,7 +2294,9 @@ msgid "指定したファイル名 + _minimal に minimal (同じミノ順をカ
 msgstr ""
 
 #: ../../source/contents/path/main.rst:254
-msgid "``--format csv`` の場合に限り、 ``-`` を指定することで、CSVファイルと同じ結果を標準出力します。 特に ``--key none`` の場合は ``--max-layer`` によって出力されるCSVファイルが選択されます。"
+msgid ""
+"``--format csv`` の場合に限り、 ``-`` を指定することで、CSVファイルと同じ結果を標準出力します。 特に ``--key "
+"none`` の場合は ``--max-layer`` によって出力されるCSVファイルが選択されます。"
 msgstr ""
 
 #: ../../source/contents/path/main.rst:273
@@ -2361,18 +2355,15 @@ msgstr ""
 msgid "``L , *``  →  LT, LI, LJ, LL, LS, LZ, LO 7通り"
 msgstr ""
 
-#: ../../source/contents/patterns.rst:35
-#: ../../source/contents/patterns.rst:63
+#: ../../source/contents/patterns.rst:35 ../../source/contents/patterns.rst:63
 msgid "要素を繋げるコンマは省略することもできます。"
 msgstr ""
 
-#: ../../source/contents/patterns.rst:36
-#: ../../source/contents/patterns.rst:64
+#: ../../source/contents/patterns.rst:36 ../../source/contents/patterns.rst:64
 msgid "``T, I, O`` →　``TIO``"
 msgstr ""
 
-#: ../../source/contents/patterns.rst:37
-#: ../../source/contents/patterns.rst:65
+#: ../../source/contents/patterns.rst:37 ../../source/contents/patterns.rst:65
 msgid "``S, Z, *p3`` →　``SZ, *p3``"
 msgstr ""
 
@@ -2425,7 +2416,9 @@ msgid "``!`` は 左側で指定したミノ （[] or \\*）を全て使う組�
 msgstr ""
 
 #: ../../source/contents/patterns.rst:69
-msgid "Windowsのコマンドプロンプトで ^ をそのまま使用した場合、プログラムに入力することができません。 その場合は、以下のように入力文字列を変更してください。"
+msgid ""
+"Windowsのコマンドプロンプトで ^ をそのまま使用した場合、プログラムに入力することができません。 "
+"その場合は、以下のように入力文字列を変更してください。"
 msgstr ""
 
 #: ../../source/contents/patterns.rst:72
@@ -2441,7 +2434,9 @@ msgid "ちなみにPowerShellでは、そのまま利用することができま
 msgstr ""
 
 #: ../../source/contents/patterns.rst:79
-msgid "Macのターミナルで ``*`` や ``!`` が含まれる場合、うまくプログラムを実行開始できないことがあります。 その場合はパターンの指定をシングルクォーテーションで囲んでください。 ex) ``\"*!,*!\"``"
+msgid ""
+"Macのターミナルで ``*`` や ``!`` が含まれる場合、うまくプログラムを実行開始できないことがあります。 "
+"その場合はパターンの指定をシングルクォーテーションで囲んでください。 ex) ``\"*!,*!\"``"
 msgstr ""
 
 #: ../../source/contents/patterns.rst:84
@@ -2461,7 +2456,9 @@ msgid "パターンファイルの位置はオプションから変更するこ�
 msgstr ""
 
 #: ../../source/contents/patterns.rst:92
-msgid "パターンファイルには、1行につき上記の1つのパターンを記述します。 なお、複数行に渡って複数個のパターンを書くことができます。 その場合は、各パターンを足し合わせた探索候補から探索します。"
+msgid ""
+"パターンファイルには、1行につき上記の1つのパターンを記述します。 なお、複数行に渡って複数個のパターンを書くことができます。 "
+"その場合は、各パターンを足し合わせた探索候補から探索します。"
 msgstr ""
 
 #: ../../source/contents/patterns.rst:96
@@ -2493,7 +2490,10 @@ msgid "テト譜からミノの組み合わせを変更する場合、テト譜�
 msgstr ""
 
 #: ../../source/contents/patterns.rst:120
-msgid "例) 消去ライン数が4ラインで、パターンを*p4で指定する場合 / `サンプル1 <http://fumen.zui.jp/?v115@9gD8DeF8DeF8DeF8DeB8JeAgWUA0no2AtTMeDUPNXE?uN98AQPUGB>`_ ::"
+msgid ""
+"例) 消去ライン数が4ラインで、パターンを*p4で指定する場合 / `サンプル1 "
+"<http://fumen.zui.jp/?v115@9gD8DeF8DeF8DeF8DeB8JeAgWUA0no2AtTMeDUPNXE?uN98AQPUGB>`_"
+" ::"
 msgstr ""
 
 #: ../../source/contents/patterns.rst:124
@@ -2505,7 +2505,10 @@ msgid "例) 消去ライン数が4ラインで、パターンを T,* と I,* で
 msgstr ""
 
 #: ../../source/contents/patterns.rst:130
-msgid "例) Quiz形式で ZILJTOS を指定する場合 / `サンプル2 <http://fumen.zui.jp/?v115@HhA8BeA8FeE8CeG8CeB8JeAgWaAFLDmClcJSAVDEHB?EooRBaoAVBpi/wCPNBAA>`_ ::"
+msgid ""
+"例) Quiz形式で ZILJTOS を指定する場合 / `サンプル2 "
+"<http://fumen.zui.jp/?v115@HhA8BeA8FeE8CeG8CeB8JeAgWaAFLDmClcJSAVDEHB?EooRBaoAVBpi/wCPNBAA>`_"
+" ::"
 msgstr ""
 
 #: ../../source/contents/patterns.rst:137
@@ -2541,7 +2544,9 @@ msgid "``I, *p4``  →  Iをホールドした状態から新たな4種類のミ
 msgstr ""
 
 #: ../../source/contents/patterns.rst:157
-msgid "``[IOSL]!, *p7``  →  IOSLミノを1つずつ引いた(840通り)後に、新たな７種類のミノを1つずつ使用する計840*5040通り  ※ 開幕パフェ2巡目 IOSL残り"
+msgid ""
+"``[IOSL]!, *p7``  →  "
+"IOSLミノを1つずつ引いた(840通り)後に、新たな７種類のミノを1つずつ使用する計840*5040通り  ※ 開幕パフェ2巡目 IOSL残り"
 msgstr ""
 
 #: ../../source/contents/percent/main.rst:3
@@ -2553,7 +2558,9 @@ msgid "ある地形からパーフェクトできる確率を計算します。"
 msgstr ""
 
 #: ../../source/contents/percent/main.rst:14
-msgid "``java -jar sfinder.jar percent --tetfu v115@9gE8DeG8CeH8BeG8CeA8JeAgH --patterns *p4``"
+msgid ""
+"``java -jar sfinder.jar percent --tetfu v115@9gE8DeG8CeH8BeG8CeA8JeAgH "
+"--patterns *p4``"
 msgstr ""
 
 #: ../../source/contents/percent/main.rst:18
@@ -2667,7 +2674,10 @@ msgid "参考(外部サイト): https://www.atmarkit.co.jp/ait/articles/1604/19/
 msgstr ""
 
 #: ../../source/contents/quick_start.rst:12
-msgid "もしインストールができない環境の場合は `こちら <https://docs.google.com/presentation/d/11PBkJZhL8FZUyKqDjGOpby3irDpnEG_pswnrFfWM5z0>`_ のスライドを参考にしてください。"
+msgid ""
+"もしインストールができない環境の場合は `こちら "
+"<https://docs.google.com/presentation/d/11PBkJZhL8FZUyKqDjGOpby3irDpnEG_pswnrFfWM5z0>`_"
+" のスライドを参考にしてください。"
 msgstr ""
 
 #: ../../source/contents/quick_start.rst:16
@@ -2675,7 +2685,9 @@ msgid "Windows (コマンドラインから操作する)"
 msgstr ""
 
 #: ../../source/contents/quick_start.rst:18
-msgid "`※ 画像付きで手順を説明したスライドはこちら <https://docs.google.com/presentation/d/1zKVe0iHMJ-HV_oZBGFgVIShVa30srqe5dgI8kjubqWY>`_"
+msgid ""
+"`※ 画像付きで手順を説明したスライドはこちら <https://docs.google.com/presentation/d"
+"/1zKVe0iHMJ-HV_oZBGFgVIShVa30srqe5dgI8kjubqWY>`_"
 msgstr ""
 
 #: ../../source/contents/quick_start.rst:20
@@ -2683,7 +2695,9 @@ msgid "コマンドプロンプトでsolution-finderのあるディレクトリ�
 msgstr ""
 
 #: ../../source/contents/quick_start.rst:22
-msgid "（Windows7以降の場合、コマンドプロンプトで開きたいディレクトリへエクスプローラ上で移動し、 そのディレクトリ内で ``shift+右クリック → PowerShell ウィンドウをここに開く`` で直接移動できる）"
+msgid ""
+"（Windows7以降の場合、コマンドプロンプトで開きたいディレクトリへエクスプローラ上で移動し、 そのディレクトリ内で "
+"``shift+右クリック → PowerShell ウィンドウをここに開く`` で直接移動できる）"
 msgstr ""
 
 #: ../../source/contents/quick_start.rst:25
@@ -2725,7 +2739,9 @@ msgid "``--format link`` のように、この部分にオプションを加え�
 msgstr ""
 
 #: ../../source/contents/quick_start.rst:61
-msgid "batはstarterディレクトリ内であればコピー・リネームしても使用できますので、 batをコピーして使いやすいオプションに変更することをオススメします。"
+msgid ""
+"batはstarterディレクトリ内であればコピー・リネームしても使用できますので、 "
+"batをコピーして使いやすいオプションに変更することをオススメします。"
 msgstr ""
 
 #: ../../source/contents/quick_start.rst:64
@@ -2753,11 +2769,15 @@ msgid "ある地形から最もRENが続く手順を列挙する。"
 msgstr ""
 
 #: ../../source/contents/ren/main.rst:12
-msgid "なおREN数の表示は `ライン消去回数 - 1` に準拠する。 (1回目のライン消去で \"0 REN\"、2回目のライン消去で \"1 REN\" となる。)"
+msgid ""
+"なおREN数の表示は `ライン消去回数 - 1` に準拠する。 (1回目のライン消去で \"0 REN\"、2回目のライン消去で \"1 "
+"REN\" となる。)"
 msgstr ""
 
 #: ../../source/contents/ren/main.rst:18
-msgid "``java -jar sfinder.jar ren --tetfu v115@VgF8DeF8DeF8DeF8DeF8DeF8DeF8DeI8KeAgH --patterns TOLJISZ``"
+msgid ""
+"``java -jar sfinder.jar ren --tetfu "
+"v115@VgF8DeF8DeF8DeF8DeF8DeF8DeF8DeI8KeAgH --patterns TOLJISZ``"
 msgstr ""
 
 #: ../../source/contents/ren/main.rst:32
@@ -2790,7 +2810,9 @@ msgid "探索結果は HTMLファイル で出力されます。"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:18
-msgid "``java -jar sfinder.jar setup --tetfu v115@HhUpxhBeA81hCeA8yhD8AeB8JeAgH --patterns *! --fill i --margin o``"
+msgid ""
+"``java -jar sfinder.jar setup --tetfu v115@HhUpxhBeA81hCeA8yhD8AeB8JeAgH "
+"--patterns *! --fill i --margin o``"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:22
@@ -2798,66 +2820,53 @@ msgid "詳細"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:24
-#: ../../source/contents/setup/main.rst:24
 msgid "fumen_sample_001"
 msgstr ""
 
-#: ../../source/contents/setup/main.rst:26
 #: ../../source/contents/setup/main.rst:26
 msgid "fumen_sample_002"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:28
-#: ../../source/contents/setup/main.rst:28
 msgid "solution_sample_001"
 msgstr ""
 
-#: ../../source/contents/setup/main.rst:30
 #: ../../source/contents/setup/main.rst:30
 msgid "solution_sample_002"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:32
-#: ../../source/contents/setup/main.rst:32
 msgid "solution_sample_003"
 msgstr ""
 
-#: ../../source/contents/setup/main.rst:34
 #: ../../source/contents/setup/main.rst:34
 msgid "solution_sample_004"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:36
-#: ../../source/contents/setup/main.rst:36
 msgid "solution_sample_005"
 msgstr ""
 
-#: ../../source/contents/setup/main.rst:38
 #: ../../source/contents/setup/main.rst:38
 msgid "solution_sample_006"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:40
-#: ../../source/contents/setup/main.rst:40
 msgid "attention_sample_001"
 msgstr ""
 
-#: ../../source/contents/setup/main.rst:42
 #: ../../source/contents/setup/main.rst:42
 msgid "attention_sample_001_1"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:44
-#: ../../source/contents/setup/main.rst:44
 msgid "attention_sample_002"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:46
-#: ../../source/contents/setup/main.rst:46
 msgid "attention_sample_002_1"
 msgstr ""
 
-#: ../../source/contents/setup/main.rst:48
 #: ../../source/contents/setup/main.rst:48
 msgid "attention_sample_002_2"
 msgstr ""
@@ -2867,7 +2876,9 @@ msgid "|fumen_sample_001|"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:53
-msgid "``java -jar sfinder.jar setup --tetfu v115@9gTpFeTpFeTpFezhPeAgH --fill I --margin O -p *! -c yes``"
+msgid ""
+"``java -jar sfinder.jar setup --tetfu v115@9gTpFeTpFeTpFezhPeAgH --fill I"
+" --margin O -p *! -c yes``"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:55
@@ -2907,11 +2918,15 @@ msgid "|solution_sample_004|"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:73
-msgid "このような「穴」が含まれる地形を取り除く場合は ``--exclude`` を設定してください。 ``--exclude`` を設定することで、マージンエリアを含めて地形全体のどこかに「穴」のある解が 除外されます。"
+msgid ""
+"このような「穴」が含まれる地形を取り除く場合は ``--exclude`` を設定してください。 ``--exclude`` "
+"を設定することで、マージンエリアを含めて地形全体のどこかに「穴」のある解が 除外されます。"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:77
-msgid "もし ``--exclude`` を設定しつつも、「穴」を許容するエリアを指定したい場合は ``--free`` で色を指定し、その色で地形を塗ってください。"
+msgid ""
+"もし ``--exclude`` を設定しつつも、「穴」を許容するエリアを指定したい場合は ``--free`` "
+"で色を指定し、その色で地形を塗ってください。"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:82
@@ -2923,7 +2938,9 @@ msgid "|fumen_sample_002|"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:86
-msgid "``java -jar sfinder.jar setup --tetfu v115@9gQpBewhVpwhCe3hAe2hZpJeAgH --patterns [^T]! --fill I --margin O -c yes``"
+msgid ""
+"``java -jar sfinder.jar setup --tetfu v115@9gQpBewhVpwhCe3hAe2hZpJeAgH "
+"--patterns [^T]! --fill I --margin O -c yes``"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:88
@@ -2939,7 +2956,9 @@ msgid "この解にはどちらも「穴」が含まれているため、その�
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:95
-msgid "それを防ぐため、解が除外される前に「ミノを置く」「1ライン全て埋める」などの操作を行うことができます。 詳細は  ``--operate`` オプションをご参照ください。"
+msgid ""
+"それを防ぐため、解が除外される前に「ミノを置く」「1ライン全て埋める」などの操作を行うことができます。 詳細は  ``--operate`` "
+"オプションをご参照ください。"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:98
@@ -2967,11 +2986,16 @@ msgid "たとえば パターンに ``IOOI`` を指定したとき、2つめのI
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:115
-msgid "もし、この入力パターンを「ミノの組み合わせ」として解釈したい場合は ``--combination yes`` を設定してください。 たとえば、パターンに ``IOOI`` を指定したとき、置く順番に関わらず I2個・O2個 を使用した解が表示されます。"
+msgid ""
+"もし、この入力パターンを「ミノの組み合わせ」として解釈したい場合は ``--combination yes`` を設定してください。 "
+"たとえば、パターンに ``IOOI`` を指定したとき、置く順番に関わらず I2個・O2個 を使用した解が表示されます。"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:118
-msgid "``--combination yes`` のときに表示される解は「必ず埋めるエリア ``--fill``」をカバーする最小限のミノが表示されます。 置くミノの個数を固定したい場合は ``--n-pieces`` を設定してください。"
+msgid ""
+"``--combination yes`` のときに表示される解は「必ず埋めるエリア "
+"``--fill``」をカバーする最小限のミノが表示されます。 置くミノの個数を固定したい場合は ``--n-pieces`` "
+"を設定してください。"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:123
@@ -2995,7 +3019,9 @@ msgid "|attention_sample_001| |attention_sample_001_1|"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:134
-msgid "Tスピンの屋根にあたる部分にマージンエリアが設定されています。 領域の広さ的にはIミノが収まる範囲ですが ``--fill`` に寄与していないため、Tミノのみが解として出力されます。"
+msgid ""
+"Tスピンの屋根にあたる部分にマージンエリアが設定されています。 領域の広さ的にはIミノが収まる範囲ですが ``--fill`` "
+"に寄与していないため、Tミノのみが解として出力されます。"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:137
@@ -3007,7 +3033,9 @@ msgid "|attention_sample_002| |attention_sample_002_1| |attention_sample_002_2|"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:143
-msgid "こちらの地形も ``--fill`` に直接寄与しないミノがマージンエリアに使われています。 例1と異なる点として、 例1ではマージンエリアがなくても成立しますが、 例2はこれらのミノが足場として使われているため、存在しないと組むことができません。"
+msgid ""
+"こちらの地形も ``--fill`` に直接寄与しないミノがマージンエリアに使われています。 例1と異なる点として、 "
+"例1ではマージンエリアがなくても成立しますが、 例2はこれらのミノが足場として使われているため、存在しないと組むことができません。"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:148
@@ -3023,7 +3051,6 @@ msgid "テト譜から入力するとき"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:156
-#: ../../source/contents/setup/main.rst:156
 msgid "fumen_sample_003"
 msgstr ""
 
@@ -3032,7 +3059,9 @@ msgid "|fumen_sample_003|"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:161
-msgid "``java -jar sfinder.jar setup -t v115@9gV4whCe1hCeA82hAeB8XpA8KeAgH --fill I --margin O --free S -p [^T]! -op \"T-Reverse(7,2)\" -e holes``"
+msgid ""
+"``java -jar sfinder.jar setup -t v115@9gV4whCe1hCeA82hAeB8XpA8KeAgH "
+"--fill I --margin O --free S -p [^T]! -op \"T-Reverse(7,2)\" -e holes``"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:163
@@ -3044,7 +3073,9 @@ msgid "``-f`` or ``--fill`` → 探索時に必ず埋める必要がある場所
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:166
-msgid "``-m`` or ``--margin`` → 探索時に置いても置かなくても良い場所（マージンエリア。``exclude`` 設定時には穴を許容しない）"
+msgid ""
+"``-m`` or ``--margin`` → 探索時に置いても置かなくても良い場所（マージンエリア。``exclude`` "
+"設定時には穴を許容しない）"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:167
@@ -3060,7 +3091,9 @@ msgid "入力例 ::"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:179
-msgid "``java -jar sfinder.jar setup --patterns [^T]! --operate \"T-Reverse(7,2)\" --exclude holes``"
+msgid ""
+"``java -jar sfinder.jar setup --patterns [^T]! --operate "
+"\"T-Reverse(7,2)\" --exclude holes``"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:181
@@ -3088,15 +3121,24 @@ msgid "``2202433332`` の数字は、列ごとのブロック数を左から並�
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:222
-msgid "数字の下の ``____X_____〜`` は、地形を簡易的に表示したものです。 ここには ``--fill`` をカバーする最低限の地形が表示されます。"
+msgid ""
+"数字の下の ``____X_____〜`` は、地形を簡易的に表示したものです。 ここには ``--fill`` "
+"をカバーする最低限の地形が表示されます。"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:225
-msgid "地形の下の ``ミノ順＋リンク`` は、テト譜へのリンクを表示しています。 もし「``--combination`` がオフ」 or 「``--n-pieces`` が設定されている」ときは、すべてのミノを利用したテト譜が表示されます。 したがって「テト譜」と「簡易的な地形表示」が異なる場合があります。ご注意ください。"
+msgid ""
+"地形の下の ``ミノ順＋リンク`` は、テト譜へのリンクを表示しています。 もし「``--combination`` がオフ」 or "
+"「``--n-pieces`` が設定されている」ときは、すべてのミノを利用したテト譜が表示されます。 "
+"したがって「テト譜」と「簡易的な地形表示」が異なる場合があります。ご注意ください。"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:229
-msgid "リンクの後ろの数字 (462, ...) はこの地形を積み込む手順の総数で、入力パターンには依存しません。 手順は同じ種類のミノが複数個あっても、置く場所によってそれぞれ区別されます。 たとえば `T3個だけを使う地形 <http://fumen.zui.jp/?v115@QhwwAewwCewwBe0wAeywBewwJeAgH>`_ の場合、3!=6 通り となります。"
+msgid ""
+"リンクの後ろの数字 (462, ...) はこの地形を積み込む手順の総数で、入力パターンには依存しません。 "
+"手順は同じ種類のミノが複数個あっても、置く場所によってそれぞれ区別されます。 たとえば `T3個だけを使う地形 "
+"<http://fumen.zui.jp/?v115@QhwwAewwCewwBe0wAeywBewwJeAgH>`_ の場合、3!=6 通り "
+"となります。"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:237
@@ -3104,7 +3146,9 @@ msgid "地形をキーして、それぞれの地形で使用されるミノと�
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:239
-msgid "出力例) ``setup -p *! --fill i --margin o -t v115@2gWpCeWpDe0hQpxhAe4hAe2hJeAgH --format csv`` ::"
+msgid ""
+"出力例) ``setup -p *! --fill i --margin o -t "
+"v115@2gWpCeWpDe0hQpxhAe4hAe2hJeAgH --format csv`` ::"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:249
@@ -3136,7 +3180,10 @@ msgid "手順は同じ種類のミノが複数個あっても、置く場所に�
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:261
-msgid "たとえば `T3個だけを使う地形 <http://fumen.zui.jp/?v115@QhwwAewwCewwBe0wAeywBewwJeAgH>`_ の場合、3!=6 通り となります"
+msgid ""
+"たとえば `T3個だけを使う地形 "
+"<http://fumen.zui.jp/?v115@QhwwAewwCewwBe0wAeywBewwJeAgH>`_ の場合、3!=6 通り "
+"となります"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:263
@@ -3165,14 +3212,12 @@ msgid "``--free``"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:279
-#: ../../source/contents/spin/main.rst:27
-#: ../../source/contents/util/fig.rst:95
+#: ../../source/contents/spin/main.rst:27 ../../source/contents/util/fig.rst:95
 msgid "``--line``"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:282
-#: ../../source/contents/util/fig.rst:94
-#: ../../source/contents/util/seq.rst:101
+#: ../../source/contents/util/fig.rst:94 ../../source/contents/util/seq.rst:101
 msgid "``-e``"
 msgstr ""
 
@@ -3417,7 +3462,10 @@ msgid "座標は左下のブロックが (0,0) となります。"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:451
-msgid "ミノの回転軸は `SRS / How Guideline SRS Really Works <https://harddrop.com/wiki/SRS#How_Guideline_SRS_Really_Works>`_ の回転軸に準拠しています。"
+msgid ""
+"ミノの回転軸は `SRS / How Guideline SRS Really Works "
+"<https://harddrop.com/wiki/SRS#How_Guideline_SRS_Really_Works>`_ "
+"の回転軸に準拠しています。"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:453
@@ -3433,7 +3481,9 @@ msgid "例）--operate \"L-Right(0,1)\" \"row(1)\" \"clear()\" \"block(1,1)\""
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:461
-msgid "`結果 <http://fumen.zui.jp/?v115@vhAKJYYAF7IVCNbNyDIP98AYo78ADq78A5nY9ARhg0?I8TeAAPQAF7YVEvT98A4p78A5nY9AvhAAAPRAF7wiDs4DXE?FbuRAy178ASAAAAShA8beAAPWAF7YfDsng/DFbO6AFLn6AF?rwRASbAAARhg0Ieh0ReAAPGASY0hEM/BAA>`_：右回転Lを置く→2段目をすべて埋める→ライン消去を行う→(1,1)にブロックを置く"
+msgid ""
+"`結果 "
+"<http://fumen.zui.jp/?v115@vhAKJYYAF7IVCNbNyDIP98AYo78ADq78A5nY9ARhg0?I8TeAAPQAF7YVEvT98A4p78A5nY9AvhAAAPRAF7wiDs4DXE?FbuRAy178ASAAAAShA8beAAPWAF7YfDsng/DFbO6AFLn6AF?rwRASbAAARhg0Ieh0ReAAPGASY0hEM/BAA>`_：右回転Lを置く→2段目をすべて埋める→ライン消去を行う→(1,1)にブロックを置く"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:465
@@ -3445,7 +3495,9 @@ msgid "解で使用されるミノの個数を指定する。"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:469
-msgid "もし ``-1`` を指定した場合は自動で設定されます。（``--combination`` がオンのとき固定なし、オフのときはpatterns・地形に従う）"
+msgid ""
+"もし ``-1`` を指定した場合は自動で設定されます。（``--combination`` "
+"がオンのとき固定なし、オフのときはpatterns・地形に従う）"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:473
@@ -3458,7 +3510,9 @@ msgstr ""
 
 #: ../../source/contents/setup/main.rst:486
 #: ../../source/contents/spin/main.rst:214
-msgid "ただし ``yes`` で生成されるテト譜はあくまで置き場所を示すものであり、ページ順通りに置くとミノが空中に浮いたり、移動できない場所に置かれることもあります。"
+msgid ""
+"ただし ``yes`` "
+"で生成されるテト譜はあくまで置き場所を示すものであり、ページ順通りに置くとミノが空中に浮いたり、移動できない場所に置かれることもあります。"
 msgstr ""
 
 #: ../../source/contents/setup/main.rst:493
@@ -3478,7 +3532,9 @@ msgid "ある地形からTスピンできる置き方を探す"
 msgstr ""
 
 #: ../../source/contents/spin/main.rst:13
-msgid "``java -jar sfinder.jar spin --tetfu v115@zgD8FeE8EeF8DeG8CeH8LeAgH --patterns *p7 -ft 4``"
+msgid ""
+"``java -jar sfinder.jar spin --tetfu v115@zgD8FeE8EeF8DeG8CeH8LeAgH "
+"--patterns *p7 -ft 4``"
 msgstr ""
 
 #: ../../source/contents/spin/main.rst:24
@@ -3582,7 +3638,9 @@ msgid "**1. Tスピンをつくる範囲をなるべく狭くする**"
 msgstr ""
 
 #: ../../source/contents/spin/main.rst:66
-msgid "Spinコマンドでは、``-fb`` と ``-ft`` の間の段でTスピンをつくります。 この  ``-fb`` と ``-ft`` の差が大きかったり、ブロックがないラインを選ぶほど、 つくれるTスピンの数は増えていきます。"
+msgid ""
+"Spinコマンドでは、``-fb`` と ``-ft`` の間の段でTスピンをつくります。 この  ``-fb`` と ``-ft`` "
+"の差が大きかったり、ブロックがないラインを選ぶほど、 つくれるTスピンの数は増えていきます。"
 msgstr ""
 
 #: ../../source/contents/spin/main.rst:70
@@ -3614,7 +3672,9 @@ msgid "2ではマージンの範囲を狭くしましたが、マージン内に
 msgstr ""
 
 #: ../../source/contents/spin/main.rst:87
-msgid "たとえば ``-mr 1`` と指定すると、最低限のTスピンの形からさらに1ミノだけ置かれます。 そのため、2ミノ以上のケースを探さないため、その分実行がはやくなります。"
+msgid ""
+"たとえば ``-mr 1`` と指定すると、最低限のTスピンの形からさらに1ミノだけ置かれます。 "
+"そのため、2ミノ以上のケースを探さないため、その分実行がはやくなります。"
 msgstr ""
 
 #: ../../source/contents/spin/main.rst:91
@@ -3633,7 +3693,6 @@ msgstr ""
 msgid "**各オプションの関係を表した図**"
 msgstr ""
 
-#: ../../source/contents/spin/main.rst:99
 #: ../../source/contents/spin/main.rst:99
 msgid "option_001"
 msgstr ""
@@ -3659,7 +3718,9 @@ msgid "今後、指定されたミノ順で、実際に組むことができる�
 msgstr ""
 
 #: ../../source/contents/spin/main.rst:111
-msgid "Tミノ以外のミノに屋根が必要なケースは、順列指定でのみ対応させる予定です。 `その理由 <http://fumen.zui.jp/?v115@EhD8AeC8CeC8AeD8AeD8BeG8JeAglIhglCeywCeglD?ewwDehlQeAg0lAUYHDBQDxRA1dE6B0XHDBQpjRA1d0KB3XH?DBQeJSA1dkRBiAAAAqgAtHeBtHeAtweAg0DBMYHDBwFhRA1?w2KB1XHDBQUHSA1dkRBCYHDBQBFSA1d0KBGY3JBj+ESAVi+?AB5XHDBQOHSA1Ae3B1X/TBZ0mAAqgAPHeBPHeAPFeDAgWCA?SLCAgWDAQLDAhWGAJeAg0GAtjVRAz3AAAEhD8CeA8CeC8Ce?B8AeD8BeG8JeAg0qAlP52BxpDfEToXOBlP62A1vDfETY9KB?lvs2ACqDfET4d3Blvs2ACmAAAIhglRpAeywCeglRpBewwDe?hlQeAg0lAUYHDBQDxRA1dE6B0XHDBQpjRA1d0KB3XHDBQeJ?SA1dkRBiAAAA5fRpHeRpDfxSAeSLDexSBeQLWeAg0aBlvs2?AkJEfETIH+Blvs2A00btAls7fClvs2A2HEfET4xRBlvs2AU?GEfETY85AlP52BUDEfEWUDVBlvs2AWJEfEVpHIBl/PVB4pD?fET4JwBlvs2A1iAAAkfglIeglIeglQawSHexSCfgWRpGegW?RpGehWQeAg0OBlvs2AkJEfETIH+Blvs2A0kitAlszVClvs2?A2HEfET4xRBlvs2AUGEfETY85AlP52BUDEfEWUDVBlvs2A0?EEfEVpHIBl/PVB4ZAAAqgAtHeBtHeAtweAglvhBAg0mBlPB?BC5sDfET45ABlvs2AWxDfETY85AlP52BUDEfEWUDVBlvs2A?WJEfETYhBClvs2ADIEfEZk0KBlvs2A2HEfEVpM6AlPiOBmJ?EfETY12BlPJVByyDfETYN6Blvs2AUeAAAAg0mBlvs2AVGEf?ET4p9Blvs2AVJEfETYO6Alvs2AwpDfEX2NEBlPREBQ0DfET?ofzBlvs2A2yDfET4BBClPhzBGIEfEV5Z3Blvs2A1yDfET4J?wBlvs2AUuDfE032RBlPhzB5xAAA>`_"
+msgid ""
+"Tミノ以外のミノに屋根が必要なケースは、順列指定でのみ対応させる予定です。 `その理由 "
+"<http://fumen.zui.jp/?v115@EhD8AeC8CeC8AeD8AeD8BeG8JeAglIhglCeywCeglD?ewwDehlQeAg0lAUYHDBQDxRA1dE6B0XHDBQpjRA1d0KB3XH?DBQeJSA1dkRBiAAAAqgAtHeBtHeAtweAg0DBMYHDBwFhRA1?w2KB1XHDBQUHSA1dkRBCYHDBQBFSA1d0KBGY3JBj+ESAVi+?AB5XHDBQOHSA1Ae3B1X/TBZ0mAAqgAPHeBPHeAPFeDAgWCA?SLCAgWDAQLDAhWGAJeAg0GAtjVRAz3AAAEhD8CeA8CeC8Ce?B8AeD8BeG8JeAg0qAlP52BxpDfEToXOBlP62A1vDfETY9KB?lvs2ACqDfET4d3Blvs2ACmAAAIhglRpAeywCeglRpBewwDe?hlQeAg0lAUYHDBQDxRA1dE6B0XHDBQpjRA1d0KB3XHDBQeJ?SA1dkRBiAAAA5fRpHeRpDfxSAeSLDexSBeQLWeAg0aBlvs2?AkJEfETIH+Blvs2A00btAls7fClvs2A2HEfET4xRBlvs2AU?GEfETY85AlP52BUDEfEWUDVBlvs2AWJEfEVpHIBl/PVB4pD?fET4JwBlvs2A1iAAAkfglIeglIeglQawSHexSCfgWRpGegW?RpGehWQeAg0OBlvs2AkJEfETIH+Blvs2A0kitAlszVClvs2?A2HEfET4xRBlvs2AUGEfETY85AlP52BUDEfEWUDVBlvs2A0?EEfEVpHIBl/PVB4ZAAAqgAtHeBtHeAtweAglvhBAg0mBlPB?BC5sDfET45ABlvs2AWxDfETY85AlP52BUDEfEWUDVBlvs2A?WJEfETYhBClvs2ADIEfEZk0KBlvs2A2HEfEVpM6AlPiOBmJ?EfETY12BlPJVByyDfETYN6Blvs2AUeAAAAg0mBlvs2AVGEf?ET4p9Blvs2AVJEfETYO6Alvs2AwpDfEX2NEBlPREBQ0DfET?ofzBlvs2A2yDfET4BBClPhzBGIEfEV5Z3Blvs2A1yDfET4J?wBlvs2AUuDfE032RBlPhzB5xAAA>`_"
 msgstr ""
 
 #: ../../source/contents/spin/main.rst:145
@@ -3728,7 +3789,9 @@ msgid "``-r``, ``--roof`` [default: yes]"
 msgstr ""
 
 #: ../../source/contents/spin/main.rst:193
-msgid "このオプションが `yes` のとき、Tミノの回転入れに必要な屋根の探索を実行する。 `no` を指定した場合は、屋根の探索をスキップされ、そのままではTミノを入れられない地形も解として表示される。"
+msgid ""
+"このオプションが `yes` のとき、Tミノの回転入れに必要な屋根の探索を実行する。 `no` "
+"を指定した場合は、屋根の探索をスキップされ、そのままではTミノを入れられない地形も解として表示される。"
 msgstr ""
 
 #: ../../source/contents/spin/main.rst:196
@@ -3740,7 +3803,9 @@ msgid "``-mr``, ``--max-roof`` [default: -1]"
 msgstr ""
 
 #: ../../source/contents/spin/main.rst:202
-msgid "Tミノの回転入れに必要な屋根の探索で置くことができる最大のミノ数を指定する。 `-1` が指定されたとき、指定パターンの中で制限なく屋根を置いて探索する。 そのため、この値が大きいほど実行時間が長くなる。"
+msgid ""
+"Tミノの回転入れに必要な屋根の探索で置くことができる最大のミノ数を指定する。 `-1` "
+"が指定されたとき、指定パターンの中で制限なく屋根を置いて探索する。 そのため、この値が大きいほど実行時間が長くなる。"
 msgstr ""
 
 #: ../../source/contents/spin/main.rst:206
@@ -3764,7 +3829,10 @@ msgid "strict: Tスピンできる解のみを表示します（`[O]` のみに�
 msgstr ""
 
 #: ../../source/contents/spin/main.rst:228
-msgid "ignore-t: Tミノ以外は組むことができる解を表示します。Tミノが実際に到達できるかは問いません。ただし、地面に触れている必要はあります（`[O]` と `[X]` に相当）`"
+msgid ""
+"ignore-t: "
+"Tミノ以外は組むことができる解を表示します。Tミノが実際に到達できるかは問いません。ただし、地面に触れている必要はあります（`[O]` と "
+"`[X]` に相当）`"
 msgstr ""
 
 #: ../../source/contents/spin/main.rst:229
@@ -3788,11 +3856,9 @@ msgid "Fumen Preview (Chrome Extension)"
 msgstr ""
 
 #: ../../source/contents/tools.rst:14
-#: ../../source/contents/tools.rst:14
 msgid "preview_video_001"
 msgstr ""
 
-#: ../../source/contents/tools.rst:16
 #: ../../source/contents/tools.rst:16
 msgid "preview_setting_001"
 msgstr ""
@@ -3806,7 +3872,10 @@ msgid "|preview_video_001|"
 msgstr ""
 
 #: ../../source/contents/tools.rst:23
-msgid "`Chrome Web Store <https://chrome.google.com/webstore/detail/fumen-preview/kkmandajpdmjfibomfokgdjcgmbkipef>`_ からインストールすることができます。あわせてご利用ください。"
+msgid ""
+"`Chrome Web Store <https://chrome.google.com/webstore/detail/fumen-"
+"preview/kkmandajpdmjfibomfokgdjcgmbkipef>`_ "
+"からインストールすることができます。あわせてご利用ください。"
 msgstr ""
 
 #: ../../source/contents/tools.rst:25
@@ -3860,7 +3929,9 @@ msgid "画像化したいテト譜のデータを field.txt に記述するか�
 msgstr ""
 
 #: ../../source/contents/util/fig.rst:20
-msgid "``java -jar sfinder.jar util fig --tetfu v115@vhKSSJznBGjBXqBNpB0fBRmBasB/rB0qBAAA``"
+msgid ""
+"``java -jar sfinder.jar util fig --tetfu "
+"v115@vhKSSJznBGjBXqBNpB0fBRmBasB/rB0qBAAA``"
 msgstr ""
 
 #: ../../source/contents/util/fig.rst:24
@@ -3880,21 +3951,17 @@ msgid "デフォルトカラーのサンプル"
 msgstr ""
 
 #: ../../source/contents/util/fig.rst:34
-#: ../../source/contents/util/fig.rst:34
 msgid "fig_sample_default"
 msgstr ""
 
-#: ../../source/contents/util/fig.rst:36
 #: ../../source/contents/util/fig.rst:36
 msgid "fig_sample_mipi"
 msgstr ""
 
 #: ../../source/contents/util/fig.rst:38
-#: ../../source/contents/util/fig.rst:38
 msgid "fig_sample_fumen"
 msgstr ""
 
-#: ../../source/contents/util/fig.rst:40
 #: ../../source/contents/util/fig.rst:40
 msgid "fig_sample_four"
 msgstr ""
@@ -3908,7 +3975,9 @@ msgid "|fig_sample_default|"
 msgstr ""
 
 #: ../../source/contents/util/fig.rst:47
-msgid "**mipi** : `@mipi_teto_puyo <https://twitter.com/mipi_teto_puyo>`_ さんの資料をベースとしたカラーリング"
+msgid ""
+"**mipi** : `@mipi_teto_puyo <https://twitter.com/mipi_teto_puyo>`_ "
+"さんの資料をベースとしたカラーリング"
 msgstr ""
 
 #: ../../source/contents/util/fig.rst:49
@@ -3995,8 +4064,7 @@ msgstr ""
 msgid "gif"
 msgstr ""
 
-#: ../../source/contents/util/fig.rst:89
-#: ../../source/contents/util/seq.rst:103
+#: ../../source/contents/util/fig.rst:89 ../../source/contents/util/seq.rst:103
 msgid "``-n``"
 msgstr ""
 
@@ -4057,7 +4125,9 @@ msgid "出力される画像ファイルのパスを指定する。"
 msgstr ""
 
 #: ../../source/contents/util/fig.rst:110
-msgid "なお、フォーマットにpngを指定した場合は ``output/{実行日時}/fig.png`` のように、ディレクトリ構成と拡張子が一部変更されます。"
+msgid ""
+"なお、フォーマットにpngを指定した場合は ``output/{実行日時}/fig.png`` "
+"のように、ディレクトリ構成と拡張子が一部変更されます。"
 msgstr ""
 
 #: ../../source/contents/util/fig.rst:114
@@ -4235,7 +4305,9 @@ msgid "入力されたテト譜を変換して、新たなテト譜を標準出�
 msgstr ""
 
 #: ../../source/contents/util/fumen.rst:20
-msgid "``java -jar sfinder.jar util fumen --mode reduce --tetfu v115@vhFXKJNJJ0/IWSJTIJCDJ``"
+msgid ""
+"``java -jar sfinder.jar util fumen --mode reduce --tetfu "
+"v115@vhFXKJNJJ0/IWSJTIJCDJ``"
 msgstr ""
 
 #: ../../source/contents/util/fumen.rst:31
@@ -4279,7 +4351,6 @@ msgid "すべてのページのコメントを削除します"
 msgstr ""
 
 #: ../../source/contents/util/main.rst:18
-#: ../../source/contents/util/main.rst:18
 msgid "目次"
 msgstr ""
 
@@ -4319,24 +4390,25 @@ msgstr ""
 msgid "対応している変換モードは以下の通りです。"
 msgstr ""
 
-#: ../../source/contents/util/seq.rst:14
-#: ../../source/contents/util/seq.rst:123
+#: ../../source/contents/util/seq.rst:14 ../../source/contents/util/seq.rst:123
 msgid "``pass``: ``*`` などを展開だけを行う"
 msgstr ""
 
-#: ../../source/contents/util/seq.rst:15
-#: ../../source/contents/util/seq.rst:124
+#: ../../source/contents/util/seq.rst:15 ../../source/contents/util/seq.rst:124
 msgid "``forward``: 指定パターンから、ホールドでミノを入れ替えてつくれる、ホールド後のシーケンスを展開する"
 msgstr ""
 
-#: ../../source/contents/util/seq.rst:16
-#: ../../source/contents/util/seq.rst:125
-msgid "``backward``: ホールドでミノを入れ替えると、指定パターンの形になる、ホールドの前の元のシーケンスを展開する。最終的にホールドされるため特定できないミノは ``*`` が出力されます"
+#: ../../source/contents/util/seq.rst:16 ../../source/contents/util/seq.rst:125
+msgid ""
+"``backward``: "
+"ホールドでミノを入れ替えると、指定パターンの形になる、ホールドの前の元のシーケンスを展開する。最終的にホールドされるため特定できないミノは "
+"``*`` が出力されます"
 msgstr ""
 
-#: ../../source/contents/util/seq.rst:17
-#: ../../source/contents/util/seq.rst:126
-msgid "``backward-and-pass`` ``backward-pass``: ``backward`` と同じ処理をした後、``*`` を7種類のミノで展開します"
+#: ../../source/contents/util/seq.rst:17 ../../source/contents/util/seq.rst:126
+msgid ""
+"``backward-and-pass`` ``backward-pass``: ``backward`` と同じ処理をした後、``*`` "
+"を7種類のミノで展開します"
 msgstr ""
 
 #: ../../source/contents/util/seq.rst:23
@@ -4597,7 +4669,9 @@ msgid "``-hh``, ``--head-hold`` [default: yes]"
 msgstr ""
 
 #: ../../source/contents/util/seq.rst:185
-msgid "パターン( ``forward`` モード)・出力されるシーケンス( ``backward`` モード) の先頭のミノを、ホールドの初期値として扱うかどうかを指定します。 この設定値は、ホールドの回数に影響を与えます。"
+msgid ""
+"パターン( ``forward`` モード)・出力されるシーケンス( ``backward`` モード) "
+"の先頭のミノを、ホールドの初期値として扱うかどうかを指定します。 この設定値は、ホールドの回数に影響を与えます。"
 msgstr ""
 
 #: ../../source/contents/util/seq.rst:188
@@ -4632,8 +4706,7 @@ msgstr ""
 msgid "ある地形からのパフェ手順をすべて求めて、さらにその中からパフェを取るまでにTSDを打つことができる確率を求めます。"
 msgstr ""
 
-#: ../../source/contents/workflow.rst:16
-#: ../../source/contents/workflow.rst:76
+#: ../../source/contents/workflow.rst:16 ../../source/contents/workflow.rst:76
 msgid "sfinder.jarがあるディレクトリをPowerShellで開き、次のコマンドを実行してください。"
 msgstr ""
 
@@ -4642,7 +4715,10 @@ msgid "出力は以下のようになります (一例です)。"
 msgstr ""
 
 #: ../../source/contents/workflow.rst:49
-msgid "この地形でパターン ``*p7`` の場合、TSDをしながらパフェを取れる確率は ``35.00%`` となります。 なお、表示されているテト譜はあくまでもミノの置き場所であり、TSDするための手順ではないのでご注意ください (ミノの置く順番はツモ順によって変化する)。"
+msgid ""
+"この地形でパターン ``*p7`` の場合、TSDをしながらパフェを取れる確率は ``35.00%`` となります。 "
+"なお、表示されているテト譜はあくまでもミノの置き場所であり、TSDするための手順ではないのでご注意ください "
+"(ミノの置く順番はツモ順によって変化する)。"
 msgstr ""
 
 #: ../../source/contents/workflow.rst:52
@@ -4650,11 +4726,16 @@ msgid "たとえば、"
 msgstr ""
 
 #: ../../source/contents/workflow.rst:58
-msgid "これはミノを `このように <http://fumen.zui.jp/?v115@zgA8g0BtzhC8i0hlRpE8BtglRpD8ywglG8wwF8JeAg?H>`_ 置くと、パターン全体の ``5.71%`` のツモ順でTSDできることを表しています。"
+msgid ""
+"これはミノを `このように "
+"<http://fumen.zui.jp/?v115@zgA8g0BtzhC8i0hlRpE8BtglRpD8ywglG8wwF8JeAg?H>`_"
+" 置くと、パターン全体の ``5.71%`` のツモ順でTSDできることを表しています。"
 msgstr ""
 
 #: ../../source/contents/workflow.rst:63
-msgid "`ガムシロ積み3巡目のパフェ <https://tetris-matome.com/gamushiro/>`_ のため、5ラインパフェ(``-c 5``)となっています。"
+msgid ""
+"`ガムシロ積み3巡目のパフェ <https://tetris-matome.com/gamushiro/>`_ のため、5ラインパフェ(``-c "
+"5``)となっています。"
 msgstr ""
 
 #: ../../source/contents/workflow.rst:64

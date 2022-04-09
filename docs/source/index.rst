@@ -2,14 +2,15 @@
 solution-finder
 ===========================================
 
-solution-finderとは、テトリスで条件に従った解を探索するコマンドラインツールです。理論的なコマンドを組み合わせることで複雑な条件でも様々な結果を求めることができます。
+solution-finderとは、テトリスで、条件にあわせた解をみつけたり、確率を計算するためのコマンドラインツールです。
+コマンドを組み合わせることで、複雑な条件下での計算もできます。
 
 コマンド一覧
 -------------------------------------------
 
 + **percent** : ある地形からパーフェクトクリアできる確率を計算します。
 + **path** : ある地形からパーフェクトクリアする手順をすべて出力します。
-+ **setup** : ある地形から指定したブロックを埋める操作手順をすべて列挙します。
++ **setup** : ある地形から指定したブロックを埋める操作手順をすべて出力します。
 + **ren** : ある地形からRENを続ける手順をすべて出力します。
 + **spin** : ある地形からTスピンできる手順をすべて出力します。
 + **cover** : 指定された場所・条件通りにミノを置くことができる確率を計算します。
@@ -17,14 +18,13 @@ solution-finderとは、テトリスで条件に従った解を探索するコ�
 + **util fumen** : 入力されたテト譜を変換して、新たなテト譜を出力します。
 + **util seq** : solution-finderのパターンをツモ順に展開します。
 
-詳細は各コマンドをご参照ください。
+詳細は各コマンドのページをご参照ください。
 
 
 補助GUI
 -------------------------------------------
 
-solution-finderはコマンドラインツールなため、基本的にCLIからコマンドで操作します。
-
+solution-finderは基本的にCLIからコマンドで操作する必要があります。
 一方で ``percent`` ``path`` ``util fig`` コマンドについては、solution-finderを操作しやすくするGUIが付属しています。
 
 こちらのGUIは `@kitsune_fuchi (twitter) <https://twitter.com/kitsune_fuchi>`_ さんに作成していただきました。
@@ -37,7 +37,7 @@ https://github.com/knewjade/solution-finder/releases/ からダウンロード�
 
 （補助GUIを利用したい方は ``solution-finder-*-GUI.zip`` を選択してください。）
 
-また、プログラムの実行には `Java8(64bit) <https://java.com/ja/download/>`_ が必要となります。
+また、プログラムの実行には `Java8(64bit) <https://java.com/ja/download/>`_ 以上が必要となります。
 
 その後のステップは :doc:`contents/quick_start` をご覧ください。
 
@@ -60,6 +60,7 @@ https://github.com/knewjade/solution-finder/releases/ からダウンロード�
    contents/workflow
    contents/caution
    contents/tools
+   contents/licenses
    contents/contact
 
 
