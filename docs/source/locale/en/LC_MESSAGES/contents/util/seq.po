@@ -1,0 +1,416 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: solution-finder\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-03-30 19:39+0900\n"
+"PO-Revision-Date: 2022-04-09 00:33\n"
+"Last-Translator: \n"
+"Language-Team: English\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: solution-finder\n"
+"X-Crowdin-Project-ID: 509240\n"
+"X-Crowdin-Language: en\n"
+"X-Crowdin-File: /translation/docs/source/locale/gettext/contents/util/seq.pot\n"
+"X-Crowdin-File-ID: 76\n"
+"Language: en_US\n"
+
+#: ../../contents/util/seq.rst:3
+msgid "サブコマンド: util seq"
+msgstr ""
+
+#: ../../contents/util/seq.rst:6
+msgid "概要"
+msgstr ""
+
+#: ../../contents/util/seq.rst:8
+msgid "入力されたパターンの ``*`` などをシーケンス（ツモ順）に展開します。"
+msgstr ""
+
+#: ../../contents/util/seq.rst:10
+msgid "展開のほかに、ホールドによるミノの入れ替えにも対応しています。"
+msgstr ""
+
+#: ../../contents/util/seq.rst:12
+msgid "対応している変換モードは以下の通りです。"
+msgstr ""
+
+#: ../../contents/util/seq.rst:14
+#: ../../contents/util/seq.rst:123
+msgid "``pass``: ``*`` などを展開だけを行う"
+msgstr ""
+
+#: ../../contents/util/seq.rst:15
+#: ../../contents/util/seq.rst:124
+msgid "``forward``: 指定パターンから、ホールドでミノを入れ替えてつくれる、ホールド後のシーケンスを展開する"
+msgstr ""
+
+#: ../../contents/util/seq.rst:16
+#: ../../contents/util/seq.rst:125
+msgid "``backward``: ホールドでミノを入れ替えると、指定パターンの形になる、ホールドの前の元のシーケンスを展開する。最終的にホールドされるため特定できないミノは ``*`` が出力されます"
+msgstr ""
+
+#: ../../contents/util/seq.rst:17
+#: ../../contents/util/seq.rst:126
+msgid "``backward-and-pass`` ``backward-pass``: ``backward`` と同じ処理をした後、``*`` を7種類のミノで展開します"
+msgstr ""
+
+#: ../../contents/util/seq.rst:21
+msgid "基本コマンド"
+msgstr ""
+
+#: ../../contents/util/seq.rst:23
+msgid "``java -jar sfinder.jar util seq -p '*!'``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:27
+msgid "サンプルコマンド"
+msgstr ""
+
+#: ../../contents/util/seq.rst:29
+msgid "代表的なサンプルコマンドをいくつか例示します。"
+msgstr ""
+
+#: ../../contents/util/seq.rst:32
+msgid "Sの直後にZがくるツモ順 (開幕7ミノ)"
+msgstr ""
+
+#: ../../contents/util/seq.rst:34
+msgid "``java -jar sfinder.jar util seq -M pass -hh no -p *! -e 'SZ'``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:37
+msgid "SがZより先にくるツモ順 (開幕7ミノ)"
+msgstr ""
+
+#: ../../contents/util/seq.rst:39
+msgid "``java -jar sfinder.jar util seq -M pass -hh no -p *! -e 'S.*Z'``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:42
+msgid "Sが先頭から2番目にくるツモ順 (開幕7ミノ)"
+msgstr ""
+
+#: ../../contents/util/seq.rst:44
+msgid "``java -jar sfinder.jar util seq -M pass -hh no -p *! -e '^.S'``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:47
+msgid "Sが先頭から1番目か2番目にくるツモ順 (開幕7ミノ)"
+msgstr ""
+
+#: ../../contents/util/seq.rst:49
+msgid "``java -jar sfinder.jar util seq -M pass -hh no -p *! -e '^.{0,1}?S'``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:52
+msgid "Sが最後から2番目にくるツモ順 (開幕7ミノ)"
+msgstr ""
+
+#: ../../contents/util/seq.rst:54
+msgid "``java -jar sfinder.jar util seq -M pass -hh no -p *! -e 'S.$'``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:57
+msgid "Tが2個含まれるツモ順 (任意のホールド+4ミノ選択)"
+msgstr ""
+
+#: ../../contents/util/seq.rst:59
+msgid "``java -jar sfinder.jar util seq -M pass -p *,*p4 -n T=2``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:63
+msgid "ツモ順 ``TIOLJ`` から、ホールド1回以内で並び変えられる、ホールド後のシーケンス (4ミノ)"
+msgstr ""
+
+#: ../../contents/util/seq.rst:65
+msgid "``java -jar sfinder.jar util seq -M forward -p TIOLJ -n HOLD<=1``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:67
+msgid "※ 先頭の ``T`` は、はじめからホールドにある設定です"
+msgstr ""
+
+#: ../../contents/util/seq.rst:71
+msgid "ツモ順 ``TIOLJ`` にホールド1回以内で並び変えられる、ホールド前のシーケンス (6ミノ)"
+msgstr ""
+
+#: ../../contents/util/seq.rst:73
+msgid "``java -jar sfinder.jar util seq -M backward -p TIOLJ -n HOLD<=1``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:75
+msgid "※ 出力されるシーケンスの先頭のミノは、はじめからホールドにある設定です"
+msgstr ""
+
+#: ../../contents/util/seq.rst:79
+msgid "フィルタリングや変換処理の順番"
+msgstr ""
+
+#: ../../contents/util/seq.rst:81
+msgid "各オプションの処理される順番は以下のようになっています。"
+msgstr ""
+
+#: ../../contents/util/seq.rst:83
+msgid "パターンをモードに従って展開"
+msgstr ""
+
+#: ../../contents/util/seq.rst:84
+msgid "ホールドの回数によるフィルタリング (``-n`` オプション)"
+msgstr ""
+
+#: ../../contents/util/seq.rst:85
+msgid "シーケンスサイズの変換処理 (``-l`` オプション)"
+msgstr ""
+
+#: ../../contents/util/seq.rst:86
+msgid "ミノの個数によるフィルタリング (``-n`` オプション)"
+msgstr ""
+
+#: ../../contents/util/seq.rst:87
+msgid "正規表現によるフィルタリング (``-e`` オプション)"
+msgstr ""
+
+#: ../../contents/util/seq.rst:88
+msgid "シーケンスの出力"
+msgstr ""
+
+#: ../../contents/util/seq.rst:92
+msgid "オプション一覧"
+msgstr ""
+
+#: ../../contents/util/seq.rst:95
+msgid "short"
+msgstr ""
+
+#: ../../contents/util/seq.rst:95
+msgid "long"
+msgstr ""
+
+#: ../../contents/util/seq.rst:95
+msgid "default"
+msgstr ""
+
+#: ../../contents/util/seq.rst:97
+msgid "``-p``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:97
+msgid "``--patterns``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:97
+#: ../../contents/util/seq.rst:101
+#: ../../contents/util/seq.rst:102
+#: ../../contents/util/seq.rst:103
+msgid "なし"
+msgstr ""
+
+#: ../../contents/util/seq.rst:98
+msgid "``-M``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:98
+msgid "``--mode``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:98
+msgid "pass"
+msgstr ""
+
+#: ../../contents/util/seq.rst:99
+msgid "``-l``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:99
+msgid "``--length``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:99
+msgid "-1"
+msgstr ""
+
+#: ../../contents/util/seq.rst:100
+msgid "``-d``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:100
+msgid "``--distinct``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:100
+#: ../../contents/util/seq.rst:104
+msgid "yes"
+msgstr ""
+
+#: ../../contents/util/seq.rst:101
+msgid "``-e``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:101
+msgid "``--expression``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:102
+msgid "``-ne``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:102
+msgid "``--not-expression``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:103
+msgid "``-n``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:103
+msgid "``--num``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:104
+msgid "``-hh``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:104
+msgid "``--head-hold``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:109
+msgid "``-p``, ``--patterns`` [default: なし]"
+msgstr ""
+
+#: ../../contents/util/seq.rst:111
+msgid "探索ミノの組み合わせパターンを指定する。"
+msgstr ""
+
+#: ../../contents/util/seq.rst:113
+msgid "パターンを変更したい場合は ``--pattern *p7`` のように指定する。"
+msgstr ""
+
+#: ../../contents/util/seq.rst:117
+msgid "``-M``, ``--mode`` [default: pass]"
+msgstr ""
+
+#: ../../contents/util/seq.rst:119
+msgid "入力されたパターンをどのように変換するかモードを指定する。"
+msgstr ""
+
+#: ../../contents/util/seq.rst:121
+msgid "対応しているモードは以下の通り。"
+msgstr ""
+
+#: ../../contents/util/seq.rst:130
+msgid "``-l``, ``--length`` [default: -1]"
+msgstr ""
+
+#: ../../contents/util/seq.rst:132
+msgid "変換後のシーケンスの長さを指定します。"
+msgstr ""
+
+#: ../../contents/util/seq.rst:134
+msgid "``-1`` を入力したとき、以下の値が自動的に設定されます。"
+msgstr ""
+
+#: ../../contents/util/seq.rst:136
+msgid "``pass``: 入力されたパターンの長さと同じ"
+msgstr ""
+
+#: ../../contents/util/seq.rst:137
+msgid "``forward``: 入力されたパターンの長さ - 1"
+msgstr ""
+
+#: ../../contents/util/seq.rst:138
+msgid "``backward`` ``backward-and-pass``: 入力されたパターンの長さ + 1"
+msgstr ""
+
+#: ../../contents/util/seq.rst:142
+msgid "``-d``, ``--distinct`` [default: yes]"
+msgstr ""
+
+#: ../../contents/util/seq.rst:144
+msgid "変換後のシーケンスの重複を取り除くか指定します。"
+msgstr ""
+
+#: ../../contents/util/seq.rst:146
+msgid "``yes`` を指定した場合、重複したシーケンスを取り除かれます。"
+msgstr ""
+
+#: ../../contents/util/seq.rst:150
+msgid "``-e``, ``--expression`` [default: なし]"
+msgstr ""
+
+#: ../../contents/util/seq.rst:152
+msgid "変換後のシーケンスに対して、条件が満たしているものだけを取り出します。"
+msgstr ""
+
+#: ../../contents/util/seq.rst:154
+#: ../../contents/util/seq.rst:164
+msgid "条件は正規表現で指定します。"
+msgstr ""
+
+#: ../../contents/util/seq.rst:156
+msgid "なお ``-ne`` を同時に指定した場合、2つのオプションを満たすもの（AND）が取り出されます。"
+msgstr ""
+
+#: ../../contents/util/seq.rst:160
+msgid "``-ne``, ``--not-expression`` [default: なし]"
+msgstr ""
+
+#: ../../contents/util/seq.rst:162
+msgid "変換後のシーケンスに対して、条件が満たさないものだけを取り出します。"
+msgstr ""
+
+#: ../../contents/util/seq.rst:166
+msgid "なお ``-e`` を同時に指定した場合、2つのオプションを満たすもの（AND）が取り出されます。"
+msgstr ""
+
+#: ../../contents/util/seq.rst:170
+msgid "``-n``, ``--num`` [default: なし]"
+msgstr ""
+
+#: ../../contents/util/seq.rst:172
+msgid "変換後のシーケンスに対して、ミノの個数やホールドの回数の条件を満たすものだけを取り出します。"
+msgstr ""
+
+#: ../../contents/util/seq.rst:174
+msgid "条件は ``T==0`` ``1<Hold`` のように指定します。条件を複数個同時に指定する場合は、スペースでつなげてください。"
+msgstr ""
+
+#: ../../contents/util/seq.rst:176
+msgid "ex) ``S=1 Z=1 0<Hold``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:178
+msgid "対象: ``T`` ``I`` ``O`` ``L`` ``J`` ``S`` ``Z``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:179
+msgid "演算子: ``== (=も可)`` ``!=`` ``<`` ``<=`` ``>`` ``>=``"
+msgstr ""
+
+#: ../../contents/util/seq.rst:183
+msgid "``-hh``, ``--head-hold`` [default: yes]"
+msgstr ""
+
+#: ../../contents/util/seq.rst:185
+msgid "パターン( ``forward`` モード)・出力されるシーケンス( ``backward`` モード) の先頭のミノを、ホールドの初期値として扱うかどうかを指定します。 この設定値は、ホールドの回数に影響を与えます。"
+msgstr ""
+
+#: ../../contents/util/seq.rst:188
+msgid "たとえば ``LZSO`` というシーケンスがあるとき、"
+msgstr ""
+
+#: ../../contents/util/seq.rst:190
+msgid "``--hh yes`` を指定すると、``L``がホールドされている状態で ``Z`` を受け取るところから開始される"
+msgstr ""
+
+#: ../../contents/util/seq.rst:191
+msgid "``--hh no`` を指定すると、何もホールドされていない状態で ``L`` を受け取るところから開始される"
+msgstr ""
+
+#: ../../contents/util/seq.rst:193
+msgid "となります。"
+msgstr ""
+
