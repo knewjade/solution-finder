@@ -1,0 +1,665 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: solution-finder\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-03-30 19:39+0900\n"
+"PO-Revision-Date: 2022-04-09 00:33\n"
+"Last-Translator: \n"
+"Language-Team: English\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: solution-finder\n"
+"X-Crowdin-Project-ID: 509240\n"
+"X-Crowdin-Language: en\n"
+"X-Crowdin-File: /translation/docs/source/locale/gettext/contents/path/main.pot\n"
+"X-Crowdin-File-ID: 54\n"
+"Language: en_US\n"
+
+#: ../../contents/path/main.rst:3
+msgid "コマンド: path"
+msgstr ""
+
+#: ../../contents/path/main.rst:6
+msgid "概要"
+msgstr ""
+
+#: ../../contents/path/main.rst:8
+msgid "ある地形からパーフェクトまでの操作手順をすべて列挙する"
+msgstr ""
+
+#: ../../contents/path/main.rst:10
+msgid "指定したミノの組み合わせから、パーフェクトまでの全パターンを列挙してファイルに出力"
+msgstr ""
+
+#: ../../contents/path/main.rst:15
+msgid "次の2種類の結果を列挙して出力"
+msgstr ""
+
+#: ../../contents/path/main.rst:12
+msgid "ミノの接着場所が異なるパターンを列挙 (unique)"
+msgstr ""
+
+#: ../../contents/path/main.rst:15
+msgid "あるパフェパターンに対して、同じようなミノ順をカバーできるパターンが他にあるとき、片方をカットした手順を列挙 (minimal)"
+msgstr ""
+
+#: ../../contents/path/main.rst:14
+msgid "※ 厳密にすべてのパターンを網羅する最小の組み合わせではありませんのでご注意下さい"
+msgstr ""
+
+#: ../../contents/path/main.rst:18
+msgid "基本コマンド"
+msgstr ""
+
+#: ../../contents/path/main.rst:20
+msgid "``java -jar sfinder.jar path --tetfu v115@9gE8DeG8CeH8BeG8CeA8JeAgH --patterns *p4``"
+msgstr ""
+
+#: ../../contents/path/main.rst:24
+msgid "出力フォーマット"
+msgstr ""
+
+#: ../../contents/path/main.rst:26
+msgid "出力フォーマットは、以下の方式から選択できます。 変更したい場合は、オプションから変更できます。"
+msgstr ""
+
+#: ../../contents/path/main.rst:29
+#: ../../contents/path/main.rst:131
+msgid "html: シンプルなHTML形式のテト譜リンク"
+msgstr ""
+
+#: ../../contents/path/main.rst:30
+msgid "csv: csv形式（詳細は後述）"
+msgstr ""
+
+#: ../../contents/path/main.rst:33
+msgid "HTML形式"
+msgstr ""
+
+#: ../../contents/path/main.rst:35
+msgid "サンプル ::"
+msgstr ""
+
+#: ../../contents/path/main.rst:40
+msgid "S-Spawn T-Right L-Left O-Spawn Z-Spawn I-Spawn"
+msgstr ""
+
+#: ../../contents/path/main.rst:41
+msgid "パフェ手順の一例"
+msgstr ""
+
+#: ../../contents/path/main.rst:42
+msgid "30.0 %"
+msgstr ""
+
+#: ../../contents/path/main.rst:43
+msgid "入力パターンで指定したツモのうち、この手順でパフェできる割合"
+msgstr ""
+
+#: ../../contents/path/main.rst:46
+msgid "1512"
+msgstr ""
+
+#: ../../contents/path/main.rst:45
+msgid "入力パターンで指定したツモのうち、この手順でパフェできるツモ数"
+msgstr ""
+
+#: ../../contents/path/main.rst:49
+msgid "CSV形式"
+msgstr ""
+
+#: ../../contents/path/main.rst:58
+msgid "オプション一覧"
+msgstr ""
+
+#: ../../contents/path/main.rst:61
+msgid "short"
+msgstr ""
+
+#: ../../contents/path/main.rst:61
+msgid "long"
+msgstr ""
+
+#: ../../contents/path/main.rst:61
+msgid "default"
+msgstr ""
+
+#: ../../contents/path/main.rst:63
+msgid "``-H``"
+msgstr ""
+
+#: ../../contents/path/main.rst:63
+msgid "``--hold``"
+msgstr ""
+
+#: ../../contents/path/main.rst:63
+msgid "use"
+msgstr ""
+
+#: ../../contents/path/main.rst:64
+msgid "``-t``"
+msgstr ""
+
+#: ../../contents/path/main.rst:64
+msgid "``--tetfu``"
+msgstr ""
+
+#: ../../contents/path/main.rst:64
+#: ../../contents/path/main.rst:66
+msgid "なし"
+msgstr ""
+
+#: ../../contents/path/main.rst:65
+msgid "``-P``"
+msgstr ""
+
+#: ../../contents/path/main.rst:65
+msgid "``--page``"
+msgstr ""
+
+#: ../../contents/path/main.rst:65
+msgid "1"
+msgstr ""
+
+#: ../../contents/path/main.rst:66
+msgid "``-p``"
+msgstr ""
+
+#: ../../contents/path/main.rst:66
+msgid "``--patterns``"
+msgstr ""
+
+#: ../../contents/path/main.rst:67
+msgid "``-c``"
+msgstr ""
+
+#: ../../contents/path/main.rst:67
+msgid "``--clear-line``"
+msgstr ""
+
+#: ../../contents/path/main.rst:67
+msgid "4"
+msgstr ""
+
+#: ../../contents/path/main.rst:68
+msgid "``-f``"
+msgstr ""
+
+#: ../../contents/path/main.rst:68
+msgid "``--format``"
+msgstr ""
+
+#: ../../contents/path/main.rst:68
+msgid "html"
+msgstr ""
+
+#: ../../contents/path/main.rst:69
+msgid "``-k``"
+msgstr ""
+
+#: ../../contents/path/main.rst:69
+msgid "``--key``"
+msgstr ""
+
+#: ../../contents/path/main.rst:69
+msgid "none"
+msgstr ""
+
+#: ../../contents/path/main.rst:70
+msgid "``-s``"
+msgstr ""
+
+#: ../../contents/path/main.rst:70
+msgid "``--split``"
+msgstr ""
+
+#: ../../contents/path/main.rst:70
+msgid "no"
+msgstr ""
+
+#: ../../contents/path/main.rst:71
+msgid "``-L``"
+msgstr ""
+
+#: ../../contents/path/main.rst:71
+msgid "``--max-layer``"
+msgstr ""
+
+#: ../../contents/path/main.rst:71
+msgid "2"
+msgstr ""
+
+#: ../../contents/path/main.rst:72
+msgid "``-so``"
+msgstr ""
+
+#: ../../contents/path/main.rst:72
+msgid "``--specified-only``"
+msgstr ""
+
+#: ../../contents/path/main.rst:72
+msgid "yes"
+msgstr ""
+
+#: ../../contents/path/main.rst:73
+msgid "``-r``"
+msgstr ""
+
+#: ../../contents/path/main.rst:73
+msgid "``--reserved``"
+msgstr ""
+
+#: ../../contents/path/main.rst:73
+msgid "false"
+msgstr ""
+
+#: ../../contents/path/main.rst:74
+msgid "``-d``"
+msgstr ""
+
+#: ../../contents/path/main.rst:74
+msgid "``--drop``"
+msgstr ""
+
+#: ../../contents/path/main.rst:74
+msgid "soft"
+msgstr ""
+
+#: ../../contents/path/main.rst:75
+msgid "``-th``"
+msgstr ""
+
+#: ../../contents/path/main.rst:75
+msgid "``--threads``"
+msgstr ""
+
+#: ../../contents/path/main.rst:75
+msgid "-1"
+msgstr ""
+
+#: ../../contents/path/main.rst:76
+msgid "``-cb``"
+msgstr ""
+
+#: ../../contents/path/main.rst:76
+msgid "``--cached-bit``"
+msgstr ""
+
+#: ../../contents/path/main.rst:76
+msgid "0"
+msgstr ""
+
+#: ../../contents/path/main.rst:77
+msgid "``-o``"
+msgstr ""
+
+#: ../../contents/path/main.rst:77
+msgid "``--output-base``"
+msgstr ""
+
+#: ../../contents/path/main.rst:77
+msgid "output/path.txt"
+msgstr ""
+
+#: ../../contents/path/main.rst:78
+msgid "``-lp``"
+msgstr ""
+
+#: ../../contents/path/main.rst:78
+msgid "``--log-path``"
+msgstr ""
+
+#: ../../contents/path/main.rst:78
+msgid "output/last_output.txt"
+msgstr ""
+
+#: ../../contents/path/main.rst:79
+msgid "``-fp``"
+msgstr ""
+
+#: ../../contents/path/main.rst:79
+msgid "``--field-path``"
+msgstr ""
+
+#: ../../contents/path/main.rst:79
+msgid "input/field.txt"
+msgstr ""
+
+#: ../../contents/path/main.rst:80
+msgid "``-pp``"
+msgstr ""
+
+#: ../../contents/path/main.rst:80
+msgid "``--patterns-path``"
+msgstr ""
+
+#: ../../contents/path/main.rst:80
+msgid "input/patterns.txt"
+msgstr ""
+
+#: ../../contents/path/main.rst:85
+msgid "``-H``, ``--hold`` [default: use]"
+msgstr ""
+
+#: ../../contents/path/main.rst:87
+msgid "ホールドの有無を指定する。"
+msgstr ""
+
+#: ../../contents/path/main.rst:89
+msgid "ホールドなしで探索する場合は ``--hold avoid`` を指定する。"
+msgstr ""
+
+#: ../../contents/path/main.rst:93
+msgid "``-t``, ``--tetfu`` [default: なし]"
+msgstr ""
+
+#: ../../contents/path/main.rst:95
+msgid "フィールドやオプションなどを指定したテト譜データを指定する。"
+msgstr ""
+
+#: ../../contents/path/main.rst:97
+msgid "テト譜で探索条件を指定する場合は ``--tetfu v115@vhAAgH`` のように指定する。"
+msgstr ""
+
+#: ../../contents/path/main.rst:99
+msgid "v115のテト譜データにのみ対応。"
+msgstr ""
+
+#: ../../contents/path/main.rst:103
+msgid "``-P``, ``--page`` [default: 1]"
+msgstr ""
+
+#: ../../contents/path/main.rst:105
+msgid "テト譜からロードするページを指定する。"
+msgstr ""
+
+#: ../../contents/path/main.rst:107
+msgid "読み込むページを変更したい場合は ``--page 31`` のように指定する。"
+msgstr ""
+
+#: ../../contents/path/main.rst:111
+msgid "``-p``, ``--patterns`` [default: なし]"
+msgstr ""
+
+#: ../../contents/path/main.rst:113
+msgid "探索ミノの組み合わせパターンを指定する。"
+msgstr ""
+
+#: ../../contents/path/main.rst:115
+msgid "パターンを変更したい場合は ``--pattern *p7`` のように指定する。"
+msgstr ""
+
+#: ../../contents/path/main.rst:117
+msgid "複数パターンを指定したい場合は ``;`` で連結する (``--pattern T,*;I,*``)"
+msgstr ""
+
+#: ../../contents/path/main.rst:121
+msgid "``-c``, ``--clear-line`` [default: 4]"
+msgstr ""
+
+#: ../../contents/path/main.rst:123
+msgid "パフェまでに消去するライン数を指定する。"
+msgstr ""
+
+#: ../../contents/path/main.rst:127
+msgid "``-f``, ``--format`` [default: html]"
+msgstr ""
+
+#: ../../contents/path/main.rst:129
+msgid "以下の出力フォーマットのうち、ひとつを指定する。"
+msgstr ""
+
+#: ../../contents/path/main.rst:132
+msgid "互換性のため `link` は `html` と同じように動作します"
+msgstr ""
+
+#: ../../contents/path/main.rst:135
+msgid "csv: csv形式"
+msgstr ""
+
+#: ../../contents/path/main.rst:134
+msgid "keyオプションで出力する項目をさらに選択します"
+msgstr ""
+
+#: ../../contents/path/main.rst:138
+msgid "``-k``, ``--key`` [default: none]"
+msgstr ""
+
+#: ../../contents/path/main.rst:140
+msgid "formatオプションに csv を選択したとき、さらに出力する項目を指定する。"
+msgstr ""
+
+#: ../../contents/path/main.rst:142
+msgid "以下の出力項目のうち、ひとつを指定する。"
+msgstr ""
+
+#: ../../contents/path/main.rst:144
+msgid "solution: パフェ手順をキーとして、対応ツモをまとめた形式"
+msgstr ""
+
+#: ../../contents/path/main.rst:145
+msgid "pattern: 入力パターンをキーとして、対応地形をまとめた形式"
+msgstr ""
+
+#: ../../contents/path/main.rst:146
+msgid "use: 使用ミノをキーとして、対応ツモ・地形をまとめた形式"
+msgstr ""
+
+#: ../../contents/path/main.rst:147
+msgid "none: 1行につき、1つのパフェでの操作手順を記述した形式（旧csvフォーマット形式）"
+msgstr ""
+
+#: ../../contents/path/main.rst:149
+msgid "各出力項目の詳細なフォーマットは :doc:`CSV形式<csv>` を参照してください。"
+msgstr ""
+
+#: ../../contents/path/main.rst:151
+msgid "なお、オプションは先頭の1文字だけでも指定することができます。 (solution → s)"
+msgstr ""
+
+#: ../../contents/path/main.rst:155
+msgid "``-s``, ``--split`` [default: no]"
+msgstr ""
+
+#: ../../contents/path/main.rst:157
+msgid "出力フォーマットがlinkのときに出力されるテト譜で、手順を1ミノずつ分割するか指定する。"
+msgstr ""
+
+#: ../../contents/path/main.rst:159
+msgid "yes: 1ページにつき1ミノずつ表示される形で出力"
+msgstr ""
+
+#: ../../contents/path/main.rst:160
+msgid "no: すべてのミノが1ページに納まった形で出力"
+msgstr ""
+
+#: ../../contents/path/main.rst:164
+msgid "``-L``, ``--max-layer`` [default: 2]"
+msgstr ""
+
+#: ../../contents/path/main.rst:166
+msgid "手順の絞り込みをどこまで行うかを指定する。 次の数字を指定すると、対応するところまで絞り込みを行う。"
+msgstr ""
+
+#: ../../contents/path/main.rst:169
+msgid "1: unique"
+msgstr ""
+
+#: ../../contents/path/main.rst:170
+msgid "2: unique, minimal の両方"
+msgstr ""
+
+#: ../../contents/path/main.rst:174
+msgid "``-so``, ``--specified-only`` [default: yes]"
+msgstr ""
+
+#: ../../contents/path/main.rst:176
+msgid "minimalの絞り込みにおいて、パターンの重複をチェックするとき、そのパターンを入力パターン内に限定するならyesを指定。 noの場合、解自体から抽出したパターンをもとに、重複をチェックします。"
+msgstr ""
+
+#: ../../contents/path/main.rst:181
+msgid "``-r``, ``--reserved`` [default: false]"
+msgstr ""
+
+#: ../../contents/path/main.rst:183
+msgid "ミノの接着場所を予約します。"
+msgstr ""
+
+#: ../../contents/path/main.rst:185
+msgid "たとえば `テンプレ+縦I <http://fumen.zui.jp/?v115@9gwhDeE8whCeF8whBeG8whCeF8JeAgH>`_ を入力したとします。"
+msgstr ""
+
+#: ../../contents/path/main.rst:187
+msgid "このとき探索開始には `クレーの地形 <http://fumen.zui.jp/?v115@9gh0R4F8g0R4G8BtH8g0BtG8JeAgWDA6vzBA>`_ が適用され、 最終的に色のあるブロック通りに配置されるパフェが探索対象となります。"
+msgstr ""
+
+#: ../../contents/path/main.rst:190
+msgid "なおこのとき、色のついたブロックは4個単位である必要はありません（1ブロックでも可）。"
+msgstr ""
+
+#: ../../contents/path/main.rst:192
+msgid "この機能を有効にする場合は ``true`` を指定してください。"
+msgstr ""
+
+#: ../../contents/path/main.rst:196
+msgid "``-d``, ``--drop`` [default: soft]"
+msgstr ""
+
+#: ../../contents/path/main.rst:198
+msgid "ミノの操作に制限を加える。"
+msgstr ""
+
+#: ../../contents/path/main.rst:200
+msgid "以下から操作方法をひとつ選択する。"
+msgstr ""
+
+#: ../../contents/path/main.rst:202
+msgid "softdrop: ソフトドロップ＋回転入れ（制限なし）"
+msgstr ""
+
+#: ../../contents/path/main.rst:203
+msgid "harddrop: ハードドロップのみ"
+msgstr ""
+
+#: ../../contents/path/main.rst:204
+msgid "180: ソフトドロップ＋180度回転入れ。180度回転は `Nullpomino <https://github.com/nullpomino/nullpomino>`_ のStandard Wallkickに準拠します。"
+msgstr ""
+
+#: ../../contents/path/main.rst:205
+msgid "t-softdrop: Tミノはソフトドロップ、その他のミノはハードドロップ"
+msgstr ""
+
+#: ../../contents/path/main.rst:207
+msgid "any-tspin (any, tspin0): Tミノは必ずT-Spin(Mini含むすべてのT-Spin)をする。その他のミノはハードドロップ"
+msgstr ""
+
+#: ../../contents/path/main.rst:208
+msgid "tss (tspin1): Tミノは必ずT-Spin Single,Double,Tripe(Miniは含まない)をする。その他のミノはハードドロップ"
+msgstr ""
+
+#: ../../contents/path/main.rst:209
+msgid "tsd (tspin2): Tミノは必ずT-Spin Double,Tripe(Miniは含まない)をする。その他のミノはハードドロップ"
+msgstr ""
+
+#: ../../contents/path/main.rst:210
+msgid "tst (tspin3): Tミノは必ずT-Spin Tripe(Miniは含まない)をする。その他のミノはハードドロップ"
+msgstr ""
+
+#: ../../contents/path/main.rst:212
+msgid "※ T-Spin系のdropでは、「T-Spinできないケース」や「ライン消去が発生しないT-Spinになるケース」ではミノを置きません。 また、Tミノを使わないケースでは `harddrop` と同じになる点にご注意ください (solutionが省略されるわけではありません)。"
+msgstr ""
+
+#: ../../contents/path/main.rst:217
+msgid "``-th``, ``--threads`` [default: -1]"
+msgstr ""
+
+#: ../../contents/path/main.rst:219
+msgid "探索時に使用するスレッド数を指定します。"
+msgstr ""
+
+#: ../../contents/path/main.rst:221
+msgid "`1` を指定したとき、シングルスレッドでの探索となります。"
+msgstr ""
+
+#: ../../contents/path/main.rst:223
+msgid "もし、0以下を指定した場合は、自動的に「実行環境のコア数」を設定します。"
+msgstr ""
+
+#: ../../contents/path/main.rst:227
+msgid "``-cb``, ``--cached-bit`` [default: 0]"
+msgstr ""
+
+#: ../../contents/path/main.rst:229
+msgid "内部のアルゴリズムで使用するキャッシュの最小ビットを指定します。"
+msgstr ""
+
+#: ../../contents/path/main.rst:231
+msgid "基本的にこの値を変更する必要はありません。"
+msgstr ""
+
+#: ../../contents/path/main.rst:233
+msgid "実行環境で使用できるメモリが小さく、OutOfMemoryErrorが頻発して計算が続行できなくなる場合のみ、この値を変更してください。"
+msgstr ""
+
+#: ../../contents/path/main.rst:235
+msgid "この数値を大きくすることで計算結果を保存せずにその都度計算するようになるため、実行時間が非常に長くなります。"
+msgstr ""
+
+#: ../../contents/path/main.rst:237
+msgid "そのため、値を調節するときは1ずつ大きくしていき、再実行して確認しながら調整してください。"
+msgstr ""
+
+#: ../../contents/path/main.rst:241
+msgid "``-o``, ``--output-base`` [default: output/path.txt]"
+msgstr ""
+
+#: ../../contents/path/main.rst:243
+msgid "実行後に結果を出力するファイルのパスを指定する。 ただし、拡張子は出力形式によって変更される可能性があります。"
+msgstr ""
+
+#: ../../contents/path/main.rst:246
+msgid "実際は、このオプションで指定したファイル名 + suffix にあたるファイルとして出力されます。"
+msgstr ""
+
+#: ../../contents/path/main.rst:248
+msgid "出力されるファイルは以下の通りです。"
+msgstr ""
+
+#: ../../contents/path/main.rst:250
+msgid "指定したファイル名 + _unique に unique (重複をのぞいた手順) の結果が出力される。"
+msgstr ""
+
+#: ../../contents/path/main.rst:251
+msgid "指定したファイル名 + _minimal に minimal (同じミノ順をカバーするパターンをのぞいた手順) の結果が出力される。"
+msgstr ""
+
+#: ../../contents/path/main.rst:254
+msgid "``--format csv`` の場合に限り、 ``-`` を指定することで、CSVファイルと同じ結果を標準出力します。 特に ``--key none`` の場合は ``--max-layer`` によって出力されるCSVファイルが選択されます。"
+msgstr ""
+
+#: ../../contents/path/main.rst:259
+msgid "``-lp``, ``--log-path`` [default: output/last_output.txt]"
+msgstr ""
+
+#: ../../contents/path/main.rst:261
+msgid "実行時のログを保存するファイルのパスを指定する。"
+msgstr ""
+
+#: ../../contents/path/main.rst:265
+msgid "``-fp``, ``--field-path`` [default: input/field.txt]"
+msgstr ""
+
+#: ../../contents/path/main.rst:267
+msgid "フィールドを定義するファイルのパスを指定する。"
+msgstr ""
+
+#: ../../contents/path/main.rst:271
+msgid "``-pp``, ``--patterns-path`` [default: input/patterns.txt]"
+msgstr ""
+
+#: ../../contents/path/main.rst:273
+msgid "探索の組み合わせパターンを定義するファイルのパスを指定する。"
+msgstr ""
+
