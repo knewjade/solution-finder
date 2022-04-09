@@ -1,0 +1,112 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2017-2022, knewjade
+# This file is distributed under the same license as the solution-finder
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: solution-finder \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-03-30 19:39+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../contents/workflow.rst:3
+msgid "ワークフロー"
+msgstr ""
+
+#: ../../contents/workflow.rst:6
+msgid "このページについて"
+msgstr ""
+
+#: ../../contents/workflow.rst:8
+msgid "solution-finderのコマンドを組み合わせたサンプルコマンドを記載します。"
+msgstr ""
+
+#: ../../contents/workflow.rst:12
+msgid "TSD→パフェの確率を求める [PowerShell]"
+msgstr ""
+
+#: ../../contents/workflow.rst:14
+msgid "ある地形からのパフェ手順をすべて求めて、さらにその中からパフェを取るまでにTSDを打つことができる確率を求めます。"
+msgstr ""
+
+#: ../../contents/workflow.rst:16 ../../contents/workflow.rst:76
+msgid "sfinder.jarがあるディレクトリをPowerShellで開き、次のコマンドを実行してください。"
+msgstr ""
+
+#: ../../contents/workflow.rst:25
+msgid "出力は以下のようになります (一例です)。"
+msgstr ""
+
+#: ../../contents/workflow.rst:49
+msgid ""
+"この地形でパターン ``*p7`` の場合、TSDをしながらパフェを取れる確率は ``35.00%`` となります。 "
+"なお、表示されているテト譜はあくまでもミノの置き場所であり、TSDするための手順ではないのでご注意ください "
+"(ミノの置く順番はツモ順によって変化する)。"
+msgstr ""
+
+#: ../../contents/workflow.rst:52
+msgid "たとえば、"
+msgstr ""
+
+#: ../../contents/workflow.rst:58
+msgid ""
+"これはミノを `このように "
+"<http://fumen.zui.jp/?v115@zgA8g0BtzhC8i0hlRpE8BtglRpD8ywglG8wwF8JeAg?H>`_"
+" 置くと、パターン全体の ``5.71%`` のツモ順でTSDできることを表しています。"
+msgstr ""
+
+#: ../../contents/workflow.rst:63
+msgid ""
+"`ガムシロ積み3巡目のパフェ <https://tetris-matome.com/gamushiro/>`_ のため、5ラインパフェ(``-c "
+"5``)となっています。"
+msgstr ""
+
+#: ../../contents/workflow.rst:64
+msgid "``path -s yes`` で出力されるテト譜をページごとに分割しています。"
+msgstr ""
+
+#: ../../contents/workflow.rst:65
+msgid "``path.csv`` から ``Select-String`` でテト譜を正規表現で抽出しています。そのため、解はunique相当になります。"
+msgstr ""
+
+#: ../../contents/workflow.rst:66
+msgid "もしminimalから抽出したい場合は、HTMLファイルからすべての解をまとめたテト譜を削除して、読み込むファイルを変更すれば、同じコマンドで抽出できます。ただし、minimalではTスピンできる解が省略される可能性もあるため、uniqueと結果が異なる可能性もあるのでご注意ください。"
+msgstr ""
+
+#: ../../contents/workflow.rst:67
+msgid "``cover --mode tsd`` でパフェの途中でTSDできる確率を求めています。"
+msgstr ""
+
+#: ../../contents/workflow.rst:72
+msgid "ツモ順を限定したときのパフェの確率を求める [PowerShell]"
+msgstr ""
+
+#: ../../contents/workflow.rst:74
+msgid "「Sが先頭から1番目か2番目にくるツモ順」に限定したときのパフェを取れる確率を求めます。"
+msgstr ""
+
+#: ../../contents/workflow.rst:84
+msgid "出力は以下のようになります。"
+msgstr ""
+
+#: ../../contents/workflow.rst:103
+msgid "``util seq`` の結果を ``input/patterns.txt`` に保存します。"
+msgstr ""
+
+#: ../../contents/workflow.rst:104
+msgid "``percent`` では、``-p`` を指定しないことでファイルから読み取るようにしています。"
+msgstr ""
+
+#: ../../contents/workflow.rst:105
+msgid "``percent`` の ``-fc 0 -td 1`` は、結果の表示を少なくするためのオプションです。"
+msgstr ""
+

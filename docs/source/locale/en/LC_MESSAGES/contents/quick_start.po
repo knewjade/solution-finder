@@ -1,0 +1,121 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2017-2022, knewjade
+# This file is distributed under the same license as the solution-finder
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: solution-finder \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-03-30 19:39+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../contents/quick_start.rst:3
+msgid "クイックスタート"
+msgstr ""
+
+#: ../../contents/quick_start.rst:6
+msgid "はじめに"
+msgstr ""
+
+#: ../../contents/quick_start.rst:8
+msgid "solution-finderの実行にはJavaが必要となりますので、インストール＆設定をしてください。"
+msgstr ""
+
+#: ../../contents/quick_start.rst:10
+msgid "参考(外部サイト): https://www.atmarkit.co.jp/ait/articles/1604/19/news027.html"
+msgstr ""
+
+#: ../../contents/quick_start.rst:12
+msgid ""
+"もしインストールができない環境の場合は `こちら "
+"<https://docs.google.com/presentation/d/11PBkJZhL8FZUyKqDjGOpby3irDpnEG_pswnrFfWM5z0>`_"
+" のスライドを参考にしてください。"
+msgstr ""
+
+#: ../../contents/quick_start.rst:16
+msgid "Windows (コマンドラインから操作する)"
+msgstr ""
+
+#: ../../contents/quick_start.rst:18
+msgid ""
+"`※ 画像付きで手順を説明したスライドはこちら <https://docs.google.com/presentation/d"
+"/1zKVe0iHMJ-HV_oZBGFgVIShVa30srqe5dgI8kjubqWY>`_"
+msgstr ""
+
+#: ../../contents/quick_start.rst:20
+msgid "コマンドプロンプトでsolution-finderのあるディレクトリへ移動してください。"
+msgstr ""
+
+#: ../../contents/quick_start.rst:22
+msgid ""
+"（Windows7以降の場合、コマンドプロンプトで開きたいディレクトリへエクスプローラ上で移動し、 そのディレクトリ内で "
+"``shift+右クリック → PowerShell ウィンドウをここに開く`` で直接移動できる）"
+msgstr ""
+
+#: ../../contents/quick_start.rst:25
+msgid "※ コマンドラインでも同様に操作できます。"
+msgstr ""
+
+#: ../../contents/quick_start.rst:27
+msgid "そのあと、以下のコマンドを入力してください。 ::"
+msgstr ""
+
+#: ../../contents/quick_start.rst:38
+msgid "このとき、各コマンドでオプションを指定することができます。"
+msgstr ""
+
+#: ../../contents/quick_start.rst:40 ../../contents/quick_start.rst:72
+msgid "例) ::"
+msgstr ""
+
+#: ../../contents/quick_start.rst:45 ../../contents/quick_start.rst:79
+msgid "使用したいオプションを付与してコマンドを実行することで、様々な探索が可能になります。"
+msgstr ""
+
+#: ../../contents/quick_start.rst:47 ../../contents/quick_start.rst:81
+msgid "オプションの詳細は :doc:`command` を参照してください。"
+msgstr ""
+
+#: ../../contents/quick_start.rst:51
+msgid "Windows (batをベースにオプションを変更する)"
+msgstr ""
+
+#: ../../contents/quick_start.rst:53
+msgid "starterディレクトリの中にあるbatファイルをテキストエディタで開くと、次のような記述があります。"
+msgstr ""
+
+#: ../../contents/quick_start.rst:55
+msgid "pathの例) ::"
+msgstr ""
+
+#: ../../contents/quick_start.rst:59
+msgid "``--format link`` のように、この部分にオプションを加えることで各種設定を変更できます。"
+msgstr ""
+
+#: ../../contents/quick_start.rst:61
+msgid ""
+"batはstarterディレクトリ内であればコピー・リネームしても使用できますので、 "
+"batをコピーして使いやすいオプションに変更することをオススメします。"
+msgstr ""
+
+#: ../../contents/quick_start.rst:64
+msgid "なおオプションについては、このドキュメントの各コマンドに記載されていますので、そちらをご参照ください。"
+msgstr ""
+
+#: ../../contents/quick_start.rst:68
+msgid "Mac"
+msgstr ""
+
+#: ../../contents/quick_start.rst:70
+msgid "各コマンドを実行するとき、オプションを指定することができます。"
+msgstr ""
+

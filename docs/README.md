@@ -10,5 +10,5 @@ make -e SPHINXOPTS="-D language='en'" html
 
 ```
 cd docs/source
-sphinx-build -b gettext . ./locale/gettext
+sphinx-build -b gettext . ./locale/gettext && sphinx-intl update -p locale/gettext -l en
 ```

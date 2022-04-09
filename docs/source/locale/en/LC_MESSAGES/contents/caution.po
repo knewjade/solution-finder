@@ -1,0 +1,104 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2017-2022, knewjade
+# This file is distributed under the same license as the solution-finder
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: solution-finder \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-03-30 19:39+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../contents/caution.rst:3
+msgid "制限・注意・不具合情報"
+msgstr ""
+
+#: ../../contents/caution.rst:6
+msgid "このページについて"
+msgstr ""
+
+#: ../../contents/caution.rst:8
+msgid "solution-finderには、いくつか制約や実行時に注意するべき点があります。"
+msgstr ""
+
+#: ../../contents/caution.rst:10
+msgid ""
+"なお、ここに記載している制約は、solution-finderの都合によるものであり、 "
+"その他にコンピュータのリソースの制約や探索アルゴリズムの限界があります。"
+msgstr ""
+
+#: ../../contents/caution.rst:13
+msgid "そちらについては、各実行環境に大きく依存するため、参考程度の記載に留めています。"
+msgstr ""
+
+#: ../../contents/caution.rst:17
+msgid "percent"
+msgstr ""
+
+#: ../../contents/caution.rst:19 ../../contents/caution.rst:34
+#: ../../contents/caution.rst:43 ../../contents/caution.rst:52
+msgid "制限"
+msgstr ""
+
+#: ../../contents/caution.rst:21 ../../contents/caution.rst:54
+msgid "入力できるフィールドの高さは最大24まで"
+msgstr ""
+
+#: ../../contents/caution.rst:22 ../../contents/caution.rst:38
+#: ../../contents/caution.rst:47
+msgid "入力できるミノ順の最大の長さは22まで"
+msgstr ""
+
+#: ../../contents/caution.rst:24
+msgid "注意"
+msgstr ""
+
+#: ../../contents/caution.rst:29
+msgid "パフェまでに必要なミノ数以上指定した場合、確率が直感とは異なるケースがある"
+msgstr ""
+
+#: ../../contents/caution.rst:27
+msgid "たくさんミノを入力しても必要な数しか使われず、あくまでその範囲での成功・失敗の確率が表示されます"
+msgstr ""
+
+#: ../../contents/caution.rst:28
+msgid "現verでは警告メッセージが表示されます"
+msgstr ""
+
+#: ../../contents/caution.rst:29
+msgid "https://twitter.com/1millim/status/854351094679453696"
+msgstr ""
+
+#: ../../contents/caution.rst:32
+msgid "path"
+msgstr ""
+
+#: ../../contents/caution.rst:36 ../../contents/caution.rst:45
+msgid "入力できるフィールドの高さは最大10まで"
+msgstr ""
+
+#: ../../contents/caution.rst:38 ../../contents/caution.rst:47
+msgid "実行環境によっては、高さが7以上のフィールドに対する探索は難しいと思われます（メモリサイズに依存します）"
+msgstr ""
+
+#: ../../contents/caution.rst:41
+msgid "setup"
+msgstr ""
+
+#: ../../contents/caution.rst:50
+msgid "ren"
+msgstr ""
+
+#: ../../contents/caution.rst:55
+msgid "入力できるミノ順の最大の長さは44まで"
+msgstr ""
+

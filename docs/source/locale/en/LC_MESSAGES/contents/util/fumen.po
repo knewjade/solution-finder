@@ -1,0 +1,202 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2017-2022, knewjade
+# This file is distributed under the same license as the solution-finder
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: solution-finder \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-03-30 19:39+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../contents/util/fumen.rst:3
+msgid "サブコマンド: util fumen"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:6
+msgid "概要"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:8
+msgid "入力されたテト譜を変換して、新たなテト譜を標準出力に出力します。"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:12
+msgid "テト譜の指定方法"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:14
+msgid "画像化したいテト譜のデータを field.txt に記述するか、``--tetfu`` オプションで直接指定してください。"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:18
+msgid "基本コマンド"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:20
+msgid ""
+"``java -jar sfinder.jar util fumen --mode reduce --tetfu "
+"v115@vhFXKJNJJ0/IWSJTIJCDJ``"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:24
+msgid "オプション一覧"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:27
+msgid "short"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:27
+msgid "long"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:27
+msgid "default"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:29
+msgid "``-t``"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:29
+msgid "``--tetfu``"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:29 ../../contents/util/fumen.rst:30
+msgid "なし"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:30
+msgid "``-M``"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:30
+msgid "``--mode``"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:31
+msgid "``-o``"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:31
+msgid "``--output-base``"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:31
+msgid "output/path.html"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:32
+msgid "``-lp``"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:32
+msgid "``--log-path``"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:32
+msgid "output/last_output.txt"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:33
+msgid "``-fp``"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:33
+msgid "``--field-path``"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:33
+msgid "input/field.txt"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:38
+msgid "``-t``, ``--tetfu`` [default: なし]"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:40
+msgid "フィールドやオプションなどを指定したテト譜データを指定する。"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:42
+msgid "テト譜を複数個同時に指定する場合は ``--tetfu v115@vhAAgH v115@vhAAgH`` のように指定する。"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:44
+msgid "v115のテト譜データにのみ対応。"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:48
+msgid "``-M``, ``--mode`` [default: なし]"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:50
+msgid "変換モードを変更します。現在のところ、以下のモードに対応しています。"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:55
+msgid "reduce"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:53
+msgid "最初のページをもとに、すべてのミノの接着を1ページにまとめます"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:54
+msgid "途中のページで直接書き込まれたブロックなどは無視されます"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:55
+msgid "ページをまとめた結果、フィールドの高さ24を超える場合はエラーになります(テト譜の表現できないため)"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:56
+msgid "「盛/せりあがり」「鏡」フラグがオンのページがあれば、そのページまでを対象とします"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:59
+msgid "remove-comment"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:58
+msgid "すべてのページのコメントを削除します"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:62
+msgid "``-o``, ``--output-base`` [default: output/cover.csv]"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:64
+msgid "出力結果を保存するファイルのパスを指定する。"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:68
+msgid "``-lp``, ``--log-path`` [default: output/last_output.txt]"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:70
+msgid "実行時のログを保存するファイルのパスを指定する。"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:74
+msgid "``-fp``, ``--field-path`` [default: input/field.txt]"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:76
+msgid "フィールドを定義するファイルのパスを指定する。"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:78
+msgid "util figではテト譜のみ対応しています（____XXXXXX の形式で書かれたフィールドは入力できません）。"
+msgstr ""
+
