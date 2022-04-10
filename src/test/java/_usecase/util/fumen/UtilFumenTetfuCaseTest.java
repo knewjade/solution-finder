@@ -13,12 +13,12 @@ import java.io.IOException;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class UtilFumenTetfuCaseTest {
+    private String buildCommand(String subCommand, String fumen, String options) {
+        return String.format("util fumen -M %s -t %s %s", subCommand, fumen, options);
+    }
+
     @Nested
     class FumenTest extends UtilFumenUseCaseBaseTest {
-        private String buildCommand(String subCommand, String fumen, String options) {
-            return String.format("util fumen -M %s -t %s %s", subCommand, fumen, options);
-        }
-
         @Override
         @BeforeEach
         void setUp() throws IOException {
@@ -63,6 +63,15 @@ class UtilFumenTetfuCaseTest {
             assertThat(errorFile)
                     .contains(command)
                     .contains("Unsupported mode: mode=invalid [FinderParseException]");
+        }
+    }
+
+    @Nested
+    class FumenReduceTest extends UtilFumenUseCaseBaseTest {
+        @Override
+        @BeforeEach
+        void setUp() throws IOException {
+            super.setUp();
         }
 
         @Test
@@ -114,7 +123,25 @@ class UtilFumenTetfuCaseTest {
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())
-                    .contains("");
+                    .contains("v115@8gA8HeB8HeB8RpD8ywA8RpE8wwB8JeAgH");
+        }
+
+        @Test
+        void reduceEmpty() throws Exception {
+            String fumens = "v115@vhAAgH";
+            String command = buildCommand("reduce", fumens, "");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput()).contains("v115@vhAAgH");
+        }
+    }
+
+    @Nested
+    class FumenRemoveCommentTest extends UtilFumenUseCaseBaseTest {
+        @Override
+        @BeforeEach
+        void setUp() throws IOException {
+            super.setUp();
         }
 
         @Test
@@ -135,6 +162,78 @@ class UtilFumenTetfuCaseTest {
 
             assertThat(log.getOutput())
                     .contains("v115@bhA8HeA8whglQpAtwwg0Q4A8AeA8AgHvhAA4BlhA8A?eA8Q4g0wwAtQpglwhAAevhCAwDA4BAAA");
+        }
+
+        @Test
+        void removeCommentEmpty() throws Exception {
+            String fumens = "v115@vhAAgH";
+            String command = buildCommand("remove-comment", fumens, "");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput()).contains("v115@vhAAgH");
+        }
+    }
+
+    @Nested
+    class FumenFilterTest extends UtilFumenUseCaseBaseTest {
+        @Override
+        @BeforeEach
+        void setUp() throws IOException {
+            super.setUp();
+        }
+
+        @Test
+        void filterT1() throws Exception {
+            String fumens = "v115@vhGWSJJHJSQJXGJVBJUIJTJJ";
+            String command = buildCommand("filter", fumens, "-f T");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput()).contains("v115@vhFWSJJnBSwBXmBUoBTpB");
+        }
+
+        @Test
+        void filter2() throws Exception {
+            String fumens = "v115@pgE8CeH8AeI8AeI8AeI8AeI8AeC8JeS0IvhCXqIF4I?JHJ";
+
+            {
+                String command = buildCommand("filter", fumens, "-f T");
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput()).contains("v115@pgE8CeH8AeI8AeI8AeI8AeI8AeC8JeS0IvhBXKBJnB?");
+            }
+            {
+                String command = buildCommand("filter", fumens, "-f I");
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput()).contains("v115@pgE8CeH8AeI8AeI8AeI8AeI8AeC8JeS0IvhBXKBFYB?");
+            }
+        }
+
+        @Test
+        void filterEmpty() throws Exception {
+            String fumens = "v115@vhAAgH";
+            String command = buildCommand("filter", fumens, "-f T");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput()).contains("v115@vhAAgH");
+        }
+
+        @Test
+        void noFilteredPiece() throws Exception {
+            String fumens = "v115@vhAAgH";
+            String command = buildCommand("filter", fumens, "");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isNotEqualTo(0);
+        }
+
+        @Test
+        void illegalFilteredPiece() throws Exception {
+            String fumens = "v115@vhAAgH";
+            String command = buildCommand("filter", fumens, "-f K");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isNotEqualTo(0);
         }
     }
 }

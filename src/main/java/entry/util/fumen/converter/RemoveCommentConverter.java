@@ -7,7 +7,6 @@ import common.tetfu.common.ColorConverter;
 import core.mino.MinoFactory;
 import exceptions.FinderParseException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,22 +20,16 @@ public class RemoveCommentConverter implements FumenConverter {
     }
 
     @Override
-    public List<String> parse(List<String> fumens) throws FinderParseException {
-        List<String> outputs = new ArrayList<>();
+    public String parse(String data) throws FinderParseException {
+        Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
+        List<TetfuPage> pages = tetfu.decode(data);
 
-        for (String fumen : fumens) {
-            Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
-            List<TetfuPage> pages = tetfu.decode(fumen);
+        List<TetfuElement> elements = pages.stream().map(page -> new TetfuElement(
+                page.getField(), page.getColorType(), page.getRotate(), page.getX(), page.getY(), "",
+                page.isLock(), page.isMirror(), page.isBlockUp(), page.getBlockUpList()
+        )).collect(Collectors.toList());
+        String encode = tetfu.encode(elements);
 
-            List<TetfuElement> elements = pages.stream().map(page -> new TetfuElement(
-                    page.getField(), page.getColorType(), page.getRotate(), page.getX(), page.getY(), "",
-                    page.isLock(), page.isMirror(), page.isBlockUp(), page.getBlockUpList()
-            )).collect(Collectors.toList());
-            String encode = tetfu.encode(elements);
-
-            outputs.add(String.format("v115@%s", encode));
-        }
-
-        return outputs;
+        return String.format("v115@%s", encode);
     }
 }

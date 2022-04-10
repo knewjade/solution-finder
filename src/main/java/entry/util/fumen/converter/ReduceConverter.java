@@ -32,60 +32,54 @@ public class ReduceConverter implements FumenConverter {
     }
 
     @Override
-    public List<String> parse(List<String> fumens) throws FinderParseException {
-        List<String> outputs = new ArrayList<>();
+    public String parse(String data) throws FinderParseException {
+        Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
+        List<TetfuPage> pages = tetfu.decode(data);
 
-        for (String fumen : fumens) {
-            Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
-            List<TetfuPage> pages = tetfu.decode(fumen);
+        List<SimpleMinoOperation> operationList = new ArrayList<>();
+        for (TetfuPage page : pages) {
+            if (page.isPutMino()) {
+                Piece piece = colorConverter.parseToBlock(page.getColorType());
+                Mino mino = minoFactory.create(piece, page.getRotate());
+                operationList.add(new SimpleMinoOperation(mino, page.getX(), page.getY()));
 
-            List<SimpleMinoOperation> operationList = new ArrayList<>();
-            for (TetfuPage page : pages) {
-                if (page.isPutMino()) {
-                    Piece piece = colorConverter.parseToBlock(page.getColorType());
-                    Mino mino = minoFactory.create(piece, page.getRotate());
-                    operationList.add(new SimpleMinoOperation(mino, page.getX(), page.getY()));
-
-                    if (page.isBlockUp() || page.isMirror()) {
-                        break;
-                    }
+                if (page.isBlockUp() || page.isMirror()) {
+                    break;
                 }
             }
-
-            int height = 24;
-
-            TetfuPage headPage = pages.get(0);
-            ColoredField coloredField = headPage.getField();
-            Field field = toField(coloredField, height);
-
-            List<MinoOperationWithKey> operationsWithKey = OperationTransform.parseToOperationWithKeys(
-                    field, new Operations(operationList), minoFactory, height
-            );
-
-            BlockField blockField = new BlockField(height);
-            for (MinoOperationWithKey operationWithKey : operationsWithKey) {
-                Field minoField = operationWithKey.createMinoField(height);
-                blockField.merge(minoField, operationWithKey.getPiece());
-            }
-
-            ColoredField freeze = coloredField.freeze();
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < 10; x++) {
-                    Piece block = blockField.getBlock(x, y);
-                    if (block != null) {
-                        freeze.setColorType(colorConverter.parseToColorType(block), x, y);
-                    }
-                }
-            }
-
-            String encode = tetfu.encode(Collections.singletonList(
-                    new TetfuElement(freeze, headPage.getComment())
-            ));
-
-            outputs.add(String.format("v115@%s", encode));
         }
 
-        return outputs;
+        int height = 24;
+
+        TetfuPage headPage = pages.get(0);
+        ColoredField coloredField = headPage.getField();
+        Field field = toField(coloredField, height);
+
+        List<MinoOperationWithKey> operationsWithKey = OperationTransform.parseToOperationWithKeys(
+                field, new Operations(operationList), minoFactory, height
+        );
+
+        BlockField blockField = new BlockField(height);
+        for (MinoOperationWithKey operationWithKey : operationsWithKey) {
+            Field minoField = operationWithKey.createMinoField(height);
+            blockField.merge(minoField, operationWithKey.getPiece());
+        }
+
+        ColoredField freeze = coloredField.freeze();
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < 10; x++) {
+                Piece block = blockField.getBlock(x, y);
+                if (block != null) {
+                    freeze.setColorType(colorConverter.parseToColorType(block), x, y);
+                }
+            }
+        }
+
+        String encode = tetfu.encode(Collections.singletonList(
+                new TetfuElement(freeze, headPage.getComment())
+        ));
+
+        return String.format("v115@%s", encode);
     }
 
     private Field toField(ColoredField coloredField, int height) {

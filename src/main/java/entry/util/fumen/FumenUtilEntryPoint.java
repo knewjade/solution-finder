@@ -1,9 +1,12 @@
 package entry.util.fumen;
 
+import common.parser.StringEnumTransform;
 import common.tetfu.common.ColorConverter;
 import core.mino.MinoFactory;
+import core.mino.Piece;
 import entry.EntryPoint;
 import entry.path.output.MyFile;
+import entry.util.fumen.converter.FilterPieceConverter;
 import entry.util.fumen.converter.FumenConverter;
 import entry.util.fumen.converter.ReduceConverter;
 import entry.util.fumen.converter.RemoveCommentConverter;
@@ -14,7 +17,6 @@ import exceptions.FinderTerminateException;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.List;
 
 public class FumenUtilEntryPoint implements EntryPoint {
     private static final String LINE_SEPARATOR = System.lineSeparator();
@@ -42,22 +44,36 @@ public class FumenUtilEntryPoint implements EntryPoint {
     @Override
     public void run() throws FinderException {
         FumenUtilModes mode = settings.getFumenUtilModes();
-        FumenConverter converter = createFumenConverter(mode);
-        List<String> parsed = converter.parse(settings.getFumens());
-        for (String fumen : parsed) {
-            output(fumen);
+        FumenConverter converter = createFumenConverter(settings);
+        for (String fumen : settings.getFumens()) {
+            output(converter.parse(fumen));
         }
     }
 
-    private FumenConverter createFumenConverter(FumenUtilModes mode) throws FinderExecuteException {
+    private FumenConverter createFumenConverter(FumenUtilSettings settings) throws FinderExecuteException {
+        FumenUtilModes mode = settings.getFumenUtilModes();
         switch (mode) {
             case Reduce:
                 return new ReduceConverter(new MinoFactory(), new ColorConverter());
             case RemoveComment:
                 return new RemoveCommentConverter(new MinoFactory(), new ColorConverter());
+            case Filter:
+                return createFilterConverter(settings);
             default:
                 throw new FinderExecuteException("Unknown mode: " + mode);
         }
+    }
+
+    private FumenConverter createFilterConverter(FumenUtilSettings settings) throws FinderExecuteException {
+        String filter = settings.getFilter();
+        assert filter != null;
+        Piece piece;
+        try {
+            piece = StringEnumTransform.toPiece(filter);
+        } catch (IllegalArgumentException e) {
+            throw new FinderExecuteException("Unsupported filtered piece: filter=" + filter);
+        }
+        return new FilterPieceConverter(new MinoFactory(), new ColorConverter(), piece);
     }
 
     private void output(String str) throws FinderExecuteException {
