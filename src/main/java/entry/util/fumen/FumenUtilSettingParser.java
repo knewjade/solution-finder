@@ -56,6 +56,15 @@ public class FumenUtilSettingParser extends SettingParser<FumenUtilSettings> {
         }
         settings.setFumenUtilModes(modeType.get());
 
+        // フィルタリングの設定
+        Optional<String> filter = wrapper.getStringOption(FumenUtilOptions.Filter.optName());
+        if (settings.getFumenUtilModes() == FumenUtilModes.Filter) {
+            if (!filter.isPresent()) {
+                throw new FinderParseException("Should specify filter if using filter mode");
+            }
+            settings.setFilter(filter.get());
+        }
+
         // ログファイルの設定
         Optional<String> logFilePath = wrapper.getStringOption(FumenUtilOptions.LogPath.optName());
         logFilePath.ifPresent(settings::setLogFilePath);

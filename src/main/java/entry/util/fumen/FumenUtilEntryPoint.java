@@ -1,23 +1,15 @@
 package entry.util.fumen;
 
-import common.datastore.BlockField;
-import common.datastore.MinoOperationWithKey;
-import common.datastore.Operations;
-import common.datastore.SimpleMinoOperation;
-import common.parser.OperationTransform;
-import common.tetfu.Tetfu;
-import common.tetfu.TetfuElement;
-import common.tetfu.TetfuPage;
+import common.parser.StringEnumTransform;
 import common.tetfu.common.ColorConverter;
-import common.tetfu.common.ColorType;
-import common.tetfu.field.ColoredField;
-import core.field.Field;
-import core.field.FieldFactory;
-import core.mino.Mino;
 import core.mino.MinoFactory;
 import core.mino.Piece;
 import entry.EntryPoint;
 import entry.path.output.MyFile;
+import entry.util.fumen.converter.FilterPieceConverter;
+import entry.util.fumen.converter.FumenConverter;
+import entry.util.fumen.converter.ReduceConverter;
+import entry.util.fumen.converter.RemoveCommentConverter;
 import exceptions.FinderException;
 import exceptions.FinderExecuteException;
 import exceptions.FinderInitializeException;
@@ -25,10 +17,6 @@ import exceptions.FinderTerminateException;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class FumenUtilEntryPoint implements EntryPoint {
     private static final String LINE_SEPARATOR = System.lineSeparator();
@@ -56,93 +44,39 @@ public class FumenUtilEntryPoint implements EntryPoint {
     @Override
     public void run() throws FinderException {
         FumenUtilModes mode = settings.getFumenUtilModes();
+        FumenConverter converter = createFumenConverter(settings);
+        for (String fumen : settings.getFumens()) {
+            output(converter.parse(fumen));
+        }
+    }
+
+    private FumenConverter createFumenConverter(FumenUtilSettings settings) throws FinderExecuteException {
+        FumenUtilModes mode = settings.getFumenUtilModes();
         switch (mode) {
-            case Reduce: {
-                MinoFactory minoFactory = new MinoFactory();
-                ColorConverter colorConverter = new ColorConverter();
-                for (String fumen : settings.getFumens()) {
-                    Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
-                    List<TetfuPage> pages = tetfu.decode(fumen);
-
-                    List<SimpleMinoOperation> operationList = new ArrayList<>();
-                    for (TetfuPage page : pages) {
-                        if (page.isPutMino()) {
-                            Piece piece = colorConverter.parseToBlock(page.getColorType());
-                            Mino mino = minoFactory.create(piece, page.getRotate());
-                            operationList.add(new SimpleMinoOperation(mino, page.getX(), page.getY()));
-
-                            if (page.isBlockUp() || page.isMirror()) {
-                                break;
-                            }
-                        }
-                    }
-
-                    int height = 24;
-
-                    TetfuPage headPage = pages.get(0);
-                    ColoredField coloredField = headPage.getField();
-                    Field field = toField(coloredField, height);
-
-                    List<MinoOperationWithKey> operationsWithKey = OperationTransform.parseToOperationWithKeys(
-                            field, new Operations(operationList), minoFactory, height
-                    );
-
-                    BlockField blockField = new BlockField(height);
-                    for (MinoOperationWithKey operationWithKey : operationsWithKey) {
-                        Field minoField = operationWithKey.createMinoField(height);
-                        blockField.merge(minoField, operationWithKey.getPiece());
-                    }
-
-                    ColoredField freeze = coloredField.freeze();
-                    for (int y = 0; y < height; y++) {
-                        for (int x = 0; x < 10; x++) {
-                            Piece block = blockField.getBlock(x, y);
-                            if (block != null) {
-                                freeze.setColorType(colorConverter.parseToColorType(block), x, y);
-                            }
-                        }
-                    }
-
-                    String encode = tetfu.encode(Collections.singletonList(
-                            new TetfuElement(freeze, headPage.getComment())
-                    ));
-
-                    output(String.format("v115@%s", encode));
-                }
-                break;
-            }
-            case RemoveComment: {
-                MinoFactory minoFactory = new MinoFactory();
-                ColorConverter colorConverter = new ColorConverter();
-                for (String fumen : settings.getFumens()) {
-                    Tetfu tetfu = new Tetfu(minoFactory, colorConverter);
-                    List<TetfuPage> pages = tetfu.decode(fumen);
-
-                    List<TetfuElement> elements = pages.stream().map(page -> new TetfuElement(
-                            page.getField(), page.getColorType(), page.getRotate(), page.getX(), page.getY(), "",
-                            page.isLock(), page.isMirror(), page.isBlockUp(), page.getBlockUpList()
-                    )).collect(Collectors.toList());
-                    String encode = tetfu.encode(elements);
-
-                    output(String.format("v115@%s", encode));
-                }
-                break;
-            }
+            case Reduce:
+                return new ReduceConverter(new MinoFactory(), new ColorConverter());
+            case RemoveComment:
+                return new RemoveCommentConverter(new MinoFactory(), new ColorConverter());
+            case Filter:
+                return createFilterConverter(settings);
             default:
                 throw new FinderExecuteException("Unknown mode: " + mode);
         }
     }
 
-    private Field toField(ColoredField coloredField, int height) {
-        Field field = FieldFactory.createField(height);
-        for (int y = 0; y < height; y++)
-            for (int x = 0; x < 10; x++)
-                if (coloredField.getColorType(x, y) != ColorType.Empty)
-                    field.setBlock(x, y);
-        return field;
+    private FumenConverter createFilterConverter(FumenUtilSettings settings) throws FinderExecuteException {
+        String filter = settings.getFilter();
+        assert filter != null;
+        Piece piece;
+        try {
+            piece = StringEnumTransform.toPiece(filter);
+        } catch (IllegalArgumentException e) {
+            throw new FinderExecuteException("Unsupported filtered piece: filter=" + filter);
+        }
+        return new FilterPieceConverter(new MinoFactory(), new ColorConverter(), piece);
     }
 
-    public void output(String str) throws FinderExecuteException {
+    private void output(String str) throws FinderExecuteException {
         try {
             logWriter.append(str).append(LINE_SEPARATOR);
         } catch (IOException e) {

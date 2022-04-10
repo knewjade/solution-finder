@@ -11,6 +11,7 @@ public enum FumenUtilOptions {
     Help(NoArgOption.full("h", "help", "Usage")),
     Fumen(ListArgOption.fullSpace("t", "tetfu", "v115@~", "Specify tetfu data for s-finder settings")),
     Mode(SingleArgOption.full("M", "mode", "normal or tspin", "Specify cover mode")),
+    Filter(SingleArgOption.full("f", "filter", "piece-name", "Specify filtered piece")),
     FieldPath(SingleArgOption.full("fp", "field-path", "path", "File path of field definition")),
     LogPath(SingleArgOption.full("lp", "log-path", "path", "File path of output log")),
     OutputBase(SingleArgOption.full("o", "output-base", "path", "Base file path of result to output")),

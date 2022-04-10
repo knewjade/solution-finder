@@ -18,6 +18,7 @@ import core.srs.Rotate;
 import exceptions.FinderParseException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -91,6 +92,14 @@ public class Tetfu {
 
     // コメント・フィールドは初期設定のみ設定可能
     public String encode(List<TetfuElement> elements) {
+        // 空のページを作成する
+        if (elements.isEmpty()) {
+            elements = Collections.singletonList(new TetfuElement(""));
+        }
+        return encodeInner(elements);
+    }
+
+    private String encodeInner(List<TetfuElement> elements) {
         ColoredField prevField = ColoredFieldFactory.createField(TETFU_MAX_HEIGHT);
         List<Integer> prevBlockUp = createBlockUp();
         String prevComment = "";

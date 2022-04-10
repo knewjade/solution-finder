@@ -14,6 +14,7 @@ public class FumenUtilSettings {
     private String outputBaseFilePath = DEFAULT_OUTPUT_BASE_FILE_PATH;
     private List<String> fumens = Collections.emptyList();
     private FumenUtilModes mode = null;
+    private String filter = null;
 
     // ********* Getter ************
     String getLogFilePath() {
@@ -30,6 +31,10 @@ public class FumenUtilSettings {
 
     List<String> getFumens() {
         return fumens;
+    }
+
+    boolean isOutputToConsole() {
+        return true;
     }
 
     // ********* Setter ************
@@ -50,6 +55,9 @@ public class FumenUtilSettings {
             case "remove-comment":
                 this.mode = FumenUtilModes.RemoveComment;
                 return;
+            case "filter":
+                this.mode = FumenUtilModes.Filter;
+                return;
             default:
                 throw new FinderParseException("Unsupported mode: mode=" + mode);
         }
@@ -59,7 +67,11 @@ public class FumenUtilSettings {
         this.fumens = fumens;
     }
 
-    boolean isOutputToConsole() {
-        return true;
+    void setFilter(String filter) {
+        this.filter = filter;
+    }
+
+    String getFilter() {
+        return filter;
     }
 }
