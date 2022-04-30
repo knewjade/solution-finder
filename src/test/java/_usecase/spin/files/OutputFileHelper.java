@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -40,8 +42,63 @@ public class OutputFileHelper {
             mergedFumen = list.isEmpty() ? null : list.get(0);
         }
 
-        List<String> fumens = extractTetfu(html);
+        Map<TSpinType, List<String>> fumens = getFumensEachSpin(html);
         return new SpinHTML(html, mergedFumen, fumens);
+    }
+
+    private static Map<TSpinType, List<String>> getFumensEachSpin(String html) {
+        Pattern pattern = Pattern.compile("(<section.*?</section>)");
+        Matcher matcher = pattern.matcher(html);
+
+        Map<TSpinType, List<String>> maps = new HashMap<>();
+        while (matcher.find()) {
+            String section = matcher.group();
+
+            TSpinType spin = extractTSpinType(section);
+            List<String> fumens = extractTetfu(section);
+
+            maps.put(spin, fumens);
+        }
+
+        return maps;
+    }
+
+    private static TSpinType extractTSpinType(String html) {
+        Pattern pattern = Pattern.compile("<h2>(.*?)</h2>");
+        Matcher matcher = pattern.matcher(html);
+        if (!matcher.find()) {
+            throw new IllegalStateException();
+        }
+        String header = matcher.group();
+
+        if (header.contains("Single [Regular]")) {
+            return TSpinType.RegularSingle;
+        }
+        if (header.contains("Double [Regular]")) {
+            return TSpinType.RegularDouble;
+        }
+        if (header.contains("Triple")) {
+            return TSpinType.RegularTriple;
+        }
+        if (header.contains("Single [FIN]")) {
+            return TSpinType.FinSingle;
+        }
+        if (header.contains("Double [FIN]")) {
+            return TSpinType.FinDouble;
+        }
+        if (header.contains("Single [NEO]")) {
+            return TSpinType.NeoSingle;
+        }
+        if (header.contains("Double [NEO]")) {
+            return TSpinType.NeoDouble;
+        }
+        if (header.contains("Single [ISO]")) {
+            return TSpinType.IsoSingle;
+        }
+        if (header.contains("Double [ISO]")) {
+            return TSpinType.IsoDouble;
+        }
+        throw new IllegalStateException("Unexpected header: " + header);
     }
 
     private static List<String> extractTetfu(String html) {

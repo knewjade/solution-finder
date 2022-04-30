@@ -105,7 +105,7 @@ public class FullSpinOutput implements SpinOutput {
         int maxPriority = -1;
 
         // 左回転, 右回転
-        for (RotateDirection direction : RotateDirection.values()) {
+        for (RotateDirection direction : RotateDirection.valuesNo180()) {
             RotateDirection beforeDirection = RotateDirection.reverse(direction);
 
             Mino before = minoFactory.create(slideOperation.getPiece(), slideOperation.getRotate().get(beforeDirection));

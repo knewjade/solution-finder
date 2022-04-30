@@ -5,6 +5,7 @@ import _usecase.Log;
 import _usecase.RunnerHelper;
 import _usecase.spin.files.OutputFileHelper;
 import _usecase.spin.files.SpinHTML;
+import _usecase.spin.files.TSpinType;
 import entry.EntryPointMain;
 import module.LongTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,7 +46,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(5)
                     .contains("zgD8DehlF8ywglG8wwQ4glH8R4I8Q4JeAgWDAzOkBA?")
                     .contains("vgglBewhD8ilBewhF8ywwhG8wwQ4whH8R4I8Q4JeAg?WEAze9VC")
@@ -67,7 +68,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(5)
                     .contains("zgD8FeF8DeG8CeH8BeI8Ke/NYWAFLDmClcJSAVDEHB?EooRBToAVB0CBAAvhBlsB6tB")
                     .contains("zgD8FeF8DeG8CeH8BeI8Ke/NYXAFLDmClcJSAVDEHB?EooRBToAVBU+jBAvhClsB5oBywB")
@@ -89,7 +90,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(1)
                     .contains("ufAtFeQ4AeBtBehlBeR4AtA8i0glywQ4D8g0glA8ww?E8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeC8JeAgWFAqCmFDz?AAAA");
         }
@@ -108,7 +109,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(2)
                     .contains("1gBtEewhCeBtDewhh0wwRpilA8whg0xwRpglR4A8wh?g0A8wwB8R4C8JeAgWHAq+bgCMeDCA")
                     .contains("rgQ4IeR4EewhCeQ4Eewhh0wwilRpA8whg0xwglBtRp?A8whg0A8wwB8BtC8JeAgWHAqujWCPuzBA");
@@ -128,7 +129,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens()).isEmpty();
+            assertThat(html.getAllFumens()).isEmpty();
         }
 
         @Test
@@ -145,7 +146,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(1709)
                     .contains("kgg0Ieg0DeD8h0DeE8ywR4F8wwR4glG8ilH8LeAgWE?As+jPC")
                     .contains("ogwhDeilBewhD8glQ4ywwhE8R4wwAtwhF8Q4Btg0G8?AtAeg0H8h0JeAgWGAKtjxCpCBAA")
@@ -167,7 +168,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(15938)
                     .contains("xgh0D8BeR4g0whE8R4wwg0whF8xwglwhG8wwglwhH8?hlJeAgWFAseltCqAAAA")
                     .contains("rgi0glRpBeD8g0glRpR4E8hlR4wwF8BtxwG8BtwwH8?LeAgWGA6OstCKHBAA")
@@ -190,7 +191,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(1520)
                     .contains("kgwhglHewhglCeD8AewhhlBeE8whQ4ywF8R4wwAtG8?Q4BtH8AtKeAgWFAzXOMCsAAAA")
                     .contains("lgQ4BewhFeR4AewhD8ywQ4glwhE8wwRpglwhF8Rphl?G8i0H8Aeg0JeAgWGAKHExCJNBAA")
@@ -217,7 +218,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(1680)
 
                     // -mr 0の結果が含まれている
@@ -246,7 +247,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens()).isEmpty();
+            assertThat(html.getAllFumens()).isEmpty();
         }
 
         @Test
@@ -262,7 +263,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(2)
                     .contains("1gBtIeBtEeB8wwH8xwI8wwG8JeAgWCA0XBAA")
                     .contains("1gi0Ieg0EeB8wwH8xwI8wwG8JeAgWCA0/AAA");
@@ -281,7 +282,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(1)
                     .contains("HhB8wwH8xwI8wwG8JeAgWBA0AAAA");
         }
@@ -300,7 +301,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens()).isEmpty();
+            assertThat(html.getAllFumens()).isEmpty();
         }
 
         @Test
@@ -316,7 +317,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(1)
                     .contains("XgA8IeB8IeA8AeB8Ceh0wwG8g0xwG8g0Q4wwB8DeB8?R4B8AeF8Q4B8BeC8JeAgWDAq+zBA");
         }
@@ -335,7 +336,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(4)
                     .contains("4gi0Ieg0BeE8wwRpF8xwRpG8wwD8JeAgWDAUnfBA")
                     .contains("Ehh0AeE8Beg0F8ywg0G8wwD8JeAgWCA0/AAA")
@@ -357,7 +358,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(5)
                     .contains("sgglIeglIehlCeF8ywH8wwH8DeB8JeAgWCA0CBAA")
                     .contains("3gglGeilCeF8ywH8wwH8DeB8JeAgWCA0CBAA")
@@ -384,7 +385,7 @@ class SpinTetfuCaseTest {
                     .doesNotContain("[O]")
                     .doesNotContain("[X]");
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(1)
                     .contains("HgRpHeRpBeG8CeG8wwhlG8xwglG8wwAeglG8i0F8Ce?g0H8AeI8AeA8JeAgWEAqOMgC");
         }
@@ -402,7 +403,27 @@ class SpinTetfuCaseTest {
 
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
-            assertThat(html.getFumens()).hasSize(0);
+            assertThat(html.getAllFumens()).hasSize(0);
+        }
+
+        @Test
+        void case14() throws Exception {
+            // ISO
+            String fumen = "v115@9gA8IeB8HeA8BeI8AeG8JeAgH";
+            String command = buildCommand(fumen, "-p IT");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(1));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SpinHTML html = OutputFileHelper.loadSpinHTML();
+            assertThat(html.getAllFumens()).hasSize(1)
+                    .contains("zgzhFeA8IeB8wwGeA8xwI8wwG8JeAgWCAU+AAA");
+
+            assertThat(html.getFumensBySpin(TSpinType.RegularDouble)).hasSize(0);
+            assertThat(html.getFumensBySpin(TSpinType.IsoDouble)).hasSize(1);
         }
     }
 
