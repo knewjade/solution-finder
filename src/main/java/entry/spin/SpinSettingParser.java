@@ -108,6 +108,10 @@ public class SpinSettingParser extends SettingParser<SpinSettings> {
         Optional<String> filter = wrapper.getStringOption(SpinOptions.Filter.optName());
         filter.ifPresent(settings::setFilterMode);
 
+        // 出力フォーマット
+        Optional<String> format = wrapper.getStringOption(SpinOptions.Format.optName());
+        format.ifPresent(settings::setOutputType);
+
         // 出力分割の設定
         Optional<Boolean> isSplit = wrapper.getBoolOption(PathOptions.Split.optName());
         isSplit.ifPresent(settings::setTetfuSplit);

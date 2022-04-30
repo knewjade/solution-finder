@@ -25,6 +25,7 @@ public class SpinSettings {
     private int maxRoofNum = -1;
     private boolean isSplit = false;
     private FilterType filter = FilterType.Strict;
+    private OutputType outputType = OutputType.HTML;
 
     // ********* Getter ************
     Field getField() {
@@ -105,6 +106,10 @@ public class SpinSettings {
         return filter;
     }
 
+    OutputType getOutputType() {
+        return outputType;
+    }
+
     // ********* Setter ************
     void setField(Field field) {
         this.field = field;
@@ -164,6 +169,19 @@ public class SpinSettings {
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported filter mode: " + mode);
+        }
+    }
+
+    public void setOutputType(String type) {
+        switch (type.trim().toLowerCase()) {
+            case "html":
+                outputType = OutputType.HTML;
+                break;
+            case "csv":
+                outputType = OutputType.CSV;
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported output type: " + type);
         }
     }
 }
