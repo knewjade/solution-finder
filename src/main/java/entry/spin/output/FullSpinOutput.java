@@ -23,6 +23,7 @@ import searcher.spins.SpinCommons;
 import searcher.spins.candidates.Candidate;
 import searcher.spins.results.Result;
 import searcher.spins.spin.Spin;
+import searcher.spins.spin.SpinDefaultPriority;
 
 import java.io.BufferedWriter;
 import java.util.ArrayList;
@@ -113,7 +114,7 @@ public class FullSpinOutput implements SpinOutput {
 
             List<Spin> spins = getSpins(lockedReachable, freeze, slideOperation, before, patterns, direction, fieldHeight, clearedLineOnlyT);
             for (Spin spin : spins) {
-                int priority = getSpinPriority(spin);
+                int priority = SpinDefaultPriority.getSpinPriority(spin);
                 if (maxSpin == null || maxPriority < priority) {
                     maxSpin = spin;
                     maxPriority = priority;
@@ -128,7 +129,10 @@ public class FullSpinOutput implements SpinOutput {
         Optional<Pair<String, Integer>> optional = formatter.get(candidate, initField, fieldHeight);
         if (optional.isPresent()) {
             Pair<String, Integer> aLinkSolutionPriority = optional.get();
-            FullSpinColumn column = new FullSpinColumn(maxSpin, finalPriority, getSpinString(maxSpin));
+            int clearedLine = maxSpin.getClearedLine();
+            String clearLineString = getSendLineString(clearedLine);
+            String spinName = getSpinName(maxSpin);
+            FullSpinColumn column = new FullSpinColumn(maxSpin, finalPriority, clearLineString, spinName);
             htmlBuilder.addColumn(column, aLinkSolutionPriority.getKey(), aLinkSolutionPriority.getValue());
         }
     }
@@ -176,46 +180,15 @@ public class FullSpinOutput implements SpinOutput {
         return spins;
     }
 
-    private int getSpinPriority(Spin spin) {
-        int clearedLine = spin.getClearedLine();
-
+    private String getSpinName(Spin spin) {
         switch (spin.getSpin()) {
             case Mini: {
-                return clearedLine * 10 + 1;
+                return "Mini";
             }
             case Regular: {
-                switch (spin.getName()) {
-                    case Iso: {
-                        return clearedLine * 10 + 2;
-                    }
-                    case Fin: {
-                        return clearedLine * 10 + 3;
-                    }
-                    case Neo: {
-                        return clearedLine * 10 + 4;
-                    }
-                    case NoName: {
-                        return clearedLine * 10 + 5;
-                    }
-                }
+                return spin.getName().getName();
             }
         }
-
-        throw new IllegalStateException();
-    }
-
-    private String getSpinString(Spin spin) {
-        int clearedLine = spin.getClearedLine();
-        String lineString = getSendLineString(clearedLine);
-        switch (spin.getSpin()) {
-            case Mini: {
-                return lineString + " [Mini]";
-            }
-            case Regular: {
-                return lineString + " [" + spin.getName().getName() + "]";
-            }
-        }
-
         throw new IllegalStateException();
     }
 
