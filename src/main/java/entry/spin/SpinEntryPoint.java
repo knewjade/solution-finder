@@ -136,9 +136,12 @@ public class SpinEntryPoint implements EntryPoint {
         List<PieceCounter> pieceCounters = generator.blockCountersStream().collect(Collectors.toList());
 
         if (1 < pieceCounters.size())
-            throw new FinderInitializeException("Should specify one combination");
+            throw new FinderInitializeException("Should specify only one combination");
 
         PieceCounter pieceCounter = pieceCounters.get(0);
+
+        if (pieceCounter.getBlocks().size() <= 1)
+            throw new FinderInitializeException("Specified piece size should be greater than 1");
 
         output("  " + pieceCounter.getBlocks().stream().map(Piece::getName).collect(Collectors.joining()));
         output();
