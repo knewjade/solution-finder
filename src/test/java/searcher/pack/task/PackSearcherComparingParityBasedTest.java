@@ -70,7 +70,7 @@ class PackSearcherComparingParityBasedTest {
                 .map(split -> {
                     Stream<Piece> blocks = BlockInterpreter.parse(split[0]);
                     LongPieces pieces = new LongPieces(blocks);
-                    int count = Integer.valueOf(split[1]);
+                    int count = Integer.parseInt(split[1]);
                     return new TestData(pieces, count);
                 })
                 .collect(Collectors.toList());
@@ -93,7 +93,7 @@ class PackSearcherComparingParityBasedTest {
                 .map(split -> {
                     Stream<Piece> blocks = BlockInterpreter.parse(split[0]);
                     LongPieces pieces = new LongPieces(blocks);
-                    int count = Integer.valueOf(split[1]);
+                    int count = Integer.parseInt(split[1]);
                     return new TestData(pieces, count);
                 })
                 .collect(Collectors.toList());
@@ -118,7 +118,7 @@ class PackSearcherComparingParityBasedTest {
                 .map(split -> {
                     Stream<Piece> blocks = BlockInterpreter.parse(split[0]);
                     LongPieces pieces = new LongPieces(blocks);
-                    int count = Integer.valueOf(split[1]);
+                    int count = Integer.parseInt(split[1]);
                     return new TestData(pieces, count);
                 })
                 .collect(Collectors.toList());

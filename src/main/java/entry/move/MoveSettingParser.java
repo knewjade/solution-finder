@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MoveSettingParser {
     private static final String CHARSET_NAME = "utf-8";
@@ -73,8 +74,9 @@ public class MoveSettingParser {
             Path path = Paths.get(fieldPath);
             Charset charset = Charset.forName(CHARSET_NAME);
 
-            try {
-                LinkedList<String> fieldLines = Files.lines(path, charset)
+            try (Stream<String> lines = Files.lines(path, charset)) {
+
+                LinkedList<String> fieldLines = lines
                         .map(str -> {
                             if (str.contains("#"))
                                 return str.substring(0, str.indexOf('#'));
@@ -126,8 +128,8 @@ public class MoveSettingParser {
             Path path = Paths.get(patternPath);
             Charset charset = Charset.forName(CHARSET_NAME);
 
-            try {
-                List<String> patterns = Files.lines(path, charset).collect(Collectors.toList());
+            try (Stream<String> lines = Files.lines(path, charset)) {
+                List<String> patterns = lines.collect(Collectors.toList());
                 settings.setPatterns(patterns);
             } catch (IOException e) {
                 throw new FinderParseException("Cannot open patterns file", e);
@@ -145,7 +147,7 @@ public class MoveSettingParser {
         try {
             return parser.parse(options, commands);
         } catch (Exception e) {
-            String commandsStr = Arrays.stream(commands).collect(Collectors.joining(" "));
+            String commandsStr = String.join(" ", commands);
             throw new FinderParseException(String.format("Cannot parse options: commands='%s'", commandsStr), e);
         }
     }

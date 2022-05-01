@@ -267,7 +267,7 @@ class PercentCountCaseTest extends PercentUseCaseBaseTest {
                         String command = line.substring(1, index + 1);
                         String[] split = line.substring(index).split(",");
                         assert split.length == 3;
-                        return new TestData(command, Integer.valueOf(split[1]), Integer.valueOf(split[2]));
+                        return new TestData(command, Integer.parseInt(split[1]), Integer.parseInt(split[2]));
                     })
                     .collect(Collectors.toList());
             Collections.shuffle(testCases);

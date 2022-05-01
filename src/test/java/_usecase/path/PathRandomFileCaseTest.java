@@ -124,7 +124,7 @@ class PathRandomFileCaseTest extends PathUseCaseBaseTest {
                         String command = line.substring(1, index + 1);
                         String[] split = line.substring(index).split(",");
                         assert split.length == 2 : Arrays.toString(split);
-                        return new TestData(command, Integer.valueOf(split[1]));
+                        return new TestData(command, Integer.parseInt(split[1]));
                     })
                     .collect(Collectors.toList());
             Collections.shuffle(testCases);

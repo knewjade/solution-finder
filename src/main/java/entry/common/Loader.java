@@ -45,22 +45,20 @@ public class Loader {
             String fieldPath = fieldPathOption.orElse(defaultFieldText);
             Path path = Paths.get(fieldPath);
 
-            Stream<String> lines;
-            try {
-                lines = Files.lines(path, charset);
+            LinkedList<String> fieldLines;
+            try (Stream<String> lines = Files.lines(path, charset)) {
+                fieldLines = lines
+                        .map(str -> {
+                            if (str.contains("#"))
+                                return str.substring(0, str.indexOf('#'));
+                            return str;
+                        })
+                        .map(String::trim)
+                        .filter(s -> !s.isEmpty())
+                        .collect(Collectors.toCollection(LinkedList::new));
             } catch (IOException e) {
                 throw new FinderParseException("Cannot open field file");
             }
-
-            LinkedList<String> fieldLines = lines
-                    .map(str -> {
-                        if (str.contains("#"))
-                            return str.substring(0, str.indexOf('#'));
-                        return str;
-                    })
-                    .map(String::trim)
-                    .filter(s -> !s.isEmpty())
-                    .collect(Collectors.toCollection(LinkedList::new));
 
             if (fieldLines.isEmpty())
                 throw new FinderParseException("Should specify clear-line & field-definition in field file");
@@ -93,8 +91,8 @@ public class Loader {
             String patternPath = patternPathOption.orElse(defaultPatternsText);
             Path path = Paths.get(patternPath);
 
-            try {
-                return Files.lines(path, charset).collect(Collectors.toList());
+            try (Stream<String> lines = Files.lines(path, charset)) {
+                return lines.collect(Collectors.toList());
             } catch (IOException e) {
                 throw new FinderParseException("Cannot open patterns file", e);
             }

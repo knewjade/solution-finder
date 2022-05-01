@@ -76,7 +76,7 @@ class CheckmateUsingHoldTest {
 
 
     @Test
-    void testLong9() throws Exception {
+    void testLong9() {
         List<Pair<List<Piece>, Integer>> testCases = new ArrayList<Pair<List<Piece>, Integer>>() {
             {
                 add(new Pair<>(Arrays.asList(I, S, Z, T, J, I, S, Z, S, Z), 29));
@@ -126,7 +126,7 @@ class CheckmateUsingHoldTest {
     }
 
     @Test
-    void testLong10() throws Exception {
+    void testLong10() {
         // Invoker
         List<Pair<List<Piece>, Integer>> testCases = new ArrayList<Pair<List<Piece>, Integer>>() {
             {
@@ -162,7 +162,7 @@ class CheckmateUsingHoldTest {
     }
 
     @Test
-    void testMultiPath1() throws Exception {
+    void testMultiPath1() {
         // Field
         String marks = "" +
                 "X________X" +
@@ -194,7 +194,7 @@ class CheckmateUsingHoldTest {
     }
 
     @Test
-    void testMultiPath2() throws Exception {
+    void testMultiPath2() {
         // Field
         String marks = "" +
                 "X____XXXXX" +
@@ -228,7 +228,7 @@ class CheckmateUsingHoldTest {
     }
 
     @Test
-    void testFilledLine() throws Exception {
+    void testFilledLine() {
         // Field
         String marks = "" +
                 "XXXXX_____" +
@@ -264,7 +264,7 @@ class CheckmateUsingHoldTest {
     @ParameterizedTest
     @ArgumentsSource(TestCase.class)
     @LongTest
-    void testCaseList(Pieces pieces, int expectedCount) throws Exception {
+    void testCaseList(Pieces pieces, int expectedCount) {
         // Field
         int maxClearLine = 4;
         int maxDepth = 10;
@@ -306,7 +306,7 @@ class CheckmateUsingHoldTest {
                     .map(split -> {
                         Stream<Piece> blocks = BlockInterpreter.parse(split[0]);
                         LongPieces pieces = new LongPieces(blocks);
-                        int count = Integer.valueOf(split[1]);
+                        int count = Integer.parseInt(split[1]);
                         return new Pair<Pieces, Integer>(pieces, count);
                     })
                     .collect(Collectors.toList());
