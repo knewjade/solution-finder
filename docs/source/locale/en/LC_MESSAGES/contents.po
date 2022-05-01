@@ -20,7 +20,7 @@ msgstr ""
 
 #: ../../source/contents/caution.rst:3
 msgid "制限・注意・不具合情報"
-msgstr ""
+msgstr "Limitations, Cautions, and Bug Information"
 
 #: ../../source/contents/caution.rst:6 ../../source/contents/tools.rst:6
 #: ../../source/contents/workflow.rst:6
