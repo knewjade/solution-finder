@@ -182,11 +182,24 @@ public class FullSpinOutput implements SpinOutput {
 
     private String getSpinName(Spin spin) {
         switch (spin.getSpin()) {
-            case Mini: {
-                return "Mini";
-            }
             case Regular: {
-                return spin.getName().getName();
+                switch (spin.getName()) {
+                    case Iso:
+                    case Fin:
+                    case NoName: {
+                        return spin.getName().getName();
+                    }
+                }
+            }
+            case Mini: {
+                switch (spin.getName()) {
+                    case Neo: {
+                        return spin.getName().getName();
+                    }
+                    case NoName: {
+                        return "MINI";
+                    }
+                }
             }
         }
         throw new IllegalStateException();

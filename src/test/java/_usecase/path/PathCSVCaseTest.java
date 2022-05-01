@@ -156,7 +156,7 @@ class PathCSVCaseTest extends PathUseCaseBaseTest {
         CSVStore csvStore = OutputFileHelper.loadPathSolutionCSV();
         assertThat(csvStore.size()).isEqualTo(18);
 
-        assertThat(csvStore.row("fumen", "http://fumen.zui.jp/?v115@9gF8BthlG8ywH8wwglG8BtglJeAgWDA0iDCA"))
+        assertThat(csvStore.findRow("fumen", "http://fumen.zui.jp/?v115@9gF8BthlG8ywH8wwglG8BtglJeAgWDA0iDCA"))
                 .contains(entry("use", "TLZ"))
                 .contains(entry("num-valid", "1"))
                 .contains(entry("num-solutions", "1"))
@@ -164,7 +164,7 @@ class PathCSVCaseTest extends PathUseCaseBaseTest {
                 .contains(entry("solutions", "TLZ"))
                 .matches(map -> count(map.get("patterns"), 4), "fail patterns");
 
-        assertThat(csvStore.row("fumen", "http://fumen.zui.jp/?v115@9gF8zhG8BtglH8BtG8ilJeAgWDA6SdBA"))
+        assertThat(csvStore.findRow("fumen", "http://fumen.zui.jp/?v115@9gF8zhG8BtglH8BtG8ilJeAgWDA6SdBA"))
                 .contains(entry("use", "ILZ"))
                 .contains(entry("num-valid", "3"))
                 .contains(entry("num-solutions", "3"))
@@ -172,7 +172,7 @@ class PathCSVCaseTest extends PathUseCaseBaseTest {
                 .matches(map -> count(map.get("solutions"), 3), "fail solutions")
                 .matches(map -> count(map.get("patterns"), 6), "fail patterns");
 
-        assertThat(csvStore.row("fumen", "http://fumen.zui.jp/?v115@9gF8ywwhG8wwg0whH8g0whG8h0whJeAgWDAK+1BA"))
+        assertThat(csvStore.findRow("fumen", "http://fumen.zui.jp/?v115@9gF8ywwhG8wwg0whH8g0whG8h0whJeAgWDAK+1BA"))
                 .contains(entry("use", "TIJ"))
                 .contains(entry("num-solutions", "2"))
                 .contains(entry("num-patterns", "4"))
@@ -195,7 +195,7 @@ class PathCSVCaseTest extends PathUseCaseBaseTest {
         CSVStore csvStore = OutputFileHelper.loadPathSolutionCSV();
         assertThat(csvStore.size()).isEqualTo(4);
 
-        assertThat(csvStore.row("fumen", "http://fumen.zui.jp/?v115@9ghlH8h0H8g0glH8g0glH8JeAgWCAqCBAA"))
+        assertThat(csvStore.findRow("fumen", "http://fumen.zui.jp/?v115@9ghlH8h0H8g0glH8g0glH8JeAgWCAqCBAA"))
                 .contains(entry("use", "LJ"))
                 .contains(entry("num-valid", "1"))
                 .contains(entry("num-solutions", "1"))
@@ -220,7 +220,7 @@ class PathCSVCaseTest extends PathUseCaseBaseTest {
         CSVStore csvStore = OutputFileHelper.loadPathSolutionCSV();
         assertThat(csvStore.size()).isEqualTo(1);
 
-        assertThat(csvStore.row("fumen", "http://fumen.zui.jp/?v115@Hhh0F8hlg0H8glg0H8glJeAgWCAqCBAA"))
+        assertThat(csvStore.findRow("fumen", "http://fumen.zui.jp/?v115@Hhh0F8hlg0H8glg0H8glJeAgWCAqCBAA"))
                 .contains(entry("use", "LJ"))
                 .contains(entry("num-valid", "1"))
                 .contains(entry("num-solutions", "2"))
@@ -247,21 +247,21 @@ class PathCSVCaseTest extends PathUseCaseBaseTest {
         CSVStore csvStore = OutputFileHelper.loadPathUseCSV();
         assertThat(csvStore.size()).isEqualTo(35);
 
-        assertThat(csvStore.row("use", "JSO"))
+        assertThat(csvStore.findRow("use", "JSO"))
                 .contains(entry("use", "JSO"))
                 .contains(entry("num-solutions", "0"))
                 .contains(entry("num-patterns", "0"))
                 .contains(entry("fumens", ""))
                 .contains(entry("patterns", ""));
 
-        assertThat(csvStore.row("use", "TIO"))
+        assertThat(csvStore.findRow("use", "TIO"))
                 .contains(entry("use", "TIO"))
                 .contains(entry("num-solutions", "1"))
                 .contains(entry("num-patterns", "6"))
                 .contains(entry("fumens", "v115@9gF8zhG8RpwwH8xwG8RpwwJeAgWDAUXdBA"))
                 .matches(map -> count(map.get("patterns"), 6), "fail patterns");
 
-        assertThat(csvStore.row("use", "TSZ"))
+        assertThat(csvStore.findRow("use", "TSZ"))
                 .contains(entry("use", "TSZ"))
                 .contains(entry("num-solutions", "2"))
                 .contains(entry("num-patterns", "4"))
@@ -286,21 +286,21 @@ class PathCSVCaseTest extends PathUseCaseBaseTest {
         CSVStore csvStore = OutputFileHelper.loadPathUseCSV();
         assertThat(csvStore.size()).isEqualTo(35);
 
-        assertThat(csvStore.row("use", "TJS"))
+        assertThat(csvStore.findRow("use", "TJS"))
                 .contains(entry("use", "TJS"))
                 .contains(entry("num-solutions", "0"))
                 .contains(entry("num-patterns", "0"))
                 .contains(entry("fumens", ""))
                 .contains(entry("patterns", ""));
 
-        assertThat(csvStore.row("use", "ILZ"))
+        assertThat(csvStore.findRow("use", "ILZ"))
                 .contains(entry("use", "ILZ"))
                 .contains(entry("num-solutions", "1"))
                 .contains(entry("num-patterns", "3"))
                 .contains(entry("fumens", "v115@9gF8zhG8BtglH8BtG8ilJeAgWDA6SdBA"))
                 .matches(map -> count(map.get("patterns"), 3), "fail patterns");
 
-        assertThat(csvStore.row("use", "TIJ"))
+        assertThat(csvStore.findRow("use", "TIJ"))
                 .contains(entry("use", "TIJ"))
                 .contains(entry("num-solutions", "2"))
                 .contains(entry("num-patterns", "5"))
@@ -325,25 +325,25 @@ class PathCSVCaseTest extends PathUseCaseBaseTest {
         CSVStore csvStore = OutputFileHelper.loadPathPatternCSV();
         assertThat(csvStore.size()).isEqualTo(840);
 
-        assertThat(csvStore.row("pattern", "JZSO"))
+        assertThat(csvStore.findRow("pattern", "JZSO"))
                 .contains(entry("num-solutions", "0"))
                 .contains(entry("use", ""))
                 .contains(entry("nouse", ""))
                 .contains(entry("fumens", ""));
 
-        assertThat(csvStore.row("pattern", "STOZ"))
+        assertThat(csvStore.findRow("pattern", "STOZ"))
                 .contains(entry("num-solutions", "1"))
                 .contains(entry("use", "TSZ"))
                 .contains(entry("nouse", "O"))
                 .contains(entry("fumens", "v115@9gF8BtR4G8R4wwH8xwG8BtwwJeAgWDAUtDCA"));
 
-        assertThat(csvStore.row("pattern", "SLZO"))
+        assertThat(csvStore.findRow("pattern", "SLZO"))
                 .contains(entry("num-solutions", "2"))
                 .contains(entry("use", "LSZ"))
                 .contains(entry("nouse", "O"))
                 .matches(map -> count(map.get("fumens"), 2), "fail fumens");
 
-        assertThat(csvStore.row("pattern", "TSZL"))
+        assertThat(csvStore.findRow("pattern", "TSZL"))
                 .contains(entry("num-solutions", "4"))
                 .matches(map -> count(map.get("use"), 3), "fail use")
                 .matches(map -> count(map.get("nouse"), 3), "fail nouse")
@@ -367,19 +367,19 @@ class PathCSVCaseTest extends PathUseCaseBaseTest {
         CSVStore csvStore = OutputFileHelper.loadPathPatternCSV();
         assertThat(csvStore.size()).isEqualTo(840);
 
-        assertThat(csvStore.row("pattern", "OSJ"))
+        assertThat(csvStore.findRow("pattern", "OSJ"))
                 .contains(entry("num-solutions", "0"))
                 .contains(entry("use", ""))
                 .contains(entry("nouse", ""))
                 .contains(entry("fumens", ""));
 
-        assertThat(csvStore.row("pattern", "JIT"))
+        assertThat(csvStore.findRow("pattern", "JIT"))
                 .contains(entry("num-solutions", "1"))
                 .contains(entry("use", "TIJ"))
                 .contains(entry("nouse", ""))
                 .contains(entry("fumens", "v115@9gF8ywwhG8wwg0whH8g0whG8h0whJeAgWDAK+1BA"));
 
-        assertThat(csvStore.row("pattern", "TLZ"))
+        assertThat(csvStore.findRow("pattern", "TLZ"))
                 .contains(entry("num-solutions", "2"))
                 .contains(entry("use", "TLZ"))
                 .contains(entry("nouse", ""))
@@ -404,19 +404,19 @@ class PathCSVCaseTest extends PathUseCaseBaseTest {
         CSVStore csvStore = OutputFileHelper.loadPathPatternCSV();
         assertThat(csvStore.size()).isEqualTo(840);
 
-        assertThat(csvStore.row("pattern", "ISZJO"))
+        assertThat(csvStore.findRow("pattern", "ISZJO"))
                 .contains(entry("num-solutions", "0"))
                 .contains(entry("use", ""))
                 .contains(entry("nouse", ""))
                 .contains(entry("fumens", ""));
 
-        assertThat(csvStore.row("pattern", "ILZJT"))
+        assertThat(csvStore.findRow("pattern", "ILZJT"))
                 .contains(entry("num-solutions", "1"))
                 .contains(entry("use", "TILZ"))
                 .contains(entry("nouse", "J"))
                 .contains(entry("fumens", "v115@9gE8ywAtwhF8wwBtwhG8AtglwhF8ilwhJeAgWEAMej?xC"));
 
-        assertThat(csvStore.row("pattern", "ITLIZ"))
+        assertThat(csvStore.findRow("pattern", "ITLIZ"))
                 .contains(entry("num-solutions", "5"))
                 .matches(map -> count(map.get("use"), 3), "fail use")
                 .matches(map -> count(map.get("nouse"), 3), "fail nouse")
@@ -447,25 +447,25 @@ class PathCSVCaseTest extends PathUseCaseBaseTest {
         CSVStore csvStore = OutputFileHelper.loadPathPatternCSV();
         assertThat(csvStore.size()).isEqualTo(840);
 
-        assertThat(csvStore.row("pattern", "ITJSZ"))
+        assertThat(csvStore.findRow("pattern", "ITJSZ"))
                 .contains(entry("num-solutions", "0"))
                 .contains(entry("use", ""))
                 .contains(entry("nouse", ""))
                 .contains(entry("fumens", ""));
 
-        assertThat(csvStore.row("pattern", "ISOJL"))
+        assertThat(csvStore.findRow("pattern", "ISOJL"))
                 .contains(entry("num-solutions", "1"))
                 .contains(entry("use", "IJSO"))
                 .contains(entry("nouse", "L"))
                 .contains(entry("fumens", "v115@9gi0R4E8zhF8Rpg0G8RpR4F8JeAgWEAPentC"));
 
-        assertThat(csvStore.row("pattern", "ITLSI"))
+        assertThat(csvStore.findRow("pattern", "ITLSI"))
                 .contains(entry("num-solutions", "3"))
                 .contains(entry("use", "TILS"))
                 .contains(entry("nouse", "I"))
                 .matches(map -> count(map.get("fumens"), 3), "fail fumens");
 
-        assertThat(csvStore.row("pattern", "ILTSZ"))
+        assertThat(csvStore.findRow("pattern", "ILTSZ"))
                 .contains(entry("num-solutions", "4"))
                 .matches(map -> count(map.get("use"), 2), "fail use")
                 .matches(map -> count(map.get("nouse"), 2), "fail nouse")
@@ -587,12 +587,12 @@ class PathCSVCaseTest extends PathUseCaseBaseTest {
 
         // column: [fumen, use, num-valid, num-solutions, num-patterns, valid, solutions, patterns]
         for (String key : csvStoreFromFile.keySet()) {
-            assertThat(csvStoreFromFile.row("num-valid", key))
-                    .isEqualTo(csvStoreFromConsole.row("num-valid", key));
-            assertThat(csvStoreFromFile.row("num-solutions", key))
-                    .isEqualTo(csvStoreFromConsole.row("num-solutions", key));
-            assertThat(csvStoreFromFile.row("num-patterns", key))
-                    .isEqualTo(csvStoreFromConsole.row("num-patterns", key));
+            assertThat(csvStoreFromFile.findRow("num-valid", key))
+                    .isEqualTo(csvStoreFromConsole.findRow("num-valid", key));
+            assertThat(csvStoreFromFile.findRow("num-solutions", key))
+                    .isEqualTo(csvStoreFromConsole.findRow("num-solutions", key));
+            assertThat(csvStoreFromFile.findRow("num-patterns", key))
+                    .isEqualTo(csvStoreFromConsole.findRow("num-patterns", key));
         }
     }
 
@@ -627,10 +627,10 @@ class PathCSVCaseTest extends PathUseCaseBaseTest {
 
         assertThat(csvStoreFromFile.keySet()).isEqualTo(csvStoreFromConsole.keySet());
         for (String key : csvStoreFromFile.keySet()) {
-            assertThat(csvStoreFromFile.row("num-solutions", key))
-                    .isEqualTo(csvStoreFromConsole.row("num-solutions", key));
-            assertThat(csvStoreFromFile.row("num-patterns", key))
-                    .isEqualTo(csvStoreFromConsole.row("num-patterns", key));
+            assertThat(csvStoreFromFile.findRow("num-solutions", key))
+                    .isEqualTo(csvStoreFromConsole.findRow("num-solutions", key));
+            assertThat(csvStoreFromFile.findRow("num-patterns", key))
+                    .isEqualTo(csvStoreFromConsole.findRow("num-patterns", key));
         }
     }
 
@@ -665,8 +665,8 @@ class PathCSVCaseTest extends PathUseCaseBaseTest {
 
         assertThat(csvStoreFromFile.keySet()).isEqualTo(csvStoreFromConsole.keySet());
         for (String key : csvStoreFromFile.keySet()) {
-            assertThat(csvStoreFromFile.row("num-solutions", key))
-                    .isEqualTo(csvStoreFromConsole.row("num-solutions", key));
+            assertThat(csvStoreFromFile.findRow("num-solutions", key))
+                    .isEqualTo(csvStoreFromConsole.findRow("num-solutions", key));
         }
     }
 

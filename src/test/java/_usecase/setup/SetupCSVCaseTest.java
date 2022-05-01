@@ -47,7 +47,7 @@ class SetupCSVCaseTest extends SetupUseCaseBaseTest {
 
         assertThat(csvStore.size()).isEqualTo(214);
 
-        assertThat(csvStore.row("fumen", "http://fumen.zui.jp/?v115@6gQ4Feg0BeR4Eeg0ilQ4wwRpAeh0glBtxwRpAezhBt?wwJeAgWHAUtjWCKuqBA"))
+        assertThat(csvStore.findRow("fumen", "http://fumen.zui.jp/?v115@6gQ4Feg0BeR4Eeg0ilQ4wwRpAeh0glBtxwRpAezhBt?wwJeAgWHAUtjWCKuqBA"))
                 .contains(entry("use", "TSZLJIO"))
                 .contains(entry("num-build", "581"));
     }
@@ -79,7 +79,7 @@ class SetupCSVCaseTest extends SetupUseCaseBaseTest {
 
         assertThat(csvStore.size()).isEqualTo(14);
 
-        assertThat(csvStore.row("fumen", "http://fumen.zui.jp/?v115@DhwhGeAtg0whglQ4AeRpAeBtg0whglR4RpAeAth0wh?hlQ4JeAgWGAzSNPCaHBAA"))
+        assertThat(csvStore.findRow("fumen", "http://fumen.zui.jp/?v115@DhwhGeAtg0whglQ4AeRpAeBtg0whglR4RpAeAth0wh?hlQ4JeAgWGAzSNPCaHBAA"))
                 .contains(entry("use", "SLIJZO"))
                 .contains(entry("num-build", "336"));
     }
@@ -124,10 +124,10 @@ class SetupCSVCaseTest extends SetupUseCaseBaseTest {
 
         assertThat(csvStoreFromFile.keySet()).isEqualTo(csvStoreFromConsole.keySet());
         for (String key : csvStoreFromFile.keySet()) {
-            assertThat(csvStoreFromFile.row("use", key))
-                    .isEqualTo(csvStoreFromConsole.row("use", key));
-            assertThat(csvStoreFromFile.row("num-build", key))
-                    .isEqualTo(csvStoreFromConsole.row("num-build", key));
+            assertThat(csvStoreFromFile.findRow("use", key))
+                    .isEqualTo(csvStoreFromConsole.findRow("use", key));
+            assertThat(csvStoreFromFile.findRow("num-build", key))
+                    .isEqualTo(csvStoreFromConsole.findRow("num-build", key));
         }
     }
 }

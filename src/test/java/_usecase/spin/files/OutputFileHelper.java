@@ -1,28 +1,30 @@
 package _usecase.spin.files;
 
 import _usecase.FileHelper;
+import helper.CSVStore;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class OutputFileHelper {
-    private static final String SPIN_PATH = concatPath("output", "spin.html");
+    private static final String SPIN_HTML_PATH = concatPath("output", "spin.html");
+
+    private static final String SPIN_CSV_PATH = concatPath("output", "spin.csv");
 
     private static String concatPath(String... names) {
         return FileHelper.concatPath(names);
     }
 
     public static SpinHTML loadSpinHTML() throws IOException {
-        return loadSpinHTML(SPIN_PATH);
+        return loadSpinHTML(SPIN_HTML_PATH);
     }
 
     private static SpinHTML loadSpinHTML(String path) throws IOException {
@@ -114,7 +116,29 @@ public class OutputFileHelper {
     }
 
     public static void deleteSpinHTML() {
-        File file = new File(SPIN_PATH);
+        File file = new File(SPIN_HTML_PATH);
         FileHelper.deleteFileAndClose(file);
+    }
+
+    public static CSVStore loadSpinCSV() throws IOException {
+        return loadSpinCSV(Paths.get(SPIN_CSV_PATH));
+    }
+
+    public static CSVStore loadSpinCSV(Path path) throws IOException {
+        return loadSpinCSV(Files.lines(path));
+    }
+
+    public static CSVStore loadSpinCSV(Stream<String> content) {
+        return loadCSVStore(content, Arrays.asList(
+                "fumen", "valid", "use", "num-use", "t-spin-lines", "mini", "name", "total-lines", "hole"
+        ));
+    }
+
+    private static CSVStore loadCSVStore(Stream<String> content, List<String> columnNames) {
+        CSVStore csvStore = new CSVStore(columnNames);
+        content
+                .skip(1)  // skip header
+                .forEach(csvStore::load);
+        return csvStore;
     }
 }

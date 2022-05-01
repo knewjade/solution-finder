@@ -7,6 +7,7 @@ import _usecase.spin.files.OutputFileHelper;
 import _usecase.spin.files.SpinHTML;
 import _usecase.spin.files.TSpinType;
 import entry.EntryPointMain;
+import helper.CSVStore;
 import module.LongTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -428,6 +429,140 @@ class SpinTetfuCaseTest {
     }
 
     @Nested
+    class CSVTest extends SpinUseCaseBaseTest {
+        private String buildCommand(String fumen, String options) {
+            return String.format("spin -t %s -fo csv %s", fumen, options);
+        }
+
+        @Override
+        @BeforeEach
+        void setUp() throws IOException {
+            super.setUp();
+        }
+
+        @Test
+        void case1() throws Exception {
+            String fumen = "v115@zgD8FeE8EeF8DeG8CeH8LeAgH";
+            String command = buildCommand(fumen, "-p *p7 -ft 4 --line 1");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(2052));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            CSVStore csv = OutputFileHelper.loadSpinCSV();
+
+            // ALL
+            {
+                assertThat(csv).returns(2052, CSVStore::size);
+
+                assertThat(csv.filter("mini", "O")).returns(997, CSVStore::size);
+                assertThat(csv.filter("mini", "X")).returns(1055, CSVStore::size);
+
+                assertThat(csv.filter("name", "")).returns(2041, CSVStore::size);
+                assertThat(csv.filter("name", "FIN")).returns(10, CSVStore::size);
+                assertThat(csv.filter("name", "ISO")).returns(0, CSVStore::size);
+                assertThat(csv.filter("name", "NEO")).returns(1, CSVStore::size);
+
+                assertThat(csv.filter("use", "TZL")).returns(11, CSVStore::size);
+                assertThat(csv.filter("use", "LZSTJ")).returns(3, CSVStore::size);
+
+                assertThat(csv.filter("num-use", "1")).returns(0, CSVStore::size);
+                assertThat(csv.filter("num-use", "2")).returns(4, CSVStore::size);
+                assertThat(csv.filter("num-use", "3")).returns(117, CSVStore::size);
+                assertThat(csv.filter("num-use", "4")).returns(779, CSVStore::size);
+                assertThat(csv.filter("num-use", "5")).returns(1077, CSVStore::size);
+                assertThat(csv.filter("num-use", "6")).returns(75, CSVStore::size);
+                assertThat(csv.filter("num-use", "7")).returns(0, CSVStore::size);
+
+                assertThat(csv.filter("total-lines", "1")).returns(633, CSVStore::size);
+                assertThat(csv.filter("total-lines", "2")).returns(981, CSVStore::size);
+                assertThat(csv.filter("total-lines", "3")).returns(387, CSVStore::size);
+                assertThat(csv.filter("total-lines", "4")).returns(49, CSVStore::size);
+                assertThat(csv.filter("total-lines", "5")).returns(2, CSVStore::size);
+                assertThat(csv.filter("total-lines", "6")).returns(0, CSVStore::size);
+
+                assertThat(csv.filter("hole", "0")).returns(206, CSVStore::size);
+                assertThat(csv.filter("hole", "1")).returns(443, CSVStore::size);
+                assertThat(csv.filter("hole", "2")).returns(639, CSVStore::size);
+                assertThat(csv.filter("hole", "3")).returns(533, CSVStore::size);
+                assertThat(csv.filter("hole", "4")).returns(210, CSVStore::size);
+                assertThat(csv.filter("hole", "5")).returns(19, CSVStore::size);
+                assertThat(csv.filter("hole", "6")).returns(2, CSVStore::size);
+                assertThat(csv.filter("hole", "7")).returns(0, CSVStore::size);
+            }
+
+            // TSD
+            {
+                CSVStore tsd = csv.filter("t-spin-lines", "2");
+                assertThat(tsd).returns(201, CSVStore::size);
+
+                assertThat(tsd.filter("mini", "O")).returns(1, CSVStore::size);
+                assertThat(tsd.filter("mini", "X")).returns(200, CSVStore::size);
+
+                assertThat(tsd.filter("name", "")).returns(196, CSVStore::size);
+                assertThat(tsd.filter("name", "FIN")).returns(4, CSVStore::size);
+                assertThat(tsd.filter("name", "NEO")).returns(1, CSVStore::size);
+
+                assertThat(tsd.filter("use", "TZL")).returns(2, CSVStore::size);
+                assertThat(tsd.filter("use", "LZSTJ")).returns(0, CSVStore::size);
+
+                assertThat(tsd.filter("num-use", "2")).returns(0, CSVStore::size);
+                assertThat(tsd.filter("num-use", "3")).returns(11, CSVStore::size);
+                assertThat(tsd.filter("num-use", "4")).returns(71, CSVStore::size);
+                assertThat(tsd.filter("num-use", "5")).returns(102, CSVStore::size);
+                assertThat(tsd.filter("num-use", "6")).returns(17, CSVStore::size);
+                assertThat(tsd.filter("num-use", "7")).returns(0, CSVStore::size);
+
+                assertThat(tsd.filter("total-lines", "2")).returns(84, CSVStore::size);
+                assertThat(tsd.filter("total-lines", "3")).returns(88, CSVStore::size);
+                assertThat(tsd.filter("total-lines", "4")).returns(27, CSVStore::size);
+                assertThat(tsd.filter("total-lines", "5")).returns(2, CSVStore::size);
+                assertThat(tsd.filter("total-lines", "6")).returns(0, CSVStore::size);
+
+                assertThat(tsd.filter("hole", "0")).returns(65, CSVStore::size);
+                assertThat(tsd.filter("hole", "1")).returns(66, CSVStore::size);
+                assertThat(tsd.filter("hole", "2")).returns(50, CSVStore::size);
+                assertThat(tsd.filter("hole", "3")).returns(19, CSVStore::size);
+                assertThat(tsd.filter("hole", "4")).returns(1, CSVStore::size);
+                assertThat(tsd.filter("hole", "5")).returns(0, CSVStore::size);
+            }
+        }
+
+        @Test
+        void case2() throws Exception {
+            String fumen = "v115@9gA8IeB8HeA8BeA8CeE8AeA8AeE8JeAgH";
+            String command = buildCommand(fumen, "-fb 0 -ft 2 -m 5 -c 2 -p iltz");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(2));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            CSVStore csv = OutputFileHelper.loadSpinCSV();
+
+            assertThat(csv).returns(2, CSVStore::size);
+
+            assertThat(csv.filter("mini", "O")).returns(0, CSVStore::size);
+            assertThat(csv.filter("mini", "X")).returns(2, CSVStore::size);
+
+            assertThat(csv.filter("name", "ISO")).returns(2, CSVStore::size);
+
+            assertThat(csv.filter("use", "TLI")).returns(1, CSVStore::size);
+            assertThat(csv.filter("use", "TZLI")).returns(1, CSVStore::size);
+
+            assertThat(csv.filter("num-use", "3")).returns(1, CSVStore::size);
+            assertThat(csv.filter("num-use", "4")).returns(1, CSVStore::size);
+
+            assertThat(csv.filter("total-lines", "2")).returns(2, CSVStore::size);
+
+            assertThat(csv.filter("hole", "3")).returns(2, CSVStore::size);
+        }
+    }
+
+    @Nested
     class ErrorTest extends SpinUseCaseBaseTest {
         private String buildCommand(String fumen, String options) {
             return String.format("spin -t %s %s", fumen, options);
@@ -499,6 +634,17 @@ class SpinTetfuCaseTest {
             // Log
             assertThat(log.getReturnCode()).isNotEqualTo(0);
             assertThat(log.getError()).contains("Required-clear-line should be 1 <= line <= 3");
+        }
+
+        @Test
+        void pieceSizeIs1() throws Exception {
+            String fumen = "v115@9gzhFezhFezhFezhPeAgH";
+            String command = buildCommand(fumen, "-p T");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getReturnCode()).isNotEqualTo(0);
+            assertThat(log.getError()).contains("Specified piece size should be greater than 1");
         }
     }
 }

@@ -56,8 +56,6 @@ public class CSVSpinOutput implements SpinOutput {
 
     @Override
     public int output(MyFile myFile, List<Candidate> results, Field initField, int fieldHeight) throws FinderExecuteException {
-        int size = results.size();
-
         Function<Candidate, Optional<CSVItem>> candidateOptionalFunction = isSearchRoof ?
                 candidate -> {
                     Optional<Spin> spinOptional = getSpin(candidate, fieldHeight);
@@ -85,7 +83,7 @@ public class CSVSpinOutput implements SpinOutput {
             throw new FinderExecuteException("Failed to output file", e);
         }
 
-        return size;
+        return lines.size();
     }
 
     private Optional<Spin> getSpin(Candidate candidate, int fieldHeight) {
@@ -177,15 +175,15 @@ public class CSVSpinOutput implements SpinOutput {
     }
 
     public String toHeaderLine() {
-        return "テト譜,有効マーク,使用ミノ,T-Spinライン数,MINI,名前,トータルクリアライン数,hole,使用ミノ数";
+        return "テト譜,有効マーク,使用ミノ,使用ミノ数,T-Spinライン数,MINI,名前,トータルクリアライン数,hole";
     }
 
     public String toLine(CSVItem item) {
         return String.format(
-                "http://fumen.zui.jp/?v115@%s,%s,%s,%d,%s,%s,%d,%d,%d",
-                item.getData(), item.getMark(), item.getUsingPieces(), item.getClearedLinesTOnly(),
-                item.isMini() ? "O" : "X", item.getSpinName(),
-                item.getTotalClearedLines(), item.getNumOfHoles(), item.getNumOfUsingPieces()
+                "http://fumen.zui.jp/?v115@%s,%s,%s,%d,%d,%s,%s,%d,%d",
+                item.getData(), item.getMark(), item.getUsingPieces(), item.getNumOfUsingPieces(),
+                item.getClearedLinesTOnly(), item.isMini() ? "O" : "X", item.getSpinName(),
+                item.getTotalClearedLines(), item.getNumOfHoles()
         );
     }
 }
