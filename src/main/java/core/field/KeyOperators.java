@@ -293,4 +293,28 @@ public class KeyOperators {
         long high = key & 0b000000100000000010000000001000000000100000000010000000001000L;
         return high & (-high);
     }
+
+    public static long toColumnKey(long bitKey) {
+        long columnKey = 0L;
+        for (int y = 0; y < 24; y++) {
+            if (0 < (bitKey & getBitKey(y))) {
+                columnKey |= getColumnKey(y);
+            }
+        }
+        return columnKey;
+    }
+
+    public static long getColumnKey(int y) {
+        return 1L << y;
+    }
+
+    public static long toBitKey(long columnKey) {
+        long bitKey = 0L;
+        for (int y = 0; y < 24; y++) {
+            if (0 < (columnKey & getColumnKey(y))) {
+                bitKey |= getBitKey(y);
+            }
+        }
+        return bitKey;
+    }
 }

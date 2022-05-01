@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: solution-finder \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-30 19:39+0900\n"
+"POT-Creation-Date: 2022-04-16 19:42+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -261,7 +261,7 @@ msgid "``--mode``"
 msgstr ""
 
 #: ../../contents/cover/main.rst:130
-#: ../../contents/cover/main.rst:212
+#: ../../contents/cover/main.rst:214
 msgid "normal"
 msgstr ""
 
@@ -379,389 +379,393 @@ msgstr ""
 msgid "v115のテト譜データにのみ対応。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:154
-msgid "``-p``, ``--patterns`` [default: なし]"
+#: ../../contents/cover/main.rst:152
+msgid "coverコマンドでは、上述したページを指定する書き方にも対応しています。"
 msgstr ""
 
 #: ../../contents/cover/main.rst:156
-msgid "探索したいミノ順を指定する。"
+msgid "``-p``, ``--patterns`` [default: なし]"
 msgstr ""
 
 #: ../../contents/cover/main.rst:158
-msgid "最大で22個のミノまで指定できる。"
+msgid "探索したいミノ順を指定する。"
 msgstr ""
 
 #: ../../contents/cover/main.rst:160
+msgid "最大で22個のミノまで指定できる。"
+msgstr ""
+
+#: ../../contents/cover/main.rst:162
 msgid "パターンを変更したい場合は ``--pattern IOSZLJTIO`` のように指定します。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:164
+#: ../../contents/cover/main.rst:166
 msgid "``-H``, ``--hold`` [default: use]"
 msgstr ""
 
-#: ../../contents/cover/main.rst:166
+#: ../../contents/cover/main.rst:168
 msgid "ホールドの有無を指定する。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:168
+#: ../../contents/cover/main.rst:170
 msgid "ホールドなしで探索する場合は ``--hold avoid`` を指定する。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:172
+#: ../../contents/cover/main.rst:174
 msgid "``-d``, ``--drop`` [default: softdrop]"
 msgstr ""
 
-#: ../../contents/cover/main.rst:174
+#: ../../contents/cover/main.rst:176
 msgid "ミノの操作に制限を加える。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:176
+#: ../../contents/cover/main.rst:178
 msgid "以下から操作方法をひとつ選択する。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:178
+#: ../../contents/cover/main.rst:180
 msgid "softdrop: ソフトドロップ＋回転入れ（制限なし）"
 msgstr ""
 
-#: ../../contents/cover/main.rst:179
+#: ../../contents/cover/main.rst:181
 msgid "harddrop: ハードドロップのみ"
 msgstr ""
 
-#: ../../contents/cover/main.rst:180
+#: ../../contents/cover/main.rst:182
 msgid "180: ソフトドロップ＋180度回転入れ。180度回転は `Nullpomino <https://github.com/nullpomino/nullpomino>`_ のStandard Wallkickに準拠します"
 msgstr ""
 
-#: ../../contents/cover/main.rst:181
+#: ../../contents/cover/main.rst:183
 msgid "t-softdrop: Tミノはソフトドロップ、その他のミノはハードドロップ"
 msgstr ""
 
-#: ../../contents/cover/main.rst:183
+#: ../../contents/cover/main.rst:185
 msgid "any-tspin (any, tspin0): Tミノは必ずT-Spin(Mini含むすべてのT-Spin)をする。その他のミノはハードドロップ"
 msgstr ""
 
-#: ../../contents/cover/main.rst:184
+#: ../../contents/cover/main.rst:186
 msgid "tss (tspin1): Tミノは必ずT-Spin Single,Double,Tripe(Miniは含まない)をする。その他のミノはハードドロップ"
 msgstr ""
 
-#: ../../contents/cover/main.rst:185
+#: ../../contents/cover/main.rst:187
 msgid "tsd (tspin2): Tミノは必ずT-Spin Double,Tripe(Miniは含まない)をする。その他のミノはハードドロップ"
 msgstr ""
 
-#: ../../contents/cover/main.rst:186
+#: ../../contents/cover/main.rst:188
 msgid "tst (tspin3): Tミノは必ずT-Spin Tripe(Miniは含まない)をする。その他のミノはハードドロップ"
 msgstr ""
 
-#: ../../contents/cover/main.rst:188
+#: ../../contents/cover/main.rst:190
 msgid "※ T-Spin系のdropでは、「T-Spinできないケース」や「ライン消去が発生しないT-Spinになるケース」ではミノを置きません。 また、Tミノを使わないケースでは ``harddrop`` と同じになる点にご注意ください (solutionが省略されるわけではありません)。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:193
+#: ../../contents/cover/main.rst:195
 msgid "``-m``, ``--mirror`` [default: no]"
 msgstr ""
 
-#: ../../contents/cover/main.rst:195
+#: ../../contents/cover/main.rst:197
 msgid "``yes`` の場合、入力した組み方を左右に反転させた組み方も対象に加える。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:197
+#: ../../contents/cover/main.rst:199
 msgid "複数のテト譜を同時に指定した場合、すべての組み方が左右反転されます。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:201
+#: ../../contents/cover/main.rst:203
 msgid "``-M``, ``--mode`` [default: normal]"
 msgstr ""
 
-#: ../../contents/cover/main.rst:203
+#: ../../contents/cover/main.rst:205
 msgid "探索モードを変更します。モードを変更すると「成功とする条件」が変化します。 その結果、Outputに表示される数値が各条件に沿った値となります。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:206
+#: ../../contents/cover/main.rst:208
 msgid "モードは以下からひとつ選択する。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:208
+#: ../../contents/cover/main.rst:210
 msgid "<Normal系>"
 msgstr ""
 
-#: ../../contents/cover/main.rst:211
+#: ../../contents/cover/main.rst:213
 msgid "指定されたミノの置き場所通りにすべて置くことができれば成功とする"
 msgstr ""
 
-#: ../../contents/cover/main.rst:212
+#: ../../contents/cover/main.rst:214
 msgid "``Mode: 1L`` と同等のモードです"
 msgstr ""
 
-#: ../../contents/cover/main.rst:217
+#: ../../contents/cover/main.rst:219
 msgid "1L (1line, 1lines) ~ 4L (4line, 4lines)"
 msgstr ""
 
-#: ../../contents/cover/main.rst:215
+#: ../../contents/cover/main.rst:217
 msgid "指定されたライン数以上での消去を許可された状況下で、指定されたミノの置き場所通りにすべて置くことができれば成功とする"
 msgstr ""
 
-#: ../../contents/cover/main.rst:216
+#: ../../contents/cover/main.rst:218
 msgid "たとえば ``3L``　を指定した場合、3ライン or 4ライン が可能です"
 msgstr ""
 
-#: ../../contents/cover/main.rst:217
+#: ../../contents/cover/main.rst:219
 msgid "ライン数は ``1~4`` の間で指定できます"
 msgstr ""
 
-#: ../../contents/cover/main.rst:222
+#: ../../contents/cover/main.rst:224
 msgid "1L-OR-PC (1line-OR-PC, 1lines-OR-PC) ~ 4L-OR-PC (4line-OR-PC, 4lines-OR-PC)"
 msgstr ""
 
-#: ../../contents/cover/main.rst:220
+#: ../../contents/cover/main.rst:222
 msgid "-通常のライン消去 (``1L ~ 4L``) に加えて、Perfect Clearも許可します - たとえば ``3L-OR-PC``　を指定した場合、3ライン or 4ライン or 任意のライン数のPC が可能です - ライン数は ``1~4`` の間で指定できます"
 msgstr ""
 
-#: ../../contents/cover/main.rst:224
+#: ../../contents/cover/main.rst:226
 msgid "※ 上の3つのモードでは ``--max-softdrop`` ``--max-clearline`` をさらに指定できます"
 msgstr ""
 
-#: ../../contents/cover/main.rst:227
+#: ../../contents/cover/main.rst:229
 msgid "<Tetris系>"
 msgstr ""
 
-#: ../../contents/cover/main.rst:230
+#: ../../contents/cover/main.rst:232
 msgid "tetris"
 msgstr ""
 
-#: ../../contents/cover/main.rst:230
+#: ../../contents/cover/main.rst:232
 msgid "テトリス(4ライン消去)を1回以上しながら、指定されたミノの置き場所通りにすべて置くことができれば成功とする"
 msgstr ""
 
-#: ../../contents/cover/main.rst:231
+#: ../../contents/cover/main.rst:233
 msgid "途中でTetrisが含まれていれば、それ以外のミノでライン消去が発生しても成功となる"
 msgstr ""
 
-#: ../../contents/cover/main.rst:235
+#: ../../contents/cover/main.rst:237
 msgid "tetris-end"
 msgstr ""
 
-#: ../../contents/cover/main.rst:233
+#: ../../contents/cover/main.rst:235
 msgid "指定されたミノの置き場所通りにすべて置きながら、かつ最後の操作がテトリス(4ライン消去)にできれば成功とする"
 msgstr ""
 
-#: ../../contents/cover/main.rst:234
+#: ../../contents/cover/main.rst:236
 msgid "最後がTetrisであれば、それ以外のミノでライン消去が発生しても成功となる"
 msgstr ""
 
-#: ../../contents/cover/main.rst:237
+#: ../../contents/cover/main.rst:239
 msgid "<T-Spin系>"
 msgstr ""
 
-#: ../../contents/cover/main.rst:241
+#: ../../contents/cover/main.rst:243
 msgid "any-tspin (any, tspin0)"
 msgstr ""
 
-#: ../../contents/cover/main.rst:240
+#: ../../contents/cover/main.rst:242
 msgid "Tスピンを1回以上しながら、指定されたミノの置き場所通りにすべて置くことができれば成功とする"
 msgstr ""
 
-#: ../../contents/cover/main.rst:241
+#: ../../contents/cover/main.rst:243
 msgid "途中でTスピンが含まれていれば、それ以外のミノでライン消去が発生しても成功となる"
 msgstr ""
 
-#: ../../contents/cover/main.rst:242
+#: ../../contents/cover/main.rst:244
 msgid "Tスピンは TSS,TSD,TST,Mini すべてが対象となる (ライン消去を伴わないTスピンはカウントされません)"
 msgstr ""
 
-#: ../../contents/cover/main.rst:244
+#: ../../contents/cover/main.rst:246
 msgid "tss (tspin1)"
 msgstr ""
 
-#: ../../contents/cover/main.rst:244
-#: ../../contents/cover/main.rst:247
-#: ../../contents/cover/main.rst:250
+#: ../../contents/cover/main.rst:246
+#: ../../contents/cover/main.rst:249
+#: ../../contents/cover/main.rst:252
 msgid "``any-tspin`` と同様"
 msgstr ""
 
-#: ../../contents/cover/main.rst:245
+#: ../../contents/cover/main.rst:247
 msgid "ただし、TSS,TSD,TST が対象となる (Miniは含まれない)"
 msgstr ""
 
-#: ../../contents/cover/main.rst:247
+#: ../../contents/cover/main.rst:249
 msgid "tsd (tspin2)"
 msgstr ""
 
-#: ../../contents/cover/main.rst:248
+#: ../../contents/cover/main.rst:250
 msgid "ただし、TSD,TST が対象となる (Miniは含まれない)"
 msgstr ""
 
-#: ../../contents/cover/main.rst:252
+#: ../../contents/cover/main.rst:254
 msgid "tst (tspin3)"
 msgstr ""
 
-#: ../../contents/cover/main.rst:251
+#: ../../contents/cover/main.rst:253
 msgid "ただし、TST のみが対象となる (Miniは含まれない)"
 msgstr ""
 
-#: ../../contents/cover/main.rst:254
+#: ../../contents/cover/main.rst:256
 msgid "<B2B系>"
 msgstr ""
 
-#: ../../contents/cover/main.rst:259
+#: ../../contents/cover/main.rst:261
 msgid "b2b"
 msgstr ""
 
-#: ../../contents/cover/main.rst:257
+#: ../../contents/cover/main.rst:259
 msgid "B2Bを継続したまま、指定されたミノの置き場所通りにすべて置くことができれば成功とする"
 msgstr ""
 
-#: ../../contents/cover/main.rst:258
+#: ../../contents/cover/main.rst:260
 msgid "つまり、途中でテトリス or Tスピン以外でライン消去が発生する場合は失敗となる"
 msgstr ""
 
-#: ../../contents/cover/main.rst:262
+#: ../../contents/cover/main.rst:264
 msgid "``-sb``, ``--starting-b2b`` [default: 0]"
 msgstr ""
 
-#: ../../contents/cover/main.rst:264
+#: ../../contents/cover/main.rst:266
 msgid "``mode`` が ``any-tspin`` ``tss`` ``tsd`` ``tst`` の場合に、使用されるオプションです。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:266
+#: ../../contents/cover/main.rst:268
 msgid "このオプションで指定した回数以上、開始直後からTスピン・テトリスを連続して成功させる必要があります。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:268
+#: ../../contents/cover/main.rst:270
 msgid "以下に ``-M any-tspin -sb 2`` で、ライン消去が起きた場合の例を記載します。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:270
+#: ../../contents/cover/main.rst:272
 msgid "START -> 3ライン : 失敗"
 msgstr ""
 
-#: ../../contents/cover/main.rst:271
+#: ../../contents/cover/main.rst:273
 msgid "START -> TSS -> 3ライン : 失敗"
 msgstr ""
 
-#: ../../contents/cover/main.rst:272
+#: ../../contents/cover/main.rst:274
 msgid "START -> TSS -> TSS -> 3ライン : 成功"
 msgstr ""
 
-#: ../../contents/cover/main.rst:273
+#: ../../contents/cover/main.rst:275
 msgid "START -> 4ライン -> TSS : 成功"
 msgstr ""
 
-#: ../../contents/cover/main.rst:274
+#: ../../contents/cover/main.rst:276
 msgid "START -> 4ライン -> 4ライン -> END : 失敗 (T-Spinが必須なモードを指定しているため)"
 msgstr ""
 
-#: ../../contents/cover/main.rst:275
+#: ../../contents/cover/main.rst:277
 msgid "START -> 4ライン -> 4ライン -> TSS : 成功"
 msgstr ""
 
-#: ../../contents/cover/main.rst:277
+#: ../../contents/cover/main.rst:279
 msgid "``0`` の場合は、開始直後にライン消去しても成功となります。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:280
+#: ../../contents/cover/main.rst:282
 msgid "``-P``, ``--priority`` [default: no]"
 msgstr ""
 
-#: ../../contents/cover/main.rst:282
+#: ../../contents/cover/main.rst:284
 msgid "入力されるテト譜に優先度を設定し、1つのツモ順につき1つの組み方だけを成功にします。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:284
+#: ../../contents/cover/main.rst:286
 msgid "なお、優先度はテト譜の入力順によって決まり、先頭にあるテト譜の優先度が最も高く、末尾にあるテト譜の優先度が最も低くなります。 ``-P yes`` の場合、優先度の高い組み方から成功/失敗が判定され、一番はじめに条件を満たしたテト譜のみを成功となります。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:288
+#: ../../contents/cover/main.rst:290
 msgid "たとえば ``-t テト譜A テト譜B テト譜C`` を入力し、``TIOSZLJ`` はすべてのテト譜で組めるとします。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:290
+#: ../../contents/cover/main.rst:292
 msgid "このとき、``-P no`` ではすべて成功 (``TIOSZLJ,O,O,O``) となりますが、 ``-P yes`` ではテト譜Aのみ成功 (``TIOSZLJ,O,X,X``) となります。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:295
+#: ../../contents/cover/main.rst:297
 msgid "``-l``, ``--last-sd`` [default: 0]"
 msgstr ""
 
-#: ../../contents/cover/main.rst:297
+#: ../../contents/cover/main.rst:299
 msgid "``--drop`` の設定によらず、ソフトドロップを有効にするタイミングを指定します。 数値には、残り何ミノでソフトドロップを有効にするかを入力します。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:300
+#: ../../contents/cover/main.rst:302
 msgid "たとえば、`このテト譜 <http://fumen.zui.jp/?v115@ThE8BeA8BeF8LeTJJvhAUtB>`_ で ``--drop harddrop --last-sd 1`` と指定したとします。 本来 ``--drop harddrop`` だけでは、Zミノでソフトドロップが必要となるため、組むことができません。 しかし ``--last-sd 1`` を指定することで、残り1ミノのときだけソフトドロップを有効になります。 つまり今回の例では、Oミノを置いた後であれば、Zミノを置くことができます。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:306
+#: ../../contents/cover/main.rst:308
 msgid "なお、テト譜ごとで必要なミノ数が異なる場合では、それぞれのテト譜で適用されるタイミングが変わります。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:308
+#: ../../contents/cover/main.rst:310
 msgid "たとえば、4ミノと3ミノの組み方を指定したケースでは、それぞれの組み方で3ミノ・2ミノ置いた後から適用されることになります。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:312
+#: ../../contents/cover/main.rst:314
 msgid "``-ms``, ``--max-softdrop`` [default: -1]"
 msgstr ""
 
-#: ../../contents/cover/main.rst:314
+#: ../../contents/cover/main.rst:316
 msgid "途中でSoftdropを使用できる最大の回数を指定できます。指定された回数もOKとなります。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:316
+#: ../../contents/cover/main.rst:318
 msgid "指定された回数より多くのSoftdropを使用しないといけない置き方は失敗となります。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:318
-#: ../../contents/cover/main.rst:330
+#: ../../contents/cover/main.rst:320
+#: ../../contents/cover/main.rst:332
 msgid "このオプションは ``normal`` ``1L ~ 4L`` ``1L-OR-PC ~ 4L-OR-PC`` モードで有効となります。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:320
+#: ../../contents/cover/main.rst:322
 msgid "もし ``-1`` を指定した場合、Softdropの回数は制限されません。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:324
+#: ../../contents/cover/main.rst:326
 msgid "``-mc``, ``--max-clearline`` [default: -1]"
 msgstr ""
 
-#: ../../contents/cover/main.rst:326
+#: ../../contents/cover/main.rst:328
 msgid "途中でライン消去しても良い最大の回数を指定できます。指定された回数もOKとなります。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:328
+#: ../../contents/cover/main.rst:330
 msgid "指定された回数より多くのライン消去が発生する置き方は失敗となります。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:332
+#: ../../contents/cover/main.rst:334
 msgid "もし ``-1`` を指定した場合、ライン消去の回数は制限されません。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:336
+#: ../../contents/cover/main.rst:338
 msgid "``-o``, ``--output-base`` [default: output/cover.csv]"
 msgstr ""
 
-#: ../../contents/cover/main.rst:338
+#: ../../contents/cover/main.rst:340
 msgid "出力結果を保存するファイルのパスを指定する。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:342
+#: ../../contents/cover/main.rst:344
 msgid "``-lp``, ``--log-path`` [default: output/last_output.txt]"
 msgstr ""
 
-#: ../../contents/cover/main.rst:344
+#: ../../contents/cover/main.rst:346
 msgid "実行時のログを保存するファイルのパスを指定する。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:348
+#: ../../contents/cover/main.rst:350
 msgid "``-fp``, ``--field-path`` [default: input/field.txt]"
 msgstr ""
 
-#: ../../contents/cover/main.rst:350
+#: ../../contents/cover/main.rst:352
 msgid "フィールドを定義するファイルのパスを指定する。"
 msgstr ""
 
-#: ../../contents/cover/main.rst:354
+#: ../../contents/cover/main.rst:356
 msgid "``-pp``, ``--patterns-path`` [default: input/patterns.txt]"
 msgstr ""
 
-#: ../../contents/cover/main.rst:356
+#: ../../contents/cover/main.rst:358
 msgid "組み合わせパターンを定義するファイルのパスを指定する。"
 msgstr ""

@@ -103,4 +103,28 @@ class KeyOperatorsTest {
             assertThat(KeyOperators.extractLowerBit(current)).isEqualTo(key);
         }
     }
+
+    @Test
+    void getColumnKey() {
+        assertThat(KeyOperators.getColumnKey(0)).isEqualTo(0b1);
+        assertThat(KeyOperators.getColumnKey(1)).isEqualTo(0b10);
+        assertThat(KeyOperators.getColumnKey(2)).isEqualTo(0b100);
+        assertThat(KeyOperators.getColumnKey(10)).isEqualTo(0b10000000000);
+    }
+
+    @Test
+    void toColumnKey() {
+        for (int y = 0; y < 24; y++) {
+            long bitKey = KeyOperators.getBitKey(y);
+            assertThat(KeyOperators.toColumnKey(bitKey)).isEqualTo(KeyOperators.getColumnKey(y));
+        }
+    }
+
+    @Test
+    void toBitKey() {
+        for (int y = 0; y < 24; y++) {
+            long columnKey = KeyOperators.getColumnKey(y);
+            assertThat(KeyOperators.toBitKey(columnKey)).isEqualTo(KeyOperators.getBitKeys(y));
+        }
+    }
 }

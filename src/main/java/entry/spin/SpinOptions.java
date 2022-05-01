@@ -21,6 +21,7 @@ public enum SpinOptions {
     Roof(SingleArgOption.full("r", "roof", "boolean", "If this option is true, search for roof")),
     MaxRoof(SingleArgOption.full("mr", "max-roof", "number", "Specify the maximum number of pieces that can be used as a roof")),
     Filter(SingleArgOption.full("f", "filter", "mode", "Specify filtering mode")),
+    Format(SingleArgOption.full("fo", "format", "string", "Result format type for output")),
     Split(SingleArgOption.full("s", "split", "boolean", "Split outputted tetfu page")),
     LogPath(SingleArgOption.full("lp", "log-path", "path", "File path of output log")),
     OutputBase(SingleArgOption.full("o", "output-base", "path", "Base file path of result to output")),

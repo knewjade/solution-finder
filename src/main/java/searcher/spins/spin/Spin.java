@@ -25,6 +25,10 @@ public class Spin implements Comparable<Spin> {
         return clearedLine;
     }
 
+    public boolean isMini() {
+        return spin == TSpins.Mini;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

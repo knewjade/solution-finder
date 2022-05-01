@@ -1,17 +1,19 @@
 package common.buildup;
 
-import common.SpinChecker;
-import common.datastore.*;
+import common.datastore.MinoOperation;
+import common.datastore.MinoOperationWithKey;
+import common.datastore.OperationWithKey;
 import common.datastore.action.Action;
 import core.action.reachable.Reachable;
 import core.field.Field;
 import core.field.KeyOperators;
 import core.mino.Mino;
 import core.mino.Piece;
-import searcher.spins.spin.Spin;
 
-import java.util.*;
-import java.util.function.ToIntFunction;
+import java.util.Comparator;
+import java.util.EnumMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -58,12 +60,7 @@ public class BuildUp {
     }
 
     public static boolean existsValidBuildPatternDirectly(Field fieldOrigin, LinkedList<MinoOperationWithKey> operationWithKeys, int height, Reachable reachable) {
-        operationWithKeys.sort((o1, o2) -> {
-            int compare = Integer.compare(o1.getY(), o2.getY());
-            if (compare != 0)
-                return compare;
-            return Long.compare(o1.getNeedDeletedKey(), o2.getNeedDeletedKey());
-        });
+        operationWithKeys.sort(Comparator.comparingInt((MinoOperationWithKey o) -> o.getY()).thenComparingLong(OperationWithKey::getNeedDeletedKey));
         return existsValidBuildPatternRecursive(fieldOrigin.freeze(height), operationWithKeys, height, reachable);
     }
 

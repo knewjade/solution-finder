@@ -69,7 +69,7 @@ class CheckmateNoHoldTest {
     }
 
     @Test
-    void testLong9() throws Exception {
+    void testLong9() {
         List<Pair<List<Piece>, Integer>> testCases = new ArrayList<Pair<List<Piece>, Integer>>() {
             {
                 add(new Pair<>(Arrays.asList(I, S, Z, T, J, I, S, Z, S, Z), 0));
@@ -120,7 +120,7 @@ class CheckmateNoHoldTest {
 
     @Test
     @LongTest
-    void testLong10() throws Exception {
+    void testLong10() {
         List<Pair<List<Piece>, Integer>> testCases = new ArrayList<Pair<List<Piece>, Integer>>() {
             {
                 add(new Pair<>(Arrays.asList(I, S, Z, T, J, I, S, Z, S, Z, T), 3));
@@ -166,7 +166,7 @@ class CheckmateNoHoldTest {
     }
 
     @Test
-    void testMultiPath1() throws Exception {
+    void testMultiPath1() {
         // Field
         String marks = "" +
                 "X________X" +
@@ -198,7 +198,7 @@ class CheckmateNoHoldTest {
     }
 
     @Test
-    void testMultiPath2() throws Exception {
+    void testMultiPath2() {
         // Field
         String marks = "" +
                 "X____XXXXX" +
@@ -232,7 +232,7 @@ class CheckmateNoHoldTest {
     }
 
     @Test
-    void testFilledLine() throws Exception {
+    void testFilledLine() {
         // Field
         String marks = "" +
                 "XXXXX_____" +
@@ -310,7 +310,7 @@ class CheckmateNoHoldTest {
                     .map(split -> {
                         Stream<Piece> blocks = BlockInterpreter.parse(split[0]);
                         LongPieces pieces = new LongPieces(blocks);
-                        int count = Integer.valueOf(split[1]);
+                        int count = Integer.parseInt(split[1]);
                         return new Pair<Pieces, Integer>(pieces, count);
                     })
                     .collect(Collectors.toList());

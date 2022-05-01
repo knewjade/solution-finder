@@ -11,9 +11,9 @@ public class FullSpinColumn implements HTMLColumn, Comparable<FullSpinColumn> {
     private final int priority;
     private final String title;
 
-    FullSpinColumn(Spin spin, int priority, String title) {
+    FullSpinColumn(Spin spin, int priority, String clearLineString, String spinName) {
         this.spin = spin;
-        this.title = title;
+        this.title = clearLineString + " [" + spinName + "]";
         this.priority = priority;
     }
 
@@ -47,11 +47,10 @@ public class FullSpinColumn implements HTMLColumn, Comparable<FullSpinColumn> {
 
     @Override
     public int compareTo(FullSpinColumn o) {
-        int compareTo = spin.compareTo(o.spin);
-        if (compareTo != 0) {
-            return compareTo;
+        int compare = Integer.compare(this.priority, o.priority);
+        if (compare != 0) {
+            return compare;
         }
-
-        return Integer.compare(this.priority, o.priority);
+        return spin.compareTo(o.spin);
     }
 }

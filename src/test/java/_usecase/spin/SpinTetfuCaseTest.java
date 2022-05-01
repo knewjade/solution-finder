@@ -5,7 +5,9 @@ import _usecase.Log;
 import _usecase.RunnerHelper;
 import _usecase.spin.files.OutputFileHelper;
 import _usecase.spin.files.SpinHTML;
+import _usecase.spin.files.TSpinType;
 import entry.EntryPointMain;
+import helper.CSVStore;
 import module.LongTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -45,7 +47,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(5)
                     .contains("zgD8DehlF8ywglG8wwQ4glH8R4I8Q4JeAgWDAzOkBA?")
                     .contains("vgglBewhD8ilBewhF8ywwhG8wwQ4whH8R4I8Q4JeAg?WEAze9VC")
@@ -67,7 +69,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(5)
                     .contains("zgD8FeF8DeG8CeH8BeI8Ke/NYWAFLDmClcJSAVDEHB?EooRBToAVB0CBAAvhBlsB6tB")
                     .contains("zgD8FeF8DeG8CeH8BeI8Ke/NYXAFLDmClcJSAVDEHB?EooRBToAVBU+jBAvhClsB5oBywB")
@@ -89,7 +91,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(1)
                     .contains("ufAtFeQ4AeBtBehlBeR4AtA8i0glywQ4D8g0glA8ww?E8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeC8JeAgWFAqCmFDz?AAAA");
         }
@@ -108,7 +110,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(2)
                     .contains("1gBtEewhCeBtDewhh0wwRpilA8whg0xwRpglR4A8wh?g0A8wwB8R4C8JeAgWHAq+bgCMeDCA")
                     .contains("rgQ4IeR4EewhCeQ4Eewhh0wwilRpA8whg0xwglBtRp?A8whg0A8wwB8BtC8JeAgWHAqujWCPuzBA");
@@ -128,7 +130,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens()).isEmpty();
+            assertThat(html.getAllFumens()).isEmpty();
         }
 
         @Test
@@ -145,7 +147,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(1709)
                     .contains("kgg0Ieg0DeD8h0DeE8ywR4F8wwR4glG8ilH8LeAgWE?As+jPC")
                     .contains("ogwhDeilBewhD8glQ4ywwhE8R4wwAtwhF8Q4Btg0G8?AtAeg0H8h0JeAgWGAKtjxCpCBAA")
@@ -167,7 +169,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(15938)
                     .contains("xgh0D8BeR4g0whE8R4wwg0whF8xwglwhG8wwglwhH8?hlJeAgWFAseltCqAAAA")
                     .contains("rgi0glRpBeD8g0glRpR4E8hlR4wwF8BtxwG8BtwwH8?LeAgWGA6OstCKHBAA")
@@ -190,7 +192,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(1520)
                     .contains("kgwhglHewhglCeD8AewhhlBeE8whQ4ywF8R4wwAtG8?Q4BtH8AtKeAgWFAzXOMCsAAAA")
                     .contains("lgQ4BewhFeR4AewhD8ywQ4glwhE8wwRpglwhF8Rphl?G8i0H8Aeg0JeAgWGAKHExCJNBAA")
@@ -217,7 +219,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(1680)
 
                     // -mr 0の結果が含まれている
@@ -246,7 +248,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens()).isEmpty();
+            assertThat(html.getAllFumens()).isEmpty();
         }
 
         @Test
@@ -262,7 +264,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(2)
                     .contains("1gBtIeBtEeB8wwH8xwI8wwG8JeAgWCA0XBAA")
                     .contains("1gi0Ieg0EeB8wwH8xwI8wwG8JeAgWCA0/AAA");
@@ -281,7 +283,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(1)
                     .contains("HhB8wwH8xwI8wwG8JeAgWBA0AAAA");
         }
@@ -300,7 +302,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens()).isEmpty();
+            assertThat(html.getAllFumens()).isEmpty();
         }
 
         @Test
@@ -316,7 +318,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(1)
                     .contains("XgA8IeB8IeA8AeB8Ceh0wwG8g0xwG8g0Q4wwB8DeB8?R4B8AeF8Q4B8BeC8JeAgWDAq+zBA");
         }
@@ -335,7 +337,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(4)
                     .contains("4gi0Ieg0BeE8wwRpF8xwRpG8wwD8JeAgWDAUnfBA")
                     .contains("Ehh0AeE8Beg0F8ywg0G8wwD8JeAgWCA0/AAA")
@@ -357,7 +359,7 @@ class SpinTetfuCaseTest {
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(5)
                     .contains("sgglIeglIehlCeF8ywH8wwH8DeB8JeAgWCA0CBAA")
                     .contains("3gglGeilCeF8ywH8wwH8DeB8JeAgWCA0CBAA")
@@ -384,7 +386,7 @@ class SpinTetfuCaseTest {
                     .doesNotContain("[O]")
                     .doesNotContain("[X]");
 
-            assertThat(html.getFumens())
+            assertThat(html.getAllFumens())
                     .hasSize(1)
                     .contains("HgRpHeRpBeG8CeG8wwhlG8xwglG8wwAeglG8i0F8Ce?g0H8AeI8AeA8JeAgWEAqOMgC");
         }
@@ -402,7 +404,211 @@ class SpinTetfuCaseTest {
 
             // HTML
             SpinHTML html = OutputFileHelper.loadSpinHTML();
-            assertThat(html.getFumens()).hasSize(0);
+            assertThat(html.getAllFumens()).hasSize(0);
+        }
+
+        @Test
+        void case14() throws Exception {
+            // ISO
+            String fumen = "v115@9gA8IeB8HeA8BeI8AeG8JeAgH";
+            String command = buildCommand(fumen, "-p IT");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(1));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            SpinHTML html = OutputFileHelper.loadSpinHTML();
+            assertThat(html.getAllFumens()).hasSize(1)
+                    .contains("zgzhFeA8IeB8wwGeA8xwI8wwG8JeAgWCAU+AAA");
+
+            assertThat(html.getFumensBySpin(TSpinType.RegularDouble)).hasSize(0);
+            assertThat(html.getFumensBySpin(TSpinType.IsoDouble)).hasSize(1);
+        }
+    }
+
+    @Nested
+    class CSVTest extends SpinUseCaseBaseTest {
+        private String buildCommand(String fumen, String options) {
+            return String.format("spin -t %s -fo csv %s", fumen, options);
+        }
+
+        @Override
+        @BeforeEach
+        void setUp() throws IOException {
+            super.setUp();
+        }
+
+        @Test
+        void case1() throws Exception {
+            String fumen = "v115@zgD8FeE8EeF8DeG8CeH8LeAgH";
+            String command = buildCommand(fumen, "-p *p7 -ft 4 --line 1");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(2052));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            CSVStore csv = OutputFileHelper.loadSpinCSV();
+
+            // ALL
+            {
+                assertThat(csv).returns(2052, CSVStore::size);
+
+                assertThat(csv.filter("mini", "O")).returns(997, CSVStore::size);
+                assertThat(csv.filter("mini", "X")).returns(1055, CSVStore::size);
+
+                assertThat(csv.filter("name", "")).returns(2041, CSVStore::size);
+                assertThat(csv.filter("name", "FIN")).returns(10, CSVStore::size);
+                assertThat(csv.filter("name", "ISO")).returns(0, CSVStore::size);
+                assertThat(csv.filter("name", "NEO")).returns(1, CSVStore::size);
+
+                assertThat(csv.filter("use", "TZL")).returns(11, CSVStore::size);
+                assertThat(csv.filter("use", "LZSTJ")).returns(3, CSVStore::size);
+
+                assertThat(csv.filter("num-use", "1")).returns(0, CSVStore::size);
+                assertThat(csv.filter("num-use", "2")).returns(4, CSVStore::size);
+                assertThat(csv.filter("num-use", "3")).returns(117, CSVStore::size);
+                assertThat(csv.filter("num-use", "4")).returns(779, CSVStore::size);
+                assertThat(csv.filter("num-use", "5")).returns(1077, CSVStore::size);
+                assertThat(csv.filter("num-use", "6")).returns(75, CSVStore::size);
+                assertThat(csv.filter("num-use", "7")).returns(0, CSVStore::size);
+
+                assertThat(csv.filter("total-lines", "1")).returns(633, CSVStore::size);
+                assertThat(csv.filter("total-lines", "2")).returns(981, CSVStore::size);
+                assertThat(csv.filter("total-lines", "3")).returns(387, CSVStore::size);
+                assertThat(csv.filter("total-lines", "4")).returns(49, CSVStore::size);
+                assertThat(csv.filter("total-lines", "5")).returns(2, CSVStore::size);
+                assertThat(csv.filter("total-lines", "6")).returns(0, CSVStore::size);
+
+                assertThat(csv.filter("hole", "0")).returns(206, CSVStore::size);
+                assertThat(csv.filter("hole", "1")).returns(443, CSVStore::size);
+                assertThat(csv.filter("hole", "2")).returns(639, CSVStore::size);
+                assertThat(csv.filter("hole", "3")).returns(533, CSVStore::size);
+                assertThat(csv.filter("hole", "4")).returns(210, CSVStore::size);
+                assertThat(csv.filter("hole", "5")).returns(19, CSVStore::size);
+                assertThat(csv.filter("hole", "6")).returns(2, CSVStore::size);
+                assertThat(csv.filter("hole", "7")).returns(0, CSVStore::size);
+
+                assertThat(csv.filter("t-rotate", "0")).returns(196, CSVStore::size);
+                assertThat(csv.filter("t-rotate", "L")).returns(668, CSVStore::size);
+                assertThat(csv.filter("t-rotate", "R")).returns(641, CSVStore::size);
+                assertThat(csv.filter("t-rotate", "2")).returns(547, CSVStore::size);
+
+                assertThat(csv.filter("t-x", "0")).returns(0, CSVStore::size);
+                assertThat(csv.filter("t-x", "1")).returns(0, CSVStore::size);
+                assertThat(csv.filter("t-x", "2")).returns(0, CSVStore::size);
+                assertThat(csv.filter("t-x", "3")).returns(0, CSVStore::size);
+                assertThat(csv.filter("t-x", "4")).returns(0, CSVStore::size);
+                assertThat(csv.filter("t-x", "5")).returns(910, CSVStore::size);
+                assertThat(csv.filter("t-x", "6")).returns(545, CSVStore::size);
+                assertThat(csv.filter("t-x", "7")).returns(330, CSVStore::size);
+                assertThat(csv.filter("t-x", "8")).returns(134, CSVStore::size);
+                assertThat(csv.filter("t-x", "9")).returns(133, CSVStore::size);
+
+                assertThat(csv.filter("t-y", "0")).returns(0, CSVStore::size);
+                assertThat(csv.filter("t-y", "1")).returns(2, CSVStore::size);
+                assertThat(csv.filter("t-y", "2")).returns(98, CSVStore::size);
+                assertThat(csv.filter("t-y", "3")).returns(655, CSVStore::size);
+                assertThat(csv.filter("t-y", "4")).returns(1297, CSVStore::size);
+                assertThat(csv.filter("t-y", "5")).returns(0, CSVStore::size);
+
+                assertThat(csv.filter("t-deleted-linekey", "0")).returns(2052, CSVStore::size);
+            }
+
+            // TSD
+            {
+                CSVStore tsd = csv.filter("t-spin-lines", "2");
+                assertThat(tsd).returns(201, CSVStore::size);
+
+                assertThat(tsd.filter("mini", "O")).returns(1, CSVStore::size);
+                assertThat(tsd.filter("mini", "X")).returns(200, CSVStore::size);
+
+                assertThat(tsd.filter("name", "")).returns(196, CSVStore::size);
+                assertThat(tsd.filter("name", "FIN")).returns(4, CSVStore::size);
+                assertThat(tsd.filter("name", "NEO")).returns(1, CSVStore::size);
+
+                assertThat(tsd.filter("use", "TZL")).returns(2, CSVStore::size);
+                assertThat(tsd.filter("use", "LZSTJ")).returns(0, CSVStore::size);
+
+                assertThat(tsd.filter("num-use", "2")).returns(0, CSVStore::size);
+                assertThat(tsd.filter("num-use", "3")).returns(11, CSVStore::size);
+                assertThat(tsd.filter("num-use", "4")).returns(71, CSVStore::size);
+                assertThat(tsd.filter("num-use", "5")).returns(102, CSVStore::size);
+                assertThat(tsd.filter("num-use", "6")).returns(17, CSVStore::size);
+                assertThat(tsd.filter("num-use", "7")).returns(0, CSVStore::size);
+
+                assertThat(tsd.filter("total-lines", "2")).returns(84, CSVStore::size);
+                assertThat(tsd.filter("total-lines", "3")).returns(88, CSVStore::size);
+                assertThat(tsd.filter("total-lines", "4")).returns(27, CSVStore::size);
+                assertThat(tsd.filter("total-lines", "5")).returns(2, CSVStore::size);
+                assertThat(tsd.filter("total-lines", "6")).returns(0, CSVStore::size);
+
+                assertThat(tsd.filter("hole", "0")).returns(65, CSVStore::size);
+                assertThat(tsd.filter("hole", "1")).returns(66, CSVStore::size);
+                assertThat(tsd.filter("hole", "2")).returns(50, CSVStore::size);
+                assertThat(tsd.filter("hole", "3")).returns(19, CSVStore::size);
+                assertThat(tsd.filter("hole", "4")).returns(1, CSVStore::size);
+                assertThat(tsd.filter("hole", "5")).returns(0, CSVStore::size);
+
+                assertThat(tsd.filter("t-x", "0")).returns(0, CSVStore::size);
+                assertThat(tsd.filter("t-x", "1")).returns(0, CSVStore::size);
+                assertThat(tsd.filter("t-x", "2")).returns(0, CSVStore::size);
+                assertThat(tsd.filter("t-x", "3")).returns(0, CSVStore::size);
+                assertThat(tsd.filter("t-x", "4")).returns(0, CSVStore::size);
+                assertThat(tsd.filter("t-x", "5")).returns(75, CSVStore::size);
+                assertThat(tsd.filter("t-x", "6")).returns(80, CSVStore::size);
+                assertThat(tsd.filter("t-x", "7")).returns(31, CSVStore::size);
+                assertThat(tsd.filter("t-x", "8")).returns(15, CSVStore::size);
+                assertThat(tsd.filter("t-x", "9")).returns(0, CSVStore::size);
+
+                assertThat(tsd.filter("t-y", "0")).returns(0, CSVStore::size);
+                assertThat(tsd.filter("t-y", "1")).returns(2, CSVStore::size);
+                assertThat(tsd.filter("t-y", "2")).returns(23, CSVStore::size);
+                assertThat(tsd.filter("t-y", "3")).returns(93, CSVStore::size);
+                assertThat(tsd.filter("t-y", "4")).returns(83, CSVStore::size);
+                assertThat(tsd.filter("t-y", "5")).returns(0, CSVStore::size);
+
+                assertThat(tsd.filter("t-deleted-linekey", "0")).returns(201, CSVStore::size);
+            }
+        }
+
+        @Test
+        void case2() throws Exception {
+            String fumen = "v115@9gA8IeB8HeA8BeA8CeE8AeA8AeE8JeAgH";
+            String command = buildCommand(fumen, "-fb 0 -ft 2 -m 5 -c 2 -p ILTZ");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(2));
+            assertThat(log.getError()).isEmpty();
+
+            // HTML
+            CSVStore csv = OutputFileHelper.loadSpinCSV();
+
+            assertThat(csv).returns(2, CSVStore::size);
+
+            assertThat(csv.filter("mini", "O")).returns(0, CSVStore::size);
+            assertThat(csv.filter("mini", "X")).returns(2, CSVStore::size);
+
+            assertThat(csv.filter("name", "ISO")).returns(2, CSVStore::size);
+
+            assertThat(csv.filter("use", "TLI")).returns(1, CSVStore::size);
+            assertThat(csv.filter("use", "TZLI")).returns(1, CSVStore::size);
+
+            assertThat(csv.filter("num-use", "3")).returns(1, CSVStore::size);
+            assertThat(csv.filter("num-use", "4")).returns(1, CSVStore::size);
+
+            assertThat(csv.filter("total-lines", "2")).returns(2, CSVStore::size);
+
+            assertThat(csv.filter("hole", "3")).returns(2, CSVStore::size);
+
+            assertThat(csv.filter("t-rotate", "L")).returns(2, CSVStore::size);
+            assertThat(csv.filter("t-x", "2")).returns(2, CSVStore::size);
+            assertThat(csv.filter("t-y", "1")).returns(2, CSVStore::size);
+            assertThat(csv.filter("t-deleted-linekey", "0")).returns(2, CSVStore::size);
         }
     }
 
@@ -478,6 +684,17 @@ class SpinTetfuCaseTest {
             // Log
             assertThat(log.getReturnCode()).isNotEqualTo(0);
             assertThat(log.getError()).contains("Required-clear-line should be 1 <= line <= 3");
+        }
+
+        @Test
+        void pieceSizeIs1() throws Exception {
+            String fumen = "v115@9gzhFezhFezhFezhPeAgH";
+            String command = buildCommand(fumen, "-p T");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            // Log
+            assertThat(log.getReturnCode()).isNotEqualTo(0);
+            assertThat(log.getError()).contains("Specified piece size should be greater than 1");
         }
     }
 }

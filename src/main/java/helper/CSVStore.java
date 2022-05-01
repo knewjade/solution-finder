@@ -6,11 +6,17 @@ public class CSVStore {
     private static final List<String> EMPTY_COLUMNS = Collections.emptyList();
 
     private final List<String> columnNames;
-    private final HashMap<String, List<String>> map = new HashMap<>();
-    private int size = 0;
+    private final Map<String, List<String>> map;
+    private int size;
 
     public CSVStore(List<String> columnNames) {
+        this(columnNames, new HashMap<>(), 0);
+    }
+
+    private CSVStore(List<String> columnNames, Map<String, List<String>> map, int size) {
         this.columnNames = columnNames;
+        this.map = map;
+        this.size = size;
     }
 
     public void load(String line) {
@@ -32,7 +38,7 @@ public class CSVStore {
         return map.getOrDefault(name, EMPTY_COLUMNS);
     }
 
-    public Map<String, String> row(String name, String value) {
+    public Map<String, String> findRow(String name, String value) {
         List<String> list = map.getOrDefault(name, EMPTY_COLUMNS);
         int index = list.indexOf(value);
         if (index < 0)
@@ -49,5 +55,30 @@ public class CSVStore {
 
     public Set<String> keySet() {
         return map.keySet();
+    }
+
+    public CSVStore filter(String name, String value) {
+        List<String> columns = map.getOrDefault(name, EMPTY_COLUMNS);
+        List<Integer> indexes = new ArrayList<>();
+        for (int index = 0; index < columns.size(); index++) {
+            String s = columns.get(index);
+            if (s.equals(value)) {
+                indexes.add(index);
+            }
+        }
+
+        HashMap<String, List<String>> newMap = new HashMap<>();
+        for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+            List<String> from = entry.getValue();
+
+            List<String> newColumns = new ArrayList<>();
+            for (int index : indexes) {
+                newColumns.add(from.get(index));
+            }
+
+            newMap.put(entry.getKey(), newColumns);
+        }
+
+        return new CSVStore(columnNames, newMap, indexes.size());
     }
 }

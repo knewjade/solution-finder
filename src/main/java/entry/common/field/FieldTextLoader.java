@@ -43,7 +43,7 @@ public class FieldTextLoader {
             try {
                 // 最大削除ラインの設定
                 String firstLine = fieldLines.pollFirst();
-                int maxClearLine = Integer.valueOf(firstLine != null ? firstLine : "error");
+                int maxClearLine = Integer.parseInt(firstLine != null ? firstLine : "error");
 
                 // フィールドの設定
                 String fieldMarks = String.join("", fieldLines);

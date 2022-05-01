@@ -43,13 +43,13 @@ class CoverTetfuCaseTest {
             CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1, fumen2));
 
             assertThat(csv.size()).isEqualTo(5040);
-            assertThat(csv.row("name", "TIOLJSZ")).containsEntry(fumen1, "X").containsEntry(fumen2, "O");
+            assertThat(csv.findRow("name", "TIOLJSZ")).containsEntry(fumen1, "X").containsEntry(fumen2, "O");
 
-            assertThat(csv.row("name", "LISZTOJ")).containsEntry(fumen1, "O").containsEntry(fumen2, "X");
+            assertThat(csv.findRow("name", "LISZTOJ")).containsEntry(fumen1, "O").containsEntry(fumen2, "X");
 
-            assertThat(csv.row("name", "TILSZJO")).containsEntry(fumen1, "O").containsEntry(fumen2, "O");
+            assertThat(csv.findRow("name", "TILSZJO")).containsEntry(fumen1, "O").containsEntry(fumen2, "O");
 
-            assertThat(csv.row("name", "JSTILZO")).containsEntry(fumen1, "X").containsEntry(fumen2, "X");
+            assertThat(csv.findRow("name", "JSTILZO")).containsEntry(fumen1, "X").containsEntry(fumen2, "X");
         }
 
         @Test
@@ -71,13 +71,13 @@ class CoverTetfuCaseTest {
             CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1, fumen2));
 
             assertThat(csv.size()).isEqualTo(5040);
-            assertThat(csv.row("name", "JIZSOLT")).containsEntry(fumen1, "X").containsEntry(fumen2, "O");
+            assertThat(csv.findRow("name", "JIZSOLT")).containsEntry(fumen1, "X").containsEntry(fumen2, "O");
 
-            assertThat(csv.row("name", "SLIOZJT")).containsEntry(fumen1, "O").containsEntry(fumen2, "X");
+            assertThat(csv.findRow("name", "SLIOZJT")).containsEntry(fumen1, "O").containsEntry(fumen2, "X");
 
-            assertThat(csv.row("name", "ILSZJOT")).containsEntry(fumen1, "O").containsEntry(fumen2, "O");
+            assertThat(csv.findRow("name", "ILSZJOT")).containsEntry(fumen1, "O").containsEntry(fumen2, "O");
 
-            assertThat(csv.row("name", "ZOTIJLS")).containsEntry(fumen1, "X").containsEntry(fumen2, "X");
+            assertThat(csv.findRow("name", "ZOTIJLS")).containsEntry(fumen1, "X").containsEntry(fumen2, "X");
         }
 
         @Test
@@ -99,13 +99,13 @@ class CoverTetfuCaseTest {
             CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1, fumen2));
 
             assertThat(csv.size()).isEqualTo(5040);
-            assertThat(csv.row("name", "JIOTLSZ")).containsEntry(fumen1, "X").containsEntry(fumen2, "O");
+            assertThat(csv.findRow("name", "JIOTLSZ")).containsEntry(fumen1, "X").containsEntry(fumen2, "O");
 
-            assertThat(csv.row("name", "OTLIZJS")).containsEntry(fumen1, "O").containsEntry(fumen2, "X");
+            assertThat(csv.findRow("name", "OTLIZJS")).containsEntry(fumen1, "O").containsEntry(fumen2, "X");
 
-            assertThat(csv.row("name", "ILSJZOT")).containsEntry(fumen1, "O").containsEntry(fumen2, "O");
+            assertThat(csv.findRow("name", "ILSJZOT")).containsEntry(fumen1, "O").containsEntry(fumen2, "O");
 
-            assertThat(csv.row("name", "ZSLIOTJ")).containsEntry(fumen1, "X").containsEntry(fumen2, "X");
+            assertThat(csv.findRow("name", "ZSLIOTJ")).containsEntry(fumen1, "X").containsEntry(fumen2, "X");
         }
 
         @Test
@@ -127,11 +127,11 @@ class CoverTetfuCaseTest {
             CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1, fumen2));
 
             assertThat(csv.size()).isEqualTo(5040);
-            assertThat(csv.row("name", "ISLJZOT")).containsEntry(fumen1, "X").containsEntry(fumen2, "O");
+            assertThat(csv.findRow("name", "ISLJZOT")).containsEntry(fumen1, "X").containsEntry(fumen2, "O");
 
-            assertThat(csv.row("name", "OILSZJT")).containsEntry(fumen1, "O").containsEntry(fumen2, "X");
+            assertThat(csv.findRow("name", "OILSZJT")).containsEntry(fumen1, "O").containsEntry(fumen2, "X");
 
-            assertThat(csv.row("name", "ZTJLSIO")).containsEntry(fumen1, "X").containsEntry(fumen2, "X");
+            assertThat(csv.findRow("name", "ZTJLSIO")).containsEntry(fumen1, "X").containsEntry(fumen2, "X");
         }
 
         @Test
@@ -403,7 +403,7 @@ class CoverTetfuCaseTest {
             // CSV
             CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1));
 
-            assertThat(csv.row("name", "SLOZJIT")).containsEntry(fumen1, "O");
+            assertThat(csv.findRow("name", "SLOZJIT")).containsEntry(fumen1, "O");
         }
 
         @Test
@@ -423,7 +423,7 @@ class CoverTetfuCaseTest {
                 // CSV
                 CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1));
 
-                assertThat(csv.row("name", "SLOZJIT")).containsEntry(fumen1, "O");
+                assertThat(csv.findRow("name", "SLOZJIT")).containsEntry(fumen1, "O");
             }
             {
                 String command = String.format("cover -t %s -p *! --drop t-softdrop --mode tsd", fumen1);
@@ -438,7 +438,7 @@ class CoverTetfuCaseTest {
                 // CSV
                 CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1));
 
-                assertThat(csv.row("name", "SLOZJIT")).containsEntry(fumen1, "X");
+                assertThat(csv.findRow("name", "SLOZJIT")).containsEntry(fumen1, "X");
             }
             {
                 String command = String.format("cover -t %s -p *! --drop tsd", fumen1);
@@ -453,7 +453,7 @@ class CoverTetfuCaseTest {
                 // CSV
                 CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1));
 
-                assertThat(csv.row("name", "SLOZJIT")).containsEntry(fumen1, "X");
+                assertThat(csv.findRow("name", "SLOZJIT")).containsEntry(fumen1, "X");
             }
         }
 
@@ -502,8 +502,8 @@ class CoverTetfuCaseTest {
                 // CSV
                 CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1, fumen2));
 
-                assertThat(csv.row("name", "OTILSZJ")).containsEntry(fumen1, "X").containsEntry(fumen2, "X");
-                assertThat(csv.row("name", "OTIZSJL")).containsEntry(fumen1, "X").containsEntry(fumen2, "X");
+                assertThat(csv.findRow("name", "OTILSZJ")).containsEntry(fumen1, "X").containsEntry(fumen2, "X");
+                assertThat(csv.findRow("name", "OTIZSJL")).containsEntry(fumen1, "X").containsEntry(fumen2, "X");
             }
             {
                 String command = String.format("cover -t %s %s -p *! --mode tsd", fumen1, fumen2);
@@ -519,8 +519,8 @@ class CoverTetfuCaseTest {
                 // CSV
                 CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1, fumen2));
 
-                assertThat(csv.row("name", "OTILSZJ")).containsEntry(fumen1, "X").containsEntry(fumen2, "X");
-                assertThat(csv.row("name", "OTIZSJL")).containsEntry(fumen1, "X").containsEntry(fumen2, "X");
+                assertThat(csv.findRow("name", "OTILSZJ")).containsEntry(fumen1, "X").containsEntry(fumen2, "X");
+                assertThat(csv.findRow("name", "OTIZSJL")).containsEntry(fumen1, "X").containsEntry(fumen2, "X");
             }
             {
                 String command = String.format("cover -t %s %s -p *! --mode any", fumen1, fumen2);
@@ -536,8 +536,8 @@ class CoverTetfuCaseTest {
                 // CSV
                 CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1, fumen2));
 
-                assertThat(csv.row("name", "OTILSZJ")).containsEntry(fumen1, "O").containsEntry(fumen2, "X");
-                assertThat(csv.row("name", "OTIZSJL")).containsEntry(fumen1, "X").containsEntry(fumen2, "X");
+                assertThat(csv.findRow("name", "OTILSZJ")).containsEntry(fumen1, "O").containsEntry(fumen2, "X");
+                assertThat(csv.findRow("name", "OTIZSJL")).containsEntry(fumen1, "X").containsEntry(fumen2, "X");
             }
         }
 
@@ -677,13 +677,13 @@ class CoverTetfuCaseTest {
             // CSV
             CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1, fumen2, fumen3, fumen4));
 
-            assertThat(csv.row("name", "OZLSIJT")).containsEntry(fumen1, "O").containsEntry(fumen2, "X").containsEntry(fumen3, "X").containsEntry(fumen4, "X");
+            assertThat(csv.findRow("name", "OZLSIJT")).containsEntry(fumen1, "O").containsEntry(fumen2, "X").containsEntry(fumen3, "X").containsEntry(fumen4, "X");
 
-            assertThat(csv.row("name", "JITOLSZ")).containsEntry(fumen1, "X").containsEntry(fumen2, "O").containsEntry(fumen3, "X").containsEntry(fumen4, "X");
+            assertThat(csv.findRow("name", "JITOLSZ")).containsEntry(fumen1, "X").containsEntry(fumen2, "O").containsEntry(fumen3, "X").containsEntry(fumen4, "X");
 
-            assertThat(csv.row("name", "STIZOLJ")).containsEntry(fumen1, "X").containsEntry(fumen2, "X").containsEntry(fumen3, "O").containsEntry(fumen4, "X");
+            assertThat(csv.findRow("name", "STIZOLJ")).containsEntry(fumen1, "X").containsEntry(fumen2, "X").containsEntry(fumen3, "O").containsEntry(fumen4, "X");
 
-            assertThat(csv.row("name", "ZTIOSLJ")).containsEntry(fumen1, "X").containsEntry(fumen2, "X").containsEntry(fumen3, "X").containsEntry(fumen4, "O");
+            assertThat(csv.findRow("name", "ZTIOSLJ")).containsEntry(fumen1, "X").containsEntry(fumen2, "X").containsEntry(fumen3, "X").containsEntry(fumen4, "O");
         }
 
         @Test

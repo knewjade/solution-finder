@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FigUtilSettingParser {
     private static final String CHARSET_NAME = "utf-8";
@@ -140,8 +141,9 @@ public class FigUtilSettingParser {
             Path path = Paths.get(fieldPath);
             Charset charset = Charset.forName(CHARSET_NAME);
 
-            try {
-                LinkedList<String> fieldLines = Files.lines(path, charset)
+            LinkedList<String> fieldLines;
+            try (Stream<String> lines = Files.lines(path, charset)) {
+                fieldLines = lines
                         .map(str -> {
                             if (str.contains("#"))
                                 return str.substring(0, str.indexOf('#'));

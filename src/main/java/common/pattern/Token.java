@@ -53,6 +53,7 @@ public class Token {
     public String check() {
         while (hasNext()) {
             String next = token.peekFirst();
+            assert next != null;
             if (isBlank(next)) {
                 skip();
                 continue;
@@ -65,6 +66,7 @@ public class Token {
     String nextString() {
         while (hasNext()) {
             String next = token.pollFirst();
+            assert next != null;
             lastIndex += 1;
             if (isBlank(next))
                 continue;
@@ -90,7 +92,7 @@ public class Token {
     public int nextInt() throws SyntaxException {
         String s = nextString();
         try {
-            return Integer.valueOf(s);
+            return Integer.parseInt(s);
         } catch (Exception e) {
             throw new SyntaxException("Unexpected number format: value=" + s, getLastIndex());
         }
@@ -116,6 +118,7 @@ public class Token {
     public String pop() {
         if (hasNext()) {
             String next = token.pollFirst();
+            assert next != null;
             lastIndex += 1;
             return next.toUpperCase();
         }

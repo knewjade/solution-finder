@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: solution-finder \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-30 19:39+0900\n"
+"POT-Creation-Date: 2022-04-16 19:42+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -393,178 +393,170 @@ msgid "``-p``, ``--patterns`` [default: なし]"
 msgstr ""
 
 #: ../../contents/spin/main.rst:135
-msgid "探索したいミノ順を指定する。"
+msgid "探索ミノの組み合わせパターンを指定する。"
 msgstr ""
 
 #: ../../contents/spin/main.rst:137
-msgid "最大で22個のミノまで指定できる。"
-msgstr ""
-
-#: ../../contents/spin/main.rst:139
-msgid "なお、renコマンドでは複数のミノを指定する記号（`*`, `[]`）は使用できません。"
+msgid "パターンを変更したい場合は ``--pattern *p7`` のように指定する。"
 msgstr ""
 
 #: ../../contents/spin/main.rst:141
-msgid "パターンを変更したい場合は ``--pattern IOSZLJTIO`` のように指定します。"
-msgstr ""
-
-#: ../../contents/spin/main.rst:145
 msgid "``-fb``, ``--fill-bottom`` [default: 0]"
 msgstr ""
 
-#: ../../contents/spin/main.rst:147
+#: ../../contents/spin/main.rst:143
 msgid "揃えるラインの範囲のうち、一番下のラインを指定する。 y座標は、一番下の段を `0` とする。"
 msgstr ""
 
-#: ../../contents/spin/main.rst:150
+#: ../../contents/spin/main.rst:146
 msgid "もし `2` を指定すると、y=2より上のラインを揃える組み合わせを探索する。 （3段目/y=2 は対象になる）"
 msgstr ""
 
-#: ../../contents/spin/main.rst:153
-#: ../../contents/spin/main.rst:165
+#: ../../contents/spin/main.rst:149
+#: ../../contents/spin/main.rst:161
 msgid "ここで指定する範囲には、Tスピンにならないライン消去（Tミノを含まないライン消去）も含まれる。"
 msgstr ""
 
-#: ../../contents/spin/main.rst:157
+#: ../../contents/spin/main.rst:153
 msgid "``-ft``, ``--fill-top`` [default: -1]"
 msgstr ""
 
-#: ../../contents/spin/main.rst:159
+#: ../../contents/spin/main.rst:155
 msgid "揃えるラインの範囲の高さを指定する。 y座標は、一番下の段を `0` とする。"
 msgstr ""
 
-#: ../../contents/spin/main.rst:162
+#: ../../contents/spin/main.rst:158
 msgid "もし `4` を指定すると、y=4より下のラインを揃える組み合わせを探索する。 （5段目/y=4 は対象にならない）"
 msgstr ""
 
-#: ../../contents/spin/main.rst:167
+#: ../../contents/spin/main.rst:163
 msgid "`-1` が指定されたときは、自動的に 最も高い位置にあるブロックの高さ+1 に設定される。"
 msgstr ""
 
-#: ../../contents/spin/main.rst:171
+#: ../../contents/spin/main.rst:167
 msgid "``-m``, ``--margin-height`` [default: -1]"
 msgstr ""
 
-#: ../../contents/spin/main.rst:173
+#: ../../contents/spin/main.rst:169
 msgid "ミノを置ける範囲の高さを指定する。 `-1` が指定されたときは、自動的に `fill-top` + 2 が設定される。"
 msgstr ""
 
-#: ../../contents/spin/main.rst:176
+#: ../../contents/spin/main.rst:172
 msgid "もし `4` を指定すると、y=4より下にミノを置く組み合わせを探索する。 （5段目/y=4 にブロックを置かない）"
 msgstr ""
 
-#: ../../contents/spin/main.rst:179
+#: ../../contents/spin/main.rst:175
 msgid "この高さは、Tスピンに必要なブロックや回転入れするための屋根の探索に利用される。"
 msgstr ""
 
-#: ../../contents/spin/main.rst:183
+#: ../../contents/spin/main.rst:179
 msgid "``-c``, ``--line`` [default: 2]"
 msgstr ""
 
-#: ../../contents/spin/main.rst:185
+#: ../../contents/spin/main.rst:181
 msgid "Tスピン時に消すべき最小のライン数を指定する。"
 msgstr ""
 
-#: ../../contents/spin/main.rst:187
+#: ../../contents/spin/main.rst:183
 msgid "`2` を指定したとき、T-Spin Double/Triple を探索する。"
 msgstr ""
 
-#: ../../contents/spin/main.rst:191
+#: ../../contents/spin/main.rst:187
 msgid "``-r``, ``--roof`` [default: yes]"
 msgstr ""
 
-#: ../../contents/spin/main.rst:193
+#: ../../contents/spin/main.rst:189
 msgid "このオプションが `yes` のとき、Tミノの回転入れに必要な屋根の探索を実行する。 `no` を指定した場合は、屋根の探索をスキップされ、そのままではTミノを入れられない地形も解として表示される。"
 msgstr ""
 
-#: ../../contents/spin/main.rst:196
+#: ../../contents/spin/main.rst:192
 msgid "もし、屋根なしでTミノをそのまま入れられる解が必要であれば `-r yes -mr 0` を指定する。"
 msgstr ""
 
-#: ../../contents/spin/main.rst:200
+#: ../../contents/spin/main.rst:196
 msgid "``-mr``, ``--max-roof`` [default: -1]"
 msgstr ""
 
-#: ../../contents/spin/main.rst:202
+#: ../../contents/spin/main.rst:198
 msgid "Tミノの回転入れに必要な屋根の探索で置くことができる最大のミノ数を指定する。 `-1` が指定されたとき、指定パターンの中で制限なく屋根を置いて探索する。 そのため、この値が大きいほど実行時間が長くなる。"
 msgstr ""
 
-#: ../../contents/spin/main.rst:206
+#: ../../contents/spin/main.rst:202
 msgid "もし `0` を指定した場合は、屋根が必要ない解が選択される。"
 msgstr ""
 
-#: ../../contents/spin/main.rst:210
+#: ../../contents/spin/main.rst:206
 msgid "``-s``, ``--split`` [default: no]"
 msgstr ""
 
-#: ../../contents/spin/main.rst:212
+#: ../../contents/spin/main.rst:208
 msgid "出力フォーマットがlinkのときに出力されるテト譜で、手順を1ミノずつ分割するか指定する。"
 msgstr ""
 
-#: ../../contents/spin/main.rst:214
+#: ../../contents/spin/main.rst:210
 msgid "ただし ``yes`` で生成されるテト譜はあくまで置き場所を示すものであり、ページ順通りに置くとミノが空中に浮いたり、移動できない場所に置かれることもあります。"
 msgstr ""
 
-#: ../../contents/spin/main.rst:216
+#: ../../contents/spin/main.rst:212
 msgid "yes: 1ページにつき1ミノずつ表示される形で出力"
 msgstr ""
 
-#: ../../contents/spin/main.rst:217
+#: ../../contents/spin/main.rst:213
 msgid "no: すべてのミノが1ページに納まった形で出力"
 msgstr ""
 
-#: ../../contents/spin/main.rst:221
+#: ../../contents/spin/main.rst:217
 msgid "``-f``, ``--filter`` [default: strict]"
 msgstr ""
 
-#: ../../contents/spin/main.rst:223
+#: ../../contents/spin/main.rst:219
 msgid "解の先頭に表示されているマークに従って、表示する解を制限します。"
 msgstr ""
 
-#: ../../contents/spin/main.rst:225
+#: ../../contents/spin/main.rst:221
 msgid "指定できる値は以下の通りです。"
 msgstr ""
 
-#: ../../contents/spin/main.rst:227
+#: ../../contents/spin/main.rst:223
 msgid "strict: Tスピンできる解のみを表示します（`[O]` のみに相当）`"
 msgstr ""
 
-#: ../../contents/spin/main.rst:228
+#: ../../contents/spin/main.rst:224
 msgid "ignore-t: Tミノ以外は組むことができる解を表示します。Tミノが実際に到達できるかは問いません。ただし、地面に触れている必要はあります（`[O]` と `[X]` に相当）`"
 msgstr ""
 
-#: ../../contents/spin/main.rst:229
+#: ../../contents/spin/main.rst:225
 msgid "none: 表示する解を制限しません"
 msgstr ""
 
-#: ../../contents/spin/main.rst:233
+#: ../../contents/spin/main.rst:229
 msgid "``-o``, ``--output-base`` [default: output/spin.html]"
 msgstr ""
 
-#: ../../contents/spin/main.rst:235
+#: ../../contents/spin/main.rst:231
 msgid "出力結果を保存するファイルのパスを指定する。"
 msgstr ""
 
-#: ../../contents/spin/main.rst:239
+#: ../../contents/spin/main.rst:235
 msgid "``-fp``, ``--field-path`` [default: input/field.txt]"
 msgstr ""
 
-#: ../../contents/spin/main.rst:241
+#: ../../contents/spin/main.rst:237
 msgid "フィールドを定義するファイルのパスを指定する。"
 msgstr ""
 
-#: ../../contents/spin/main.rst:245
+#: ../../contents/spin/main.rst:241
 msgid "``-pp``, ``--patterns-path`` [default: input/patterns.txt]"
 msgstr ""
 
-#: ../../contents/spin/main.rst:247
+#: ../../contents/spin/main.rst:243
 msgid "探索の組み合わせパターンを定義するファイルのパスを指定する。"
 msgstr ""
 
-#: ../../contents/spin/main.rst:251
+#: ../../contents/spin/main.rst:247
 msgid "``-lp``, ``--log-path`` [default: output/last_output.txt]"
 msgstr ""
 
-#: ../../contents/spin/main.rst:253
+#: ../../contents/spin/main.rst:249
 msgid "実行時のログを保存するファイルのパスを指定する。"
 msgstr ""

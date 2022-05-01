@@ -67,7 +67,7 @@ public class NoRoofSpinOutput implements SpinOutput {
         SimpleOriginalPiece operationT = candidate.getOperationT();
         int clearedLineOnlyT = Long.bitCount(result.getAllMergedFilledLine() & operationT.getUsingKey());
 
-        Optional<Pair<String, Integer>> optional = formatter.get(candidate, initField, fieldHeight);
+        Optional<Pair<String, Integer>> optional = formatter.get(candidate, null, initField, fieldHeight);
         if (optional.isPresent()) {
             Pair<String, Integer> aLinkSolutionPriority = optional.get();
             NoRoofColumn column = new NoRoofColumn(clearedLineOnlyT, getSendLineString(clearedLineOnlyT));

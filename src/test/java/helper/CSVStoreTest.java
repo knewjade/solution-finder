@@ -37,7 +37,7 @@ class CSVStoreTest {
         csvStore.load("id1,hello,one");
         csvStore.load("id2,,two");
         csvStore.load("id3,world,three");
-        assertThat(csvStore.row("id", "id3"))
+        assertThat(csvStore.findRow("id", "id3"))
                 .contains(entry("id", "id3"))
                 .contains(entry("name", "world"))
                 .contains(entry("number", "three"));
@@ -48,7 +48,7 @@ class CSVStoreTest {
         List<String> columnNames = Arrays.asList("c1", "c2", "c3", "c4", "c5");
         CSVStore csvStore = new CSVStore(columnNames);
         csvStore.load("a,b,c,,");
-        assertThat(csvStore.row("c1", "a"))
+        assertThat(csvStore.findRow("c1", "a"))
                 .contains(entry("c1", "a"))
                 .contains(entry("c2", "b"))
                 .contains(entry("c3", "c"))

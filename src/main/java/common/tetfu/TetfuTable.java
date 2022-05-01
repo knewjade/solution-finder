@@ -72,16 +72,17 @@ public class TetfuTable {
                 builder.append(c);
             } else if (c == '%') {
                 Character c2 = chars.pollFirst();
+                assert c2 != null;
                 if (c2 != 'u') {
                     Character c3 = chars.pollFirst();
-                    String value = String.valueOf(c2) + String.valueOf(c3);
+                    String value = c2 + String.valueOf(c3);
                     char newChar = (char) Integer.valueOf(value, 16).intValue();
                     builder.append(newChar);
                 } else {
-                    String value = "";
+                    StringBuilder value = new StringBuilder();
                     for (int count = 0; count < 4; count++)
-                        value += chars.pollFirst();
-                    char newChar = (char) Integer.valueOf(value, 16).intValue();
+                        value.append(chars.pollFirst());
+                    char newChar = (char) Integer.valueOf(value.toString(), 16).intValue();
                     builder.append(newChar);
                 }
             } else {

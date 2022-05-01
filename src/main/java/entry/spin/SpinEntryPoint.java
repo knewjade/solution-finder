@@ -20,6 +20,7 @@ import entry.path.output.FumenParser;
 import entry.path.output.MyFile;
 import entry.path.output.OneFumenParser;
 import entry.path.output.SequenceFumenParser;
+import entry.spin.output.CSVSpinOutput;
 import entry.spin.output.FullSpinOutput;
 import entry.spin.output.NoRoofSpinOutput;
 import entry.spin.output.SpinOutput;
@@ -71,12 +72,23 @@ public class SpinEntryPoint implements EntryPoint {
                 namePath += "spin";
 
             // baseファイル
-            String outputFilePath = String.format("%s%s", namePath, FILE_EXTENSION);
+            String extension = getExtension(settings.getOutputType());
+            String outputFilePath = String.format("%s%s", namePath, extension);
             MyFile base = new MyFile(outputFilePath);
             base.mkdirs();
 
             this.base = base;
         }
+    }
+
+    private String getExtension(OutputType outputType) {
+        switch (outputType) {
+            case CSV:
+                return ".csv";
+            case HTML:
+                return ".html";
+        }
+        throw new IllegalStateException("Unexpected output type: " + outputType);
     }
 
     @Override
@@ -124,9 +136,12 @@ public class SpinEntryPoint implements EntryPoint {
         List<PieceCounter> pieceCounters = generator.blockCountersStream().collect(Collectors.toList());
 
         if (1 < pieceCounters.size())
-            throw new FinderInitializeException("Should specify one combination");
+            throw new FinderInitializeException("Should specify only one combination");
 
         PieceCounter pieceCounter = pieceCounters.get(0);
+
+        if (pieceCounter.getBlocks().size() <= 1)
+            throw new FinderInitializeException("Specified piece size should be greater than 1");
 
         output("  " + pieceCounter.getBlocks().stream().map(Piece::getName).collect(Collectors.joining()));
         output();
@@ -169,14 +184,28 @@ public class SpinEntryPoint implements EntryPoint {
 
         LockedReachableThreadLocal lockedReachableThreadLocal = new LockedReachableThreadLocal(minoFactory, minoShifter, minoRotation, fieldHeight);
         SpinOutput output;
-        if (searchRoof) {
-            output = new FullSpinOutput(
-                    fumenParser, minoFactory, minoRotationDetail, lockedReachableThreadLocal, rotateReachableThreadLocal, settings.getFilterMode()
-            );
-        } else {
-            output = new NoRoofSpinOutput(
-                    fumenParser, lockedReachableThreadLocal, rotateReachableThreadLocal, settings.getFilterMode()
-            );
+        switch (settings.getOutputType()) {
+            case HTML: {
+                if (searchRoof) {
+                    output = new FullSpinOutput(
+                            fumenParser, minoFactory, minoRotationDetail, lockedReachableThreadLocal, rotateReachableThreadLocal, settings.getFilterMode()
+                    );
+                } else {
+                    output = new NoRoofSpinOutput(
+                            fumenParser, lockedReachableThreadLocal, rotateReachableThreadLocal, settings.getFilterMode()
+                    );
+                }
+                break;
+            }
+            case CSV: {
+                output = new CSVSpinOutput(
+                        fumenParser, minoFactory, minoRotationDetail, lockedReachableThreadLocal, rotateReachableThreadLocal, settings.getFilterMode(), searchRoof
+                );
+                break;
+            }
+            default: {
+                throw new IllegalStateException("Unexpected output type: " + settings.getOutputType());
+            }
         }
 
         int resultSize = output.output(base, results, initField, fieldHeight);
@@ -214,8 +243,6 @@ public class SpinEntryPoint implements EntryPoint {
         if (requiredClearLine < 1 || 3 < requiredClearLine)
             throw new FinderInitializeException("Required-clear-line should be 1 <= line <= 3: line=" + requiredClearLine);
     }
-
-    private static final String FILE_EXTENSION = ".html";
 
     private String getRemoveExtensionFromPath(String path) {
         int pointIndex = path.lastIndexOf('.');

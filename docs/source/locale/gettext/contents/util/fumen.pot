@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: solution-finder \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-30 19:39+0900\n"
+"POT-Creation-Date: 2022-04-16 19:42+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -70,6 +70,7 @@ msgstr ""
 
 #: ../../contents/util/fumen.rst:29
 #: ../../contents/util/fumen.rst:30
+#: ../../contents/util/fumen.rst:31
 msgid "なし"
 msgstr ""
 
@@ -82,75 +83,79 @@ msgid "``--mode``"
 msgstr ""
 
 #: ../../contents/util/fumen.rst:31
+msgid "``-f``"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:31
+msgid "``--filter``"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:32
 msgid "``-o``"
 msgstr ""
 
-#: ../../contents/util/fumen.rst:31
+#: ../../contents/util/fumen.rst:32
 msgid "``--output-base``"
 msgstr ""
 
-#: ../../contents/util/fumen.rst:31
+#: ../../contents/util/fumen.rst:32
 msgid "output/path.html"
 msgstr ""
 
-#: ../../contents/util/fumen.rst:32
+#: ../../contents/util/fumen.rst:33
 msgid "``-lp``"
 msgstr ""
 
-#: ../../contents/util/fumen.rst:32
+#: ../../contents/util/fumen.rst:33
 msgid "``--log-path``"
 msgstr ""
 
-#: ../../contents/util/fumen.rst:32
+#: ../../contents/util/fumen.rst:33
 msgid "output/last_output.txt"
 msgstr ""
 
-#: ../../contents/util/fumen.rst:33
+#: ../../contents/util/fumen.rst:34
 msgid "``-fp``"
 msgstr ""
 
-#: ../../contents/util/fumen.rst:33
+#: ../../contents/util/fumen.rst:34
 msgid "``--field-path``"
 msgstr ""
 
-#: ../../contents/util/fumen.rst:33
+#: ../../contents/util/fumen.rst:34
 msgid "input/field.txt"
 msgstr ""
 
-#: ../../contents/util/fumen.rst:38
+#: ../../contents/util/fumen.rst:39
 msgid "``-t``, ``--tetfu`` [default: なし]"
 msgstr ""
 
-#: ../../contents/util/fumen.rst:40
+#: ../../contents/util/fumen.rst:41
 msgid "フィールドやオプションなどを指定したテト譜データを指定する。"
 msgstr ""
 
-#: ../../contents/util/fumen.rst:42
+#: ../../contents/util/fumen.rst:43
 msgid "テト譜を複数個同時に指定する場合は ``--tetfu v115@vhAAgH v115@vhAAgH`` のように指定する。"
 msgstr ""
 
-#: ../../contents/util/fumen.rst:44
+#: ../../contents/util/fumen.rst:45
 msgid "v115のテト譜データにのみ対応。"
 msgstr ""
 
-#: ../../contents/util/fumen.rst:48
+#: ../../contents/util/fumen.rst:49
 msgid "``-M``, ``--mode`` [default: なし]"
 msgstr ""
 
-#: ../../contents/util/fumen.rst:50
+#: ../../contents/util/fumen.rst:51
 msgid "変換モードを変更します。現在のところ、以下のモードに対応しています。"
 msgstr ""
 
-#: ../../contents/util/fumen.rst:55
+#: ../../contents/util/fumen.rst:56
 msgid "reduce"
 msgstr ""
 
-#: ../../contents/util/fumen.rst:53
-msgid "最初のページをもとに、すべてのミノの接着を1ページにまとめます"
-msgstr ""
-
 #: ../../contents/util/fumen.rst:54
-msgid "途中のページで直接書き込まれたブロックなどは無視されます"
+msgid "最初のページをもとに、すべてのミノの接着を1ページにまとめます"
 msgstr ""
 
 #: ../../contents/util/fumen.rst:55
@@ -158,41 +163,71 @@ msgid "ページをまとめた結果、フィールドの高さ24を超える�
 msgstr ""
 
 #: ../../contents/util/fumen.rst:56
+#: ../../contents/util/fumen.rst:63
+msgid "途中のページで直接書き込まれたブロックなどは無視されます"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:57
+#: ../../contents/util/fumen.rst:64
 msgid "「盛/せりあがり」「鏡」フラグがオンのページがあれば、そのページまでを対象とします"
 msgstr ""
 
-#: ../../contents/util/fumen.rst:59
+#: ../../contents/util/fumen.rst:58
 msgid "remove-comment"
 msgstr ""
 
-#: ../../contents/util/fumen.rst:58
+#: ../../contents/util/fumen.rst:59
 msgid "すべてのページのコメントを削除します"
 msgstr ""
 
-#: ../../contents/util/fumen.rst:62
-msgid "``-o``, ``--output-base`` [default: output/cover.csv]"
+#: ../../contents/util/fumen.rst:65
+msgid "filter"
 msgstr ""
 
-#: ../../contents/util/fumen.rst:64
-msgid "出力結果を保存するファイルのパスを指定する。"
+#: ../../contents/util/fumen.rst:61
+msgid "指定されたピースの操作だけをテト譜から除去します"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:62
+msgid "接着フラグがオンのページだけが対象となります（オフのページも削除されます）"
 msgstr ""
 
 #: ../../contents/util/fumen.rst:68
-msgid "``-lp``, ``--log-path`` [default: output/last_output.txt]"
+msgid "``-f``, ``--filter`` [default: なし]"
 msgstr ""
 
 #: ../../contents/util/fumen.rst:70
-msgid "実行時のログを保存するファイルのパスを指定する。"
+msgid "``--mode filter`` の場合に、フィルターするピースを指定します。"
 msgstr ""
 
-#: ../../contents/util/fumen.rst:74
-msgid "``-fp``, ``--field-path`` [default: input/field.txt]"
+#: ../../contents/util/fumen.rst:72
+msgid "たとえば ``--filter t`` を指定すると、Tミノを置くページを削除します。"
 msgstr ""
 
 #: ../../contents/util/fumen.rst:76
-msgid "フィールドを定義するファイルのパスを指定する。"
+msgid "``-o``, ``--output-base`` [default: output/cover.csv]"
 msgstr ""
 
 #: ../../contents/util/fumen.rst:78
+msgid "出力結果を保存するファイルのパスを指定する。"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:82
+msgid "``-lp``, ``--log-path`` [default: output/last_output.txt]"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:84
+msgid "実行時のログを保存するファイルのパスを指定する。"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:88
+msgid "``-fp``, ``--field-path`` [default: input/field.txt]"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:90
+msgid "フィールドを定義するファイルのパスを指定する。"
+msgstr ""
+
+#: ../../contents/util/fumen.rst:92
 msgid "util figではテト譜のみ対応しています（____XXXXXX の形式で書かれたフィールドは入力できません）。"
 msgstr ""

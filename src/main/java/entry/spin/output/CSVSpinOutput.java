@@ -1,8 +1,8 @@
 package entry.spin.output;
 
 import common.datastore.Operation;
-import common.datastore.Pair;
 import common.datastore.SimpleOperation;
+import common.parser.OperationWithKeyInterpreter;
 import concurrent.LockedReachableThreadLocal;
 import concurrent.RotateReachableThreadLocal;
 import core.action.reachable.LockedReachable;
@@ -18,69 +18,73 @@ import entry.path.output.FumenParser;
 import entry.path.output.MyFile;
 import entry.spin.FilterType;
 import exceptions.FinderExecuteException;
-import output.HTMLBuilder;
+import lib.AsyncBufferedFileWriter;
 import searcher.spins.SpinCommons;
 import searcher.spins.candidates.Candidate;
 import searcher.spins.results.Result;
 import searcher.spins.spin.Spin;
 import searcher.spins.spin.SpinDefaultPriority;
 
-import java.io.BufferedWriter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.io.IOException;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-public class FullSpinOutput implements SpinOutput {
+public class CSVSpinOutput implements SpinOutput {
     private final MinoFactory minoFactory;
     private final MinoRotationDetail minoRotationDetail;
     private final LockedReachableThreadLocal lockedReachableThreadLocal;
+    private final boolean isSearchRoof;
     private final Formatter formatter;
 
-    public FullSpinOutput(
+    public CSVSpinOutput(
             FumenParser fumenParser,
             MinoFactory minoFactory, MinoRotationDetail minoRotationDetail,
             LockedReachableThreadLocal lockedReachableThreadLocal,
             RotateReachableThreadLocal rotateReachableThreadLocal,
-            FilterType filterType
+            FilterType filterType,
+            boolean isSearchRoof
     ) {
         this.minoFactory = minoFactory;
         this.minoRotationDetail = minoRotationDetail;
         this.lockedReachableThreadLocal = lockedReachableThreadLocal;
+        this.isSearchRoof = isSearchRoof;
         this.formatter = new Formatter(fumenParser, lockedReachableThreadLocal, rotateReachableThreadLocal, filterType);
     }
 
     @Override
     public int output(MyFile myFile, List<Candidate> results, Field initField, int fieldHeight) throws FinderExecuteException {
-        HTMLBuilder<FullSpinColumn> htmlBuilder = new HTMLBuilder<>("Spin Result");
+        Function<Candidate, Optional<CSVItem>> candidateOptionalFunction = isSearchRoof ?
+                candidate -> {
+                    Optional<Spin> spinOptional = getSpin(candidate, fieldHeight);
+                    if (!spinOptional.isPresent()) {
+                        return Optional.empty();
+                    }
+                    return formatter.getCSVItems(candidate, spinOptional.get(), initField, fieldHeight);
+                } :
+                candidate -> formatter.getCSVItems(candidate, null, initField, fieldHeight);
 
-        // HTMLを作成する
-        for (Candidate candidate : results) {
-            add(htmlBuilder, candidate, initField, fieldHeight);
-        }
+        List<CSVItem> lines = results.stream()
+                .map(candidateOptionalFunction)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .sorted(Comparator.comparingInt(CSVItem::getPriority))
+                .collect(Collectors.toList());
 
-        int size = htmlBuilder.getSize();
-        htmlBuilder.addHeader(String.format("%d solutions", size));
-
-        // 書き込み
-        try (BufferedWriter writer = myFile.newBufferedWriter()) {
-            ArrayList<FullSpinColumn> sorted = new ArrayList<>(htmlBuilder.getRegisteredColumns());
-            sorted.sort(Comparator.reverseOrder());
-
-            List<String> lines = htmlBuilder.toList(sorted, true);
-            for (String line : lines) {
-                writer.write(line);
+        try (AsyncBufferedFileWriter writer = myFile.newAsyncWriter()) {
+            writer.writeAndNewLine(toHeaderLine());
+            for (CSVItem csvItem : lines) {
+                writer.writeAndNewLine(toLine(csvItem));
             }
-
             writer.flush();
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new FinderExecuteException("Failed to output file", e);
         }
 
-        return size;
+        return lines.size();
     }
 
-    private void add(HTMLBuilder<FullSpinColumn> htmlBuilder, Candidate candidate, Field initField, int fieldHeight) {
+    private Optional<Spin> getSpin(Candidate candidate, int fieldHeight) {
         LockedReachable lockedReachable = lockedReachableThreadLocal.get();
 
         // Tを使って消去されるライン数
@@ -122,19 +126,7 @@ public class FullSpinOutput implements SpinOutput {
             }
         }
 
-        assert maxSpin != null;
-
-        final int finalPriority = maxPriority;
-
-        Optional<Pair<String, Integer>> optional = formatter.get(candidate, maxSpin, initField, fieldHeight);
-        if (optional.isPresent()) {
-            Pair<String, Integer> aLinkSolutionPriority = optional.get();
-            int clearedLine = maxSpin.getClearedLine();
-            String clearLineString = getSendLineString(clearedLine);
-            String spinName = getSpinName(maxSpin);
-            FullSpinColumn column = new FullSpinColumn(maxSpin, finalPriority, clearLineString, spinName);
-            htmlBuilder.addColumn(column, aLinkSolutionPriority.getKey(), aLinkSolutionPriority.getValue());
-        }
+        return Optional.ofNullable(maxSpin);
     }
 
     private List<Spin> getSpins(LockedReachable lockedReachable, Field fieldWithoutT, Operation operation, Mino before, int[][] patterns, RotateDirection direction, int maxHeight, int clearedLine) {
@@ -180,41 +172,17 @@ public class FullSpinOutput implements SpinOutput {
         return spins;
     }
 
-    private String getSpinName(Spin spin) {
-        switch (spin.getSpin()) {
-            case Regular: {
-                switch (spin.getName()) {
-                    case Iso:
-                    case Fin:
-                    case NoName: {
-                        return spin.getName().getName();
-                    }
-                }
-            }
-            case Mini: {
-                switch (spin.getName()) {
-                    case Neo: {
-                        return spin.getName().getName();
-                    }
-                    case NoName: {
-                        return "MINI";
-                    }
-                }
-            }
-        }
-        throw new IllegalStateException();
+    public String toHeaderLine() {
+        return "テト譜,有効マーク,使用ミノ,使用ミノ数,T-Spinライン数,MINI,名前,トータルクリアライン数,hole,t-rotate,t-x,t-y,t-deleted-linekey";
     }
 
-    private String getSendLineString(int clearedLine) {
-        assert 1 <= clearedLine && clearedLine <= 3;
-        switch (clearedLine) {
-            case 1:
-                return "Single";
-            case 2:
-                return "Double";
-            case 3:
-                return "Triple";
-        }
-        throw new IllegalStateException();
+    public String toLine(CSVItem item) {
+        String operationT = OperationWithKeyInterpreter.parseToStringSimple(item.getOperationT());
+        return String.format(
+                "http://fumen.zui.jp/?v115@%s,%s,%s,%d,%d,%s,%s,%d,%d,%s",
+                item.getData(), item.getMark(), item.getUsingPieces(), item.getNumOfUsingPieces(),
+                item.getClearedLinesTOnly(), item.isMini() ? "O" : "X", item.getSpinName(),
+                item.getTotalClearedLines(), item.getNumOfHoles(), operationT
+        );
     }
 }

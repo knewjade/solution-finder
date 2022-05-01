@@ -12,6 +12,7 @@ import core.srs.RotateDirection;
 import core.srs.SpinResult;
 import searcher.spins.SpinCommons;
 import searcher.spins.spin.Spin;
+import searcher.spins.spin.SpinDefaultPriority;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +60,7 @@ public class SpinChecker {
                     field, operation, before, patterns, direction, fieldHeight, clearedLine
             );
             for (Spin spin : spins) {
-                int priority = getSpinPriority(spin);
+                int priority = SpinDefaultPriority.getSpinPriority(spin);
                 if (maxSpin == null || maxPriority < priority) {
                     maxSpin = spin;
                     maxPriority = priority;
@@ -115,33 +116,5 @@ public class SpinChecker {
         }
 
         return spins;
-    }
-
-    private int getSpinPriority(searcher.spins.spin.Spin spin) {
-        int clearedLine = spin.getClearedLine();
-
-        switch (spin.getSpin()) {
-            case Mini: {
-                return clearedLine * 10 + 1;
-            }
-            case Regular: {
-                switch (spin.getName()) {
-                    case Iso: {
-                        return clearedLine * 10 + 2;
-                    }
-                    case Fin: {
-                        return clearedLine * 10 + 3;
-                    }
-                    case Neo: {
-                        return clearedLine * 10 + 4;
-                    }
-                    case NoName: {
-                        return clearedLine * 10 + 5;
-                    }
-                }
-            }
-        }
-
-        throw new IllegalStateException();
     }
 }

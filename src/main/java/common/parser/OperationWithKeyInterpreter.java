@@ -1,11 +1,12 @@
 package common.parser;
 
+import common.datastore.FullOperationWithKey;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.OperationWithKey;
-import common.datastore.FullOperationWithKey;
-import core.mino.Piece;
+import core.field.KeyOperators;
 import core.mino.Mino;
 import core.mino.MinoFactory;
+import core.mino.Piece;
 import core.srs.Rotate;
 
 import java.util.Arrays;
@@ -30,8 +31,8 @@ public class OperationWithKeyInterpreter {
                 StringEnumTransform.toString(operation.getRotate()),
                 operation.getX(),
                 operation.getY(),
-                operation.getNeedDeletedKey(),
-                operation.getUsingKey()
+                KeyOperators.toColumnKey(operation.getNeedDeletedKey()),
+                KeyOperators.toColumnKey(operation.getUsingKey())
         );
     }
 
@@ -46,11 +47,20 @@ public class OperationWithKeyInterpreter {
                     Piece piece = StringEnumTransform.toPiece(strings[0]);
                     Rotate rotate = StringEnumTransform.toRotate(strings[1]);
                     Mino mino = minoFactory.create(piece, rotate);
-                    int x = Integer.valueOf(strings[2]);
-                    int y = Integer.valueOf(strings[3]);
-                    long deleteKey = Long.valueOf(strings[4]);
-                    long usingKey = Long.valueOf(strings[5]);
+                    int x = Integer.parseInt(strings[2]);
+                    int y = Integer.parseInt(strings[3]);
+                    long deleteKey = KeyOperators.toBitKey(Long.parseLong(strings[4]));
+                    long usingKey = KeyOperators.toBitKey(Long.parseLong(strings[5]));
                     return new FullOperationWithKey(mino, x, y, deleteKey, usingKey);
                 });
+    }
+
+    public static String parseToStringSimple(OperationWithKey operation) {
+        return String.format("%s,%d,%d,%d",
+                StringEnumTransform.toString(operation.getRotate()),
+                operation.getX(),
+                operation.getY(),
+                KeyOperators.toColumnKey(operation.getNeedDeletedKey())
+        );
     }
 }
