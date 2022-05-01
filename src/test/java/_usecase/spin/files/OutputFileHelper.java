@@ -73,13 +73,13 @@ public class OutputFileHelper {
         }
         String header = matcher.group();
 
-        if (header.contains("Single [Regular]")) {
+        if (header.contains("Single [Regular]") || header.contains(">Single<")) {
             return TSpinType.RegularSingle;
         }
-        if (header.contains("Double [Regular]")) {
+        if (header.contains("Double [Regular]") || header.contains(">Double<")) {
             return TSpinType.RegularDouble;
         }
-        if (header.contains("Triple")) {
+        if (header.contains("Triple [Regular]") || header.contains(">Triple<")) {
             return TSpinType.RegularTriple;
         }
         if (header.contains("Single [FIN]")) {
