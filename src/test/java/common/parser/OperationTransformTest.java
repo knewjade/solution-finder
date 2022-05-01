@@ -60,7 +60,7 @@ class OperationTransformTest {
         List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
 
         String line = OperationWithKeyInterpreter.parseToString(operationWithKeys);
-        assertThat(line).isEqualTo("L,0,2,0,0,1025;Z,R,2,2,0,1074791424;O,0,0,1,0,1049600;L,2,1,1,1049600,1073741825");
+        assertThat(line).isEqualTo("L,0,2,0,0,3;Z,R,2,2,0,14;O,0,0,1,0,6;L,2,1,1,6,9");
 
         Field expected = FieldFactory.createField("" +
                 "XXXXXXXXXX" +
@@ -84,7 +84,7 @@ class OperationTransformTest {
         List<MinoOperationWithKey> operationWithKeys = OperationTransform.parseToOperationWithKeys(field, operations, minoFactory, height);
 
         String line = OperationWithKeyInterpreter.parseToString(operationWithKeys);
-        assertThat(line).isEqualTo("T,2,5,1,0,1025;I,0,2,0,0,1;I,0,7,0,0,1;I,L,0,1,0,1074791425");
+        assertThat(line).isEqualTo("T,2,5,1,0,3;I,0,2,0,0,1;I,0,7,0,0,1;I,L,0,1,0,15");
 
         Field expected = FieldFactory.createField("" +
                 "X_________" +

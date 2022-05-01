@@ -151,7 +151,7 @@ class BuildUpTest {
     }
 
     @Test
-    void existsValidBuildPattern1() throws Exception {
+    void existsValidBuildPattern1() {
         Field field = FieldFactory.createField("" +
                 "_________X" +
                 "_________X"
@@ -175,7 +175,7 @@ class BuildUpTest {
     }
 
     @Test
-    void existsValidBuildPattern2() throws Exception {
+    void existsValidBuildPattern2() {
         Field field = FieldFactory.createField("" +
                 "__XXXXXXXX" +
                 "__XXXXXXXX" +
@@ -362,7 +362,7 @@ class BuildUpTest {
     }
 
     @Test
-    void checksAllPatterns1() throws Exception {
+    void checksAllPatterns1() {
         int height = 4;
         Field field = FieldFactory.createField("" +
                 "____XXXXXX" +
@@ -406,7 +406,7 @@ class BuildUpTest {
     }
 
     @Test
-    void checksAllPatterns2() throws Exception {
+    void checksAllPatterns2() {
         int height = 4;
         Field field = FieldFactory.createField("" +
                 "_____XXXXX" +
@@ -451,7 +451,7 @@ class BuildUpTest {
     }
 
     @Test
-    void existsValidByOrder() throws Exception {
+    void existsValidByOrder() {
         Field field = FieldFactory.createField("" +
                 "____XXXXXX" +
                 "____XXXXXX" +
@@ -459,7 +459,7 @@ class BuildUpTest {
                 "____XXXXXX" +
                 ""
         );
-        String line = "L,L,3,1,0,1049601;L,R,1,1,0,1049601;I,L,0,1,0,1074791425;T,2,2,2,1048576,1073742848";
+        String line = "L,L,3,1,0,7;L,R,1,1,0,7;I,L,0,1,0,15;T,2,2,2,4,15";
         MinoFactory minoFactory = new MinoFactory();
         Stream<MinoOperationWithKey> stream = OperationWithKeyInterpreter.parseToStream(line, minoFactory);
         List<MinoOperationWithKey> operations = stream.collect(Collectors.toList());
@@ -483,7 +483,7 @@ class BuildUpTest {
     }
 
     @Test
-    void existsValidBuildPatternWithoutKey() throws Exception {
+    void existsValidBuildPatternWithoutKey() {
         Field field = FieldFactory.createField("" +
                 "____XXXXXX" +
                 "____XXXXXX" +
