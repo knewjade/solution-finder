@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: solution-finder \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-30 19:39+0900\n"
+"POT-Creation-Date: 2022-05-01 16:06+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,19 +54,19 @@ msgid "2つめの要素 R: 回転方向"
 msgstr ""
 
 #: ../../contents/path/csv.rst:24
-msgid "0: 出現時の回転方向"
+msgid "0: 出現時の回転方向 == North"
 msgstr ""
 
 #: ../../contents/path/csv.rst:25
-msgid "R: 右回転"
+msgid "R: 右回転 == East"
 msgstr ""
 
 #: ../../contents/path/csv.rst:26
-msgid "L: 左回転"
+msgid "L: 左回転 == West"
 msgstr ""
 
 #: ../../contents/path/csv.rst:27
-msgid "2: 裏向き (右回転2回 or 左回転2回)"
+msgid "2: 裏向き (右回転2回 or 左回転2回) == South"
 msgstr ""
 
 #: ../../contents/path/csv.rst:30

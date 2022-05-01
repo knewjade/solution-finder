@@ -1,0 +1,248 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2017-2022, knewjade
+# This file is distributed under the same license as the solution-finder
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: solution-finder \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-05-01 16:06+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../contents/spin/csv.rst:2
+msgid "CSV形式の出力フォーマット"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:4
+msgid ""
+"出力例) ``spin --format csv -t v115@9gA8IeB8HeA8BeA8CeE8AeA8AeE8JeAgH -fb 0 "
+"-ft 2 -m 5 -c 2 -p ILTZ`` ::"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:10
+msgid "各項目は、左から順に以下の通りです。 以下の 例) は、上記の結果を基づいた説明になります。"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:16
+msgid "テト譜"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:14
+msgid "Tスピンの手順（地形）を表すテト譜"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:16 ../../contents/spin/csv.rst:22
+#: ../../contents/spin/csv.rst:27 ../../contents/spin/csv.rst:32
+#: ../../contents/spin/csv.rst:37 ../../contents/spin/csv.rst:43
+#: ../../contents/spin/csv.rst:49 ../../contents/spin/csv.rst:54
+#: ../../contents/spin/csv.rst:59 ../../contents/spin/csv.rst:68
+msgid "例)"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:16
+msgid ""
+"``http://fumen.zui.jp/?v115@zgzhFeA8IeB8wwGeA8xwA8ilE8wwA8glE8JeAgWDA0?SdBA``"
+" その行の対象となる手順のテト譜リンク"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:22
+msgid "有効マーク"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:19
+msgid "HTMLでの結果における「先頭のマーク」と同様で、実際に組むことができるか・Tスピンできるかを表します"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:20
+msgid "マークの説明は :ref:`spin-output-html-label` を参照してください"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:22
+msgid "``O`` Tスピンできる手順である"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:27
+msgid "使用ミノ"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:25
+msgid "その手順で使用するミノの組み合わせ"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:27
+msgid "``TLI`` JSZの3ミノを使ってTスピンをする手順である"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:32
+msgid "使用ミノ数"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:30
+msgid "その手順で使用するミノの数"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:32
+msgid "``3`` JSZのように、3ミノを使ってTスピンをする手順である"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:37
+msgid "T-Spinライン数"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:35
+msgid "Tスピンによって消去されるライン数"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:37
+msgid "``2`` T-Spin Doubleである"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:43
+msgid "MINI"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:40
+msgid "TスピンがMINIであるとき ``O``　、ないとき ``X`` を出力する"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:41
+msgid "MINIかどうかの具体的な判定基準は :ref:`spin-output-html-label` を参照してください"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:43
+msgid "``X`` MINIではない"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:49
+msgid "名前"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:46
+msgid "Tスピンに特殊な名前がついているとき出力します。名前がない場合は空白となります"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:47
+msgid "取りうる値: ``FIN`` ``NEO`` ``ISO`` ``(empty)``"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:49
+msgid "``ISO`` T-Spin ISOである"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:54
+msgid "トータルクリアライン数"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:52
+msgid "手順全体で消去されるライン合計数"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:54
+msgid "``2`` 全体で2ライン消去する（この例では、Tスピン以外で消去されるラインがない）"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:59
+msgid "hole"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:57
+msgid "HTMLでの結果における「hole」で、Tスピン後の地形の穴の数（横穴も含む）"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:59
+msgid "``3`` Tスピン後、3つの穴が残る手順である"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:68
+msgid "t-rotate"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:65
+msgid "T-SpinするTミノの回転方向"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:63
+msgid "0: 出現時の回転方向 == North"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:64
+msgid "R: 右回転 == East"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:65
+msgid "L: 左回転 == West"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:66
+msgid "2: 裏向き (右回転2回 or 左回転2回) == South"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:68
+msgid "``L`` T-Spinするとき、Tミノは右回転した状態である"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:73
+msgid "t-x"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:71
+msgid "T-SpinするTミノの回転軸のx座標"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:73
+msgid "最も左の列を 0 としたときの列番号"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:73
+msgid "``2`` T-Spinするとき、Tミノの回転軸は左端から3番目である"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:79
+msgid "t-y"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:76
+msgid "手順上のすべてのミノをひとつにまとめたときの、T-SpinするTミノの回転軸のy座標"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:77
+msgid "実際の手順上では、ライン消去によって座標がずれる可能性はあります（ミノの置く順番に依存する可能性があります）"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:79
+msgid "最も下の行を 0 としたときの行番号"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:79
+msgid "``1`` T-Spinするとき、Tミノの回転軸は下から2番目である"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:84
+msgid "t-deleted-linekey"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:82
+msgid "**現在のバージョンでは常に ``0`` となります**"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:83
+msgid "手順上のすべてのミノをひとつにまとめたときの、Tミノを上下に分断するようなライン（T-SpinするTミノを置くために消えていないとならないライン）を示します"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:84
+msgid "``0`` は、Tミノが上下に分離するようなライン消去が発生していないことを表します"
+msgstr ""
+
+#: ../../contents/spin/csv.rst:85
+msgid "理由：現在のバージョンでは、このような解が探索対象となっていないため"
+msgstr ""
+

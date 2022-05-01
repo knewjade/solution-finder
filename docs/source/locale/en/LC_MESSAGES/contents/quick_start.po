@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: solution-finder \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-30 19:39+0900\n"
+"POT-Creation-Date: 2022-05-01 16:06+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../contents/quick_start.rst:3
-msgid "クイックスタート"
+msgid "クイックスタートガイド"
 msgstr ""
 
 #: ../../contents/quick_start.rst:6
@@ -118,4 +118,7 @@ msgstr ""
 #: ../../contents/quick_start.rst:70
 msgid "各コマンドを実行するとき、オプションを指定することができます。"
 msgstr ""
+
+#~ msgid "クイックスタート"
+#~ msgstr ""
 

@@ -1,7 +1,5 @@
-key: solution
+CSV形式の出力フォーマット
 ============================================================
-
-パフェ手順（地形）をキーして、それぞれの手順で対応できるツモを振り分けます。
 
 出力例) ``spin --format csv -t v115@9gA8IeB8HeA8BeA8CeE8AeA8AeE8JeAgH -fb 0 -ft 2 -m 5 -c 2 -p ILTZ`` ::
 
@@ -19,7 +17,7 @@ key: solution
 
 * 有効マーク
     - HTMLでの結果における「先頭のマーク」と同様で、実際に組むことができるか・Tスピンできるかを表します
-    - マークの説明は :ref:`spin-output-label` を参照してください
+    - マークの説明は :ref:`spin-output-html-label` を参照してください
     - 例)
         * ``O`` Tスピンできる手順である
 
@@ -40,13 +38,13 @@ key: solution
 
 * MINI
     - TスピンがMINIであるとき ``O``　、ないとき ``X`` を出力する
-    - MINIかどうかの具体的な判定基準は :ref:`spin-output-label` を参照してください
+    - MINIかどうかの具体的な判定基準は :ref:`spin-output-html-label` を参照してください
     - 例)
         * ``X`` MINIではない
 
 * 名前
     - Tスピンに特殊な名前がついているとき出力します。名前がない場合は空白となります
-    - 取りうる値: ``FIN`` ``NEO`` ``ISO`` ````
+    - 取りうる値: ``FIN`` ``NEO`` ``ISO`` ``(empty)``
     - 例)
         * ``ISO`` T-Spin ISOである
 
