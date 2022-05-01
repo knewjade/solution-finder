@@ -130,7 +130,8 @@ public class OutputFileHelper {
 
     public static CSVStore loadSpinCSV(Stream<String> content) {
         return loadCSVStore(content, Arrays.asList(
-                "fumen", "valid", "use", "num-use", "t-spin-lines", "mini", "name", "total-lines", "hole"
+                "fumen", "valid", "use", "num-use", "t-spin-lines", "mini", "name", "total-lines", "hole",
+                "t-rotate", "t-x", "t-y", "t-deleted-linekey"
         ));
     }
 

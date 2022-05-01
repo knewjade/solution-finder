@@ -48,6 +48,7 @@ enum SolutionType {
 }
 
 class CSVItem {
+    private final MinoOperationWithKey operationT;
     private final String data;
     private final SolutionType solutionType;
     private final List<MinoOperationWithKey> operations;
@@ -60,9 +61,10 @@ class CSVItem {
     private final int priority;
 
     CSVItem(
-            String data, SolutionType solutionType, List<MinoOperationWithKey> operations, int clearedLinesTOnly,
+            MinoOperationWithKey operationT, String data, SolutionType solutionType, List<MinoOperationWithKey> operations, int clearedLinesTOnly,
             Spin spin, int totalClearedLines, int hole, int priority
     ) {
+        this.operationT = operationT;
         this.data = data;
         this.solutionType = solutionType;
         this.operations = operations;
@@ -126,6 +128,10 @@ class CSVItem {
                 .map(operation -> String.format("%s-%s", operation.getPiece(), operation.getRotate()))
                 .collect(Collectors.joining(" "));
     }
+
+    public MinoOperationWithKey getOperationT() {
+        return operationT;
+    }
 }
 
 public class Formatter {
@@ -187,7 +193,7 @@ public class Formatter {
         );
 
         return Optional.of(new CSVItem(
-                fumen, solutionType, operations, clearedLineOnlyT, spin, clearedLineAll, numOfHoles, solutionPriority
+                operationT, fumen, solutionType, operations, clearedLineOnlyT, spin, clearedLineAll, numOfHoles, solutionPriority
         ));
     }
 

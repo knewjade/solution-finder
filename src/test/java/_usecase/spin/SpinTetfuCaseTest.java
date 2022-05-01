@@ -491,6 +491,31 @@ class SpinTetfuCaseTest {
                 assertThat(csv.filter("hole", "5")).returns(19, CSVStore::size);
                 assertThat(csv.filter("hole", "6")).returns(2, CSVStore::size);
                 assertThat(csv.filter("hole", "7")).returns(0, CSVStore::size);
+
+                assertThat(csv.filter("t-rotate", "0")).returns(196, CSVStore::size);
+                assertThat(csv.filter("t-rotate", "L")).returns(668, CSVStore::size);
+                assertThat(csv.filter("t-rotate", "R")).returns(641, CSVStore::size);
+                assertThat(csv.filter("t-rotate", "2")).returns(547, CSVStore::size);
+
+                assertThat(csv.filter("t-x", "0")).returns(0, CSVStore::size);
+                assertThat(csv.filter("t-x", "1")).returns(0, CSVStore::size);
+                assertThat(csv.filter("t-x", "2")).returns(0, CSVStore::size);
+                assertThat(csv.filter("t-x", "3")).returns(0, CSVStore::size);
+                assertThat(csv.filter("t-x", "4")).returns(0, CSVStore::size);
+                assertThat(csv.filter("t-x", "5")).returns(910, CSVStore::size);
+                assertThat(csv.filter("t-x", "6")).returns(545, CSVStore::size);
+                assertThat(csv.filter("t-x", "7")).returns(330, CSVStore::size);
+                assertThat(csv.filter("t-x", "8")).returns(134, CSVStore::size);
+                assertThat(csv.filter("t-x", "9")).returns(133, CSVStore::size);
+
+                assertThat(csv.filter("t-y", "0")).returns(0, CSVStore::size);
+                assertThat(csv.filter("t-y", "1")).returns(2, CSVStore::size);
+                assertThat(csv.filter("t-y", "2")).returns(98, CSVStore::size);
+                assertThat(csv.filter("t-y", "3")).returns(655, CSVStore::size);
+                assertThat(csv.filter("t-y", "4")).returns(1297, CSVStore::size);
+                assertThat(csv.filter("t-y", "5")).returns(0, CSVStore::size);
+
+                assertThat(csv.filter("t-deleted-linekey", "0")).returns(2052, CSVStore::size);
             }
 
             // TSD
@@ -527,13 +552,33 @@ class SpinTetfuCaseTest {
                 assertThat(tsd.filter("hole", "3")).returns(19, CSVStore::size);
                 assertThat(tsd.filter("hole", "4")).returns(1, CSVStore::size);
                 assertThat(tsd.filter("hole", "5")).returns(0, CSVStore::size);
+
+                assertThat(tsd.filter("t-x", "0")).returns(0, CSVStore::size);
+                assertThat(tsd.filter("t-x", "1")).returns(0, CSVStore::size);
+                assertThat(tsd.filter("t-x", "2")).returns(0, CSVStore::size);
+                assertThat(tsd.filter("t-x", "3")).returns(0, CSVStore::size);
+                assertThat(tsd.filter("t-x", "4")).returns(0, CSVStore::size);
+                assertThat(tsd.filter("t-x", "5")).returns(75, CSVStore::size);
+                assertThat(tsd.filter("t-x", "6")).returns(80, CSVStore::size);
+                assertThat(tsd.filter("t-x", "7")).returns(31, CSVStore::size);
+                assertThat(tsd.filter("t-x", "8")).returns(15, CSVStore::size);
+                assertThat(tsd.filter("t-x", "9")).returns(0, CSVStore::size);
+
+                assertThat(tsd.filter("t-y", "0")).returns(0, CSVStore::size);
+                assertThat(tsd.filter("t-y", "1")).returns(2, CSVStore::size);
+                assertThat(tsd.filter("t-y", "2")).returns(23, CSVStore::size);
+                assertThat(tsd.filter("t-y", "3")).returns(93, CSVStore::size);
+                assertThat(tsd.filter("t-y", "4")).returns(83, CSVStore::size);
+                assertThat(tsd.filter("t-y", "5")).returns(0, CSVStore::size);
+
+                assertThat(tsd.filter("t-deleted-linekey", "0")).returns(201, CSVStore::size);
             }
         }
 
         @Test
         void case2() throws Exception {
             String fumen = "v115@9gA8IeB8HeA8BeA8CeE8AeA8AeE8JeAgH";
-            String command = buildCommand(fumen, "-fb 0 -ft 2 -m 5 -c 2 -p iltz");
+            String command = buildCommand(fumen, "-fb 0 -ft 2 -m 5 -c 2 -p ILTZ");
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
@@ -559,6 +604,11 @@ class SpinTetfuCaseTest {
             assertThat(csv.filter("total-lines", "2")).returns(2, CSVStore::size);
 
             assertThat(csv.filter("hole", "3")).returns(2, CSVStore::size);
+
+            assertThat(csv.filter("t-rotate", "L")).returns(2, CSVStore::size);
+            assertThat(csv.filter("t-x", "2")).returns(2, CSVStore::size);
+            assertThat(csv.filter("t-y", "1")).returns(2, CSVStore::size);
+            assertThat(csv.filter("t-deleted-linekey", "0")).returns(2, CSVStore::size);
         }
     }
 

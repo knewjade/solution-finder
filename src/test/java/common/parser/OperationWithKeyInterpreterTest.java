@@ -1,10 +1,16 @@
 package common.parser;
 
+import common.buildup.BuildUp;
 import common.datastore.FullOperationWithKey;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.OperationWithKey;
+import core.action.reachable.LockedReachable;
+import core.field.Field;
+import core.field.FieldFactory;
 import core.mino.MinoFactory;
+import core.mino.MinoShifter;
 import core.mino.Piece;
+import core.srs.MinoRotationImpl;
 import core.srs.Rotate;
 import lib.Randoms;
 import org.junit.jupiter.api.Test;
@@ -17,17 +23,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class OperationWithKeyInterpreterTest {
     @Test
-    void parseToOperationWithKey() throws Exception {
-        String base = "J,0,1,0,0,1025;I,0,1,2,0,1048576;L,L,3,1,1048576,1073742849;J,0,1,3,0,1100585369600";
+    void parseToOperationWithKey() {
+        Field initField = FieldFactory.createField(""
+                + "____XXXXXX"
+                + "____XXXXXX"
+                + "____XXXXXX"
+                + "____XXXXXX"
+        );
+
+        String base = "J,0,1,0,0,3;I,0,1,2,0,4;L,L,3,1,4,11;Z,0,1,1,4,10";
         MinoFactory minoFactory = new MinoFactory();
         List<MinoOperationWithKey> operationWithKeys = OperationWithKeyInterpreter.parseToList(base, minoFactory);
-        String line = OperationWithKeyInterpreter.parseToString(operationWithKeys);
 
+        LockedReachable reachable = new LockedReachable(minoFactory, new MinoShifter(), new MinoRotationImpl(), 8);
+        assertThat(BuildUp.cansBuild(initField, operationWithKeys, 8, reachable)).isTrue();
+
+        String line = OperationWithKeyInterpreter.parseToString(operationWithKeys);
         assertThat(line).isEqualTo(base);
     }
 
     @Test
-    void parseRandom() throws Exception {
+    void parseRandom() {
         Randoms randoms = new Randoms();
         MinoFactory minoFactory = new MinoFactory();
         for (int size = 1; size < 20; size++) {

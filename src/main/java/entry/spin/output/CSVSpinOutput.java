@@ -2,6 +2,7 @@ package entry.spin.output;
 
 import common.datastore.Operation;
 import common.datastore.SimpleOperation;
+import common.parser.OperationWithKeyInterpreter;
 import concurrent.LockedReachableThreadLocal;
 import concurrent.RotateReachableThreadLocal;
 import core.action.reachable.LockedReachable;
@@ -25,10 +26,7 @@ import searcher.spins.spin.Spin;
 import searcher.spins.spin.SpinDefaultPriority;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -175,15 +173,16 @@ public class CSVSpinOutput implements SpinOutput {
     }
 
     public String toHeaderLine() {
-        return "テト譜,有効マーク,使用ミノ,使用ミノ数,T-Spinライン数,MINI,名前,トータルクリアライン数,hole";
+        return "テト譜,有効マーク,使用ミノ,使用ミノ数,T-Spinライン数,MINI,名前,トータルクリアライン数,hole,t-rotate,t-x,t-y,t-deleted-linekey";
     }
 
     public String toLine(CSVItem item) {
+        String operationT = OperationWithKeyInterpreter.parseToStringSimple(item.getOperationT());
         return String.format(
-                "http://fumen.zui.jp/?v115@%s,%s,%s,%d,%d,%s,%s,%d,%d",
+                "http://fumen.zui.jp/?v115@%s,%s,%s,%d,%d,%s,%s,%d,%d,%s",
                 item.getData(), item.getMark(), item.getUsingPieces(), item.getNumOfUsingPieces(),
                 item.getClearedLinesTOnly(), item.isMini() ? "O" : "X", item.getSpinName(),
-                item.getTotalClearedLines(), item.getNumOfHoles()
+                item.getTotalClearedLines(), item.getNumOfHoles(), operationT
         );
     }
 }
