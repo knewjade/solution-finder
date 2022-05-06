@@ -19,7 +19,7 @@ sfinder.jarがあるディレクトリをPowerShellで開き、次のコマン�
 
   $pattern = "*p7"
   java -jar sfinder.jar path -t v115@zgA8GeC8GeE8EeD8DeG8AeF8JeAgH -c 5 -p $pattern -s yes -f csv -k solution
-  $fumens = Select-String -Path output\path.csv -Pattern "v115@[a-zA-z0-9+/?]+" -AllMatches -Encoding default | %{$_.Matches} | %{$_.Value }| % -Begin {$str=""} {$str+=$_+" "} -End{$str}
+  $fumens = Select-String -Path output\path.csv -Pattern "v115@[a-zA-Z0-9+/?]+" -AllMatches -Encoding default | %{$_.Matches} | %{$_.Value }| % -Begin {$str=""} {$str+=$_+" "} -End{$str}
   java -jar sfinder.jar cover -t $fumens -p $pattern --mode tsd
 
 出力は以下のようになります (一例です)。
