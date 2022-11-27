@@ -157,8 +157,9 @@ public class CoverSettings {
             case "any":
             case "any-tspin":
             case "anytspin":
-            case "tspin0":
-                this.mode = CoverModes.AnyTSpin;
+            case "tsm":
+            case "tspinm":
+                this.mode = CoverModes.TSpinMini;
                 return;
             case "tss":
             case "tspin1":

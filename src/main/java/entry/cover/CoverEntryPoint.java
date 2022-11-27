@@ -300,8 +300,8 @@ public class CoverEntryPoint implements EntryPoint {
             case B2BContinuous: {
                 return new B2BContinuousCover(use180Rotation);
             }
-            case AnyTSpin: {
-                return TSpinCover.createAnyTSpinCover(use180Rotation, this.settings.getStartingB2B());
+            case TSpinMini: {
+                return TSpinCover.createTSpinMiniCover(use180Rotation, this.settings.getStartingB2B());
             }
             case TSpinSingle: {
                 return TSpinCover.createRegularTSpinCover(1, this.settings.getStartingB2B(), use180Rotation);

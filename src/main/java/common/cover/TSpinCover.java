@@ -40,7 +40,7 @@ public class TSpinCover implements Cover {
         }
     }
 
-    static class AnyTSpinCondition implements TSpinCondition {
+    static class TSpinMiniCondition implements TSpinCondition {
         @Override
         public boolean satisfy(Spin spin) {
             return true;
@@ -57,12 +57,12 @@ public class TSpinCover implements Cover {
         return new TSpinCover(tSpinCondition, tSpinGuard, use180Rotation);
     }
 
-    public static TSpinCover createAnyTSpinCover(boolean use180Rotation) {
-        return createAnyTSpinCover(use180Rotation, 0);
+    public static TSpinCover createTSpinMiniCover(boolean use180Rotation) {
+        return createTSpinMiniCover(use180Rotation, 0);
     }
 
-    public static TSpinCover createAnyTSpinCover(boolean use180Rotation, int b2bContinuousAfterStart) {
-        TSpinCondition tSpinCondition = new AnyTSpinCondition();
+    public static TSpinCover createTSpinMiniCover(boolean use180Rotation, int b2bContinuousAfterStart) {
+        TSpinCondition tSpinCondition = new TSpinMiniCondition();
         TSpinGuard tSpinGuard = new TSpinGuard(b2bContinuousAfterStart);
         return new TSpinCover(tSpinCondition, tSpinGuard, use180Rotation);
     }
@@ -227,11 +227,7 @@ public class TSpinCover implements Cover {
             return true;
         }
 
-        if (piece != null && existsValidByOrderWithHold(field, eachBlocks, pieces, height, reachable, maxDepth, depth, piece, deleteKey, hold, guard)) {
-            return true;
-        }
-
-        return false;
+        return piece != null && existsValidByOrderWithHold(field, eachBlocks, pieces, height, reachable, maxDepth, depth, piece, deleteKey, hold, guard);
     }
 
     private boolean existsValidByOrderWithHold(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height, ReachableForCover reachable, int maxDepth, int depth, Piece usePiece, long deleteKey, Piece nextHoldPiece, TSpinGuard guard) {

@@ -3,7 +3,7 @@ package entry.cover;
 public enum CoverModes {
     Normal,
     B2BContinuous,
-    AnyTSpin,
+    TSpinMini,
     TSpinSingle,
     TSpinDouble,
     TSpinTriple,
