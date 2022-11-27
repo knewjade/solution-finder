@@ -11,23 +11,25 @@ public class TSpinOrHarddropReachableThreadLocal extends ThreadLocal<TSpinOrHard
     private final MinoRotation minoRotation;
     private final int maxY;
     private final int required;
+    private final boolean regularOnly;
 
-    public TSpinOrHarddropReachableThreadLocal(int maxY, int required) {
-        this(new MinoFactory(), new MinoShifter(), MinoRotation.create(), maxY, required);
+    public TSpinOrHarddropReachableThreadLocal(int maxY, int required, boolean regularOnly) {
+        this(new MinoFactory(), new MinoShifter(), MinoRotation.create(), maxY, required, regularOnly);
     }
 
     public TSpinOrHarddropReachableThreadLocal(
-            MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY, int required
+            MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY, int required, boolean regularOnly
     ) {
         this.minoFactory = minoFactory;
         this.minoShifter = minoShifter;
         this.minoRotation = minoRotation;
         this.maxY = maxY;
         this.required = required;
+        this.regularOnly = regularOnly;
     }
 
     @Override
     protected TSpinOrHarddropReachable initialValue() {
-        return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, required);
+        return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, required, regularOnly);
     }
 }

@@ -91,6 +91,10 @@ public class SpinChecker {
                 continue;
             }
 
+            if (maxHeight <= beforeY + before.getMaxY()) {
+                continue;
+            }
+
             if (!fieldWithoutT.canPut(before, beforeX, beforeY)) {
                 continue;
             }

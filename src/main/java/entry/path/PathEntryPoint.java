@@ -296,14 +296,16 @@ public class PathEntryPoint implements EntryPoint {
                 return new SRSAnd180ReachableThreadLocal(maxClearLine);
             case SoftdropTOnly:
                 return new SoftdropTOnlyReachableThreadLocal(maxClearLine);
-            case AnyTSpin:
-                return new TSpinOrHarddropReachableThreadLocal(maxClearLine, 0);
+            case TSpinZero:
+                return new TSpinOrHarddropReachableThreadLocal(maxClearLine, 0, false);
+            case TSpinMini:
+                return new TSpinOrHarddropReachableThreadLocal(maxClearLine, 1, false);
             case TSpinSingle:
-                return new TSpinOrHarddropReachableThreadLocal(maxClearLine, 1);
+                return new TSpinOrHarddropReachableThreadLocal(maxClearLine, 1, true);
             case TSpinDouble:
-                return new TSpinOrHarddropReachableThreadLocal(maxClearLine, 2);
+                return new TSpinOrHarddropReachableThreadLocal(maxClearLine, 2, true);
             case TSpinTriple:
-                return new TSpinOrHarddropReachableThreadLocal(maxClearLine, 3);
+                return new TSpinOrHarddropReachableThreadLocal(maxClearLine, 3, true);
         }
         throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
     }

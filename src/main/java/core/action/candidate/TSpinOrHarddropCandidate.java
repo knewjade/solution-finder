@@ -26,18 +26,17 @@ public class TSpinOrHarddropCandidate implements Candidate<Action> {
     private final MinoRotation minoRotation;
     private final LockedCache lockedCache;
     private final int required;
+    private final boolean regularOnly;
     private final HarddropCandidate harddropCandidate;
 
     // temporary変数
     private int appearY = 0;
 
     /*
-     * @param required Tスピン時に最低限必要な消去ライン数。ただし、0以下を指定しても「ライン消去が伴わないTスピン」は許可されない。
-     *                 `1 <= required`のとき、Regular T-Spinのみとなる。
-     *                 `required <= 0`のとき、Miniを含むすべてのT-Spinが許可される。
+     * @param required Tスピン時に最低限必要な消去ライン数
      */
     public TSpinOrHarddropCandidate(
-            MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY, int required
+            MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY, int required, boolean regularOnly
     ) {
         this.minoFactory = minoFactory;
         this.minoShifter = minoShifter;
@@ -45,6 +44,7 @@ public class TSpinOrHarddropCandidate implements Candidate<Action> {
         this.lockedCache = new LockedCache(maxY);
         this.harddropCandidate = new HarddropCandidate(minoFactory, minoShifter);
         this.required = required;
+        this.regularOnly = regularOnly;
     }
 
     @Override
@@ -89,27 +89,9 @@ public class TSpinOrHarddropCandidate implements Candidate<Action> {
         freeze.put(mino, x, y);
         int clearLine = freeze.clearLine();
 
-        if (0 < clearLine) {
+        if (required <= clearLine) {
             if (SpinCommons.canTSpin(field, x, y)) {
-                if (required <= 0) {
-                    // required=0以下のときはMiniを許可
-
-                    // フィールドによらず、すべての回転軸を調べる
-
-                    // 右回転でくる可能性がある場所を移動
-                    if (checkRightRotation(field, mino, x, y)) {
-                        lockedCache.found(x, y, rotate);
-                        return true;
-                    }
-
-                    // 左回転でくる可能性がある場所を移動
-                    if (checkLeftRotation(field, mino, x, y)) {
-                        lockedCache.found(x, y, rotate);
-                        return true;
-                    }
-
-                    return false;
-                } else if (required <= clearLine) {
+                if (regularOnly) {
                     // Regularのみを許可
 
                     if (SpinCommons.isFilledTFront(field, mino.getRotate(), x, y)) {
@@ -141,6 +123,24 @@ public class TSpinOrHarddropCandidate implements Candidate<Action> {
                             return true;
                         }
                     }
+                } else {
+                    // Miniも許可
+
+                    // フィールドによらず、すべての回転軸を調べる
+
+                    // 右回転でくる可能性がある場所を移動
+                    if (checkRightRotation(field, mino, x, y)) {
+                        lockedCache.found(x, y, rotate);
+                        return true;
+                    }
+
+                    // 左回転でくる可能性がある場所を移動
+                    if (checkLeftRotation(field, mino, x, y)) {
+                        lockedCache.found(x, y, rotate);
+                        return true;
+                    }
+
+                    return false;
                 }
             }
         }

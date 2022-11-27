@@ -28,6 +28,6 @@ public class TSpinOrHarddropCandidateThreadLocal extends ThreadLocal<TSpinOrHard
 
     @Override
     protected TSpinOrHarddropCandidate initialValue() {
-        return new TSpinOrHarddropCandidate(minoFactory, minoShifter, minoRotation, maxY, required);
+        return new TSpinOrHarddropCandidate(minoFactory, minoShifter, minoRotation, maxY, required, true);
     }
 }

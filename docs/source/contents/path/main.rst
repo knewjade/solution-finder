@@ -204,12 +204,13 @@ noの場合、解自体から抽出したパターンをもとに、重複をチ
 * 180: ソフトドロップ＋180度回転入れ。180度回転は `Nullpomino <https://github.com/nullpomino/nullpomino>`_ のStandard Wallkickに準拠します。
 * t-softdrop: Tミノはソフトドロップ、その他のミノはハードドロップ
 
-* any-tspin (any, tspin0): Tミノは必ずT-Spin(Mini含むすべてのT-Spin)をする。その他のミノはハードドロップ
+* tspin0: Tミノは必ずT-Spinをする（ライン消去をしなくてもOK）。その他のミノはハードドロップ
+* tsm (tspinm): Tミノは必ずT-Spin Single,Double,Tripe(Miniを含む)をする。その他のミノはハードドロップ
 * tss (tspin1): Tミノは必ずT-Spin Single,Double,Tripe(Miniは含まない)をする。その他のミノはハードドロップ
 * tsd (tspin2): Tミノは必ずT-Spin Double,Tripe(Miniは含まない)をする。その他のミノはハードドロップ
 * tst (tspin3): Tミノは必ずT-Spin Tripe(Miniは含まない)をする。その他のミノはハードドロップ
 
-※ T-Spin系のdropでは、「T-Spinできないケース」や「ライン消去が発生しないT-Spinになるケース」ではミノを置きません。
+※ tspin0を除いたT-Spin系のdropでは、「T-Spinできないケース」や「ライン消去が発生しないT-Spinになるケース」ではミノを置きません。
 また、Tミノを使わないケースでは `harddrop` と同じになる点にご注意ください (solutionが省略されるわけではありません)。
 
 

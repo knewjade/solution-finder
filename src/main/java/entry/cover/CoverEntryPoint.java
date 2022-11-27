@@ -384,21 +384,25 @@ public class CoverEntryPoint implements EntryPoint {
                 MinoRotation minoRotation = MinoRotation.create();
                 return new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, maxY);
             }
-            case AnyTSpin: {
+            case TSpinZero: {
                 MinoRotation minoRotation = MinoRotation.create();
-                return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, 0);
+                return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, 0, false);
+            }
+            case TSpinMini: {
+                MinoRotation minoRotation = MinoRotation.create();
+                return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, 1, false);
             }
             case TSpinSingle: {
                 MinoRotation minoRotation = MinoRotation.create();
-                return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, 1);
+                return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, 1, true);
             }
             case TSpinDouble: {
                 MinoRotation minoRotation = MinoRotation.create();
-                return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, 2);
+                return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, 2, true);
             }
             case TSpinTriple: {
                 MinoRotation minoRotation = MinoRotation.create();
-                return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, 3);
+                return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, 3, true);
             }
         }
 
