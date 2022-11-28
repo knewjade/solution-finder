@@ -123,6 +123,7 @@ public class CoverSettings {
             case "t_softdrop":
                 this.dropType = DropType.SoftdropTOnly;
                 return;
+            case "tsz":
             case "tspin0":
                 this.dropType = DropType.TSpinZero;
                 return;

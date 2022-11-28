@@ -182,7 +182,7 @@ coverコマンドでは、上述したページを指定する書き方にも対
 * 180: ソフトドロップ＋180度回転入れ。180度回転は `Nullpomino <https://github.com/nullpomino/nullpomino>`_ のStandard Wallkickに準拠します
 * t-softdrop: Tミノはソフトドロップ、その他のミノはハードドロップ
 
-* tspin0: Tミノは必ずT-Spinをする（ライン消去をしなくてもOK）。その他のミノはハードドロップ
+* tsz (tspin0): Tミノは必ずT-Spinをする（ライン消去をしなくてもOK）。その他のミノはハードドロップ
 * tsm (tspinm): Tミノは必ずT-Spin Single,Double,Tripe(Miniを含む)をする。その他のミノはハードドロップ
 * tss (tspin1): Tミノは必ずT-Spin Single,Double,Tripe(Miniは含まない)をする。その他のミノはハードドロップ
 * tsd (tspin2): Tミノは必ずT-Spin Double,Tripe(Miniは含まない)をする。その他のミノはハードドロップ
