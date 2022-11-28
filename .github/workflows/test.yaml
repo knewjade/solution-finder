@@ -15,6 +15,7 @@ jobs:
       - uses: actions/setup-java@v2
         with:
           java-version: 11
+          distribution: corretto
       - run: ./gradlew check
         env:
           ALLOWS_ALL_TESTS: ${{ github.ref == 'refs/heads/main' }}
