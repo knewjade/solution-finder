@@ -1467,6 +1467,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
     void tszDrop() throws Exception {
         String fumen = "v115@+gE8CeA8AeE8EeE8EeH8KeAgH";
 
+        // --drop tsm
         {
             String command = String.format("path -t %s --hold no -p TSLI -d tsm", fumen);
 
@@ -1490,6 +1491,8 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
                     .returns(1, PathHTML::sequence)
                     .returns(0, path -> path.allFumens().size());
         }
+
+        // --drop tsz
         {
             String command = String.format("path -t %s --hold no -p TSLI -d tsz", fumen);
 
