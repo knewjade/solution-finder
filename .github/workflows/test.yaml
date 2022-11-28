@@ -4,6 +4,7 @@ on:
     branches:
       - '*'
     paths:
+      - ".github"
       - "src/**"
       - "*.gradle"
 jobs:
