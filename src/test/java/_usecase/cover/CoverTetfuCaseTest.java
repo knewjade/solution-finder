@@ -1141,5 +1141,55 @@ class CoverTetfuCaseTest {
                 assertThat(log.getOutput()).contains(Messages.foundAndSolutions(5, all));
             }
         }
+
+        @Test
+        void tszDrop1() throws Exception {
+            String fumen = "v115@4gA8DeE8AeA8CeE8EeE8EeI8KetGJ";
+
+            int all = 1;
+            {
+                String command = String.format("cover -t %s -p T --drop tsm", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(0, all, fumen));
+            }
+            {
+                String command = String.format("cover -t %s -p T --drop tspin0", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(1, all, fumen));
+            }
+            {
+                String command = String.format("cover -t %s -p T --drop tsz", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(1, all, fumen));
+            }
+        }
+
+        @Test
+        void tszDrop2() throws Exception {
+            String fumen = "v115@chH8Ke9NJ";
+
+            int all = 1;
+            {
+                String command = String.format("cover -t %s -p T --drop tsm", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(0, all, fumen));
+            }
+            {
+                String command = String.format("cover -t %s -p T --drop tspin0", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(1, all, fumen));
+            }
+            {
+                String command = String.format("cover -t %s -p T --drop tsz", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(1, all, fumen));
+            }
+        }
     }
 }

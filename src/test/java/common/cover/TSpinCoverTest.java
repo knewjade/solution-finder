@@ -429,7 +429,7 @@ class TSpinCoverTest {
     }
 
     @Nested
-    class AnyTSpinCoverTest {
+    class TSpinMiniCoverTest {
         private final MinoFactory minoFactory = new MinoFactory();
         private final MinoShifter minoShifter = new MinoShifter();
         private final MinoRotation minoRotation = MinoRotation.create();
@@ -451,7 +451,7 @@ class TSpinCoverTest {
             List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
             ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
 
-            TSpinCover cover = TSpinCover.createAnyTSpinCover(false);
+            TSpinCover cover = TSpinCover.createTSpinMiniCover(false);
 
             {
                 List<Piece> pieces = toPieceList("LT");
@@ -526,7 +526,7 @@ class TSpinCoverTest {
             List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
             ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
 
-            TSpinCover cover = TSpinCover.createAnyTSpinCover(false);
+            TSpinCover cover = TSpinCover.createTSpinMiniCover(false);
 
             {
                 List<Piece> pieces = toPieceList("LST");
@@ -578,7 +578,7 @@ class TSpinCoverTest {
             List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
             ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
 
-            TSpinCover cover = TSpinCover.createAnyTSpinCover(false);
+            TSpinCover cover = TSpinCover.createTSpinMiniCover(false);
 
             {
                 List<Piece> pieces = toPieceList("TO");
@@ -621,7 +621,7 @@ class TSpinCoverTest {
             ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new LockedReachable(minoFactory, minoShifter, minoRotation, height));
 
             {
-                TSpinCover cover = TSpinCover.createAnyTSpinCover(false, 2);
+                TSpinCover cover = TSpinCover.createTSpinMiniCover(false, 2);
 
                 List<Piece> pieces = toPieceList("TI");
 
@@ -633,7 +633,7 @@ class TSpinCoverTest {
                 ).isTrue();
             }
             {
-                TSpinCover cover = TSpinCover.createAnyTSpinCover(false, 2);
+                TSpinCover cover = TSpinCover.createTSpinMiniCover(false, 2);
 
                 List<Piece> pieces = toPieceList("IT");
 
@@ -645,7 +645,7 @@ class TSpinCoverTest {
                 ).isTrue();
             }
             {
-                TSpinCover cover = TSpinCover.createAnyTSpinCover(false, 3);
+                TSpinCover cover = TSpinCover.createTSpinMiniCover(false, 3);
 
                 List<Piece> pieces = toPieceList("TI");
 
@@ -676,7 +676,7 @@ class TSpinCoverTest {
             List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
             ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SRSAnd180Reachable(minoFactory, minoShifter, minoRotation, height));
 
-            TSpinCover cover = TSpinCover.createAnyTSpinCover(true);
+            TSpinCover cover = TSpinCover.createTSpinMiniCover(true);
 
             {
                 List<Piece> pieces = toPieceList("TIJO");

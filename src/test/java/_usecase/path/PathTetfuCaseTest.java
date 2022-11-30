@@ -1321,7 +1321,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
         String fumen = "v115@zgwhGeRpwhGeRpwhh0Eehlwhg0DeR4hli0AeBtwwwh?RpJeAgH";
 
         {
-            String command = String.format("path -t %s -p *! -c 5 -d any", fumen);
+            String command = String.format("path -t %s -p *! -c 5 -d tsm", fumen);
 
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
@@ -1461,5 +1461,58 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
 
         // ライン消去あり
         assertThat(minimalHTML.deletedLineFumens()).isEmpty();
+    }
+
+    @Test
+    void tszDrop() throws Exception {
+        String fumen = "v115@+gE8CeA8AeE8EeE8EeH8KeAgH";
+
+        {
+            String command = String.format("path -t %s --hold no -p TSLI -d tsm", fumen);
+
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput())
+                    .contains("TSLI")
+                    .contains(Messages.uniqueCount(0))
+                    .contains(Messages.minimalCount(0))
+                    .contains(Messages.noUseHold());
+
+            assertThat(log.getError()).isEmpty();
+
+            PathHTML minimal = OutputFileHelper.loadPathMinimalHTML();
+            assertThat(minimal)
+                    .returns(1, PathHTML::sequence)
+                    .returns(0, path -> path.allFumens().size());
+
+            PathHTML unique = OutputFileHelper.loadPathUniqueHTML();
+            assertThat(unique)
+                    .returns(1, PathHTML::sequence)
+                    .returns(0, path -> path.allFumens().size());
+        }
+
+        {
+            String command = String.format("path -t %s --hold no -p TSLI -d tsz", fumen);
+
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput())
+                    .contains("TSLI")
+                    .contains(Messages.uniqueCount(1))
+                    .contains(Messages.minimalCount(1))
+                    .contains(Messages.noUseHold());
+
+            assertThat(log.getError()).isEmpty();
+
+            PathHTML minimal = OutputFileHelper.loadPathMinimalHTML();
+            assertThat(minimal)
+                    .returns(1, PathHTML::sequence)
+                    .returns(1, path -> path.allFumens().size());
+
+            PathHTML unique = OutputFileHelper.loadPathUniqueHTML();
+            assertThat(unique)
+                    .returns(1, PathHTML::sequence)
+                    .returns(1, path -> path.allFumens().size());
+        }
     }
 }

@@ -123,11 +123,13 @@ public class CoverSettings {
             case "t_softdrop":
                 this.dropType = DropType.SoftdropTOnly;
                 return;
-            case "any":
-            case "any-tspin":
-            case "anytspin":
+            case "tsz":
             case "tspin0":
-                this.dropType = DropType.AnyTSpin;
+                this.dropType = DropType.TSpinZero;
+                return;
+            case "tsm":
+            case "tspinm":
+                this.dropType = DropType.TSpinMini;
                 return;
             case "tss":
             case "tspin1":
@@ -157,8 +159,9 @@ public class CoverSettings {
             case "any":
             case "any-tspin":
             case "anytspin":
-            case "tspin0":
-                this.mode = CoverModes.AnyTSpin;
+            case "tsm":
+            case "tspinm":
+                this.mode = CoverModes.TSpinMini;
                 return;
             case "tss":
             case "tspin1":

@@ -29,10 +29,10 @@ class TSpinOrHarddropCandidateTest {
     private final HarddropCandidate harddropCandidate = new HarddropCandidate(minoFactory, minoShifter);
 
     @ParameterizedTest
-    @ValueSource(ints = {0, 1, 2, 3})
+    @ValueSource(ints = {1, 2, 3})
     void caseHarddrop(int required) {
         TSpinOrHarddropCandidate candidate = new TSpinOrHarddropCandidate(
-                minoFactory, minoShifter, minoRotation, maxY, required
+                minoFactory, minoShifter, minoRotation, maxY, required, true
         );
         {
             Field field = FieldFactory.createField("" +
@@ -57,10 +57,10 @@ class TSpinOrHarddropCandidateTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {0, 1, 2, 3})
+    @ValueSource(ints = {1, 2, 3})
     void caseNotReachable(int required) {
         TSpinOrHarddropCandidate candidate = new TSpinOrHarddropCandidate(
-                minoFactory, minoShifter, minoRotation, maxY, required
+                minoFactory, minoShifter, minoRotation, maxY, required, true
         );
         {
             Field field = FieldFactory.createField("" +
@@ -87,10 +87,10 @@ class TSpinOrHarddropCandidateTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {0, 1, 2, 3})
+    @ValueSource(ints = {1, 2, 3})
     void caseTOther(int required) {
         TSpinOrHarddropCandidate candidate = new TSpinOrHarddropCandidate(
-                minoFactory, minoShifter, minoRotation, maxY, required
+                minoFactory, minoShifter, minoRotation, maxY, required, true
         );
         {
             Field field = FieldFactory.createField("" +
@@ -116,10 +116,10 @@ class TSpinOrHarddropCandidateTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {0, 1, 2, 3})
+    @ValueSource(ints = {1, 2, 3})
     void caseTSpinWithoutCleared(int required) {
         TSpinOrHarddropCandidate candidate = new TSpinOrHarddropCandidate(
-                minoFactory, minoShifter, minoRotation, maxY, required
+                minoFactory, minoShifter, minoRotation, maxY, required, true
         );
         {
             Field field = FieldFactory.createField("" +
@@ -136,7 +136,7 @@ class TSpinOrHarddropCandidateTest {
 
     private void assertReachable(Field field, Piece piece, int required, Set<Action> result) {
         TSpinOrHarddropReachable reachable = new TSpinOrHarddropReachable(
-                minoFactory, minoShifter, minoRotation, maxY, required
+                minoFactory, minoShifter, minoRotation, maxY, required, true
         );
         assertThat(result)
                 .allMatch(action -> {
@@ -146,16 +146,39 @@ class TSpinOrHarddropCandidateTest {
     }
 
     @Nested
-    class TSpinMiniTSpinOrHarddropCandidateTest {
+    class TSpinZeroOrHarddropCandidateTest {
         private final TSpinOrHarddropCandidate candidate = new TSpinOrHarddropCandidate(
-                minoFactory, minoShifter, minoRotation, maxY, 0
+                minoFactory, minoShifter, minoRotation, maxY, 0, false
         );
         private final TSpinOrHarddropReachable reachable = new TSpinOrHarddropReachable(
-                minoFactory, minoShifter, minoRotation, maxY, 0
+                minoFactory, minoShifter, minoRotation, maxY, 0, false
         );
 
         @Test
         void caseMini() {
+            {
+                Field field = FieldFactory.createField("" +
+                        "__________" +
+                        "__________" +
+                        "__________" +
+                        "XXXX_XXXXX"
+                );
+                Set<Action> result = candidate.search(field, Piece.T, maxY);
+                assertThat(result).isEmpty();
+                assertReachable(field, result);
+            }
+            {
+                Field field = FieldFactory.createField("" +
+                        "__________" +
+                        "__________" +
+                        "__________" +
+                        "_XXXXXXXX_"
+                );
+                Set<Action> result = candidate.search(field, Piece.T, maxY);
+                assertThat(result).contains(MinimalAction.create(9, 1, Rotate.Left));
+                assertThat(result).contains(MinimalAction.create(0, 1, Rotate.Right));
+                assertReachable(field, result);
+            }
             {
                 Field field = FieldFactory.createField("" +
                         "__________" +
@@ -276,12 +299,164 @@ class TSpinOrHarddropCandidateTest {
     }
 
     @Nested
-    class TSSTSpinOrHarddropCandidateTest {
+    class TSMOrHarddropCandidateTest {
         private final TSpinOrHarddropCandidate candidate = new TSpinOrHarddropCandidate(
-                minoFactory, minoShifter, minoRotation, maxY, 1
+                minoFactory, minoShifter, minoRotation, maxY, 1, false
         );
         private final TSpinOrHarddropReachable reachable = new TSpinOrHarddropReachable(
-                minoFactory, minoShifter, minoRotation, maxY, 1
+                minoFactory, minoShifter, minoRotation, maxY, 1, false
+        );
+
+        @Test
+        void caseMini() {
+            {
+                Field field = FieldFactory.createField("" +
+                        "__________" +
+                        "__________" +
+                        "__________" +
+                        "XXXX_XXXXX"
+                );
+                Set<Action> result = candidate.search(field, Piece.T, maxY);
+                assertThat(result).isEmpty();
+                assertReachable(field, result);
+            }
+            {
+                Field field = FieldFactory.createField("" +
+                        "__________" +
+                        "__________" +
+                        "__________" +
+                        "_XXXXXXXX_"
+                );
+                Set<Action> result = candidate.search(field, Piece.T, maxY);
+                assertThat(result).isEmpty();
+                assertReachable(field, result);
+            }
+            {
+                Field field = FieldFactory.createField("" +
+                        "__________" +
+                        "__________" +
+                        "__________" +
+                        "XXXXXXXXX_"
+                );
+                Set<Action> result = candidate.search(field, Piece.T, maxY);
+                assertThat(result).contains(MinimalAction.create(9, 1, Rotate.Left));
+                assertReachable(field, result);
+            }
+            {
+                Field field = FieldFactory.createField("" +
+                        "X_________" +
+                        "__________" +
+                        "__________" +
+                        "_XXXXXXXXX"
+                );
+                Set<Action> result = candidate.search(field, Piece.T, maxY);
+                assertThat(result).contains(MinimalAction.create(0, 1, Rotate.Right));
+                assertReachable(field, result);
+            }
+            {
+                // NEO
+                Field field = FieldFactory.createField("" +
+                        "XXX_______" +
+                        "X_________" +
+                        "XX________" +
+                        "XX__XXXXXX" +
+                        "XX_XXXXXXX"
+                );
+                Set<Action> result = candidate.search(field, Piece.T, maxY);
+                assertThat(result).contains(MinimalAction.create(2, 1, Rotate.Right));
+                assertReachable(field, result);
+            }
+        }
+
+        @Test
+        void caseTSS() {
+            {
+                Field field = FieldFactory.createField("" +
+                        "__________" +
+                        "___XXXXXX_" +
+                        "X___XXXXX_" +
+                        "XX_XXXXXXX"
+                );
+                Set<Action> result = candidate.search(field, Piece.T, maxY);
+                assertThat(result).contains(MinimalAction.create(2, 1, Rotate.Reverse));
+                assertReachable(field, result);
+            }
+        }
+
+        @Test
+        void caseTSD() {
+            {
+                Field field = FieldFactory.createField("" +
+                        "__________" +
+                        "___XXXXXXX" +
+                        "X___XXXXXX" +
+                        "XX_XXXXXXX"
+                );
+                Set<Action> result = candidate.search(field, Piece.T, maxY);
+                assertThat(result).contains(MinimalAction.create(2, 1, Rotate.Reverse));
+                assertReachable(field, result);
+            }
+            {
+                // FIN
+                Field field = FieldFactory.createField("" +
+                        "XXXX______" +
+                        "XX________" +
+                        "XX________" +
+                        "XX__XXXXXX" +
+                        "XX_XXXXXXX"
+                );
+                Set<Action> result = candidate.search(field, Piece.T, maxY);
+                assertThat(result).contains(MinimalAction.create(2, 1, Rotate.Right));
+                assertReachable(field, result);
+            }
+            {
+                // ISO
+                Field field = FieldFactory.createField("" +
+                        "___XXXXXXX" +
+                        "______XXXX" +
+                        "_____XXXXX" +
+                        "XXXX__XXXX" +
+                        "XXXX_XXXXX"
+                );
+                Set<Action> result = candidate.search(field, Piece.T, maxY);
+                assertThat(result).contains(MinimalAction.create(4, 1, Rotate.Right));
+                assertReachable(field, result);
+            }
+        }
+
+        @Test
+        void caseTST() {
+            {
+                Field field = FieldFactory.createField("" +
+                        "XXXX______" +
+                        "XXX_______" +
+                        "XXX_XXXXXX" +
+                        "XXX__XXXXX" +
+                        "XXX_XXXXXX"
+                );
+                Set<Action> result = candidate.search(field, Piece.T, maxY);
+                assertThat(result).contains(MinimalAction.create(3, 1, Rotate.Right));
+                assertReachable(field, result);
+            }
+        }
+
+        private void assertReachable(Field field, Set<Action> result) {
+            Piece piece = Piece.T;
+            assertThat(result)
+                    .allMatch(action -> {
+                        Mino mino = minoFactory.create(piece, action.getRotate());
+                        return reachable.checks(field, mino, action.getX(), action.getY(), maxY);
+                    });
+        }
+    }
+
+    @Nested
+    class TSSOrHarddropCandidateTest {
+        private final TSpinOrHarddropCandidate candidate = new TSpinOrHarddropCandidate(
+                minoFactory, minoShifter, minoRotation, maxY, 1, true
+        );
+        private final TSpinOrHarddropReachable reachable = new TSpinOrHarddropReachable(
+                minoFactory, minoShifter, minoRotation, maxY, 1, true
         );
 
         @Test
@@ -406,12 +581,12 @@ class TSpinOrHarddropCandidateTest {
     }
 
     @Nested
-    class TSDTSpinOrHarddropCandidateTest {
+    class TSDOrHarddropCandidateTest {
         private final TSpinOrHarddropCandidate candidate = new TSpinOrHarddropCandidate(
-                minoFactory, minoShifter, minoRotation, maxY, 2
+                minoFactory, minoShifter, minoRotation, maxY, 2, true
         );
         private final TSpinOrHarddropReachable reachable = new TSpinOrHarddropReachable(
-                minoFactory, minoShifter, minoRotation, maxY, 2
+                minoFactory, minoShifter, minoRotation, maxY, 2, true
         );
 
         @Test
@@ -536,12 +711,12 @@ class TSpinOrHarddropCandidateTest {
     }
 
     @Nested
-    class TSTTSpinOrHarddropCandidateTest {
+    class TSTOrHarddropCandidateTest {
         private final TSpinOrHarddropCandidate candidate = new TSpinOrHarddropCandidate(
-                minoFactory, minoShifter, minoRotation, maxY, 3
+                minoFactory, minoShifter, minoRotation, maxY, 3, true
         );
         private final TSpinOrHarddropReachable reachable = new TSpinOrHarddropReachable(
-                minoFactory, minoShifter, minoRotation, maxY, 3
+                minoFactory, minoShifter, minoRotation, maxY, 3, true
         );
 
         @Test

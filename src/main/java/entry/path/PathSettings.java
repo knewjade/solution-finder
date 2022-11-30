@@ -249,11 +249,13 @@ public class PathSettings {
             case "t_softdrop":
                 this.dropType = DropType.SoftdropTOnly;
                 return;
-            case "any":
-            case "any-tspin":
-            case "anytspin":
+            case "tsz":
             case "tspin0":
-                this.dropType = DropType.AnyTSpin;
+                this.dropType = DropType.TSpinZero;
+                return;
+            case "tsm":
+            case "tspinm":
+                this.dropType = DropType.TSpinMini;
                 return;
             case "tss":
             case "tspin1":

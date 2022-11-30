@@ -21,19 +21,19 @@ public class TSpinOrHarddropReachable implements Reachable {
     private final HarddropReachable harddropReachable;
     private final int required;
     private final SpinChecker spinChecker;
+    private final boolean regularOnly;
 
     /*
-     * @param required Tスピン時に最低限必要な消去ライン数。ただし、0以下を指定しても「ライン消去が伴わないTスピン」は許可されない。
-     *                 `1 <= required`のとき、Regular T-Spinのみとなる。
-     *                 `required <= 0`のとき、Miniを含むすべてのT-Spinが許可される。
+     * @param required Tスピン時に最低限必要な消去ライン数
      */
     public TSpinOrHarddropReachable(
-            MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY, int required
+            MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY, int required, boolean regularOnly
     ) {
         this.harddropReachable = new HarddropReachable(minoFactory, minoShifter, maxY);
         LockedReachable lockedReachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
         this.spinChecker = new SpinChecker(minoFactory, new MinoRotationDetail(minoFactory, minoRotation), lockedReachable);
         this.required = required;
+        this.regularOnly = regularOnly;
     }
 
     @Override
@@ -46,19 +46,14 @@ public class TSpinOrHarddropReachable implements Reachable {
             freeze.put(mino, x, y);
             int clearLine = freeze.clearLine();
 
-            if (0 < clearLine) {
+            if (required <= clearLine) {
                 SimpleOperation operation = new SimpleOperation(mino.getPiece(), mino.getRotate(), x, y);
                 Optional<Spin> spin = spinChecker.check(field, operation, validHeight, clearLine);
                 if (spin.isPresent()) {
-                    if (required <= 0) {
-                        // required=0以下のときは、Miniを許可
+                    if (regularOnly) {
+                        return spin.get().getSpin() == TSpins.Regular;
+                    } else {
                         return true;
-                    }
-
-                    if (spin.get().getSpin() != TSpins.Mini) {
-                        if (required <= clearLine) {
-                            return true;
-                        }
                     }
                 }
             }
