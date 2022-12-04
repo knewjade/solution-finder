@@ -1,2 +1,2 @@
-rootProject.name = 'sfinder-experimental'
+rootProject.name = 'solution-finder'
 include ":solution-finder"
