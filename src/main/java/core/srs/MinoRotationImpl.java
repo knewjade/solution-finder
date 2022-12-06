@@ -6,20 +6,17 @@ import core.mino.Piece;
 
 import java.util.EnumMap;
 
-public class MinoRotationImpl implements MinoRotation {
+class MinoRotationImpl implements MinoRotation {
     private static final int FIELD_WIDTH = 10;
 
-    private final EnumMap<Piece, EnumMap<Rotate, Pattern>> rightMap;
-    private final EnumMap<Piece, EnumMap<Rotate, Pattern>> leftMap;
-    private final EnumMap<Piece, EnumMap<Rotate, Pattern>> rotate180Map;
-
-    public MinoRotationImpl() {
-        this.rightMap = createRightMap();
-        this.leftMap = createLeftMap();
-        this.rotate180Map = createRotate180Map();
+    public static MinoRotationImpl create() {
+        EnumMap<Piece, EnumMap<Rotate, Pattern>> rightMap = createRightMap();
+        EnumMap<Piece, EnumMap<Rotate, Pattern>> leftMap = createLeftMap();
+        EnumMap<Piece, EnumMap<Rotate, Pattern>> rotate180Map = createRotate180Map();
+        return new MinoRotationImpl(rightMap, leftMap, rotate180Map);
     }
 
-    private EnumMap<Piece, EnumMap<Rotate, Pattern>> createRightMap() {
+    private static EnumMap<Piece, EnumMap<Rotate, Pattern>> createRightMap() {
         EnumMap<Piece, EnumMap<Rotate, Pattern>> blockMap = new EnumMap<>(Piece.class);
         for (Piece piece : Piece.values()) {
             EnumMap<Rotate, Pattern> rotateMap = new EnumMap<>(Rotate.class);
@@ -32,7 +29,7 @@ public class MinoRotationImpl implements MinoRotation {
         return blockMap;
     }
 
-    private Pattern getPattern(Piece piece, Rotate current, Rotate next) {
+    private static Pattern getPattern(Piece piece, Rotate current, Rotate next) {
         switch (piece) {
             case I:
                 return OffsetDefine.I.getPattern(current, next);
@@ -43,7 +40,7 @@ public class MinoRotationImpl implements MinoRotation {
         }
     }
 
-    private EnumMap<Piece, EnumMap<Rotate, Pattern>> createLeftMap() {
+    private static EnumMap<Piece, EnumMap<Rotate, Pattern>> createLeftMap() {
         EnumMap<Piece, EnumMap<Rotate, Pattern>> blockMap = new EnumMap<>(Piece.class);
         for (Piece piece : Piece.values()) {
             EnumMap<Rotate, Pattern> rotateMap = new EnumMap<>(Rotate.class);
@@ -56,7 +53,7 @@ public class MinoRotationImpl implements MinoRotation {
         return blockMap;
     }
 
-    private EnumMap<Piece, EnumMap<Rotate, Pattern>> createRotate180Map() {
+    private static EnumMap<Piece, EnumMap<Rotate, Pattern>> createRotate180Map() {
         EnumMap<Piece, EnumMap<Rotate, Pattern>> blockMap = new EnumMap<>(Piece.class);
         for (Piece piece : Piece.values()) {
             EnumMap<Rotate, Pattern> rotateMap = new EnumMap<>(Rotate.class);
@@ -69,7 +66,7 @@ public class MinoRotationImpl implements MinoRotation {
         return blockMap;
     }
 
-    private Pattern getPatternRotate180(Piece piece, Rotate current) {
+    private static Pattern getPatternRotate180(Piece piece, Rotate current) {
         switch (piece) {
             case I: {
                 switch (current) {
@@ -133,6 +130,20 @@ public class MinoRotationImpl implements MinoRotation {
             }
         }
         throw new IllegalStateException();
+    }
+
+    private final EnumMap<Piece, EnumMap<Rotate, Pattern>> rightMap;
+    private final EnumMap<Piece, EnumMap<Rotate, Pattern>> leftMap;
+    private final EnumMap<Piece, EnumMap<Rotate, Pattern>> rotate180Map;
+
+    MinoRotationImpl(
+            EnumMap<Piece, EnumMap<Rotate, Pattern>> rightMap,
+            EnumMap<Piece, EnumMap<Rotate, Pattern>> leftMap,
+            EnumMap<Piece, EnumMap<Rotate, Pattern>> rotate180Map
+    ) {
+        this.rightMap = rightMap;
+        this.leftMap = leftMap;
+        this.rotate180Map = rotate180Map;
     }
 
     @Override
