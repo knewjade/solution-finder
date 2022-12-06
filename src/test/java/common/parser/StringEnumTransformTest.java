@@ -38,6 +38,14 @@ class StringEnumTransformTest {
     }
 
     @Test
+    void toNEWSRotate() {
+        assertThat(StringEnumTransform.toNEWSRotate('N')).isEqualTo(Rotate.Spawn);
+        assertThat(StringEnumTransform.toNEWSRotate('E')).isEqualTo(Rotate.Reverse);
+        assertThat(StringEnumTransform.toNEWSRotate('W')).isEqualTo(Rotate.Left);
+        assertThat(StringEnumTransform.toNEWSRotate('S')).isEqualTo(Rotate.Right);
+    }
+
+    @Test
     void toString1() {
         assertThat(StringEnumTransform.toString(Rotate.Spawn)).isEqualTo("0");
         assertThat(StringEnumTransform.toString(Rotate.Reverse)).isEqualTo("2");
