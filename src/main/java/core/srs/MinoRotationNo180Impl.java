@@ -6,21 +6,18 @@ import core.mino.Piece;
 
 import java.util.EnumMap;
 
-public class MinoRotationImpl implements MinoRotation {
+public class MinoRotationNo180Impl implements MinoRotation {
     private static final int FIELD_WIDTH = 10;
 
     private final EnumMap<Piece, EnumMap<Rotate, Pattern>> rightMap;
     private final EnumMap<Piece, EnumMap<Rotate, Pattern>> leftMap;
-    private final EnumMap<Piece, EnumMap<Rotate, Pattern>> rotate180Map;
 
-    public MinoRotationImpl(
+    public MinoRotationNo180Impl(
             EnumMap<Piece, EnumMap<Rotate, Pattern>> rightMap,
-            EnumMap<Piece, EnumMap<Rotate, Pattern>> leftMap,
-            EnumMap<Piece, EnumMap<Rotate, Pattern>> rotate180Map
+            EnumMap<Piece, EnumMap<Rotate, Pattern>> leftMap
     ) {
         this.rightMap = rightMap;
         this.leftMap = leftMap;
-        this.rotate180Map = rotate180Map;
     }
 
     @Override
@@ -64,8 +61,7 @@ public class MinoRotationImpl implements MinoRotation {
 
     @Override
     public int[] getKicksWith180Rotation(Field field, Mino before, Mino after, int x, int y) {
-        Pattern pattern = rotate180Map.get(before.getPiece()).get(before.getRotate());
-        return getKicks(field, x, y, after, pattern);
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -93,6 +89,6 @@ public class MinoRotationImpl implements MinoRotation {
 
     @Override
     public int[][] getRotate180PatternsFrom(Mino current) {
-        return rotate180Map.get(current.getPiece()).get(current.getRotate()).getOffsets();
+        throw new UnsupportedOperationException();
     }
 }
