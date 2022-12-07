@@ -25,4 +25,7 @@ public class NoneSpinResult implements SpinResult {
     public int getTestPatternIndex() {
         throw new IllegalStateException();
     }
+
+    @Override
+    public boolean isPrivilegeSpins() { throw new IllegalStateException();}
 }

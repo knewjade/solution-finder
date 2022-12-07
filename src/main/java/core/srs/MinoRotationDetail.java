@@ -23,10 +23,10 @@ public class MinoRotationDetail {
         int[][] offsets = minoRotation.getPatternsFrom(before, direction);
         Rotate afterRotate = before.getRotate().get(direction);
         Mino after = minoFactory.create(before.getPiece(), afterRotate);
-        return getKicks(field, direction, after, beforeX, beforeY, offsets);
+        return getKicks(field, direction, before, after, beforeX, beforeY, offsets);
     }
 
-    private SpinResult getKicks(Field field, RotateDirection direction, Mino after, int beforeX, int beforeY, int[][] offsets) {
+    private SpinResult getKicks(Field field, RotateDirection direction, Mino before, Mino after, int beforeX, int beforeY, int[][] offsets) {
         int minX = -after.getMinX();
         int maxX = FIELD_WIDTH - after.getMaxX();
         int minY = -after.getMinY();
@@ -37,9 +37,16 @@ public class MinoRotationDetail {
             if (minX <= toX && toX < maxX && minY <= toY && field.canPut(after, toX, toY)) {
                 Field freeze = field.freeze();
                 freeze.put(after, toX, toY);
-                return new SuccessSpinResult(after, toX, toY, index, direction);
+                return createSuccessSpinResult(direction, before, after, index, toX, toY);
             }
         }
         return SpinResult.NONE;
+    }
+
+    private SuccessSpinResult createSuccessSpinResult(
+            RotateDirection direction, Mino before, Mino after, int testPatternIndex, int toX, int toY
+    ) {
+        boolean privilegeSpins = minoRotation.isPrivilegeSpins(before, direction, testPatternIndex);
+        return new SuccessSpinResult(after, toX, toY, testPatternIndex, direction, privilegeSpins);
     }
 }

@@ -1191,5 +1191,24 @@ class CoverTetfuCaseTest {
                 assertThat(log.getOutput()).contains(Messages.foundSolutions(1, all, fumen));
             }
         }
+
+        @Test
+        void tstForm() throws Exception {
+            String fumen = "v115@0gB8GeB8HeB8AeI8BeH8BeF8JeNKJ";
+
+            int all = 1;
+            {
+                String command = String.format("cover -t %s -p T --mode tsd", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(1, all, fumen));
+            }
+            {
+                String command = String.format("cover -t %s -p T --drop tsd", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(1, all, fumen));
+            }
+        }
     }
 }

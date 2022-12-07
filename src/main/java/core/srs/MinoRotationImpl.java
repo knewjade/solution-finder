@@ -97,6 +97,19 @@ public class MinoRotationImpl implements MinoRotation {
     }
 
     @Override
+    public boolean isPrivilegeSpins(Mino before, RotateDirection direction, int testPatternIndex) {
+        switch (direction) {
+            case Right:
+                return rightMap.get(before.getPiece()).get(before.getRotate()).isPrivilegeSpinsAt(testPatternIndex);
+            case Left:
+                return leftMap.get(before.getPiece()).get(before.getRotate()).isPrivilegeSpinsAt(testPatternIndex);
+            case Rotate180:
+                return rotate180Map.get(before.getPiece()).get(before.getRotate()).isPrivilegeSpinsAt(testPatternIndex);
+        }
+        throw new IllegalStateException();
+    }
+
+    @Override
     public boolean supports180() {
         return true;
     }

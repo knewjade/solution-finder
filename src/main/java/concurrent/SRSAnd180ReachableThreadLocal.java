@@ -18,7 +18,7 @@ public class SRSAnd180ReachableThreadLocal extends ThreadLocal<SRSAnd180Reachabl
     }
 
     public SRSAnd180ReachableThreadLocal(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY) {
-        if (!minoRotation.supports180()) {
+        if (minoRotation.noSupports180()) {
             throw new IllegalArgumentException("mino rotation does not support 180");
         }
 

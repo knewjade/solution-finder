@@ -103,17 +103,17 @@ public class SpinCommons {
         RotateDirection direction = spinResult.getDirection();
         TSpinNames name = getTSpinName(spinResult, toRotate, filledTFront, direction);
 
-        TSpins spin = getTSpin(spinResult, toRotate, filledTFront, name);
+        TSpins spin = getTSpin(spinResult, filledTFront);
 
         return new Spin(spin, name, clearedLine);
     }
 
-    private static TSpins getTSpin(SpinResult spinResult, Rotate toRotate, boolean filledTFront, TSpinNames name) {
+    private static TSpins getTSpin(SpinResult spinResult, boolean filledTFront) {
         if (!filledTFront) {
-            // 正面側に2つブロックがない
-            // Mini判定の可能性がある
-            if (isHorizontal(toRotate) || spinResult.getTestPatternIndex() != 4) {
-                // 接着時にTが横向き or 回転テストパターンが最後のケースではない
+            // Tの凸側のブロックが両方揃っていない
+            if (!spinResult.isPrivilegeSpins()) {
+                // TSTフォームのような特権がない限りはMiniと判定なる
+                // e.g. SRSでは「接着時にTが横向き and 回転テストパターンが最後のケース」の場合はRegular
                 return TSpins.Mini;
             }
 
@@ -143,6 +143,7 @@ public class SpinCommons {
         return TSpinNames.NoName;
     }
 
+    // Tの凸側のブロックが両方とも埋まっているか
     // `true`のとき、T-SpinはRegularになる。
     // `false`のとき、MiniかRegularか判別するにはさらに条件が必要
     public static boolean isFilledTFront(Field field, Rotate rotate, int x, int y) {
@@ -161,9 +162,5 @@ public class SpinCommons {
             }
         }
         throw new IllegalStateException();
-    }
-
-    private static boolean isHorizontal(Rotate rotate) {
-        return rotate == Rotate.Spawn || rotate == Rotate.Reverse;
     }
 }

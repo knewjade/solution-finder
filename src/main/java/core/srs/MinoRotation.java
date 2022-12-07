@@ -27,5 +27,11 @@ public interface MinoRotation {
 
     int[][] getRotate180PatternsFrom(Mino current);
 
+    boolean isPrivilegeSpins(Mino before, RotateDirection direction, int testPatternIndex);
+
+    default boolean noSupports180() {
+        return !supports180();
+    }
+
     boolean supports180();
 }

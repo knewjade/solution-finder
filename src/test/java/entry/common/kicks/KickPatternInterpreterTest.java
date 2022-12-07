@@ -19,21 +19,21 @@ class KickPatternInterpreterTest {
         void fixed1() {
             assertThat(KickPatternInterpreter.create("T.NE", "(0,0)"))
                     .returns(new KickType(Piece.T, Rotate.Spawn, Rotate.Right), KickPattern::getKickType)
-                    .returns(new Pattern(new int[][]{{0, 0}}), KickPattern::getPattern);
+                    .returns(Pattern.noPrivilegeSpins(new int[][]{{0, 0}}), KickPattern::getPattern);
         }
 
         @Test
         void fixed2() {
             assertThat(KickPatternInterpreter.create("S.ES", "(1, 1), (2, 2)"))
                     .returns(new KickType(Piece.S, Rotate.Right, Rotate.Reverse), KickPattern::getKickType)
-                    .returns(new Pattern(new int[][]{{1, 1}, {2, 2}}), KickPattern::getPattern);
+                    .returns(Pattern.noPrivilegeSpins(new int[][]{{1, 1}, {2, 2}}), KickPattern::getPattern);
         }
 
         @Test
         void fixed3() {
             assertThat(KickPatternInterpreter.create("O.SW", " ( -0 , 0 )( -2 , -2 ) (-3,-3) "))
                     .returns(new KickType(Piece.O, Rotate.Reverse, Rotate.Left), KickPattern::getKickType)
-                    .returns(new Pattern(new int[][]{{0, 0}, {-2, -2}, {-3, -3}}), KickPattern::getPattern);
+                    .returns(Pattern.noPrivilegeSpins(new int[][]{{0, 0}, {-2, -2}, {-3, -3}}), KickPattern::getPattern);
         }
 
         @Test
@@ -43,7 +43,7 @@ class KickPatternInterpreterTest {
             assertThat(KickPatternInterpreter.create("L.SW", "J.WS"))
                     .returns(new KickType(Piece.L, Rotate.Reverse, Rotate.Left), KickPattern::getKickType)
                     .returns(null, KickPattern::getPattern)
-                    .returns(new Pattern(new int[][]{{0, 0}}), it -> it.getPattern(fallback));
+                    .returns(Pattern.noPrivilegeSpins(new int[][]{{0, 0}}), it -> it.getPattern(fallback));
         }
     }
 
@@ -106,6 +106,9 @@ class KickPatternInterpreterTest {
         @Test
         void noComma() {
             assertThatThrownBy(() -> KickPatternInterpreter.create("O.WS", "(00)(1,1)"))
+                    .isInstanceOf(IllegalArgumentException.class);
+
+            assertThatThrownBy(() -> KickPatternInterpreter.create("O.WS", "(0 0)(1,1)"))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 

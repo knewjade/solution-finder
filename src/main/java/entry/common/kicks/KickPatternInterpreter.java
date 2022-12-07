@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class KickPatternInterpreter {
     public static KickPattern create(String key, String value) {
         String trimmedKey = key.trim();
-        String trimmedValue = value.trim();
+        String trimmedValue = value.replaceAll(" ", "");
 
         KickType kickType = parseToKickType(trimmedKey)
                 .orElseThrow(() -> new IllegalArgumentException("Unexpected key: key=" + trimmedKey));
@@ -96,7 +96,7 @@ public class KickPatternInterpreter {
     }
 
     private static List<Pair<Integer, Integer>> detectXYs(String str, List<String> brackets) {
-        Pattern pattern = Pattern.compile("^(-?\\d+)\\s*,\\s*(-?\\d+)$");
+        Pattern pattern = Pattern.compile("^(-?\\d+),(-?\\d+)$");
 
         return brackets.stream()
                 .map(String::trim)
@@ -124,7 +124,7 @@ public class KickPatternInterpreter {
             ints[index] = new int[]{group.getKey(), group.getValue()};
         }
 
-        return new core.srs.Pattern(ints);
+        return core.srs.Pattern.noPrivilegeSpins(ints);
     }
 
     private KickPatternInterpreter() {

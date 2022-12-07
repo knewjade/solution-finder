@@ -379,7 +379,7 @@ public class CoverEntryPoint implements EntryPoint {
                 return new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
             }
             case Rotation180: {
-                if (!minoRotation.supports180()) {
+                if (minoRotation.noSupports180()) {
                     throw new FinderInitializeException("rotation system does not support 180");
                 }
                 return new SRSAnd180Reachable(minoFactory, minoShifter, minoRotation, maxY);
