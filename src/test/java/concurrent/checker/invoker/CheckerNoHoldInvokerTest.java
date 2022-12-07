@@ -19,6 +19,7 @@ import core.field.FieldFactory;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
+import entry.common.kicks.factory.DefaultMinoRotationFactory;
 import exceptions.FinderExecuteException;
 import lib.Randoms;
 import module.LongTest;
@@ -395,7 +396,7 @@ class CheckerNoHoldInvokerTest {
 
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = MinoRotation.create();
+        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
 
         PerfectValidator validator = new PerfectValidator();
         CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);

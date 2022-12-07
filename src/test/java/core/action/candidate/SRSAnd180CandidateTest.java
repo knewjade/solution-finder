@@ -8,6 +8,7 @@ import core.mino.MinoShifter;
 import core.mino.Piece;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
+import entry.common.kicks.factory.DefaultMinoRotationFactory;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
@@ -19,7 +20,7 @@ class SRSAnd180CandidateTest {
     void testSearch1() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = MinoRotation.create();
+        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
         Candidate<Action> candidate = new SRSAnd180Candidate(minoFactory, minoShifter, minoRotation, 6);
 
         String marks = "" +

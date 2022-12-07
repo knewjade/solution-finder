@@ -15,6 +15,7 @@ import core.mino.MinoShifter;
 import core.mino.Piece;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
+import entry.common.kicks.factory.DefaultMinoRotationFactory;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +30,7 @@ class TSpinCoverTest {
     class RegularTSpinCoverTest {
         private final MinoFactory minoFactory = new MinoFactory();
         private final MinoShifter minoShifter = new MinoShifter();
-        private final MinoRotation minoRotation = MinoRotation.create();
+        private final MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
 
         @Test
         void cansBuildDouble1() {
@@ -432,7 +433,7 @@ class TSpinCoverTest {
     class TSpinMiniCoverTest {
         private final MinoFactory minoFactory = new MinoFactory();
         private final MinoShifter minoShifter = new MinoShifter();
-        private final MinoRotation minoRotation = MinoRotation.create();
+        private final MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
 
         @Test
         void cansBuild1() {

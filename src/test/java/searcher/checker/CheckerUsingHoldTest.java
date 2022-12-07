@@ -77,7 +77,7 @@ class CheckerUsingHoldTest {
     }
 
     @Test
-    void testGraceSystem() throws Exception {
+    void testGraceSystem() {
         List<Pair<List<Piece>, Boolean>> testCases = new ArrayList<Pair<List<Piece>, Boolean>>() {
             {
                 add(new Pair<>(Arrays.asList(T, S, O, J), false));
@@ -125,7 +125,7 @@ class CheckerUsingHoldTest {
     }
 
     @Test
-    void testCaseFilledLine() throws Exception {
+    void testCaseFilledLine() {
         List<Pair<List<Piece>, Boolean>> testCases = new ArrayList<Pair<List<Piece>, Boolean>>() {
             {
                 add(new Pair<>(Arrays.asList(I, Z, L, I), true));
@@ -166,7 +166,7 @@ class CheckerUsingHoldTest {
 
     @Test
     @LongTest
-    void testPossiblePerfect() throws Exception {
+    void testPossiblePerfect() throws IOException {
         // Field
         Field field = FieldFactory.createSmallField();
         int maxClearLine = 4;
@@ -174,10 +174,13 @@ class CheckerUsingHoldTest {
 
         // Set to check No Possible Perfect
         String noPerfectPath = ClassLoader.getSystemResource("orders/noperfect.txt").getPath();
-        HashSet<LongPieces> noPerfectSet = Files.lines(Paths.get(noPerfectPath))
-                .map(BlockInterpreter::parse)
-                .map(LongPieces::new)
-                .collect(Collectors.toCollection(HashSet::new));
+        HashSet<LongPieces> noPerfectSet;
+        try (Stream<String> lines = Files.lines(Paths.get(noPerfectPath))) {
+            noPerfectSet = lines
+                    .map(BlockInterpreter::parse)
+                    .map(LongPieces::new)
+                    .collect(Collectors.toCollection(HashSet::new));
+        }
 
         // Initialize
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
@@ -204,7 +207,7 @@ class CheckerUsingHoldTest {
     @ParameterizedTest
     @ArgumentsSource(TestCase.class)
     @LongTest
-    void testNoPossiblePerfect(LongPieces pieces) throws Exception {
+    void testNoPossiblePerfect(LongPieces pieces) {
         // Field
         Field field = FieldFactory.createSmallField();
         int maxClearLine = 4;
@@ -212,7 +215,6 @@ class CheckerUsingHoldTest {
 
         // Initialize
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
-        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         // Assertion
         // Set test case
@@ -221,10 +223,6 @@ class CheckerUsingHoldTest {
         // Execute
         boolean isSucceed = checker.check(field, blocks, candidate, maxClearLine, maxDepth);
         assertThat(isSucceed).isFalse();
-
-        // Check result
-        if (isSucceed)
-            assertResult(field, maxClearLine, reachable, blocks);
     }
 
     private static class TestCase implements ArgumentsProvider {
@@ -236,11 +234,14 @@ class CheckerUsingHoldTest {
 
         private List<LongPieces> loadTestCases() throws IOException {
             String resultPath = ClassLoader.getSystemResource("orders/noperfect.txt").getPath();
-            List<LongPieces> testCases = Files.lines(Paths.get(resultPath))
-                    .map(BlockInterpreter::parse)
-                    .map(LongPieces::new)
-                    .distinct()
-                    .collect(Collectors.toList());
+            List<LongPieces> testCases;
+            try (Stream<String> lines = Files.lines(Paths.get(resultPath))) {
+                testCases = lines
+                        .map(BlockInterpreter::parse)
+                        .map(LongPieces::new)
+                        .distinct()
+                        .collect(Collectors.toList());
+            }
             Collections.shuffle(testCases);
             return testCases;
         }

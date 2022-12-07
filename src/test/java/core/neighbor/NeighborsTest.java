@@ -4,6 +4,7 @@ import core.mino.MinoFactory;
 import core.mino.Piece;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
+import entry.common.kicks.factory.DefaultMinoRotationFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -12,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class NeighborsTest {
     private Neighbors createNeighbors(int maxClearLine) {
         MinoFactory minoFactory = new MinoFactory();
-        MinoRotation minoRotation = MinoRotation.create();
+        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
         OriginalPieceFactory pieceFactory = new OriginalPieceFactory(maxClearLine + 3);
         return new Neighbors(minoFactory, minoRotation, pieceFactory);
     }

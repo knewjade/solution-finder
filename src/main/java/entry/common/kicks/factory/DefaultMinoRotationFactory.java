@@ -6,6 +6,10 @@ import core.srs.*;
 import java.util.EnumMap;
 
 public class DefaultMinoRotationFactory {
+    public static MinoRotation createDefault() {
+        return new DefaultMinoRotationFactory().create();
+    }
+
     private static EnumMap<Piece, EnumMap<Rotate, Pattern>> createRightMap() {
         EnumMap<Piece, EnumMap<Rotate, Pattern>> blockMap = new EnumMap<>(Piece.class);
         for (Piece piece : Piece.values()) {

@@ -19,6 +19,7 @@ import core.field.FieldFactory;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
+import entry.common.kicks.factory.DefaultMinoRotationFactory;
 import exceptions.FinderExecuteException;
 import lib.Randoms;
 import module.LongTest;
@@ -313,7 +314,7 @@ class CheckerUsingHoldInvokerTest {
 
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = MinoRotation.create();
+        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
 
         PerfectValidator validator = new PerfectValidator();
         CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
@@ -333,14 +334,12 @@ class CheckerUsingHoldInvokerTest {
             List<Pair<Pieces, Boolean>> resultPairs = invoker.search(field, searchingPieces, maxClearLine, maxDepth);
 
             // 結果を集計する
-            AnalyzeTree tree1 = new AnalyzeTree();
+            AnalyzeTree tree = new AnalyzeTree();
             for (Pair<Pieces, Boolean> resultPair : resultPairs) {
                 Pieces pieces1 = resultPair.getKey();
                 Boolean result = resultPair.getValue();
-                tree1.set(result, pieces1);
+                tree.set(result, pieces1);
             }
-
-            AnalyzeTree tree = tree1;
 
             for (Pieces pieces : searchingPieces) {
                 boolean check = checker.check(field, pieces.getPieces(), candidate, maxClearLine, maxDepth);

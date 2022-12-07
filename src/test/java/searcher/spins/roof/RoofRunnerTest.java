@@ -13,6 +13,7 @@ import core.mino.Piece;
 import core.neighbor.SimpleOriginalPiece;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
+import entry.common.kicks.factory.DefaultMinoRotationFactory;
 import org.junit.jupiter.api.Test;
 import searcher.spins.candidates.CandidateWithMask;
 import searcher.spins.pieces.MinimalSimpleOriginalPieces;
@@ -32,7 +33,7 @@ class RoofRunnerTest {
         int fieldHeight = 8;
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = MinoRotation.create();
+        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
         SimpleOriginalPieceFactory factory = new SimpleOriginalPieceFactory(minoFactory, minoShifter, fieldHeight);
         Field initField = FieldFactory.createField("" +
                         "XX_XXXX_XX" +
