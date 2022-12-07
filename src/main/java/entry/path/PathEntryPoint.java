@@ -16,6 +16,7 @@ import core.field.Field;
 import core.field.FieldView;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import core.srs.MinoRotation;
 import entry.DropType;
 import entry.EntryPoint;
 import entry.Verify;
@@ -42,6 +43,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class PathEntryPoint implements EntryPoint {
     private static final String LINE_SEPARATOR = System.lineSeparator();
@@ -145,6 +147,7 @@ public class PathEntryPoint implements EntryPoint {
         // Initialize
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
+        MinoRotation minoRotation = MinoRotation.create();
         ColorConverter colorConverter = new ColorConverter();
         SizedBit sizedBit = decideSizedBitSolutionWidth(maxClearLine);
         SolutionFilter solutionFilter = new ForPathSolutionFilter(generator, maxClearLine);
@@ -188,7 +191,7 @@ public class PathEntryPoint implements EntryPoint {
 
         Stopwatch stopwatch2 = Stopwatch.createStartedStopwatch();
         ValidPiecesPool validPiecesPool = createValidPiecesPool(maxDepth, patterns, isUsingHold);
-        PathCore pathCore = createPathCore(field, maxClearLine, maxDepth, minoFactory, colorConverter, sizedBit, solutionFilter, isUsingHold, basicSolutions, threadCount, validPiecesPool);
+        PathCore pathCore = createPathCore(field, maxClearLine, maxDepth, minoFactory, minoRotation, colorConverter, sizedBit, solutionFilter, isUsingHold, basicSolutions, threadCount, validPiecesPool);
         List<PathPair> pathPairList = run(pathCore, field, sizedBit, reservedBlocks);
         stopwatch2.stop();
 
@@ -255,16 +258,20 @@ public class PathEntryPoint implements EntryPoint {
         throw new FinderInitializeException("Cached-min-bit should be 0 <= bit: bit=" + cachedMinBit);
     }
 
-    private PathCore createPathCore(Field field, int maxClearLine, int maxDepth, MinoFactory minoFactory, ColorConverter colorConverter, SizedBit sizedBit, SolutionFilter solutionFilter, boolean isUsingHold, BasicSolutions basicSolutions, int threadCount, ValidPiecesPool validPiecesPool) throws FinderInitializeException {
+    private PathCore createPathCore(
+            Field field, int maxClearLine, int maxDepth, MinoFactory minoFactory, MinoRotation minoRotation, ColorConverter colorConverter,
+            SizedBit sizedBit, SolutionFilter solutionFilter, boolean isUsingHold, BasicSolutions basicSolutions, int threadCount, ValidPiecesPool validPiecesPool
+    ) throws FinderInitializeException {
         assert 1 <= threadCount;
         List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(sizedBit, field);
         TaskResultHelper taskResultHelper = createTaskResultHelper(maxClearLine);
         PerfectPackSearcher searcher = new PerfectPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper, threadCount != 1);
-        FumenParser fumenParser = createFumenParser(settings.isTetfuSplit(), minoFactory, colorConverter);
+        FumenParser fumenParser = createFumenParser(settings.isTetfuSplit(), minoFactory, minoRotation, colorConverter);
 
         DropType dropType = settings.getDropType();
-        ThreadLocal<BuildUpStream> threadLocalBuildUpStream = createBuildUpStreamThreadLocal(dropType, maxClearLine);
-        ThreadLocal<? extends Reachable> reachableThreadLocal = createReachableThreadLocal(dropType, maxClearLine);
+        Supplier<MinoRotation> minoRotationSupplier = settings.createMinoRotationSupplier();
+        ThreadLocal<BuildUpStream> threadLocalBuildUpStream = createBuildUpStreamThreadLocal(minoRotationSupplier, dropType, maxClearLine);
+        ThreadLocal<? extends Reachable> reachableThreadLocal = createReachableThreadLocal(minoRotationSupplier, dropType, maxClearLine);
 
         return new PathCore(searcher, maxDepth, isUsingHold, fumenParser, threadLocalBuildUpStream, reachableThreadLocal, validPiecesPool);
     }
@@ -275,39 +282,45 @@ public class PathEntryPoint implements EntryPoint {
         return new BasicMinoPackingHelper();
     }
 
-    private FumenParser createFumenParser(boolean isTetfuSplit, MinoFactory minoFactory, ColorConverter colorConverter) {
+    private FumenParser createFumenParser(
+            boolean isTetfuSplit, MinoFactory minoFactory, MinoRotation minoRotation, ColorConverter colorConverter
+    ) {
         if (isTetfuSplit)
-            return new SequenceFumenParser(minoFactory, colorConverter);
+            return new SequenceFumenParser(minoFactory, minoRotation, colorConverter);
         return new OneFumenParser(minoFactory, colorConverter);
     }
 
-    private ThreadLocal<BuildUpStream> createBuildUpStreamThreadLocal(DropType dropType, int maxClearLine) throws FinderInitializeException {
-        ThreadLocal<? extends Reachable> reachableThreadLocal = createReachableThreadLocal(dropType, maxClearLine);
+    private ThreadLocal<BuildUpStream> createBuildUpStreamThreadLocal(
+            Supplier<MinoRotation> minoRotationSupplier, DropType dropType, int maxClearLine
+    ) throws FinderInitializeException {
+        ThreadLocal<? extends Reachable> reachableThreadLocal = createReachableThreadLocal(minoRotationSupplier, dropType, maxClearLine);
         return new BuildUpListUpThreadLocal(reachableThreadLocal, maxClearLine);
     }
 
-    private ThreadLocal<? extends Reachable> createReachableThreadLocal(DropType dropType, int maxClearLine) throws FinderInitializeException {
+    private ThreadLocal<? extends Reachable> createReachableThreadLocal(
+            Supplier<MinoRotation> minoRotationSupplier, DropType dropType, int maxClearLine
+    ) throws FinderInitializeException {
         switch (dropType) {
             case Softdrop:
-                return new LockedReachableThreadLocal(maxClearLine);
+                return new LockedReachableThreadLocal(minoRotationSupplier, maxClearLine);
             case Harddrop:
                 return new HarddropReachableThreadLocal(maxClearLine);
             case Rotation180:
-                return new SRSAnd180ReachableThreadLocal(maxClearLine);
+                return new SRSAnd180ReachableThreadLocal(minoRotationSupplier, maxClearLine);
             case SoftdropTOnly:
-                return new SoftdropTOnlyReachableThreadLocal(maxClearLine);
+                return new SoftdropTOnlyReachableThreadLocal(minoRotationSupplier, maxClearLine);
             case TSpinZero:
-                return new TSpinOrHarddropReachableThreadLocal(maxClearLine, 0, false);
+                return new TSpinOrHarddropReachableThreadLocal(minoRotationSupplier, maxClearLine, 0, false);
             case TSpinMini:
-                return new TSpinOrHarddropReachableThreadLocal(maxClearLine, 1, false);
+                return new TSpinOrHarddropReachableThreadLocal(minoRotationSupplier, maxClearLine, 1, false);
             case TSpinSingle:
-                return new TSpinOrHarddropReachableThreadLocal(maxClearLine, 1, true);
+                return new TSpinOrHarddropReachableThreadLocal(minoRotationSupplier, maxClearLine, 1, true);
             case TSpinDouble:
-                return new TSpinOrHarddropReachableThreadLocal(maxClearLine, 2, true);
+                return new TSpinOrHarddropReachableThreadLocal(minoRotationSupplier, maxClearLine, 2, true);
             case TSpinTriple:
-                return new TSpinOrHarddropReachableThreadLocal(maxClearLine, 3, true);
+                return new TSpinOrHarddropReachableThreadLocal(minoRotationSupplier, maxClearLine, 3, true);
         }
-        throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
+        throw new FinderInitializeException("Unsupported droptype: droptype=" + dropType);
     }
 
     private List<PathPair> run(PathCore pathCore, Field field, SizedBit sizedBit, BlockField blockField) throws FinderExecuteException {

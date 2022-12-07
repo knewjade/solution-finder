@@ -7,16 +7,19 @@ import _implements.parity_based_pack.step2.FullLimitedMino;
 import _implements.parity_based_pack.step2.PositionLimitParser;
 import _implements.parity_based_pack.step3.CrossBuilder;
 import common.buildup.BuildUp;
-import common.datastore.PieceCounter;
 import common.datastore.MinoOperationWithKey;
+import common.datastore.PieceCounter;
 import concurrent.LockedReachableThreadLocal;
 import core.field.Field;
-import core.mino.Piece;
 import core.mino.MinoFactory;
+import core.mino.Piece;
+import core.srs.MinoRotation;
+import entry.common.kicks.factory.DefaultMinoRotationFactory;
 
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -38,8 +41,9 @@ public class ParityBasedPackSearcher {
     public Stream<List<MinoOperationWithKey>> search(List<Piece> usingPieces) {
         // 準備
         MinoFactory minoFactory = new MinoFactory();
+        Supplier<MinoRotation> minoRotationSupplier = DefaultMinoRotationFactory::createDefault;
         PositionLimitParser positionLimitParser = new PositionLimitParser(minoFactory, maxClearLine);
-        LockedReachableThreadLocal threadLocal = new LockedReachableThreadLocal(maxClearLine);
+        LockedReachableThreadLocal threadLocal = new LockedReachableThreadLocal(minoRotationSupplier, maxClearLine);
 
         ParityField parityField = new ParityField(field);
         PieceCounter pieceCounter = new PieceCounter(usingPieces);

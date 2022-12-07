@@ -91,4 +91,9 @@ public class MinoRotationNo180Impl implements MinoRotation {
     public int[][] getRotate180PatternsFrom(Mino current) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public boolean supports180() {
+        return false;
+    }
 }

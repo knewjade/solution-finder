@@ -13,10 +13,10 @@ public class LastSoftdropReachableForCover implements ReachableForCover {
     private final LockedReachable lockedReachable;
     private final int allowDepth;
 
-    public LastSoftdropReachableForCover(Reachable reachable, int maxY, int allowDepth) {
+    public LastSoftdropReachableForCover(Reachable reachable, MinoRotation minoRotation, int maxY, int allowDepth) {
         assert 1 <= allowDepth;
         this.reachable = reachable;
-        this.lockedReachable = new LockedReachable(new MinoFactory(), new MinoShifter(), MinoRotation.create(), maxY);
+        this.lockedReachable = new LockedReachable(new MinoFactory(), new MinoShifter(), minoRotation, maxY);
         this.allowDepth = allowDepth;
     }
 

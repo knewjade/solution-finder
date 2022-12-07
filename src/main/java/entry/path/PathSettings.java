@@ -7,11 +7,13 @@ import common.tetfu.field.ColoredField;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Piece;
+import core.srs.MinoRotation;
 import entry.DropType;
 import exceptions.FinderParseException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class PathSettings {
     private static final String DEFAULT_LOG_FILE_PATH = "output/last_output.txt";
@@ -102,6 +104,10 @@ public class PathSettings {
 
     public boolean getMinimalSpecifiedOnly() {
         return isMinimalSpecifiedOnly;
+    }
+
+    public Supplier<MinoRotation> createMinoRotationSupplier() {
+        return MinoRotation::create;
     }
 
     // ********* Setter ************

@@ -151,7 +151,7 @@ public class RenEntryPoint implements EntryPoint {
             htmlBuilder.addHeader(String.format("%d solutions", results.size()));
 
             ColorConverter colorConverter = new ColorConverter();
-            SequenceFumenParser fumenParser = new SequenceFumenParser(minoFactory, colorConverter);
+            SequenceFumenParser fumenParser = new SequenceFumenParser(minoFactory, minoRotation, colorConverter);
 
             HashSet<Integer> renKeys = new HashSet<>();
             for (RenResult result : results) {

@@ -81,7 +81,7 @@ class PackSearcherTest {
     }
 
     private SolutionFilter createSRSSolutionFilter(SizedBit sizedBit, Field initField) {
-        LockedReachableThreadLocal lockedReachableThreadLocal = new LockedReachableThreadLocal(sizedBit.getHeight());
+        LockedReachableThreadLocal lockedReachableThreadLocal = new LockedReachableThreadLocal(minoRotation, sizedBit.getHeight());
         return new SRSValidSolutionFilter(initField, lockedReachableThreadLocal, sizedBit);
     }
 

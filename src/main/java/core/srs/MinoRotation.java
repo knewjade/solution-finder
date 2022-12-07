@@ -26,4 +26,6 @@ public interface MinoRotation {
     int[][] getLeftPatternsFrom(Mino current);
 
     int[][] getRotate180PatternsFrom(Mino current);
+
+    boolean supports180();
 }

@@ -151,7 +151,7 @@ public class SpinEntryPoint implements EntryPoint {
         MinoRotationDetail minoRotationDetail = new MinoRotationDetail(minoFactory, minoRotation);
         MinoShifter minoShifter = new MinoShifter();
         ColorConverter colorConverter = new ColorConverter();
-        FumenParser fumenParser = createFumenParser(settings.isTetfuSplit(), minoFactory, colorConverter);
+        FumenParser fumenParser = createFumenParser(settings.isTetfuSplit(), minoFactory, minoRotation, colorConverter);
         RotateReachableThreadLocal rotateReachableThreadLocal = new RotateReachableThreadLocal(minoFactory, minoShifter, minoRotation, fieldHeight);
 
         Field initField = FieldFactory.createField(fieldHeight);
@@ -256,9 +256,11 @@ public class SpinEntryPoint implements EntryPoint {
         return path.substring(0, pointIndex);
     }
 
-    private FumenParser createFumenParser(boolean isTetfuSplit, MinoFactory minoFactory, ColorConverter colorConverter) {
+    private FumenParser createFumenParser(
+            boolean isTetfuSplit, MinoFactory minoFactory, MinoRotation minoRotation, ColorConverter colorConverter
+    ) {
         if (isTetfuSplit)
-            return new SequenceFumenParser(minoFactory, colorConverter);
+            return new SequenceFumenParser(minoFactory, minoRotation, colorConverter);
         return new OneFumenParser(minoFactory, colorConverter);
     }
 

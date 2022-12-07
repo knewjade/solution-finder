@@ -1,11 +1,11 @@
 package concurrent;
 
-import common.datastore.action.Action;
-import core.action.candidate.Candidate;
 import core.action.candidate.SoftdropTOnlyCandidate;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
+
+import java.util.function.Supplier;
 
 public class SoftdropTOnlyCandidateThreadLocal extends ThreadLocal<SoftdropTOnlyCandidate> {
     private final MinoFactory minoFactory;
@@ -13,8 +13,8 @@ public class SoftdropTOnlyCandidateThreadLocal extends ThreadLocal<SoftdropTOnly
     private final MinoRotation minoRotation;
     private final int maxY;
 
-    public SoftdropTOnlyCandidateThreadLocal(int maxY) {
-        this(new MinoFactory(), new MinoShifter(), MinoRotation.create(), maxY);
+    public SoftdropTOnlyCandidateThreadLocal(Supplier<MinoRotation> minoRotationSupplier, int maxY) {
+        this(new MinoFactory(), new MinoShifter(), minoRotationSupplier.get(), maxY);
     }
 
     public SoftdropTOnlyCandidateThreadLocal(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY) {

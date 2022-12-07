@@ -8,7 +8,10 @@ import _implements.parity_based_pack.step2.PositionLimitParser;
 import _implements.parity_based_pack.step3.CrossBuilder;
 import common.buildup.BuildUp;
 import common.comparator.OperationWithKeyComparator;
-import common.datastore.*;
+import common.datastore.BlockField;
+import common.datastore.MinoOperationWithKey;
+import common.datastore.OperationWithKey;
+import common.datastore.PieceCounter;
 import common.iterable.CombinationIterable;
 import common.parser.OperationWithKeyInterpreter;
 import common.tetfu.Tetfu;
@@ -21,10 +24,12 @@ import concurrent.LockedReachableThreadLocal;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
-import core.mino.Piece;
 import core.mino.Mino;
 import core.mino.MinoFactory;
+import core.mino.Piece;
+import core.srs.MinoRotation;
 import core.srs.Rotate;
+import entry.common.kicks.factory.DefaultMinoRotationFactory;
 import lib.Stopwatch;
 
 import java.util.*;
@@ -87,7 +92,7 @@ public class Main3 {
             System.out.println(objs.size());
             objs.stream()
                     .map(obj -> OperationWithKeyInterpreter.parseToString(obj.operations))
-                    .sorted().sequential()
+                    .sorted()
                     .forEach(System.out::println);
 
             allObjSet.addAll(objs);
@@ -184,7 +189,7 @@ public class Main3 {
         List<Piece> blocks2 = o2.pieces;
         int size1 = blocks1.size();
         int size2 = blocks2.size();
-        int minSize = size1 < size2 ? size1 : size2;
+        int minSize = Math.min(size1, size2);
 
         for (int index = 0; index < minSize; index++) {
             int compare = blocks1.get(index).compareTo(blocks2.get(index));
@@ -265,8 +270,9 @@ public class Main3 {
 
     public static List<List<MinoOperationWithKey>> search(List<Piece> usedPieces, Field field, int maxClearLine, Field verifyField) {
         MinoFactory minoFactory = new MinoFactory();
+        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
         PositionLimitParser positionLimitParser = new PositionLimitParser(minoFactory, maxClearLine);
-        LockedReachableThreadLocal threadLocal = new LockedReachableThreadLocal(maxClearLine);
+        LockedReachableThreadLocal threadLocal = new LockedReachableThreadLocal(minoRotation, maxClearLine);
 
         ParityField parityField = new ParityField(field);
         PieceCounter pieceCounter = new PieceCounter(usedPieces);

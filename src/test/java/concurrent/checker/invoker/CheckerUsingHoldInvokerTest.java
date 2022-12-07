@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.IntFunction;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -375,8 +376,9 @@ class CheckerUsingHoldInvokerTest {
         private ConcurrentCheckerInvoker createConcurrentCheckerUsingHoldInvoker(int maxClearLine) {
             MinoFactory minoFactory = new MinoFactory();
             CheckerUsingHoldThreadLocal<Action> checkerThreadLocal = new CheckerUsingHoldThreadLocal<>();
-            LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
-            LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(maxClearLine);
+            Supplier<MinoRotation> minoRotationSupplier = DefaultMinoRotationFactory::createDefault;
+            LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(minoRotationSupplier, maxClearLine);
+            LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(minoRotationSupplier, maxClearLine);
             CheckerCommonObj commonObj = new CheckerCommonObj(minoFactory, candidateThreadLocal, checkerThreadLocal, reachableThreadLocal);
             return new ConcurrentCheckerUsingHoldInvoker(executorService, commonObj);
         }
@@ -384,8 +386,9 @@ class CheckerUsingHoldInvokerTest {
         private ConcurrentCheckerInvoker createSingleCheckerUsingHoldInvoker(int maxClearLine) {
             MinoFactory minoFactory = new MinoFactory();
             CheckerUsingHoldThreadLocal<Action> checkerThreadLocal = new CheckerUsingHoldThreadLocal<>();
-            LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(maxClearLine);
-            LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(maxClearLine);
+            Supplier<MinoRotation> minoRotationSupplier = DefaultMinoRotationFactory::createDefault;
+            LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(minoRotationSupplier, maxClearLine);
+            LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(minoRotationSupplier, maxClearLine);
             CheckerCommonObj commonObj = new CheckerCommonObj(minoFactory, candidateThreadLocal, checkerThreadLocal, reachableThreadLocal);
             return new SingleCheckerUsingHoldInvoker(commonObj);
         }

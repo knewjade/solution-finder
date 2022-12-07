@@ -12,10 +12,6 @@ public class TSpinOrHarddropCandidateThreadLocal extends ThreadLocal<TSpinOrHard
     private final int maxY;
     private final int required;
 
-    public TSpinOrHarddropCandidateThreadLocal(int maxY, int required) {
-        this(new MinoFactory(), new MinoShifter(), MinoRotation.create(), maxY, required);
-    }
-
     public TSpinOrHarddropCandidateThreadLocal(
             MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY, int required
     ) {

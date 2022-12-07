@@ -13,6 +13,7 @@ import core.action.reachable.Reachable;
 import core.field.Field;
 import core.field.FieldView;
 import core.mino.MinoFactory;
+import core.srs.MinoRotation;
 import entry.DropType;
 import entry.EntryPoint;
 import entry.Verify;
@@ -31,6 +32,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class PercentEntryPoint implements EntryPoint {
@@ -143,8 +145,9 @@ public class PercentEntryPoint implements EntryPoint {
         output("  -> Stopwatch start");
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
-        ThreadLocal<? extends Candidate<Action>> candidateThreadLocal = createCandidateThreadLocal(settings.getDropType(), maxClearLine);
-        ThreadLocal<? extends Reachable> reachableThreadLocal = createReachableThreadLocal(settings.getDropType(), maxClearLine);
+        Supplier<MinoRotation> minoRotationSupplier = MinoRotation::create;
+        ThreadLocal<? extends Candidate<Action>> candidateThreadLocal = createCandidateThreadLocal(minoRotationSupplier, settings.getDropType(), maxClearLine);
+        ThreadLocal<? extends Reachable> reachableThreadLocal = createReachableThreadLocal(minoRotationSupplier, settings.getDropType(), maxClearLine);
         MinoFactory minoFactory = new MinoFactory();
         PercentCore percentCore = new PercentCore(executorService, candidateThreadLocal, settings.isUsingHold(), reachableThreadLocal, minoFactory);
         percentCore.run(field, searchingPieces, maxClearLine, maxDepth);
@@ -225,32 +228,36 @@ public class PercentEntryPoint implements EntryPoint {
         }
     }
 
-    private ThreadLocal<? extends Candidate<Action>> createCandidateThreadLocal(DropType dropType, int maxClearLine) throws FinderInitializeException {
+    private ThreadLocal<? extends Candidate<Action>> createCandidateThreadLocal(
+            Supplier<MinoRotation> minoRotationSupplier, DropType dropType, int maxClearLine
+    ) throws FinderInitializeException {
         switch (dropType) {
             case Softdrop:
-                return new LockedCandidateThreadLocal(maxClearLine);
+                return new LockedCandidateThreadLocal(minoRotationSupplier, maxClearLine);
             case Harddrop:
                 return new HarddropCandidateThreadLocal();
             case SoftdropTOnly:
-                return new SoftdropTOnlyCandidateThreadLocal(maxClearLine);
+                return new SoftdropTOnlyCandidateThreadLocal(minoRotationSupplier, maxClearLine);
             case Rotation180:
-                return new SRSAnd180CandidateThreadLocal(maxClearLine);
+                return new SRSAnd180CandidateThreadLocal(minoRotationSupplier, maxClearLine);
         }
-        throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
+        throw new FinderInitializeException("Unsupported droptype: droptype=" + dropType);
     }
 
-    private ThreadLocal<? extends Reachable> createReachableThreadLocal(DropType dropType, int maxClearLine) throws FinderInitializeException {
+    private ThreadLocal<? extends Reachable> createReachableThreadLocal(
+            Supplier<MinoRotation> minoRotationSupplier, DropType dropType, int maxClearLine
+    ) throws FinderInitializeException {
         switch (dropType) {
             case Softdrop:
-                return new LockedReachableThreadLocal(maxClearLine);
+                return new LockedReachableThreadLocal(minoRotationSupplier, maxClearLine);
             case Harddrop:
                 return new HarddropReachableThreadLocal(maxClearLine);
             case SoftdropTOnly:
-                return new SoftdropTOnlyReachableThreadLocal(maxClearLine);
+                return new SoftdropTOnlyReachableThreadLocal(minoRotationSupplier, maxClearLine);
             case Rotation180:
-                return new SRSAnd180ReachableThreadLocal(maxClearLine);
+                return new SRSAnd180ReachableThreadLocal(minoRotationSupplier, maxClearLine);
         }
-        throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
+        throw new FinderInitializeException("Unsupported droptype: droptype=" + dropType);
     }
 
     private void outputFailedPatterns(List<Pair<Pieces, Boolean>> failedPairs) throws FinderExecuteException {

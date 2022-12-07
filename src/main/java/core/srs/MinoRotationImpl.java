@@ -95,4 +95,9 @@ public class MinoRotationImpl implements MinoRotation {
     public int[][] getRotate180PatternsFrom(Mino current) {
         return rotate180Map.get(current.getPiece()).get(current.getRotate()).getOffsets();
     }
+
+    @Override
+    public boolean supports180() {
+        return true;
+    }
 }
