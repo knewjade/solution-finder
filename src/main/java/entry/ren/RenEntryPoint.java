@@ -119,7 +119,7 @@ public class RenEntryPoint implements EntryPoint {
 
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = MinoRotation.create();
+        MinoRotation minoRotation = settings.createMinoRotationSupplier().get();
 
         RenSearcher<Action> renSearcher = getRenSearcher(minoFactory);
         Candidate<Action> candidate = getCandidate(minoFactory, minoShifter, minoRotation);

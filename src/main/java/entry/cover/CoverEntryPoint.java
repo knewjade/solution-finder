@@ -148,7 +148,7 @@ public class CoverEntryPoint implements EntryPoint {
 
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
-        MinoRotation minoRotation = MinoRotation.create();
+        MinoRotation minoRotation = settings.createMinoRotationSupplier().get();
         ReachableForCover reachableForCover = getReachableForCover(minoRotation, settings.getLastSoftdrop(), height);
         List<BitSet> results = new ArrayList<>();
 

@@ -4,11 +4,13 @@ import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import core.field.Field;
 import core.field.FieldFactory;
+import core.srs.MinoRotation;
 import entry.DropType;
 import exceptions.FinderParseException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class PercentSettings {
     private static final int EMPTY_BLOCK_NUMBER = ColorType.Empty.getNumber();
@@ -63,6 +65,10 @@ public class PercentSettings {
 
     int getThreadCount() {
         return threadCount;
+    }
+
+    Supplier<MinoRotation> createMinoRotationSupplier() {
+        return MinoRotation::create;
     }
 
     // ********* Setter ************

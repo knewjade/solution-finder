@@ -104,7 +104,7 @@ public class MoveEntryPoint implements EntryPoint {
 
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = MinoRotation.create();
+        MinoRotation minoRotation = settings.createMinoRotationSupplier().get();
         ColorConverter colorConverter = new ColorConverter();
         PerfectValidator perfectValidator = new PerfectValidator();
         PutterNoHold<Action> putter = new PutterNoHold<>(minoFactory, perfectValidator);

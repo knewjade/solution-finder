@@ -145,7 +145,7 @@ public class PercentEntryPoint implements EntryPoint {
         output("  -> Stopwatch start");
         Stopwatch stopwatch = Stopwatch.createStartedStopwatch();
 
-        Supplier<MinoRotation> minoRotationSupplier = MinoRotation::create;
+        Supplier<MinoRotation> minoRotationSupplier = settings.createMinoRotationSupplier();
         ThreadLocal<? extends Candidate<Action>> candidateThreadLocal = createCandidateThreadLocal(minoRotationSupplier, settings.getDropType(), maxClearLine);
         ThreadLocal<? extends Reachable> reachableThreadLocal = createReachableThreadLocal(minoRotationSupplier, settings.getDropType(), maxClearLine);
         MinoFactory minoFactory = new MinoFactory();

@@ -209,14 +209,13 @@ public class SetupEntryPoint implements EntryPoint {
         // Initialize
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = MinoRotation.create();
-        Supplier<MinoRotation> minoRotationSupplier = () -> minoRotation;
+        Supplier<MinoRotation> minoRotationSupplier = settings.createMinoRotationSupplier();
         ColorConverter colorConverter = new ColorConverter();
         SizedBit sizedBit = decideSizedBitSolutionWidth(maxHeight);
         TaskResultHelper taskResultHelper = new BasicMinoPackingHelper();
         SolutionFilter solutionFilter = new ForPathSolutionFilter(generator, maxHeight);
         ThreadLocal<BuildUpStream> buildUpStreamThreadLocal = createBuildUpStreamThreadLocal(minoRotationSupplier, dropType, maxHeight);
-        FumenParser oneFumenParser = createFumenParser(settings.isTetfuSplit(), minoFactory, minoRotation, colorConverter);
+        FumenParser oneFumenParser = createFumenParser(settings.isTetfuSplit(), minoFactory, minoRotationSupplier.get(), colorConverter);
 
         // ミノリストの作成
         long deleteKeyMask = getDeleteKeyMask(notFilledField, initField, needFilledField, freeField, maxHeight);

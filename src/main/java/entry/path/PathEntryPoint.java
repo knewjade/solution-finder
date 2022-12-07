@@ -147,7 +147,6 @@ public class PathEntryPoint implements EntryPoint {
         // Initialize
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = MinoRotation.create();
         ColorConverter colorConverter = new ColorConverter();
         SizedBit sizedBit = decideSizedBitSolutionWidth(maxClearLine);
         SolutionFilter solutionFilter = new ForPathSolutionFilter(generator, maxClearLine);
@@ -191,7 +190,7 @@ public class PathEntryPoint implements EntryPoint {
 
         Stopwatch stopwatch2 = Stopwatch.createStartedStopwatch();
         ValidPiecesPool validPiecesPool = createValidPiecesPool(maxDepth, patterns, isUsingHold);
-        PathCore pathCore = createPathCore(field, maxClearLine, maxDepth, minoFactory, minoRotation, colorConverter, sizedBit, solutionFilter, isUsingHold, basicSolutions, threadCount, validPiecesPool);
+        PathCore pathCore = createPathCore(field, maxClearLine, maxDepth, minoFactory, colorConverter, sizedBit, solutionFilter, isUsingHold, basicSolutions, threadCount, validPiecesPool);
         List<PathPair> pathPairList = run(pathCore, field, sizedBit, reservedBlocks);
         stopwatch2.stop();
 
@@ -259,13 +258,14 @@ public class PathEntryPoint implements EntryPoint {
     }
 
     private PathCore createPathCore(
-            Field field, int maxClearLine, int maxDepth, MinoFactory minoFactory, MinoRotation minoRotation, ColorConverter colorConverter,
+            Field field, int maxClearLine, int maxDepth, MinoFactory minoFactory, ColorConverter colorConverter,
             SizedBit sizedBit, SolutionFilter solutionFilter, boolean isUsingHold, BasicSolutions basicSolutions, int threadCount, ValidPiecesPool validPiecesPool
     ) throws FinderInitializeException {
         assert 1 <= threadCount;
         List<InOutPairField> inOutPairFields = InOutPairField.createInOutPairFields(sizedBit, field);
         TaskResultHelper taskResultHelper = createTaskResultHelper(maxClearLine);
         PerfectPackSearcher searcher = new PerfectPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper, threadCount != 1);
+        MinoRotation minoRotation = settings.createMinoRotationSupplier().get();
         FumenParser fumenParser = createFumenParser(settings.isTetfuSplit(), minoFactory, minoRotation, colorConverter);
 
         DropType dropType = settings.getDropType();

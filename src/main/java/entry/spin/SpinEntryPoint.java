@@ -147,7 +147,7 @@ public class SpinEntryPoint implements EntryPoint {
         output();
 
         MinoFactory minoFactory = new MinoFactory();
-        MinoRotation minoRotation = MinoRotation.create();
+        MinoRotation minoRotation = settings.createMinoRotationSupplier().get();
         MinoRotationDetail minoRotationDetail = new MinoRotationDetail(minoFactory, minoRotation);
         MinoShifter minoShifter = new MinoShifter();
         ColorConverter colorConverter = new ColorConverter();
