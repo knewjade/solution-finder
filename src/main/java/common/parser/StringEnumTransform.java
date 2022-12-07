@@ -58,6 +58,20 @@ public class StringEnumTransform {
         throw new IllegalArgumentException("No reachable");
     }
 
+    public static Rotate toNEWSRotate(char ch) {
+        switch (ch) {
+            case 'N':
+                return Rotate.Spawn;
+            case 'W':
+                return Rotate.Left;
+            case 'S':
+                return Rotate.Reverse;
+            case 'E':
+                return Rotate.Right;
+        }
+        throw new IllegalArgumentException("No reachable");
+    }
+
     public static String toString(Rotate rotate) {
         switch (rotate) {
             case Spawn:

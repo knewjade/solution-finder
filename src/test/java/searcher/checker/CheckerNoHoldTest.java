@@ -17,6 +17,7 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.mino.Piece;
 import core.srs.MinoRotation;
+import entry.common.kicks.factory.DefaultMinoRotationFactory;
 import module.LongTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -42,7 +43,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CheckerNoHoldTest {
     private final MinoFactory minoFactory = new MinoFactory();
     private final MinoShifter minoShifter = new MinoShifter();
-    private final MinoRotation minoRotation = MinoRotation.create();
+    private final MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
     private final PerfectValidator validator = new PerfectValidator();
     private final CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
 
@@ -71,7 +72,7 @@ class CheckerNoHoldTest {
     }
 
     @Test
-    void testGraceSystem() throws Exception {
+    void testGraceSystem() {
         List<Pair<List<Piece>, Boolean>> testCases = new ArrayList<Pair<List<Piece>, Boolean>>() {
             {
                 add(new Pair<>(Arrays.asList(T, S, O, J), false));
@@ -119,7 +120,7 @@ class CheckerNoHoldTest {
     }
 
     @Test
-    void testCase1() throws Exception {
+    void testCase1() {
         List<Pair<List<Piece>, Boolean>> testCases = new ArrayList<Pair<List<Piece>, Boolean>>() {
             {
                 add(new Pair<>(Arrays.asList(J, I, O, L, S, Z, T), true));
@@ -160,7 +161,7 @@ class CheckerNoHoldTest {
     }
 
     @Test
-    void testCase2() throws Exception {
+    void testCase2() {
         List<Pair<List<Piece>, Boolean>> testCases = new ArrayList<Pair<List<Piece>, Boolean>>() {
             {
                 add(new Pair<>(Arrays.asList(I, L, T, S, Z), true));
@@ -199,7 +200,7 @@ class CheckerNoHoldTest {
     }
 
     @Test
-    void testCase3() throws Exception {
+    void testCase3() {
         List<Pair<List<Piece>, Boolean>> testCases = new ArrayList<Pair<List<Piece>, Boolean>>() {
             {
                 add(new Pair<>(Arrays.asList(T, I, L, S, O, Z, J), false));
@@ -244,7 +245,7 @@ class CheckerNoHoldTest {
     }
 
     @Test
-    void testCaseFilledLine() throws Exception {
+    void testCaseFilledLine() {
         List<Pair<List<Piece>, Boolean>> testCases = new ArrayList<Pair<List<Piece>, Boolean>>() {
             {
                 add(new Pair<>(Arrays.asList(I, Z, L, I), true));
@@ -286,7 +287,7 @@ class CheckerNoHoldTest {
     @ParameterizedTest
     @ArgumentsSource(TestCase.class)
     @LongTest
-    void testCaseList(Pieces pieces, boolean expectedCount) throws Exception {
+    void testCaseList(Pieces pieces, boolean expectedCount) {
         int maxDepth = 10;
         int maxClearLine = 4;
         Field field = FieldFactory.createField(maxClearLine);
@@ -317,16 +318,19 @@ class CheckerNoHoldTest {
 
         private List<Pair<Pieces, Boolean>> loadTestCases() throws IOException {
             String resultPath = ClassLoader.getSystemResource("perfects/checker_avoidhold.txt").getPath();
-            List<Pair<Pieces, Boolean>> testCases = Files.lines(Paths.get(resultPath))
-                    .filter(line -> !line.startsWith("//"))
-                    .map(line -> line.split("="))
-                    .map(split -> {
-                        Stream<Piece> blocks = BlockInterpreter.parse(split[0]);
-                        LongPieces pieces = new LongPieces(blocks);
-                        boolean isSucceed = "o".equals(split[1]);
-                        return new Pair<Pieces, Boolean>(pieces, isSucceed);
-                    })
-                    .collect(Collectors.toList());
+            List<Pair<Pieces, Boolean>> testCases;
+            try (Stream<String> lines = Files.lines(Paths.get(resultPath))) {
+                testCases = lines
+                        .filter(line -> !line.startsWith("//"))
+                        .map(line -> line.split("="))
+                        .map(split -> {
+                            Stream<Piece> blocks = BlockInterpreter.parse(split[0]);
+                            LongPieces pieces = new LongPieces(blocks);
+                            boolean isSucceed = "o".equals(split[1]);
+                            return new Pair<Pieces, Boolean>(pieces, isSucceed);
+                        })
+                        .collect(Collectors.toList());
+            }
             Collections.shuffle(testCases);
             return testCases;
         }

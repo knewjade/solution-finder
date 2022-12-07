@@ -119,7 +119,7 @@ public class RenEntryPoint implements EntryPoint {
 
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = MinoRotation.create();
+        MinoRotation minoRotation = settings.createMinoRotationSupplier().get();
 
         RenSearcher<Action> renSearcher = getRenSearcher(minoFactory);
         Candidate<Action> candidate = getCandidate(minoFactory, minoShifter, minoRotation);
@@ -151,7 +151,7 @@ public class RenEntryPoint implements EntryPoint {
             htmlBuilder.addHeader(String.format("%d solutions", results.size()));
 
             ColorConverter colorConverter = new ColorConverter();
-            SequenceFumenParser fumenParser = new SequenceFumenParser(minoFactory, colorConverter);
+            SequenceFumenParser fumenParser = new SequenceFumenParser(minoFactory, minoRotation, colorConverter);
 
             HashSet<Integer> renKeys = new HashSet<>();
             for (RenResult result : results) {

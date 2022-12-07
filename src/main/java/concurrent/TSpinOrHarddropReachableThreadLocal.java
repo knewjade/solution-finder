@@ -5,6 +5,8 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 
+import java.util.function.Supplier;
+
 public class TSpinOrHarddropReachableThreadLocal extends ThreadLocal<TSpinOrHarddropReachable> {
     private final MinoFactory minoFactory;
     private final MinoShifter minoShifter;
@@ -13,8 +15,10 @@ public class TSpinOrHarddropReachableThreadLocal extends ThreadLocal<TSpinOrHard
     private final int required;
     private final boolean regularOnly;
 
-    public TSpinOrHarddropReachableThreadLocal(int maxY, int required, boolean regularOnly) {
-        this(new MinoFactory(), new MinoShifter(), MinoRotation.create(), maxY, required, regularOnly);
+    public TSpinOrHarddropReachableThreadLocal(
+            Supplier<MinoRotation> minoRotationSupplier, int maxY, int required, boolean regularOnly
+    ) {
+        this(new MinoFactory(), new MinoShifter(), minoRotationSupplier.get(), maxY, required, regularOnly);
     }
 
     public TSpinOrHarddropReachableThreadLocal(

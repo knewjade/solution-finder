@@ -12,6 +12,8 @@ import core.field.FieldFactory;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.mino.Piece;
+import core.srs.MinoRotation;
+import entry.common.kicks.factory.DefaultMinoRotationFactory;
 import org.junit.jupiter.api.Test;
 import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
@@ -27,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -60,7 +63,7 @@ class PackSearcherComparingParityBasedTest {
         int height = 4;
 
         String resultPath = ClassLoader.getSystemResource("perfects/pack_height4.txt").getPath();
-        List<String> lines = Files.lines(Paths.get(resultPath)).collect(Collectors.toList());
+        List<String> lines = Files.readAllLines(Paths.get(resultPath));
         Collections.shuffle(lines);
         List<TestData> testCases = lines.subList(0, 50).stream()
                 .map(line -> line.split("//")[0])
@@ -85,18 +88,21 @@ class PackSearcherComparingParityBasedTest {
         int height = 5;
 
         String resultPath = ClassLoader.getSystemResource("perfects/pack_height5.txt").getPath();
-        List<TestData> testCases = Files.lines(Paths.get(resultPath))
-                .map(line -> line.split("//")[0])
-                .map(String::trim)
-                .filter(line -> !line.isEmpty())
-                .map(line -> line.split("="))
-                .map(split -> {
-                    Stream<Piece> blocks = BlockInterpreter.parse(split[0]);
-                    LongPieces pieces = new LongPieces(blocks);
-                    int count = Integer.parseInt(split[1]);
-                    return new TestData(pieces, count);
-                })
-                .collect(Collectors.toList());
+        List<TestData> testCases;
+        try (Stream<String> lines = Files.lines(Paths.get(resultPath))) {
+            testCases = lines
+                    .map(line -> line.split("//")[0])
+                    .map(String::trim)
+                    .filter(line -> !line.isEmpty())
+                    .map(line -> line.split("="))
+                    .map(split -> {
+                        Stream<Piece> blocks = BlockInterpreter.parse(split[0]);
+                        LongPieces pieces = new LongPieces(blocks);
+                        int count = Integer.parseInt(split[1]);
+                        return new TestData(pieces, count);
+                    })
+                    .collect(Collectors.toList());
+        }
 
         compareCount(width, height, testCases);
     }
@@ -108,7 +114,7 @@ class PackSearcherComparingParityBasedTest {
         int height = 6;
 
         String resultPath = ClassLoader.getSystemResource("perfects/pack_height6.txt").getPath();
-        List<String> lines = Files.lines(Paths.get(resultPath)).collect(Collectors.toList());
+        List<String> lines = Files.readAllLines(Paths.get(resultPath));
         Collections.shuffle(lines);
         List<TestData> testCases = lines.subList(0, 30).stream()
                 .map(line -> line.split("//")[0])
@@ -131,6 +137,7 @@ class PackSearcherComparingParityBasedTest {
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
         Map<ColumnField, RecursiveMinoFields> calculate = calculator.calculate();
+        Supplier<MinoRotation> minoRotationSupplier = DefaultMinoRotationFactory::createDefault;
 
         for (TestData data : testDataList) {
             // 準備
@@ -140,7 +147,7 @@ class PackSearcherComparingParityBasedTest {
 
             // packで探索
             Set<PieceCounter> pieceCounters = Collections.singleton(new PieceCounter(usingPieces));
-            SolutionFilter solutionFilter = createUsingBlockAndValidKeyMementoFilter(initField, sizedBit, pieceCounters);
+            SolutionFilter solutionFilter = createUsingBlockAndValidKeyMementoFilter(minoRotationSupplier, initField, sizedBit, pieceCounters);
             BasicSolutions basicSolutions = new MappedBasicSolutions(calculate, solutionFilter);
             long packCounter = calculateSRSValidCount(sizedBit, basicSolutions, initField, solutionFilter);
 
@@ -175,7 +182,7 @@ class PackSearcherComparingParityBasedTest {
     }
 
     // パフェするまでに有効なブロック数を列挙する
-    private SolutionFilter createUsingBlockAndValidKeyMementoFilter(Field initField, SizedBit sizedBit, Set<PieceCounter> counters) {
+    private SolutionFilter createUsingBlockAndValidKeyMementoFilter(Supplier<MinoRotation> minoRotationSupplier, Field initField, SizedBit sizedBit, Set<PieceCounter> counters) {
         HashSet<Long> validBlockCounters = new HashSet<>();
 
         for (PieceCounter counter : counters) {
@@ -189,7 +196,7 @@ class PackSearcherComparingParityBasedTest {
             }
         }
 
-        LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(sizedBit.getHeight());
+        LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(minoRotationSupplier, sizedBit.getHeight());
         return new UsingBlockAndValidKeySolutionFilter(initField, validBlockCounters, reachableThreadLocal, sizedBit);
     }
 

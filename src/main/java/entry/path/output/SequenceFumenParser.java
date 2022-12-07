@@ -17,6 +17,7 @@ import core.action.reachable.LockedReachable;
 import core.field.Field;
 import core.mino.MinoFactory;
 import core.mino.Piece;
+import core.srs.MinoRotation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,10 +29,10 @@ public class SequenceFumenParser implements FumenParser {
     private final ColorConverter colorConverter;
     private final LockedReachableThreadLocal reachableThreadLocal;
 
-    public SequenceFumenParser(MinoFactory minoFactory, ColorConverter colorConverter) {
+    public SequenceFumenParser(MinoFactory minoFactory, MinoRotation minoRotation, ColorConverter colorConverter) {
         this.minoFactory = minoFactory;
         this.colorConverter = colorConverter;
-        this.reachableThreadLocal = new LockedReachableThreadLocal(24);
+        this.reachableThreadLocal = new LockedReachableThreadLocal(minoRotation, 24);
     }
 
     @Override

@@ -4,6 +4,7 @@ import common.parser.StringEnumTransform;
 import common.tetfu.common.ColorType;
 import core.field.Field;
 import core.mino.Piece;
+import core.srs.MinoRotation;
 import core.srs.Rotate;
 import entry.DropType;
 import entry.setup.operation.*;
@@ -12,6 +13,7 @@ import exceptions.FinderParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -124,6 +126,10 @@ public class SetupSettings {
 
     boolean isTetfuSplit() {
         return isSplit;
+    }
+
+    Supplier<MinoRotation> createMinoRotationSupplier() {
+        return MinoRotation::create;
     }
 
     // ********* Setter ************

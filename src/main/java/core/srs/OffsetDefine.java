@@ -2,7 +2,7 @@ package core.srs;
 
 import java.util.EnumMap;
 
-enum OffsetDefine {
+public enum OffsetDefine {
     I(
             new Offset(new int[][]{
                     {0, 0}, {-1, 0}, {2, 0}, {-1, 0}, {2, 0},
@@ -55,7 +55,7 @@ enum OffsetDefine {
         map.put(Rotate.Left, left);
     }
 
-    Pattern getPattern(Rotate current, Rotate next) {
+    public Pattern getPattern(Rotate current, Rotate next) {
         return map.get(current).to(map.get(next));
     }
 }

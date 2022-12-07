@@ -17,6 +17,7 @@ import core.mino.MinoShifter;
 import core.mino.Piece;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
+import entry.common.kicks.factory.DefaultMinoRotationFactory;
 import lib.ListComparator;
 import lib.Randoms;
 import module.LongTest;
@@ -200,7 +201,7 @@ class OperationTransformTest {
         Randoms randoms = new Randoms();
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = MinoRotation.create();
+        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
 
         // Define size
         int height = 4;

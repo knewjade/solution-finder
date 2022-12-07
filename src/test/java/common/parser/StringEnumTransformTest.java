@@ -4,7 +4,7 @@ import core.mino.Piece;
 import core.srs.Rotate;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class StringEnumTransformTest {
     @Test
@@ -35,6 +35,14 @@ class StringEnumTransformTest {
         assertThat(StringEnumTransform.toRotate("2")).isEqualTo(Rotate.Reverse);
         assertThat(StringEnumTransform.toRotate("L")).isEqualTo(Rotate.Left);
         assertThat(StringEnumTransform.toRotate("R")).isEqualTo(Rotate.Right);
+    }
+
+    @Test
+    void toNEWSRotate() {
+        assertThat(StringEnumTransform.toNEWSRotate('N')).isEqualTo(Rotate.Spawn);
+        assertThat(StringEnumTransform.toNEWSRotate('E')).isEqualTo(Rotate.Right);
+        assertThat(StringEnumTransform.toNEWSRotate('W')).isEqualTo(Rotate.Left);
+        assertThat(StringEnumTransform.toNEWSRotate('S')).isEqualTo(Rotate.Reverse);
     }
 
     @Test

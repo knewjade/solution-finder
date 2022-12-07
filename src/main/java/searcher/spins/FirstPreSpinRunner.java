@@ -9,6 +9,8 @@ import searcher.spins.pieces.AllSimpleOriginalPieces;
 import searcher.spins.pieces.SimpleOriginalPieceFactory;
 import searcher.spins.pieces.SimpleOriginalPieces;
 
+import java.util.function.Supplier;
+
 public class FirstPreSpinRunner {
     private final SimpleOriginalPieceFactory factory;
     private final int allowFillMaxHeight;
@@ -19,12 +21,14 @@ public class FirstPreSpinRunner {
     private final LinePools pools;
     private final RotateReachableThreadLocal rotateReachableThreadLocal;
 
-    FirstPreSpinRunner(int allowFillMaxHeight, int fieldHeight) {
-        this(new MinoFactory(), new MinoShifter(), allowFillMaxHeight, fieldHeight);
+    FirstPreSpinRunner(Supplier<MinoRotation> minoRotationSupplier, int allowFillMaxHeight, int fieldHeight) {
+        this(new MinoFactory(), new MinoShifter(), minoRotationSupplier, allowFillMaxHeight, fieldHeight);
     }
 
-    private FirstPreSpinRunner(MinoFactory minoFactory, MinoShifter minoShifter, int allowFillMaxHeight, int fieldHeight) {
-        this(minoFactory, minoShifter, new RotateReachableThreadLocal(minoFactory, minoShifter, MinoRotation.create(), fieldHeight), 0, allowFillMaxHeight, allowFillMaxHeight + 2, fieldHeight);
+    private FirstPreSpinRunner(
+            MinoFactory minoFactory, MinoShifter minoShifter, Supplier<MinoRotation> minoRotationSupplier, int allowFillMaxHeight, int fieldHeight
+    ) {
+        this(minoFactory, minoShifter, new RotateReachableThreadLocal(minoRotationSupplier, fieldHeight), 0, allowFillMaxHeight, allowFillMaxHeight + 2, fieldHeight);
     }
 
     public FirstPreSpinRunner(

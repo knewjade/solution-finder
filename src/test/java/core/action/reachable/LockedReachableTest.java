@@ -5,6 +5,7 @@ import core.field.FieldFactory;
 import core.mino.*;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
+import entry.common.kicks.factory.DefaultMinoRotationFactory;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +19,7 @@ class LockedReachableTest {
     private LockedReachable createLockedReachable() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new PassedMinoShifter();
-        MinoRotation minoRotation = MinoRotation.create();
+        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
         return new LockedReachable(minoFactory, minoShifter, minoRotation, 8);
     }
 
@@ -39,7 +40,7 @@ class LockedReachableTest {
     @Nested
     class WithI {
         @Test
-        void checks1ok1() throws Exception {
+        void checks1ok1() {
             String marks = "" +
                     "XX________" +
                     "X_________" +
@@ -51,7 +52,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks1ng1() throws Exception {
+        void checks1ng1() {
             String marks = "" +
                     "XX________" +
                     "X_________" +
@@ -63,7 +64,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks1ng2() throws Exception {
+        void checks1ng2() {
             String marks = "" +
                     "XX________" +
                     "X_________" +
@@ -75,7 +76,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks2ok1() throws Exception {
+        void checks2ok1() {
             String marks = "" +
                     "________XX" +
                     "_________X" +
@@ -87,7 +88,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks2ng1() throws Exception {
+        void checks2ng1() {
             String marks = "" +
                     "________XX" +
                     "_________X" +
@@ -99,7 +100,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks2ng2() throws Exception {
+        void checks2ng2() {
             String marks = "" +
                     "________XX" +
                     "_________X" +
@@ -111,7 +112,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks3ok1() throws Exception {
+        void checks3ok1() {
             String marks = "" +
                     "XXX_______" +
                     "XXX_______" +
@@ -123,7 +124,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks3ng1() throws Exception {
+        void checks3ng1() {
             String marks = "" +
                     "__________" +
                     "XXX_______" +
@@ -135,7 +136,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks3ok2() throws Exception {
+        void checks3ok2() {
             String marks = "" +
                     "__________" +
                     "XXX_______" +
@@ -150,7 +151,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks3ok3() throws Exception {
+        void checks3ok3() {
             String marks = "" +
                     "X_________" +
                     "XXX___XXXX" +
@@ -162,7 +163,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks3ok4() throws Exception {
+        void checks3ok4() {
             String marks = "" +
                     "__________" +
                     "XXX___XXXX" +
@@ -174,7 +175,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks4ok1() throws Exception {
+        void checks4ok1() {
             String marks = "" +
                     "_______XXX" +
                     "_______XXX" +
@@ -186,7 +187,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks4ok2() throws Exception {
+        void checks4ok2() {
             String marks = "" +
                     "__________" +
                     "_______XXX" +
@@ -198,7 +199,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks4ok3() throws Exception {
+        void checks4ok3() {
             String marks = "" +
                     "__________" +
                     "_______XXX" +
@@ -213,7 +214,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks4ok4() throws Exception {
+        void checks4ok4() {
             String marks = "" +
                     "_______XXX" +
                     "XXXX___XXX" +
@@ -225,7 +226,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks4ok5() throws Exception {
+        void checks4ok5() {
             String marks = "" +
                     "_________X" +
                     "XXXX___XXX" +
@@ -240,7 +241,7 @@ class LockedReachableTest {
     @Nested
     class WithO {
         @Test
-        void checks1ok1() throws Exception {
+        void checks1ok1() {
             String marks = "" +
                     "X__XXXXXXX" +
                     "X___XXXXXX" +
@@ -256,7 +257,7 @@ class LockedReachableTest {
     @Nested
     class WithS {
         @Test
-        void checks1ok1() throws Exception {
+        void checks1ok1() {
             String marks = "" +
                     "XX__XXXXXX" +
                     "X__XXXXXXX";
@@ -265,7 +266,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks2ok1() throws Exception {
+        void checks2ok1() {
             String marks = "" +
                     "XX__XXXXXX" +
                     "XX__XXXXXX" +
@@ -275,7 +276,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks2ng1() throws Exception {
+        void checks2ng1() {
             String marks = "" +
                     "XX________" +
                     "XX__XXXXXX" +
@@ -285,7 +286,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks3ok1() throws Exception {
+        void checks3ok1() {
             String marks = "" +
                     "___X______" +
                     "X_XXXXXXXX" +
@@ -296,7 +297,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks3ng1() throws Exception {
+        void checks3ng1() {
             String marks = "" +
                     "__________" +
                     "X_XXXXXXXX" +
@@ -307,7 +308,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks4ok1() throws Exception {
+        void checks4ok1() {
             String marks = "" +
                     "XX________" +
                     "X_________" +
@@ -319,7 +320,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks4ok2() throws Exception {
+        void checks4ok2() {
             String marks = "" +
                     "XX________" +
                     "X_________" +
@@ -332,7 +333,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks4ok3() throws Exception {
+        void checks4ok3() {
             String marks = "" +
                     "X_________" +
                     "__________" +
@@ -344,7 +345,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks4ng1() throws Exception {
+        void checks4ng1() {
             String marks = "" +
                     "X_________" +
                     "__________" +
@@ -360,7 +361,7 @@ class LockedReachableTest {
     @Nested
     class WithZ {
         @Test
-        void checks1ok1() throws Exception {
+        void checks1ok1() {
             String marks = "" +
                     "X__XXXXXXX" +
                     "XX__XXXXXX";
@@ -369,7 +370,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks2ok1() throws Exception {
+        void checks2ok1() {
             String marks = "" +
                     "X__XXXXXXX" +
                     "X__XXXXXXX" +
@@ -379,7 +380,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks2ng1() throws Exception {
+        void checks2ng1() {
             String marks = "" +
                     "___XXXXXXX" +
                     "X__XXXXXXX" +
@@ -389,7 +390,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks3ok1() throws Exception {
+        void checks3ok1() {
             String marks = "" +
                     "__X_______" +
                     "XXXX_XXXXX" +
@@ -400,7 +401,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks3ng1() throws Exception {
+        void checks3ng1() {
             String marks = "" +
                     "__________" +
                     "XXXX_XXXXX" +
@@ -411,7 +412,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks4ok1() throws Exception {
+        void checks4ok1() {
             String marks = "" +
                     "____XX____" +
                     "_____X____" +
@@ -423,7 +424,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks4ok2() throws Exception {
+        void checks4ok2() {
             String marks = "" +
                     "____XX____" +
                     "_____X____" +
@@ -436,7 +437,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks4ok3() throws Exception {
+        void checks4ok3() {
             String marks = "" +
                     "_____XX___" +
                     "______X___" +
@@ -448,7 +449,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks4ng1() throws Exception {
+        void checks4ng1() {
             String marks = "" +
                     "_____XX___" +
                     "______X___" +
@@ -464,7 +465,7 @@ class LockedReachableTest {
     @Nested
     class WithL {
         @Test
-        void checks1ok1() throws Exception {
+        void checks1ok1() {
             String marks = "" +
                     "XXX_______" +
                     "XX________" +
@@ -473,7 +474,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks2ok1() throws Exception {
+        void checks2ok1() {
             String marks = "" +
                     "XXX__XXXXX" +
                     "XX___XXXXX" +
@@ -482,7 +483,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks2ng1() throws Exception {
+        void checks2ng1() {
             String marks = "" +
                     "XXX___XXXX" +
                     "XX___XXXXX" +
@@ -491,7 +492,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks3ok1() throws Exception {
+        void checks3ok1() {
             String marks = "" +
                     "XXXX______" +
                     "XX________" +
@@ -500,7 +501,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks3ng1() throws Exception {
+        void checks3ng1() {
             String marks = "" +
                     "XXX_______" +
                     "XX________" +
@@ -509,7 +510,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks4ok1() throws Exception {
+        void checks4ok1() {
             String marks = "" +
                     "____XXXXXX" +
                     "XX___XXXXX" +
@@ -518,7 +519,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks4ng1() throws Exception {
+        void checks4ng1() {
             String marks = "" +
                     "____XXXXXX" +
                     "X____XXXXX" +
@@ -527,7 +528,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks5ok1() throws Exception {
+        void checks5ok1() {
             String marks = "" +
                     "___XXXXXXX" +
                     "_____XXXXX" +
@@ -536,7 +537,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks5ng1() throws Exception {
+        void checks5ng1() {
             String marks = "" +
                     "____XXXXXX" +
                     "_____XXXXX" +
@@ -545,7 +546,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks6ok1() throws Exception {
+        void checks6ok1() {
             String marks = "" +
                     "XXXX_XXXXX" +
                     "XX___XXXXX";
@@ -553,7 +554,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks6ok2() throws Exception {
+        void checks6ok2() {
             String marks = "" +
                     "XXX__XXXXX" +
                     "XX___XXXXX";
@@ -561,7 +562,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks6ok3() throws Exception {
+        void checks6ok3() {
             String marks = "" +
                     "XXXX__XXXX" +
                     "XX___XXXXX";
@@ -569,7 +570,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks6ng1() throws Exception {
+        void checks6ng1() {
             String marks = "" +
                     "XXX___XXXX" +
                     "XX___XXXXX";
@@ -577,7 +578,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks7ok1() throws Exception {
+        void checks7ok1() {
             String marks = "" +
                     "____XXXXXX" +
                     "XX___XXXXX" +
@@ -586,7 +587,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks7ng1() throws Exception {
+        void checks7ng1() {
             String marks = "" +
                     "____XXXXXX" +
                     "X____XXXXX" +
@@ -595,7 +596,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks8ok1() throws Exception {
+        void checks8ok1() {
             String marks = "" +
                     "XXX_______" +
                     "XX________" +
@@ -606,7 +607,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks8ok2() throws Exception {
+        void checks8ok2() {
             String marks = "" +
                     "XXX_______" +
                     "XX________" +
@@ -618,7 +619,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks8ok3() throws Exception {
+        void checks8ok3() {
             String marks = "" +
                     "XX________" +
                     "X_________" +
@@ -629,7 +630,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks8ok4() throws Exception {
+        void checks8ok4() {
             String marks = "" +
                     "XX________" +
                     "X_________" +
@@ -641,7 +642,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks8ng1() throws Exception {
+        void checks8ng1() {
             String marks = "" +
                     "XX_XXXXXXX" +
                     "XX_XXXXXXX" +
@@ -653,7 +654,7 @@ class LockedReachableTest {
     @Nested
     class WithJ {
         @Test
-        void checks1ok1() throws Exception {
+        void checks1ok1() {
             String marks = "" +
                     "_______XXX" +
                     "________XX" +
@@ -662,7 +663,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks2ok1() throws Exception {
+        void checks2ok1() {
             String marks = "" +
                     "XXXXX__XXX" +
                     "XXXXX___XX" +
@@ -671,7 +672,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks2ng1() throws Exception {
+        void checks2ng1() {
             String marks = "" +
                     "XXXX___XXX" +
                     "XXXXX___XX" +
@@ -680,7 +681,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks3ok1() throws Exception {
+        void checks3ok1() {
             String marks = "" +
                     "______XXXX" +
                     "________XX" +
@@ -689,7 +690,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks3ng1() throws Exception {
+        void checks3ng1() {
             String marks = "" +
                     "_______XXX" +
                     "________XX" +
@@ -698,7 +699,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks4ok1() throws Exception {
+        void checks4ok1() {
             String marks = "" +
                     "XXXXXX____" +
                     "XXXXX___XX" +
@@ -707,7 +708,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks4ng1() throws Exception {
+        void checks4ng1() {
             String marks = "" +
                     "XXXXXX____" +
                     "XXXXX____X" +
@@ -716,7 +717,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks5ok1() throws Exception {
+        void checks5ok1() {
             String marks = "" +
                     "XXXXXXX___" +
                     "XXXXX_____" +
@@ -725,7 +726,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks5ng1() throws Exception {
+        void checks5ng1() {
             String marks = "" +
                     "XXXXXX____" +
                     "XXXXX_____" +
@@ -734,7 +735,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks6ok1() throws Exception {
+        void checks6ok1() {
             String marks = "" +
                     "XXXXX_XXXX" +
                     "XXXXX___XX";
@@ -742,7 +743,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks6ok2() throws Exception {
+        void checks6ok2() {
             String marks = "" +
                     "XXXXX__XXX" +
                     "XXXXX___XX";
@@ -750,7 +751,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks6ok3() throws Exception {
+        void checks6ok3() {
             String marks = "" +
                     "XXXX__XXXX" +
                     "XXXXX___XX";
@@ -758,7 +759,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks6ng1() throws Exception {
+        void checks6ng1() {
             String marks = "" +
                     "XXXX___XXX" +
                     "XXXXX___XX";
@@ -766,7 +767,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks7ok1() throws Exception {
+        void checks7ok1() {
             String marks = "" +
                     "XXXXXX____" +
                     "XXXXX___XX" +
@@ -775,7 +776,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks7ng1() throws Exception {
+        void checks7ng1() {
             String marks = "" +
                     "XXXXXX____" +
                     "XXXXX____X" +
@@ -784,7 +785,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks8ok1() throws Exception {
+        void checks8ok1() {
             String marks = "" +
                     "_______XXX" +
                     "________XX" +
@@ -795,7 +796,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks8ok2() throws Exception {
+        void checks8ok2() {
             String marks = "" +
                     "_______XXX" +
                     "________XX" +
@@ -807,7 +808,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks8ok3() throws Exception {
+        void checks8ok3() {
             String marks = "" +
                     "________XX" +
                     "_________X" +
@@ -818,7 +819,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks8ok4() throws Exception {
+        void checks8ok4() {
             String marks = "" +
                     "________XX" +
                     "_________X" +
@@ -830,7 +831,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks8ng1() throws Exception {
+        void checks8ng1() {
             String marks = "" +
                     "XXXXXXX_XX" +
                     "XXXXXXX_XX" +
@@ -842,7 +843,7 @@ class LockedReachableTest {
     @Nested
     class WithT {
         @Test
-        void checks1ok1() throws Exception {
+        void checks1ok1() {
             String marks = "" +
                     "XX________" +
                     "X_________" +
@@ -852,7 +853,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks1ok2() throws Exception {
+        void checks1ok2() {
             String marks = "" +
                     "________XX" +
                     "_________X" +
@@ -862,7 +863,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks2ok1() throws Exception {
+        void checks2ok1() {
             String marks = "" +
                     "_____XXXXX" +
                     "XXX__XXXXX" +
@@ -871,7 +872,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks2ok2() throws Exception {
+        void checks2ok2() {
             String marks = "" +
                     "XX________" +
                     "XX__XXXXXX" +
@@ -880,7 +881,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks2ng1() throws Exception {
+        void checks2ng1() {
             String marks = "" +
                     "_____XXXXX" +
                     "XXX___XXXX" +
@@ -889,7 +890,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks2ng2() throws Exception {
+        void checks2ng2() {
             String marks = "" +
                     "XX________" +
                     "X___XXXXXX" +
@@ -898,7 +899,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks3ok1() throws Exception {
+        void checks3ok1() {
             String marks = "" +
                     "____XXXXXX" +
                     "XX___XXXXX" +
@@ -907,7 +908,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks3ok2() throws Exception {
+        void checks3ok2() {
             String marks = "" +
                     "XXX_______" +
                     "XX___XXXXX" +
@@ -916,7 +917,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks4ok1() throws Exception {
+        void checks4ok1() {
             String marks = "" +
                     "XXXX______" +
                     "XXX_______" +
@@ -928,7 +929,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks4ok2() throws Exception {
+        void checks4ok2() {
             String marks = "" +
                     "___XX_____" +
                     "____X_____" +
@@ -940,7 +941,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks4ng1() throws Exception {
+        void checks4ng1() {
             String marks = "" +
                     "XXXX______" +
                     "XXX_______" +
@@ -953,7 +954,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks4ng2() throws Exception {
+        void checks4ng2() {
             String marks = "" +
                     "___XX_____" +
                     "____X_____" +
@@ -966,7 +967,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks4ng3() throws Exception {
+        void checks4ng3() {
             String marks = "" +
                     "XXX_XXXXXX" +
                     "XXX__XXXXX" +
@@ -976,7 +977,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks4ng4() throws Exception {
+        void checks4ng4() {
             String marks = "" +
                     "XXX_XXXXXX" +
                     "XX__XXXXXX" +
@@ -986,7 +987,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks4ng5() throws Exception {
+        void checks4ng5() {
             String marks = "" +
                     "XXXX______" +
                     "XXX_______" +
@@ -998,7 +999,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks4ng6() throws Exception {
+        void checks4ng6() {
             String marks = "" +
                     "___XX_____" +
                     "____X_____" +
@@ -1010,7 +1011,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks5ok1() throws Exception {
+        void checks5ok1() {
             String marks = "" +
                     "__XXXX____" +
                     "_____X____" +
@@ -1022,7 +1023,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks5ok2() throws Exception {
+        void checks5ok2() {
             String marks = "" +
                     "_XXXX_____" +
                     "_X________" +
@@ -1034,7 +1035,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks5ng1() throws Exception {
+        void checks5ng1() {
             String marks = "" +
                     "___XXX____" +
                     "_____X____" +
@@ -1046,7 +1047,7 @@ class LockedReachableTest {
         }
 
         @Test
-        void checks5ng2() throws Exception {
+        void checks5ng2() {
             String marks = "" +
                     "_XXX______" +
                     "_X________" +
@@ -1061,7 +1062,7 @@ class LockedReachableTest {
     @Nested
     class Other {
         @Test
-        void checksLimit() throws Exception {
+        void checksLimit() {
             String marks = "" +
                     "XX_XXXXXXX" +
                     "X__XXXXXXX" +

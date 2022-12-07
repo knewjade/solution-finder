@@ -5,10 +5,14 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
 
+import java.util.function.Supplier;
+
 public class RotateCandidateThreadLocal extends ThreadLocal<RotateCandidate> {
+    private final Supplier<MinoRotation> minoRotationSupplier;
     private final int maxY;
 
-    public RotateCandidateThreadLocal(int maxY) {
+    public RotateCandidateThreadLocal(Supplier<MinoRotation> minoRotationSupplier, int maxY) {
+        this.minoRotationSupplier = minoRotationSupplier;
         this.maxY = maxY;
     }
 
@@ -16,7 +20,7 @@ public class RotateCandidateThreadLocal extends ThreadLocal<RotateCandidate> {
     protected RotateCandidate initialValue() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = MinoRotation.create();
+        MinoRotation minoRotation = minoRotationSupplier.get();
         return new RotateCandidate(minoFactory, minoShifter, minoRotation, maxY);
     }
 }

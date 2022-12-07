@@ -1,13 +1,13 @@
 package _usecase.path;
 
-import helper.EasyPool;
 import _usecase.ConfigFileHelper;
 import _usecase.path.files.OutputFileHelper;
 import common.tetfu.Tetfu;
 import common.tetfu.common.ColorConverter;
 import common.tetfu.field.ColoredField;
-import core.mino.Piece;
 import core.mino.Mino;
+import core.mino.MinoFactory;
+import core.mino.Piece;
 import exceptions.FinderParseException;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -16,7 +16,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 abstract class PathUseCaseBaseTest {
-    private static final EasyPool easyPool = new EasyPool();
+    private static final MinoFactory minoFactory = new MinoFactory();
+    private static final ColorConverter converter = new ColorConverter();
 
     @BeforeEach
     void setUp() throws IOException {
@@ -32,7 +33,7 @@ abstract class PathUseCaseBaseTest {
     List<ColoredField> parseLastPageTetfu(List<String> fumens) {
         return fumens.stream()
                 .map(fumen -> {
-                    Tetfu tetfu = easyPool.getTetfu();
+                    Tetfu tetfu = new Tetfu(minoFactory, converter);
                     try {
                         return tetfu.decode(fumen);
                     } catch (FinderParseException e) {
@@ -49,7 +50,6 @@ abstract class PathUseCaseBaseTest {
                     if (!page.isPutMino())
                         return field;
 
-                    ColorConverter converter = easyPool.getColorConverter();
                     Piece piece = converter.parseToBlock(page.getColorType());
                     field.putMino(new Mino(piece, page.getRotate()), page.getX(), page.getY());
                     return field;

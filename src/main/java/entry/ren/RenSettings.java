@@ -2,11 +2,13 @@ package entry.ren;
 
 import core.field.Field;
 import core.field.FieldFactory;
+import core.srs.MinoRotation;
 import entry.DropType;
 import exceptions.FinderParseException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class RenSettings {
     private static final String DEFAULT_LOG_FILE_PATH = "output/last_output.txt";
@@ -46,6 +48,10 @@ public class RenSettings {
 
     DropType getDropType() {
         return dropType;
+    }
+
+    Supplier<MinoRotation> createMinoRotationSupplier() {
+        return MinoRotation::create;
     }
 
     // ********* Setter ************

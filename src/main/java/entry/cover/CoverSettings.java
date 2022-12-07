@@ -1,11 +1,13 @@
 package entry.cover;
 
+import core.srs.MinoRotation;
 import entry.DropType;
 import exceptions.FinderParseException;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class CoverSettings {
     private static final String DEFAULT_LOG_FILE_PATH = "output/last_output.txt";
@@ -71,6 +73,10 @@ public class CoverSettings {
 
     Optional<Integer> getMaxClearLineTimes() {
         return 0 <= maxClearLineTimes ? Optional.of(maxClearLineTimes) : Optional.empty();
+    }
+
+    Supplier<MinoRotation> createMinoRotationSupplier() {
+        return MinoRotation::create;
     }
 
     // ********* Setter ************

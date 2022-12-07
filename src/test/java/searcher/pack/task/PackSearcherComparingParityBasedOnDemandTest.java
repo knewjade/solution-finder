@@ -9,11 +9,12 @@ import concurrent.LockedReachableThreadLocal;
 import core.column_field.ColumnField;
 import core.field.Field;
 import core.field.FieldFactory;
-import core.mino.Piece;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
+import core.mino.Piece;
+import core.srs.MinoRotation;
+import entry.common.kicks.factory.DefaultMinoRotationFactory;
 import module.LongTest;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
@@ -66,7 +67,7 @@ class PackSearcherComparingParityBasedOnDemandTest {
         int height = 4;
 
         String resultPath = ClassLoader.getSystemResource("perfects/pack_height4.txt").getPath();
-        List<String> lines = Files.lines(Paths.get(resultPath)).collect(Collectors.toList());
+        List<String> lines = Files.readAllLines(Paths.get(resultPath));
         Collections.shuffle(lines);
         List<TestData> testCases = lines.subList(0, 50).stream()
                 .map(line -> line.split("//")[0])
@@ -91,18 +92,21 @@ class PackSearcherComparingParityBasedOnDemandTest {
         int height = 5;
 
         String resultPath = ClassLoader.getSystemResource("perfects/pack_height5.txt").getPath();
-        List<TestData> testCases = Files.lines(Paths.get(resultPath))
-                .map(line -> line.split("//")[0])
-                .map(String::trim)
-                .filter(line -> !line.isEmpty())
-                .map(line -> line.split("="))
-                .map(split -> {
-                    Stream<Piece> blocks = BlockInterpreter.parse(split[0]);
-                    LongPieces pieces = new LongPieces(blocks);
-                    int count = Integer.parseInt(split[1]);
-                    return new TestData(pieces, count);
-                })
-                .collect(Collectors.toList());
+        List<TestData> testCases;
+        try (Stream<String> lines = Files.lines(Paths.get(resultPath))) {
+            testCases = lines
+                    .map(line -> line.split("//")[0])
+                    .map(String::trim)
+                    .filter(line -> !line.isEmpty())
+                    .map(line -> line.split("="))
+                    .map(split -> {
+                        Stream<Piece> blocks = BlockInterpreter.parse(split[0]);
+                        LongPieces pieces = new LongPieces(blocks);
+                        int count = Integer.parseInt(split[1]);
+                        return new TestData(pieces, count);
+                    })
+                    .collect(Collectors.toList());
+        }
 
         compareCount(width, height, testCases);
     }
@@ -115,7 +119,7 @@ class PackSearcherComparingParityBasedOnDemandTest {
         int height = 6;
 
         String resultPath = ClassLoader.getSystemResource("perfects/pack_height6.txt").getPath();
-        List<String> lines = Files.lines(Paths.get(resultPath)).collect(Collectors.toList());
+        List<String> lines = Files.readAllLines(Paths.get(resultPath));
         Collections.shuffle(lines);
         List<TestData> testCases = lines.subList(0, 25).stream()
                 .map(line -> line.split("//")[0])
@@ -196,7 +200,8 @@ class PackSearcherComparingParityBasedOnDemandTest {
             }
         }
 
-        LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(sizedBit.getHeight());
+        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(minoRotation, sizedBit.getHeight());
         return new UsingBlockAndValidKeySolutionFilter(initField, validBlockCounters, reachableThreadLocal, sizedBit);
     }
 
