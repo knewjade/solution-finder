@@ -63,10 +63,12 @@ public class EntryPointMain {
     public static int main(String[] args) {
         if (args.length < 1 || args[0].equals("-h") || args[0].equals("-v")) {
             System.out.println("Version: " + FinderConstant.VERSION);
-            System.out.println("Usage: <command> [options]");
-            System.out.println("  <command>:");
-            for (String command : COMMANDS)
-                System.out.println("    - " + command);
+            if (args.length < 1 || args[0].equals("-h")) {
+                System.out.println("Usage: <command> [options]");
+                System.out.println("  <command>:");
+                for (String command : COMMANDS)
+                    System.out.println("    - " + command);
+            }
             return 0;
         }
 
