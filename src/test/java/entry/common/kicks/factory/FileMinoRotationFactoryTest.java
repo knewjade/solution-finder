@@ -121,7 +121,7 @@ class FileMinoRotationFactoryTest {
 
     @Test
     void loadSurplusIEN() {
-        String properties = ClassLoader.getSystemResource("kicks/Surplus_I_EW.properties").getPath();
+        String properties = ClassLoader.getSystemResource("kicks/surplus_I_EW.properties").getPath();
         Path path = Paths.get(properties);
         assertThatThrownBy(() -> FileMinoRotationFactory.load(path)).isInstanceOf(IllegalArgumentException.class);
     }
