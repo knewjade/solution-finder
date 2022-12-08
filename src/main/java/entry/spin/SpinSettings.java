@@ -4,6 +4,7 @@ import core.field.Field;
 import core.field.FieldFactory;
 import core.field.KeyOperators;
 import core.srs.MinoRotation;
+import entry.common.kicks.factory.DefaultMinoRotationFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,7 +114,7 @@ public class SpinSettings {
     }
 
     Supplier<MinoRotation> createMinoRotationSupplier() {
-        return MinoRotation::create;
+        return DefaultMinoRotationFactory::createDefault;
     }
 
     // ********* Setter ************

@@ -4,6 +4,7 @@ import core.field.Field;
 import core.field.FieldFactory;
 import core.srs.MinoRotation;
 import entry.DropType;
+import entry.common.kicks.factory.DefaultMinoRotationFactory;
 import exceptions.FinderParseException;
 
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public class RenSettings {
     }
 
     Supplier<MinoRotation> createMinoRotationSupplier() {
-        return MinoRotation::create;
+        return DefaultMinoRotationFactory::createDefault;
     }
 
     // ********* Setter ************

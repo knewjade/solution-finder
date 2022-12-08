@@ -2,15 +2,8 @@ package core.srs;
 
 import core.field.Field;
 import core.mino.Mino;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
 
 public interface MinoRotation {
-    DefaultMinoRotationFactory DEFAULT_MINO_ROTATION_FACTORY = new DefaultMinoRotationFactory();
-
-    static MinoRotation create() {
-        return DEFAULT_MINO_ROTATION_FACTORY.create();
-    }
-
     int[] getKicks(Field field, Mino before, Mino after, int x, int y, RotateDirection direction);
 
     int[] getKicksWithRightRotation(Field field, Mino before, Mino after, int x, int y);
