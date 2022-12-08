@@ -37,6 +37,13 @@ class KickPatternInterpreterTest {
         }
 
         @Test
+        void fixed4PrivilegeSpins() {
+            assertThat(KickPatternInterpreter.create("O.SW", " (* -0 , 0 )( -2 , -2 ) (* -3,-3) "))
+                    .returns(new KickType(Piece.O, Rotate.Reverse, Rotate.Left), KickPattern::getKickType)
+                    .returns(new Pattern(new int[][]{{0, 0}, {-2, -2}, {-3, -3}}, new boolean[]{true, false, true}), KickPattern::getPattern);
+        }
+
+        @Test
         void reference1() {
             KickPattern referenced = KickPatternInterpreter.create("J.WS", "(0,0)");
             Map<KickType, KickPattern> fallback = Collections.singletonMap(referenced.getKickType(), referenced);
