@@ -11,31 +11,31 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-class XYMark {
-    private final int x;
-    private final int y;
-    private final boolean mark;
-
-    XYMark(int x, int y, boolean mark) {
-        this.x = x;
-        this.y = y;
-        this.mark = mark;
-    }
-
-    int getX() {
-        return x;
-    }
-
-    int getY() {
-        return y;
-    }
-
-    boolean isMark() {
-        return mark;
-    }
-}
-
 public class KickPatternInterpreter {
+    static class XYMark {
+        private final int x;
+        private final int y;
+        private final boolean mark;
+
+        XYMark(int x, int y, boolean mark) {
+            this.x = x;
+            this.y = y;
+            this.mark = mark;
+        }
+
+        int getX() {
+            return x;
+        }
+
+        int getY() {
+            return y;
+        }
+
+        boolean isMark() {
+            return mark;
+        }
+    }
+
     public static KickPattern create(String key, String value) {
         String trimmedKey = key.trim();
         String trimmedValue = value.replaceAll(" ", "");
@@ -119,7 +119,7 @@ public class KickPatternInterpreter {
     }
 
     private static List<XYMark> detectXYs(String str, List<String> brackets) {
-        Pattern pattern = Pattern.compile("^(\\*?)(-?\\d+),(-?\\d+)$");
+        Pattern pattern = Pattern.compile("^(@?)([-+]?\\d+),([-+]?\\d+)$");
 
         return brackets.stream()
                 .map(String::trim)

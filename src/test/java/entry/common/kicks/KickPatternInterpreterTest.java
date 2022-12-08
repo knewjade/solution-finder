@@ -31,14 +31,14 @@ class KickPatternInterpreterTest {
 
         @Test
         void fixed3() {
-            assertThat(KickPatternInterpreter.create("O.SW", " ( -0 , 0 )( -2 , -2 ) (-3,-3) "))
+            assertThat(KickPatternInterpreter.create("O.SW", " ( +0 , -0 )( +2 , -2 ) (+3,-3) "))
                     .returns(new KickType(Piece.O, Rotate.Reverse, Rotate.Left), KickPattern::getKickType)
-                    .returns(Pattern.noPrivilegeSpins(new int[][]{{0, 0}, {-2, -2}, {-3, -3}}), KickPattern::getPattern);
+                    .returns(Pattern.noPrivilegeSpins(new int[][]{{0, 0}, {2, -2}, {3, -3}}), KickPattern::getPattern);
         }
 
         @Test
         void fixed4PrivilegeSpins() {
-            assertThat(KickPatternInterpreter.create("O.SW", " (* -0 , 0 )( -2 , -2 ) (* -3,-3) "))
+            assertThat(KickPatternInterpreter.create("O.SW", " (@ -0 , 0 )( -2 , -2 ) (* -3,-3) "))
                     .returns(new KickType(Piece.O, Rotate.Reverse, Rotate.Left), KickPattern::getKickType)
                     .returns(new Pattern(new int[][]{{0, 0}, {-2, -2}, {-3, -3}}, new boolean[]{true, false, true}), KickPattern::getPattern);
         }
@@ -122,6 +122,12 @@ class KickPatternInterpreterTest {
         @Test
         void duplicatedMinus() {
             assertThatThrownBy(() -> KickPatternInterpreter.create("O.WS", "(--1,0)"))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void invalidMark() {
+            assertThatThrownBy(() -> KickPatternInterpreter.create("O.WS", "(* -1,0)"))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
