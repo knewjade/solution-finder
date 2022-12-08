@@ -1,6 +1,5 @@
 package entry.common.kicks;
 
-import common.datastore.Pair;
 import common.parser.StringEnumTransform;
 import core.mino.Piece;
 import core.srs.Rotate;
@@ -13,9 +12,33 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class KickPatternInterpreter {
+    static class XYMark {
+        private final int x;
+        private final int y;
+        private final boolean mark;
+
+        XYMark(int x, int y, boolean mark) {
+            this.x = x;
+            this.y = y;
+            this.mark = mark;
+        }
+
+        int getX() {
+            return x;
+        }
+
+        int getY() {
+            return y;
+        }
+
+        boolean isMark() {
+            return mark;
+        }
+    }
+
     public static KickPattern create(String key, String value) {
         String trimmedKey = key.trim();
-        String trimmedValue = value.trim();
+        String trimmedValue = value.replaceAll(" ", "");
 
         KickType kickType = parseToKickType(trimmedKey)
                 .orElseThrow(() -> new IllegalArgumentException("Unexpected key: key=" + trimmedKey));
@@ -54,11 +77,11 @@ public class KickPatternInterpreter {
             throw new IllegalArgumentException("Invalid value: value=" + str);
         }
 
-        List<Pair<Integer, Integer>> xys = detectXYs(str, brackets);
+        List<XYMark> XYMarks = detectXYs(str, brackets);
 
-        assert brackets.size() == xys.size();
+        assert brackets.size() == XYMarks.size();
 
-        return createPattern(xys);
+        return createPattern(XYMarks);
     }
 
     private static void validate(String str) {
@@ -95,8 +118,8 @@ public class KickPatternInterpreter {
         return lines;
     }
 
-    private static List<Pair<Integer, Integer>> detectXYs(String str, List<String> brackets) {
-        Pattern pattern = Pattern.compile("^(-?\\d+)\\s*,\\s*(-?\\d+)$");
+    private static List<XYMark> detectXYs(String str, List<String> brackets) {
+        Pattern pattern = Pattern.compile("^(@?)([-+]?\\d+),([-+]?\\d+)$");
 
         return brackets.stream()
                 .map(String::trim)
@@ -107,24 +130,27 @@ public class KickPatternInterpreter {
                         throw new IllegalArgumentException("Unexpected value format: value=" + str);
                     }
 
-                    assert matcher.groupCount() == 2;
+                    assert matcher.groupCount() == 3;
 
-                    String x = matcher.group(1);
-                    String y = matcher.group(2);
-                    return new Pair<>(Integer.parseInt(x), Integer.parseInt(y));
+                    String mark = matcher.group(1);
+                    String x = matcher.group(2);
+                    String y = matcher.group(3);
+                    return new XYMark(Integer.parseInt(x), Integer.parseInt(y), !mark.isEmpty());
                 })
                 .collect(Collectors.toList());
     }
 
-    private static core.srs.Pattern createPattern(List<Pair<Integer, Integer>> offsets) {
-        int groupCount = offsets.size();
-        int[][] ints = new int[groupCount][2];
-        for (int index = 0; index < groupCount; index++) {
-            Pair<Integer, Integer> group = offsets.get(index);
-            ints[index] = new int[]{group.getKey(), group.getValue()};
+    private static core.srs.Pattern createPattern(List<XYMark> xyMarks) {
+        int size = xyMarks.size();
+        int[][] offsets = new int[size][2];
+        boolean[] privilegeSpins = new boolean[size];
+        for (int index = 0; index < size; index++) {
+            XYMark xyMark = xyMarks.get(index);
+            offsets[index] = new int[]{xyMark.getX(), xyMark.getY()};
+            privilegeSpins[index] = xyMark.isMark();
         }
 
-        return new core.srs.Pattern(ints);
+        return new core.srs.Pattern(offsets, privilegeSpins);
     }
 
     private KickPatternInterpreter() {

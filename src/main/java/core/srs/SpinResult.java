@@ -12,4 +12,6 @@ public interface SpinResult {
     Rotate getToRotate();
 
     int getTestPatternIndex();
+
+    boolean isPrivilegeSpins();
 }

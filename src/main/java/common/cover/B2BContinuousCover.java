@@ -30,7 +30,7 @@ public class B2BContinuousCover implements Cover {
     private final B2BCondition b2BCondition;
 
     public B2BContinuousCover(MinoRotation minoRotation, boolean use180Rotation) {
-        if (use180Rotation && !minoRotation.supports180()) {
+        if (use180Rotation && minoRotation.noSupports180()) {
             throw new IllegalArgumentException("mino rotation does not support 180");
         }
 

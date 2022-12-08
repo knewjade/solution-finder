@@ -29,6 +29,8 @@ public class DefaultMinoRotationFactory {
                 return OffsetDefine.I.getPattern(current, next);
             case O:
                 return OffsetDefine.O.getPattern(current, next);
+            case T:
+                return OffsetDefine.T.getPattern(current, next);
             default:
                 return OffsetDefine.Other.getPattern(current, next);
         }
@@ -65,19 +67,19 @@ public class DefaultMinoRotationFactory {
             case I: {
                 switch (current) {
                     case Spawn:
-                        return new Pattern(new int[][]{
+                        return Pattern.noPrivilegeSpins(new int[][]{
                                 {1, -1}, {0, -1}, {-1, -1}, {2, -1}, {3, -1}, {1, -2},
                         });
                     case Right:
-                        return new Pattern(new int[][]{
+                        return Pattern.noPrivilegeSpins(new int[][]{
                                 {-1, -1}, {-1, -2}, {-1, -3}, {-1, 0}, {-1, 1}, {-2, -1},
                         });
                     case Reverse:
-                        return new Pattern(new int[][]{
+                        return Pattern.noPrivilegeSpins(new int[][]{
                                 {-1, 1}, {0, 1}, {1, 1}, {-2, 1}, {-3, 1}, {-1, 2},
                         });
                     case Left:
-                        return new Pattern(new int[][]{
+                        return Pattern.noPrivilegeSpins(new int[][]{
                                 {1, 1}, {1, 0}, {1, -1}, {1, 2}, {1, 3}, {2, 1}
                         });
                 }
@@ -85,19 +87,19 @@ public class DefaultMinoRotationFactory {
             case O: {
                 switch (current) {
                     case Spawn:
-                        return new Pattern(new int[][]{
+                        return Pattern.noPrivilegeSpins(new int[][]{
                                 {1, 1},
                         });
                     case Right:
-                        return new Pattern(new int[][]{
+                        return Pattern.noPrivilegeSpins(new int[][]{
                                 {1, -1},
                         });
                     case Reverse:
-                        return new Pattern(new int[][]{
+                        return Pattern.noPrivilegeSpins(new int[][]{
                                 {-1, -1},
                         });
                     case Left:
-                        return new Pattern(new int[][]{
+                        return Pattern.noPrivilegeSpins(new int[][]{
                                 {-1, 1},
                         });
                 }
@@ -105,19 +107,19 @@ public class DefaultMinoRotationFactory {
             default: {
                 switch (current) {
                     case Spawn:
-                        return new Pattern(new int[][]{
+                        return Pattern.noPrivilegeSpins(new int[][]{
                                 {0, 0}, {1, 0}, {2, 0}, {1, -1}, {2, -1}, {-1, 0}, {-2, 0}, {-1, -1}, {-2, -1}, {0, 1}, {3, 0}, {-3, 0},
                         });
                     case Right:
-                        return new Pattern(new int[][]{
+                        return Pattern.noPrivilegeSpins(new int[][]{
                                 {0, 0}, {0, -1}, {0, -2}, {-1, -1}, {-1, -2}, {0, 1}, {0, 2}, {-1, 1}, {-1, 2}, {1, 0}, {0, -3}, {0, 3},
                         });
                     case Reverse:
-                        return new Pattern(new int[][]{
+                        return Pattern.noPrivilegeSpins(new int[][]{
                                 {0, 0}, {-1, 0}, {-2, 0}, {-1, 1}, {-2, 1}, {1, 0}, {2, 0}, {1, 1}, {2, 1}, {0, -1}, {-3, 0}, {3, 0},
                         });
                     case Left:
-                        return new Pattern(new int[][]{
+                        return Pattern.noPrivilegeSpins(new int[][]{
                                 {0, 0}, {0, -1}, {0, -2}, {1, -1}, {1, -2}, {0, 1}, {0, 2}, {1, 1}, {1, 2}, {-1, 0}, {0, -3}, {0, 3},
                         });
                 }

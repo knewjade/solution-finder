@@ -8,13 +8,15 @@ public class SuccessSpinResult implements SpinResult {
     private final int y;
     private final int testPatternIndex;
     private final RotateDirection direction;
+    private final boolean isPrivilegeSpins;
 
-    SuccessSpinResult(Mino after, int x, int y, int testPatternIndex, RotateDirection direction) {
+    SuccessSpinResult(Mino after, int x, int y, int testPatternIndex, RotateDirection direction, boolean isPrivilegeSpins) {
         this.after = after;
         this.x = x;
         this.y = y;
         this.testPatternIndex = testPatternIndex;
         this.direction = direction;
+        this.isPrivilegeSpins = isPrivilegeSpins;
     }
 
     @Override
@@ -35,6 +37,11 @@ public class SuccessSpinResult implements SpinResult {
     @Override
     public int getTestPatternIndex() {
         return testPatternIndex;
+    }
+
+    @Override
+    public boolean isPrivilegeSpins() {
+        return isPrivilegeSpins;
     }
 
     @Override

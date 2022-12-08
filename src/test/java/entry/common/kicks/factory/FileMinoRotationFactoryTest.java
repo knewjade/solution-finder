@@ -24,6 +24,8 @@ class FileMinoRotationFactoryTest {
         FileMinoRotationFactory factory = FileMinoRotationFactory.load(path);
         MinoRotation minoRotation = factory.create();
 
+        assertThat(minoRotation).returns(false, MinoRotation::supports180);
+
         // rotate right
         {
             Field field = FieldFactory.createSmallField();
@@ -57,6 +59,8 @@ class FileMinoRotationFactoryTest {
         FileMinoRotationFactory factory = FileMinoRotationFactory.load(path);
         MinoRotation minoRotation = factory.create();
 
+        assertThat(minoRotation).returns(true, MinoRotation::supports180);
+
         // rotate right
         {
             Field field = FieldFactory.createSmallField();
@@ -87,8 +91,37 @@ class FileMinoRotationFactoryTest {
     }
 
     @Test
+    void loadSRS() {
+        String properties = ClassLoader.getSystemResource("kicks/srs.properties").getPath();
+        Path path = Paths.get(properties);
+        FileMinoRotationFactory factory = FileMinoRotationFactory.load(path);
+        MinoRotation minoRotation = factory.create();
+
+        assertThat(minoRotation).returns(false, MinoRotation::supports180);
+
+        MinoFactory minoFactory = new MinoFactory();
+        MinoRotation defaultMinoRotation = DefaultMinoRotationFactory.createDefault();
+        for (Piece piece : Piece.values()) {
+            for (Rotate rotate : Rotate.values()) {
+                Mino mino = minoFactory.create(piece, rotate);
+                for (RotateDirection direction : RotateDirection.valuesNo180()) {
+                    assertThat(minoRotation.getPatternsFrom(mino, direction))
+                            .isDeepEqualTo(defaultMinoRotation.getPatternsFrom(mino, direction));
+                }
+            }
+        }
+    }
+
+    @Test
     void loadMissingIEN() {
         String properties = ClassLoader.getSystemResource("kicks/missing_I_EN.properties").getPath();
+        Path path = Paths.get(properties);
+        assertThatThrownBy(() -> FileMinoRotationFactory.load(path)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void loadSurplusIEN() {
+        String properties = ClassLoader.getSystemResource("kicks/surplus_I_EW.properties").getPath();
         Path path = Paths.get(properties);
         assertThatThrownBy(() -> FileMinoRotationFactory.load(path)).isInstanceOf(IllegalArgumentException.class);
     }

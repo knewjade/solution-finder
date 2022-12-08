@@ -33,4 +33,8 @@ public class KickPatterns {
         }
         return Optional.ofNullable(kickPattern.getPattern(kickPatterns));
     }
+
+    public int size() {
+        return kickPatterns.size();
+    }
 }

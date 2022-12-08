@@ -20,6 +20,12 @@ class MinoRotationSupplier implements Supplier<MinoRotation> {
     private void validate() {
         createRightMap().orElseThrow(IllegalArgumentException::new);
         createLeftMap().orElseThrow(IllegalArgumentException::new);
+
+        int size = kickPatterns.size();
+        if (size != 28 * 2 /* 90 only */
+                && size != 28 * 3 /* with 180 */) {
+            throw new IllegalArgumentException();
+        }
     }
 
     @Override
