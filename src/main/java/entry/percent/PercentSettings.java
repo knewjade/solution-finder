@@ -6,7 +6,8 @@ import core.field.Field;
 import core.field.FieldFactory;
 import core.srs.MinoRotation;
 import entry.DropType;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.NamedSupplierMinoRotation;
+import entry.common.option.OptionsFacade;
 import exceptions.FinderParseException;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class PercentSettings {
     private int failedCount = 100;
     private int threadCount = -1;
     private DropType dropType = DropType.Softdrop;
+    private NamedSupplierMinoRotation namedSupplierMinoRotation = NamedSupplierMinoRotation.createDefault();
 
     // ********* Getter ************
     public boolean isUsingHold() {
@@ -68,8 +70,12 @@ public class PercentSettings {
         return threadCount;
     }
 
+    String getKicksName() {
+        return namedSupplierMinoRotation.getName();
+    }
+
     Supplier<MinoRotation> createMinoRotationSupplier() {
-        return DefaultMinoRotationFactory::createDefault;
+        return namedSupplierMinoRotation.getSupplier();
     }
 
     // ********* Setter ************
@@ -142,5 +148,9 @@ public class PercentSettings {
             default:
                 throw new FinderParseException("Unsupported droptype: type=" + type);
         }
+    }
+
+    void setKicks(String name) {
+        namedSupplierMinoRotation = OptionsFacade.createNamedMinoRotationSupplier(name);
     }
 }

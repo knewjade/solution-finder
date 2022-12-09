@@ -1,19 +1,17 @@
 package entry.verify.kicks;
 
 import core.srs.MinoRotation;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.NamedSupplierMinoRotation;
 import entry.common.option.OptionsFacade;
 
-import java.util.function.Supplier;
-
 public class VerifyKicksSettings {
-    private Supplier<MinoRotation> minoRotationSupplier = DefaultMinoRotationFactory::createDefault;
+    private NamedSupplierMinoRotation namedSupplierMinoRotation = NamedSupplierMinoRotation.createDefault();
 
     MinoRotation createMinoRotation() {
-        return minoRotationSupplier.get();
+        return namedSupplierMinoRotation.getSupplier().get();
     }
 
-    public void setKicks(String name) {
-        minoRotationSupplier = OptionsFacade.createMinoRotationSupplier(name);
+    void setKicks(String name) {
+        namedSupplierMinoRotation = OptionsFacade.createNamedMinoRotationSupplier(name);
     }
 }

@@ -16,9 +16,11 @@ import core.mino.Piece;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
 import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.factory.FileMinoRotationFactory;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -350,6 +352,8 @@ class TSpinCoverTest {
 
         @Test
         void cansBuildUse180() {
+            MinoRotation minoRotation180 = FileMinoRotationFactory.load(Paths.get("kicks/nullpomino180.properties")).create();
+
             int height = 5;
             Field field = FieldFactory.createField("" +
                             "__________" +
@@ -363,10 +367,10 @@ class TSpinCoverTest {
                     new SimpleOperation(Piece.T, Rotate.Reverse, 2, 1)
             );
             List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-            ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SRSAnd180Reachable(minoFactory, minoShifter, minoRotation, height));
+            ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SRSAnd180Reachable(minoFactory, minoShifter, minoRotation180, height));
 
             {
-                TSpinCover cover = TSpinCover.createRegularTSpinCover(minoRotation, 1, true);
+                TSpinCover cover = TSpinCover.createRegularTSpinCover(minoRotation180, 1, true);
 
                 {
                     List<Piece> pieces = toPieceList("TOSZ");
@@ -400,7 +404,7 @@ class TSpinCoverTest {
                 }
             }
             {
-                TSpinCover cover = TSpinCover.createRegularTSpinCover(minoRotation, 2, true);
+                TSpinCover cover = TSpinCover.createRegularTSpinCover(minoRotation180, 2, true);
 
                 {
                     List<Piece> pieces = toPieceList("ZST");
@@ -661,6 +665,8 @@ class TSpinCoverTest {
 
         @Test
         void cansBuildUse180() {
+            MinoRotation minoRotation180 = FileMinoRotationFactory.load(Paths.get("kicks/nullpomino180.properties")).create();
+
             int height = 5;
             Field field = FieldFactory.createField("" +
                             "__________" +
@@ -675,9 +681,9 @@ class TSpinCoverTest {
                     new SimpleOperation(Piece.T, Rotate.Right, 5, 1)
             );
             List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-            ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SRSAnd180Reachable(minoFactory, minoShifter, minoRotation, height));
+            ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SRSAnd180Reachable(minoFactory, minoShifter, minoRotation180, height));
 
-            TSpinCover cover = TSpinCover.createTSpinMiniCover(minoRotation, true);
+            TSpinCover cover = TSpinCover.createTSpinMiniCover(minoRotation180, true);
 
             {
                 List<Piece> pieces = toPieceList("TIJO");

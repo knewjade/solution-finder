@@ -8,7 +8,7 @@ import org.apache.commons.cli.Options;
 
 public enum VerifyKicksOptions {
     Help(NoArgOption.full("h", "help", "Usage")),
-    Kicks(SingleArgOption.full("K", "kicks", "name", "Specify the input file")),
+    Kicks(SingleArgOption.full("K", "kicks", "name", "Specify the kick name or @filename")),
     ;
 
     private final OptionBuilder optionBuilder;

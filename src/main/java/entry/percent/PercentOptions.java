@@ -13,6 +13,7 @@ public enum PercentOptions {
     Patterns(SingleArgOption.full("p", "patterns", "definition", "Specify pattern definition, directly")),
     PatternsPath(SingleArgOption.full("pp", "patterns-path", "path", "File path of pattern definition")),
     Hold(SingleArgOption.full("H", "hold", "use or avoid", "If use hold, set 'use'. If not use hold, set 'avoid'")),
+    Kicks(SingleArgOption.full("K", "kicks", "name", "Specify the kick name or @filename")),
     Drop(SingleArgOption.full("d", "drop", "hard or soft", "Specify drop")),
     ClearLine(SingleArgOption.full("c", "clear-line", "number", "'Specify max clear line")),
     TreeDepth(SingleArgOption.full("td", "tree-depth", "number", "Success tree depth")),

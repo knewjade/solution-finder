@@ -169,6 +169,7 @@ public class SetupEntryPoint implements EntryPoint {
         DropType dropType = settings.getDropType();
         output("# Initialize / User-defined");
         output("Max height: " + maxHeight);
+        output("Kicks: " + settings.getKicksName().toLowerCase());
         output("Drop: " + dropType.name().toLowerCase());
         output("Operations: " + settings.getAddOperations().stream().map(FieldOperation::toName).collect(Collectors.joining(" -> ")));
         output("Exclude: " + settings.getExcludeType().name().toLowerCase());

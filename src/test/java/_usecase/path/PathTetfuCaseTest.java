@@ -1359,11 +1359,11 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
     }
 
     @Test
-    void user180Rotation() throws Exception {
+    void use180Rotation() throws Exception {
         String tetfu = "v115@HhA8BeA8FeE8CeG8CeB8JeAgH";
 
         {
-            String command = String.format("path -t %s -p *!", tetfu);
+            String command = String.format("path -t %s -p *! --kicks default", tetfu);
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())
@@ -1374,7 +1374,18 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
             assertThat(log.getError()).isEmpty();
         }
         {
-            String command = String.format("path -t %s -p *! -d 180", tetfu);
+            String command = String.format("path -t %s -p *! --kicks @srs", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput())
+                    .contains(Messages.uniqueCount(6))
+                    .contains(Messages.minimalCount(3))
+                    .contains(Messages.useHold());
+
+            assertThat(log.getError()).isEmpty();
+        }
+        {
+            String command = String.format("path -t %s -p *! -d 180 --kicks @nullpomino180", tetfu);
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())

@@ -401,7 +401,19 @@ class PercentTetfuCaseTest extends PercentUseCaseBaseTest {
         String tetfu = "v115@GhA8DeA8CeB8DeF8DeF8JeAgH";
 
         {
-            String command = String.format("percent -t %s -p *!", tetfu);
+            String command = String.format("percent -t %s -p *! --kicks default", tetfu);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+            System.out.println(log.getError());
+            assertThat(log.getOutput())
+                    .contains(Messages.useHold())
+                    .contains(Messages.softdrop())
+                    .contains(Messages.success(5028, 5040))
+                    .contains("*!");
+
+            assertThat(log.getError()).isEmpty();
+        }
+        {
+            String command = String.format("percent -t %s -p *! --kicks @srs", tetfu);
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())
@@ -413,7 +425,7 @@ class PercentTetfuCaseTest extends PercentUseCaseBaseTest {
             assertThat(log.getError()).isEmpty();
         }
         {
-            String command = String.format("percent -t %s -p *! -drop 180", tetfu);
+            String command = String.format("percent -t %s -p *! --drop 180 --kicks @nullpomino180", tetfu);
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())

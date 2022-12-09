@@ -112,6 +112,7 @@ public class PathEntryPoint implements EntryPoint {
         output("# Initialize / User-defined");
         output("Max clear lines: " + maxClearLine);
         output("Using hold: " + (settings.isUsingHold() ? "use" : "avoid"));
+        output("Kicks: " + settings.getKicksName().toLowerCase());
         output("Drop: " + settings.getDropType().name().toLowerCase());
         output("Searching patterns:");
 

@@ -12,6 +12,7 @@ public enum CoverOptions {
     Fumen(ListArgOption.fullSpace("t", "tetfu", "v115@~", "Specify tetfu data for s-finder settings")),
     Patterns(SingleArgOption.full("p", "patterns", "definition", "Specify pattern definition, directly")),
     Hold(SingleArgOption.full("H", "hold", "use or avoid", "If use hold, set 'use'. If not use hold, set 'avoid'")),
+    Kicks(SingleArgOption.full("K", "kicks", "name", "Specify the kick name or @filename")),
     Drop(SingleArgOption.full("d", "drop", "hard or soft", "Specify drop")),
     Mirror(SingleArgOption.full("m", "mirror", "yes or no", "Specify expanding mirror")),
     Mode(SingleArgOption.full("M", "mode", "normal or tspin", "Specify cover mode")),

@@ -98,6 +98,7 @@ public class CoverEntryPoint implements EntryPoint {
         }
 
         output("Using hold: " + (settings.isUsingHold() ? "use" : "avoid"));
+        output("Kicks: " + settings.getKicksName().toLowerCase());
         output("Drop: " + settings.getDropType().name().toLowerCase());
         output("Mode: " + settings.getCoverModes().name().toLowerCase());
 
@@ -380,7 +381,7 @@ public class CoverEntryPoint implements EntryPoint {
             }
             case Rotation180: {
                 if (minoRotation.noSupports180()) {
-                    throw new FinderInitializeException("rotation system does not support 180");
+                    throw new FinderInitializeException("kicks do not support 180");
                 }
                 return new SRSAnd180Reachable(minoFactory, minoShifter, minoRotation, maxY);
             }

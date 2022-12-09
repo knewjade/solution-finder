@@ -79,6 +79,10 @@ public class RenSettingParser extends SettingParser<RenSettings> {
         );
         settings.setPatterns(patterns);
 
+        // Load kicks
+        Optional<String> kicks = wrapper.getStringOption(RenOptions.Kicks.optName());
+        kicks.ifPresent(settings::setKicks);
+
         // ログファイルの設定
         Optional<String> logFilePath = wrapper.getStringOption(RenOptions.LogPath.optName());
         logFilePath.ifPresent(settings::setLogFilePath);

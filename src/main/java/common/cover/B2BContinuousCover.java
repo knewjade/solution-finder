@@ -31,7 +31,7 @@ public class B2BContinuousCover implements Cover {
 
     public B2BContinuousCover(MinoRotation minoRotation, boolean use180Rotation) {
         if (use180Rotation && minoRotation.noSupports180()) {
-            throw new IllegalArgumentException("mino rotation does not support 180");
+            throw new IllegalArgumentException("kicks do not support 180");
         }
 
         int maxY = 24;

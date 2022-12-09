@@ -101,6 +101,10 @@ public class PercentSettingParser extends SettingParser<PercentSettings> {
         );
         settings.setPatterns(patterns);
 
+        // Load kicks
+        Optional<String> kicks = wrapper.getStringOption(PercentOptions.Kicks.optName());
+        kicks.ifPresent(settings::setKicks);
+
         // ドロップの設定
         Optional<String> dropType = wrapper.getStringOption(PercentOptions.Drop.optName());
         if (dropType.isPresent()) {

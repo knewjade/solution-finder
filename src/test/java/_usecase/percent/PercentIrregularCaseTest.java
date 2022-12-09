@@ -441,4 +441,13 @@ class PercentIrregularCaseTest extends PercentUseCaseBaseTest {
                 .contains(command)
                 .contains("Cannot parse hold option: value=INVALID [FinderParseException]");
     }
+
+    @Test
+    void use180RotationWithDefault() throws Exception {
+        String command = "percent -t v115@GhA8DeA8CeB8DeF8DeF8JeAgH -p *! --drop 180 --kicks default";
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getReturnCode()).isNotEqualTo(0);
+        assertThat(log.getError()).contains("kicks do not support 180");
+    }
 }

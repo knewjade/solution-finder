@@ -16,6 +16,7 @@ public enum RenOptions {
     LogPath(SingleArgOption.full("lp", "log-path", "path", "File path of output log")),
     OutputBase(SingleArgOption.full("o", "output-base", "path", "Base file path of result to output")),
     Hold(SingleArgOption.full("H", "hold", "use or avoid", "If use hold, set 'use'. If not use hold, set 'avoid'")),
+    Kicks(SingleArgOption.full("K", "kicks", "name", "Specify the kick name or @filename")),
     Drop(SingleArgOption.full("d", "drop", "hard or soft", "Specify drop")),;
 
     private final OptionBuilder optionBuilder;

@@ -107,6 +107,10 @@ public class PathSettingParser extends SettingParser<PathSettings> {
         );
         settings.setPatterns(patterns);
 
+        // Load kicks
+        Optional<String> kicks = wrapper.getStringOption(PathOptions.Kicks.optName());
+        kicks.ifPresent(settings::setKicks);
+
         // ドロップの設定
         Optional<String> dropType = wrapper.getStringOption(PathOptions.Drop.optName());
         if (dropType.isPresent()) {

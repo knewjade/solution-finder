@@ -568,21 +568,48 @@ class SetupTetfuCaseTest {
 
         @Test
         void use180Rotation() throws Exception {
-            String fumen = "v115@HhE8yhG8zhF80hJeAgH";
-            String command = buildCommand(fumen, "-p IZT -f i");
-            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+            String fumen = "v115@tgF8DeF8CeG8BeA8AtF8AeA8BtH8AtG8JeAgH";
 
-            // Log
-            assertThat(log.getOutput()).contains(Messages.foundSolutions(1));
-            assertThat(log.getError()).isEmpty();
+            {
+                String command = buildCommand(fumen, "-p Z -f z --kicks default");
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
-            // HTML
-            SetupHTML html = OutputFileHelper.loadSetupHTML();
-            assertThat(html.getHtml()).contains("3333333333");
+                // Log
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(0));
+                assertThat(log.getError()).isEmpty();
 
-            assertThat(html.getFumens())
-                    .hasSize(1)
-                    .contains("HhE8wwBtG8xwBtF8wwzhJeAgWDAa+1BA");
+                // HTML
+                SetupHTML html = OutputFileHelper.loadSetupHTML();
+                assertThat(html.getFumens()).isEmpty();
+            }
+            {
+                String command = buildCommand(fumen, "-p Z -f z --kicks @srs");
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(0));
+                assertThat(log.getError()).isEmpty();
+
+                // HTML
+                SetupHTML html = OutputFileHelper.loadSetupHTML();
+                assertThat(html.getFumens()).isEmpty();
+            }
+            {
+                String command = buildCommand(fumen, "-p Z -f z --drop 180 --kicks @nullpomino180");
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(1));
+                assertThat(log.getError()).isEmpty();
+
+                // HTML
+                SetupHTML html = OutputFileHelper.loadSetupHTML();
+                assertThat(html.getHtml()).contains("1234666666");
+
+                assertThat(html.getFumens())
+                        .hasSize(1)
+                        .contains("tgF8DeF8CeG8BeA8AtF8AeA8BtH8AtG8JeAgWBA6AA?AA");
+            }
         }
     }
 
@@ -981,6 +1008,16 @@ class SetupTetfuCaseTest {
 
             // Log
             assertThat(log.getError()).contains("Should specify equal to or more than 4 pieces");
+        }
+
+        @Test
+        void use180RotationWithDefault() throws Exception {
+            String fumen = "v115@tgF8DeF8CeG8BeA8AtF8AeA8BtH8AtG8JeAgH";
+            String command = buildCommand(fumen, "-p Z -f z --drop 180 --kicks default");
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isNotEqualTo(0);
+            assertThat(log.getError()).contains("kicks do not support 180");
         }
     }
 }

@@ -19,6 +19,7 @@ public enum SetupOptions {
     Margin(SingleArgOption.full("m", "margin", "color", "Specify piece color as `margin`")),
     Free(SingleArgOption.full("F", "free", "color", "Specify piece color as `free`")),
     Fill(SingleArgOption.full("f", "fill", "color", "Specify piece color as `fill`")),
+    Kicks(SingleArgOption.full("K", "kicks", "name", "Specify the kick name or @filename")),
     Drop(SingleArgOption.full("d", "drop", "hard or soft", "Specify drop")),
     Exclude(SingleArgOption.full("e", "exclude", "string", "If specify, exclude some solutions")),
     Operations(ListArgOption.fullSpace("op", "operate", "operation-list", "Operate field before determining to exclude solutions")),
