@@ -8,9 +8,10 @@ import core.mino.MinoShifter;
 import core.mino.Piece;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.factory.FileMinoRotationFactory;
 import org.junit.jupiter.api.Test;
 
+import java.nio.file.Paths;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,7 +21,7 @@ class SRSAnd180CandidateTest {
     void testSearch1() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = FileMinoRotationFactory.load(Paths.get("kicks/nullpomino180.properties")).create();
         Candidate<Action> candidate = new SRSAnd180Candidate(minoFactory, minoShifter, minoRotation, 6);
 
         String marks = "" +
