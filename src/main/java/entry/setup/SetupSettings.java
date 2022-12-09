@@ -8,6 +8,7 @@ import core.srs.MinoRotation;
 import core.srs.Rotate;
 import entry.DropType;
 import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.option.OptionsFacade;
 import entry.setup.operation.*;
 import exceptions.FinderParseException;
 
@@ -43,6 +44,7 @@ public class SetupSettings {
     private boolean isSplit = false;
     private boolean isLogOutputToConsole = true;
     private boolean isResultOutputToConsole = false;
+    private Supplier<MinoRotation> minoRotationSupplier = DefaultMinoRotationFactory::createDefault;
 
     // ********* Getter ************
     public boolean isUsingHold() {
@@ -130,7 +132,7 @@ public class SetupSettings {
     }
 
     Supplier<MinoRotation> createMinoRotationSupplier() {
-        return DefaultMinoRotationFactory::createDefault;
+        return minoRotationSupplier;
     }
 
     // ********* Setter ************
@@ -442,6 +444,10 @@ public class SetupSettings {
     void useOutputToConsole() {
         setLogOutputToConsole(false);
         setResultOutputToConsole(true);
+    }
+
+    void setKicks(String name) {
+        minoRotationSupplier = OptionsFacade.createMinoRotationSupplier(name);
     }
 }
 
