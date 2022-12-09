@@ -99,6 +99,7 @@ public class RenEntryPoint implements EntryPoint {
         // Output user-defined
         output("# Initialize / User-defined");
         output("Using hold: " + (settings.isUsingHold() ? "use" : "avoid"));
+        output("Kicks: " + settings.getKicksName().toLowerCase());
         output("Drop: " + settings.getDropType().name().toLowerCase());
         output("Version: " + FinderConstant.VERSION);
 

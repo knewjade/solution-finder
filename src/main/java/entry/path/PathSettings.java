@@ -9,7 +9,7 @@ import core.field.FieldFactory;
 import core.mino.Piece;
 import core.srs.MinoRotation;
 import entry.DropType;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.NamedSupplierMinoRotation;
 import entry.common.option.OptionsFacade;
 import exceptions.FinderParseException;
 
@@ -38,7 +38,7 @@ public class PathSettings {
     private boolean isMinimalSpecifiedOnly = true;
     private boolean isLogOutputToConsole = true;
     private boolean isResultOutputToConsole = false;
-    private Supplier<MinoRotation> minoRotationSupplier = DefaultMinoRotationFactory::createDefault;
+    private NamedSupplierMinoRotation namedSupplierMinoRotation = NamedSupplierMinoRotation.createDefault();
 
     // ********* Getter ************
     public boolean isUsingHold() {
@@ -109,8 +109,12 @@ public class PathSettings {
         return isMinimalSpecifiedOnly;
     }
 
+    String getKicksName() {
+        return namedSupplierMinoRotation.getName();
+    }
+
     public Supplier<MinoRotation> createMinoRotationSupplier() {
-        return minoRotationSupplier;
+        return namedSupplierMinoRotation.getSupplier();
     }
 
     // ********* Setter ************
@@ -307,6 +311,6 @@ public class PathSettings {
     }
 
     void setKicks(String name) {
-        minoRotationSupplier = OptionsFacade.createMinoRotationSupplier(name);
+        namedSupplierMinoRotation = OptionsFacade.createNamedMinoRotationSupplier(name);
     }
 }

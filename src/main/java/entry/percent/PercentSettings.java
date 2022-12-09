@@ -6,7 +6,7 @@ import core.field.Field;
 import core.field.FieldFactory;
 import core.srs.MinoRotation;
 import entry.DropType;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.NamedSupplierMinoRotation;
 import entry.common.option.OptionsFacade;
 import exceptions.FinderParseException;
 
@@ -27,7 +27,7 @@ public class PercentSettings {
     private int failedCount = 100;
     private int threadCount = -1;
     private DropType dropType = DropType.Softdrop;
-    private Supplier<MinoRotation> minoRotationSupplier = DefaultMinoRotationFactory::createDefault;
+    private NamedSupplierMinoRotation namedSupplierMinoRotation = NamedSupplierMinoRotation.createDefault();
 
     // ********* Getter ************
     public boolean isUsingHold() {
@@ -70,8 +70,12 @@ public class PercentSettings {
         return threadCount;
     }
 
+    String getKicksName() {
+        return namedSupplierMinoRotation.getName();
+    }
+
     Supplier<MinoRotation> createMinoRotationSupplier() {
-        return minoRotationSupplier;
+        return namedSupplierMinoRotation.getSupplier();
     }
 
     // ********* Setter ************
@@ -147,6 +151,6 @@ public class PercentSettings {
     }
 
     void setKicks(String name) {
-        minoRotationSupplier = OptionsFacade.createMinoRotationSupplier(name);
+        namedSupplierMinoRotation = OptionsFacade.createNamedMinoRotationSupplier(name);
     }
 }

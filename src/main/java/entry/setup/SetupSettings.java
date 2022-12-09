@@ -7,7 +7,7 @@ import core.mino.Piece;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
 import entry.DropType;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.NamedSupplierMinoRotation;
 import entry.common.option.OptionsFacade;
 import entry.setup.operation.*;
 import exceptions.FinderParseException;
@@ -44,7 +44,7 @@ public class SetupSettings {
     private boolean isSplit = false;
     private boolean isLogOutputToConsole = true;
     private boolean isResultOutputToConsole = false;
-    private Supplier<MinoRotation> minoRotationSupplier = DefaultMinoRotationFactory::createDefault;
+    private NamedSupplierMinoRotation namedSupplierMinoRotation = NamedSupplierMinoRotation.createDefault();
 
     // ********* Getter ************
     public boolean isUsingHold() {
@@ -131,8 +131,12 @@ public class SetupSettings {
         return isSplit;
     }
 
+    String getKicksName() {
+        return namedSupplierMinoRotation.getName();
+    }
+
     Supplier<MinoRotation> createMinoRotationSupplier() {
-        return minoRotationSupplier;
+        return namedSupplierMinoRotation.getSupplier();
     }
 
     // ********* Setter ************
@@ -447,7 +451,7 @@ public class SetupSettings {
     }
 
     void setKicks(String name) {
-        minoRotationSupplier = OptionsFacade.createMinoRotationSupplier(name);
+        namedSupplierMinoRotation = OptionsFacade.createNamedMinoRotationSupplier(name);
     }
 }
 

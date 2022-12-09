@@ -1,27 +1,25 @@
 package entry.common.option;
 
-import core.srs.MinoRotation;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.NamedSupplierMinoRotation;
 import entry.common.kicks.factory.FileMinoRotationFactory;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.function.Supplier;
 
 public class OptionsFacade {
-    public static Supplier<MinoRotation> createMinoRotationSupplier(String name) {
-        name = name.trim().toLowerCase();
-        if (name.startsWith("@")) {
-            Path path = Paths.get(String.format("kicks/%s.properties", name.substring(1)));
+    public static NamedSupplierMinoRotation createNamedMinoRotationSupplier(String name) {
+        String trimmedName = name.trim().toLowerCase();
+        if (trimmedName.startsWith("@")) {
+            Path path = Paths.get(String.format("kicks/%s.properties", trimmedName.substring(1)));
             FileMinoRotationFactory factory = FileMinoRotationFactory.load(path);
-            return factory::create;
+            return new NamedSupplierMinoRotation(factory::create, name);
         } else {
-            switch (name) {
+            switch (trimmedName) {
                 case "default":
                 case "srs":
-                    return DefaultMinoRotationFactory::createDefault;
+                    return NamedSupplierMinoRotation.createDefault();
                 default:
-                    throw new IllegalArgumentException("Unsupported kicks name: " + name);
+                    throw new IllegalArgumentException("kicks name is invalid: " + name);
             }
         }
     }

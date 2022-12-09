@@ -3,12 +3,9 @@ package entry.spin;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.KeyOperators;
-import core.srs.MinoRotation;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class SpinSettings {
     private static final String DEFAULT_LOG_FILE_PATH = "output/last_output.txt";
@@ -111,10 +108,6 @@ public class SpinSettings {
 
     OutputType getOutputType() {
         return outputType;
-    }
-
-    Supplier<MinoRotation> createMinoRotationSupplier() {
-        return DefaultMinoRotationFactory::createDefault;
     }
 
     // ********* Setter ************
