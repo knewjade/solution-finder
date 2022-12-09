@@ -17,6 +17,10 @@ public class VerifyKicksSettingParser extends SettingParser<VerifyKicksSettings>
     protected Optional<VerifyKicksSettings> parse(CommandLineWrapper wrapper) throws FinderParseException {
         VerifyKicksSettings settings = new VerifyKicksSettings();
 
+        // Load kicks
+        Optional<String> kicks = wrapper.getStringOption(VerifyKicksOptions.Kicks.optName());
+        kicks.ifPresent(settings::setKicks);
+
         return Optional.of(settings);
     }
 }

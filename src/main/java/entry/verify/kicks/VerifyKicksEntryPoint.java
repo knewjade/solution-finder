@@ -32,10 +32,6 @@ public class VerifyKicksEntryPoint implements EntryPoint {
         MinoRotation minoRotation = settings.createMinoRotation();
         ColorConverter colorConverter = new ColorConverter();
 
-        List<RotateDirection> directions = minoRotation.supports180()
-                ? RotateDirection.valuesWith180()
-                : RotateDirection.valuesNo180();
-
         for (Piece piece : Piece.values()) {
             for (Rotate fromRotate : Rotate.values()) {
                 List<TetfuElement> elements = new ArrayList<>();
@@ -59,7 +55,12 @@ public class VerifyKicksEntryPoint implements EntryPoint {
                     coloredField.setColorType(ColorType.Gray, x, y);
                 }
 
-                for (RotateDirection direction : directions) {
+                for (RotateDirection direction : RotateDirection.valuesWith180()) {
+                    if (direction == RotateDirection.Rotate180 && minoRotation.noSupports180()) {
+                        elements.add(new TetfuElement("180 is not supported"));
+                        continue;
+                    }
+
                     Rotate toRotate = fromRotate.get(direction);
 
                     int[][] patterns = minoRotation.getPatternsFrom(mino, direction);
