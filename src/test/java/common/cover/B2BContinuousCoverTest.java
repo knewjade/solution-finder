@@ -18,8 +18,10 @@ import core.mino.Piece;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
 import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.factory.FileMinoRotationFactory;
 import org.junit.jupiter.api.Test;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -200,7 +202,8 @@ class B2BContinuousCoverTest {
 
     @Test
     void cansBuildUse180() {
-        B2BContinuousCover cover = new B2BContinuousCover(minoRotation, true);
+        MinoRotation minoRotation180 = FileMinoRotationFactory.load(Paths.get("kicks/nullpomino180.properties")).create();
+        B2BContinuousCover cover = new B2BContinuousCover(minoRotation180, true);
 
         int height = 5;
         Field field = FieldFactory.createField("" +
@@ -215,7 +218,7 @@ class B2BContinuousCoverTest {
                 new SimpleOperation(Piece.T, Rotate.Reverse, 2, 1)
         );
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SRSAnd180Reachable(minoFactory, minoShifter, minoRotation, height));
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SRSAnd180Reachable(minoFactory, minoShifter, minoRotation180, height));
 
         {
             List<Piece> pieces = toPieceList("TOZI");

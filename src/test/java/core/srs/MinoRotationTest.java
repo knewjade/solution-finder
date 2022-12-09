@@ -5,40 +5,35 @@ import core.field.FieldFactory;
 import core.mino.Mino;
 import core.mino.Piece;
 import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.factory.FileMinoRotationFactory;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class MinoRotationTest {
-    private final MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
-
-    private int[] kicksLeft(String marks, Mino mino, int x, int y) {
-        Field field = FieldFactory.createField(marks);
-        assert field.canPut(mino, x, y);
-        Mino after = new Mino(mino.getPiece(), mino.getRotate().getLeftRotate());
-        return minoRotation.getKicks(field, mino, after, x, y, RotateDirection.Left);
-    }
-
-    private int[] kicksRight(String marks, Mino mino, int x, int y) {
-        Field field = FieldFactory.createField(marks);
-        assert field.canPut(mino, x, y);
-        Mino after = new Mino(mino.getPiece(), mino.getRotate().getRightRotate());
-        return minoRotation.getKicks(field, mino, after, x, y, RotateDirection.Right);
-    }
-
-    private int[] kicks180(String marks, Mino mino, int x, int y) {
-        Field field = FieldFactory.createField(marks);
-        assert field.canPut(mino, x, y);
-        Mino after = new Mino(mino.getPiece(), mino.getRotate().get180Rotate());
-        return minoRotation.getKicksWith180Rotation(field, mino, after, x, y);
-    }
-
     @Nested
     class Kicks {
+        private final MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+
+        private int[] kicksLeft(String marks, Mino mino, int x, int y) {
+            Field field = FieldFactory.createField(marks);
+            assert field.canPut(mino, x, y);
+            Mino after = new Mino(mino.getPiece(), mino.getRotate().getLeftRotate());
+            return minoRotation.getKicks(field, mino, after, x, y, RotateDirection.Left);
+        }
+
+        private int[] kicksRight(String marks, Mino mino, int x, int y) {
+            Field field = FieldFactory.createField(marks);
+            assert field.canPut(mino, x, y);
+            Mino after = new Mino(mino.getPiece(), mino.getRotate().getRightRotate());
+            return minoRotation.getKicks(field, mino, after, x, y, RotateDirection.Right);
+        }
+
         @Nested
         class WithI {
             @Test
@@ -1091,6 +1086,8 @@ class MinoRotationTest {
 
     @Nested
     class Offset {
+        private final MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+
         @Nested
         class JLSTZ {
             private final List<Piece> pieces = Arrays.asList(Piece.J, Piece.L, Piece.S, Piece.T, Piece.Z);
@@ -1329,6 +1326,15 @@ class MinoRotationTest {
 
     @Nested
     class Rotate180 {
+        private final MinoRotation minoRotation = FileMinoRotationFactory.load(Paths.get("kicks/nullpomino180.properties")).create();
+
+        private int[] kicks180(String marks, Mino mino, int x, int y) {
+            Field field = FieldFactory.createField(marks);
+            assert field.canPut(mino, x, y);
+            Mino after = new Mino(mino.getPiece(), mino.getRotate().get180Rotate());
+            return minoRotation.getKicksWith180Rotation(field, mino, after, x, y);
+        }
+
         @Nested
         class WithI {
             @Test
