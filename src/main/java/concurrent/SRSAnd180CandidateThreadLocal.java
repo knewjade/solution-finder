@@ -21,7 +21,7 @@ public class SRSAnd180CandidateThreadLocal extends ThreadLocal<SRSAnd180Candidat
             MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY
     ) {
         if (minoRotation.noSupports180()) {
-            throw new IllegalArgumentException("mino rotation does not support 180");
+            throw new IllegalArgumentException("kicks do not support 180");
         }
 
         this.minoFactory = minoFactory;

@@ -3,6 +3,7 @@ package entry.cover;
 import core.srs.MinoRotation;
 import entry.DropType;
 import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.option.OptionsFacade;
 import exceptions.FinderParseException;
 
 import java.util.Collections;
@@ -26,6 +27,7 @@ public class CoverSettings {
     private int startingB2B = 0;
     private int maxSoftdropTimes = -1;
     private int maxClearLineTimes = -1;
+    private Supplier<MinoRotation> minoRotationSupplier = DefaultMinoRotationFactory::createDefault;
 
     // ********* Getter ************
     boolean isUsingHold() {
@@ -77,7 +79,7 @@ public class CoverSettings {
     }
 
     Supplier<MinoRotation> createMinoRotationSupplier() {
-        return DefaultMinoRotationFactory::createDefault;
+        return minoRotationSupplier;
     }
 
     // ********* Setter ************
@@ -248,5 +250,9 @@ public class CoverSettings {
 
     void setMaxClearLineTimes(int maxClearLineTimes) {
         this.maxClearLineTimes = maxClearLineTimes;
+    }
+
+    void setKicks(String name) {
+        minoRotationSupplier = OptionsFacade.createMinoRotationSupplier(name);
     }
 }

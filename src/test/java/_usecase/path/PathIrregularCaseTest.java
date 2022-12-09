@@ -512,8 +512,8 @@ class PathIrregularCaseTest extends PathUseCaseBaseTest {
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
         assertThat(log.getReturnCode())
-                .isEqualTo(1)
-                .as(log.getOutput());
+                .as(log.getOutput())
+                .isEqualTo(1);
 
         assertThat(log.getError())
                 .contains(ErrorMessages.failMain());
@@ -665,5 +665,14 @@ class PathIrregularCaseTest extends PathUseCaseBaseTest {
 
         assertThat(log.getReturnCode()).isNotEqualTo(0);
         assertThat(log.getError()).contains("Parent directory is not invalid");
+    }
+
+    @Test
+    void use180RotationWithDefault() throws Exception {
+        String command = "path -t v115@HhA8BeA8FeE8CeG8CeB8JeAgH -p *! -d 180 --kicks default";
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getReturnCode()).isNotEqualTo(0);
+        assertThat(log.getError()).contains("kicks do not support 180");
     }
 }

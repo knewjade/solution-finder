@@ -178,6 +178,10 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
         );
         settings.setPatterns(patterns);
 
+        // Load kicks
+        Optional<String> kicks = wrapper.getStringOption(CoverOptions.Kicks.optName());
+        kicks.ifPresent(settings::setKicks);
+
         // ドロップの設定
         Optional<String> dropType = wrapper.getStringOption(CoverOptions.Drop.optName());
         if (dropType.isPresent()) {

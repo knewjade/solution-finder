@@ -809,25 +809,35 @@ class CoverTetfuCaseTest {
 
         @Test
         void use180Rotation() throws Exception {
-            String fumen1 = "v115@HhE8AeF8DeG8CeD8JelKJvhA+rB";
+            String fumen = "v115@HhE8AeF8DeG8CeD8JelKJvhA+rB";
 
             {
-                String command = String.format("cover --patterns [TJ]! --tetfu %s", fumen1);
+                String command = String.format("cover --patterns [TJ]! --tetfu %s --kicks default", fumen);
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 // Log
                 int all = 2;
-                assertThat(log.getOutput()).contains(Messages.foundSolutions(0, all, fumen1));
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(0, all, fumen));
                 assertThat(log.getOutput()).contains(Messages.foundOrSolutions(0, all));
                 assertThat(log.getOutput()).contains(Messages.foundAndSolutions(0, all));
             }
             {
-                String command = String.format("cover --patterns [TJ]! -d 180 --tetfu %s", fumen1);
+                String command = String.format("cover --patterns [TJ]! --tetfu %s --kicks @srs", fumen);
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 // Log
                 int all = 2;
-                assertThat(log.getOutput()).contains(Messages.foundSolutions(2, all, fumen1));
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(0, all, fumen));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(0, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(0, all));
+            }
+            {
+                String command = String.format("cover --patterns [TJ]! -d 180 --tetfu %s --kicks @nullpomino180", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 2;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(2, all, fumen));
                 assertThat(log.getOutput()).contains(Messages.foundOrSolutions(2, all));
                 assertThat(log.getOutput()).contains(Messages.foundAndSolutions(2, all));
             }
@@ -837,14 +847,14 @@ class CoverTetfuCaseTest {
         void manyPatternsFile() throws Exception {
             ConfigFileHelper.createPatternFileFromCommand("J,*!,*p2");
 
-            String fumen1 = "v115@bhA8BeB8AeA8MeeNYWAFLDmClcJSAVDEHBEooRBKoA?VBvXBAAvhBTfB0pB";
+            String fumen = "v115@bhA8BeB8AeA8MeeNYWAFLDmClcJSAVDEHBEooRBKoA?VBvXBAAvhBTfB0pB";
 
-            String command = String.format("cover -d harddrop --tetfu %s", fumen1);
+            String command = String.format("cover -d harddrop --tetfu %s", fumen);
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             // Log
             int all = 211680;
-            assertThat(log.getOutput()).contains(Messages.foundSolutions(20160, all, fumen1));
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(20160, all, fumen));
             assertThat(log.getOutput()).contains(Messages.foundOrSolutions(20160, all));
             assertThat(log.getOutput()).contains(Messages.foundAndSolutions(20160, all));
         }
@@ -1209,6 +1219,18 @@ class CoverTetfuCaseTest {
 
                 assertThat(log.getOutput()).contains(Messages.foundSolutions(1, all, fumen));
             }
+        }
+    }
+
+    @Nested
+    class IrregularTest extends CoverUseCaseBaseTest {
+        @Test
+        void use180RotationWithDefault() throws Exception {
+            String command = "cover --patterns [TJ]! --tetfu v115@HhE8AeF8DeG8CeD8JelKJvhA+rB --drop 180 --kicks default";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isNotEqualTo(0);
+            assertThat(log.getError()).contains("kicks do not support 180");
         }
     }
 }

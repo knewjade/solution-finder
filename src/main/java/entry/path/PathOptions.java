@@ -12,6 +12,7 @@ public enum PathOptions {
     Page(SingleArgOption.full("P", "page", "number", "Specify pages of tetfu data for s-finder settings")),
     Patterns(SingleArgOption.full("p", "patterns", "definition", "Specify pattern definition, directly")),
     PatternsPath(SingleArgOption.full("pp", "patterns-path", "path", "File path of pattern definition")),
+    Kicks(SingleArgOption.full("K", "kicks", "name", "Specify the kick name or @filename")),
     Drop(SingleArgOption.full("d", "drop", "hard or soft", "Specify drop")),
     Hold(SingleArgOption.full("H", "hold", "use or avoid", "If use hold, set 'use'. If not use hold, set 'avoid'")),
     MinimalSpecifiedOnly(SingleArgOption.full("so", "specified-only", "yes or no", "Set 'yes' if refine the minimal solutions from the specified patterns, or 'no' from the patterns extended with hold")),

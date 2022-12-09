@@ -131,7 +131,7 @@ class RenTetfuCaseTest {
             String fumen = "v115@TfF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8De?F8CeG8BeA8AeF8AeA8BeH8AeG8JeAgH";
 
             {
-                String command = String.format("ren -t %s -p jzostiljosztil", fumen);
+                String command = String.format("ren -t %s -p jzostiljosztil --kicks default", fumen);
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 // Log
@@ -152,7 +152,28 @@ class RenTetfuCaseTest {
                         .contains("TfF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8De?F8CeG8BeA8AeF8AeA8BeH8AeG8Je2/XUAFLDmClcJSAVDEH?BEooRBKoAVB");
             }
             {
-                String command = String.format("ren -t %s -p jzostiljosztil -d 180", fumen);
+                String command = String.format("ren -t %s -p jzostiljosztil --kicks @srs", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                assertThat(log.getOutput())
+                        .contains(Messages.foundSolutions(1))
+                        .contains(Messages.maxRen(0))
+                        .contains("JZOSTILJOSZTIL");
+                assertThat(log.getError()).isEmpty();
+
+                // HTML
+                SetupHTML html = OutputFileHelper.loadRenHTML();
+                assertThat(html.getHtml())
+                        .contains("0 Ren")
+                        .doesNotContain("1 Ren");
+
+                assertThat(html.getFumens())
+                        .hasSize(1)
+                        .contains("TfF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8De?F8CeG8BeA8AeF8AeA8BeH8AeG8Je2/XUAFLDmClcJSAVDEH?BEooRBKoAVB");
+            }
+            {
+                String command = String.format("ren -t %s -p jzostiljosztil -d 180 --kicks @nullpomino180", fumen);
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 // Log
@@ -225,6 +246,18 @@ class RenTetfuCaseTest {
             // Log
             assertThat(log.getReturnCode()).isNotEqualTo(0);
             assertThat(log.getError()).contains("Should specify one sequence, not allow pattern(*) for multi sequences");
+        }
+    }
+
+    @Nested
+    class IrregularTest extends RenUseCaseBaseTest {
+        @Test
+        void use180RotationWithDefault() throws Exception {
+            String command = "ren -t v115@TfF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8De?F8CeG8BeA8AeF8AeA8BeH8AeG8JeAgH -p jzostiljosztil --drop 180 --kicks default";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getReturnCode()).isNotEqualTo(0);
+            assertThat(log.getError()).contains("kicks do not support 180");
         }
     }
 }

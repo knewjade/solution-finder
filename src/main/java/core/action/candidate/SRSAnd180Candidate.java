@@ -29,6 +29,10 @@ public class SRSAnd180Candidate implements Candidate<Action> {
     private int appearY = 0;
 
     public SRSAnd180Candidate(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY) {
+        if (minoRotation.noSupports180()) {
+            throw new IllegalArgumentException("kicks do not support 180");
+        }
+
         this.minoFactory = minoFactory;
         this.minoShifter = minoShifter;
         this.minoRotation = minoRotation;
