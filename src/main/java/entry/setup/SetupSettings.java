@@ -7,6 +7,7 @@ import core.mino.Piece;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
 import entry.DropType;
+import entry.common.kicks.factory.DefaultMinoRotationFactory;
 import entry.setup.operation.*;
 import exceptions.FinderParseException;
 
@@ -129,7 +130,7 @@ public class SetupSettings {
     }
 
     Supplier<MinoRotation> createMinoRotationSupplier() {
-        return MinoRotation::create;
+        return DefaultMinoRotationFactory::createDefault;
     }
 
     // ********* Setter ************

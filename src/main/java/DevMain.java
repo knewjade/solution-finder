@@ -43,7 +43,7 @@ public class DevMain {
 //        String command = "setup -p *! --fill i --margin o -t v115@2gWpCeWpDe0hQpxhAe4hAe2hJeAgH --format csv";
 //        String command = "setup -p *! --fill i --margin o -t v115@2gWpCeWpDe0hQpxhAe4hAe2hJeAgH";
 //        String command = "setup -p [^SZT]! --fill i --margin o -t v115@zgTpwhQpDeTpAeQpDezhAewhDeyhQpAexhCeTpAeRp?MeAgH";
-        String command = "setup -t v115@zgyhDeC8whQ4FeB8R4FeB8Q4B8EeB8AeB8DeC8JeAg?H -p LZ -f I -F S -c no -np 2";
+//        String command = "setup -t v115@zgyhDeC8whQ4FeB8R4FeB8Q4B8EeB8AeB8DeC8JeAg?H -p LZ -f I -F S -c no -np 2";
 
 //        String command = "path -t v115@RhA8GeE8EeB8JeAgH -p LZZSITSO";
 //        String command = "path -p J,Z,O,S,L,I,I,J,S,O,Z -t v115@vhAAgH";
@@ -66,6 +66,7 @@ public class DevMain {
 
 //        String command = "util seq -M pass -hh no -p *! -e ^.{0,1}?S";
 
+        String command = "verify kicks";
         int returnCode = EntryPointMain.main(command.split(" "));
         System.exit(returnCode);
 

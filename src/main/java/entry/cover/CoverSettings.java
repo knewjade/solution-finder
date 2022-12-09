@@ -2,6 +2,7 @@ package entry.cover;
 
 import core.srs.MinoRotation;
 import entry.DropType;
+import entry.common.kicks.factory.DefaultMinoRotationFactory;
 import exceptions.FinderParseException;
 
 import java.util.Collections;
@@ -76,7 +77,7 @@ public class CoverSettings {
     }
 
     Supplier<MinoRotation> createMinoRotationSupplier() {
-        return MinoRotation::create;
+        return DefaultMinoRotationFactory::createDefault;
     }
 
     // ********* Setter ************

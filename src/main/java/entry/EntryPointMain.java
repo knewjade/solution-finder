@@ -36,6 +36,10 @@ import entry.util.seq.SeqUtilEntryPoint;
 import entry.util.seq.SeqUtilOptions;
 import entry.util.seq.SeqUtilSettingParser;
 import entry.util.seq.SeqUtilSettings;
+import entry.verify.kicks.VerifyKicksEntryPoint;
+import entry.verify.kicks.VerifyKicksOptions;
+import entry.verify.kicks.VerifyKicksSettingParser;
+import entry.verify.kicks.VerifyKicksSettings;
 import exceptions.FinderInitializeException;
 import exceptions.FinderParseException;
 import org.apache.commons.cli.CommandLineParser;
@@ -57,7 +61,8 @@ public class EntryPointMain {
             "cover",
             "util fig",
             "util fumen",
-            "util seq"
+            "util seq",
+            "verify kicks"
     );
 
     public static int main(String[] args) {
@@ -206,6 +211,8 @@ public class EntryPointMain {
                 return getCoverEntryPoint(commands);
             case "spin":
                 return getSpinEntryPoint(commands);
+            case "verify":
+                return getVerifyEntryPoint(commands);
             default:
                 throw new IllegalArgumentException("Invalid type: Use percent, path, util, setup, ren, cover, spin");
         }
@@ -270,7 +277,7 @@ public class EntryPointMain {
                 Options options = FumenUtilOptions.create();
                 CommandLineParser parser = new DefaultParser();
                 FumenUtilSettingParser settingParser = new FumenUtilSettingParser(options, parser);
-                Optional<FumenUtilSettings> settingsOptional = settingParser.parse(commands);
+                Optional<FumenUtilSettings> settingsOptional = settingParser.parse(parameters);
                 if (settingsOptional.isPresent()) {
                     FumenUtilSettings settings = settingsOptional.get();
                     return Optional.of(new FumenUtilEntryPoint(settings));
@@ -282,7 +289,7 @@ public class EntryPointMain {
                 Options options = SeqUtilOptions.create();
                 CommandLineParser parser = new DefaultParser();
                 SeqUtilSettingParser settingParser = new SeqUtilSettingParser(options, parser);
-                Optional<SeqUtilSettings> settingsOptional = settingParser.parse(commands);
+                Optional<SeqUtilSettings> settingsOptional = settingParser.parse(parameters);
                 if (settingsOptional.isPresent()) {
                     SeqUtilSettings settings = settingsOptional.get();
                     return Optional.of(new SeqUtilEntryPoint(settings));
@@ -333,6 +340,26 @@ public class EntryPointMain {
             return Optional.of(new SpinEntryPoint(settings));
         } else {
             return Optional.empty();
+        }
+    }
+
+    private static Optional<EntryPoint> getVerifyEntryPoint(List<String> commands) throws FinderParseException {
+        String subcommand = commands.get(0);
+        List<String> parameters = commands.subList(1, commands.size());
+
+        if ("kicks".equals(subcommand)) {
+            Options options = VerifyKicksOptions.create();
+            CommandLineParser parser = new DefaultParser();
+            VerifyKicksSettingParser settingParser = new VerifyKicksSettingParser(options, parser);
+            Optional<VerifyKicksSettings> settingsOptional = settingParser.parse(parameters);
+            if (settingsOptional.isPresent()) {
+                VerifyKicksSettings settings = settingsOptional.get();
+                return Optional.of(new VerifyKicksEntryPoint(settings));
+            } else {
+                return Optional.empty();
+            }
+        } else {
+            throw new IllegalArgumentException("verify: Invalid type");
         }
     }
 }

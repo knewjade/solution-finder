@@ -10,8 +10,6 @@ import java.util.Optional;
 import static common.tetfu.Tetfu.TETFU_MAX_HEIGHT;
 
 public class TetfuElement {
-    public static TetfuElement EMPTY = new TetfuElement(ColorType.Empty, Rotate.Reverse, 0, 0);
-
     public static TetfuElement createFieldOnly(ColoredField coloredField) {
         return new TetfuElement(coloredField, ColorType.Empty, Rotate.Reverse, 0, 0);
     }
@@ -53,6 +51,10 @@ public class TetfuElement {
 
     public TetfuElement(ColoredField field, ColorType colorType, Rotate rotate, int x, int y, String comment) {
         this(field, colorType, rotate, x, y, comment, true, false, false, null);
+    }
+
+    public TetfuElement(ColoredField field, ColorType colorType, Rotate rotate, int x, int y, String comment, boolean isLock) {
+        this(field, colorType, rotate, x, y, comment, isLock, false, false, null);
     }
 
     public TetfuElement(
