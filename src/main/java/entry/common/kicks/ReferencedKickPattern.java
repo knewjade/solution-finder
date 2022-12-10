@@ -9,6 +9,9 @@ class ReferencedKickPattern implements KickPattern {
     private final KickType referenceKickType;
 
     ReferencedKickPattern(KickType kickType, KickType referenceKickType) {
+        if (kickType.equals(referenceKickType)) {
+            throw new IllegalArgumentException("Cannot refer to itself");
+        }
         this.kickType = kickType;
         this.referenceKickType = referenceKickType;
     }

@@ -69,14 +69,14 @@ public class VerifyKicksEntryPoint implements EntryPoint {
                         int x = cx + pattern[0];
                         int y = cy + pattern[1];
                         String mark = minoRotation.isPrivilegeSpins(mino, direction, index) ? " @" : "";
-                        String comment = String.format("rotate to %s: test %d%s", toDirectionName(direction), index + 1, mark);
+                        String comment = String.format("to %s: test %d%s", toDirectionName(direction), index + 1, mark);
                         elements.add(new TetfuElement(coloredField, colorType, toRotate, x, y, comment, false));
                     }
                 }
 
                 String encode = new Tetfu(minoFactory, colorConverter).encode(elements);
                 System.out.printf("%s (from %s):%n", piece, fromRotate);
-                System.out.printf("https://fumen.zui.jp/?v115@%s%n", encode);
+                System.out.printf("https://fumen.zui.jp/?D115@%s%n", encode);
             }
         }
     }

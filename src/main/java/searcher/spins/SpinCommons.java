@@ -109,18 +109,22 @@ public class SpinCommons {
     }
 
     private static TSpins getTSpin(SpinResult spinResult, boolean filledTFront) {
-        if (!filledTFront) {
-            // Tの凸側のブロックが両方揃っていない
-            if (!spinResult.isPrivilegeSpins()) {
-                // TSTフォームのような特権がない限りはMiniと判定なる
-                // e.g. SRSでは「接着時にTが横向き and 回転テストパターンが最後のケース」の場合はRegular
-                return TSpins.Mini;
-            }
+        // 前提: Tスピンとなる条件（Tの隅に3つ以上ブロックが存在している）はこの時点で満たしている
 
-            // TSTの形のみ、Regularとなる
+        if (filledTFront) {
+            // Tの凸側のブロックが両方揃っている
+            return TSpins.Regular;
         }
 
-        return TSpins.Regular;
+        // Tの凸側のブロックが両方揃っていない
+        if (spinResult.isPrivilegeSpins()) {
+            // TSTフォームのような特権がある場合はRegularと判定する
+            // e.g. SRSでは「接着時にTが横向き and 回転テストパターンが最後のケース」の場合はRegular
+            return TSpins.Regular;
+        }
+
+        // 通常はMini
+        return TSpins.Mini;
     }
 
     private static TSpinNames getTSpinName(SpinResult spinResult, Rotate toRotate, boolean filledTFront, RotateDirection direction) {

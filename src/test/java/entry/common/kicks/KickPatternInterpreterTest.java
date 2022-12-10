@@ -47,7 +47,7 @@ class KickPatternInterpreterTest {
         void reference1() {
             KickPattern referenced = KickPatternInterpreter.create("J.WS", "(0,0)");
             Map<KickType, KickPattern> fallback = Collections.singletonMap(referenced.getKickType(), referenced);
-            assertThat(KickPatternInterpreter.create("L.SW", "J.WS"))
+            assertThat(KickPatternInterpreter.create("L.SW", "&J.WS"))
                     .returns(new KickType(Piece.L, Rotate.Reverse, Rotate.Left), KickPattern::getKickType)
                     .returns(null, KickPattern::getPattern)
                     .returns(Pattern.noPrivilegeSpins(new int[][]{{0, 0}}), it -> it.getPattern(fallback));
@@ -128,6 +128,18 @@ class KickPatternInterpreterTest {
         @Test
         void invalidMark() {
             assertThatThrownBy(() -> KickPatternInterpreter.create("O.WS", "(* -1,0)"))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void noRefMark() {
+            assertThatThrownBy(() -> KickPatternInterpreter.create("O.WS", "T.EW"))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void referenceToSelf() {
+            assertThatThrownBy(() -> KickPatternInterpreter.create("O.WS", "&O.WS"))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
