@@ -5,15 +5,27 @@ import core.srs.Rotate;
 
 import java.util.Objects;
 
-class KickType {
+public class KickType {
     private final Piece piece;
     private final Rotate rotateFrom;
     private final Rotate rotateTo;
 
-    KickType(Piece piece, Rotate rotateFrom, Rotate rotateTo) {
+    public KickType(Piece piece, Rotate rotateFrom, Rotate rotateTo) {
         this.piece = piece;
         this.rotateFrom = rotateFrom;
         this.rotateTo = rotateTo;
+    }
+
+    public Piece getPiece() {
+        return piece;
+    }
+
+    public Rotate getRotateFrom() {
+        return rotateFrom;
+    }
+
+    public Rotate getRotateTo() {
+        return rotateTo;
     }
 
     @Override

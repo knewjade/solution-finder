@@ -985,6 +985,32 @@ class SetupTetfuCaseTest {
 
             assertThat(log.getError()).isEmpty();
         }
+
+        @Test
+        void noKicks() throws Exception {
+            String fumen = "v115@9gTpFeUpxhBeB80hCeA8zhC8AeB8JeAgH";
+
+            {
+                String command = String.format("setup -t %s -p *! -f i -m o", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput())
+                        .contains(Messages.foundSolutions(11))
+                        .contains(Messages.foundSubSolutions(11));
+
+                assertThat(log.getError()).isEmpty();
+            }
+            {
+                String command = String.format("setup -t %s -p *! -f i -m o --kicks @nokicks", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput())
+                        .contains(Messages.foundSolutions(4))
+                        .contains(Messages.foundSubSolutions(4));
+
+                assertThat(log.getError()).isEmpty();
+            }
+        }
     }
 
     @Nested

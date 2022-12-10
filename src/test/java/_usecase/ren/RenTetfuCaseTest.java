@@ -196,22 +196,37 @@ class RenTetfuCaseTest {
         }
 
         @Test
-        void manyPatterns() throws Exception {
-            ConfigFileHelper.createPatternFileFromCommand("*, *!");
+        void noKicks() throws Exception {
+            String fumen = "v115@VgF8DeF8DeF8DeF8DeF8DeF8DeH8BeG8MeAgH";
 
-            String tetfu = "v115@9gB8HeC8GeD8FeC8QeAgH";
-            String command = String.format("ren -t %s", tetfu);
-            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
-            System.out.println(log.getOutput());
-            System.out.println(log.getError());
-//            assertThat(log.getOutput())
-//                    .contains(_usecase.percent.Messages.useHold())
-//                    .contains(_usecase.percent.Messages.success(34981, 35280))
-//                    .contains(_usecase.percent.Messages.clearLine(4))
-//                    .contains(_usecase.percent.Messages.patternSize(35280))
-//                    .contains("and more, total 35280 lines");
-//
-//            assertThat(log.getError()).isEmpty();
+            {
+                String command = String.format("ren --tetfu %s --patterns TOLJISZ", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput())
+                        .contains(Messages.foundSolutions(40))
+                        .contains(Messages.maxRen(6));
+                assertThat(log.getError()).isEmpty();
+            }
+            {
+                String command = String.format("ren --tetfu %s --patterns TOLJISZ --kicks @nokicks", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput())
+                        .contains(Messages.foundSolutions(28))
+                        .contains(Messages.maxRen(6));
+                assertThat(log.getError()).isEmpty();
+                System.out.println(log.getOutput());
+            }
+            {
+                String command = String.format("ren --tetfu %s --patterns TOLJISZ --kicks @nokicks -d 180", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput())
+                        .contains(Messages.foundSolutions(27))
+                        .contains(Messages.maxRen(6));
+                assertThat(log.getError()).isEmpty();
+            }
         }
     }
 

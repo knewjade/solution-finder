@@ -1220,6 +1220,27 @@ class CoverTetfuCaseTest {
                 assertThat(log.getOutput()).contains(Messages.foundSolutions(1, all, fumen));
             }
         }
+
+        @Test
+        void noKicks() throws Exception {
+            String fumen = "v115@vhFRQJUGJKJJvMJTNJGBJ v115@vhFRQJPGJKJJGMJTNJ0BJ";
+
+            int all = 5040;
+            {
+                String command = String.format("cover -t %s -p *!", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(3108, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(812, all));
+            }
+            {
+                String command = String.format("cover -t %s -p *! --kicks @nokicks", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(2730, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(770, all));
+            }
+        }
     }
 
     @Nested
