@@ -8,7 +8,7 @@ import core.field.FieldFactory;
 import core.mino.*;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.factory.SRSMinoRotationFactory;
 import lib.Coordinates;
 import lib.Randoms;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ class RotateCandidateTest {
     void testSearch1() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         Candidate<Action> candidate = new RotateCandidate(minoFactory, minoShifter, minoRotation, 4);
 
         String marks = "" +
@@ -53,7 +53,7 @@ class RotateCandidateTest {
     void testSearch2() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         Candidate<Action> candidate = new RotateCandidate(minoFactory, minoShifter, minoRotation, 3);
 
         String marks = "" +
@@ -78,7 +78,7 @@ class RotateCandidateTest {
 
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new PassedMinoShifter();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
 
         for (int count = 0; count < 10000; count++) {
             int randomHeight = randoms.nextIntClosed(2, 12);

@@ -9,7 +9,7 @@ import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.MinoFactory;
 import core.srs.MinoRotation;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.factory.SRSMinoRotationFactory;
 import entry.searching_pieces.NormalEnumeratePieces;
 import org.junit.jupiter.api.Test;
 
@@ -53,7 +53,7 @@ class PercentCoreTest {
         Set<LongPieces> blocks = enumeratePieces.enumerate();
 
         Optional<ExecutorService> executorService = obj.isSingleThread ? Optional.empty() : Optional.of(Executors.newCachedThreadPool());
-        Supplier<MinoRotation> minoRotationSupplier = DefaultMinoRotationFactory::createDefault;
+        Supplier<MinoRotation> minoRotationSupplier = SRSMinoRotationFactory::createDefault;
         LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(minoRotationSupplier, obj.maxClearLine);
         LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(minoRotationSupplier, obj.maxClearLine);
         MinoFactory minoFactory = new MinoFactory();

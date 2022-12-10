@@ -13,7 +13,7 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.mino.Piece;
 import core.srs.MinoRotation;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.factory.SRSMinoRotationFactory;
 import module.LongTest;
 import org.junit.jupiter.api.Test;
 import searcher.pack.InOutPairField;
@@ -200,7 +200,7 @@ class PackSearcherComparingParityBasedOnDemandTest {
             }
         }
 
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(minoRotation, sizedBit.getHeight());
         return new UsingBlockAndValidKeySolutionFilter(initField, validBlockCounters, reachableThreadLocal, sizedBit);
     }

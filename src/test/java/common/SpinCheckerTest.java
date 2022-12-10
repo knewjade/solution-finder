@@ -10,7 +10,7 @@ import core.mino.Piece;
 import core.srs.MinoRotation;
 import core.srs.MinoRotationDetail;
 import core.srs.Rotate;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.factory.SRSMinoRotationFactory;
 import org.junit.jupiter.api.Test;
 import searcher.spins.spin.Spin;
 import searcher.spins.spin.TSpins;
@@ -25,7 +25,7 @@ class SpinCheckerTest {
         int maxY = 24;
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         MinoRotationDetail minoRotationDetail = new MinoRotationDetail(minoFactory, minoRotation);
         LockedReachable lockedReachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
         SpinChecker spinChecker = new SpinChecker(minoFactory, minoRotationDetail, lockedReachable);

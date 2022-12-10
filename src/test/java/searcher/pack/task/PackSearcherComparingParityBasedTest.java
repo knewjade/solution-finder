@@ -13,7 +13,7 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.mino.Piece;
 import core.srs.MinoRotation;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.factory.SRSMinoRotationFactory;
 import org.junit.jupiter.api.Test;
 import searcher.pack.InOutPairField;
 import searcher.pack.SeparableMinos;
@@ -137,7 +137,7 @@ class PackSearcherComparingParityBasedTest {
         SeparableMinos separableMinos = createSeparableMinos(sizedBit);
         BasicSolutionsCalculator calculator = new BasicSolutionsCalculator(separableMinos, sizedBit);
         Map<ColumnField, RecursiveMinoFields> calculate = calculator.calculate();
-        Supplier<MinoRotation> minoRotationSupplier = DefaultMinoRotationFactory::createDefault;
+        Supplier<MinoRotation> minoRotationSupplier = SRSMinoRotationFactory::createDefault;
 
         for (TestData data : testDataList) {
             // 準備

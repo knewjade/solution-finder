@@ -4,7 +4,7 @@ import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Mino;
 import core.mino.Piece;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.factory.SRSMinoRotationFactory;
 import entry.common.kicks.factory.FileMinoRotationFactory;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class MinoRotationTest {
     @Nested
     class Kicks {
-        private final MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        private final MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
 
         private int[] kicksLeft(String marks, Mino mino, int x, int y) {
             Field field = FieldFactory.createField(marks);
@@ -1086,7 +1086,7 @@ class MinoRotationTest {
 
     @Nested
     class Offset {
-        private final MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        private final MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
 
         @Nested
         class JLSTZ {

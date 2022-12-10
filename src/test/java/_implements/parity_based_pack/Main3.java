@@ -29,7 +29,7 @@ import core.mino.MinoFactory;
 import core.mino.Piece;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.factory.SRSMinoRotationFactory;
 import lib.Stopwatch;
 
 import java.util.*;
@@ -270,7 +270,7 @@ public class Main3 {
 
     public static List<List<MinoOperationWithKey>> search(List<Piece> usedPieces, Field field, int maxClearLine, Field verifyField) {
         MinoFactory minoFactory = new MinoFactory();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         PositionLimitParser positionLimitParser = new PositionLimitParser(minoFactory, maxClearLine);
         LockedReachableThreadLocal threadLocal = new LockedReachableThreadLocal(minoRotation, maxClearLine);
 

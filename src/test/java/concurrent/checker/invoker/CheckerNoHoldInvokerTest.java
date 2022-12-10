@@ -19,7 +19,7 @@ import core.field.FieldFactory;
 import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.srs.MinoRotation;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.factory.SRSMinoRotationFactory;
 import exceptions.FinderExecuteException;
 import lib.Randoms;
 import module.LongTest;
@@ -397,7 +397,7 @@ class CheckerNoHoldInvokerTest {
 
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
 
         PerfectValidator validator = new PerfectValidator();
         CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
@@ -432,7 +432,7 @@ class CheckerNoHoldInvokerTest {
         private ConcurrentCheckerInvoker createConcurrentCheckerUsingHoldInvoker(int maxClearLine) {
             MinoFactory minoFactory = new MinoFactory();
             CheckerNoHoldThreadLocal<Action> checkerThreadLocal = new CheckerNoHoldThreadLocal<>();
-            Supplier<MinoRotation> minoRotationSupplier = DefaultMinoRotationFactory::createDefault;
+            Supplier<MinoRotation> minoRotationSupplier = SRSMinoRotationFactory::createDefault;
             LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(minoRotationSupplier, maxClearLine);
             LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(minoRotationSupplier, maxClearLine);
             CheckerCommonObj commonObj = new CheckerCommonObj(minoFactory, candidateThreadLocal, checkerThreadLocal, reachableThreadLocal);
@@ -442,7 +442,7 @@ class CheckerNoHoldInvokerTest {
         private ConcurrentCheckerInvoker createSingleCheckerNoHoldInvoker(int maxClearLine) {
             MinoFactory minoFactory = new MinoFactory();
             CheckerNoHoldThreadLocal<Action> checkerThreadLocal = new CheckerNoHoldThreadLocal<>();
-            Supplier<MinoRotation> minoRotationSupplier = DefaultMinoRotationFactory::createDefault;
+            Supplier<MinoRotation> minoRotationSupplier = SRSMinoRotationFactory::createDefault;
             LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(minoRotationSupplier, maxClearLine);
             LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(minoRotationSupplier, maxClearLine);
             CheckerCommonObj commonObj = new CheckerCommonObj(minoFactory, candidateThreadLocal, checkerThreadLocal, reachableThreadLocal);

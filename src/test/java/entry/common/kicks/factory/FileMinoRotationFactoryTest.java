@@ -100,7 +100,7 @@ class FileMinoRotationFactoryTest {
         assertThat(minoRotation).returns(false, MinoRotation::supports180);
 
         MinoFactory minoFactory = new MinoFactory();
-        MinoRotation defaultMinoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation defaultMinoRotation = SRSMinoRotationFactory.createDefault();
         for (Piece piece : Piece.values()) {
             for (Rotate rotate : Rotate.values()) {
                 Mino mino = minoFactory.create(piece, rotate);
@@ -122,7 +122,7 @@ class FileMinoRotationFactoryTest {
         assertThat(minoRotation).returns(false, MinoRotation::supports180);
 
         MinoFactory minoFactory = new MinoFactory();
-        MinoRotation defaultMinoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation defaultMinoRotation = SRSMinoRotationFactory.createDefault();
         for (Piece piece : Piece.values()) {
             for (Rotate rotate : Rotate.values()) {
                 Mino mino = minoFactory.create(piece, rotate);

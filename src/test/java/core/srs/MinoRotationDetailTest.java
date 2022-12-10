@@ -4,7 +4,7 @@ import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.MinoFactory;
 import core.mino.Piece;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.factory.SRSMinoRotationFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,7 +13,7 @@ class MinoRotationDetailTest {
     @Test
     void caseDouble() {
         MinoFactory minoFactory = new MinoFactory();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         MinoRotationDetail detail = new MinoRotationDetail(minoFactory, minoRotation);
 
         Field field = FieldFactory.createField("" +
@@ -34,7 +34,7 @@ class MinoRotationDetailTest {
     @Test
     void caseMini() {
         MinoFactory minoFactory = new MinoFactory();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         MinoRotationDetail detail = new MinoRotationDetail(minoFactory, minoRotation);
 
         Field field = FieldFactory.createField("" +
@@ -55,7 +55,7 @@ class MinoRotationDetailTest {
     @Test
     void caseTripe() {
         MinoFactory minoFactory = new MinoFactory();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         MinoRotationDetail detail = new MinoRotationDetail(minoFactory, minoRotation);
 
         Field field = FieldFactory.createField("" +
@@ -78,7 +78,7 @@ class MinoRotationDetailTest {
     @Test
     void caseNeo() {
         MinoFactory minoFactory = new MinoFactory();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         MinoRotationDetail detail = new MinoRotationDetail(minoFactory, minoRotation);
 
         Field field = FieldFactory.createField("" +
@@ -101,7 +101,7 @@ class MinoRotationDetailTest {
     @Test
     void caseFin() {
         MinoFactory minoFactory = new MinoFactory();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         MinoRotationDetail detail = new MinoRotationDetail(minoFactory, minoRotation);
 
         Field field = FieldFactory.createField("" +
@@ -124,7 +124,7 @@ class MinoRotationDetailTest {
     @Test
     void caseIso() {
         MinoFactory minoFactory = new MinoFactory();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         MinoRotationDetail detail = new MinoRotationDetail(minoFactory, minoRotation);
 
         Field field = FieldFactory.createField("" +

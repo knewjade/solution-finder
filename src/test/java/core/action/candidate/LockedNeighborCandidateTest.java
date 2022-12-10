@@ -11,7 +11,7 @@ import core.neighbor.Neighbor;
 import core.neighbor.OriginalPiece;
 import core.neighbor.OriginalPieceFactory;
 import core.srs.MinoRotation;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.factory.SRSMinoRotationFactory;
 import lib.Randoms;
 import lib.Stopwatch;
 import org.junit.jupiter.api.Test;
@@ -32,14 +32,14 @@ class LockedNeighborCandidateTest {
     private LockedCandidate createLockedCandidate(int maxClearLine) {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         return new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
     }
 
     private LockedNeighborCandidate createLockedNeighborCandidate(int maxClearLine) {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         OriginalPieceFactory pieceFactory = new OriginalPieceFactory(maxClearLine + 3);
         return new LockedNeighborCandidate(minoFactory, minoShifter, minoRotation, pieceFactory);
     }
