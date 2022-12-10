@@ -13,7 +13,7 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.mino.Piece;
 import core.srs.MinoRotation;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.factory.SRSMinoRotationFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ class CheckerNoHoldCountTest {
         // Initialize
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         PerfectValidator validator = new PerfectValidator();
         CheckerNoHold<Action> checker = new CheckerNoHold<>(minoFactory, validator);
 

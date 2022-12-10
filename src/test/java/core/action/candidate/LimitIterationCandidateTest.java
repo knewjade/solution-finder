@@ -9,7 +9,7 @@ import core.mino.MinoShifter;
 import core.mino.Piece;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.factory.SRSMinoRotationFactory;
 import lib.Randoms;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +22,7 @@ class LimitIterationCandidateTest {
     void testSearch1() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         Candidate<Action> candidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 3);
 
         String marks = "" +
@@ -42,7 +42,7 @@ class LimitIterationCandidateTest {
     void testSearch2() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         Candidate<Action> candidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 3);
 
         String marks = "" +
@@ -63,7 +63,7 @@ class LimitIterationCandidateTest {
     void testSearch3When3Iteration() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         Candidate<Action> candidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 3);
 
         String marks = "" +
@@ -91,7 +91,7 @@ class LimitIterationCandidateTest {
     void testSearch3When4Iteration() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         Candidate<Action> candidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 4);
 
         String marks = "" +
@@ -114,7 +114,7 @@ class LimitIterationCandidateTest {
     void testSearch4() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         Candidate<Action> candidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 4);
 
         String marks = "" +
@@ -140,7 +140,7 @@ class LimitIterationCandidateTest {
 
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         HarddropCandidate harddropCandidate = new HarddropCandidate(minoFactory, minoShifter);
         LimitIterationCandidate limitIterationCandidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 0);
 

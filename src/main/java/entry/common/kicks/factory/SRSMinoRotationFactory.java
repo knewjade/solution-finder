@@ -5,8 +5,8 @@ import core.srs.*;
 
 import java.util.EnumMap;
 
-public class DefaultMinoRotationFactory {
-    private static final DefaultMinoRotationFactory DEFAULT_FACTORY = new DefaultMinoRotationFactory();
+public class SRSMinoRotationFactory {
+    private static final SRSMinoRotationFactory DEFAULT_FACTORY = new SRSMinoRotationFactory();
 
     public static MinoRotation createDefault() {
         return DEFAULT_FACTORY.create();

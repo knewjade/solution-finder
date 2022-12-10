@@ -19,7 +19,7 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.mino.Piece;
 import core.srs.MinoRotation;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.factory.SRSMinoRotationFactory;
 import module.LongTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -42,7 +42,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CheckmateUsingHoldTest {
     private final MinoFactory minoFactory = new MinoFactory();
     private final MinoShifter minoShifter = new MinoShifter();
-    private final MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+    private final MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
     private final PerfectValidator validator = new PerfectValidator();
     private final Checkmate<Action> checkmate = new CheckmateUsingHold<>(minoFactory, validator);
 

@@ -10,7 +10,7 @@ import core.mino.MinoFactory;
 import core.mino.Piece;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.factory.SRSMinoRotationFactory;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -24,7 +24,7 @@ class SequenceFumenParserTest {
     void case1() {
         MinoFactory minoFactory = new MinoFactory();
         ColorConverter colorConverter = new ColorConverter();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         SequenceFumenParser parser = new SequenceFumenParser(minoFactory, minoRotation, colorConverter);
 
         Field field = FieldFactory.createField("" +
@@ -49,7 +49,7 @@ class SequenceFumenParserTest {
     void case2() {
         MinoFactory minoFactory = new MinoFactory();
         ColorConverter colorConverter = new ColorConverter();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         SequenceFumenParser parser = new SequenceFumenParser(minoFactory, minoRotation, colorConverter);
 
         Field field = FieldFactory.createField("" +

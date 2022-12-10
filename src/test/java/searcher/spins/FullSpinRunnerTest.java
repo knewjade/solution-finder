@@ -12,7 +12,7 @@ import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.MinoFactory;
 import core.mino.Piece;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.factory.SRSMinoRotationFactory;
 import entry.path.output.OneFumenParser;
 import module.LongTest;
 import org.junit.jupiter.api.Disabled;
@@ -41,7 +41,7 @@ class FullSpinRunnerTest {
                 , fieldHeight);
         PieceCounter pieceCounter = new PieceCounter(Piece.valueList());
 
-        FirstPreSpinRunner firstPreSpinRunner = new FirstPreSpinRunner(DefaultMinoRotationFactory::createDefault, 4, fieldHeight);
+        FirstPreSpinRunner firstPreSpinRunner = new FirstPreSpinRunner(SRSMinoRotationFactory::createDefault, 4, fieldHeight);
         SecondPreSpinRunner secondPreSpinRunner = new SecondPreSpinRunner(firstPreSpinRunner, initField, pieceCounter);
         FullSpinRunner runner = new FullSpinRunner();
         List<Candidate> results = runner.search(secondPreSpinRunner, 1).parallel().collect(Collectors.toList());
@@ -78,7 +78,7 @@ class FullSpinRunnerTest {
                 , fieldHeight);
         PieceCounter pieceCounter = new PieceCounter(Piece.valueList());
 
-        FirstPreSpinRunner firstPreSpinRunner = new FirstPreSpinRunner(DefaultMinoRotationFactory::createDefault, 5, fieldHeight);
+        FirstPreSpinRunner firstPreSpinRunner = new FirstPreSpinRunner(SRSMinoRotationFactory::createDefault, 5, fieldHeight);
         SecondPreSpinRunner secondPreSpinRunner = new SecondPreSpinRunner(firstPreSpinRunner, initField, pieceCounter);
         FullSpinRunner runner = new FullSpinRunner();
         List<Candidate> results = runner.search(secondPreSpinRunner, 1).parallel().collect(Collectors.toList());
@@ -103,7 +103,7 @@ class FullSpinRunnerTest {
                 , fieldHeight);
         PieceCounter pieceCounter = new PieceCounter(Piece.valueList());
 
-        FirstPreSpinRunner firstPreSpinRunner = new FirstPreSpinRunner(DefaultMinoRotationFactory::createDefault, 4, fieldHeight);
+        FirstPreSpinRunner firstPreSpinRunner = new FirstPreSpinRunner(SRSMinoRotationFactory::createDefault, 4, fieldHeight);
         SecondPreSpinRunner secondPreSpinRunner = new SecondPreSpinRunner(firstPreSpinRunner, initField, pieceCounter);
         FullSpinRunner runner = new FullSpinRunner();
         List<Candidate> results = runner.search(secondPreSpinRunner, 2).parallel().collect(Collectors.toList());
@@ -127,7 +127,7 @@ class FullSpinRunnerTest {
                 , fieldHeight);
         PieceCounter pieceCounter = new PieceCounter(Arrays.asList(Piece.L, Piece.S, Piece.T));
 
-        FirstPreSpinRunner firstPreSpinRunner = new FirstPreSpinRunner(DefaultMinoRotationFactory::createDefault, 5, fieldHeight);
+        FirstPreSpinRunner firstPreSpinRunner = new FirstPreSpinRunner(SRSMinoRotationFactory::createDefault, 5, fieldHeight);
         SecondPreSpinRunner secondPreSpinRunner = new SecondPreSpinRunner(firstPreSpinRunner, initField, pieceCounter);
         FullSpinRunner runner = new FullSpinRunner();
         List<Candidate> results = runner.search(secondPreSpinRunner, 1).parallel().collect(Collectors.toList());

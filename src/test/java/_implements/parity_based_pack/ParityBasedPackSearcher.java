@@ -14,7 +14,7 @@ import core.field.Field;
 import core.mino.MinoFactory;
 import core.mino.Piece;
 import core.srs.MinoRotation;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.factory.SRSMinoRotationFactory;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -41,7 +41,7 @@ public class ParityBasedPackSearcher {
     public Stream<List<MinoOperationWithKey>> search(List<Piece> usingPieces) {
         // 準備
         MinoFactory minoFactory = new MinoFactory();
-        Supplier<MinoRotation> minoRotationSupplier = DefaultMinoRotationFactory::createDefault;
+        Supplier<MinoRotation> minoRotationSupplier = SRSMinoRotationFactory::createDefault;
         PositionLimitParser positionLimitParser = new PositionLimitParser(minoFactory, maxClearLine);
         LockedReachableThreadLocal threadLocal = new LockedReachableThreadLocal(minoRotationSupplier, maxClearLine);
 

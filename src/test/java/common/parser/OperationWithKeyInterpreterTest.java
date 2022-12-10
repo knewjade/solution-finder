@@ -11,7 +11,7 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.mino.Piece;
 import core.srs.Rotate;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.factory.SRSMinoRotationFactory;
 import lib.Randoms;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +35,7 @@ class OperationWithKeyInterpreterTest {
         MinoFactory minoFactory = new MinoFactory();
         List<MinoOperationWithKey> operationWithKeys = OperationWithKeyInterpreter.parseToList(base, minoFactory);
 
-        LockedReachable reachable = new LockedReachable(minoFactory, new MinoShifter(), DefaultMinoRotationFactory.createDefault(), 8);
+        LockedReachable reachable = new LockedReachable(minoFactory, new MinoShifter(), SRSMinoRotationFactory.createDefault(), 8);
         assertThat(BuildUp.cansBuild(initField, operationWithKeys, 8, reachable)).isTrue();
 
         String line = OperationWithKeyInterpreter.parseToString(operationWithKeys);

@@ -1,13 +1,13 @@
 package entry.common.kicks;
 
 import core.srs.MinoRotation;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.factory.SRSMinoRotationFactory;
 
 import java.util.function.Supplier;
 
 public class NamedSupplierMinoRotation {
     public static NamedSupplierMinoRotation createDefault() {
-        return new NamedSupplierMinoRotation(DefaultMinoRotationFactory::createDefault, "default");
+        return new NamedSupplierMinoRotation(SRSMinoRotationFactory::createDefault, "srs");
     }
 
     private final Supplier<MinoRotation> minoRotationSupplier;

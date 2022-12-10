@@ -20,7 +20,7 @@ import core.mino.MinoShifter;
 import core.mino.Piece;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.factory.SRSMinoRotationFactory;
 import lib.Randoms;
 import module.LongTest;
 import org.junit.jupiter.api.Test;
@@ -62,7 +62,7 @@ class BuildUpTest {
 
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
 
         Operations operations = OperationInterpreter.parseToOperations("J,0,1,0;S,L,1,2;O,0,2,1;J,2,2,1");
@@ -84,7 +84,7 @@ class BuildUpTest {
         // Initialize
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         PerfectValidator validator = new PerfectValidator();
         CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
 
@@ -123,7 +123,7 @@ class BuildUpTest {
         // Initialize
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         PerfectValidator validator = new PerfectValidator();
         CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
 
@@ -161,7 +161,7 @@ class BuildUpTest {
 
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
 
         List<MinoOperationWithKey> operationWithKeys = Arrays.asList(
@@ -187,7 +187,7 @@ class BuildUpTest {
 
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
 
         List<MinoOperationWithKey> operationWithKeys = Arrays.asList(
@@ -205,7 +205,7 @@ class BuildUpTest {
         Randoms randoms = new Randoms();
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
 
         // Define size
         int height = 4;
@@ -287,7 +287,7 @@ class BuildUpTest {
         Randoms randoms = new Randoms();
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
 
         // Define size
         int height = 4;
@@ -383,7 +383,7 @@ class BuildUpTest {
 
         // reachableの準備
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
 
         // existsValidBuildPatternのチェック
@@ -428,7 +428,7 @@ class BuildUpTest {
 
         // reachableの準備
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
 
         // existsValidBuildPatternのチェック
@@ -466,7 +466,7 @@ class BuildUpTest {
         List<MinoOperationWithKey> operations = stream.collect(Collectors.toList());
 
         int height = 4;
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         MinoShifter minoShifter = new MinoShifter();
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
 
@@ -496,7 +496,7 @@ class BuildUpTest {
 
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
 
         LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
 

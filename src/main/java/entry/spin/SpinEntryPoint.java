@@ -16,7 +16,7 @@ import core.srs.MinoRotation;
 import core.srs.MinoRotationDetail;
 import entry.EntryPoint;
 import entry.Verify;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.factory.SRSMinoRotationFactory;
 import entry.path.output.FumenParser;
 import entry.path.output.MyFile;
 import entry.path.output.OneFumenParser;
@@ -148,7 +148,7 @@ public class SpinEntryPoint implements EntryPoint {
         output();
 
         MinoFactory minoFactory = new MinoFactory();
-        MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+        MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         MinoRotationDetail minoRotationDetail = new MinoRotationDetail(minoFactory, minoRotation);
         MinoShifter minoShifter = new MinoShifter();
         ColorConverter colorConverter = new ColorConverter();

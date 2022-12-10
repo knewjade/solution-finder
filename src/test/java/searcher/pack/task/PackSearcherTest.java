@@ -22,7 +22,7 @@ import core.mino.MinoFactory;
 import core.mino.MinoShifter;
 import core.mino.Piece;
 import core.srs.MinoRotation;
-import entry.common.kicks.factory.DefaultMinoRotationFactory;
+import entry.common.kicks.factory.SRSMinoRotationFactory;
 import lib.Randoms;
 import module.LongTest;
 import org.junit.jupiter.api.Nested;
@@ -59,7 +59,7 @@ class PackSearcherTest {
 
     private final MinoFactory minoFactory = new MinoFactory();
     private final MinoShifter minoShifter = new MinoShifter();
-    private final MinoRotation minoRotation = DefaultMinoRotationFactory.createDefault();
+    private final MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
 
     private BasicSolutions createMappedBasicSolutions(SizedBit sizedBit) {
         SeparableMinos separableMinos = SeparableMinos.createSeparableMinos(minoFactory, minoShifter, sizedBit);
