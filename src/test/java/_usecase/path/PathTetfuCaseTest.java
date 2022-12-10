@@ -1526,4 +1526,36 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
                     .returns(1, path -> path.allFumens().size());
         }
     }
+
+    @Test
+    void noKicks() throws Exception {
+        String fumen = "v115@9gE8DeG8CeH8BeG8CeA8JeAgH";
+
+        {
+            String command = String.format("path -t %s -p *p4", fumen);
+
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput())
+                    .contains("*p4")
+                    .contains(Messages.uniqueCount(18))
+                    .contains(Messages.minimalCount(16))
+                    .contains(Messages.useHold());
+
+            assertThat(log.getError()).isEmpty();
+        }
+        {
+            String command = String.format("path -t %s -p *p4 --kicks @nokicks", fumen);
+
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput())
+                    .contains("*p4")
+                    .contains(Messages.uniqueCount(8))
+                    .contains(Messages.minimalCount(8))
+                    .contains(Messages.useHold());
+
+            assertThat(log.getError()).isEmpty();
+        }
+    }
 }

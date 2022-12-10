@@ -142,5 +142,47 @@ class VerifyKicksUseCaseTest {
 
             assertThat(log.getError()).isEmpty();
         }
+
+        @Test
+        void noKicks() throws Exception {
+            String command = "verify kicks --kicks @nokicks";
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            List<String> expectedFumens = List.of(
+                    "https://fumen.zui.jp/?D115@yfA8HeC8wf1eXMAGsrGEAemsCwSVKEyfQpHeSpwft+?tSA03xUEprDeElsKBA0YceEgZAAAvhB9+tRA03hAEFq2TAz?xgbEl9+CARAAAAl+tQA03Z5AYoTABhA1rDT/Z5A",
+                    "https://fumen.zui.jp/?D115@xfA8IeB8HeA8ofNeXMAGsrGEAeOpCprDeExfQpIeRp?HeQpofF+tSA03xUEprDeElsKBA0YceEgZAAAvhBV+tRA03h?AEFq2TAzxgbEl9+CARAAAAd+tQA03Z5AYoTABhA1rDT/Z5A?",
+                    "https://fumen.zui.jp/?D115@7fC8HeA8nfleXOAGsrGEAeOpCFSNXEzoBAA7fSpHeQ?pnf9+tSA03xUEprDeElsKBA0YceEgZAAAvhBt+tRA03hAEF?q2TAzxgbEl9+CARAAAA1+tQA03Z5AYoTABhA1rDT/Z5A",
+                    "https://fumen.zui.jp/?D115@yfA8HeB8IeA8nf9eXLAGsrGEAe+UCFq+CAyfQpHeRp?IeQpnf1+tSA03xUEprDeElsKBA0YceEgZAAAvhBl+tRA03h?AEFq2TAzxgbEl9+CARAAAAt+tQA03Z5AYoTABhA1rDT/Z5A?",
+                    "https://fumen.zui.jp/?D115@6fD8wfReXMAGsrGEgNmsCwSVKE6fT4wfp+tSA03xUE?prDeElsKBA0YceEgZAAAvhBZ+tRA03hAEFq2TAzxgbEl9+C?ARAAAAB+tQA03Z5AYoTABhA1rDT/Z5A",
+                    "https://fumen.zui.jp/?D115@yfA8IeA8IeA8IeA8dfpeXMAGsrGEgNOpCprDeEyfQ4?IeQ4IeQ4IeQ4dfBDuSA03xUEprDeElsKBA0YceEgZAAAvhB?R+tRA03hAEFq2TAzxgbEl9+CARAAAA5+tQA03Z5AYoTABhA?1rDT/Z5A",
+                    "https://fumen.zui.jp/?D115@6fD8wfBeXOAGsrGEgNOpCFSNXEzoBAA6fT4wfZ5tSA?03xUEprDeElsKBA0YceEgZAAAvhBp5tRA03hAEFq2TAzxgb?El9+CARAAAAR+tQA03Z5AYoTABhA1rDT/Z5A",
+                    "https://fumen.zui.jp/?D115@ofA8IeA8IeA8IeA8nf5ZXLAGsrGEgN+UCFq+CAofQ4?IeQ4IeQ4IeQ4nfx5tSA03xUEprDeElsKBA0YceEgZAAAvhB?h+tRA03hAEFq2TAzxgbEl9+CARAAAAp5tQA03Z5AYoTABhA?1rDT/Z5A",
+                    "https://fumen.zui.jp/?D115@zfA8GeC8wfyeXMAGsrGEASmsCwSVKEzfg0Gei0wfq+?tSA03xUEprDeElsKBA0YceEgZAAAvhB6+tRA03hAEFq2TAz?xgbEl9+CARAAAAi+tQA03Z5AYoTABhA1rDT/Z5A",
+                    "https://fumen.zui.jp/?D115@xfA8IeA8IeB8nfKeXMAGsrGEASOpCprDeExfg0Ieg0?Ieh0nfC+tSA03xUEprDeElsKBA0YceEgZAAAvhBS+tRA03h?AEFq2TAzxgbEl9+CARAAAAa+tQA03Z5AYoTABhA1rDT/Z5A?",
+                    "https://fumen.zui.jp/?D115@7fC8GeA8ofieXOAGsrGEASOpCFSNXEzoBAA7fi0Geg?0of6+tSA03xUEprDeElsKBA0YceEgZAAAvhBq+tRA03hAEF?q2TAzxgbEl9+CARAAAAy+tQA03Z5AYoTABhA1rDT/Z5A",
+                    "https://fumen.zui.jp/?D115@xfB8IeA8IeA8nf6eXLAGsrGEAS+UCFq+CAxfh0Ieg0?Ieg0nfy+tSA03xUEprDeElsKBA0YceEgZAAAvhBi+tRA03h?AEFq2TAzxgbEl9+CARAAAAq+tQA03Z5AYoTABhA1rDT/Z5A?",
+                    "https://fumen.zui.jp/?D115@xfA8IeC8wf2eXMAGsrGEAPmsCwSVKExfglIeilwfu+?tSA03xUEprDeElsKBA0YceEgZAAAvhB++tRA03hAEFq2TAz?xgbEl9+CARAAAAm+tQA03Z5AYoTABhA1rDT/Z5A",
+                    "https://fumen.zui.jp/?D115@xfB8HeA8IeA8ofOeXMAGsrGEAPOpCprDeExfhlHegl?IeglofG+tSA03xUEprDeElsKBA0YceEgZAAAvhBW+tRA03h?AEFq2TAzxgbEl9+CARAAAAe+tQA03Z5AYoTABhA1rDT/Z5A?",
+                    "https://fumen.zui.jp/?D115@7fC8IeA8mfmeXOAGsrGEAPOpCFSNXEzoBAA7filIeg?lmf++tSA03xUEprDeElsKBA0YceEgZAAAvhBu+tRA03hAEF?q2TAzxgbEl9+CARAAAA2+tQA03Z5AYoTABhA1rDT/Z5A",
+                    "https://fumen.zui.jp/?D115@yfA8IeA8HeB8nf+eXLAGsrGEAP+UCFq+CAyfglIegl?Hehlnf2+tSA03xUEprDeElsKBA0YceEgZAAAvhBm+tRA03h?AEFq2TAzxgbEl9+CARAAAAu+tQA03Z5AYoTABhA1rDT/Z5A?",
+                    "https://fumen.zui.jp/?D115@yfB8GeB8xf3ZXMAGsrGEgcmsCwSVKEyfxhGexhxfP/?tSA03xUEprDeElsKBA0YceEgZAAAvhB/+tRA03hAEFq2TAz?xgbEl9+CARAAAAn5tQA03Z5AYoTABhA1rDT/Z5A",
+                    "https://fumen.zui.jp/?D115@xfA8IeB8IeA8nfveXMAGsrGEgcOpCprDeExfwhIexh?IewhnfH+tSA03xUEprDeElsKBA0YceEgZAAAvhBX5tRA03h?AEFq2TAzxgbEl9+CARAAAA/+tQA03Z5AYoTABhA1rDT/Z5A?",
+                    "https://fumen.zui.jp/?D115@8fB8GeB8nfneXOAGsrGEgcOpCFSNXEzoBAA8fxhGex?hnf/+tSA03xUEprDeElsKBA0YceEgZAAAvhBP/tRA03hAEF?q2TAzxgbEl9+CARAAAA3+tQA03Z5AYoTABhA1rDT/Z5A",
+                    "https://fumen.zui.jp/?D115@xfA8IeB8IeA8nf/eXLAGsrGEgc+UCFq+CAxfwhIexh?Iewhnf35tSA03xUEprDeElsKBA0YceEgZAAAvhBn+tRA03h?AEFq2TAzxgbEl9+CARAAAAv+tQA03Z5AYoTABhA1rDT/Z5A?",
+                    "https://fumen.zui.jp/?D115@xfB8IeB8wf0ZXMAGsrGEAnmsCwSVKExfBtIeBtwfs+?tSA03xUEprDeElsKBA0YceEgZAAAvhBc+tRA03hAEFq2TAz?xgbEl9+CARAAAAk5tQA03Z5AYoTABhA1rDT/Z5A",
+                    "https://fumen.zui.jp/?D115@yfA8HeB8HeA8ofMeXMAGsrGEAnOpCprDeEyfAtHeBt?HeAtofE+tSA03xUEprDeElsKBA0YceEgZAAAvhBU5tRA03h?AEFq2TAzxgbEl9+CARAAAAc+tQA03Z5AYoTABhA1rDT/Z5A?",
+                    "https://fumen.zui.jp/?D115@7fB8IeB8mfkeXOAGsrGEAnOpCFSNXEzoBAA7fBtIeB?tmfc+tSA03xUEprDeElsKBA0YceEgZAAAvhBs+tRA03hAEF?q2TAzxgbEl9+CARAAAA0+tQA03Z5AYoTABhA1rDT/Z5A",
+                    "https://fumen.zui.jp/?D115@yfA8HeB8HeA8ofceXLAGsrGEAn+UCFq+CAyfAtHeBt?HeAtof05tSA03xUEprDeElsKBA0YceEgZAAAvhBk+tRA03h?AEFq2TAzxgbEl9+CARAAAAM+tQA03Z5AYoTABhA1rDT/Z5A?",
+                    "https://fumen.zui.jp/?D115@xfB8HeB8xfTZXMAGsrGEgWmsCwSVKExfxwHexwxfL5?tSA03xUEprDeElsKBA0YceEgZAAAvhBb5tRA03hAEFq2TAz?xgbEl9+CARAAAAD5tQA03Z5AYoTABhA1rDT/Z5A",
+                    "https://fumen.zui.jp/?D115@7fB8HeB8nfLeXMAGsrGEgWOpCprDeE7fxwHexwnfD+?tSA03xUEprDeElsKBA0YceEgZAAAvhBT+tRA03hAEFq2TAz?xgbEl9+CARAAAAb+tQA03Z5AYoTABhA1rDT/Z5A",
+                    "https://fumen.zui.jp/?D115@7fB8HeB8nfDeXOAGsrGEgWOpCFSNXEzoBAA7fxwHex?wnfb+tSA03xUEprDeElsKBA0YceEgZAAAvhBL+tRA03hAEF?q2TAzxgbEl9+CARAAAAT+tQA03Z5AYoTABhA1rDT/Z5A",
+                    "https://fumen.zui.jp/?D115@xfB8HeB8xfbZXLAGsrGEgW+UCFq+CAxfxwHexwxfT5?tSA03xUEprDeElsKBA0YceEgZAAAvhBD5tRA03hAEFq2TAz?xgbEl9+CARAAAAL5tQA03Z5AYoTABhA1rDT/Z5A"
+            );
+
+            assertThat(log.getOutput().split(LINE_SEPARATOR))
+                    .containsAll(expectedFumens);
+
+            assertThat(log.getError()).isEmpty();
+        }
     }
 }
