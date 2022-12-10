@@ -43,12 +43,16 @@ public class KickPatternInterpreter {
         KickType kickType = parseToKickType(trimmedKey)
                 .orElseThrow(() -> new IllegalArgumentException("Unexpected key: key=" + trimmedKey));
 
-        return parseToKickType(trimmedValue)
-                .map(referenceKickType -> (KickPattern) new ReferencedKickPattern(kickType, referenceKickType))
-                .orElseGet(() -> {
-                    core.srs.Pattern offset = parseToPattern(trimmedValue);
-                    return new FixedKickPattern(kickType, offset);
-                });
+        if (trimmedValue.startsWith("&")) {
+            // reference
+            return parseToKickType(trimmedValue.substring(1))
+                    .map(referenceKickType -> new ReferencedKickPattern(kickType, referenceKickType))
+                    .orElseThrow(() -> new IllegalArgumentException("Unexpected key: key=" + trimmedKey));
+        } else {
+            // fixed
+            core.srs.Pattern offset = parseToPattern(trimmedValue);
+            return new FixedKickPattern(kickType, offset);
+        }
     }
 
     private static Optional<KickType> parseToKickType(String str) {

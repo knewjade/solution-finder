@@ -113,6 +113,28 @@ class FileMinoRotationFactoryTest {
     }
 
     @Test
+    void loadTwoLevelsOfReference() {
+        String properties = ClassLoader.getSystemResource("kicks/two_levels_of_reference.properties").getPath();
+        Path path = Paths.get(properties);
+        FileMinoRotationFactory factory = FileMinoRotationFactory.load(path);
+        MinoRotation minoRotation = factory.create();
+
+        assertThat(minoRotation).returns(false, MinoRotation::supports180);
+
+        MinoFactory minoFactory = new MinoFactory();
+        MinoRotation defaultMinoRotation = DefaultMinoRotationFactory.createDefault();
+        for (Piece piece : Piece.values()) {
+            for (Rotate rotate : Rotate.values()) {
+                Mino mino = minoFactory.create(piece, rotate);
+                for (RotateDirection direction : RotateDirection.valuesNo180()) {
+                    assertThat(minoRotation.getPatternsFrom(mino, direction))
+                            .isDeepEqualTo(defaultMinoRotation.getPatternsFrom(mino, direction));
+                }
+            }
+        }
+    }
+
+    @Test
     void loadMissingIEN() {
         String properties = ClassLoader.getSystemResource("kicks/missing_I_EN.properties").getPath();
         Path path = Paths.get(properties);
