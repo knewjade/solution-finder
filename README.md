@@ -11,7 +11,9 @@ solution-finder is a command-line tool for searching piece operations and calcul
 + **spin** : Output all the operations that can be T-spin from a specified field.
 + **cover** : Calculate the coverage of piece sequences for specified operations.
 + **util fig** : Generate images based on the fumen.
-+ **util fumen** : Convert the input fumens and output new fumens.+ **util seq** : Expand to piece sequences from solution-finder patterns.
++ **util fumen** : Convert the input fumens and output new fumens.
++ **util seq** : Expand to piece sequences from solution-finder patterns.
++ **verify kicks** : Check confirmation of the kick property file.
 
 # Documentation
 

@@ -20,7 +20,9 @@ solution-finderが出力するHTMLファイルのテト譜を開くことなく�
 
 |preview_video_001|
 
-`Chrome Web Store <https://chrome.google.com/webstore/detail/fumen-preview/kkmandajpdmjfibomfokgdjcgmbkipef>`_ からインストールすることができます。あわせてご利用ください。
+現在はChrome Web Storeから削除されていますが、
+`こちら <https://github.com/knewjade/fumen-preview-extension/releases/tag/v1.2.6>`_ からダウンロードして、
+ローカルで読み込むことが可能です。
 
 なお、Chrome拡張機能のデフォルトの設定では、ローカルファイルには拡張機能が適用されません。
 
