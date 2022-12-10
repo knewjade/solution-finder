@@ -278,6 +278,7 @@ short    long                   default
 ``-F``   ``--free``             なし
 ``-l``   ``--line``             -1
 ``-H``   ``--hold``             use
+``-K``   ``--kicks``            srs
 ``-d``   ``--drop``             softdrop
 ``-e``   ``--exclude``          none
 ``-op``  ``--operate``          なし
@@ -393,6 +394,19 @@ v115のテト譜データにのみ対応。
 ホールドなしで探索する場合は ``--hold avoid`` を指定する。
 
 
+``-K``, ``--kicks`` [default: srs]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+適用する回転法則を指定する。
+
+以下から操作方法をひとつ選択する。
+
+* srs (default): SRSに準拠した回転法則。90度回転のみ
+* @ファイル名: ``kicks/ファイル名.properties`` からKickテーブルを読み込みます
+
+なお、kicksファイルのフォーマットは :doc:`../inputs` を参照してください。
+
+
 ``-d``, ``--drop`` [default: softdrop]
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -402,7 +416,7 @@ v115のテト譜データにのみ対応。
 
 * softdrop: ソフトドロップ＋回転入れ（制限なし）
 * harddrop: ハードドロップのみ
-* 180: ソフトドロップ＋180度回転入れ。180度回転は `Nullpomino <https://github.com/nullpomino/nullpomino>`_ のStandard Wallkickに準拠します。
+* 180: ソフトドロップ＋180度回転入れ（使用するには、180度回転に対応したkicksを選択する必要があります）
 * t-softdrop: Tミノはソフトドロップ、その他のミノはハードドロップ
 
 ``-e``, ``--exclude`` [default: none]

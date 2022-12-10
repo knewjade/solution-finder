@@ -17,6 +17,7 @@ solution-finderとは、テトリスで、条件にあわせた解をみつけ�
 + **util fig** : テト譜をもとに画像を生成します。
 + **util fumen** : 入力されたテト譜を変換して、新たなテト譜を出力します。
 + **util seq** : solution-finderのパターンをツモ順に展開します。
++ **verify kicks** : 設定されたKickテーブルの検証を行います。
 
 詳細は各コマンドのページをご参照ください。
 
@@ -57,6 +58,8 @@ https://github.com/knewjade/solution-finder/releases/ からダウンロード�
    contents/spin/main
    contents/cover/main
    contents/util/main
+   contents/verify/main
+   contents/inputs
    contents/workflow
    contents/caution
    contents/tools
