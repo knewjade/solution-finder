@@ -18,13 +18,13 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class SRSAnd180CandidateTest {
+class Locked180CandidateTest {
     @Test
     void testSearch1() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = FileMinoRotationFactory.load(Paths.get("kicks/nullpomino180.properties")).create();
-        Candidate<Action> candidate = new SRSAnd180Candidate(minoFactory, minoShifter, minoRotation, 6);
+        Candidate<Action> candidate = new Locked180Candidate(minoFactory, minoShifter, minoRotation, 6);
 
         String marks = "" +
                 "_XXXXXXXXX" +
@@ -61,7 +61,7 @@ class SRSAnd180CandidateTest {
             MinoFactory minoFactory = new MinoFactory();
             MinoShifter minoShifter = new MinoShifter();
             MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
-            Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, 24);
+            Candidate<Action> candidate = CandidateFacade.create90Locked(minoFactory, minoShifter, minoRotation, 24);
 
             String marks = "" +
                     "XXXXXX____" +
@@ -76,7 +76,7 @@ class SRSAnd180CandidateTest {
             MinoFactory minoFactory = new MinoFactory();
             MinoShifter minoShifter = new MinoShifter();
             MinoRotation minoRotation = FileMinoRotationFactory.load(Paths.get("kicks/nokicks.properties")).create();
-            Candidate<Action> candidate = new SRSAnd180Candidate(minoFactory, minoShifter, minoRotation, 24);
+            Candidate<Action> candidate = new Locked180Candidate(minoFactory, minoShifter, minoRotation, 24);
 
             String marks = "" +
                     "XXXXXX____" +

@@ -45,7 +45,7 @@ class ClearLinesCoverTest {
                 new SimpleOperation(Piece.J, Rotate.Right, 0, 1)
         );
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height, false));
 
         ClearLinesCover cover = ClearLinesCover.createEqualToOrGreaterThan(3, false);
 
@@ -86,7 +86,7 @@ class ClearLinesCoverTest {
                 new SimpleOperation(Piece.J, Rotate.Right, 0, 1)
         );
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height, false));
 
         ClearLinesCover cover = ClearLinesCover.createEqualToOrGreaterThan(3, false);
 
@@ -138,7 +138,7 @@ class ClearLinesCoverTest {
                 new SimpleOperation(Piece.I, Rotate.Left, 0, 1)
         );
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height, false));
 
         ClearLinesCover cover = ClearLinesCover.createEqualToOrGreaterThan(2, false);
 
@@ -190,7 +190,7 @@ class ClearLinesCoverTest {
                 new SimpleOperation(Piece.I, Rotate.Left, 0, 1)
         );
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height, false));
 
         ClearLinesCover cover = ClearLinesCover.createEqualTo(2, false);
 
@@ -243,7 +243,7 @@ class ClearLinesCoverTest {
                 new SimpleOperation(Piece.T, Rotate.Reverse, 2, 1)
         );
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height, false));
 
         {
             ClearLinesCover cover = ClearLinesCover.createEqualTo(3, false);
@@ -311,7 +311,7 @@ class ClearLinesCoverTest {
                 new SimpleOperation(Piece.J, Rotate.Right, 0, 1)
         );
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height, false));
 
         ClearLinesCover cover = ClearLinesCover.createEqualToOrGreaterThan(1, false, 0, Integer.MAX_VALUE);
 
@@ -362,7 +362,7 @@ class ClearLinesCoverTest {
                 new SimpleOperation(Piece.J, Rotate.Right, 0, 1)
         );
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height, false));
 
         ClearLinesCover cover = ClearLinesCover.createEqualToOrGreaterThan(1, false, Integer.MAX_VALUE, 1);
 

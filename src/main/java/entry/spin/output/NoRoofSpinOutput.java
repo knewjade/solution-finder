@@ -1,7 +1,7 @@
 package entry.spin.output;
 
 import common.datastore.Pair;
-import concurrent.LockedReachableThreadLocal;
+import concurrent.ILockedReachableThreadLocal;
 import concurrent.RotateReachableThreadLocal;
 import core.field.Field;
 import core.neighbor.SimpleOriginalPiece;
@@ -24,7 +24,7 @@ public class NoRoofSpinOutput implements SpinOutput {
 
     public NoRoofSpinOutput(
             FumenParser fumenParser,
-            LockedReachableThreadLocal lockedReachableThreadLocal,
+            ILockedReachableThreadLocal lockedReachableThreadLocal,
             RotateReachableThreadLocal rotateReachableThreadLocal,
             FilterType filterType
     ) {

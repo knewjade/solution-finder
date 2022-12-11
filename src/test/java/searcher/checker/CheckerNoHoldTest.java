@@ -9,8 +9,9 @@ import common.datastore.blocks.Pieces;
 import common.parser.BlockInterpreter;
 import common.parser.OperationTransform;
 import core.action.candidate.Candidate;
-import core.action.candidate.LockedCandidate;
-import core.action.reachable.LockedReachable;
+import core.action.candidate.CandidateFacade;
+import core.action.reachable.ILockedReachable;
+import core.action.reachable.ReachableFacade;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.MinoFactory;
@@ -57,7 +58,7 @@ class CheckerNoHoldTest {
         return new Operations(ResultHelper.createOperationStream(result));
     }
 
-    private void assertResult(Field field, int maxClearLine, LockedReachable reachable, List<Piece> pieces) {
+    private void assertResult(Field field, int maxClearLine, ILockedReachable reachable, List<Piece> pieces) {
         Result result = checker.getResult();
 
         // Check pieces is same
@@ -100,8 +101,8 @@ class CheckerNoHoldTest {
         int maxDepth = 4;
 
         // Initialize
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
-        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
+        Candidate<Action> candidate = CandidateFacade.create90Locked(minoFactory, minoShifter, minoRotation, maxClearLine);
+        ILockedReachable reachable = ReachableFacade.create90Locked(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         // Assertion
         for (Pair<List<Piece>, Boolean> testCase : testCases) {
@@ -141,8 +142,8 @@ class CheckerNoHoldTest {
         int maxDepth = 6;
 
         // Initialize
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
-        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
+        Candidate<Action> candidate = CandidateFacade.create90Locked(minoFactory, minoShifter, minoRotation, maxClearLine);
+        ILockedReachable reachable = ReachableFacade.create90Locked(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         // Assertion
         for (Pair<List<Piece>, Boolean> testCase : testCases) {
@@ -180,8 +181,8 @@ class CheckerNoHoldTest {
         int maxDepth = 5;
 
         // Initialize
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
-        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
+        Candidate<Action> candidate = CandidateFacade.create90Locked(minoFactory, minoShifter, minoRotation, maxClearLine);
+        ILockedReachable reachable = ReachableFacade.create90Locked(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         // Assertion
         for (Pair<List<Piece>, Boolean> testCase : testCases) {
@@ -225,8 +226,8 @@ class CheckerNoHoldTest {
         int maxDepth = 7;
 
         // Initialize
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
-        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
+        Candidate<Action> candidate = CandidateFacade.create90Locked(minoFactory, minoShifter, minoRotation, maxClearLine);
+        ILockedReachable reachable = ReachableFacade.create90Locked(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         // Assertion
         for (Pair<List<Piece>, Boolean> testCase : testCases) {
@@ -265,8 +266,8 @@ class CheckerNoHoldTest {
         int maxDepth = 4;
 
         // Initialize
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
-        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
+        Candidate<Action> candidate = CandidateFacade.create90Locked(minoFactory, minoShifter, minoRotation, maxClearLine);
+        ILockedReachable reachable = ReachableFacade.create90Locked(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         // Assertion
         for (Pair<List<Piece>, Boolean> testCase : testCases) {
@@ -293,8 +294,8 @@ class CheckerNoHoldTest {
         Field field = FieldFactory.createField(maxClearLine);
 
         // Initialize
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
-        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
+        Candidate<Action> candidate = CandidateFacade.create90Locked(minoFactory, minoShifter, minoRotation, maxClearLine);
+        ILockedReachable reachable = ReachableFacade.create90Locked(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         // Assertion
         // Set test case

@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * マルチスレッド非対応
  */
-public class SRSAnd180Reachable implements Reachable {
+public class Locked180Reachable implements ILockedReachable {
     private static final int FIELD_WIDTH = 10;
 
     private final MinoFactory minoFactory;
@@ -27,7 +27,10 @@ public class SRSAnd180Reachable implements Reachable {
     // temporary変数
     private int appearY = 0;
 
-    public SRSAnd180Reachable(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY) {
+    Locked180Reachable(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY) {
+        if (minoRotation.noSupports180()) {
+            throw new IllegalArgumentException("kicks do not support 180");
+        }
         this.minoFactory = minoFactory;
         this.minoShifter = minoShifter;
         this.minoRotation = minoRotation;

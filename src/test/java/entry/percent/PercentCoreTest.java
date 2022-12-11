@@ -3,8 +3,8 @@ package entry.percent;
 import common.datastore.blocks.LongPieces;
 import common.pattern.LoadedPatternGenerator;
 import common.pattern.PatternGenerator;
+import concurrent.ILockedReachableThreadLocal;
 import concurrent.LockedCandidateThreadLocal;
-import concurrent.LockedReachableThreadLocal;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.MinoFactory;
@@ -54,8 +54,8 @@ class PercentCoreTest {
 
         Optional<ExecutorService> executorService = obj.isSingleThread ? Optional.empty() : Optional.of(Executors.newCachedThreadPool());
         Supplier<MinoRotation> minoRotationSupplier = SRSMinoRotationFactory::createDefault;
-        LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(minoRotationSupplier, obj.maxClearLine);
-        LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(minoRotationSupplier, obj.maxClearLine);
+        LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(minoRotationSupplier, obj.maxClearLine, false);
+        ILockedReachableThreadLocal reachableThreadLocal = new ILockedReachableThreadLocal(minoRotationSupplier, obj.maxClearLine, false);
         MinoFactory minoFactory = new MinoFactory();
 
         PercentCore percentCore = getPercentCore(obj, executorService.orElse(null), candidateThreadLocal, reachableThreadLocal, minoFactory);
@@ -68,7 +68,7 @@ class PercentCoreTest {
         assertThat(percentCore.getResultTree().getSuccessPercent()).isEqualTo(successPercent);
     }
 
-    private PercentCore getPercentCore(Obj obj, ExecutorService executorService, LockedCandidateThreadLocal candidateThreadLocal, LockedReachableThreadLocal reachableThreadLocal, MinoFactory minoFactory) {
+    private PercentCore getPercentCore(Obj obj, ExecutorService executorService, LockedCandidateThreadLocal candidateThreadLocal, ILockedReachableThreadLocal reachableThreadLocal, MinoFactory minoFactory) {
         if (executorService == null)
             return new PercentCore(candidateThreadLocal, obj.isUsingHold, reachableThreadLocal, minoFactory);
         return new PercentCore(executorService, candidateThreadLocal, obj.isUsingHold, reachableThreadLocal, minoFactory);

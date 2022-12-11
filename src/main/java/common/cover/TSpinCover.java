@@ -4,7 +4,8 @@ import common.SpinChecker;
 import common.cover.reachable.ReachableForCover;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.SimpleMinoOperation;
-import core.action.reachable.LockedReachable;
+import core.action.reachable.ILockedReachable;
+import core.action.reachable.ReachableFacade;
 import core.field.Field;
 import core.field.KeyOperators;
 import core.mino.Mino;
@@ -76,7 +77,7 @@ public class TSpinCover implements Cover {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         MinoRotationDetail minoRotationDetail = new MinoRotationDetail(minoFactory, minoRotation);
-        LockedReachable lockedReachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
+        ILockedReachable lockedReachable = ReachableFacade.createLocked(minoFactory, minoShifter, minoRotation, maxY, use180Rotation);
         this.spinChecker = new SpinChecker(minoFactory, minoRotationDetail, lockedReachable, use180Rotation);
         this.initGuard = initGuard;
         this.tSpinCondition = tSpinCondition;
@@ -228,6 +229,7 @@ public class TSpinCover implements Cover {
 
         return piece != null && existsValidByOrderWithHold(field, eachBlocks, pieces, height, reachable, maxDepth, depth, piece, deleteKey, hold, guard);
     }
+
 
     private boolean existsValidByOrderWithHold(Field field, EnumMap<Piece, LinkedList<MinoOperationWithKey>> eachBlocks, List<Piece> pieces, int height, ReachableForCover reachable, int maxDepth, int depth, Piece usePiece, long deleteKey, Piece nextHoldPiece, TSpinGuard guard) {
         LinkedList<MinoOperationWithKey> operationWithKeys = eachBlocks.get(usePiece);

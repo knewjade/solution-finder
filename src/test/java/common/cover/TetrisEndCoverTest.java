@@ -4,7 +4,7 @@ import common.cover.reachable.ReachableForCoverWrapper;
 import common.datastore.*;
 import common.parser.BlockInterpreter;
 import common.parser.OperationTransform;
-import core.action.reachable.LockedReachable;
+import core.action.reachable.ReachableFacade;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Mino;
@@ -42,7 +42,7 @@ class TetrisEndCoverTest {
                 new SimpleOperation(Piece.I, Rotate.Left, 0, 1)
         );
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new LockedReachable(minoFactory, minoShifter, minoRotation, height));
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(ReachableFacade.create90Locked(minoFactory, minoShifter, minoRotation, height));
 
         TetrisEndCover cover = new TetrisEndCover();
 
@@ -117,7 +117,7 @@ class TetrisEndCoverTest {
                 new SimpleOperation(Piece.I, Rotate.Left, 0, 1)
         );
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new LockedReachable(minoFactory, minoShifter, minoRotation, height));
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(ReachableFacade.create90Locked(minoFactory, minoShifter, minoRotation, height));
 
         TetrisEndCover cover = new TetrisEndCover();
 

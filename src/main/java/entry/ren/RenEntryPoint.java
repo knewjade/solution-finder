@@ -7,7 +7,10 @@ import common.datastore.blocks.Pieces;
 import common.pattern.PatternGenerator;
 import common.tetfu.common.ColorConverter;
 import core.FinderConstant;
-import core.action.candidate.*;
+import core.action.candidate.Candidate;
+import core.action.candidate.CandidateFacade;
+import core.action.candidate.HarddropCandidate;
+import core.action.candidate.SoftdropTOnlyCandidate;
 import core.field.Field;
 import core.field.FieldView;
 import core.mino.MinoFactory;
@@ -152,7 +155,8 @@ public class RenEntryPoint implements EntryPoint {
             htmlBuilder.addHeader(String.format("%d solutions", results.size()));
 
             ColorConverter colorConverter = new ColorConverter();
-            SequenceFumenParser fumenParser = new SequenceFumenParser(minoFactory, minoRotation, colorConverter);
+            boolean use180Rotation = settings.getDropType().uses180Rotation();
+            SequenceFumenParser fumenParser = new SequenceFumenParser(minoFactory, minoRotation, colorConverter, use180Rotation);
 
             HashSet<Integer> renKeys = new HashSet<>();
             for (RenResult result : results) {
@@ -216,15 +220,16 @@ public class RenEntryPoint implements EntryPoint {
 
     private Candidate<Action> getCandidate(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation) throws FinderInitializeException {
         DropType dropType = settings.getDropType();
+        boolean use180Rotation = dropType.uses180Rotation();
+
         switch (dropType) {
-            case Softdrop:
-                return new LockedCandidate(minoFactory, minoShifter, minoRotation, 24);
             case Harddrop:
                 return new HarddropCandidate(minoFactory, minoShifter);
-            case Rotation180:
-                return new SRSAnd180Candidate(minoFactory, minoShifter, minoRotation, 24);
+            case Softdrop:
+            case Softdrop180:
+                return CandidateFacade.createLocked(minoFactory, minoShifter, minoRotation, 24, use180Rotation);
             case SoftdropTOnly:
-                return new SoftdropTOnlyCandidate(minoFactory, minoShifter, minoRotation, 24);
+                return new SoftdropTOnlyCandidate(minoFactory, minoShifter, minoRotation, 24, use180Rotation);
             default:
                 throw new FinderInitializeException("Unsupport droptype: droptype=" + dropType);
         }

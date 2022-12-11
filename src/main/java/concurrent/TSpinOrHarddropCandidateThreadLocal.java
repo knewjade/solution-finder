@@ -11,19 +11,21 @@ public class TSpinOrHarddropCandidateThreadLocal extends ThreadLocal<TSpinOrHard
     private final MinoRotation minoRotation;
     private final int maxY;
     private final int required;
+    private final boolean use180Rotation;
 
     public TSpinOrHarddropCandidateThreadLocal(
-            MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY, int required
+            MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY, int required, boolean use180Rotation
     ) {
         this.minoFactory = minoFactory;
         this.minoShifter = minoShifter;
         this.minoRotation = minoRotation;
         this.maxY = maxY;
         this.required = required;
+        this.use180Rotation = use180Rotation;
     }
 
     @Override
     protected TSpinOrHarddropCandidate initialValue() {
-        return new TSpinOrHarddropCandidate(minoFactory, minoShifter, minoRotation, maxY, required, true);
+        return new TSpinOrHarddropCandidate(minoFactory, minoShifter, minoRotation, maxY, required, true, use180Rotation);
     }
 }

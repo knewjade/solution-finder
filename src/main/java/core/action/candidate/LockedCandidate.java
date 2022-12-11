@@ -17,7 +17,7 @@ import java.util.Set;
 /**
  * マルチスレッド非対応
  */
-public class LockedCandidate implements Candidate<Action> {
+public class LockedCandidate implements ILockedCandidate {
     private static final int FIELD_WIDTH = 10;
 
     private final MinoFactory minoFactory;
@@ -28,7 +28,7 @@ public class LockedCandidate implements Candidate<Action> {
     // temporary変数
     private int appearY = 0;
 
-    public LockedCandidate(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY) {
+    LockedCandidate(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY) {
         this.minoFactory = minoFactory;
         this.minoShifter = minoShifter;
         this.minoRotation = minoRotation;

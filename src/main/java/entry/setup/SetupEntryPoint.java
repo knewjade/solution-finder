@@ -7,8 +7,7 @@ import common.iterable.CombinationIterable;
 import common.pattern.PatternGenerator;
 import common.tetfu.common.ColorConverter;
 import concurrent.HarddropReachableThreadLocal;
-import concurrent.LockedReachableThreadLocal;
-import concurrent.SRSAnd180ReachableThreadLocal;
+import concurrent.ILockedReachableThreadLocal;
 import concurrent.SoftdropTOnlyReachableThreadLocal;
 import core.FinderConstant;
 import core.action.reachable.Reachable;
@@ -216,7 +215,8 @@ public class SetupEntryPoint implements EntryPoint {
         TaskResultHelper taskResultHelper = new BasicMinoPackingHelper();
         SolutionFilter solutionFilter = new ForPathSolutionFilter(generator, maxHeight);
         ThreadLocal<BuildUpStream> buildUpStreamThreadLocal = createBuildUpStreamThreadLocal(minoRotationSupplier, dropType, maxHeight);
-        FumenParser oneFumenParser = createFumenParser(settings.isTetfuSplit(), minoFactory, minoRotationSupplier.get(), colorConverter);
+        boolean use180Rotation = this.settings.getDropType().uses180Rotation();
+        FumenParser oneFumenParser = createFumenParser(settings.isTetfuSplit(), minoFactory, minoRotationSupplier.get(), colorConverter, use180Rotation);
 
         // ミノリストの作成
         long deleteKeyMask = getDeleteKeyMask(notFilledField, initField, needFilledField, freeField, maxHeight);
@@ -346,10 +346,10 @@ public class SetupEntryPoint implements EntryPoint {
     }
 
     private FumenParser createFumenParser(
-            boolean isTetfuSplit, MinoFactory minoFactory, MinoRotation minoRotation, ColorConverter colorConverter
+            boolean isTetfuSplit, MinoFactory minoFactory, MinoRotation minoRotation, ColorConverter colorConverter, boolean use180Rotation
     ) {
         if (isTetfuSplit)
-            return new SequenceFumenParser(minoFactory, minoRotation, colorConverter);
+            return new SequenceFumenParser(minoFactory, minoRotation, colorConverter, use180Rotation);
         return new OneFumenParser(minoFactory, colorConverter);
     }
 
@@ -520,15 +520,16 @@ public class SetupEntryPoint implements EntryPoint {
     private ThreadLocal<? extends Reachable> createReachableThreadLocal(
             Supplier<MinoRotation> minoRotationSupplier, DropType dropType, int maxClearLine
     ) throws FinderInitializeException {
+        boolean use180Rotation = dropType.uses180Rotation();
+
         switch (dropType) {
-            case Softdrop:
-                return new LockedReachableThreadLocal(minoRotationSupplier, maxClearLine);
             case Harddrop:
                 return new HarddropReachableThreadLocal(maxClearLine);
+            case Softdrop:
+            case Softdrop180:
+                return new ILockedReachableThreadLocal(minoRotationSupplier, maxClearLine, use180Rotation);
             case SoftdropTOnly:
-                return new SoftdropTOnlyReachableThreadLocal(minoRotationSupplier, maxClearLine);
-            case Rotation180:
-                return new SRSAnd180ReachableThreadLocal(minoRotationSupplier, maxClearLine);
+                return new SoftdropTOnlyReachableThreadLocal(minoRotationSupplier, maxClearLine, use180Rotation);
         }
         throw new FinderInitializeException("Unsupported droptype: droptype=" + dropType);
     }

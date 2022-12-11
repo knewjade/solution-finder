@@ -11,11 +11,11 @@ import java.util.Set;
 
 public class SoftdropTOnlyCandidate implements Candidate<Action> {
     private final HarddropCandidate harddropCandidate;
-    private final LockedCandidate lockedCandidate;
+    private final ILockedCandidate lockedCandidate;
 
-    public SoftdropTOnlyCandidate(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY) {
+    public SoftdropTOnlyCandidate(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY, boolean use180Rotation) {
         this.harddropCandidate = new HarddropCandidate(minoFactory, minoShifter);
-        this.lockedCandidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxY);
+        this.lockedCandidate = CandidateFacade.createLocked(minoFactory, minoShifter, minoRotation, maxY, use180Rotation);
     }
 
     @Override

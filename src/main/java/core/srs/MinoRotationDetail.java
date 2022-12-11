@@ -49,4 +49,8 @@ public class MinoRotationDetail {
         boolean privilegeSpins = minoRotation.isPrivilegeSpins(before, direction, testPatternIndex);
         return new SuccessSpinResult(after, toX, toY, testPatternIndex, direction, privilegeSpins);
     }
+
+    public MinoRotation getMinoRotation() {
+        return minoRotation;
+    }
 }

@@ -5,7 +5,7 @@ import common.datastore.blocks.LongPieces;
 import common.datastore.blocks.Pieces;
 import common.iterable.CombinationIterable;
 import common.parser.BlockInterpreter;
-import concurrent.LockedReachableThreadLocal;
+import concurrent.ILockedReachableThreadLocal;
 import core.column_field.ColumnField;
 import core.field.Field;
 import core.field.FieldFactory;
@@ -201,7 +201,7 @@ class PackSearcherComparingParityBasedOnDemandTest {
         }
 
         MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
-        LockedReachableThreadLocal reachableThreadLocal = new LockedReachableThreadLocal(minoRotation, sizedBit.getHeight());
+        ILockedReachableThreadLocal reachableThreadLocal = new ILockedReachableThreadLocal(minoRotation, sizedBit.getHeight(), false);
         return new UsingBlockAndValidKeySolutionFilter(initField, validBlockCounters, reachableThreadLocal, sizedBit);
     }
 

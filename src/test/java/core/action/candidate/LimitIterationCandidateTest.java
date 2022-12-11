@@ -23,7 +23,7 @@ class LimitIterationCandidateTest {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
-        Candidate<Action> candidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 3);
+        Candidate<Action> candidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 3, false);
 
         String marks = "" +
                 "__________" +
@@ -43,7 +43,7 @@ class LimitIterationCandidateTest {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
-        Candidate<Action> candidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 3);
+        Candidate<Action> candidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 3, false);
 
         String marks = "" +
                 "XXXX______" +
@@ -64,7 +64,7 @@ class LimitIterationCandidateTest {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
-        Candidate<Action> candidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 3);
+        Candidate<Action> candidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 3, false);
 
         String marks = "" +
                 "XXXX______" +
@@ -92,7 +92,7 @@ class LimitIterationCandidateTest {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
-        Candidate<Action> candidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 4);
+        Candidate<Action> candidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 4, false);
 
         String marks = "" +
                 "XXXX______" +
@@ -115,7 +115,7 @@ class LimitIterationCandidateTest {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
-        Candidate<Action> candidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 4);
+        Candidate<Action> candidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 4, false);
 
         String marks = "" +
                 "XXXXX__XXX" +
@@ -142,7 +142,7 @@ class LimitIterationCandidateTest {
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
         HarddropCandidate harddropCandidate = new HarddropCandidate(minoFactory, minoShifter);
-        LimitIterationCandidate limitIterationCandidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 0);
+        LimitIterationCandidate limitIterationCandidate = new LimitIterationCandidate(minoFactory, minoShifter, minoRotation, 0, false);
 
         for (int count = 0; count < 10000; count++) {
             int randomHeight = randoms.nextIntClosed(2, 12);

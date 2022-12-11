@@ -20,11 +20,11 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class LockedNeighborReachableTest {
-    private LockedReachable createLockedReachable(int maxClearLine) {
+    private ILockedReachable createLockedReachable(int maxClearLine) {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
-        return new LockedReachable(minoFactory, minoShifter, minoRotation, maxClearLine);
+        return ReachableFacade.create90Locked(minoFactory, minoShifter, minoRotation, maxClearLine);
     }
 
     private LockedNeighborReachable createLockedNeighborReachable(int maxClearLine) {
@@ -70,7 +70,7 @@ class LockedNeighborReachableTest {
     @Test
     void randoms() {
         int maxClearLine = 4;
-        LockedReachable reachable1 = createLockedReachable(maxClearLine);
+        ILockedReachable reachable1 = createLockedReachable(maxClearLine);
         LockedNeighborReachable reachable2 = createLockedNeighborReachable(maxClearLine);
 
         OriginalPieceFactory pieceFactory = new OriginalPieceFactory(maxClearLine + 3);

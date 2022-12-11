@@ -12,20 +12,22 @@ public class SoftdropTOnlyReachableThreadLocal extends ThreadLocal<SoftdropTOnly
     private final MinoShifter minoShifter;
     private final MinoRotation minoRotation;
     private final int maxY;
+    private final boolean use180Rotation;
 
-    public SoftdropTOnlyReachableThreadLocal(Supplier<MinoRotation> minoRotationSupplier, int maxY) {
-        this(new MinoFactory(), new MinoShifter(), minoRotationSupplier.get(), maxY);
+    public SoftdropTOnlyReachableThreadLocal(Supplier<MinoRotation> minoRotationSupplier, int maxY, boolean use180Rotation) {
+        this(new MinoFactory(), new MinoShifter(), minoRotationSupplier.get(), maxY, use180Rotation);
     }
 
-    public SoftdropTOnlyReachableThreadLocal(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY) {
+    public SoftdropTOnlyReachableThreadLocal(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY, boolean use180Rotation) {
         this.minoFactory = minoFactory;
         this.minoShifter = minoShifter;
         this.minoRotation = minoRotation;
         this.maxY = maxY;
+        this.use180Rotation = use180Rotation;
     }
 
     @Override
     protected SoftdropTOnlyReachable initialValue() {
-        return new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, maxY);
+        return new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, maxY, use180Rotation);
     }
 }

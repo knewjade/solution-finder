@@ -7,7 +7,10 @@ import common.datastore.BlockField;
 import common.pattern.LoadedPatternGenerator;
 import common.pattern.PatternGenerator;
 import common.tetfu.common.ColorConverter;
-import concurrent.*;
+import concurrent.HarddropReachableThreadLocal;
+import concurrent.ILockedReachableThreadLocal;
+import concurrent.SoftdropTOnlyReachableThreadLocal;
+import concurrent.TSpinOrHarddropReachableThreadLocal;
 import core.FinderConstant;
 import core.action.reachable.Reachable;
 import core.column_field.ColumnField;
@@ -267,7 +270,8 @@ public class PathEntryPoint implements EntryPoint {
         TaskResultHelper taskResultHelper = createTaskResultHelper(maxClearLine);
         PerfectPackSearcher searcher = new PerfectPackSearcher(inOutPairFields, basicSolutions, sizedBit, solutionFilter, taskResultHelper, threadCount != 1);
         MinoRotation minoRotation = settings.createMinoRotationSupplier().get();
-        FumenParser fumenParser = createFumenParser(settings.isTetfuSplit(), minoFactory, minoRotation, colorConverter);
+        boolean use180Rotation = this.settings.getDropType().uses180Rotation();
+        FumenParser fumenParser = createFumenParser(settings.isTetfuSplit(), minoFactory, minoRotation, colorConverter, use180Rotation);
 
         DropType dropType = settings.getDropType();
         Supplier<MinoRotation> minoRotationSupplier = settings.createMinoRotationSupplier();
@@ -284,10 +288,11 @@ public class PathEntryPoint implements EntryPoint {
     }
 
     private FumenParser createFumenParser(
-            boolean isTetfuSplit, MinoFactory minoFactory, MinoRotation minoRotation, ColorConverter colorConverter
+            boolean isTetfuSplit, MinoFactory minoFactory, MinoRotation minoRotation, ColorConverter colorConverter,
+            boolean use180Rotation
     ) {
         if (isTetfuSplit)
-            return new SequenceFumenParser(minoFactory, minoRotation, colorConverter);
+            return new SequenceFumenParser(minoFactory, minoRotation, colorConverter, use180Rotation);
         return new OneFumenParser(minoFactory, colorConverter);
     }
 
@@ -301,25 +306,32 @@ public class PathEntryPoint implements EntryPoint {
     private ThreadLocal<? extends Reachable> createReachableThreadLocal(
             Supplier<MinoRotation> minoRotationSupplier, DropType dropType, int maxClearLine
     ) throws FinderInitializeException {
+        boolean use180Rotation = dropType.uses180Rotation();
+
         switch (dropType) {
-            case Softdrop:
-                return new LockedReachableThreadLocal(minoRotationSupplier, maxClearLine);
             case Harddrop:
                 return new HarddropReachableThreadLocal(maxClearLine);
-            case Rotation180:
-                return new SRSAnd180ReachableThreadLocal(minoRotationSupplier, maxClearLine);
+            case Softdrop:
+            case Softdrop180:
+                return new ILockedReachableThreadLocal(minoRotationSupplier, maxClearLine, use180Rotation);
             case SoftdropTOnly:
-                return new SoftdropTOnlyReachableThreadLocal(minoRotationSupplier, maxClearLine);
+            case SoftdropTOnly180:
+                return new SoftdropTOnlyReachableThreadLocal(minoRotationSupplier, maxClearLine, use180Rotation);
             case TSpinZero:
-                return new TSpinOrHarddropReachableThreadLocal(minoRotationSupplier, maxClearLine, 0, false);
+            case TSpinZero180:
+                return new TSpinOrHarddropReachableThreadLocal(minoRotationSupplier, maxClearLine, 0, false, use180Rotation);
             case TSpinMini:
-                return new TSpinOrHarddropReachableThreadLocal(minoRotationSupplier, maxClearLine, 1, false);
+            case TSpinMini180:
+                return new TSpinOrHarddropReachableThreadLocal(minoRotationSupplier, maxClearLine, 1, false, use180Rotation);
             case TSpinSingle:
-                return new TSpinOrHarddropReachableThreadLocal(minoRotationSupplier, maxClearLine, 1, true);
+            case TSpinSingle180:
+                return new TSpinOrHarddropReachableThreadLocal(minoRotationSupplier, maxClearLine, 1, true, use180Rotation);
             case TSpinDouble:
-                return new TSpinOrHarddropReachableThreadLocal(minoRotationSupplier, maxClearLine, 2, true);
+            case TSpinDouble180:
+                return new TSpinOrHarddropReachableThreadLocal(minoRotationSupplier, maxClearLine, 2, true, use180Rotation);
             case TSpinTriple:
-                return new TSpinOrHarddropReachableThreadLocal(minoRotationSupplier, maxClearLine, 3, true);
+            case TSpinTriple180:
+                return new TSpinOrHarddropReachableThreadLocal(minoRotationSupplier, maxClearLine, 3, true, use180Rotation);
         }
         throw new FinderInitializeException("Unsupported droptype: droptype=" + dropType);
     }
