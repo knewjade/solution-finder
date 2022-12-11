@@ -33,7 +33,7 @@ class TSpinOrHarddropCandidateTest {
     @ValueSource(ints = {1, 2, 3})
     void caseHarddrop(int required) {
         TSpinOrHarddropCandidate candidate = new TSpinOrHarddropCandidate(
-                minoFactory, minoShifter, minoRotation, maxY, required, true
+                minoFactory, minoShifter, minoRotation, maxY, required, true, false
         );
         {
             Field field = FieldFactory.createField("" +
@@ -61,7 +61,7 @@ class TSpinOrHarddropCandidateTest {
     @ValueSource(ints = {1, 2, 3})
     void caseNotReachable(int required) {
         TSpinOrHarddropCandidate candidate = new TSpinOrHarddropCandidate(
-                minoFactory, minoShifter, minoRotation, maxY, required, true
+                minoFactory, minoShifter, minoRotation, maxY, required, true, false
         );
         {
             Field field = FieldFactory.createField("" +
@@ -91,7 +91,7 @@ class TSpinOrHarddropCandidateTest {
     @ValueSource(ints = {1, 2, 3})
     void caseTOther(int required) {
         TSpinOrHarddropCandidate candidate = new TSpinOrHarddropCandidate(
-                minoFactory, minoShifter, minoRotation, maxY, required, true
+                minoFactory, minoShifter, minoRotation, maxY, required, true, false
         );
         {
             Field field = FieldFactory.createField("" +
@@ -120,7 +120,7 @@ class TSpinOrHarddropCandidateTest {
     @ValueSource(ints = {1, 2, 3})
     void caseTSpinWithoutCleared(int required) {
         TSpinOrHarddropCandidate candidate = new TSpinOrHarddropCandidate(
-                minoFactory, minoShifter, minoRotation, maxY, required, true
+                minoFactory, minoShifter, minoRotation, maxY, required, true, false
         );
         {
             Field field = FieldFactory.createField("" +
@@ -149,7 +149,7 @@ class TSpinOrHarddropCandidateTest {
     @Nested
     class TSpinZeroOrHarddropCandidateTest {
         private final TSpinOrHarddropCandidate candidate = new TSpinOrHarddropCandidate(
-                minoFactory, minoShifter, minoRotation, maxY, 0, false
+                minoFactory, minoShifter, minoRotation, maxY, 0, false, false
         );
         private final TSpinOrHarddropReachable reachable = new TSpinOrHarddropReachable(
                 minoFactory, minoShifter, minoRotation, maxY, 0, false, false
@@ -302,7 +302,7 @@ class TSpinOrHarddropCandidateTest {
     @Nested
     class TSMOrHarddropCandidateTest {
         private final TSpinOrHarddropCandidate candidate = new TSpinOrHarddropCandidate(
-                minoFactory, minoShifter, minoRotation, maxY, 1, false
+                minoFactory, minoShifter, minoRotation, maxY, 1, false, false
         );
         private final TSpinOrHarddropReachable reachable = new TSpinOrHarddropReachable(
                 minoFactory, minoShifter, minoRotation, maxY, 1, false, false
@@ -454,7 +454,7 @@ class TSpinOrHarddropCandidateTest {
     @Nested
     class TSSOrHarddropCandidateTest {
         private final TSpinOrHarddropCandidate candidate = new TSpinOrHarddropCandidate(
-                minoFactory, minoShifter, minoRotation, maxY, 1, true
+                minoFactory, minoShifter, minoRotation, maxY, 1, true, false
         );
         private final TSpinOrHarddropReachable reachable = new TSpinOrHarddropReachable(
                 minoFactory, minoShifter, minoRotation, maxY, 1, true, false
@@ -584,7 +584,7 @@ class TSpinOrHarddropCandidateTest {
     @Nested
     class TSDOrHarddropCandidateTest {
         private final TSpinOrHarddropCandidate candidate = new TSpinOrHarddropCandidate(
-                minoFactory, minoShifter, minoRotation, maxY, 2, true
+                minoFactory, minoShifter, minoRotation, maxY, 2, true, false
         );
         private final TSpinOrHarddropReachable reachable = new TSpinOrHarddropReachable(
                 minoFactory, minoShifter, minoRotation, maxY, 2, true, false
@@ -714,7 +714,7 @@ class TSpinOrHarddropCandidateTest {
     @Nested
     class TSTOrHarddropCandidateTest {
         private final TSpinOrHarddropCandidate candidate = new TSpinOrHarddropCandidate(
-                minoFactory, minoShifter, minoRotation, maxY, 3, true
+                minoFactory, minoShifter, minoRotation, maxY, 3, true, false
         );
         private final TSpinOrHarddropReachable reachable = new TSpinOrHarddropReachable(
                 minoFactory, minoShifter, minoRotation, maxY, 3, true, false

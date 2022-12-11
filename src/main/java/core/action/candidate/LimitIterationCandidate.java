@@ -24,7 +24,11 @@ public class LimitIterationCandidate implements Candidate<Action> {
     // temporary変数
     private int appearY = 0;
 
-    public LimitIterationCandidate(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxIteration) {
+    public LimitIterationCandidate(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxIteration, boolean use180Rotation) {
+        if (use180Rotation) {
+            throw new UnsupportedOperationException("This class does not support 180 rotation.");
+        }
+
         this.minoFactory = minoFactory;
         this.minoShifter = minoShifter;
         this.minoRotation = minoRotation;

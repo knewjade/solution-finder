@@ -36,8 +36,12 @@ public class TSpinOrHarddropCandidate implements Candidate<Action> {
      * @param required Tスピン時に最低限必要な消去ライン数
      */
     public TSpinOrHarddropCandidate(
-            MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY, int required, boolean regularOnly
+            MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY, int required, boolean regularOnly, boolean use180Rotation
     ) {
+        if (use180Rotation) {
+            throw new UnsupportedOperationException("This class does not support 180 rotation.");
+        }
+
         this.minoFactory = minoFactory;
         this.minoShifter = minoShifter;
         this.minoRotation = minoRotation;
