@@ -49,7 +49,6 @@ public class PercentSettingParser extends SettingParser<PercentSettings> {
                 PercentOptions.Fumen.optName(),
                 PercentOptions.FieldPath.optName(),
                 DEFAULT_FIELD_TXT,
-                Charset.forName(CHARSET_NAME),
                 Optional::of,
                 fieldLines -> {
                     try {
