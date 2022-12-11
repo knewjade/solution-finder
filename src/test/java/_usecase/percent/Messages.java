@@ -54,8 +54,8 @@ class Messages {
         return "Drop: softdrop";
     }
 
-    static String rotation180() {
-        return "Drop: rotation180";
+    static String softdrop180() {
+        return "Drop: softdrop180";
     }
 
     static String singleThread() {
