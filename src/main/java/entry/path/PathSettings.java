@@ -252,6 +252,7 @@ public class PathSettings {
                 this.dropType = DropType.Harddrop;
                 return;
             case "180":
+            case "softdrop180":
                 this.dropType = DropType.Softdrop180;
                 return;
             case "tsoft":

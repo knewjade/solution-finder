@@ -832,7 +832,7 @@ class CoverTetfuCaseTest {
                 assertThat(log.getOutput()).contains(Messages.foundAndSolutions(0, all));
             }
             {
-                String command = String.format("cover --patterns [TJ]! -d 180 --tetfu %s --kicks @nullpomino180", fumen);
+                String command = String.format("cover --patterns [TJ]! -d softdrop180 --tetfu %s --kicks @nullpomino180", fumen);
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 // Log
