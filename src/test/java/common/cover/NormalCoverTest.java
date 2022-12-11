@@ -175,7 +175,7 @@ class NormalCoverTest {
         );
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
         MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
-        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, height, 2, true));
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, height, 2, true, false));
 
         {
             List<Piece> pieces = toPieceList("TILJSZO");

@@ -1153,6 +1153,36 @@ class CoverTetfuCaseTest {
         }
 
         @Test
+        void case20() throws Exception {
+            String fumen = "v115@3gA8GeE8BeA8AeD8DeF8CeG8AeD8JetLJ";
+
+//            {
+//                String command = String.format("cover --tetfu %s --patterns T", fumen);
+//                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+//
+//                // Log
+//                int all = 1;
+//                assertThat(log.getOutput()).contains(Messages.foundSolutions(0, all, fumen));
+//            }
+//            {
+//                String command = String.format("cover --tetfu %s --patterns T --drop 180 --kicks @jstris180", fumen);
+//                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+//
+//                // Log
+//                int all = 1;
+//                assertThat(log.getOutput()).contains(Messages.foundSolutions(1, all, fumen));
+//            }
+            {
+                String command = String.format("cover --tetfu %s --patterns T --drop 180 --kicks @jstris180 --mode tsm", fumen);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                // Log
+                int all = 1;
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(1, all, fumen));
+            }
+        }
+
+        @Test
         void tszDrop1() throws Exception {
             String fumen = "v115@4gA8DeE8AeA8CeE8EeE8EeI8KetGJ";
 

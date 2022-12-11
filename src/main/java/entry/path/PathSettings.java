@@ -101,7 +101,7 @@ public class PathSettings {
         return threadCount;
     }
 
-    DropType getDropType() {
+    public DropType getDropType() {
         return dropType;
     }
 
@@ -252,7 +252,7 @@ public class PathSettings {
                 this.dropType = DropType.Harddrop;
                 return;
             case "180":
-                this.dropType = DropType.Rotation180;
+                this.dropType = DropType.Softdrop180;
                 return;
             case "tsoft":
             case "tsoftdrop":

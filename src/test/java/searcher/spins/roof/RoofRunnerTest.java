@@ -42,7 +42,7 @@ class RoofRunnerTest {
                 , fieldHeight);
         MinimalSimpleOriginalPieces minimalPieces = factory.createMinimalPieces(initField);
         Roofs roofs = new Roofs(minimalPieces);
-//        LockedReachableThreadLocal lockedReachableThreadLocal = new LockedReachableThreadLocal(minoFactory, minoShifter, minoRotation, fieldHeight);
+//        ILockedReachableThreadLocal lockedReachableThreadLocal = new ILockedReachableThreadLocal(minoFactory, minoShifter, minoRotation, fieldHeight);
         RotateReachableThreadLocal rotateReachableThreadLocal = new RotateReachableThreadLocal(minoFactory, minoShifter, minoRotation, fieldHeight);
         RoofRunner runner = new RoofRunner(roofs, rotateReachableThreadLocal, Integer.MAX_VALUE, fieldHeight);
 

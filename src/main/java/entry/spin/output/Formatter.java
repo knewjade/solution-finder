@@ -4,9 +4,9 @@ import common.buildup.BuildUp;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.Operation;
 import common.datastore.Pair;
-import concurrent.LockedReachableThreadLocal;
+import concurrent.ILockedReachableThreadLocal;
 import concurrent.RotateReachableThreadLocal;
-import core.action.reachable.LockedReachable;
+import core.action.reachable.ILockedReachable;
 import core.action.reachable.RotateReachable;
 import core.field.Field;
 import core.field.KeyOperators;
@@ -136,13 +136,13 @@ class CSVItem {
 
 public class Formatter {
     private final FumenParser fumenParser;
-    private final LockedReachableThreadLocal lockedReachableThreadLocal;
+    private final ILockedReachableThreadLocal lockedReachableThreadLocal;
     private final RotateReachableThreadLocal rotateReachableThreadLocal;
     private final SolutionType lowerSolutionType;
 
     public Formatter(
             FumenParser fumenParser,
-            LockedReachableThreadLocal lockedReachableThreadLocal,
+            ILockedReachableThreadLocal lockedReachableThreadLocal,
             RotateReachableThreadLocal rotateReachableThreadLocal,
             FilterType filterType
     ) {
@@ -213,7 +213,7 @@ public class Formatter {
             Candidate candidate, Field initField, int fieldHeight,
             List<MinoOperationWithKey> operations, SimpleOriginalPiece operationT
     ) {
-        LockedReachable lockedReachable = lockedReachableThreadLocal.get();
+        ILockedReachable lockedReachable = lockedReachableThreadLocal.get();
 
         // その解をそのまま組み立てられるか
         boolean cansBuildWithoutT = BuildUp.existsValidBuildPattern(

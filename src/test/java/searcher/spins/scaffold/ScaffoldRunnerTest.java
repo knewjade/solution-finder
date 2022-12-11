@@ -4,7 +4,8 @@ import common.buildup.BuildUp;
 import common.datastore.BlockField;
 import common.datastore.PieceCounter;
 import common.parser.OperationTransform;
-import core.action.reachable.LockedReachable;
+import core.action.reachable.ILockedReachable;
+import core.action.reachable.ReachableFacade;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.Mino;
@@ -177,7 +178,7 @@ class ScaffoldRunnerTest {
     }
 
     private void verify(List<? extends ScaffoldResult> results, Field initField, int fieldHeight) {
-        LockedReachable reachable = new LockedReachable(new MinoFactory(), new MinoShifter(), SRSMinoRotationFactory.createDefault(), fieldHeight);
+        ILockedReachable reachable = ReachableFacade.create90Locked(new MinoFactory(), new MinoShifter(), SRSMinoRotationFactory.createDefault(), fieldHeight);
 
         // BlockFieldに重複がない
         TreeSet<BlockField> blockFields = new TreeSet<>(BlockField::compareTo);

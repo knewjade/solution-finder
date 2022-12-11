@@ -4,8 +4,7 @@ import common.cover.reachable.ReachableForCoverWrapper;
 import common.datastore.*;
 import common.parser.BlockInterpreter;
 import common.parser.OperationTransform;
-import core.action.reachable.LockedReachable;
-import core.action.reachable.SRSAnd180Reachable;
+import core.action.reachable.ReachableFacade;
 import core.action.reachable.SoftdropTOnlyReachable;
 import core.field.Field;
 import core.field.FieldFactory;
@@ -15,8 +14,8 @@ import core.mino.MinoShifter;
 import core.mino.Piece;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
-import entry.common.kicks.factory.SRSMinoRotationFactory;
 import entry.common.kicks.factory.FileMinoRotationFactory;
+import entry.common.kicks.factory.SRSMinoRotationFactory;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -49,7 +48,7 @@ class TSpinCoverTest {
                     new SimpleOperation(Piece.T, Rotate.Reverse, 2, 1)
             );
             List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-            ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
+            ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height, false));
 
             TSpinCover cover = TSpinCover.createRegularTSpinCover(minoRotation, 2, false);
 
@@ -124,7 +123,7 @@ class TSpinCoverTest {
                     new SimpleOperation(Piece.T, Rotate.Reverse, 3, 1)
             );
             List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-            ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
+            ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height, false));
 
             TSpinCover cover = TSpinCover.createRegularTSpinCover(minoRotation, 2, false);
 
@@ -177,7 +176,7 @@ class TSpinCoverTest {
                     new SimpleOperation(Piece.T, Rotate.Reverse, 3, 1)
             );
             List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-            ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
+            ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height, false));
 
             TSpinCover cover = TSpinCover.createRegularTSpinCover(minoRotation, 1, false);
 
@@ -230,7 +229,7 @@ class TSpinCoverTest {
                     new SimpleOperation(Piece.T, Rotate.Reverse, 3, 1)
             );
             List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-            ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new LockedReachable(minoFactory, minoShifter, minoRotation, height));
+            ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(ReachableFacade.createLocked(minoFactory, minoShifter, minoRotation, height, false));
 
             // b2bContinuousAfterStart is undefined
             {
@@ -323,7 +322,7 @@ class TSpinCoverTest {
                     new SimpleOperation(Piece.T, Rotate.Right, 0, 1)
             );
             List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-            ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
+            ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height, false));
 
             TSpinCover cover = TSpinCover.createRegularTSpinCover(minoRotation, 1, false);
 
@@ -367,7 +366,7 @@ class TSpinCoverTest {
                     new SimpleOperation(Piece.T, Rotate.Reverse, 2, 1)
             );
             List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-            ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SRSAnd180Reachable(minoFactory, minoShifter, minoRotation180, height));
+            ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(ReachableFacade.create180Locked(minoFactory, minoShifter, minoRotation180, height));
 
             {
                 TSpinCover cover = TSpinCover.createRegularTSpinCover(minoRotation180, 1, true);
@@ -454,7 +453,7 @@ class TSpinCoverTest {
                     new SimpleOperation(Piece.T, Rotate.Reverse, 2, 1)
             );
             List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-            ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
+            ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height, false));
 
             TSpinCover cover = TSpinCover.createTSpinMiniCover(minoRotation, false);
 
@@ -529,7 +528,7 @@ class TSpinCoverTest {
                     new SimpleOperation(Piece.T, Rotate.Reverse, 3, 1)
             );
             List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-            ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
+            ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height, false));
 
             TSpinCover cover = TSpinCover.createTSpinMiniCover(minoRotation, false);
 
@@ -581,7 +580,7 @@ class TSpinCoverTest {
                     new SimpleOperation(Piece.T, Rotate.Right, 0, 1)
             );
             List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-            ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
+            ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height, false));
 
             TSpinCover cover = TSpinCover.createTSpinMiniCover(minoRotation, false);
 
@@ -623,7 +622,7 @@ class TSpinCoverTest {
                     new SimpleOperation(Piece.I, Rotate.Left, 3, 1)
             );
             List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-            ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new LockedReachable(minoFactory, minoShifter, minoRotation, height));
+            ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(ReachableFacade.createLocked(minoFactory, minoShifter, minoRotation, height, false));
 
             {
                 TSpinCover cover = TSpinCover.createTSpinMiniCover(minoRotation, false, 2);
@@ -681,7 +680,7 @@ class TSpinCoverTest {
                     new SimpleOperation(Piece.T, Rotate.Right, 5, 1)
             );
             List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-            ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SRSAnd180Reachable(minoFactory, minoShifter, minoRotation180, height));
+            ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(ReachableFacade.create180Locked(minoFactory, minoShifter, minoRotation180, height));
 
             TSpinCover cover = TSpinCover.createTSpinMiniCover(minoRotation180, true);
 

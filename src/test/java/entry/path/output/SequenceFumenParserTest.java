@@ -25,7 +25,7 @@ class SequenceFumenParserTest {
         MinoFactory minoFactory = new MinoFactory();
         ColorConverter colorConverter = new ColorConverter();
         MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
-        SequenceFumenParser parser = new SequenceFumenParser(minoFactory, minoRotation, colorConverter);
+        SequenceFumenParser parser = new SequenceFumenParser(minoFactory, minoRotation, colorConverter, false);
 
         Field field = FieldFactory.createField("" +
                 "XXXXXX____" +
@@ -50,7 +50,7 @@ class SequenceFumenParserTest {
         MinoFactory minoFactory = new MinoFactory();
         ColorConverter colorConverter = new ColorConverter();
         MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
-        SequenceFumenParser parser = new SequenceFumenParser(minoFactory, minoRotation, colorConverter);
+        SequenceFumenParser parser = new SequenceFumenParser(minoFactory, minoRotation, colorConverter, false);
 
         Field field = FieldFactory.createField("" +
                 "__XXXXXXXX" +

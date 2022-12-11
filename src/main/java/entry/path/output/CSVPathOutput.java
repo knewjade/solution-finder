@@ -85,20 +85,21 @@ public class CSVPathOutput implements PathOutput {
         List<PathPair> pathPairList = pathPairs.getUniquePathPairList();
 
         PathLayer pathLayer = settings.getPathLayer();
+        boolean use180Rotation = this.settings.getDropType().uses180Rotation();
 
         Supplier<MinoRotation> minoRotationSupplier = settings.createMinoRotationSupplier();
 
         // 同一ミノ配置を取り除いたパスの出力
         if (pathLayer.contains(PathLayer.Unique)) {
             outputLog("Found path [unique] = " + pathPairList.size());
-            outputOperationsToCSV(minoRotationSupplier, field, outputUniqueFile, pathPairList, sizedBit);
+            outputOperationsToCSV(minoRotationSupplier, field, outputUniqueFile, pathPairList, sizedBit, use180Rotation);
         }
 
         // 少ないパターンでカバーできるパスを出力
         if (pathLayer.contains(PathLayer.Minimal)) {
             List<PathPair> minimal = pathPairs.getMinimalPathPairList(settings.getMinimalSpecifiedOnly());
             outputLog("Found path [minimal] = " + minimal.size());
-            outputOperationsToCSV(minoRotationSupplier, field, outputMinimalFile, minimal, sizedBit);
+            outputOperationsToCSV(minoRotationSupplier, field, outputMinimalFile, minimal, sizedBit, use180Rotation);
         }
     }
 
@@ -107,9 +108,10 @@ public class CSVPathOutput implements PathOutput {
     }
 
     private void outputOperationsToCSV(
-            Supplier<MinoRotation> minoRotationSupplier, Field field, MyFile file, List<PathPair> pathPairs, SizedBit sizedBit
+            Supplier<MinoRotation> minoRotationSupplier, Field field, MyFile file,
+            List<PathPair> pathPairs, SizedBit sizedBit, boolean use180Rotation
     ) throws FinderExecuteException {
-        LockedBuildUpListUpThreadLocal threadLocal = new LockedBuildUpListUpThreadLocal(minoRotationSupplier, sizedBit.getHeight());
+        LockedBuildUpListUpThreadLocal threadLocal = new LockedBuildUpListUpThreadLocal(minoRotationSupplier, sizedBit.getHeight(), use180Rotation);
         List<List<MinoOperationWithKey>> samples = pathPairs.parallelStream()
                 .map(resultPair -> {
                     Result result = resultPair.getResult();

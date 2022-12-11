@@ -8,7 +8,7 @@ import common.datastore.SimpleOperation;
 import common.parser.BlockInterpreter;
 import common.parser.OperationTransform;
 import core.action.reachable.HarddropReachable;
-import core.action.reachable.SRSAnd180Reachable;
+import core.action.reachable.ReachableFacade;
 import core.action.reachable.SoftdropTOnlyReachable;
 import core.field.Field;
 import core.field.FieldFactory;
@@ -17,8 +17,8 @@ import core.mino.MinoShifter;
 import core.mino.Piece;
 import core.srs.MinoRotation;
 import core.srs.Rotate;
-import entry.common.kicks.factory.SRSMinoRotationFactory;
 import entry.common.kicks.factory.FileMinoRotationFactory;
+import entry.common.kicks.factory.SRSMinoRotationFactory;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Paths;
@@ -51,7 +51,7 @@ class B2BContinuousCoverTest {
                 new SimpleOperation(Piece.T, Rotate.Reverse, 2, 1)
         );
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height, false));
 
         {
             List<Piece> pieces = toPieceList("LT");
@@ -124,7 +124,7 @@ class B2BContinuousCoverTest {
                 new SimpleOperation(Piece.T, Rotate.Reverse, 3, 1)
         );
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height));
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, height, false));
 
         {
             List<Piece> pieces = toPieceList("LST");
@@ -218,7 +218,7 @@ class B2BContinuousCoverTest {
                 new SimpleOperation(Piece.T, Rotate.Reverse, 2, 1)
         );
         List<MinoOperationWithKey> operationsWithKey = toMinoOperationWithKey(operationList, field, height);
-        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(new SRSAnd180Reachable(minoFactory, minoShifter, minoRotation180, height));
+        ReachableForCoverWrapper reachable = new ReachableForCoverWrapper(ReachableFacade.create180Locked(minoFactory, minoShifter, minoRotation180, height));
 
         {
             List<Piece> pieces = toPieceList("TOZI");

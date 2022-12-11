@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * マルチスレッド非対応
  */
-public class LockedReachable implements Reachable {
+public class LockedReachable implements ILockedReachable {
     private static final int FIELD_WIDTH = 10;
 
     private final MinoFactory minoFactory;
@@ -27,7 +27,7 @@ public class LockedReachable implements Reachable {
     // temporary変数
     private int appearY = 0;
 
-    public LockedReachable(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY) {
+    LockedReachable(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY) {
         this.minoFactory = minoFactory;
         this.minoShifter = minoShifter;
         this.minoRotation = minoRotation;

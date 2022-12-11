@@ -4,7 +4,8 @@ import common.buildup.BuildUp;
 import common.datastore.FullOperationWithKey;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.OperationWithKey;
-import core.action.reachable.LockedReachable;
+import core.action.reachable.ILockedReachable;
+import core.action.reachable.ReachableFacade;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.MinoFactory;
@@ -35,7 +36,7 @@ class OperationWithKeyInterpreterTest {
         MinoFactory minoFactory = new MinoFactory();
         List<MinoOperationWithKey> operationWithKeys = OperationWithKeyInterpreter.parseToList(base, minoFactory);
 
-        LockedReachable reachable = new LockedReachable(minoFactory, new MinoShifter(), SRSMinoRotationFactory.createDefault(), 8);
+        ILockedReachable reachable = ReachableFacade.create90Locked(minoFactory, new MinoShifter(), SRSMinoRotationFactory.createDefault(), 8);
         assertThat(BuildUp.cansBuild(initField, operationWithKeys, 8, reachable)).isTrue();
 
         String line = OperationWithKeyInterpreter.parseToString(operationWithKeys);

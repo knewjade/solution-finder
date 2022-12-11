@@ -27,10 +27,10 @@ public class TSpinOrHarddropReachable implements Reachable {
      * @param required Tスピン時に最低限必要な消去ライン数
      */
     public TSpinOrHarddropReachable(
-            MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY, int required, boolean regularOnly
+            MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY, int required, boolean regularOnly, boolean use180Rotation
     ) {
         this.harddropReachable = new HarddropReachable(minoFactory, minoShifter, maxY);
-        LockedReachable lockedReachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
+        ILockedReachable lockedReachable = ReachableFacade.createLocked(minoFactory, minoShifter, minoRotation, maxY, use180Rotation);
         this.spinChecker = new SpinChecker(minoFactory, new MinoRotationDetail(minoFactory, minoRotation), lockedReachable);
         this.required = required;
         this.regularOnly = regularOnly;

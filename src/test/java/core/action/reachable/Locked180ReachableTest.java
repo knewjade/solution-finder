@@ -14,13 +14,13 @@ import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class SRSAnd180ReachableTest {
+class Locked180ReachableTest {
     @Test
     void testSearch1() {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = FileMinoRotationFactory.load(Paths.get("kicks/nullpomino180.properties")).create();
-        Reachable reachable = new SRSAnd180Reachable(minoFactory, minoShifter, minoRotation, 6);
+        Reachable reachable = ReachableFacade.create180Locked(minoFactory, minoShifter, minoRotation, 6);
 
         String marks = "" +
                 "__________" +

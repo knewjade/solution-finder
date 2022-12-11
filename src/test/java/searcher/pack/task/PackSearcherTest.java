@@ -10,10 +10,11 @@ import common.datastore.blocks.LongPieces;
 import common.datastore.blocks.Pieces;
 import common.pattern.LoadedPatternGenerator;
 import common.pattern.PatternGenerator;
-import concurrent.LockedReachableThreadLocal;
+import concurrent.ILockedReachableThreadLocal;
 import core.action.candidate.Candidate;
 import core.action.candidate.LockedCandidate;
-import core.action.reachable.LockedReachable;
+import core.action.reachable.ILockedReachable;
+import core.action.reachable.ReachableFacade;
 import core.column_field.ColumnField;
 import core.column_field.ColumnSmallField;
 import core.field.Field;
@@ -81,7 +82,7 @@ class PackSearcherTest {
     }
 
     private SolutionFilter createSRSSolutionFilter(SizedBit sizedBit, Field initField) {
-        LockedReachableThreadLocal lockedReachableThreadLocal = new LockedReachableThreadLocal(minoRotation, sizedBit.getHeight());
+        ILockedReachableThreadLocal lockedReachableThreadLocal = new ILockedReachableThreadLocal(minoRotation, sizedBit.getHeight(), false);
         return new SRSValidSolutionFilter(initField, lockedReachableThreadLocal, sizedBit);
     }
 
@@ -286,7 +287,7 @@ class PackSearcherTest {
         Randoms randoms = new Randoms();
 
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
-        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
+        ILockedReachable reachable = ReachableFacade.create90Locked(minoFactory, minoShifter, minoRotation, height);
 
         TaskResultHelper taskResultHelper = new Field4x10MinoPackingHelper();
 
@@ -344,7 +345,7 @@ class PackSearcherTest {
         Randoms randoms = new Randoms();
 
         Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
-        LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
+        ILockedReachable reachable = ReachableFacade.create90Locked(minoFactory, minoShifter, minoRotation, height);
 
         TaskResultHelper taskResultHelper = new BasicMinoPackingHelper();
 

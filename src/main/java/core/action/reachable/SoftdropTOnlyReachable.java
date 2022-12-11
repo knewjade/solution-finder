@@ -12,11 +12,13 @@ import core.srs.MinoRotation;
  */
 public class SoftdropTOnlyReachable implements Reachable {
     private final HarddropReachable harddropReachable;
-    private final LockedReachable lockedReachable;
+    private final ILockedReachable lockedReachable;
 
-    public SoftdropTOnlyReachable(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY) {
+    public SoftdropTOnlyReachable(
+            MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY, boolean use180Rotation
+    ) {
         this.harddropReachable = new HarddropReachable(minoFactory, minoShifter, maxY);
-        this.lockedReachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
+        this.lockedReachable = ReachableFacade.createLocked(minoFactory, minoShifter, minoRotation, maxY, use180Rotation);
     }
 
     @Override

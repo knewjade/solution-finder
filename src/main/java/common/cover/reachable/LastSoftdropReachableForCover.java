@@ -1,7 +1,8 @@
 package common.cover.reachable;
 
-import core.action.reachable.LockedReachable;
+import core.action.reachable.ILockedReachable;
 import core.action.reachable.Reachable;
+import core.action.reachable.ReachableFacade;
 import core.field.Field;
 import core.mino.Mino;
 import core.mino.MinoFactory;
@@ -10,13 +11,13 @@ import core.srs.MinoRotation;
 
 public class LastSoftdropReachableForCover implements ReachableForCover {
     private final Reachable reachable;
-    private final LockedReachable lockedReachable;
+    private final ILockedReachable lockedReachable;
     private final int allowDepth;
 
-    public LastSoftdropReachableForCover(Reachable reachable, MinoRotation minoRotation, int maxY, int allowDepth) {
+    public LastSoftdropReachableForCover(Reachable reachable, MinoRotation minoRotation, int maxY, int allowDepth, boolean use180Rotation) {
         assert 1 <= allowDepth;
         this.reachable = reachable;
-        this.lockedReachable = new LockedReachable(new MinoFactory(), new MinoShifter(), minoRotation, maxY);
+        this.lockedReachable = ReachableFacade.createLocked(new MinoFactory(), new MinoShifter(), minoRotation, maxY, use180Rotation);
         this.allowDepth = allowDepth;
     }
 

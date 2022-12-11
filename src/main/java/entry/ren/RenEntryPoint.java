@@ -152,7 +152,8 @@ public class RenEntryPoint implements EntryPoint {
             htmlBuilder.addHeader(String.format("%d solutions", results.size()));
 
             ColorConverter colorConverter = new ColorConverter();
-            SequenceFumenParser fumenParser = new SequenceFumenParser(minoFactory, minoRotation, colorConverter);
+            boolean use180Rotation = settings.getDropType().uses180Rotation();
+            SequenceFumenParser fumenParser = new SequenceFumenParser(minoFactory, minoRotation, colorConverter, use180Rotation);
 
             HashSet<Integer> renKeys = new HashSet<>();
             for (RenResult result : results) {
@@ -221,7 +222,7 @@ public class RenEntryPoint implements EntryPoint {
                 return new LockedCandidate(minoFactory, minoShifter, minoRotation, 24);
             case Harddrop:
                 return new HarddropCandidate(minoFactory, minoShifter);
-            case Rotation180:
+            case Softdrop180:
                 return new SRSAnd180Candidate(minoFactory, minoShifter, minoRotation, 24);
             case SoftdropTOnly:
                 return new SoftdropTOnlyCandidate(minoFactory, minoShifter, minoRotation, 24);

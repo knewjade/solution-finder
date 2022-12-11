@@ -25,7 +25,7 @@ class TSpinOrHarddropReachableTest {
     @ValueSource(ints = {1, 2, 3})
     void caseHarddrop(int required) {
         Reachable reachable = new TSpinOrHarddropReachable(
-                minoFactory, minoShifter, minoRotation, maxY, required, true
+                minoFactory, minoShifter, minoRotation, maxY, required, true, false
         );
         {
             Field field = FieldFactory.createField("" +
@@ -51,7 +51,7 @@ class TSpinOrHarddropReachableTest {
     @ValueSource(ints = {1, 2, 3})
     void caseNotReachable(int required) {
         Reachable reachable = new TSpinOrHarddropReachable(
-                minoFactory, minoShifter, minoRotation, maxY, required, true
+                minoFactory, minoShifter, minoRotation, maxY, required, true, false
         );
         {
             Field field = FieldFactory.createField("" +
@@ -77,7 +77,7 @@ class TSpinOrHarddropReachableTest {
     @ValueSource(ints = {1, 2, 3})
     void caseTOther(int required) {
         Reachable reachable = new TSpinOrHarddropReachable(
-                minoFactory, minoShifter, minoRotation, maxY, required, true
+                minoFactory, minoShifter, minoRotation, maxY, required, true, false
         );
         {
             Field field = FieldFactory.createField("" +
@@ -102,7 +102,7 @@ class TSpinOrHarddropReachableTest {
     @ValueSource(ints = {1, 2, 3})
     void caseTSpinWithoutCleared(int required) {
         Reachable reachable = new TSpinOrHarddropReachable(
-                minoFactory, minoShifter, minoRotation, maxY, required, true
+                minoFactory, minoShifter, minoRotation, maxY, required, true, false
         );
         {
             Field field = FieldFactory.createField("" +
@@ -118,7 +118,7 @@ class TSpinOrHarddropReachableTest {
     @Nested
     class TSpinZeroOrHarddropReachableTest {
         private final Reachable reachable = new TSpinOrHarddropReachable(
-                minoFactory, minoShifter, minoRotation, maxY, 0, false
+                minoFactory, minoShifter, minoRotation, maxY, 0, false, false
         );
 
         @Test
@@ -239,7 +239,7 @@ class TSpinOrHarddropReachableTest {
     @Nested
     class TSMOrHarddropReachableTest {
         private final Reachable reachable = new TSpinOrHarddropReachable(
-                minoFactory, minoShifter, minoRotation, maxY, 1, false
+                minoFactory, minoShifter, minoRotation, maxY, 1, false, false
         );
 
         @Test
@@ -360,7 +360,7 @@ class TSpinOrHarddropReachableTest {
     @Nested
     class TSSOrHarddropReachableTest {
         private final Reachable reachable = new TSpinOrHarddropReachable(
-                minoFactory, minoShifter, minoRotation, maxY, 1, true
+                minoFactory, minoShifter, minoRotation, maxY, 1, true, false
         );
 
         @Test
@@ -462,7 +462,7 @@ class TSpinOrHarddropReachableTest {
     @Nested
     class TSDOrHarddropReachableTest {
         private final Reachable reachable = new TSpinOrHarddropReachable(
-                minoFactory, minoShifter, minoRotation, maxY, 2, true
+                minoFactory, minoShifter, minoRotation, maxY, 2, true, false
         );
 
         @Test
@@ -564,7 +564,7 @@ class TSpinOrHarddropReachableTest {
     @Nested
     class TSTOrHarddropReachableTest {
         private final Reachable reachable = new TSpinOrHarddropReachable(
-                minoFactory, minoShifter, minoRotation, maxY, 3, true
+                minoFactory, minoShifter, minoRotation, maxY, 3, true, false
         );
 
         @Test

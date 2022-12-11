@@ -3,9 +3,9 @@ package entry.spin.output;
 import common.datastore.Operation;
 import common.datastore.Pair;
 import common.datastore.SimpleOperation;
-import concurrent.LockedReachableThreadLocal;
+import concurrent.ILockedReachableThreadLocal;
 import concurrent.RotateReachableThreadLocal;
-import core.action.reachable.LockedReachable;
+import core.action.reachable.ILockedReachable;
 import core.field.Field;
 import core.field.KeyOperators;
 import core.mino.Mino;
@@ -34,13 +34,13 @@ import java.util.Optional;
 public class FullSpinOutput implements SpinOutput {
     private final MinoFactory minoFactory;
     private final MinoRotationDetail minoRotationDetail;
-    private final LockedReachableThreadLocal lockedReachableThreadLocal;
+    private final ILockedReachableThreadLocal lockedReachableThreadLocal;
     private final Formatter formatter;
 
     public FullSpinOutput(
             FumenParser fumenParser,
             MinoFactory minoFactory, MinoRotationDetail minoRotationDetail,
-            LockedReachableThreadLocal lockedReachableThreadLocal,
+            ILockedReachableThreadLocal lockedReachableThreadLocal,
             RotateReachableThreadLocal rotateReachableThreadLocal,
             FilterType filterType
     ) {
@@ -81,7 +81,7 @@ public class FullSpinOutput implements SpinOutput {
     }
 
     private void add(HTMLBuilder<FullSpinColumn> htmlBuilder, Candidate candidate, Field initField, int fieldHeight) {
-        LockedReachable lockedReachable = lockedReachableThreadLocal.get();
+        ILockedReachable lockedReachable = lockedReachableThreadLocal.get();
 
         // Tを使って消去されるライン数
         Result result = candidate.getResult();
@@ -137,7 +137,7 @@ public class FullSpinOutput implements SpinOutput {
         }
     }
 
-    private List<Spin> getSpins(LockedReachable lockedReachable, Field fieldWithoutT, Operation operation, Mino before, int[][] patterns, RotateDirection direction, int maxHeight, int clearedLine) {
+    private List<Spin> getSpins(ILockedReachable lockedReachable, Field fieldWithoutT, Operation operation, Mino before, int[][] patterns, RotateDirection direction, int maxHeight, int clearedLine) {
         List<Spin> spins = new ArrayList<>();
 
         for (int[] pattern : patterns) {

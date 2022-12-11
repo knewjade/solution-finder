@@ -11,9 +11,9 @@ import common.tetfu.common.ColorConverter;
 import common.tetfu.common.ColorType;
 import common.tetfu.field.ColoredField;
 import common.tetfu.field.ColoredFieldFactory;
-import concurrent.LockedReachableThreadLocal;
+import concurrent.ILockedReachableThreadLocal;
 import core.action.reachable.DeepdropReachable;
-import core.action.reachable.LockedReachable;
+import core.action.reachable.ILockedReachable;
 import core.field.Field;
 import core.mino.MinoFactory;
 import core.mino.Piece;
@@ -27,12 +27,12 @@ import java.util.stream.Collectors;
 public class SequenceFumenParser implements FumenParser {
     private final MinoFactory minoFactory;
     private final ColorConverter colorConverter;
-    private final LockedReachableThreadLocal reachableThreadLocal;
+    private final ILockedReachableThreadLocal reachableThreadLocal;
 
-    public SequenceFumenParser(MinoFactory minoFactory, MinoRotation minoRotation, ColorConverter colorConverter) {
+    public SequenceFumenParser(MinoFactory minoFactory, MinoRotation minoRotation, ColorConverter colorConverter, boolean use180Rotation) {
         this.minoFactory = minoFactory;
         this.colorConverter = colorConverter;
-        this.reachableThreadLocal = new LockedReachableThreadLocal(minoRotation, 24);
+        this.reachableThreadLocal = new ILockedReachableThreadLocal(minoRotation, 24, use180Rotation);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class SequenceFumenParser implements FumenParser {
 
     public List<MinoOperationWithKey> get(List<MinoOperationWithKey> operationsWithKey, Field field, int maxClearLine) {
         {
-            LockedReachable reachable = reachableThreadLocal.get();
+            ILockedReachable reachable = reachableThreadLocal.get();
             BuildUpStream stream = new BuildUpStream(reachable, maxClearLine);
             Optional<List<MinoOperationWithKey>> first = stream.existsValidBuildPattern(field, operationsWithKey).findFirst();
             if (first.isPresent()) {

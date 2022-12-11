@@ -1,7 +1,7 @@
 package common;
 
 import common.datastore.Operation;
-import core.action.reachable.LockedReachable;
+import core.action.reachable.ILockedReachable;
 import core.field.Field;
 import core.mino.Mino;
 import core.mino.MinoFactory;
@@ -21,15 +21,15 @@ import java.util.Optional;
 public class SpinChecker {
     private final MinoFactory minoFactory;
     private final MinoRotationDetail minoRotationDetail;
-    private final LockedReachable lockedReachable;
+    private final ILockedReachable lockedReachable;
     private final List<RotateDirection> rotations;
 
-    public SpinChecker(MinoFactory minoFactory, MinoRotationDetail minoRotationDetail, LockedReachable lockedReachable) {
+    public SpinChecker(MinoFactory minoFactory, MinoRotationDetail minoRotationDetail, ILockedReachable lockedReachable) {
         this(minoFactory, minoRotationDetail, lockedReachable, false);
     }
 
     public SpinChecker(
-            MinoFactory minoFactory, MinoRotationDetail minoRotationDetail, LockedReachable lockedReachable,
+            MinoFactory minoFactory, MinoRotationDetail minoRotationDetail, ILockedReachable lockedReachable,
             boolean use180Rotation
     ) {
         this.minoFactory = minoFactory;

@@ -233,13 +233,13 @@ public class PercentEntryPoint implements EntryPoint {
             Supplier<MinoRotation> minoRotationSupplier, DropType dropType, int maxClearLine
     ) throws FinderInitializeException {
         switch (dropType) {
-            case Softdrop:
-                return new LockedCandidateThreadLocal(minoRotationSupplier, maxClearLine);
             case Harddrop:
                 return new HarddropCandidateThreadLocal();
+            case Softdrop:
+                return new LockedCandidateThreadLocal(minoRotationSupplier, maxClearLine);
             case SoftdropTOnly:
                 return new SoftdropTOnlyCandidateThreadLocal(minoRotationSupplier, maxClearLine);
-            case Rotation180:
+            case Softdrop180:
                 return new SRSAnd180CandidateThreadLocal(minoRotationSupplier, maxClearLine);
         }
         throw new FinderInitializeException("Unsupported droptype: droptype=" + dropType);
@@ -248,15 +248,16 @@ public class PercentEntryPoint implements EntryPoint {
     private ThreadLocal<? extends Reachable> createReachableThreadLocal(
             Supplier<MinoRotation> minoRotationSupplier, DropType dropType, int maxClearLine
     ) throws FinderInitializeException {
+        boolean use180Rotation = dropType.uses180Rotation();
+
         switch (dropType) {
-            case Softdrop:
-                return new LockedReachableThreadLocal(minoRotationSupplier, maxClearLine);
             case Harddrop:
                 return new HarddropReachableThreadLocal(maxClearLine);
+            case Softdrop:
+            case Softdrop180:
+                return new ILockedReachableThreadLocal(minoRotationSupplier, maxClearLine, use180Rotation);
             case SoftdropTOnly:
-                return new SoftdropTOnlyReachableThreadLocal(minoRotationSupplier, maxClearLine);
-            case Rotation180:
-                return new SRSAnd180ReachableThreadLocal(minoRotationSupplier, maxClearLine);
+                return new SoftdropTOnlyReachableThreadLocal(minoRotationSupplier, maxClearLine, use180Rotation);
         }
         throw new FinderInitializeException("Unsupported droptype: droptype=" + dropType);
     }

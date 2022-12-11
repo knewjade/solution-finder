@@ -137,7 +137,7 @@ class TSpinOrHarddropCandidateTest {
 
     private void assertReachable(Field field, Piece piece, int required, Set<Action> result) {
         TSpinOrHarddropReachable reachable = new TSpinOrHarddropReachable(
-                minoFactory, minoShifter, minoRotation, maxY, required, true
+                minoFactory, minoShifter, minoRotation, maxY, required, true, false
         );
         assertThat(result)
                 .allMatch(action -> {
@@ -152,7 +152,7 @@ class TSpinOrHarddropCandidateTest {
                 minoFactory, minoShifter, minoRotation, maxY, 0, false
         );
         private final TSpinOrHarddropReachable reachable = new TSpinOrHarddropReachable(
-                minoFactory, minoShifter, minoRotation, maxY, 0, false
+                minoFactory, minoShifter, minoRotation, maxY, 0, false, false
         );
 
         @Test
@@ -305,7 +305,7 @@ class TSpinOrHarddropCandidateTest {
                 minoFactory, minoShifter, minoRotation, maxY, 1, false
         );
         private final TSpinOrHarddropReachable reachable = new TSpinOrHarddropReachable(
-                minoFactory, minoShifter, minoRotation, maxY, 1, false
+                minoFactory, minoShifter, minoRotation, maxY, 1, false, false
         );
 
         @Test
@@ -457,7 +457,7 @@ class TSpinOrHarddropCandidateTest {
                 minoFactory, minoShifter, minoRotation, maxY, 1, true
         );
         private final TSpinOrHarddropReachable reachable = new TSpinOrHarddropReachable(
-                minoFactory, minoShifter, minoRotation, maxY, 1, true
+                minoFactory, minoShifter, minoRotation, maxY, 1, true, false
         );
 
         @Test
@@ -587,7 +587,7 @@ class TSpinOrHarddropCandidateTest {
                 minoFactory, minoShifter, minoRotation, maxY, 2, true
         );
         private final TSpinOrHarddropReachable reachable = new TSpinOrHarddropReachable(
-                minoFactory, minoShifter, minoRotation, maxY, 2, true
+                minoFactory, minoShifter, minoRotation, maxY, 2, true, false
         );
 
         @Test
@@ -717,7 +717,7 @@ class TSpinOrHarddropCandidateTest {
                 minoFactory, minoShifter, minoRotation, maxY, 3, true
         );
         private final TSpinOrHarddropReachable reachable = new TSpinOrHarddropReachable(
-                minoFactory, minoShifter, minoRotation, maxY, 3, true
+                minoFactory, minoShifter, minoRotation, maxY, 3, true, false
         );
 
         @Test

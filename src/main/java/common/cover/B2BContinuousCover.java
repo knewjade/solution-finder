@@ -5,7 +5,8 @@ import common.cover.reachable.ReachableForCover;
 import common.datastore.MinoOperation;
 import common.datastore.MinoOperationWithKey;
 import common.datastore.SimpleMinoOperation;
-import core.action.reachable.LockedReachable;
+import core.action.reachable.ILockedReachable;
+import core.action.reachable.ReachableFacade;
 import core.field.Field;
 import core.field.KeyOperators;
 import core.mino.Mino;
@@ -38,7 +39,7 @@ public class B2BContinuousCover implements Cover {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         MinoRotationDetail minoRotationDetail = new MinoRotationDetail(minoFactory, minoRotation);
-        LockedReachable lockedReachable = new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
+        ILockedReachable lockedReachable = ReachableFacade.createLocked(minoFactory, minoShifter, minoRotation, maxY, use180Rotation);
         SpinChecker spinChecker = new SpinChecker(minoFactory, minoRotationDetail, lockedReachable, use180Rotation);
 
         this.b2BCondition = (Field field, int height, MinoOperation key) -> {

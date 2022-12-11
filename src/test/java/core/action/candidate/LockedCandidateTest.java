@@ -2,7 +2,8 @@ package core.action.candidate;
 
 import common.datastore.action.Action;
 import common.datastore.action.MinimalAction;
-import core.action.reachable.LockedReachable;
+import core.action.reachable.ILockedReachable;
+import core.action.reachable.ReachableFacade;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.*;
@@ -131,7 +132,7 @@ class LockedCandidateTest {
             LockedCandidate candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
             Set<Action> actions = candidate.search(field, piece, height);
 
-            LockedReachable reachable = new LockedReachable(minoFactory, minoShifter, minoRotation, height);
+            ILockedReachable reachable = ReachableFacade.create90Locked(minoFactory, minoShifter, minoRotation, height);
 
             for (Rotate rotate : Rotate.values()) {
                 Coordinates.walk(minoFactory.create(piece, rotate), height)

@@ -290,7 +290,7 @@ public class CoverEntryPoint implements EntryPoint {
     }
 
     private Cover createCover(MinoRotation minoRotation) {
-        boolean use180Rotation = this.settings.getDropType() == DropType.Rotation180;
+        boolean use180Rotation = this.settings.getDropType().uses180Rotation();
 
         CoverModes modes = this.settings.getCoverModes();
         switch (modes) {
@@ -360,49 +360,45 @@ public class CoverEntryPoint implements EntryPoint {
 
     private ReachableForCover getReachableForCover(
             MinoRotation minoRotation, int lastSoftdrop, int maxY
-    ) throws FinderInitializeException {
-        Reachable reachable = createReachable(minoRotation, settings.getDropType(), maxY);
+    ) {
+        DropType dropType = settings.getDropType();
+        Reachable reachable = createReachable(minoRotation, dropType, maxY);
         if (lastSoftdrop <= 0) {
             return new ReachableForCoverWrapper(reachable);
         }
-        return new LastSoftdropReachableForCover(reachable, minoRotation, maxY, lastSoftdrop);
+        return new LastSoftdropReachableForCover(reachable, minoRotation, maxY, lastSoftdrop, dropType.uses180Rotation());
     }
 
-    private Reachable createReachable(MinoRotation minoRotation, DropType dropType, int maxY) throws FinderInitializeException {
+    private Reachable createReachable(MinoRotation minoRotation, DropType dropType, int maxY) {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
 
+        boolean use180Rotation = dropType.uses180Rotation();
+
         switch (dropType) {
-            case Harddrop: {
+            case Harddrop:
                 return new HarddropReachable(minoFactory, minoShifter, maxY);
-            }
-            case Softdrop: {
-                return new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
-            }
-            case Rotation180: {
-                if (minoRotation.noSupports180()) {
-                    throw new FinderInitializeException("kicks do not support 180");
-                }
-                return new SRSAnd180Reachable(minoFactory, minoShifter, minoRotation, maxY);
-            }
-            case SoftdropTOnly: {
-                return new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, maxY);
-            }
-            case TSpinZero: {
-                return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, 0, false);
-            }
-            case TSpinMini: {
-                return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, 1, false);
-            }
-            case TSpinSingle: {
-                return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, 1, true);
-            }
-            case TSpinDouble: {
-                return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, 2, true);
-            }
-            case TSpinTriple: {
-                return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, 3, true);
-            }
+            case Softdrop:
+            case Softdrop180:
+                return ReachableFacade.createLocked(minoFactory, minoShifter, minoRotation, maxY, use180Rotation);
+            case SoftdropTOnly:
+            case SoftdropTOnly180:
+                return new SoftdropTOnlyReachable(minoFactory, minoShifter, minoRotation, maxY, use180Rotation);
+            case TSpinZero:
+            case TSpinZero180:
+                return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, 0, false, use180Rotation);
+            case TSpinMini:
+            case TSpinMini180:
+                return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, 1, false, use180Rotation);
+            case TSpinSingle:
+            case TSpinSingle180:
+                return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, 1, true, use180Rotation);
+            case TSpinDouble:
+            case TSpinDouble180:
+                return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, 2, true, use180Rotation);
+            case TSpinTriple:
+            case TSpinTriple180:
+                return new TSpinOrHarddropReachable(minoFactory, minoShifter, minoRotation, maxY, 3, true, use180Rotation);
         }
 
         throw new IllegalStateException("Unknown drop type: " + dropType);
