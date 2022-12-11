@@ -54,7 +54,7 @@ class PercentCoreTest {
 
         Optional<ExecutorService> executorService = obj.isSingleThread ? Optional.empty() : Optional.of(Executors.newCachedThreadPool());
         Supplier<MinoRotation> minoRotationSupplier = SRSMinoRotationFactory::createDefault;
-        LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(minoRotationSupplier, obj.maxClearLine);
+        LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(minoRotationSupplier, obj.maxClearLine, false);
         ILockedReachableThreadLocal reachableThreadLocal = new ILockedReachableThreadLocal(minoRotationSupplier, obj.maxClearLine, false);
         MinoFactory minoFactory = new MinoFactory();
 

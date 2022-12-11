@@ -10,7 +10,7 @@ import common.order.StackOrder;
 import common.parser.BlockInterpreter;
 import common.parser.OperationTransform;
 import core.action.candidate.Candidate;
-import core.action.candidate.LockedCandidate;
+import core.action.candidate.CandidateFacade;
 import core.action.reachable.ILockedReachable;
 import core.action.reachable.ReachableFacade;
 import core.field.Field;
@@ -107,7 +107,7 @@ class CheckerUsingHoldTest {
         int maxDepth = 4;
 
         // Initialize
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+        Candidate<Action> candidate = CandidateFacade.create90Locked(minoFactory, minoShifter, minoRotation, maxClearLine);
         ILockedReachable reachable = ReachableFacade.create90Locked(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         // Assertion
@@ -147,7 +147,7 @@ class CheckerUsingHoldTest {
         int maxDepth = 4;
 
         // Initialize
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+        Candidate<Action> candidate = CandidateFacade.create90Locked(minoFactory, minoShifter, minoRotation, maxClearLine);
         ILockedReachable reachable = ReachableFacade.create90Locked(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         // Assertion
@@ -185,7 +185,7 @@ class CheckerUsingHoldTest {
         }
 
         // Initialize
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+        Candidate<Action> candidate = CandidateFacade.create90Locked(minoFactory, minoShifter, minoRotation, maxClearLine);
         ILockedReachable reachable = ReachableFacade.create90Locked(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         // Assertion
@@ -216,7 +216,7 @@ class CheckerUsingHoldTest {
         int maxDepth = 10;
 
         // Initialize
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+        Candidate<Action> candidate = CandidateFacade.create90Locked(minoFactory, minoShifter, minoRotation, maxClearLine);
 
         // Assertion
         // Set test case

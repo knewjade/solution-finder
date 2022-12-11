@@ -24,7 +24,7 @@ class LockedCandidateTest {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, 4);
+        Candidate<Action> candidate = CandidateFacade.create90Locked(minoFactory, minoShifter, minoRotation, 4);
 
         String marks = "" +
                 "__________" +
@@ -44,7 +44,7 @@ class LockedCandidateTest {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, 4);
+        Candidate<Action> candidate = CandidateFacade.create90Locked(minoFactory, minoShifter, minoRotation, 4);
 
         String marks = "" +
                 "XXXX______" +
@@ -65,7 +65,7 @@ class LockedCandidateTest {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new MinoShifter();
         MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, 4);
+        Candidate<Action> candidate = CandidateFacade.create90Locked(minoFactory, minoShifter, minoRotation, 4);
 
         String marks = "" +
                 "XXXX______" +
@@ -95,7 +95,7 @@ class LockedCandidateTest {
         MinoFactory minoFactory = new MinoFactory();
         MinoShifter minoShifter = new PassedMinoShifter();
         MinoRotation minoRotation = SRSMinoRotationFactory.createDefault();
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, 4);
+        Candidate<Action> candidate = CandidateFacade.create90Locked(minoFactory, minoShifter, minoRotation, 4);
 
         String marks = "" +
                 "X_________" +
@@ -129,7 +129,7 @@ class LockedCandidateTest {
             int height = randomHeight - field.clearLine();
             Piece piece = randoms.block();
 
-            LockedCandidate candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
+            ILockedCandidate candidate = CandidateFacade.create90Locked(minoFactory, minoShifter, minoRotation, height);
             Set<Action> actions = candidate.search(field, piece, height);
 
             ILockedReachable reachable = ReachableFacade.create90Locked(minoFactory, minoShifter, minoRotation, height);

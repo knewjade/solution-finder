@@ -7,7 +7,7 @@ import common.pattern.LoadedPatternGenerator;
 import common.pattern.PatternGenerator;
 import common.tree.AnalyzeTree;
 import core.action.candidate.Candidate;
-import core.action.candidate.LockedCandidate;
+import core.action.candidate.CandidateFacade;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.MinoFactory;
@@ -37,7 +37,7 @@ class CheckerUsingHoldCountTest {
         CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
 
         // Measure
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+        Candidate<Action> candidate = CandidateFacade.create90Locked(minoFactory, minoShifter, minoRotation, maxClearLine);
         AnalyzeTree tree = new AnalyzeTree();
 
         Iterable<List<Piece>> combinations = new PermutationIterable<>(pieces, popCount);
@@ -96,7 +96,7 @@ class CheckerUsingHoldCountTest {
         CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
 
         // Measure
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+        Candidate<Action> candidate = CandidateFacade.create90Locked(minoFactory, minoShifter, minoRotation, maxClearLine);
         AnalyzeTree tree = new AnalyzeTree();
         Iterable<List<Piece>> combinations = new PermutationIterable<>(pieces, popCount);
         for (List<Piece> combination : combinations) {
@@ -132,7 +132,7 @@ class CheckerUsingHoldCountTest {
         CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
 
         // Measure
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+        Candidate<Action> candidate = CandidateFacade.create90Locked(minoFactory, minoShifter, minoRotation, maxClearLine);
         AnalyzeTree tree = new AnalyzeTree();
 
         PatternGenerator generator = new LoadedPatternGenerator(pattern);
@@ -173,7 +173,7 @@ class CheckerUsingHoldCountTest {
         CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
 
         // Measure
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+        Candidate<Action> candidate = CandidateFacade.create90Locked(minoFactory, minoShifter, minoRotation, maxClearLine);
         AnalyzeTree tree = new AnalyzeTree();
         Iterable<List<Piece>> combinations = new PermutationIterable<>(pieces, popCount);
         for (List<Piece> combination : combinations) {
@@ -213,7 +213,7 @@ class CheckerUsingHoldCountTest {
         CheckerUsingHold<Action> checker = new CheckerUsingHold<>(minoFactory, validator);
 
         // Measure
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+        Candidate<Action> candidate = CandidateFacade.create90Locked(minoFactory, minoShifter, minoRotation, maxClearLine);
         AnalyzeTree tree = new AnalyzeTree();
         Iterable<List<Piece>> combinations = new PermutationIterable<>(pieces, popCount);
         for (List<Piece> combination : combinations) {

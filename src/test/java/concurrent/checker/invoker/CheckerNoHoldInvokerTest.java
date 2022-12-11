@@ -13,7 +13,7 @@ import concurrent.checker.CheckerNoHoldThreadLocal;
 import concurrent.checker.invoker.no_hold.ConcurrentCheckerNoHoldInvoker;
 import concurrent.checker.invoker.no_hold.SingleCheckerNoHoldInvoker;
 import core.action.candidate.Candidate;
-import core.action.candidate.LockedCandidate;
+import core.action.candidate.CandidateFacade;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.mino.MinoFactory;
@@ -405,7 +405,7 @@ class CheckerNoHoldInvokerTest {
         for (int count = 0; count < 10; count++) {
             int maxClearLine = randoms.nextIntOpen(3, 6);
             int maxDepth = randoms.nextIntClosed(3, 5);
-            Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, maxClearLine);
+            Candidate<Action> candidate = CandidateFacade.create90Locked(minoFactory, minoShifter, minoRotation, maxClearLine);
             Field field = randoms.field(maxClearLine, maxDepth);
 
             PatternGenerator blocksGenerator = createPiecesGenerator(maxDepth);
@@ -433,7 +433,7 @@ class CheckerNoHoldInvokerTest {
             MinoFactory minoFactory = new MinoFactory();
             CheckerNoHoldThreadLocal<Action> checkerThreadLocal = new CheckerNoHoldThreadLocal<>();
             Supplier<MinoRotation> minoRotationSupplier = SRSMinoRotationFactory::createDefault;
-            LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(minoRotationSupplier, maxClearLine);
+            LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(minoRotationSupplier, maxClearLine, false);
             ILockedReachableThreadLocal reachableThreadLocal = new ILockedReachableThreadLocal(minoRotationSupplier, maxClearLine, false);
             CheckerCommonObj commonObj = new CheckerCommonObj(minoFactory, candidateThreadLocal, checkerThreadLocal, reachableThreadLocal);
             return new ConcurrentCheckerNoHoldInvoker(executorService, commonObj);
@@ -443,7 +443,7 @@ class CheckerNoHoldInvokerTest {
             MinoFactory minoFactory = new MinoFactory();
             CheckerNoHoldThreadLocal<Action> checkerThreadLocal = new CheckerNoHoldThreadLocal<>();
             Supplier<MinoRotation> minoRotationSupplier = SRSMinoRotationFactory::createDefault;
-            LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(minoRotationSupplier, maxClearLine);
+            LockedCandidateThreadLocal candidateThreadLocal = new LockedCandidateThreadLocal(minoRotationSupplier, maxClearLine, false);
             ILockedReachableThreadLocal reachableThreadLocal = new ILockedReachableThreadLocal(minoRotationSupplier, maxClearLine, false);
             CheckerCommonObj commonObj = new CheckerCommonObj(minoFactory, candidateThreadLocal, checkerThreadLocal, reachableThreadLocal);
             return new SingleCheckerNoHoldInvoker(commonObj);

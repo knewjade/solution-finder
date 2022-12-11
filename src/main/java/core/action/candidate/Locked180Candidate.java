@@ -17,7 +17,7 @@ import java.util.Set;
 /**
  * マルチスレッド非対応
  */
-public class SRSAnd180Candidate implements Candidate<Action> {
+public class Locked180Candidate implements ILockedCandidate {
     private static final int FIELD_WIDTH = 10;
 
     private final MinoFactory minoFactory;
@@ -28,7 +28,7 @@ public class SRSAnd180Candidate implements Candidate<Action> {
     // temporary変数
     private int appearY = 0;
 
-    public SRSAnd180Candidate(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY) {
+    Locked180Candidate(MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY) {
         if (minoRotation.noSupports180()) {
             throw new IllegalArgumentException("kicks do not support 180");
         }

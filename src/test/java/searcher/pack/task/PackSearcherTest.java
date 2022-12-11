@@ -12,7 +12,7 @@ import common.pattern.LoadedPatternGenerator;
 import common.pattern.PatternGenerator;
 import concurrent.ILockedReachableThreadLocal;
 import core.action.candidate.Candidate;
-import core.action.candidate.LockedCandidate;
+import core.action.candidate.CandidateFacade;
 import core.action.reachable.ILockedReachable;
 import core.action.reachable.ReachableFacade;
 import core.column_field.ColumnField;
@@ -286,7 +286,7 @@ class PackSearcherTest {
         int height = sizedBit.getHeight();
         Randoms randoms = new Randoms();
 
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
+        Candidate<Action> candidate = CandidateFacade.create90Locked(minoFactory, minoShifter, minoRotation, height);
         ILockedReachable reachable = ReachableFacade.create90Locked(minoFactory, minoShifter, minoRotation, height);
 
         TaskResultHelper taskResultHelper = new Field4x10MinoPackingHelper();
@@ -344,7 +344,7 @@ class PackSearcherTest {
         int height = sizedBit.getHeight();
         Randoms randoms = new Randoms();
 
-        Candidate<Action> candidate = new LockedCandidate(minoFactory, minoShifter, minoRotation, height);
+        Candidate<Action> candidate = CandidateFacade.create90Locked(minoFactory, minoShifter, minoRotation, height);
         ILockedReachable reachable = ReachableFacade.create90Locked(minoFactory, minoShifter, minoRotation, height);
 
         TaskResultHelper taskResultHelper = new BasicMinoPackingHelper();

@@ -232,15 +232,16 @@ public class PercentEntryPoint implements EntryPoint {
     private ThreadLocal<? extends Candidate<Action>> createCandidateThreadLocal(
             Supplier<MinoRotation> minoRotationSupplier, DropType dropType, int maxClearLine
     ) throws FinderInitializeException {
+        boolean use180Rotation = dropType.uses180Rotation();
+
         switch (dropType) {
             case Harddrop:
                 return new HarddropCandidateThreadLocal();
             case Softdrop:
-                return new LockedCandidateThreadLocal(minoRotationSupplier, maxClearLine);
-            case SoftdropTOnly:
-                return new SoftdropTOnlyCandidateThreadLocal(minoRotationSupplier, maxClearLine);
             case Softdrop180:
-                return new SRSAnd180CandidateThreadLocal(minoRotationSupplier, maxClearLine);
+                return new LockedCandidateThreadLocal(minoRotationSupplier, maxClearLine, use180Rotation);
+            case SoftdropTOnly:
+                return new SoftdropTOnlyCandidateThreadLocal(minoRotationSupplier, maxClearLine, use180Rotation);
         }
         throw new FinderInitializeException("Unsupported droptype: droptype=" + dropType);
     }
