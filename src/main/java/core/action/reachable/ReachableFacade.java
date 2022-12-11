@@ -21,9 +21,9 @@ public class ReachableFacade {
             MinoFactory minoFactory, MinoShifter minoShifter, MinoRotation minoRotation, int maxY, boolean use180Rotation
     ) {
         if (use180Rotation) {
-            return new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
-        } else {
             return new Locked180Reachable(minoFactory, minoShifter, minoRotation, maxY);
+        } else {
+            return new LockedReachable(minoFactory, minoShifter, minoRotation, maxY);
         }
     }
 }
