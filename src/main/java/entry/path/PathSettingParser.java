@@ -53,7 +53,6 @@ public class PathSettingParser extends SettingParser<PathSettings> {
                 PathOptions.Fumen.optName(),
                 PathOptions.FieldPath.optName(),
                 DEFAULT_FIELD_TXT,
-                Charset.forName(CHARSET_NAME),
                 Optional::of,
                 fieldLines -> {
                     try {

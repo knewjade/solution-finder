@@ -54,7 +54,6 @@ public class SetupSettingParser extends SettingParser<SetupSettings> {
                 SetupOptions.Fumen.optName(),
                 SetupOptions.FieldPath.optName(),
                 DEFAULT_FIELD_TXT,
-                Charset.forName(CHARSET_NAME),
                 fieldData -> {
                     ColoredField coloredField = fieldData.toColoredField();
 

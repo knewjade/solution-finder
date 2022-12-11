@@ -47,7 +47,6 @@ public class SpinSettingParser extends SettingParser<SpinSettings> {
                 SpinOptions.Fumen.optName(),
                 SpinOptions.FieldPath.optName(),
                 DEFAULT_FIELD_TXT,
-                Charset.forName(CHARSET_NAME),
                 Optional::of,
                 fieldLines -> {
                     // フィールドの設定

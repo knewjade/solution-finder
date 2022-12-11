@@ -5,6 +5,7 @@ import _usecase.Log;
 import _usecase.RunnerHelper;
 import _usecase.path.files.OutputFileHelper;
 import _usecase.path.files.PathHTML;
+import com.google.common.base.Charsets;
 import core.field.Field;
 import core.field.FieldFactory;
 import entry.EntryPointMain;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.stream.Collectors;
@@ -40,8 +42,13 @@ class PathFileCaseTest extends PathUseCaseBaseTest {
         );
 
         int height = 4;
-        ConfigFileHelper.createFieldFile(field, height);
-        ConfigFileHelper.createPatternFile("*p4");
+        Charset charset = Charsets.UTF_8;
+
+        ConfigFileHelper.deleteFieldFile();
+        ConfigFileHelper.createFieldFile(field, height, charset);
+
+        ConfigFileHelper.deletePatternFile();
+        ConfigFileHelper.createPatternFile("*p4", charset);
 
         String command = "path";
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
@@ -269,7 +276,11 @@ class PathFileCaseTest extends PathUseCaseBaseTest {
 
         assertThat(log.getReturnCode()).isEqualTo(0);
 
-        String logFile = Files.lines(Paths.get("test_output_log/test_last_output.txt")).collect(Collectors.joining(LINE_SEPARATOR)) + LINE_SEPARATOR;
+        String logFile;
+        try (Stream<String> lines = Files.lines(Paths.get("test_output_log/test_last_output.txt"))) {
+            logFile = lines.collect(Collectors.joining(LINE_SEPARATOR)) + LINE_SEPARATOR;
+        }
+
         assertThat(log.getOutput())
                 .isEqualTo(logFile);
 

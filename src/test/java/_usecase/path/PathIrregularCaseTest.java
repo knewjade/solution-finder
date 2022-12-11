@@ -4,6 +4,7 @@ import _usecase.ConfigFileHelper;
 import _usecase.Log;
 import _usecase.RunnerHelper;
 import _usecase.path.files.OutputFileHelper;
+import com.google.common.base.Charsets;
 import core.field.Field;
 import core.field.FieldFactory;
 import core.field.FieldView;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -674,5 +676,41 @@ class PathIrregularCaseTest extends PathUseCaseBaseTest {
 
         assertThat(log.getReturnCode()).isNotEqualTo(0);
         assertThat(log.getError()).contains("kicks do not support 180");
+    }
+
+    @Test
+    void unsupportedFieldFileEncoding() throws Exception {
+        int height = 4;
+        Charset unexpectedCharset = Charsets.UTF_16;
+
+        ConfigFileHelper.deleteFieldFile();
+        ConfigFileHelper.createFieldFile(FieldFactory.createField(height), height, unexpectedCharset);
+
+        ConfigFileHelper.deletePatternFile();
+        ConfigFileHelper.createPatternFile("*p4");
+
+        String command = "path";
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getReturnCode()).isNotEqualTo(0);
+        assertThat(log.getError()).contains("File encoding is probably unexpected. solution-finder supports UTF-8.");
+    }
+
+    @Test
+    void unsupportedPatternFileEncoding() throws Exception {
+        int height = 4;
+        Charset unexpectedCharset = Charsets.UTF_16;
+
+        ConfigFileHelper.deleteFieldFile();
+        ConfigFileHelper.createFieldFile(FieldFactory.createField(height), height);
+
+        ConfigFileHelper.deletePatternFile();
+        ConfigFileHelper.createPatternFile("*p4", unexpectedCharset);
+
+        String command = "path";
+        Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+        assertThat(log.getReturnCode()).isNotEqualTo(0);
+        assertThat(log.getError()).contains("File encoding is probably unexpected. solution-finder supports UTF-8.");
     }
 }

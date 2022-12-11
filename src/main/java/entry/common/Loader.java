@@ -7,7 +7,10 @@ import entry.common.field.FumenLoader;
 import exceptions.FinderParseException;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
+import java.nio.charset.MalformedInputException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,11 +22,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Loader {
+    private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
+
     // フィールドの情報を読み込む
     public static Optional<FieldData> loadFieldData(
             CommandLineWrapper wrapper, FumenLoader fumenLoader,
             String pageOptName, String fumenOptName, String fieldPathOptName,
-            String defaultFieldText, Charset charset,
+            String defaultFieldText,
             FunctionParseException<FieldData, Optional<FieldData>> callbackWithFumen,
             FunctionParseException<LinkedList<String>, Optional<FieldData>> callbackWithText
     ) throws FinderParseException {
@@ -46,7 +51,7 @@ public class Loader {
             Path path = Paths.get(fieldPath);
 
             LinkedList<String> fieldLines;
-            try (Stream<String> lines = Files.lines(path, charset)) {
+            try (Stream<String> lines = Files.lines(path, DEFAULT_CHARSET)) {
                 fieldLines = lines
                         .map(str -> {
                             if (str.contains("#"))
@@ -56,6 +61,11 @@ public class Loader {
                         .map(String::trim)
                         .filter(s -> !s.isEmpty())
                         .collect(Collectors.toCollection(LinkedList::new));
+            } catch (UncheckedIOException e) {
+                if (e.getCause() instanceof MalformedInputException) {
+                    throw new FinderParseException("File encoding is probably unexpected. solution-finder supports UTF-8.");
+                }
+                throw e;
             } catch (IOException e) {
                 throw new FinderParseException("Cannot open field file");
             }
@@ -93,6 +103,11 @@ public class Loader {
 
             try (Stream<String> lines = Files.lines(path, charset)) {
                 return lines.collect(Collectors.toList());
+            } catch (UncheckedIOException e) {
+                if (e.getCause() instanceof MalformedInputException) {
+                    throw new FinderParseException("File encoding is probably unexpected. solution-finder supports UTF-8.");
+                }
+                throw e;
             } catch (IOException e) {
                 throw new FinderParseException("Cannot open patterns file", e);
             }

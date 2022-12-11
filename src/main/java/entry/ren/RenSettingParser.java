@@ -46,7 +46,6 @@ public class RenSettingParser extends SettingParser<RenSettings> {
                 RenOptions.Fumen.optName(),
                 RenOptions.FieldPath.optName(),
                 DEFAULT_FIELD_TXT,
-                Charset.forName(CHARSET_NAME),
                 Optional::of,
                 fieldLines -> {
                     // フィールドの設定
