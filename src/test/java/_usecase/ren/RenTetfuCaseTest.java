@@ -152,7 +152,7 @@ class RenTetfuCaseTest {
                         .contains("TfF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8DeF8De?F8CeG8BeA8AeF8AeA8BeH8AeG8Je2/XUAFLDmClcJSAVDEH?BEooRBKoAVB");
             }
             {
-                String command = String.format("ren -t %s -p jzostiljosztil --kicks @srs", fumen);
+                String command = String.format("ren -t %s -p jzostiljosztil --kicks +srs", fumen);
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 // Log

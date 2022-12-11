@@ -217,7 +217,7 @@ class UtilFigTetfuCaseTest extends UtilFigUseCaseBaseTest {
         // オプション: format:png
 
         String tetfu = "v115@vhPRQYGBFLDmClcJSAVDEHBEooRBUoAVBJ3jPC6ijW?CTuKxCqiLuCJn/wCPt/wCsn1LCaHUPCUdNPCUnLuCMtPFDU?X9VC0/AAATpB3mB+tBcqBykBlsBKkBXtBUnBRiBNrBuqBSy?BzpB0qBrgBtIeBtEeI8AeI8AeB8BtE8AeC8BtD8KexdBvhA?vXBZgQ4GeBtAeQ4FeAPAewSAezhC8BtwhS4QaleAAA8Je2V?BvhATTBFgQ4AeRpBeg0AeBtR4RpBeI8AeD8whA8xwA8Aegl?A8BtxhxwA8SeAAA8GeAAAeA8GeAAAeA8GeAAA8KelBBvhBv?KBGHBCgi0FewwRaAeQ4AeRpQ4AeSpglwhA8xwwhceAAA8Ge?AAA8beA8AAKelDBvhAi8AFfilGegli0ywCeywg0Q4wwRpQ4?AeI8AeI8Aei0F8Aeg0ilSpA8AeA8SpglwhQpwwwSwhA8GeA?AAeA8GeAAAeA8HeAAA8FeAAAeA8GeAAA8HeAAA8HeAAA8He?AAAeA8KeTZAvhDp2AMAB5JB0MBZfRpHeRpBtFeilBtDeAtH?8AeG8AeC8xwD8AeC8xwBtB8AeC8i0BtA8AeB8AtFeAAAeA8?CeAACeA8EeAACeA8EeAACeA8EeAACeA8We6xAvehlRpGegl?RpBtEejlBtDeAtH8gWg0xwD8AeB8g0xwBtB8AeB8j0BtA8A?eB8AtFeAAAeA8MeAACeA8EeAACeA8EeAACeA8EeAACeA8Ee?A8CeAAEeA8DeAADeA8DeAADeA8DeAAHeA8AALemaAvhFTPA?XhAdnApgAOwA1uAxeRpAewwAewhDeRpywwhBehlRpi0whh0?AeglxwA8QpA8Q4AeC8xwSpQ4AeA8h0xwilQ4gHglA8g0BeA?ACeA8EeAACeA8EeAACeA8OeA8CeAAEeA8DeAADeA8DeAAHe?A8AALeAAFeA8BeAAFeA8BeAAFeA8LeTcAvhEMiAfgAPfAar?AMsAAeT4hlAeBtF8AeE8AeI8AeI8AeI8AeM8AeJ8AeA8AtA?8whA8whC8AeBtA8zhh0AeBtFeA8AABeAAAeA8GeAAAeA8Ge?AAAeA8IeA8EeAAGeA8AeAAoeA8FeAABeA8GeAAAeA8FeAAL?eAAA";
-        String command = String.format("util fig -c fumen -F png -t %s -s 5 -e 30", tetfu);
+        String command = String.format("util fig -c +fumen -F png -t %s -s 5 -e 30", tetfu);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
         // 出力ディレクトリを取得

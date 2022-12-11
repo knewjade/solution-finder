@@ -1374,7 +1374,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
             assertThat(log.getError()).isEmpty();
         }
         {
-            String command = String.format("path -t %s -p *! --kicks @srs", tetfu);
+            String command = String.format("path -t %s -p *! --kicks +srs", tetfu);
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())

@@ -583,7 +583,7 @@ class SetupTetfuCaseTest {
                 assertThat(html.getFumens()).isEmpty();
             }
             {
-                String command = buildCommand(fumen, "-p Z -f z --kicks @srs");
+                String command = buildCommand(fumen, "-p Z -f z --kicks +srs");
                 Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
                 // Log

@@ -413,7 +413,7 @@ class PercentTetfuCaseTest extends PercentUseCaseBaseTest {
             assertThat(log.getError()).isEmpty();
         }
         {
-            String command = String.format("percent -t %s -p *! --kicks @srs", tetfu);
+            String command = String.format("percent -t %s -p *! --kicks +srs", tetfu);
             Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
             assertThat(log.getOutput())
