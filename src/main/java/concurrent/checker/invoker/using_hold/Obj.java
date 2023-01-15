@@ -1,6 +1,5 @@
 package concurrent.checker.invoker.using_hold;
 
-import common.order.ReverseOrderLookUp;
 import common.tree.ConcurrentVisitedTree;
 import core.field.Field;
 
@@ -11,8 +10,10 @@ class Obj {
     final ConcurrentVisitedTree visitedTree;
 
     Obj(Field field, int maxClearLine, int maxDepth, ConcurrentVisitedTree visitedTree) {
-        this.field = field;
-        this.maxClearLine = maxClearLine;
+        Field freeze = field.freeze();
+        int lines_cleared = freeze.clearLine();
+        this.field = freeze;
+        this.maxClearLine = maxClearLine - lines_cleared;
         this.maxDepth = maxDepth;
         this.visitedTree = visitedTree;
     }

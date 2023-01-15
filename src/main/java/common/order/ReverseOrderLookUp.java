@@ -3,6 +3,7 @@ package common.order;
 import core.mino.Piece;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -23,6 +24,14 @@ public class ReverseOrderLookUp {
     }
 
     private List<List<Integer>> reverse(int toDepth, int fromDepth) {
+        if (toDepth == 0) {
+            List<Integer> integers = new ArrayList<>();
+            for (int i = 0; i < fromDepth; i++) {
+                integers.add(-1);
+            }
+            return Collections.singletonList(integers);
+        }
+
         assert 1 <= toDepth;
         assert toDepth <= fromDepth;
         List<Integer> indexes = IntStream.range(0, toDepth).boxed().collect(Collectors.toList());

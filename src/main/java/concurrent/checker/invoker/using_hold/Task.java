@@ -1,12 +1,12 @@
 package concurrent.checker.invoker.using_hold;
 
 import common.ResultHelper;
-import common.buildup.BuildUpStream;
-import common.datastore.*;
+import common.datastore.Operation;
+import common.datastore.Pair;
+import common.datastore.Result;
 import common.datastore.action.Action;
 import common.datastore.blocks.Pieces;
 import common.order.OrderLookup;
-import common.parser.OperationTransform;
 import common.tree.VisitedTree;
 import concurrent.checker.invoker.CheckerCommonObj;
 import core.action.candidate.Candidate;
@@ -29,13 +29,21 @@ class Task implements Callable<Pair<Pieces, Boolean>> {
     }
 
     @Override
-    public Pair<Pieces, Boolean> call() throws Exception {
+    public Pair<Pieces, Boolean> call() {
         List<Piece> pieceList = target.getPieces();
 
         // すでに探索済みならそのまま結果を追加
         int succeed = obj.visitedTree.isSucceed(pieceList);
         if (succeed != VisitedTree.NO_RESULT)
             return new Pair<>(target, succeed == VisitedTree.SUCCEED);
+
+        // すでに条件を満たしている場合は成功として扱う
+        if (obj.field.isEmpty() && obj.maxClearLine == 0) {
+            boolean result = true;
+            obj.visitedTree.set(result, pieceList);
+            return new Pair<>(target, result);
+        }
+        assert 0 < obj.maxClearLine;
 
         // 探索準備
         Checker<Action> checker = commonObj.checkerThreadLocal.get();
