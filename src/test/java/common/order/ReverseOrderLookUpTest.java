@@ -4,10 +4,10 @@ import common.datastore.blocks.LongPieces;
 import core.mino.Piece;
 import lib.Randoms;
 import module.LongTest;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +27,7 @@ class ReverseOrderLookUpTest {
     }
 
     @Test
-    void parseJustBlocksCount() throws Exception {
+    void parseJustBlocksCount() {
         List<Piece> pieceList = Piece.valueList();
         int toDepth = pieceList.size();
 
@@ -38,7 +38,7 @@ class ReverseOrderLookUpTest {
     }
 
     @Test
-    void parseOverBlocksCount() throws Exception {
+    void parseOverBlocksCount() {
         List<Piece> pieceList = Piece.valueList();
         int toDepth = pieceList.size() + 1;
 
@@ -49,7 +49,7 @@ class ReverseOrderLookUpTest {
     }
 
     @Test
-    void parseOver() throws Exception {
+    void parseOver() {
         List<Piece> pieceList = Arrays.asList(Piece.I, Piece.T, Piece.Z, Piece.O, Piece.I, Piece.L);
         int fromDepth = pieceList.size() + 1;
 
@@ -85,7 +85,7 @@ class ReverseOrderLookUpTest {
     }
 
     @Test
-    void parseJustRandom() throws Exception {
+    void parseJustRandom() {
         Randoms randoms = new Randoms();
         for (int size = 2; size <= 13; size++) {
             List<Piece> blocks = randoms.blocks(size);
@@ -109,7 +109,7 @@ class ReverseOrderLookUpTest {
 
     @Test
     @LongTest
-    void parseOverRandom() throws Exception {
+    void parseOverRandom() {
         Randoms randoms = new Randoms();
         for (int size = 2; size <= 13; size++) {
             List<Piece> pieces = randoms.blocks(size);
@@ -134,7 +134,7 @@ class ReverseOrderLookUpTest {
     }
 
     @Test
-    void parseOver2Random() throws Exception {
+    void parseOver2Random() {
         Randoms randoms = new Randoms();
         for (int size = 2; size <= 12; size++) {
             List<Piece> pieces = randoms.blocks(size);
@@ -155,6 +155,25 @@ class ReverseOrderLookUpTest {
                         .anyMatch(target::equals);
                 assertThat(isFound).isTrue();
             }
+        }
+    }
+
+    @Test
+    void empty() {
+        {
+            ReverseOrderLookUp lookUp = new ReverseOrderLookUp(0, 0);
+            assertThat(lookUp.parse(Collections.emptyList()).map(pieceStream -> pieceStream.collect(Collectors.toList())).collect(Collectors.toList()))
+                    .contains(Collections.emptyList());
+        }
+        {
+            ReverseOrderLookUp lookUp = new ReverseOrderLookUp(0, 1);
+            assertThat(lookUp.parse(Collections.emptyList()).map(pieceStream -> pieceStream.collect(Collectors.toList())).collect(Collectors.toList()))
+                    .contains(Collections.singletonList(null));
+        }
+        {
+            ReverseOrderLookUp lookUp = new ReverseOrderLookUp(0, 2);
+            assertThat(lookUp.parse(Collections.emptyList()).map(pieceStream -> pieceStream.collect(Collectors.toList())).collect(Collectors.toList()))
+                    .contains(Arrays.asList(null, null));
         }
     }
 }
