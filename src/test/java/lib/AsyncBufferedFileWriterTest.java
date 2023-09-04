@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -38,11 +37,11 @@ class AsyncBufferedFileWriterTest {
         }
 
         // Read
-        assertThat(Files.lines(file.toPath(), charset).count()).isEqualTo(maxThread * maxCount);
+        assertThat(MyFiles.lines(file.toPath(), charset).count()).isEqualTo(maxThread * maxCount);
 
         for (int thread = 0; thread < maxThread; thread++) {
             int numberOfThread = thread;
-            List<String> lines = Files.lines(file.toPath(), charset)
+            List<String> lines = MyFiles.lines(file.toPath(), charset)
                     .filter(line -> line.startsWith("n" + numberOfThread))
                     .collect(Collectors.toList());
 

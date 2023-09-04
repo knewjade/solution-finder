@@ -6,6 +6,7 @@ import common.cover.reachable.LastSoftdropReachableForCover;
 import common.cover.reachable.ReachableForCover;
 import common.cover.reachable.ReachableForCoverWrapper;
 import common.datastore.MinoOperationWithKey;
+import common.datastore.Pair;
 import common.datastore.blocks.LongPieces;
 import common.datastore.blocks.Pieces;
 import common.pattern.PatternGenerator;
@@ -33,10 +34,7 @@ import lib.Stopwatch;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -232,15 +230,72 @@ public class CoverEntryPoint implements EntryPoint {
 
         output("success:");
 
-        int all = piecesList.size();
-        for (int index = 0; index < successCounters.size(); index++) {
+        assert successCounters.size() == parameterSize;
+
+        List<OutputData> outputDataList = new ArrayList<>();
+        for (int index = 0; index < parameterSize; index++) {
             AtomicInteger counter = successCounters.get(index);
             CoverParameter parameter = parameters.get(index);
+            outputDataList.add(new OutputData(index, counter, parameter));
+        }
 
-            int success = counter.get();
-            output(String.format("%.2f %% [%d/%d]: %s",
-                    success * 100.0 / all, success, all, parameter.getUrl()
-            ));
+        assert outputDataList.size() == parameterSize;
+
+        Comparator<OutputData> comparator = getOutputDataComparator();
+        outputDataList.sort(comparator);
+
+        int all = piecesList.size();
+
+        if (settings.getShowsAccumulation()) {
+            // Pairs of (andCounter, orCounter) for each parameter
+            List<Pair<AtomicInteger, AtomicInteger>> counters = new ArrayList<>();
+            for (int parameterIndex = 0; parameterIndex < parameterSize; parameterIndex++) {
+                counters.add(new Pair<>(new AtomicInteger(0), new AtomicInteger(0)));
+            }
+            assert counters.size() == parameterSize;
+
+            // Recalculate And/Or counters to match parameter output order
+            for (BitSet result : results) {
+                boolean and = true;
+                boolean or = false;
+
+                for (int outputDataIndex = 0; outputDataIndex < outputDataList.size(); outputDataIndex++) {
+                    int parameterIndex = outputDataList.get(outputDataIndex).getIndex();
+                    boolean success = result.get(parameterIndex);
+
+                    and &= success;
+                    or |= success;
+
+                    if (and) {
+                        counters.get(outputDataIndex).getKey().incrementAndGet();
+                    }
+
+                    if (or) {
+                        counters.get(outputDataIndex).getValue().incrementAndGet();
+                    }
+                }
+            }
+
+            // The last result of the accumulation matches the overall result
+            assert counters.get(parameterSize - 1).getKey().get() == andCounter.get();
+            assert counters.get(parameterSize - 1).getValue().get() == orCounter.get();
+
+            for (int outputDataIndex = 0; outputDataIndex < outputDataList.size(); outputDataIndex++) {
+                OutputData outputData = outputDataList.get(outputDataIndex);
+                int success = outputData.getSuccessCount();
+                Pair<AtomicInteger, AtomicInteger> countersPair = counters.get(outputDataIndex);
+                output(String.format("%.2f %% [%d/%d] (accum. OR=%d, AND=%d): %s",
+                        success * 100.0 / all, success, all, countersPair.getValue().get(), countersPair.getKey().get(),
+                        outputData.getUrl()
+                ));
+            }
+        } else {
+            for (OutputData outputData : outputDataList) {
+                int success = outputData.getSuccessCount();
+                output(String.format("%.2f %% [%d/%d]: %s",
+                        success * 100.0 / all, success, all, outputData.getUrl()
+                ));
+            }
         }
 
         output(">>>");
@@ -263,7 +318,12 @@ public class CoverEntryPoint implements EntryPoint {
             // Header
             bw.write("sequence,");
             bw.write(
-                    parameters.stream().map(CoverParameter::getLabel).collect(Collectors.joining(","))
+                    IntStream.range(0, parameterSize)
+                            .mapToObj(outputDataList::get)
+                            .mapToInt(OutputData::getIndex)
+                            .mapToObj(parameters::get)
+                            .map(CoverParameter::getLabel)
+                            .collect(Collectors.joining(","))
             );
             bw.newLine();
 
@@ -275,6 +335,8 @@ public class CoverEntryPoint implements EntryPoint {
 
                 BitSet result = results.get(index);
                 String body = IntStream.range(0, parameterSize)
+                        .mapToObj(outputDataList::get)
+                        .mapToInt(OutputData::getIndex)
                         .mapToObj(result::get)
                         .map(success -> success ? "O" : "X")
                         .collect(Collectors.joining(","));
@@ -404,6 +466,25 @@ public class CoverEntryPoint implements EntryPoint {
         throw new IllegalStateException("Unknown drop type: " + dropType);
     }
 
+    private Comparator<OutputData> getOutputDataComparator() {
+        Comparator<OutputData> comparator = getAscendingDataComparator();
+        if (settings.isAscendingSort()) {
+            return comparator;
+        }
+        return comparator.reversed();
+    }
+
+    private Comparator<OutputData> getAscendingDataComparator() {
+        CoverSortType sortType = settings.getCoverSortType();
+        switch (sortType) {
+            case Input:
+                return Comparator.comparingInt(OutputData::getIndex);
+            case SuccessRate:
+                return Comparator.comparingInt(OutputData::getSuccessCount);
+        }
+        throw new IllegalStateException("Unknown sort type: " + sortType);
+    }
+
     private void output() throws FinderExecuteException {
         output("");
     }
@@ -434,6 +515,30 @@ public class CoverEntryPoint implements EntryPoint {
             logWriter.close();
         } catch (IOException | FinderExecuteException e) {
             throw new FinderTerminateException(e);
+        }
+    }
+
+    private static class OutputData {
+        private final int index;
+        private final AtomicInteger counter;
+        private final CoverParameter parameter;
+
+        public OutputData(int index, AtomicInteger counter, CoverParameter parameter) {
+            this.index = index;
+            this.counter = counter;
+            this.parameter = parameter;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public int getSuccessCount() {
+            return counter.get();
+        }
+
+        public String getUrl() {
+            return parameter.getUrl();
         }
     }
 }

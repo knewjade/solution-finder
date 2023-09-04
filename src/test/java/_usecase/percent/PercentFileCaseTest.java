@@ -6,11 +6,11 @@ import _usecase.RunnerHelper;
 import core.field.Field;
 import core.field.FieldFactory;
 import entry.EntryPointMain;
+import lib.MyFiles;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.stream.Collectors;
 
@@ -246,7 +246,7 @@ class PercentFileCaseTest extends PercentUseCaseBaseTest {
         String command = "percent -fp input/test_field.txt -pp input/test_patterns.txt --log-path test_output_log/test_last_output.txt";
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
-        String logFile = Files.lines(Paths.get("test_output_log/test_last_output.txt")).collect(Collectors.joining(LINE_SEPARATOR)) + LINE_SEPARATOR;
+        String logFile = MyFiles.lines(Paths.get("test_output_log/test_last_output.txt")).collect(Collectors.joining(LINE_SEPARATOR)) + LINE_SEPARATOR;
         assertThat(log.getOutput())
                 .isEqualTo(logFile);
 

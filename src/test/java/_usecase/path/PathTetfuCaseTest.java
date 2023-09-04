@@ -1176,7 +1176,7 @@ class PathTetfuCaseTest extends PathUseCaseBaseTest {
 
         String tetfu = "http://fumen.zui.jp/?v115@HhglBeQ4FeglBtR4CeRphlBtQ4CeRpJeAgWaAFLDmC?lcJSAVDEHBEooRBJoAVBM3jFD0/AAA";
 
-        String command = String.format("path -t %s -p #Q=[T](*)IJOZS", tetfu);
+        String command = String.format("path -t %s -p #Q=[T](*)IJOZS --hold yes --drop hard", tetfu);
         Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
 
         assertThat(log.getOutput())

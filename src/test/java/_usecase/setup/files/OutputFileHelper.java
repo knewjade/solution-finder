@@ -2,10 +2,10 @@ package _usecase.setup.files;
 
 import _usecase.FileHelper;
 import helper.CSVStore;
+import lib.MyFiles;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ public class OutputFileHelper {
     }
 
     private static SetupHTML loadHTML(String path) throws IOException {
-        String html = Files.lines(Paths.get(path)).collect(Collectors.joining());
+        String html = MyFiles.lines(Paths.get(path)).collect(Collectors.joining());
 
         String mergedFumen;
         {
@@ -63,7 +63,7 @@ public class OutputFileHelper {
 
     public static CSVStore loadSetupCSV() throws IOException {
         Path path = Paths.get(SETUP_CSV);
-        return loadSetupCSV(Files.lines(path));
+        return loadSetupCSV(MyFiles.lines(path));
     }
 
     public static CSVStore loadSetupCSV(Stream<String> content) {

@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class OutputFileHelper {
     private static final String DEFAULT_CSV = concatPath("output", "cover.csv");
@@ -22,9 +23,10 @@ public class OutputFileHelper {
 
     private static CSVStore loadCSVStore(Path path, List<String> columnNames) throws IOException {
         CSVStore csvStore = new CSVStore(columnNames);
-        Files.lines(path)
-                .skip(1)  // skip header
-                .forEach(csvStore::load);
+        try (Stream<String> lines = Files.lines(path)) {
+            lines.skip(1)  // skip header
+                    .forEach(csvStore::load);
+        }
         return csvStore;
     }
 }

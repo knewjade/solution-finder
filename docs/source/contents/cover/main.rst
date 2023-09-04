@@ -134,6 +134,8 @@ short    long                   default
 ``-l``   ``--last-sd``          0
 ``-ms``  ``--max-softdrop``     -1
 ``-mc``  ``--max-clearline``    -1
+``-s``   ``--sort``             input
+``-a``   ``--accum``            no
 ``-o``   ``--output-base``      output/cover.csv
 ``-lp``  ``--log-path``         output/last_output.txt
 ``-fp``  ``--field-path``       input/field.txt
@@ -364,6 +366,39 @@ Tスピンを1回以上しながら、指定されたミノの置き場所通り
 このオプションは ``normal`` ``1L ~ 4L`` ``1L-OR-PC ~ 4L-OR-PC`` モードで有効となります。
 
 もし ``-1`` を指定した場合、ライン消去の回数は制限されません。
+
+
+``-s``, ``--sort`` [default: input]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``--fumen`` で入力したテト譜ごとの成功確率の出力表示の順番を並び替えます.
+
+* input
+    - 結果の表示が「 ``--fumen`` で入力した順」に並びます.
+* success (success-desc)
+    - 結果の表示が「成功確率の降順」に並びます.
+* success-asc
+    - ``success`` の逆順で「成功確率の昇順」に並びます.
+
+
+``-a``, ``--accum`` [default: no]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+出力するテト譜ごとに、そのテト譜までの累積度数 ("OR", "AND") を出力します。
+したがって、最も一番下のテト譜の累積度数は全体の確率と常に一致します。
+
+累積度数の適応順は ``--sort`` による出力順に依存します。
+
+出力サンプル ::
+
+    # Output
+    success:
+    66.67 % [16/24] (accum. OR=16, AND=16): http://fumen.zui.jp/?v115@vhCKJJzEJ+KJ
+    50.00 % [12/24] (accum. OR=20, AND=8): http://fumen.zui.jp/?v115@vhC2OJzEJi/I
+    50.00 % [12/24] (accum. OR=20, AND=4): http://fumen.zui.jp/?v115@vhCSSJzHJGDJ
+    >>>
+    OR  = 83.33 % [20/24]
+    AND = 16.67 % [4/24]
 
 
 ``-o``, ``--output-base`` [default: output/cover.csv]

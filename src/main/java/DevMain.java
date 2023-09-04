@@ -66,7 +66,7 @@ public class DevMain {
 
 //        String command = "util seq -M pass -hh no -p *! -e ^.{0,1}?S";
 
-        String command = "verify kicks";
+        String command = "cover --tetfu v115@vhFRQJUGJKJJvMJTNJGBJ v115@vhFRQJPGJKJJGMJTNJ0BJ --patterns *p7";
         int returnCode = EntryPointMain.main(command.split(" "));
         System.exit(returnCode);
 

@@ -1,10 +1,10 @@
 package _usecase.ren.files;
 
 import _usecase.FileHelper;
+import lib.MyFiles;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ public class OutputFileHelper {
     }
 
     private static SetupHTML loadHTML(String path) throws IOException {
-        String html = Files.lines(Paths.get(path)).collect(Collectors.joining());
+        String html = MyFiles.lines(Paths.get(path)).collect(Collectors.joining());
         List<String> fumens = extractTetfu(html);
         return new SetupHTML(html, fumens);
     }
