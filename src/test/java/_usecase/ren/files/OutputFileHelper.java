@@ -1,16 +1,14 @@
 package _usecase.ren.files;
 
 import _usecase.FileHelper;
-import lib.MyFiles;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class OutputFileHelper {
     private static final String REN_PATH = concatPath("output", "ren.html");
@@ -28,7 +26,7 @@ public class OutputFileHelper {
     }
 
     private static SetupHTML loadHTML(String path) throws IOException {
-        String html = MyFiles.lines(Paths.get(path)).collect(Collectors.joining());
+        String html = String.join("", Files.readAllLines(Paths.get(path)));
         List<String> fumens = extractTetfu(html);
         return new SetupHTML(html, fumens);
     }
@@ -43,10 +41,5 @@ public class OutputFileHelper {
             fumens.add(matcher.group(1));
         }
         return fumens;
-    }
-
-    public static void deleteRenHTML() {
-        File file = new File(REN_PATH);
-        FileHelper.deleteFileAndClose(file);
     }
 }

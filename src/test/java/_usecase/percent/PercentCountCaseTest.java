@@ -3,7 +3,6 @@ package _usecase.percent;
 import _usecase.Log;
 import _usecase.RunnerHelper;
 import entry.EntryPointMain;
-import lib.MyFiles;
 import module.LongTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +13,8 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
@@ -260,7 +261,8 @@ class PercentCountCaseTest extends PercentUseCaseBaseTest {
 
         private List<TestData> loadTestCases() throws IOException {
             String resultPath = ClassLoader.getSystemResource(resourcePath).getPath();
-            List<TestData> testCases = MyFiles.lines(Paths.get(resultPath))
+            Path path = Paths.get(resultPath);
+            List<TestData> testCases = Files.readAllLines(path).stream()
                     .filter(line -> !line.startsWith("//"))
                     .map(line -> {
                         int index = line.substring(1).indexOf('"');

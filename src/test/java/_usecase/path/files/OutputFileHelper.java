@@ -4,10 +4,10 @@ import _usecase.FileHelper;
 import common.datastore.Operations;
 import common.parser.OperationInterpreter;
 import helper.CSVStore;
-import lib.MyFiles;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public class OutputFileHelper {
     }
 
     private static PathHTML loadHTML(String path) throws IOException {
-        String html = MyFiles.lines(Paths.get(path)).collect(Collectors.joining());
+        String html = String.join("", Files.readAllLines(Paths.get(path)));
         int pattern = extractPattern(html);
         int sequence = extractSequence(html);
 
@@ -89,7 +89,7 @@ public class OutputFileHelper {
     }
 
     public static PathCSV loadPathCSV(Path path) throws IOException {
-        return loadPathCSV(MyFiles.lines(path));
+        return loadPathCSV(Files.readAllLines(path).stream());
     }
 
     public static PathCSV loadPathCSV(Stream<String> content) {
@@ -101,7 +101,7 @@ public class OutputFileHelper {
 
     public static CSVStore loadPathSolutionCSV() throws IOException {
         Path path = Paths.get(DEFAULT_CSV);
-        return loadPathSolutionCSV(MyFiles.lines(path));
+        return loadPathSolutionCSV(Files.readAllLines(path).stream());
     }
 
     public static CSVStore loadPathSolutionCSV(Stream<String> content) {
@@ -110,7 +110,7 @@ public class OutputFileHelper {
 
     public static CSVStore loadPathUseCSV() throws IOException {
         Path path = Paths.get(DEFAULT_CSV);
-        return loadPathUseCSV(MyFiles.lines(path));
+        return loadPathUseCSV(Files.readAllLines(path).stream());
     }
 
     public static CSVStore loadPathUseCSV(Stream<String> content) {
@@ -119,7 +119,7 @@ public class OutputFileHelper {
 
     public static CSVStore loadPathPatternCSV() throws IOException {
         Path path = Paths.get(DEFAULT_CSV);
-        return loadPathPatternCSV(MyFiles.lines(path));
+        return loadPathPatternCSV(Files.readAllLines(path).stream());
     }
 
     public static CSVStore loadPathPatternCSV(Stream<String> content) {
@@ -206,6 +206,7 @@ public class OutputFileHelper {
     }
 
     public static String loadErrorText() throws IOException {
-        return MyFiles.lines(Paths.get(ERROR_PATH)).collect(Collectors.joining(System.lineSeparator()));
+        Path path = Paths.get(ERROR_PATH);
+        return Files.readAllLines(path).stream().collect(Collectors.joining(System.lineSeparator()));
     }
 }
