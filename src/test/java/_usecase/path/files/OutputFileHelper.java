@@ -39,7 +39,7 @@ public class OutputFileHelper {
     }
 
     private static PathHTML loadHTML(String path) throws IOException {
-        String html = Files.lines(Paths.get(path)).collect(Collectors.joining());
+        String html = String.join("", Files.readAllLines(Paths.get(path)));
         int pattern = extractPattern(html);
         int sequence = extractSequence(html);
 
@@ -89,7 +89,7 @@ public class OutputFileHelper {
     }
 
     public static PathCSV loadPathCSV(Path path) throws IOException {
-        return loadPathCSV(Files.lines(path));
+        return loadPathCSV(Files.readAllLines(path).stream());
     }
 
     public static PathCSV loadPathCSV(Stream<String> content) {
@@ -101,7 +101,7 @@ public class OutputFileHelper {
 
     public static CSVStore loadPathSolutionCSV() throws IOException {
         Path path = Paths.get(DEFAULT_CSV);
-        return loadPathSolutionCSV(Files.lines(path));
+        return loadPathSolutionCSV(Files.readAllLines(path).stream());
     }
 
     public static CSVStore loadPathSolutionCSV(Stream<String> content) {
@@ -110,7 +110,7 @@ public class OutputFileHelper {
 
     public static CSVStore loadPathUseCSV() throws IOException {
         Path path = Paths.get(DEFAULT_CSV);
-        return loadPathUseCSV(Files.lines(path));
+        return loadPathUseCSV(Files.readAllLines(path).stream());
     }
 
     public static CSVStore loadPathUseCSV(Stream<String> content) {
@@ -119,7 +119,7 @@ public class OutputFileHelper {
 
     public static CSVStore loadPathPatternCSV() throws IOException {
         Path path = Paths.get(DEFAULT_CSV);
-        return loadPathPatternCSV(Files.lines(path));
+        return loadPathPatternCSV(Files.readAllLines(path).stream());
     }
 
     public static CSVStore loadPathPatternCSV(Stream<String> content) {
@@ -206,6 +206,7 @@ public class OutputFileHelper {
     }
 
     public static String loadErrorText() throws IOException {
-        return Files.lines(Paths.get(ERROR_PATH)).collect(Collectors.joining(System.lineSeparator()));
+        Path path = Paths.get(ERROR_PATH);
+        return Files.readAllLines(path).stream().collect(Collectors.joining(System.lineSeparator()));
     }
 }

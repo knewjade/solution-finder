@@ -205,6 +205,16 @@ public class CoverSettingParser extends SettingParser<CoverSettings> {
             maxClearLineCount.ifPresent(settings::setMaxClearLineTimes);
         }
 
+        // ソートの設定
+        Optional<String> sortType = wrapper.getStringOption(CoverOptions.Sort.optName());
+        if (sortType.isPresent()) {
+            settings.setCoverSortType(sortType.get());
+        }
+
+        // accum.の表示設定
+        Optional<Boolean> showsAccumulation = wrapper.getBoolOption(CoverOptions.ShowsAccumulation.optName());
+        showsAccumulation.ifPresent(settings::setShowsAccumulation);
+
         // アウトプットファイルの設定
         Optional<Integer> lastSoftdrop = wrapper.getIntegerOption(CoverOptions.LastSoftdrop.optName());
         lastSoftdrop.ifPresent(settings::setLastSoftdrop);

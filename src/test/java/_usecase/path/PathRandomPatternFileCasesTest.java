@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
@@ -76,7 +77,8 @@ class PathRandomPatternFileCasesTest extends PathUseCaseBaseTest {
 
         private List<TestData> loadTestCases() throws IOException {
             String resultPath = ClassLoader.getSystemResource(resourcePath).getPath();
-            List<TestData> testCases = Files.lines(Paths.get(resultPath))
+            Path path = Paths.get(resultPath);
+            List<TestData> testCases = Files.readAllLines(path).stream()
                     .filter(line -> !line.startsWith("//"))
                     // GitHub Actionsの環境では、フィールドが高いとOutOfMemoryErrorになりやすいので暫くスキップする
                     .filter(line -> !(line.contains("-c 7") || line.contains("-c 8")))

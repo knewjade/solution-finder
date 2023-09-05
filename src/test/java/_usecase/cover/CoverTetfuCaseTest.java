@@ -4,6 +4,7 @@ import _usecase.ConfigFileHelper;
 import _usecase.Log;
 import _usecase.RunnerHelper;
 import _usecase.cover.files.OutputFileHelper;
+import com.google.common.collect.Lists;
 import entry.EntryPointMain;
 import helper.CSVStore;
 import org.junit.jupiter.api.BeforeEach;
@@ -1263,6 +1264,102 @@ class CoverTetfuCaseTest {
                 assertThat(log.getOutput()).contains(Messages.foundOrSolutions(2730, all));
                 assertThat(log.getOutput()).contains(Messages.foundAndSolutions(770, all));
             }
+        }
+
+        @Test
+        void sortAndAccumulation() throws Exception {
+            // case10Prioritized2のsort変更あり
+            String fumen1 = "v115@7gA8AeA8FeB8AeB8DeF8AeJ8AeF8Jeu6IvhFJwIUBJ?X9I6+ITvINFJ";
+            String fumen2 = "v115@7gA8AeA8FeB8AeB8DeF8AeJ8AeF8Jeu6IvhFJwIUBJ?X9I6+IzrINFJ";
+            String fumen3 = "v115@7gA8AeA8FeB8AeB8DeF8AeJ8AeF8Jeu6IvhFJwIUBJ?X9I6+ITzINFJ";
+            String fumen4 = "v115@7gA8AeA8FeB8AeB8DeF8AeJ8AeF8Jeu6IvhFUBJp5I?X9IzzIqpINFJ";
+
+            int all = 5040;
+
+            for (String type : Lists.newArrayList("success", "success-desc")) {
+                String command = String.format("cover -t %s %s %s %s -p *! --mode tsd -P yes --sort %s -a yes", fumen1, fumen2, fumen3, fumen4, type);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(3864, all, 3864, 3864, fumen1));
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(504, all, 4368, 0, fumen4));
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(336, all, 4704, 0, fumen2));
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(336, all, 5040, 0, fumen3));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(5040, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(0, all));
+
+                // CSV
+                CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen1, fumen4, fumen2, fumen3));
+
+                assertThat(csv.findRow("name", "OZLSIJT")).containsEntry(fumen1, "O").containsEntry(fumen2, "X").containsEntry(fumen3, "X").containsEntry(fumen4, "X");
+
+                assertThat(csv.findRow("name", "JITOLSZ")).containsEntry(fumen1, "X").containsEntry(fumen2, "O").containsEntry(fumen3, "X").containsEntry(fumen4, "X");
+
+                assertThat(csv.findRow("name", "STIZOLJ")).containsEntry(fumen1, "X").containsEntry(fumen2, "X").containsEntry(fumen3, "O").containsEntry(fumen4, "X");
+
+                assertThat(csv.findRow("name", "ZTIOSLJ")).containsEntry(fumen1, "X").containsEntry(fumen2, "X").containsEntry(fumen3, "X").containsEntry(fumen4, "O");
+            }
+
+            {
+                String type = "success-asc";
+                String command = String.format("cover -t %s %s %s %s -p *! --mode tsd -P yes --sort %s -a yes", fumen1, fumen2, fumen3, fumen4, type);
+                Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(336, all, 336, 336, fumen2));
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(336, all, 672, 0, fumen3));
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(504, all, 1176, 0, fumen4));
+                assertThat(log.getOutput()).contains(Messages.foundSolutions(3864, all, 5040, 0, fumen1));
+                assertThat(log.getOutput()).contains(Messages.foundOrSolutions(5040, all));
+                assertThat(log.getOutput()).contains(Messages.foundAndSolutions(0, all));
+
+                // CSV
+                CSVStore csv = OutputFileHelper.loadCoverCSV(Arrays.asList("name", fumen2, fumen3, fumen4, fumen1));
+
+                assertThat(csv.findRow("name", "OZLSIJT")).containsEntry(fumen1, "O").containsEntry(fumen2, "X").containsEntry(fumen3, "X").containsEntry(fumen4, "X");
+
+                assertThat(csv.findRow("name", "JITOLSZ")).containsEntry(fumen1, "X").containsEntry(fumen2, "O").containsEntry(fumen3, "X").containsEntry(fumen4, "X");
+
+                assertThat(csv.findRow("name", "STIZOLJ")).containsEntry(fumen1, "X").containsEntry(fumen2, "X").containsEntry(fumen3, "O").containsEntry(fumen4, "X");
+
+                assertThat(csv.findRow("name", "ZTIOSLJ")).containsEntry(fumen1, "X").containsEntry(fumen2, "X").containsEntry(fumen3, "X").containsEntry(fumen4, "O");
+            }
+        }
+    }
+
+    @Test
+    void sortAndAccumulation2() throws Exception {
+        String fumen1 = "v115@vhC2OJzEJi/I";
+        String fumen2 = "v115@vhCKJJzEJ+KJ";
+        String fumen3 = "v115@vhCSSJzHJGDJ";
+
+        int all = 24;
+
+        {
+            String type = "input";
+            String command = String.format("cover -t %s %s %s -p [ILOJ]! --sort %s -a yes", fumen1, fumen2, fumen3, type);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(12, all, 12, 12, fumen1));
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(16, all, 20, 8, fumen2));
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(12, all, 20, 4, fumen3));
+        }
+
+        for (String type : Lists.newArrayList("success", "success-desc")) {
+            String command = String.format("cover -t %s %s %s -p [ILOJ]! --sort %s -a yes", fumen1, fumen2, fumen3, type);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(16, all, 16, 16, fumen2));
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(12, all, 20, 8, fumen1));
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(12, all, 20, 4, fumen3));
+        }
+
+        {
+            String type = "success-asc";
+            String command = String.format("cover -t %s %s %s -p [ILOJ]! --sort %s -a yes", fumen1, fumen2, fumen3, type);
+            Log log = RunnerHelper.runnerCatchingLog(() -> EntryPointMain.main(command.split(" ")));
+
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(12, all, 12, 12, fumen1));
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(12, all, 20, 4, fumen3));
+            assertThat(log.getOutput()).contains(Messages.foundSolutions(16, all, 20, 4, fumen2));
         }
     }
 

@@ -13,6 +13,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
@@ -117,7 +118,8 @@ class PathRandomFileCaseTest extends PathUseCaseBaseTest {
 
         private List<TestData> loadTestCases() throws IOException {
             String resultPath = ClassLoader.getSystemResource(resourcePath).getPath();
-            List<TestData> testCases = Files.lines(Paths.get(resultPath))
+            Path path = Paths.get(resultPath);
+            List<TestData> testCases = Files.readAllLines(path).stream()
                     .filter(line -> !line.startsWith("//"))
                     .map(line -> {
                         int index = line.substring(1).indexOf('"');

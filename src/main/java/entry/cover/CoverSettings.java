@@ -1,5 +1,6 @@
 package entry.cover;
 
+import common.datastore.Pair;
 import core.srs.MinoRotation;
 import entry.DropType;
 import entry.common.kicks.NamedSupplierMinoRotation;
@@ -22,6 +23,9 @@ public class CoverSettings {
     private DropType dropType = DropType.Softdrop;
     private boolean isUsingHold = true;
     private CoverModes mode = CoverModes.Normal;
+    // Pair<SortType, Asc>
+    private Pair<CoverSortType, Boolean> sortTypes = new Pair<>(CoverSortType.Input, true);
+    private boolean showsAccumulation = false;
     private boolean isUsingPriority = false;
     private int lastSoftdrop = 0;
     private int startingB2B = 0;
@@ -60,6 +64,18 @@ public class CoverSettings {
 
     CoverModes getCoverModes() {
         return mode;
+    }
+
+    CoverSortType getCoverSortType() {
+        return sortTypes.getKey();
+    }
+
+    boolean isAscendingSort() {
+        return sortTypes.getValue();
+    }
+
+    public boolean getShowsAccumulation() {
+        return showsAccumulation;
     }
 
     int getLastSoftdrop() {
@@ -239,6 +255,27 @@ public class CoverSettings {
             default:
                 throw new FinderParseException("Unsupported mode: mode=" + mode);
         }
+    }
+
+    void setCoverSortType(String type) throws FinderParseException {
+        switch (type.trim().toLowerCase().replace("_", "-")) {
+            case "input":
+                this.sortTypes = new Pair<>(CoverSortType.Input, true);
+                return;
+            case "success":
+            case "success-desc":
+                this.sortTypes = new Pair<>(CoverSortType.SuccessRate, false);
+                return;
+            case "success-asc":
+                this.sortTypes = new Pair<>(CoverSortType.SuccessRate, true);
+                return;
+            default:
+                throw new FinderParseException("Unsupported type: type=" + type);
+        }
+    }
+
+    public void setShowsAccumulation(boolean showsAccumulation) {
+        this.showsAccumulation = showsAccumulation;
     }
 
     public void setLastSoftdrop(int lastSoftdrop) {
