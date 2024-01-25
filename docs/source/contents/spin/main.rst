@@ -31,7 +31,7 @@ short    long                   default
 ``-mr``  ``--max-roof``         -1
 ``-s``   ``--split``            no
 ``-f``   ``--filter``           strict
-``-fo``   ``--format``           html
+``-fo``  ``--format``           html
 ``-o``   ``--output-base``      output/spin.html
 ``-fp``  ``--field-path``       input/field.txt
 ``-pp``  ``--patterns-path``    input/patterns.txt
