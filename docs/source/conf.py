@@ -18,7 +18,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'solution-finder'
-copyright = '2017-2022, knewjade'
+copyright = '2017-2024, knewjade'
 author = 'knewjade'
 
 
