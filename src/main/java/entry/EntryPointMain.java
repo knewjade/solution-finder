@@ -32,6 +32,10 @@ import entry.util.fumen.FumenUtilEntryPoint;
 import entry.util.fumen.FumenUtilOptions;
 import entry.util.fumen.FumenUtilSettingParser;
 import entry.util.fumen.FumenUtilSettings;
+import entry.util.remove.RemoveUtilEntryPoint;
+import entry.util.remove.RemoveUtilOptions;
+import entry.util.remove.RemoveUtilSettingParser;
+import entry.util.remove.RemoveUtilSettings;
 import entry.util.seq.SeqUtilEntryPoint;
 import entry.util.seq.SeqUtilOptions;
 import entry.util.seq.SeqUtilSettingParser;
@@ -62,6 +66,7 @@ public class EntryPointMain {
             "util fig",
             "util fumen",
             "util seq",
+            "util remove",
             "verify kicks"
     );
 
@@ -293,6 +298,18 @@ public class EntryPointMain {
                 if (settingsOptional.isPresent()) {
                     SeqUtilSettings settings = settingsOptional.get();
                     return Optional.of(new SeqUtilEntryPoint(settings));
+                } else {
+                    return Optional.empty();
+                }
+            }
+            case "remove": {
+                Options options = RemoveUtilOptions.create();
+                CommandLineParser parser = new DefaultParser();
+                RemoveUtilSettingParser settingParser = new RemoveUtilSettingParser(options, parser);
+                Optional<RemoveUtilSettings> settingsOptional = settingParser.parse(parameters);
+                if (settingsOptional.isPresent()) {
+                    RemoveUtilSettings settings = settingsOptional.get();
+                    return Optional.of(new RemoveUtilEntryPoint(settings));
                 } else {
                     return Optional.empty();
                 }
