@@ -68,8 +68,8 @@ public class DevMain {
 
 //        String command = "cover --tetfu v115@vhFRQJUGJKJJvMJTNJGBJ v115@vhFRQJPGJKJJGMJTNJ0BJ --patterns *p7";
 
-//        String command = "util remove --tetfu v115@0gAtHeBtwwFewhAtxwDehlwhRpwwR4i0glwhRpR4Ce?g0glwhJeAgHfgwhIewhRpGewhRpFeAtwhAtywi0DtQpwwQ4?hlg0AtQ4AtRpAeR4glh0Q4xwxhAeQ4hlg0Q4JeAgWAAfgRp?GewhRpR4BeglBewhS4CeglAeg0whQ4ywBthlg0whQ4zwBth?0AtCewwxhg0Hewhg0MeAgWAAegwhIewhEeRpBewhi0BeRpR?4whxwg0ywR4AtQ4xwxhwwglg0BtQ4Aexhilg0AtglQ4TeAg?WAA";
-        String command = "util remove --tetfu v115@pgh0BeBtBewwwhg0CeglBtxwwhg0wwilC8wwwhA8xw?R4D8whA8wwR4H8AeG8JeAgH";
+        String command = "util remove --tetfu v115@0gAtHeBtwwFewhAtxwDehlwhRpwwR4i0glwhRpR4Ce?g0glwhJeAgHfgwhIewhRpGewhRpFeAtwhAtywi0DtQpwwQ4?hlg0AtQ4AtRpAeR4glh0Q4xwxhAeQ4hlg0Q4JeAgWAAfgRp?GewhRpR4BeglBewhS4CeglAeg0whQ4ywBthlg0whQ4zwBth?0AtCewwxhg0Hewhg0MeAgWAAegwhIewhEeRpBewhi0BeRpR?4whxwg0ywR4AtQ4xwxhwwglg0BtQ4Aexhilg0AtglQ4TeAg?WAA";
+//        String command = "util remove --tetfu v115@pgh0BeBtBewwwhg0CeglBtxwwhg0wwilC8wwwhA8xw?R4D8whA8wwR4H8AeG8JeAgH";
 
         int returnCode = EntryPointMain.main(command.split(" "));
         System.exit(returnCode);

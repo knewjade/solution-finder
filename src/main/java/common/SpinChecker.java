@@ -79,7 +79,7 @@ public class SpinChecker {
         List<Spin> spins = new ArrayList<>();
 
         for (int[] pattern : patterns) {
-            // 開店前の位置に移動
+            // 回転前の位置に移動
             int beforeX = operation.getX() - pattern[0];
             int beforeY = operation.getY() - pattern[1];
 
